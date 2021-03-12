@@ -6,7 +6,7 @@ val appName = "plastic-packaging-tax-returns-frontend"
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8505")
 
-val silencerVersion = "1.7.0"
+val silencerVersion = "1.7.3"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,
@@ -18,7 +18,7 @@ lazy val microservice = Project(appName, file("."))
   )
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(majorVersion := 0,
-            scalaVersion := "2.12.11",
+            scalaVersion := "2.12.13",
             libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
             TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.hmrcfrontend.views.html.components._",
                                               "uk.gov.hmrc.govukfrontend.views.html.components._",
