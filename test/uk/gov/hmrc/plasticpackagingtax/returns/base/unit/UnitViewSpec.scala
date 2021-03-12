@@ -24,7 +24,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.returns.base.Injector
 import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 
 class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector with GuiceOneAppPerSuite {

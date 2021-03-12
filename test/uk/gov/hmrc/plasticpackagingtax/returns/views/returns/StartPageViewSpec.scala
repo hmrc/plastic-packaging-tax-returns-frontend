@@ -145,7 +145,7 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
       view.getElementsByClass("govuk-button").first() must haveHref(
-        returnsRoutes.StartController.displayPage().url
+        returnsRoutes.ManufacturedPlasticWeightController.displayPage().url
       )
     }
   }

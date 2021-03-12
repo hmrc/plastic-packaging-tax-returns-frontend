@@ -1,6 +1,11 @@
 service.name=Plastic Packaging Tax
 
-
+site.back = Back
+site.backToGovUk = Back to GOV.UK
+site.button.continue = Save and Continue
+site.button.acceptAndSend = Accept and send
+site.button.saveAndComeBackLater = Save and come back later
+site.error.summary.title = There is a problem
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
@@ -26,3 +31,16 @@ startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycled plast
 startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 startPage.buttonName = Start now
 
+manufacturedPlasticWeight.title = 1. Manufactured plastic packaging
+manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax Return
+manufacturedPlasticWeight.total.weight = Total weight of manufactured packaging components
+manufacturedPlasticWeight.belowThreshold.weight = Total weight of finished manufactured packaging containing less than 30% recycled plastic
+manufacturedPlasticWeight.details.link = How are plastic packaging, components and recycled plastic defined?
+manufacturedPlasticWeight.details.line1 = A ‘packaging component’ is something created to carry or protect other goods, including products made to be sold for future use as packaging, such as cling film.
+manufacturedPlasticWeight.details.line2 = A packaging component is ‘plastic’ if it contains more plastic by weight than any other individual material.
+manufacturedPlasticWeight.details.line3 = A plastic packaging component is considered ‘finished’ when the final manufacturing step or last substantial modification is made. The party responsible for this step is liable for the tax.
+manufacturedPlasticWeight.details.line4 = ‘Recycled plastic’ is plastic that has been reprocessed from recovered material by means of a  chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
+manufacturedPlasticWeight.empty.error = Enter an amount to continue
+manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
+manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+manufacturedPlasticWeight.invalidValue.error = Amount cannot be more than the total manufactured weight
