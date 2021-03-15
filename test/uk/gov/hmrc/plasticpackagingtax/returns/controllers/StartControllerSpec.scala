@@ -16,33 +16,33 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers
 
-import controllers.Assets.OK
+import akka.http.scaladsl.model.StatusCodes.OK
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.start_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home_page
 
-class HomeControllerSpec extends ControllerSpec {
+class StartControllerSpec extends ControllerSpec {
 
   private val mcc        = stubMessagesControllerComponents()
-  private val homePage   = mock[home_page]
-  private val controller = new HomeController(mcc, homePage)
+  private val startPage  = mock[start_page]
+  private val controller = new StartController(mcc, startPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(homePage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    when(startPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(homePage)
+    reset(startPage)
     super.afterEach()
   }
 
-  "HomePage Controller" should {
+  "Start Controller" should {
 
     "return 200" when {
 
@@ -50,7 +50,7 @@ class HomeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(getRequest())
 
-        status(result) mustBe OK
+        status(result) mustBe OK.intValue
       }
     }
   }
