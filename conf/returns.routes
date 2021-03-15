@@ -1,0 +1,3 @@
+# microservice specific routes
+
+GET        /submit-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartController.displayPage()
