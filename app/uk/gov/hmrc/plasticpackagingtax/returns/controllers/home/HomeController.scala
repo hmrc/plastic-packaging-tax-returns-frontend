@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.start_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-@Singleton
-class StartController @Inject() (mcc: MessagesControllerComponents, startPage: start_page)
+class HomeController @Inject() (mcc: MessagesControllerComponents, homePage: home_page)
     extends FrontendController(mcc) with I18nSupport {
 
-  val displayPage: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(startPage()))
-  }
+  def displayPage: Action[AnyContent] =
+    Action.async { implicit request =>
+      Future.successful(Ok(homePage()))
+    }
 
 }

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.views
+package uk.gov.hmrc.plasticpackagingtax.returns.views.returns
 
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.start_page
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
@@ -144,7 +145,7 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
       view.getElementsByClass("govuk-button").first() must haveHref(
-        uk.gov.hmrc.plasticpackagingtax.returns.controllers.routes.StartController.displayPage().url
+        returnsRoutes.StartController.displayPage().url
       )
     }
   }

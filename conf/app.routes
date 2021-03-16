@@ -1,7 +1,7 @@
 # microservice specific routes
 
+->         /returns                 returns.Routes
+
+->         /home                    home.Routes
+
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
-
-GET        /home                    uk.gov.hmrc.plasticpackagingtax.returns.controllers.HomeController.displayPage
-
-GET        /start                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.StartController.displayPage
