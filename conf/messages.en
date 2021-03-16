@@ -7,8 +7,13 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 
+feedback=This is a new service - your {0} will help us to improve it.
+feedback.link=feedback
+
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
+
+home.startPage.title = Your Plastic Packaging Tax account home
 
 returns.startPage.title = Submit a return
 returns.startPage.title.sectionHeader = Plastic Packaging Tax return
