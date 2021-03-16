@@ -39,102 +39,108 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
     "have proper messages for labels" in {
 
-      messages must haveTranslationFor("startPage.title")
-      messages must haveTranslationFor("startPage.title.sectionHeader")
-      messages must haveTranslationFor("startPage.informationYouNeed.header")
-      messages must haveTranslationFor("startPage.informationYouNeed.body")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItems.header")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.1")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.2")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.3")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.4")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.5")
-      messages must haveTranslationFor("startPage.whatIsLiable.header")
-      messages must haveTranslationFor("startPage.whatIsLiable.body.1")
-      messages must haveTranslationFor("startPage.whatIsLiable.body.2")
-      messages must haveTranslationFor("startPage.whatIsLiable.body.3")
-      messages must haveTranslationFor("startPage.whatIsLiable.listItems.header")
-      messages must haveTranslationFor("startPage.whatIsLiable.listItem.1")
-      messages must haveTranslationFor("startPage.whatIsLiable.listItem.2")
-      messages must haveTranslationFor("startPage.whatIsLiable.listItem.3")
-      messages must haveTranslationFor("startPage.buttonName")
+      messages must haveTranslationFor("returns.startPage.title")
+      messages must haveTranslationFor("returns.startPage.title.sectionHeader")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.header")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.body")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItems.header")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.1")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.2")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.3")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.4")
+      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.5")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.header")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.1")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.2")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.3")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItems.header")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.1")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.2")
+      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.3")
+      messages must haveTranslationFor("returns.startPage.buttonName")
     }
 
     val view: Html = createView()
 
     "validate other rendering  methods" in {
       startPage.f()(request, messages).select("title").text() must include(
-        messages("startPage.title")
+        messages("returns.startPage.title")
       )
       startPage.render(request, messages).select("title").text() must include(
-        messages("startPage.title")
+        messages("returns.startPage.title")
       )
     }
 
     "display title" in {
 
-      view.select("title").text() must include(messages("startPage.title"))
+      view.select("title").text() must include(messages("returns.startPage.title"))
     }
 
     "display section header" in {
 
-      view.getElementById("section-header") must containMessage("startPage.title.sectionHeader")
+      view.getElementById("section-header") must containMessage(
+        "returns.startPage.title.sectionHeader"
+      )
     }
 
     "display header" in {
 
-      view.getElementById("title") must containMessage("startPage.title")
+      view.getElementById("title") must containMessage("returns.startPage.title")
     }
 
     "display 'Information you need' section" in {
 
-      view.getElementById("section-1") must containMessage("startPage.informationYouNeed.header")
+      view.getElementById("section-1") must containMessage(
+        "returns.startPage.informationYouNeed.header"
+      )
       view.getElementsByClass("govuk-body").get(0) must containMessage(
-        "startPage.informationYouNeed.body"
+        "returns.startPage.informationYouNeed.body"
       )
       view.getElementsByClass("govuk-body").get(1) must containMessage(
-        "startPage.informationYouNeed.listItems.header"
+        "returns.startPage.informationYouNeed.listItems.header"
       )
       view.getElementsByClass("dashed-list-item").get(0) must containMessage(
-        "startPage.informationYouNeed.listItem.1"
+        "returns.startPage.informationYouNeed.listItem.1"
       )
       view.getElementsByClass("dashed-list-item").get(1) must containMessage(
-        "startPage.informationYouNeed.listItem.2"
+        "returns.startPage.informationYouNeed.listItem.2"
       )
       view.getElementsByClass("dashed-list-item").get(2) must containMessage(
-        "startPage.informationYouNeed.listItem.3"
+        "returns.startPage.informationYouNeed.listItem.3"
       )
       view.getElementsByClass("dashed-list-item").get(3) must containMessage(
-        "startPage.informationYouNeed.listItem.4"
+        "returns.startPage.informationYouNeed.listItem.4"
       )
       view.getElementsByClass("dashed-list-item").get(4) must containMessage(
-        "startPage.informationYouNeed.listItem.5"
+        "returns.startPage.informationYouNeed.listItem.5"
       )
     }
 
     "display 'What is liable?" in {
 
-      view.getElementById("section-2") must containMessage("startPage.whatIsLiable.header")
+      view.getElementById("section-2") must containMessage("returns.startPage.whatIsLiable.header")
       view.getElementsByClass("govuk-body").get(2) must containMessage(
-        "startPage.whatIsLiable.body.1"
+        "returns.startPage.whatIsLiable.body.1"
       )
       view.getElementsByClass("govuk-body").get(3) must containMessage(
-        "startPage.whatIsLiable.body.2"
+        "returns.startPage.whatIsLiable.body.2"
       )
       view.getElementsByClass("govuk-body").get(4) must containMessage(
-        "startPage.whatIsLiable.listItems.header"
+        "returns.startPage.whatIsLiable.listItems.header"
       )
       view.getElementsByClass("dashed-list-item").get(5) must containMessage(
-        "startPage.whatIsLiable.listItem.1"
+        "returns.startPage.whatIsLiable.listItem.1"
       )
       view.getElementsByClass("dashed-list-item").get(6) must containMessage(
-        "startPage.whatIsLiable.listItem.2"
+        "returns.startPage.whatIsLiable.listItem.2"
       )
       view.getElementsByClass("dashed-list-item").get(7) must containMessage(
-        "startPage.whatIsLiable.listItem.3"
+        "returns.startPage.whatIsLiable.listItem.3"
       )
       view.getElementsByClass("govuk-body").get(5).text() must include(
-        messages("startPage.whatIsLiable.body.3", messages("startPage.whatIsLiable.body.3.link"))
+        messages("returns.startPage.whatIsLiable.body.3",
+                 messages("returns.startPage.whatIsLiable.body.3.link")
+        )
       )
       view.getElementsByClass("govuk-link").first() must haveHref(
         "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
@@ -143,7 +149,9 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Start now' button" in {
 
-      view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
+      view.getElementsByClass("govuk-button").first() must containMessage(
+        "returns.startPage.buttonName"
+      )
       view.getElementsByClass("govuk-button").first() must haveHref(
         returnsRoutes.ManufacturedPlasticWeightController.displayPage().url
       )

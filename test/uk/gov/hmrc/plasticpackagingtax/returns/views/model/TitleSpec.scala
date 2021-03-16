@@ -25,14 +25,14 @@ class TitleSpec extends UnitViewSpec with Matchers {
     "display title without section header" in {
 
       Title(headingKey =
-        "startPage.title"
+        "returns.startPage.title"
       ).toString mustBe "Submit a return - Plastic Packaging Tax - GOV.UK"
     }
 
     "display title with section header" in {
 
-      Title(headingKey = "startPage.title",
-            sectionKey = "startPage.whatIsLiable.header"
+      Title(headingKey = "returns.startPage.title",
+            sectionKey = "returns.startPage.whatIsLiable.header"
       ).toString mustBe "Submit a return - What is liable? - Plastic Packaging Tax - GOV.UK"
     }
   }
