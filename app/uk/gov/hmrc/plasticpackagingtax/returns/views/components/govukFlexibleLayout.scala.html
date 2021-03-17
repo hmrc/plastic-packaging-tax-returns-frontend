@@ -1,0 +1,54 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.siteHeader
+
+@this(
+  govukTemplate: GovukTemplate,
+  govukHeader: GovukHeader,
+  govukFooter: GovukFooter,
+  govukBackLink: GovukBackLink,
+  siteHeader: siteHeader,
+  hmrcFooter: hmrcStandardFooter
+)
+
+@(
+  pageTitle: Option[String] = None,
+  headBlock: Option[Html] = None,
+  headerBlock: Html,
+  beforeContentBlock: Option[Html] = None,
+  bodyEndBlock: Option[Html] = None,
+  scriptsBlock: Option[Html] = None,
+  footerBlock: Html
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@bodyEndDefault = {
+  @bodyEndBlock
+  @scriptsBlock
+}
+
+@govukTemplate(
+  htmlLang = Some("en"),
+  pageTitle = pageTitle,
+  headBlock = headBlock,
+  headerBlock = headerBlock,
+  beforeContentBlock = beforeContentBlock,
+  footerBlock = footerBlock,
+  mainClasses = Some("govuk-main-wrapper--auto-spacing"),
+  bodyEndBlock = Some(bodyEndDefault)
+)(contentBlock)

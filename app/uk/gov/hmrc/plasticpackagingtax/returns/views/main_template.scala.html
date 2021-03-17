@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.siteHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.phaseBanner
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.govukFlexibleLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
 
 @this(
@@ -27,7 +28,8 @@
     govukBackLink: GovukBackLink,
     siteHeader: siteHeader,
     phaseBanner: phaseBanner,
-    hmrcFooter: hmrcStandardFooter
+    hmrcFooter: hmrcStandardFooter,
+    govukFlexibleLayout: govukFlexibleLayout,
 )
 @(title: Title,
     backButton: Option[BackButton] = None,
@@ -73,13 +75,24 @@
     </div>
     @contentBlock
 }
-
-@govukLayout(
-    pageTitle = Some(title.toString),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    bodyEndBlock = None,
-    scriptsBlock = Some(scripts),
-    headerBlock = Some(siteHeader()),
-    footerBlock = Some(hmrcFooter())
-)(content)
+@if(useCustomContentWidth) {
+    @govukFlexibleLayout(
+        pageTitle = Some(title.toString),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        scriptsBlock = Some(scripts),
+        headerBlock = siteHeader(),
+        footerBlock = hmrcFooter()
+    )(content)
+} else {
+    @govukLayout(
+        pageTitle = Some(title.toString),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        scriptsBlock = Some(scripts),
+        headerBlock = Some(siteHeader()),
+        footerBlock = Some(hmrcFooter())
+    )(content)
+}

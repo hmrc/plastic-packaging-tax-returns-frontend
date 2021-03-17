@@ -142,7 +142,7 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
                  messages("returns.startPage.whatIsLiable.body.3.link")
         )
       )
-      view.getElementsByClass("govuk-link").first() must haveHref(
+      view.getElementsByClass("govuk-link").get(1) must haveHref(
         "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
       )
     }
