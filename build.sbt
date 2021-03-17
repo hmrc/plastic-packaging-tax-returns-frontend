@@ -6,7 +6,7 @@ val appName = "plastic-packaging-tax-returns-frontend"
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8505")
 
-val silencerVersion = "1.7.0"
+val silencerVersion = "1.7.1"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,
@@ -59,7 +59,6 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
 )
 
 lazy val silencerSettings: Seq[Setting[_]] = {
-  val silencerVersion = "1.7.0"
   Seq(
     libraryDependencies ++= Seq(
       compilerPlugin(
