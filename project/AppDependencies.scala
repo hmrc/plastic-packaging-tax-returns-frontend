@@ -7,19 +7,19 @@ object AppDependencies {
 
   val compile = Seq(
     ws,
-    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27" % "3.2.0",
+    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27" % "4.1.0",
     "uk.gov.hmrc"             %% "govuk-template"             % "5.61.0-play-27",
     "uk.gov.hmrc"             %% "play-ui"                    % "8.20.0-play-27",
-    "uk.gov.hmrc"             %% "play-frontend-govuk"        % "0.57.0-play-27",
-    "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "0.35.0-play-27",
+    "uk.gov.hmrc"             %% "play-frontend-govuk"        % "0.65.0-play-27",
+    "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "0.50.0-play-27",
     "org.webjars.npm"         %  "govuk-frontend"             % "3.10.2",
     "org.webjars.npm"         %  "hmrc-frontend"              % "1.23.1"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-27"   % "2.23.0"                % Test,
-    "org.scalatest"           %% "scalatest"                % "3.1.2"                 % Test,
-    "org.jsoup"               %  "jsoup"                    % "1.10.2"                % Test,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-27"   % "4.1.0"                % Test,
+    "org.scalatest"           %% "scalatest"                % "3.2.5"                 % Test,
+    "org.jsoup"               %  "jsoup"                    % "1.13.1"                % Test,
     "com.typesafe.play"       %% "play-test"                % current                 % Test,
     "org.mockito"             %  "mockito-core"             % "3.5.7"                 % Test,
     "org.scalatestplus"       %% "scalatestplus-mockito"    % "1.0.0-M2"              % Test,

@@ -1,3 +1,6 @@
 # microservice specific routes
 
 GET        /submit-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartController.displayPage()
+
+GET        /manufactured-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.displayPage()
+POST       /manufactured-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.submit()

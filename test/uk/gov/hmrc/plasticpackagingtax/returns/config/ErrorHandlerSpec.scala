@@ -21,7 +21,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.stubMessagesApi
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.Injector
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.Injector
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.error_template
 
 class ErrorHandlerSpec
