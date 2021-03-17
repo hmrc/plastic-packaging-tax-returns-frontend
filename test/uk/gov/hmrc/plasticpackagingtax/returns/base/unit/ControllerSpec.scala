@@ -27,6 +27,7 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.returns.base.MockAuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndComeBackLater,
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
     extends AnyWordSpecLike with MockitoSugar with Matchers with GuiceOneAppPerSuite
-    with BeforeAndAfterEach with DefaultAwaitTimeout with MockJourneyAction {
+    with BeforeAndAfterEach with DefaultAwaitTimeout with MockJourneyAction with MockAuthAction {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 

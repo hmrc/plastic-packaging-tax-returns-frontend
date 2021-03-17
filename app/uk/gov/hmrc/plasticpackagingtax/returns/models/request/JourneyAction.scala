@@ -16,28 +16,36 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.Logger
+import play.api.mvc.{ActionRefiner, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction.tempTaxReturnId
-import uk.gov.hmrc.play.HeaderCarrierConverter
-
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit
   val exec: ExecutionContext
-) extends ActionRefiner[Request, JourneyRequest] {
+) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+
+  private val logger = Logger(this.getClass)
 
   override protected def refine[A](
-    request: Request[A]
+    request: AuthenticatedRequest[A]
   ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    loadOrCreateReturn(tempTaxReturnId).map {
-      case Right(reg)  => Right(new JourneyRequest[A](request, reg))
-      case Left(error) => throw error
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    request.enrolmentId.filter(_.trim.nonEmpty) match {
+      case Some(id) =>
+        loadOrCreateReturn(id).map {
+          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
+          case Left(error) => throw error
+        }
+      case None =>
+        logger.warn(s"Enrolment not present, redirecting to Start")
+        Future.successful(Left(Results.Redirect(returnRoutes.StartController.displayPage())))
     }
   }
 
@@ -51,8 +59,4 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit
     }
 
   override protected def executionContext: ExecutionContext = exec
-}
-
-object JourneyAction {
-  val tempTaxReturnId = "123"
 }

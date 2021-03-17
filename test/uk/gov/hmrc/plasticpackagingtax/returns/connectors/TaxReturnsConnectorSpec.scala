@@ -53,7 +53,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val res = await(connector.create(TaxReturn("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
       }
 
       "tax return already exists" in {
@@ -62,7 +62,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val res = await(connector.create(TaxReturn("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
 
       }
     }
@@ -109,7 +109,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val res = await(connector.find("123"))
 
-        res.right.value.get.id mustBe "123"
+        res.value.get.id mustBe "123"
       }
     }
 
@@ -122,7 +122,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         val res = await(connector.find("123"))
 
         res.isRight mustBe true
-        res.right.value.isEmpty mustBe true
+        res.value.isEmpty mustBe true
       }
     }
 
@@ -162,7 +162,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val res = await(connector.update(TaxReturn("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
 
       }
 
@@ -175,7 +175,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val res = await(connector.update(TaxReturn("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
 
       }
     }

@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 
-class JourneyRequest[+A](
-  val authenticatedRequest: AuthenticatedRequest[A],
-  val taxReturn: TaxReturn,
-  override val enrolmentId: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId)
+class AuthenticatedRequest[+A](
+  request: Request[A],
+  val user: SignedInUser,
+  val enrolmentId: Option[String]
+) extends WrappedRequest[A](request) {}

@@ -20,7 +20,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
@@ -33,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManufacturedPlasticWeightController @Inject() (
+  authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
@@ -41,7 +46,7 @@ class ManufacturedPlasticWeightController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (Action andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
+    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       request.taxReturn.manufacturedPlasticWeight match {
         case data =>
           Ok(
@@ -59,7 +64,7 @@ class ManufacturedPlasticWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (Action andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       ManufacturedPlasticWeight.form()
         .bindFromRequest()
         .fold(

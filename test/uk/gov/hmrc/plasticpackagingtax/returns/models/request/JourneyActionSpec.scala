@@ -27,13 +27,15 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Headers, Result, Results}
 import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   DownstreamServiceError,
   TaxReturnsConnector
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction.tempTaxReturnId
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -52,51 +54,102 @@ class JourneyActionSpec
     given(responseGenerator.apply(any())).willReturn(Future.successful(Results.Ok))
   }
 
-  private def request(headers: Headers = Headers()): JourneyRequest[AnyContentAsEmpty.type] =
-    new JourneyRequest(FakeRequest().withHeaders(headers), TaxReturn(tempTaxReturnId))
+  val taxReturnId: String = "123"
+
+  private def request(
+    enrolmentIdentifier: Option[String] = None,
+    headers: Headers = Headers()
+  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
+    new AuthenticatedRequest(FakeRequest().withHeaders(headers),
+                             SignedInUser(Enrolments(Set.empty), IdentityData()),
+                             enrolmentIdentifier
+    )
 
   "action refine" should {
 
+    "permit request" when {
+      "enrolmentId found" in {
+        given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
+          Future.successful(Right(Option(TaxReturn(taxReturnId))))
+        )
+
+        await(actionRefiner.invokeBlock(request(Some("123")), responseGenerator)) mustBe Results.Ok
+      }
+    }
+
+    "pass through headers" when {
+      "enrolmentId found" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
+          Future.successful(Right(Option(TaxReturn(taxReturnId))))
+        )
+
+        await(
+          actionRefiner.invokeBlock(request(Some(taxReturnId), headers), responseGenerator)
+        ) mustBe Results.Ok
+
+        getHeaders.requestId mustBe Some(RequestId("req1"))
+      }
+    }
+
     "create tax return" when {
       "tax return details not found" in {
-        given(mockTaxReturnsConnector.find(refEq(tempTaxReturnId))(any[HeaderCarrier])).willReturn(
+        given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(None))
         )
         given(
-          mockTaxReturnsConnector.create(refEq(TaxReturn(tempTaxReturnId)))(any[HeaderCarrier])
-        ).willReturn(Future.successful(Right(TaxReturn(tempTaxReturnId))))
+          mockTaxReturnsConnector.create(refEq(TaxReturn(taxReturnId)))(any[HeaderCarrier])
+        ).willReturn(Future.successful(Right(TaxReturn(taxReturnId))))
 
-        await(actionRefiner.invokeBlock(request(), responseGenerator)) mustBe Results.Ok
+        await(
+          actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator)
+        ) mustBe Results.Ok
       }
     }
 
     "load tax return" when {
       "tax return exists" in {
-        given(mockTaxReturnsConnector.find(refEq(tempTaxReturnId))(any[HeaderCarrier])).willReturn(
-          Future.successful(Right(Option(TaxReturn(tempTaxReturnId))))
+        given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
+          Future.successful(Right(Option(TaxReturn(taxReturnId))))
         )
 
-        await(actionRefiner.invokeBlock(request(), responseGenerator)) mustBe Results.Ok
+        await(
+          actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator)
+        ) mustBe Results.Ok
       }
     }
   }
 
   def getHeaders: HeaderCarrier = {
     val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-    verify(mockTaxReturnsConnector).find(refEq(tempTaxReturnId))(captor.capture())
+    verify(mockTaxReturnsConnector).find(refEq(taxReturnId))(captor.capture())
     captor.getValue
+  }
+
+  "redirect to StartController" when {
+    "enrolmentId not found" in {
+      await(actionRefiner.invokeBlock(request(), responseGenerator)) mustBe Results.Redirect(
+        returnRoutes.StartController.displayPage()
+      )
+    }
+
+    "enrolmentId is empty" in {
+      await(
+        actionRefiner.invokeBlock(request(Some("")), responseGenerator)
+      ) mustBe Results.Redirect(returnRoutes.StartController.displayPage())
+    }
   }
 
   "throw exception" when {
     "cannot load user tax return" in {
-      given(mockTaxReturnsConnector.find(refEq(tempTaxReturnId))(any[HeaderCarrier])).willReturn(
+      given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
         Future.successful(
           Left(DownstreamServiceError("error", new InternalServerException("error")))
         )
       )
 
       intercept[DownstreamServiceError] {
-        await(actionRefiner.invokeBlock(request(), responseGenerator))
+        await(actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator))
       }
     }
   }
