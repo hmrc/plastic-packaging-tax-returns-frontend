@@ -19,16 +19,19 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-class HomeController @Inject() (mcc: MessagesControllerComponents, homePage: home_page)
-    extends FrontendController(mcc) with I18nSupport {
+class HomeController @Inject() (authenticate: AuthAction)(
+  mcc: MessagesControllerComponents,
+  homePage: home_page
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] =
-    Action.async { implicit request =>
+    authenticate.async { implicit request =>
       Future.successful(Ok(homePage()))
     }
 

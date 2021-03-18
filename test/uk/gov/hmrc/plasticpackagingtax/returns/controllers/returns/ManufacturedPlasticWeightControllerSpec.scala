@@ -27,12 +27,11 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 
 class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
@@ -41,6 +40,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
   private val page = mock[manufactured_plastic_weight_page]
 
   private val controller = new ManufacturedPlasticWeightController(
+    authenticate = mockAuthAction,
     journeyAction = mockJourneyAction,
     mcc = mcc,
     page = page,
@@ -64,6 +64,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "display page method is invoked" in {
+        authorizedUser()
 
         val result = controller.displayPage()(getRequest())
 
@@ -72,6 +73,8 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
 
       "tax return already exists and display page method is invoked" in {
         mockTaxReturnFind(aTaxReturn())
+        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -81,6 +84,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits the weight details" in {
+          authorizedUser()
           mockTaxReturnFind(aTaxReturn())
           mockTaxReturnUpdate(aTaxReturn())
 
@@ -115,7 +119,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
       }
 
       "data exist" in {
-
+        authorizedUser()
         mockTaxReturnFind(
           aTaxReturn(
             withManufacturedPlasticWeight(totalKg = Some(10), totalKgBelowThreshold = Some(5))
@@ -133,6 +137,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid job title" in {
+        authorizedUser()
         val result =
           controller.submit()(
             postRequest(
@@ -149,6 +154,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     "return an error" when {
 
       "user submits form and the tax return update fails" in {
+        authorizedUser()
         mockTaxReturnFailure()
         val result =
           controller.submit()(
@@ -163,6 +169,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
       }
 
       "user submits form and a tax return update runtime exception occurs" in {
+        authorizedUser()
         mockTaxReturnException()
         val result =
           controller.submit()(
@@ -172,6 +179,13 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
               )
             )
           )
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user is not authorised" in {
+        unAuthorizedUser()
+        val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
       }

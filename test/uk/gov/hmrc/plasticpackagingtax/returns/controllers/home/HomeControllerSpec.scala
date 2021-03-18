@@ -30,7 +30,7 @@ class HomeControllerSpec extends ControllerSpec {
 
   private val mcc        = stubMessagesControllerComponents()
   private val homePage   = mock[home_page]
-  private val controller = new HomeController(mcc, homePage)
+  private val controller = new HomeController(authenticate = mockAuthAction)(mcc, homePage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -46,11 +46,22 @@ class HomeControllerSpec extends ControllerSpec {
 
     "return 200" when {
 
-      "display page method is invoked" in {
+      "use is authorised and display page method is invoked" in {
+        authorizedUser()
 
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "return an error" when {
+
+      "user is not authorised" in {
+        unAuthorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
       }
     }
   }

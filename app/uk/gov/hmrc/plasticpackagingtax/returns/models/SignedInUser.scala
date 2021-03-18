@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.request
+package uk.gov.hmrc.plasticpackagingtax.returns.models
 
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.IdentityData
 
-class JourneyRequest[+A](
-  val authenticatedRequest: AuthenticatedRequest[A],
-  val taxReturn: TaxReturn,
-  override val enrolmentId: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId)
+case class SignedInUser(enrolments: Enrolments, identityData: IdentityData)
