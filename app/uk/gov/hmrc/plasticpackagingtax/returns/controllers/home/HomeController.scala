@@ -20,19 +20,20 @@ import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.Future
-
-class HomeController @Inject() (authenticate: AuthAction)(
+class HomeController @Inject() (
+  authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  homePage: home_page
+  page: home_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] =
-    authenticate.async { implicit request =>
-      Future.successful(Ok(homePage()))
+    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
+      Ok(page())
     }
 
 }

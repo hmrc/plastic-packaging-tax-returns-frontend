@@ -20,7 +20,6 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page

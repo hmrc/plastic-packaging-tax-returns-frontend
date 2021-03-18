@@ -28,17 +28,22 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class HomeControllerSpec extends ControllerSpec {
 
-  private val mcc        = stubMessagesControllerComponents()
-  private val homePage   = mock[home_page]
-  private val controller = new HomeController(authenticate = mockAuthAction)(mcc, homePage)
+  private val mcc  = stubMessagesControllerComponents()
+  private val page = mock[home_page]
+
+  private val controller = new HomeController(authenticate = mockAuthAction,
+                                              journeyAction = mockJourneyAction,
+                                              mcc = mcc,
+                                              page = page
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(homePage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(homePage)
+    reset(page)
     super.afterEach()
   }
 
