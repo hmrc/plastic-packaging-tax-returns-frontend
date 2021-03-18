@@ -29,30 +29,27 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
+class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
   private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[manufactured_plastic_weight_page]
+  private val page = mock[imported_plastic_weight_page]
 
-  private val controller = new ManufacturedPlasticWeightController(
-    authenticate = mockAuthAction,
-    journeyAction = mockJourneyAction,
-    mcc = mcc,
-    page = page,
-    returnsConnector = mockTaxReturnsConnector
+  private val controller = new ImportedPlasticWeightController(authenticate = mockAuthAction,
+                                                               journeyAction = mockJourneyAction,
+                                                               mcc = mcc,
+                                                               page = page,
+                                                               returnsConnector =
+                                                                 mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ManufacturedPlasticWeight]])(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(page.apply(any[Form[ImportedPlasticWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -60,22 +57,20 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "ManufacturedPlasticWeightController" should {
+  "ImportedPlasticWeightController" should {
 
     "return 200" when {
 
       "display page method is invoked" in {
         authorizedUser()
-
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "tax return already exists and display page method is invoked" in {
-        mockTaxReturnFind(aTaxReturn())
         authorizedUser()
-
+        mockTaxReturnFind(aTaxReturn())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -92,19 +87,17 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
           val result =
             controller.submit()(
               postRequestEncoded(
-                ManufacturedPlasticWeight(totalKg = Some("10"), totalKgBelowThreshold = Some("5")),
+                ImportedPlasticWeight(totalKg = Some("10"), totalKgBelowThreshold = Some("5")),
                 formAction
               )
             )
 
           status(result) mustBe Assets.SEE_OTHER
-          modifiedTaxReturn.manufacturedPlasticWeight.totalKg mustBe Some(10)
-          modifiedTaxReturn.manufacturedPlasticWeight.totalKgBelowThreshold mustBe Some(5)
+          modifiedTaxReturn.importedPlasticWeight.totalKg mustBe Some(10)
+          modifiedTaxReturn.importedPlasticWeight.totalKgBelowThreshold mustBe Some(5)
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                returnRoutes.ImportedPlasticWeightController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
@@ -115,8 +108,8 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
 
     "return prepopulated form" when {
 
-      def pageForm: Form[ManufacturedPlasticWeight] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[ManufacturedPlasticWeight]])
+      def pageForm: Form[ImportedPlasticWeight] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[ImportedPlasticWeight]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
@@ -124,9 +117,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
       "data exist" in {
         authorizedUser()
         mockTaxReturnFind(
-          aTaxReturn(
-            withManufacturedPlasticWeight(totalKg = Some(10), totalKgBelowThreshold = Some(5))
-          )
+          aTaxReturn(withImportedPlasticWeight(totalKg = Some(10), totalKgBelowThreshold = Some(5)))
         )
 
         await(controller.displayPage()(getRequest()))
@@ -144,9 +135,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(
             postRequest(
-              Json.toJson(
-                ManufacturedPlasticWeight(totalKg = Some("0"), totalKgBelowThreshold = None)
-              )
+              Json.toJson(ImportedPlasticWeight(totalKg = Some("0"), totalKgBelowThreshold = None))
             )
           )
 
@@ -163,7 +152,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
           controller.submit()(
             postRequest(
               Json.toJson(
-                ManufacturedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
+                ImportedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
               )
             )
           )
@@ -178,7 +167,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
           controller.submit()(
             postRequest(
               Json.toJson(
-                ManufacturedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
+                ImportedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
               )
             )
           )

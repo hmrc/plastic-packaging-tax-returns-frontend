@@ -101,7 +101,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
   "find tax return" should {
 
-    "return return" when {
+    "return tax return" when {
 
       "exists" in {
 

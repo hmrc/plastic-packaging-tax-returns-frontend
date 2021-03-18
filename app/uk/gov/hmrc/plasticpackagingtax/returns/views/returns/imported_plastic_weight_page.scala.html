@@ -16,15 +16,16 @@
 
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukFieldset
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
+@import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 
@@ -34,22 +35,22 @@
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
+  paragraphBody: paragraphBody,
   govukDetails : GovukDetails,
   govukFieldset : GovukFieldset,
   formHelper: FormWithCSRF
 )
 
-@(form: Form[ManufacturedPlasticWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[ImportedPlasticWeight])(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
 @totalWeightBelowThresholdField = @{form("totalKgBelowThreshold")}
 
 @formattedDetailsContent = {
   <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.manufacturedPlasticWeight.details.line1")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.manufacturedPlasticWeight.details.line2")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.manufacturedPlasticWeight.details.line3")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.manufacturedPlasticWeight.details.line4")</li>
+      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line1")</li>
+      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line2")</li>
+      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line3")</li>
   </ul>
 }
 
@@ -68,6 +69,9 @@
 }
 
 @inputFields= {
+
+    @paragraphBody(message = messages("returns.importedPlasticWeight.hint"), classes = "govuk-body govuk-!-margin-bottom-7")
+
     @govukInput(
         Input(
             id = s"${totalWeightField.name}",
@@ -77,7 +81,7 @@
             label = Label(
                 isPageHeading = true,
                 classes = s"govuk-label",
-                content = Text(messages("returns.manufacturedPlasticWeight.total.weight"))),
+                content = Text(messages("returns.importedPlasticWeight.total.weight"))),
                 classes = "govuk-input--width-10",
                 spellcheck = Some(false),
                 suffix = Some(PrefixOrSuffix(
@@ -95,7 +99,7 @@
             label = Label(
                 isPageHeading = true,
                 classes = s"govuk-label",
-                content = Text(messages("returns.manufacturedPlasticWeight.belowThreshold.weight"))),
+                content = Text(messages("returns.importedPlasticWeight.belowThreshold.weight"))),
                 classes = "govuk-input--width-10",
                 spellcheck = Some(false),
                 suffix = Some(PrefixOrSuffix(
@@ -106,19 +110,19 @@
 }
 
 @govukLayout(
-    title = Title("returns.manufacturedPlasticWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), returnsRoutes.StartController.displayPage()))) {
+    title = Title("returns.importedPlasticWeight.title"),
+    backButton = Some(BackButton(messages("site.back"), returnsRoutes.ManufacturedPlasticWeightController.displayPage()))) {
 
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.manufacturedPlasticWeight.sectionHeader"))
+        @sectionHeader(messages("returns.importedPlasticWeight.sectionHeader"))
 
-        @formHelper(action = returnsRoutes.ManufacturedPlasticWeightController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = returnsRoutes.ImportedPlasticWeightController.submit(), 'autoComplete -> "off") {
 
         @govukFieldset(
             Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("returns.manufacturedPlasticWeight.title")),
+                    content = Text(messages("returns.importedPlasticWeight.title")),
                     classes = "govuk-fieldset__legend--l",
                     isPageHeading = true)),
                 html = inputFields
@@ -126,7 +130,7 @@
         )
 
         @govukDetails(Details(
-            summary = Text(messages("returns.manufacturedPlasticWeight.details.link")),
+            summary = Text(messages("returns.importedPlasticWeight.details.link")),
             content = HtmlContent(formattedDetailsContent)
         ))
 

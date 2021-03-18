@@ -18,20 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TaxReturn(
-  id: String,
-  manufacturedPlasticWeight: ManufacturedPlasticWeight = ManufacturedPlasticWeight(),
-  importedPlasticWeight: ImportedPlasticWeight = ImportedPlasticWeight()
-) {
+case class ImportedPlasticWeight(
+  totalKg: Option[Long] = None,
+  totalKgBelowThreshold: Option[Long] = None
+)
 
-  def toTaxReturn: TaxReturn =
-    TaxReturn(id = this.id,
-              manufacturedPlasticWeight = this.manufacturedPlasticWeight,
-              importedPlasticWeight = this.importedPlasticWeight
-    )
+object ImportedPlasticWeight {
+  implicit val format: OFormat[ImportedPlasticWeight] = Json.format[ImportedPlasticWeight]
 
-}
-
-object TaxReturn {
-  implicit val format: OFormat[TaxReturn] = Json.format[TaxReturn]
 }

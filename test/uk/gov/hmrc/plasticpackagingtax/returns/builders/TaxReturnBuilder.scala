@@ -16,7 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.builders
 
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{ManufacturedPlasticWeight, TaxReturn}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  ImportedPlasticWeight,
+  ManufacturedPlasticWeight,
+  TaxReturn
+}
 
 //noinspection ScalaStyle
 trait TaxReturnBuilder {
@@ -36,5 +40,11 @@ trait TaxReturnBuilder {
     totalKgBelowThreshold: Option[Long]
   ): TaxReturnModifier =
     _.copy(manufacturedPlasticWeight = ManufacturedPlasticWeight(totalKg, totalKgBelowThreshold))
+
+  def withImportedPlasticWeight(
+    totalKg: Option[Long],
+    totalKgBelowThreshold: Option[Long]
+  ): TaxReturnModifier =
+    _.copy(importedPlasticWeight = ImportedPlasticWeight(totalKg, totalKgBelowThreshold))
 
 }
