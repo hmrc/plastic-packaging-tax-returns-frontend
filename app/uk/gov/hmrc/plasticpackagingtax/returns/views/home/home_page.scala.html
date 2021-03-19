@@ -14,21 +14,52 @@
  * limitations under the License.
  *@
 
+@import java.time.LocalDate
+@import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.card
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingM
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 
 @this(
-govukLayout: main_template,
-pageTitle: pageTitle,
+  govukLayout: main_template,
+  pageTitle: pageTitle,
+  paragraphBody: paragraphBody,
+  card: card
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("startPage.title")) {
+@govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
+    @pageTitle(text = messages("account.homePage.title"), classes = gdsPageHeadingL)
 
-<div class="govuk-!-width-two-thirds">
-    @pageTitle(text = messages("startPage.title"))
-</div>
+    <h2 id="entityName" class="@gdsPageHeadingL">Plastic Packaging Ltd.</h2>
+
+    <div class="card-balance">
+      <h2 id='currentBalance' class="@gdsPageHeadingM">@messages("account.homePage.currentBalance")</h2>
+      <h3 id='accountBalance' class="@gdsPageHeadingL">£2720.00</h3>
+      @paragraphBody(id=Some("accountBalanceOnDate"), message = messages("account.homePage.currentBalance.onDate",
+          LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
+    </div>
+
+    <div class="govuk-grid-row">
+
+        @card(headerKey = "account.homePage.card.transactions.header",
+          bodyKey = "account.homePage.card.transactions.body",
+          links = Seq(
+              Link("account.homePage.card.transactions.link.1", returnsRoutes.ManufacturedPlasticWeightController.displayPage())))
+
+        @card(headerKey = "account.homePage.card.registration.header",
+          bodyKey = "account.homePage.card.registration.body",
+          links = Seq(
+              Link("account.homePage.card.registration.link.1", homeRoutes.HomeController.displayPage()),
+              Link("account.homePage.card.registration.link.2", homeRoutes.HomeController.displayPage())))
+    </div>
 }
 

@@ -37,7 +37,7 @@ govukButton: GovukButton
 )
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("startPage.title")) {
+@govukLayout(title = Title("returns.startPage.title")) {
 
     <div class="gem-c-breadcrumbs govuk-breadcrumbs govuk-breadcrumbs--collapse-on-mobile" data-module="gem-track-click">
         <ol class="govuk-breadcrumbs__list">
@@ -56,8 +56,8 @@ govukButton: GovukButton
     <br />
 
     <div class="govuk-!-width-two-thirds">
-        @sectionHeader(messages("startPage.title.sectionHeader"))
-        @pageTitle(text = messages("startPage.title"))
+        @sectionHeader(messages("returns.startPage.title.sectionHeader"))
+        @pageTitle(text = messages("returns.startPage.title"))
     </div>
 
     <div class="gem-c-breadcrumbs govuk-breadcrumbs govuk-breadcrumbs--collapse-on-mobile" data-module="gem-toggle">
@@ -67,17 +67,17 @@ govukButton: GovukButton
     <br />
 
     <div>
-        <h2 id="section-1" class="govuk-heading-m">@messages("startPage.informationYouNeed.header")</h2>
-        @paragraphBody(message = messages("startPage.informationYouNeed.body"))
+        <h2 id="section-1" class="govuk-heading-m">@messages("returns.startPage.informationYouNeed.header")</h2>
+        @paragraphBody(message = messages("returns.startPage.informationYouNeed.body"))
 
         @bulletList(
-            title = Some(messages("startPage.informationYouNeed.listItems.header")),
+            title = Some(messages("returns.startPage.informationYouNeed.listItems.header")),
             elements = Seq(
-                Html(messages("startPage.informationYouNeed.listItem.1")),
-                Html(messages("startPage.informationYouNeed.listItem.2")),
-                Html(messages("startPage.informationYouNeed.listItem.3")),
-                Html(messages("startPage.informationYouNeed.listItem.4")),
-                Html(messages("startPage.informationYouNeed.listItem.5"))
+                Html(messages("returns.startPage.informationYouNeed.listItem.1")),
+                Html(messages("returns.startPage.informationYouNeed.listItem.2")),
+                Html(messages("returns.startPage.informationYouNeed.listItem.3")),
+                Html(messages("returns.startPage.informationYouNeed.listItem.4")),
+                Html(messages("returns.startPage.informationYouNeed.listItem.5"))
             )
         )
 
@@ -87,27 +87,27 @@ govukButton: GovukButton
             Button(
                 href = Some(returnsRoutes.ManufacturedPlasticWeightController.displayPage().url),
                 isStartButton = true,
-                content = Text(messages("startPage.buttonName"))
+                content = Text(messages("returns.startPage.buttonName"))
             )
         )
 
         <div>
-            <h2 id="section-2" class="govuk-heading-m">@messages("startPage.whatIsLiable.header")</h2>
-            @paragraphBody(message = messages("startPage.whatIsLiable.body.1"))
-            @paragraphBody(message = messages("startPage.whatIsLiable.body.2"))
+            <h2 id="section-2" class="govuk-heading-m">@messages("returns.startPage.whatIsLiable.header")</h2>
+            @paragraphBody(message = messages("returns.startPage.whatIsLiable.body.1"))
+            @paragraphBody(message = messages("returns.startPage.whatIsLiable.body.2"))
 
             @bulletList(
-                title = Some(messages("startPage.whatIsLiable.listItems.header")),
+                title = Some(messages("returns.startPage.whatIsLiable.listItems.header")),
                 elements = Seq(
-                    Html(messages("startPage.whatIsLiable.listItem.1")),
-                    Html(messages("startPage.whatIsLiable.listItem.2")),
-                    Html(messages("startPage.whatIsLiable.listItem.3"))
+                    Html(messages("returns.startPage.whatIsLiable.listItem.1")),
+                    Html(messages("returns.startPage.whatIsLiable.listItem.2")),
+                    Html(messages("returns.startPage.whatIsLiable.listItem.3"))
                 )
             )
 
             @paragraphBody(message = messages(
-                "startPage.whatIsLiable.body.3",
-                link(text = messages("startPage.whatIsLiable.body.3.link"), call = Call("GET", "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"))))
+                "returns.startPage.whatIsLiable.body.3",
+                link(text = messages("returns.startPage.whatIsLiable.body.3.link"), call = Call("GET", "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"))))
         </div>
 
     </div>
