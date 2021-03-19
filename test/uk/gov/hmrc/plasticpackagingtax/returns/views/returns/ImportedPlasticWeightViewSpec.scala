@@ -20,64 +20,73 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest
-class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
+class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[manufactured_plastic_weight_page]
+  private val page = instanceOf[imported_plastic_weight_page]
 
   private def createView(
-    form: Form[ManufacturedPlasticWeight] = ManufacturedPlasticWeight.form()
+    form: Form[ImportedPlasticWeight] = ImportedPlasticWeight.form()
   ): Document =
     page(form)(request, messages)
 
-  "Manufactured Plastic Weight View" should {
+  "Imported Plastic Weight View" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.title")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.sectionHeader")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.total.weight")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.belowThreshold.weight")
+      messages must haveTranslationFor("returns.importedPlasticWeight.title")
+      messages must haveTranslationFor("returns.importedPlasticWeight.hint")
+      messages must haveTranslationFor("returns.importedPlasticWeight.sectionHeader")
+      messages must haveTranslationFor("returns.importedPlasticWeight.total.weight")
+      messages must haveTranslationFor("returns.importedPlasticWeight.belowThreshold.weight")
 
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.link")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line1")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line2")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line3")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line4")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.link")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.line1")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.line2")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.line3")
 
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.empty.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.format.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.aboveMax.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.invalidValue.error")
+      messages must haveTranslationFor("returns.importedPlasticWeight.empty.error")
+      messages must haveTranslationFor("returns.importedPlasticWeight.format.error")
+      messages must haveTranslationFor("returns.importedPlasticWeight.aboveMax.error")
+      messages must haveTranslationFor("returns.importedPlasticWeight.invalidValue.error")
     }
 
     val view = createView()
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(returnRoutes.StartController.displayPage())
+      view.getElementById("back-link") must haveHref(
+        routes.ManufacturedPlasticWeightController.displayPage()
+      )
     }
 
     "display title" in {
 
-      view.select("title").text() must include(messages("returns.manufacturedPlasticWeight.title"))
+      view.select("title").text() must include(messages("returns.importedPlasticWeight.title"))
     }
 
     "display header" in {
 
       view.getElementsByClass("govuk-caption-xl").text() must include(
-        messages("returns.manufacturedPlasticWeight.sectionHeader")
+        messages("returns.importedPlasticWeight.sectionHeader")
+      )
+    }
+
+    "display hint" in {
+
+      view.getElementsByClass("govuk-!-margin-bottom-7").text() must include(
+        messages("returns.importedPlasticWeight.hint")
       )
     }
 
     "display total weight label" in {
 
       view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
-        messages("returns.manufacturedPlasticWeight.total.weight")
+        messages("returns.importedPlasticWeight.total.weight")
       )
     }
 
@@ -89,7 +98,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display total weight below threshold label" in {
 
       view.getElementsByAttributeValueMatching("for", "totalKgBelowThreshold").text() must include(
-        messages("returns.manufacturedPlasticWeight.belowThreshold.weight")
+        messages("returns.importedPlasticWeight.belowThreshold.weight")
       )
     }
 
@@ -110,13 +119,13 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  "Manufactured Plastic Weight View when filled" should {
+  "Imported Plastic Weight View when filled" should {
 
     "display data in total weight input" in {
 
-      val form = ManufacturedPlasticWeight
+      val form = ImportedPlasticWeight
         .form()
-        .fill(ManufacturedPlasticWeight(Some("1000"), Some("5")))
+        .fill(ImportedPlasticWeight(Some("1000"), Some("5")))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
@@ -128,9 +137,9 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "weight is not entered" in {
 
-      val form = ManufacturedPlasticWeight
+      val form = ImportedPlasticWeight
         .form()
-        .fillAndValidate(ManufacturedPlasticWeight(None, None))
+        .fillAndValidate(ImportedPlasticWeight(None, None))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary

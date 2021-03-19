@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
@@ -34,6 +35,7 @@ class TaxReturnsConnector @Inject() (
   def find(
     id: String
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[TaxReturn]]] = {
+    import uk.gov.hmrc.http.HttpReads.Implicits.readOptionOfNotFound
     val timer = metrics.defaultRegistry.timer("ppt.find.return.timer").time()
     httpClient.GET[Option[TaxReturn]](appConfig.pptReturnUrl(id))
       .andThen { case _ => timer.stop() }

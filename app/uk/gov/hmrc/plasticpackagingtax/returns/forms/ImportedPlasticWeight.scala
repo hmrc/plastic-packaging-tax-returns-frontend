@@ -16,33 +16,30 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
-import play.api.data.Forms.{mapping, text}
 import play.api.data.{Form, Forms}
+import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 
-case class ManufacturedPlasticWeight(
-  totalKg: Option[String],
-  totalKgBelowThreshold: Option[String]
-) {}
+case class ImportedPlasticWeight(totalKg: Option[String], totalKgBelowThreshold: Option[String])
 
-object ManufacturedPlasticWeight extends CommonFormValidators {
+object ImportedPlasticWeight extends CommonFormValidators {
 
-  implicit val format: OFormat[ManufacturedPlasticWeight] = Json.format[ManufacturedPlasticWeight]
+  implicit val format: OFormat[ImportedPlasticWeight] = Json.format[ImportedPlasticWeight]
 
   val maxTotalKg            = 99999999
   val totalKg               = "totalKg"
   val totalKgBelowThreshold = "totalKgBelowThreshold"
-  val weightEmptyError      = "returns.manufacturedPlasticWeight.empty.error"
-  val invalidFormatError    = "returns.manufacturedPlasticWeight.format.error"
-  val aboveMaxError         = "returns.manufacturedPlasticWeight.aboveMax.error"
-  val invalidValueError     = "returns.manufacturedPlasticWeight.invalidValue.error"
+  val weightEmptyError      = "returns.importedPlasticWeight.empty.error"
+  val invalidFormatError    = "returns.importedPlasticWeight.format.error"
+  val aboveMaxError         = "returns.importedPlasticWeight.aboveMax.error"
+  val invalidValueError     = "returns.importedPlasticWeight.invalidValue.error"
 
-  val isValid: ManufacturedPlasticWeight => Boolean = value =>
+  val isValid: ImportedPlasticWeight => Boolean = value =>
     value.totalKgBelowThreshold.map(_.trim.toLong).getOrElse(0L) <= value.totalKg.map(
       _.trim.toLong
     ).getOrElse(0L)
 
-  def form(): Form[ManufacturedPlasticWeight] =
+  def form(): Form[ImportedPlasticWeight] =
     Form(
       mapping(
         totalKg -> Forms.optional(text())
@@ -53,7 +50,7 @@ object ManufacturedPlasticWeight extends CommonFormValidators {
           .verifying(weightEmptyError, isNotEmpty)
           .verifying(invalidFormatError, v => !isNotEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
-      )(ManufacturedPlasticWeight.apply)(ManufacturedPlasticWeight.unapply)
+      )(ImportedPlasticWeight.apply)(ImportedPlasticWeight.unapply)
         .verifying(invalidValueError, isValid(_))
     )
 
