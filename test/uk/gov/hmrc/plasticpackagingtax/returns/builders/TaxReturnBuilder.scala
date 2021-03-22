@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.builders
 
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  HumanMedicinesPlasticWeight,
   ImportedPlasticWeight,
   ManufacturedPlasticWeight,
   TaxReturn
@@ -46,5 +47,8 @@ trait TaxReturnBuilder {
     totalKgBelowThreshold: Option[Long]
   ): TaxReturnModifier =
     _.copy(importedPlasticWeight = ImportedPlasticWeight(totalKg, totalKgBelowThreshold))
+
+  def withHumanMedicinesPlasticWeight(totalKg: Option[Long]): TaxReturnModifier =
+    _.copy(humanMedicinesPlasticWeight = HumanMedicinesPlasticWeight(totalKg))
 
 }

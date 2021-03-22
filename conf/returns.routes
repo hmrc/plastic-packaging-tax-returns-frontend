@@ -7,3 +7,6 @@ POST       /manufactured-plastic-packaging-weight   uk.gov.hmrc.plasticpackaging
 
 GET        /imported-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.displayPage()
 POST       /imported-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.submit()
+
+GET        /human-medicines-plastic-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.displayPage()
+POST       /human-medicines-plastic-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.submit()

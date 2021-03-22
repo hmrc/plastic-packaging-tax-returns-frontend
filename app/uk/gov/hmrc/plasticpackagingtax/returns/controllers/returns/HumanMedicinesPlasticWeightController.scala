@@ -26,58 +26,53 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ImportedPlasticWeightController @Inject() (
+class HumanMedicinesPlasticWeightController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
-  page: imported_plastic_weight_page
+  page: human_medicines_plastic_weight_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.importedPlasticWeight match {
+      request.taxReturn.humanMedicinesPlasticWeight match {
         case data: Any =>
           Ok(
             page(
-              ImportedPlasticWeight.form().fill(
-                ImportedPlasticWeight(totalKg = data.totalKg.map(_.toString),
-                                      totalKgBelowThreshold =
-                                        data.totalKgBelowThreshold.map(_.toString)
-                )
+              HumanMedicinesPlasticWeight.form().fill(
+                HumanMedicinesPlasticWeight(totalKg = data.totalKg.map(_.toString))
               )
             )
           )
-        case _ => Ok(page(ImportedPlasticWeight.form()))
+        case _ => Ok(page(HumanMedicinesPlasticWeight.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
-      ImportedPlasticWeight.form()
+      HumanMedicinesPlasticWeight.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[ImportedPlasticWeight]) =>
+          (formWithErrors: Form[HumanMedicinesPlasticWeight]) =>
             Future.successful(BadRequest(page(formWithErrors))),
           weight =>
             updateTaxReturn(weight).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(returnRoutes.HumanMedicinesPlasticWeightController.displayPage())
-                  case _ => Redirect(homeRoutes.HomeController.displayPage())
+                  case SaveAndContinue => Redirect(homeRoutes.HomeController.displayPage())
+                  case _               => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error
             }
@@ -85,15 +80,12 @@ class ImportedPlasticWeightController @Inject() (
     }
 
   private def updateTaxReturn(
-    formData: ImportedPlasticWeight
+    formData: HumanMedicinesPlasticWeight
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
-      val updatedImportedPlasticWeight =
-        taxReturn.importedPlasticWeight.copy(totalKg = formData.totalKg.map(_.trim.toLong),
-                                             totalKgBelowThreshold =
-                                               formData.totalKgBelowThreshold.map(_.trim.toLong)
-        )
-      taxReturn.copy(importedPlasticWeight = updatedImportedPlasticWeight)
+      val updatedHumanMedicinesPlasticWeight =
+        taxReturn.humanMedicinesPlasticWeight.copy(totalKg = formData.totalKg.map(_.trim.toLong))
+      taxReturn.copy(humanMedicinesPlasticWeight = updatedHumanMedicinesPlasticWeight)
     }
 
 }

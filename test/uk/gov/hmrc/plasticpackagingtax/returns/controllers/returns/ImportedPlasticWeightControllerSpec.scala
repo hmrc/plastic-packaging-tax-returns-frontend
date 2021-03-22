@@ -30,6 +30,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -97,7 +98,9 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
           modifiedTaxReturn.importedPlasticWeight.totalKgBelowThreshold mustBe Some(5)
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
+              redirectLocation(result) mustBe Some(
+                returnRoutes.HumanMedicinesPlasticWeightController.displayPage().url
+              )
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
@@ -130,7 +133,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid job title" in {
+      "user submits invalid imported plastic weight" in {
         authorizedUser()
         val result =
           controller.submit()(
