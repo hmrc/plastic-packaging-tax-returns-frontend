@@ -83,3 +83,14 @@ returns.humanMedicinesPlasticWeight.details.line2 = The packaging is ‘immediat
 returns.humanMedicinesPlasticWeight.empty.error = Enter an amount to continue
 returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
 returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+
+returns.exportedPlasticWeight.title = 4. Exported packaging
+returns.exportedPlasticWeight.sectionHeader = Plastic Packaging Tax return
+returns.exportedPlasticWeight.totalKg.label = Total weight of plastic packaging directly exported
+returns.exportedPlasticWeight.totalValueForCredit.label = Total value of exported plastic packaging for credit
+returns.exportedPlasticWeight.details.link = What is exported plastic packaging for credit?
+returns.exportedPlasticWeight.details.body = This is when a packaging manufacturer pays tax on the packaging they produce before sending it to a third-party for further conversion. The third party will pay additional tax on the whole, complete packaging.
+returns.exportedPlasticWeight.empty.error = Enter an amount to continue
+returns.exportedPlasticWeight.format.error = Amount must be entered as numbers only
+returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+returns.exportedPlasticWeight.credit.aboveMax.error = Amount cannot exceed £99,999,999

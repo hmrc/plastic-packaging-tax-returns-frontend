@@ -22,14 +22,16 @@ case class TaxReturn(
   id: String,
   manufacturedPlasticWeight: ManufacturedPlasticWeight = ManufacturedPlasticWeight(),
   importedPlasticWeight: ImportedPlasticWeight = ImportedPlasticWeight(),
-  humanMedicinesPlasticWeight: HumanMedicinesPlasticWeight = HumanMedicinesPlasticWeight()
+  humanMedicinesPlasticWeight: HumanMedicinesPlasticWeight = HumanMedicinesPlasticWeight(),
+  exportedPlasticWeight: Option[ExportedPlasticWeight] = None
 ) {
 
   def toTaxReturn: TaxReturn =
     TaxReturn(id = this.id,
               manufacturedPlasticWeight = this.manufacturedPlasticWeight,
               importedPlasticWeight = this.importedPlasticWeight,
-              humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight
+              humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
+              exportedPlasticWeight = this.exportedPlasticWeight
     )
 
 }
