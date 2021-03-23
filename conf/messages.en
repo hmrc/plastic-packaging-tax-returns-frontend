@@ -72,3 +72,14 @@ returns.importedPlasticWeight.empty.error = Enter an amount to continue
 returns.importedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.importedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 returns.importedPlasticWeight.invalidValue.error = Amount cannot be more than the total imported weight
+
+returns.humanMedicinesPlasticWeight.title = 3. Immediate human medicines packaging
+returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into immediate contact with licensed human medicines is not liable for the tax, but must still be declared below.
+returns.humanMedicinesPlasticWeight.sectionHeader = Plastic Packaging Tax Return
+returns.humanMedicinesPlasticWeight.total.weight = Total weight of packaging for immediate human medicines
+returns.humanMedicinesPlasticWeight.details.link = What is immediate human medicines plastic packaging?
+returns.humanMedicinesPlasticWeight.details.line1 = It is plastic packaging produced or imported for use in the immediate packaging of a human medicinal product.
+returns.humanMedicinesPlasticWeight.details.line2 = The packaging is ‘immediate’ if it comes into direct contact with a medicinal product.
+returns.humanMedicinesPlasticWeight.empty.error = Enter an amount to continue
+returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
+returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs

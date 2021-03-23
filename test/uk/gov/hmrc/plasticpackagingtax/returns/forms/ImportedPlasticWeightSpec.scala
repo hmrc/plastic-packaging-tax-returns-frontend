@@ -84,7 +84,9 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
         val input = Map.empty[String, String]
         val expectedErrors =
-          Seq(FormError(totalKg, weightEmptyError), FormError(totalKg, weightEmptyError))
+          Seq(FormError(totalKg, weightEmptyError),
+              FormError(totalKgBelowThreshold, weightEmptyError)
+          )
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -93,7 +95,9 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
         val input = Map(totalKg -> "20A #", totalKgBelowThreshold -> "£$%8")
         val expectedErrors =
-          Seq(FormError(totalKg, invalidFormatError), FormError(totalKg, invalidFormatError))
+          Seq(FormError(totalKg, invalidFormatError),
+              FormError(totalKgBelowThreshold, invalidFormatError)
+          )
 
         testFailedValidationErrors(input, expectedErrors)
       }
