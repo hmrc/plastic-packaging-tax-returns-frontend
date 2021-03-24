@@ -30,30 +30,26 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.exported_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
+class ExportedPlasticWeightControllerSpec extends ControllerSpec {
 
   private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[human_medicines_plastic_weight_page]
+  private val page = mock[exported_plastic_weight_page]
 
-  private val controller = new HumanMedicinesPlasticWeightController(authenticate = mockAuthAction,
-                                                                     journeyAction =
-                                                                       mockJourneyAction,
-                                                                     mcc = mcc,
-                                                                     page = page,
-                                                                     returnsConnector =
-                                                                       mockTaxReturnsConnector
+  private val controller = new ExportedPlasticWeightController(authenticate = mockAuthAction,
+                                                               journeyAction = mockJourneyAction,
+                                                               mcc = mcc,
+                                                               page = page,
+                                                               returnsConnector =
+                                                                 mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[HumanMedicinesPlasticWeight]])(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(page.apply(any[Form[ExportedPlasticWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -61,20 +57,22 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "HumanMedicinesPlasticWeightController" should {
+  "DirectExportDetailsController" should {
 
     "return 200" when {
 
       "display page method is invoked" in {
         authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "tax return already exists and display page method is invoked" in {
-        authorizedUser()
         mockTaxReturnFind(aTaxReturn())
+        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -90,16 +88,18 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(HumanMedicinesPlasticWeight(totalKg = Some("10")), formAction)
+              postRequestEncoded(
+                ExportedPlasticWeight(totalKg = "10", totalValueForCredit = "5.75"),
+                formAction
+              )
             )
 
           status(result) mustBe Assets.SEE_OTHER
-          modifiedTaxReturn.humanMedicinesPlasticWeight.totalKg mustBe Some(10)
+          modifiedTaxReturn.exportedPlasticWeight.get.totalKg mustBe 10
+          modifiedTaxReturn.exportedPlasticWeight.get.totalValueForCreditInPence mustBe 575
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                returnsRoutes.ExportedPlasticWeightController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
@@ -110,29 +110,34 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
 
     "return prepopulated form" when {
 
-      def pageForm: Form[HumanMedicinesPlasticWeight] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[HumanMedicinesPlasticWeight]])
+      def pageForm: Form[ExportedPlasticWeight] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[ExportedPlasticWeight]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(aTaxReturn(withHumanMedicinesPlasticWeight(totalKg = Some(10))))
+        mockTaxReturnFind(
+          aTaxReturn(withDirectExportDetails(totalKg = 10, totalValueForCreditInPence = 575))
+        )
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe Some("10")
+        pageForm.get.totalKg mustBe "10"
+        pageForm.get.totalValueForCredit mustBe "5.75"
 
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid human medicines total weight" in {
+      "user submits invalid job title" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = None))))
+          controller.submit()(
+            postRequest(Json.toJson(ExportedPlasticWeight(totalKg = "0", totalValueForCredit = "")))
+          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -145,7 +150,9 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
         mockTaxReturnFailure()
         val result =
           controller.submit()(
-            postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = Some("5"))))
+            postRequest(
+              Json.toJson(ExportedPlasticWeight(totalKg = "5", totalValueForCredit = "5"))
+            )
           )
 
         intercept[DownstreamServiceError](status(result))
@@ -156,7 +163,9 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
         mockTaxReturnException()
         val result =
           controller.submit()(
-            postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = Some("5"))))
+            postRequest(
+              Json.toJson(ExportedPlasticWeight(totalKg = "5", totalValueForCredit = "5"))
+            )
           )
 
         intercept[RuntimeException](status(result))

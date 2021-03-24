@@ -20,12 +20,14 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.phaseBanner
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.govukFlexibleLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 
 @this(
     govukHeader: GovukHeader,
     govukLayout: GovukLayout,
     govukPhaseBanner: GovukPhaseBanner,
     govukBackLink: GovukBackLink,
+    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     siteHeader: siteHeader,
     phaseBanner: phaseBanner,
     hmrcFooter: hmrcStandardFooter,
@@ -38,6 +40,8 @@
 
 
 @head = {
+    @hmrcTrackingConsentSnippet()
+
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")'
           type="image/x-icon"/>

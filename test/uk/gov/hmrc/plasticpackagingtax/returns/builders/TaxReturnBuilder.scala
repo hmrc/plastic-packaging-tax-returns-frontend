@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.builders
 
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  ExportedPlasticWeight,
   HumanMedicinesPlasticWeight,
   ImportedPlasticWeight,
   ManufacturedPlasticWeight,
@@ -32,7 +33,10 @@ trait TaxReturnBuilder {
     modifiers.foldLeft(modelWithDefaults)((current, modifier) => modifier(current))
 
   private def modelWithDefaults: TaxReturn =
-    TaxReturn(id = "id", manufacturedPlasticWeight = ManufacturedPlasticWeight())
+    TaxReturn(id = "id",
+              manufacturedPlasticWeight = ManufacturedPlasticWeight(),
+              exportedPlasticWeight = None
+    )
 
   def withId(id: String): TaxReturnModifier = _.copy(id = id)
 
@@ -50,5 +54,14 @@ trait TaxReturnBuilder {
 
   def withHumanMedicinesPlasticWeight(totalKg: Option[Long]): TaxReturnModifier =
     _.copy(humanMedicinesPlasticWeight = HumanMedicinesPlasticWeight(totalKg))
+
+  def withDirectExportDetails(totalKg: Long, totalValueForCreditInPence: Long): TaxReturnModifier =
+    _.copy(exportedPlasticWeight =
+      Some(
+        ExportedPlasticWeight(totalKg = totalKg,
+                              totalValueForCreditInPence = totalValueForCreditInPence
+        )
+      )
+    )
 
 }

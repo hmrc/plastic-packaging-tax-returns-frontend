@@ -20,10 +20,11 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import javax.inject.Inject
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit

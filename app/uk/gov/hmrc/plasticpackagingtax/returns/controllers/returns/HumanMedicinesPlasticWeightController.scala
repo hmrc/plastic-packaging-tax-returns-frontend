@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,13 +27,13 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,17 +48,15 @@ class HumanMedicinesPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.humanMedicinesPlasticWeight match {
-        case data: Any =>
-          Ok(
-            page(
-              HumanMedicinesPlasticWeight.form().fill(
-                HumanMedicinesPlasticWeight(totalKg = data.totalKg.map(_.toString))
-              )
+      Ok(
+        page(
+          HumanMedicinesPlasticWeight.form().fill(
+            HumanMedicinesPlasticWeight(totalKg =
+              request.taxReturn.humanMedicinesPlasticWeight.totalKg.map(_.toString)
             )
           )
-        case _ => Ok(page(HumanMedicinesPlasticWeight.form()))
-      }
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
@@ -71,8 +70,9 @@ class HumanMedicinesPlasticWeightController @Inject() (
             updateTaxReturn(weight).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
-                  case SaveAndContinue => Redirect(homeRoutes.HomeController.displayPage())
-                  case _               => Redirect(homeRoutes.HomeController.displayPage())
+                  case SaveAndContinue =>
+                    Redirect(returnsRoutes.ExportedPlasticWeightController.displayPage())
+                  case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error
             }

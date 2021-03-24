@@ -30,4 +30,21 @@ trait CommonFormValidators {
   val isEqualToOrBelow: (Option[String], Long) => Boolean = (value, limit) =>
     isNotEmpty(value) && isDigitsOnly(value) && value.exists(v => v.trim.toLong <= limit)
 
+  val isValidDecimal: String => Boolean =
+    (input: String) =>
+      try isNonEmpty(input) &&
+        BigDecimal(input.trim) >= 0 &&
+        BigDecimal(input.trim).scale <= 2
+      catch {
+        case _: java.lang.NumberFormatException => false
+      }
+
+  val isLowerThan: BigDecimal => String => Boolean = (threshold: BigDecimal) =>
+    (input: String) =>
+      try isValidDecimal(input) &&
+        BigDecimal(input.trim) < threshold
+      catch {
+        case _: java.lang.NumberFormatException => false
+      }
+
 }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, Jo
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -48,20 +48,17 @@ class ManufacturedPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.manufacturedPlasticWeight match {
-        case data: Any =>
-          Ok(
-            page(
-              ManufacturedPlasticWeight.form().fill(
-                ManufacturedPlasticWeight(totalKg = data.totalKg.map(_.toString),
-                                          totalKgBelowThreshold =
-                                            data.totalKgBelowThreshold.map(_.toString)
-                )
-              )
+      Ok(
+        page(
+          ManufacturedPlasticWeight.form().fill(
+            ManufacturedPlasticWeight(
+              totalKg = request.taxReturn.manufacturedPlasticWeight.totalKg.map(_.toString),
+              totalKgBelowThreshold =
+                request.taxReturn.manufacturedPlasticWeight.totalKgBelowThreshold.map(_.toString)
             )
           )
-        case _ => Ok(page(ManufacturedPlasticWeight.form()))
-      }
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
