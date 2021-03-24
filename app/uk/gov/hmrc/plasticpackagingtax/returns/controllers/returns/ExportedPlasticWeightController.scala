@@ -35,6 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
   ExportedPlasticWeight => DirectExportDetailsModel
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.exported_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -48,7 +49,7 @@ class ExportedPlasticWeightController @Inject() (
   mcc: MessagesControllerComponents,
   page: exported_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with PriceConverter with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
@@ -91,9 +92,10 @@ class ExportedPlasticWeightController @Inject() (
     update { taxReturn =>
       taxReturn.copy(exportedPlasticWeight =
         Some(
-          DirectExportDetailsModel(totalKg = formData.totalKg.trim.toLong,
-                                   totalValueForCreditInPence =
-                                     (formData.totalValueForCredit.trim.toDouble * 100).toLong
+          DirectExportDetailsModel(
+            totalKg = formData.totalKg.trim.toLong,
+            totalValueForCreditInPence =
+              convertDecimalRepresentationToPences(formData.totalValueForCredit)
           )
         )
       )

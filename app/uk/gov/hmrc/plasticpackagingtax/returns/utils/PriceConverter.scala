@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
+package uk.gov.hmrc.plasticpackagingtax.returns.utils
 
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
+trait PriceConverter {
 
-case class ExportedPlasticWeight(totalKg: Long, totalValueForCreditInPence: Long)
-    extends PriceConverter {
-  def totalKgAsString = this.totalKg.toString
+  def convertDecimalRepresentationToPences(amountAsString: String): Long =
+    (BigDecimal(amountAsString.trim) * 100).toLong
 
-  def totalValueForCreditAsString =
-    convertPencesToDecimalRepresentation(this.totalValueForCreditInPence)
+  def convertPencesToDecimalRepresentation(totalInPences: Long): String =
+    (BigDecimal(totalInPences) / 100.00).setScale(2).toString
 
-}
-
-object ExportedPlasticWeight {
-  implicit val format: OFormat[ExportedPlasticWeight] = Json.format[ExportedPlasticWeight]
 }
