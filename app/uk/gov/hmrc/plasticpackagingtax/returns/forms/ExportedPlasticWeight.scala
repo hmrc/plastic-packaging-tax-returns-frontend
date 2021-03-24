@@ -34,23 +34,19 @@ object ExportedPlasticWeight extends CommonFormValidators {
   val creditAboveMaxError = "returns.exportedPlasticWeight.credit.aboveMax.error"
 
   val maxTotalKg        = 99999999
-  val oneHundredMillion = 100000000
+  val oneHundredMillion = BigDecimal(100000000)
 
   private val mapping = Forms.mapping(
     totalKg ->
       text()
         .verifying(emptyError, isNonEmpty)
-        .verifying(invalidFormatError, v => !isNotEmpty(Some(v)) || isDigitsOnly(Some(v)))
-        .verifying(weightAboveMaxError,
-                   v => !isDigitsOnly(Some(v)) || isEqualToOrBelow(Some(v), maxTotalKg)
-        ),
+        .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
+        .verifying(weightAboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
     totalValueForCredit ->
       text()
         .verifying(emptyError, isNonEmpty)
         .verifying(invalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
-        .verifying(creditAboveMaxError,
-                   v => !isNonEmpty(v) || isLowerThan(BigDecimal(oneHundredMillion))(v)
-        )
+        .verifying(creditAboveMaxError, v => !isNonEmpty(v) || isLowerThan(oneHundredMillion)(v))
   )(ExportedPlasticWeight.apply)(ExportedPlasticWeight.unapply)
 
   def form(): Form[ExportedPlasticWeight] = Form(mapping)

@@ -124,8 +124,9 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display data in total weight input" in {
 
-      val form = ManufacturedPlasticWeight.form()
-        .fill(ManufacturedPlasticWeight(Some("1000"), Some("5")))
+      val form = ManufacturedPlasticWeight
+        .form()
+        .fill(ManufacturedPlasticWeight("1000", "5"))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
@@ -137,8 +138,9 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "weight is not entered" in {
 
-      val form = ManufacturedPlasticWeight.form()
-        .fillAndValidate(ManufacturedPlasticWeight(None, None))
+      val form = ManufacturedPlasticWeight
+        .form()
+        .fillAndValidate(ManufacturedPlasticWeight("", ""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary

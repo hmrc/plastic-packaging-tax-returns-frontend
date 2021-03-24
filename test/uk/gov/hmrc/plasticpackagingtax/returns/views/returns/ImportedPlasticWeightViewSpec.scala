@@ -135,7 +135,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ImportedPlasticWeight
         .form()
-        .fill(ImportedPlasticWeight(Some("1000"), Some("5")))
+        .fill(ImportedPlasticWeight("1000", "5"))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
@@ -149,7 +149,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ImportedPlasticWeight
         .form()
-        .fillAndValidate(ImportedPlasticWeight(None, None))
+        .fillAndValidate(ImportedPlasticWeight("", ""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary

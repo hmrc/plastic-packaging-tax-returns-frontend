@@ -28,6 +28,7 @@ class PriceConverterSpec extends AnyWordSpec with Matchers {
 
     "convert from decimal Representation (String) to pences (Long) correctly " in {
       testImplClass.convertDecimalRepresentationToPences("0.10") mustBe 10L
+      testImplClass.convertDecimalRepresentationToPences("0.0") mustBe 0L
       testImplClass.convertDecimalRepresentationToPences("0.29") mustBe 29L
       testImplClass.convertDecimalRepresentationToPences("5.7666666") mustBe 576L
       testImplClass.convertDecimalRepresentationToPences("99999999.99") mustBe 9999999999L
@@ -37,6 +38,7 @@ class PriceConverterSpec extends AnyWordSpec with Matchers {
       testImplClass.convertPencesToDecimalRepresentation(10L) mustBe "0.10"
       testImplClass.convertPencesToDecimalRepresentation(29L) mustBe "0.29"
       testImplClass.convertPencesToDecimalRepresentation(576L) mustBe "5.76"
+      testImplClass.convertPencesToDecimalRepresentation(0L) mustBe "0.00"
       testImplClass.convertPencesToDecimalRepresentation(9999999999L) mustBe "99999999.99"
     }
   }

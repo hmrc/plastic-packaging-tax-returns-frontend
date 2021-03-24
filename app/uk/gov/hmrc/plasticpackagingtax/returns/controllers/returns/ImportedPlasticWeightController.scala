@@ -28,7 +28,11 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  ImportedPlasticWeight => ImportedPlasticWeightDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
@@ -48,17 +52,19 @@ class ImportedPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      Ok(
-        page(
-          ImportedPlasticWeight.form().fill(
-            ImportedPlasticWeight(
-              totalKg = request.taxReturn.importedPlasticWeight.totalKg.map(_.toString),
-              totalKgBelowThreshold =
-                request.taxReturn.importedPlasticWeight.totalKgBelowThreshold.map(_.toString)
+      request.taxReturn.importedPlasticWeight match {
+        case Some(data) =>
+          Ok(
+            page(
+              form().fill(
+                ImportedPlasticWeight(totalKg = data.totalKg.toString,
+                                      totalKgBelowThreshold = data.totalKgBelowThreshold.toString
+                )
+              )
             )
           )
-        )
-      )
+        case _ => Ok(page(form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
@@ -85,12 +91,13 @@ class ImportedPlasticWeightController @Inject() (
     formData: ImportedPlasticWeight
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
-      val updatedImportedPlasticWeight =
-        taxReturn.importedPlasticWeight.copy(totalKg = formData.totalKg.map(_.trim.toLong),
-                                             totalKgBelowThreshold =
-                                               formData.totalKgBelowThreshold.map(_.trim.toLong)
+      taxReturn.copy(importedPlasticWeight =
+        Some(
+          ImportedPlasticWeightDetails(totalKg = formData.totalKg.toLong,
+                                       totalKgBelowThreshold = formData.totalKgBelowThreshold.toLong
+          )
         )
-      taxReturn.copy(importedPlasticWeight = updatedImportedPlasticWeight)
+      )
     }
 
 }

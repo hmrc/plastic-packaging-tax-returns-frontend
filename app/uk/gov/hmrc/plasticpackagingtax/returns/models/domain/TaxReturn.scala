@@ -20,10 +20,11 @@ import play.api.libs.json.{Json, OFormat}
 
 case class TaxReturn(
   id: String,
-  manufacturedPlasticWeight: ManufacturedPlasticWeight = ManufacturedPlasticWeight(),
-  importedPlasticWeight: ImportedPlasticWeight = ImportedPlasticWeight(),
-  humanMedicinesPlasticWeight: HumanMedicinesPlasticWeight = HumanMedicinesPlasticWeight(),
-  exportedPlasticWeight: Option[ExportedPlasticWeight] = None
+  manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
+  importedPlasticWeight: Option[ImportedPlasticWeight] = None,
+  humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
+  exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
+  convertedPackagingCredit: Option[ConvertedPackagingCredit] = None
 ) {
 
   def toTaxReturn: TaxReturn =
@@ -31,7 +32,8 @@ case class TaxReturn(
               manufacturedPlasticWeight = this.manufacturedPlasticWeight,
               importedPlasticWeight = this.importedPlasticWeight,
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
-              exportedPlasticWeight = this.exportedPlasticWeight
+              exportedPlasticWeight = this.exportedPlasticWeight,
+              convertedPackagingCredit = this.convertedPackagingCredit
     )
 
 }

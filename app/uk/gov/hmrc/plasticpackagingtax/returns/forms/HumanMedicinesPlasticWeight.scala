@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
+import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
-import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight.isNonEmpty
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.{
   isDigitsOnly,
-  isEqualToOrBelow,
-  isNotEmpty
+  isEqualToOrBelow
 }
 
-case class HumanMedicinesPlasticWeight(totalKg: Option[String])
+case class HumanMedicinesPlasticWeight(totalKg: String)
 
 object HumanMedicinesPlasticWeight {
 
@@ -42,9 +42,9 @@ object HumanMedicinesPlasticWeight {
   def form(): Form[HumanMedicinesPlasticWeight] =
     Form(
       mapping(
-        totalKg -> Forms.optional(text())
-          .verifying(weightEmptyError, isNotEmpty)
-          .verifying(invalidFormatError, v => !isNotEmpty(v) || isDigitsOnly(v))
+        totalKg -> text()
+          .verifying(weightEmptyError, isNonEmpty)
+          .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
       )(HumanMedicinesPlasticWeight.apply)(HumanMedicinesPlasticWeight.unapply)
     )

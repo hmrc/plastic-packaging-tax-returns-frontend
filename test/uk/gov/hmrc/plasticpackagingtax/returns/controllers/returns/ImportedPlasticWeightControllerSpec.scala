@@ -87,15 +87,14 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(
-                ImportedPlasticWeight(totalKg = Some("10"), totalKgBelowThreshold = Some("5")),
-                formAction
+              postRequestEncoded(ImportedPlasticWeight(totalKg = "10", totalKgBelowThreshold = "5"),
+                                 formAction
               )
             )
 
           status(result) mustBe Assets.SEE_OTHER
-          modifiedTaxReturn.importedPlasticWeight.totalKg mustBe Some(10)
-          modifiedTaxReturn.importedPlasticWeight.totalKgBelowThreshold mustBe Some(5)
+          modifiedTaxReturn.importedPlasticWeight.get.totalKg mustBe 10
+          modifiedTaxReturn.importedPlasticWeight.get.totalKgBelowThreshold mustBe 5
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
@@ -120,13 +119,13 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
       "data exist" in {
         authorizedUser()
         mockTaxReturnFind(
-          aTaxReturn(withImportedPlasticWeight(totalKg = Some(10), totalKgBelowThreshold = Some(5)))
+          aTaxReturn(withImportedPlasticWeight(totalKg = 10, totalKgBelowThreshold = 5))
         )
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe Some("10")
-        pageForm.get.totalKgBelowThreshold mustBe Some("5")
+        pageForm.get.totalKg mustBe "10"
+        pageForm.get.totalKgBelowThreshold mustBe "5"
 
       }
     }
@@ -138,7 +137,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(
             postRequest(
-              Json.toJson(ImportedPlasticWeight(totalKg = Some("0"), totalKgBelowThreshold = None))
+              Json.toJson(ImportedPlasticWeight(totalKg = "0", totalKgBelowThreshold = ""))
             )
           )
 
@@ -154,9 +153,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(
             postRequest(
-              Json.toJson(
-                ImportedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
-              )
+              Json.toJson(ImportedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
             )
           )
 
@@ -169,9 +166,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(
             postRequest(
-              Json.toJson(
-                ImportedPlasticWeight(totalKg = Some("5"), totalKgBelowThreshold = Some("5"))
-              )
+              Json.toJson(ImportedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
             )
           )
 

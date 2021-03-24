@@ -30,6 +30,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.exported_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -99,7 +100,9 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
           modifiedTaxReturn.exportedPlasticWeight.get.totalValueForCreditInPence mustBe 575
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
+              redirectLocation(result) mustBe Some(
+                returnRoutes.ConvertedPackagingCreditController.displayPage().url
+              )
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }

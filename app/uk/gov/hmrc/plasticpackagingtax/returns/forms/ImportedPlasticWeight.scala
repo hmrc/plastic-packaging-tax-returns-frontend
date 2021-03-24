@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
-import play.api.data.{Form, Forms}
+import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 
-case class ImportedPlasticWeight(totalKg: Option[String], totalKgBelowThreshold: Option[String])
+case class ImportedPlasticWeight(totalKg: String, totalKgBelowThreshold: String)
 
 object ImportedPlasticWeight extends CommonFormValidators {
 
@@ -35,20 +35,18 @@ object ImportedPlasticWeight extends CommonFormValidators {
   val invalidValueError     = "returns.importedPlasticWeight.invalidValue.error"
 
   val isValid: ImportedPlasticWeight => Boolean = value =>
-    value.totalKgBelowThreshold.map(_.trim.toLong).getOrElse(0L) <= value.totalKg.map(
-      _.trim.toLong
-    ).getOrElse(0L)
+    value.totalKgBelowThreshold.trim.toLong <= value.totalKg.trim.toLong
 
   def form(): Form[ImportedPlasticWeight] =
     Form(
       mapping(
-        totalKg -> Forms.optional(text())
-          .verifying(weightEmptyError, isNotEmpty)
-          .verifying(invalidFormatError, v => !isNotEmpty(v) || isDigitsOnly(v))
+        totalKg -> text()
+          .verifying(weightEmptyError, isNonEmpty)
+          .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
-        totalKgBelowThreshold -> Forms.optional(text())
-          .verifying(weightEmptyError, isNotEmpty)
-          .verifying(invalidFormatError, v => !isNotEmpty(v) || isDigitsOnly(v))
+        totalKgBelowThreshold -> text()
+          .verifying(weightEmptyError, isNonEmpty)
+          .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
       )(ImportedPlasticWeight.apply)(ImportedPlasticWeight.unapply)
         .verifying(invalidValueError, isValid(_))

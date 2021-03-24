@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,61 +26,60 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.form
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
-  ManufacturedPlasticWeight => ManufacturedPlasticWeightDetails
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
+  ConvertedPackagingCredit => ConvertedPackagingCreditDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  Cacheable,
+  ConvertedPackagingCredit,
+  TaxReturn
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManufacturedPlasticWeightController @Inject() (
+class ConvertedPackagingCreditController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
-  page: manufactured_plastic_weight_page
+  page: converted_packaging_credit_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with PriceConverter {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.manufacturedPlasticWeight match {
+      request.taxReturn.convertedPackagingCredit match {
         case Some(data) =>
           Ok(
             page(
-              form().fill(
-                ManufacturedPlasticWeight(totalKg = data.totalKg.toString,
-                                          totalKgBelowThreshold =
-                                            data.totalKgBelowThreshold.toString
-                )
+              ConvertedPackagingCreditDetails.form().fill(
+                ConvertedPackagingCreditDetails(totalInPence = data.totalValueForCreditAsString)
               )
             )
           )
-        case _ => Ok(page(form()))
+        case _ => Ok(page(ConvertedPackagingCreditDetails.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
-      ManufacturedPlasticWeight.form()
+      ConvertedPackagingCreditDetails.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[ManufacturedPlasticWeight]) =>
+          (formWithErrors: Form[ConvertedPackagingCreditDetails]) =>
             Future.successful(BadRequest(page(formWithErrors))),
-          weight =>
-            updateTaxReturn(weight).map {
+          credit =>
+            updateTaxReturn(credit).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(returnRoutes.ImportedPlasticWeightController.displayPage())
-                  case _ => Redirect(homeRoutes.HomeController.displayPage())
+                  case SaveAndContinue => Redirect(homeRoutes.HomeController.displayPage())
+                  case _               => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error
             }
@@ -89,16 +87,11 @@ class ManufacturedPlasticWeightController @Inject() (
     }
 
   private def updateTaxReturn(
-    formData: ManufacturedPlasticWeight
+    formData: ConvertedPackagingCreditDetails
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
-      taxReturn.copy(manufacturedPlasticWeight =
-        Some(
-          ManufacturedPlasticWeightDetails(totalKg = formData.totalKg.toLong,
-                                           totalKgBelowThreshold =
-                                             formData.totalKgBelowThreshold.toLong
-          )
-        )
+      taxReturn.copy(convertedPackagingCredit =
+        Some(ConvertedPackagingCredit(totalInPence = formData.totalInPenceAsLong()))
       )
     }
 

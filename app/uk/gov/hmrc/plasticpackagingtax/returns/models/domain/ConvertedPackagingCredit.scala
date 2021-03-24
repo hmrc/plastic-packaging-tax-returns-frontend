@@ -17,10 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
-case class ManufacturedPlasticWeight(totalKg: Long, totalKgBelowThreshold: Long)
+case class ConvertedPackagingCredit(totalInPence: Long) extends PriceConverter {
 
-object ManufacturedPlasticWeight {
-  implicit val format: OFormat[ManufacturedPlasticWeight] = Json.format[ManufacturedPlasticWeight]
+  def totalValueForCreditAsString =
+    convertPencesToDecimalRepresentation(this.totalInPence)
 
+}
+
+object ConvertedPackagingCredit {
+  implicit val format: OFormat[ConvertedPackagingCredit] = Json.format[ConvertedPackagingCredit]
 }
