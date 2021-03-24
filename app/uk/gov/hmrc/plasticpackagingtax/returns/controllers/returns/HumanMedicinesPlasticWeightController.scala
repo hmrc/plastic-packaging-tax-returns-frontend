@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, Jo
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -48,17 +48,15 @@ class HumanMedicinesPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.humanMedicinesPlasticWeight match {
-        case data: Any =>
-          Ok(
-            page(
-              HumanMedicinesPlasticWeight.form().fill(
-                HumanMedicinesPlasticWeight(totalKg = data.totalKg.map(_.toString))
-              )
+      Ok(
+        page(
+          HumanMedicinesPlasticWeight.form().fill(
+            HumanMedicinesPlasticWeight(totalKg =
+              request.taxReturn.humanMedicinesPlasticWeight.totalKg.map(_.toString)
             )
           )
-        case _ => Ok(page(HumanMedicinesPlasticWeight.form()))
-      }
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
