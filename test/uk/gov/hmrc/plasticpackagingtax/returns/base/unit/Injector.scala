@@ -32,7 +32,7 @@ trait Injector {
     */
   SharedMetricRegistries.clear()
 
-  private val injector = GuiceApplicationBuilder().injector()
+  private val injector = GuiceApplicationBuilder().build().injector
 
   def instanceOf[T <: AnyRef](implicit classTag: ClassTag[T]): T = injector.instanceOf[T]
 }
