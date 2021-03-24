@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
@@ -71,8 +72,9 @@ class HumanMedicinesPlasticWeightController @Inject() (
             updateTaxReturn(weight).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
-                  case SaveAndContinue => Redirect(homeRoutes.HomeController.displayPage())
-                  case _               => Redirect(homeRoutes.HomeController.displayPage())
+                  case SaveAndContinue =>
+                    Redirect(returnsRoutes.ExportedPlasticWeightController.displayPage())
+                  case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error
             }
