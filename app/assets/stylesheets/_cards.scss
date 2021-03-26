@@ -1,4 +1,20 @@
 /***************************************
+ ********** Default Styling  ***********
+ ***************************************/
+.card .card-body {
+  padding: 10px;
+}
+
+.card-balance .govuk-heading-m {
+  margin-bottom: 10px;
+}
+
+.card-balance .govuk-heading-l {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/***************************************
  ***********  Mobile Styling  **********
  ***************************************/
 @media only screen and (max-width: 640px) {
@@ -31,21 +47,4 @@
   .card .govuk-link {
     font-size: 19px;
   }
-}
-
-
-/***************************************
- ********** Default Styling  ***********
- ***************************************/
-.card .card-body {
-  padding: 10px;
-}
-
-.card-balance .govuk-heading-m {
-  margin-bottom: 10px;
-}
-
-.card-balance .govuk-heading-l {
-  margin-top: 0;
-  margin-bottom: 10px;
 }
