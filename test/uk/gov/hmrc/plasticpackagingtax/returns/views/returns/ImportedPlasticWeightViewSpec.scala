@@ -67,6 +67,16 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+    }
+
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(

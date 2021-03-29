@@ -11,6 +11,15 @@ site.error.summary.title = There is a problem
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
+sessionTimeout.title = For your security, we signed you out
+sessionTimeout.paragraph.saved = We saved your answers.
+sessionTimeout.signin.button = Sign in
+
+timeoutDialog.title = Your session will timeout soon
+timeoutDialog.message = For your security, we will sign you out in
+timeoutDialog.keepAlive.text = Stay signed in
+timeoutDialog.signout.text= Sign out
+
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
