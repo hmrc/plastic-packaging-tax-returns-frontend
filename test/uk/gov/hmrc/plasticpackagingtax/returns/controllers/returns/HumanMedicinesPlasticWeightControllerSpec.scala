@@ -90,11 +90,11 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(HumanMedicinesPlasticWeight(totalKg = Some("10")), formAction)
+              postRequestEncoded(HumanMedicinesPlasticWeight(totalKg = "10"), formAction)
             )
 
           status(result) mustBe Assets.SEE_OTHER
-          modifiedTaxReturn.humanMedicinesPlasticWeight.totalKg mustBe Some(10)
+          modifiedTaxReturn.humanMedicinesPlasticWeight.get.totalKg mustBe 10
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
@@ -118,11 +118,11 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(aTaxReturn(withHumanMedicinesPlasticWeight(totalKg = Some(10))))
+        mockTaxReturnFind(aTaxReturn(withHumanMedicinesPlasticWeight(totalKg = 10)))
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe Some("10")
+        pageForm.get.totalKg mustBe "10"
 
       }
     }
@@ -132,7 +132,7 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
       "user submits invalid human medicines total weight" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = None))))
+          controller.submit()(postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = ""))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -144,9 +144,7 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(
-            postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = Some("5"))))
-          )
+          controller.submit()(postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = "5"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -155,9 +153,7 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(
-            postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = Some("5"))))
-          )
+          controller.submit()(postRequest(Json.toJson(HumanMedicinesPlasticWeight(totalKg = "5"))))
 
         intercept[RuntimeException](status(result))
       }

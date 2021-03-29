@@ -30,29 +30,26 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
+class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
   private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[manufactured_plastic_weight_page]
+  private val page = mock[converted_packaging_credit_page]
 
-  private val controller = new ManufacturedPlasticWeightController(
-    authenticate = mockAuthAction,
-    journeyAction = mockJourneyAction,
-    mcc = mcc,
-    page = page,
-    returnsConnector = mockTaxReturnsConnector
+  private val controller = new ConvertedPackagingCreditController(authenticate = mockAuthAction,
+                                                                  journeyAction = mockJourneyAction,
+                                                                  mcc = mcc,
+                                                                  page = page,
+                                                                  returnsConnector =
+                                                                    mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ManufacturedPlasticWeight]])(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(page.apply(any[Form[ConvertedPackagingCredit]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -60,22 +57,20 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "ManufacturedPlasticWeightController" should {
+  "ConvertedPackagingCreditController" should {
 
     "return 200" when {
 
       "display page method is invoked" in {
         authorizedUser()
-
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "tax return already exists and display page method is invoked" in {
-        mockTaxReturnFind(aTaxReturn())
         authorizedUser()
-
+        mockTaxReturnFind(aTaxReturn())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -84,27 +79,21 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the weight details" in {
+        "user submits the amount of credit" in {
           authorizedUser()
           mockTaxReturnFind(aTaxReturn())
           mockTaxReturnUpdate(aTaxReturn())
 
           val result =
             controller.submit()(
-              postRequestEncoded(
-                ManufacturedPlasticWeight(totalKg = "10", totalKgBelowThreshold = "5"),
-                formAction
-              )
+              postRequestEncoded(ConvertedPackagingCredit(totalInPence = "10.2"), formAction)
             )
 
           status(result) mustBe Assets.SEE_OTHER
-          modifiedTaxReturn.manufacturedPlasticWeight.get.totalKg mustBe 10
-          modifiedTaxReturn.manufacturedPlasticWeight.get.totalKgBelowThreshold mustBe 5
+          modifiedTaxReturn.convertedPackagingCredit.get.totalInPence mustBe 1020
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                returnRoutes.ImportedPlasticWeightController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
@@ -115,36 +104,28 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
 
     "return prepopulated form" when {
 
-      def pageForm: Form[ManufacturedPlasticWeight] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[ManufacturedPlasticWeight]])
+      def pageForm: Form[ConvertedPackagingCredit] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedPackagingCredit]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(
-          aTaxReturn(withManufacturedPlasticWeight(totalKg = 10, totalKgBelowThreshold = 5))
-        )
+        mockTaxReturnFind(aTaxReturn(withConvertedPackagingCredit(totalInPence = 5500)))
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe "10"
-        pageForm.get.totalKgBelowThreshold mustBe "5"
-
+        pageForm.get.totalInPence mustBe "55.00"
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid manufactured plastic weight" in {
+      "user submits invalid job title" in {
         authorizedUser()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ManufacturedPlasticWeight(totalKg = "0", totalKgBelowThreshold = ""))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = ""))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -157,9 +138,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
         mockTaxReturnFailure()
         val result =
           controller.submit()(
-            postRequest(
-              Json.toJson(ManufacturedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
-            )
+            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
           )
 
         intercept[DownstreamServiceError](status(result))
@@ -170,9 +149,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
         mockTaxReturnException()
         val result =
           controller.submit()(
-            postRequest(
-              Json.toJson(ManufacturedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
-            )
+            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
           )
 
         intercept[RuntimeException](status(result))

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
 
-case class HumanMedicinesPlasticWeight(totalKg: Option[Long] = None)
+case class HumanMedicinesPlasticWeight(totalKg: Long)
 
 object HumanMedicinesPlasticWeight {
 

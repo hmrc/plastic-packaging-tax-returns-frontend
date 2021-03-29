@@ -27,6 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
@@ -78,7 +79,7 @@ class ExportedPlasticWeightController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(homeRoutes.HomeController.displayPage())
+                    Redirect(returnRoutes.ConvertedPackagingCreditController.displayPage())
                   case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error

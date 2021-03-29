@@ -31,11 +31,6 @@ class CommonFormValidatorsSpec
 
         isNonEmpty("myString") mustBe true
       }
-
-      "string optional is not empty" in {
-
-        isNotEmpty(Some("myString")) mustBe true
-      }
     }
 
     "isDigitsOnly" should {
@@ -44,7 +39,7 @@ class CommonFormValidatorsSpec
 
         "value contains digits only" in {
 
-          isDigitsOnly(Some("1234567890")) mustBe true
+          isDigitsOnly("1234567890") mustBe true
         }
       }
     }
@@ -53,12 +48,12 @@ class CommonFormValidatorsSpec
       "return true" when {
         "value is equal to threshold" in {
 
-          isEqualToOrBelow(Some("1"), 1) mustBe true
+          isEqualToOrBelow("1", 1) mustBe true
         }
 
         "value is below threshold" in {
 
-          isEqualToOrBelow(Some("1"), 4) mustBe true
+          isEqualToOrBelow("1", 4) mustBe true
         }
       }
     }
@@ -79,32 +74,17 @@ class CommonFormValidatorsSpec
       }
     }
 
-    "isNotEmpty" should {
-
-      "return false" when {
-        "optional is empty" in {
-
-          isNotEmpty(None) mustBe false
-        }
-
-        "optional string is empty" in {
-
-          isNotEmpty(Some("")) mustBe false
-        }
-      }
-    }
-
     "isDigitsOnly" should {
 
       "return false" when {
         "value contains alpha character" in {
 
-          isDigitsOnly(Some("123a56f7%8&9 0")) mustBe false
+          isDigitsOnly("123a56f7%8&9 0") mustBe false
         }
 
         "value is empty" in {
 
-          isDigitsOnly(Some("")) mustBe false
+          isDigitsOnly("") mustBe false
         }
       }
     }
@@ -113,12 +93,12 @@ class CommonFormValidatorsSpec
       "return false" when {
         "value is empty" in {
 
-          isEqualToOrBelow(Some(""), 1) mustBe false
+          isEqualToOrBelow("", 1) mustBe false
         }
 
         "value is above threshold" in {
 
-          isEqualToOrBelow(Some("2"), 1) mustBe false
+          isEqualToOrBelow("2", 1) mustBe false
         }
       }
     }

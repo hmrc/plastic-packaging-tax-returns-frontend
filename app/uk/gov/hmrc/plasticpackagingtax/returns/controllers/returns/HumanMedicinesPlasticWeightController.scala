@@ -28,7 +28,11 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  HumanMedicinesPlasticWeight => HumanMedicinesPlasticWeightDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
@@ -48,15 +52,11 @@ class HumanMedicinesPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      Ok(
-        page(
-          HumanMedicinesPlasticWeight.form().fill(
-            HumanMedicinesPlasticWeight(totalKg =
-              request.taxReturn.humanMedicinesPlasticWeight.totalKg.map(_.toString)
-            )
-          )
-        )
-      )
+      request.taxReturn.humanMedicinesPlasticWeight match {
+        case Some(data) =>
+          Ok(page(form().fill(HumanMedicinesPlasticWeight(data.totalKg.toString))))
+        case _ => Ok(page(form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
@@ -83,9 +83,9 @@ class HumanMedicinesPlasticWeightController @Inject() (
     formData: HumanMedicinesPlasticWeight
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
-      val updatedHumanMedicinesPlasticWeight =
-        taxReturn.humanMedicinesPlasticWeight.copy(totalKg = formData.totalKg.map(_.trim.toLong))
-      taxReturn.copy(humanMedicinesPlasticWeight = updatedHumanMedicinesPlasticWeight)
+      taxReturn.copy(humanMedicinesPlasticWeight =
+        Some(HumanMedicinesPlasticWeightDetails(totalKg = formData.totalKg.toLong))
+      )
     }
 
 }

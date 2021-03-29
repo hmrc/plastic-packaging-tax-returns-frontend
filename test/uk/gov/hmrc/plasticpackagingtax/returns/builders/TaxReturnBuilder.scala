@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.builders
 
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  ConvertedPackagingCredit,
   ExportedPlasticWeight,
   HumanMedicinesPlasticWeight,
   ImportedPlasticWeight,
@@ -33,27 +34,23 @@ trait TaxReturnBuilder {
     modifiers.foldLeft(modelWithDefaults)((current, modifier) => modifier(current))
 
   private def modelWithDefaults: TaxReturn =
-    TaxReturn(id = "id",
-              manufacturedPlasticWeight = ManufacturedPlasticWeight(),
-              exportedPlasticWeight = None
-    )
+    TaxReturn(id = "id")
 
   def withId(id: String): TaxReturnModifier = _.copy(id = id)
 
-  def withManufacturedPlasticWeight(
-    totalKg: Option[Long],
-    totalKgBelowThreshold: Option[Long]
-  ): TaxReturnModifier =
-    _.copy(manufacturedPlasticWeight = ManufacturedPlasticWeight(totalKg, totalKgBelowThreshold))
+  def withManufacturedPlasticWeight(totalKg: Long, totalKgBelowThreshold: Long): TaxReturnModifier =
+    _.copy(manufacturedPlasticWeight =
+      Some(ManufacturedPlasticWeight(totalKg, totalKgBelowThreshold))
+    )
 
-  def withImportedPlasticWeight(
-    totalKg: Option[Long],
-    totalKgBelowThreshold: Option[Long]
-  ): TaxReturnModifier =
-    _.copy(importedPlasticWeight = ImportedPlasticWeight(totalKg, totalKgBelowThreshold))
+  def withImportedPlasticWeight(totalKg: Long, totalKgBelowThreshold: Long): TaxReturnModifier =
+    _.copy(importedPlasticWeight = Some(ImportedPlasticWeight(totalKg, totalKgBelowThreshold)))
 
-  def withHumanMedicinesPlasticWeight(totalKg: Option[Long]): TaxReturnModifier =
-    _.copy(humanMedicinesPlasticWeight = HumanMedicinesPlasticWeight(totalKg))
+  def withConvertedPackagingCredit(totalInPence: Long): TaxReturnModifier =
+    _.copy(convertedPackagingCredit = Some(ConvertedPackagingCredit(totalInPence)))
+
+  def withHumanMedicinesPlasticWeight(totalKg: Long): TaxReturnModifier =
+    _.copy(humanMedicinesPlasticWeight = Some(HumanMedicinesPlasticWeight(totalKg)))
 
   def withDirectExportDetails(totalKg: Long, totalValueForCreditInPence: Long): TaxReturnModifier =
     _.copy(exportedPlasticWeight =

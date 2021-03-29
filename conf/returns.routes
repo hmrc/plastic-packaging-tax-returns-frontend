@@ -13,3 +13,6 @@ POST       /imported-plastic-packaging-weight           uk.gov.hmrc.plasticpacka
 
 GET        /exported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ExportedPlasticWeightController.displayPage()
 POST       /exported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ExportedPlasticWeightController.submit()
+
+GET        /converted-plastic-packaging-credit   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.displayPage()
+POST       /converted-plastic-packaging-credit   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.submit()

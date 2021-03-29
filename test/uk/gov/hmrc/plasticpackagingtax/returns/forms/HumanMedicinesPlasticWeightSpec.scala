@@ -72,7 +72,7 @@ class HumanMedicinesPlasticWeightSpec extends AnyWordSpec with Matchers {
 
       "provided with empty data" in {
 
-        val input = Map.empty[String, String]
+        val input = Map(totalKg -> "")
         val expectedErrors =
           Seq(FormError(totalKg, weightEmptyError))
 

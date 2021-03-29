@@ -20,15 +20,17 @@ import com.google.common.base.Strings
 
 trait CommonFormValidators {
 
-  val isNotEmpty: Option[String] => Boolean = value => value.nonEmpty && isNonEmpty(value.get)
+  val maxLength = 100
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
-  val isDigitsOnly: Option[String] => Boolean = value =>
-    isNotEmpty(value) && value.exists(v => v.trim.chars().allMatch(c => Character.isDigit(c)))
+  val isDigitsOnly: String => Boolean = value =>
+    isNonEmpty(value) && isNotExceedingMaxLength(value, maxLength) && value.trim.chars().allMatch(
+      c => Character.isDigit(c)
+    )
 
-  val isEqualToOrBelow: (Option[String], Long) => Boolean = (value, limit) =>
-    isNotEmpty(value) && isDigitsOnly(value) && value.exists(v => v.trim.toLong <= limit)
+  val isEqualToOrBelow: (String, Long) => Boolean = (value, limit) =>
+    isNonEmpty(value) && isDigitsOnly(value) && value.trim.toLong <= limit
 
   val isValidDecimal: String => Boolean =
     (input: String) =>
@@ -46,5 +48,16 @@ trait CommonFormValidators {
       catch {
         case _: java.lang.NumberFormatException => false
       }
+
+  val isLowerOrEqualTo: BigDecimal => String => Boolean = (threshold: BigDecimal) =>
+    (input: String) =>
+      try isValidDecimal(input) &&
+        BigDecimal(input.trim) <= threshold
+      catch {
+        case _: java.lang.NumberFormatException => false
+      }
+
+  private val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
+    value.trim.length <= maxLength
 
 }
