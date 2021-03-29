@@ -120,7 +120,7 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalInPence", "Enter an amount to continue")
+      view must haveGovukFieldError("totalInPence", "Enter £0.00 or higher to continue")
     }
   }
 }

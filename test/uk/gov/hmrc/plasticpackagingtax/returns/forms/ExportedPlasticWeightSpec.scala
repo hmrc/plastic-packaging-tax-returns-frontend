@@ -21,12 +21,14 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight.{
   creditAboveMaxError,
-  emptyError,
-  invalidFormatError,
   maxTotalKg,
   oneHundredMillion,
   totalKg,
+  totalKgEmptyError,
+  totalKgInvalidFormatError,
   totalValueForCredit,
+  totalValueForCreditEmptyError,
+  totalValueForCreditInvalidFormatError,
   weightAboveMaxError
 }
 
@@ -80,7 +82,9 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
         val input =
           Map(totalKg -> "", totalValueForCredit -> "")
         val expectedErrors =
-          Seq(FormError(totalKg, emptyError), FormError(totalValueForCredit, emptyError))
+          Seq(FormError(totalKg, totalKgEmptyError),
+              FormError(totalValueForCredit, totalValueForCreditEmptyError)
+          )
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -89,7 +93,9 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
         val input = Map(totalKg -> "20A #", totalValueForCredit -> "66,898.00")
         val expectedErrors =
-          Seq(FormError(totalKg, invalidFormatError), FormError(totalKg, invalidFormatError))
+          Seq(FormError(totalKg, totalKgInvalidFormatError),
+              FormError(totalValueForCredit, totalValueForCreditInvalidFormatError)
+          )
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -97,9 +103,10 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "contains negative numbers" in {
 
         val input = Map(totalKg -> "-1", totalValueForCredit -> "-1000.00")
-        val expectedErrors = Seq(FormError(totalKg, invalidFormatError),
-                                 FormError(totalValueForCredit, invalidFormatError)
-        )
+        val expectedErrors =
+          Seq(FormError(totalKg, totalKgInvalidFormatError),
+              FormError(totalValueForCredit, totalValueForCreditInvalidFormatError)
+          )
 
         testFailedValidationErrors(input, expectedErrors)
       }

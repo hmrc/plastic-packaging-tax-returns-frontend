@@ -28,8 +28,16 @@ object ExportedPlasticWeight extends CommonFormValidators {
 
   val totalKg             = "totalKg"
   val totalValueForCredit = "totalValueForCredit"
-  val emptyError          = "returns.exportedPlasticWeight.empty.error"
-  val invalidFormatError  = "returns.exportedPlasticWeight.format.error"
+  val totalKgEmptyError   = "returns.exportedPlasticWeight.totalKg.empty.error"
+
+  val totalValueForCreditEmptyError =
+    "returns.exportedPlasticWeight.totalValueForCredit.empty.error"
+
+  val totalKgInvalidFormatError = "returns.exportedPlasticWeight.totalKg.format.error"
+
+  val totalValueForCreditInvalidFormatError =
+    "returns.exportedPlasticWeight.totalValueForCredit.format.error"
+
   val weightAboveMaxError = "returns.exportedPlasticWeight.weight.aboveMax.error"
   val creditAboveMaxError = "returns.exportedPlasticWeight.credit.aboveMax.error"
 
@@ -39,13 +47,13 @@ object ExportedPlasticWeight extends CommonFormValidators {
   private val mapping = Forms.mapping(
     totalKg ->
       text()
-        .verifying(emptyError, isNonEmpty)
-        .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
+        .verifying(totalKgEmptyError, isNonEmpty)
+        .verifying(totalKgInvalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
         .verifying(weightAboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
     totalValueForCredit ->
       text()
-        .verifying(emptyError, isNonEmpty)
-        .verifying(invalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
+        .verifying(totalValueForCreditEmptyError, isNonEmpty)
+        .verifying(totalValueForCreditInvalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
         .verifying(creditAboveMaxError, v => !isNonEmpty(v) || isLowerThan(oneHundredMillion)(v))
   )(ExportedPlasticWeight.apply)(ExportedPlasticWeight.unapply)
 
