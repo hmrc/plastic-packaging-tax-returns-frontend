@@ -22,6 +22,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -56,6 +57,15 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view = createView()
+
+    "validate other rendering  methods" in {
+      page.f(form())(request, messages).select("title").text() must include(
+        messages("returns.importedPlasticWeight.title")
+      )
+      page.render(form(), request, messages).select("title").text() must include(
+        messages("returns.importedPlasticWeight.title")
+      )
+    }
 
     "display 'Back' button" in {
 

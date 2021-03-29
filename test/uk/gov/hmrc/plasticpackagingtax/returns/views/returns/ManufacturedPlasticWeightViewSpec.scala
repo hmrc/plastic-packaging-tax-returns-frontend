@@ -22,6 +22,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -56,6 +57,15 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view = createView()
+
+    "validate other rendering  methods" in {
+      page.f(form())(request, messages).select("title").text() must include(
+        messages("returns.manufacturedPlasticWeight.title")
+      )
+      page.render(form(), request, messages).select("title").text() must include(
+        messages("returns.manufacturedPlasticWeight.title")
+      )
+    }
 
     "display 'Back' button" in {
 
@@ -114,8 +124,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display data in total weight input" in {
 
-      val form = ManufacturedPlasticWeight
-        .form()
+      val form = ManufacturedPlasticWeight.form()
         .fill(ManufacturedPlasticWeight(Some("1000"), Some("5")))
       val view = createView(form)
 
@@ -128,8 +137,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "weight is not entered" in {
 
-      val form = ManufacturedPlasticWeight
-        .form()
+      val form = ManufacturedPlasticWeight.form()
         .fillAndValidate(ManufacturedPlasticWeight(None, None))
       val view = createView(form)
 
