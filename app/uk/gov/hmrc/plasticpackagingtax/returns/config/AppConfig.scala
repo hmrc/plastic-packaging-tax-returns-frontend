@@ -59,4 +59,16 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptReturnsUrl: String = s"$pptServiceHost/returns"
 
   def pptReturnUrl(id: String): String = s"$pptReturnsUrl/$id"
+
+  lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
+
+  lazy val feedbackUnauthenticatedLink: String =
+    config.get[String]("urls.feedback.unauthenticatedLink")
+
+  def authenticatedFeedbackUrl(): String =
+    s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
+
+  def unauthenticatedFeedbackUrl(): String =
+    s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
+
 }

@@ -16,12 +16,22 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukPhaseBanner
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 
 @this(govukPhaseBanner: GovukPhaseBanner, appConfig: AppConfig)
 
 @(phase: String)(implicit request: Request[_], messages: Messages)
 
-@link = {<a href="todo" class="govuk-link">@messages("feedback.link")</a>}
+@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@feedbackUrl = @{
+    if (isAuthenticated) {
+        s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
+    } else {
+        s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
+    }
+}
+
+@link = {<a href="@feedbackUrl" class="govuk-link">@messages("feedback.link")</a>}
 @feedbackBanner = {
   @Html(messages("feedback", link))
 }

@@ -22,7 +22,6 @@ import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight.{
   aboveMaxError,
   invalidFormatError,
-  invalidValueError,
   maxTotalKg,
   totalKg,
   weightEmptyError
