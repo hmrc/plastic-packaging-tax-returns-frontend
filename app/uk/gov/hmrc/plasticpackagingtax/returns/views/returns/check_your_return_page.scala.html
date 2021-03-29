@@ -1,0 +1,107 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+
+@this(
+formHelper: FormWithCSRF,
+govukLayout: main_template,
+pageTitle: pageTitle,
+saveButtons: saveButtons,
+govukTable : GovukTable,
+link: link,
+paragraphBody:paragraphBody
+)
+
+@(taxReturn: TaxReturn)(implicit request: Request[_], messages: Messages)
+
+@row(key: String, value: Option[String], postFixMetric: String, call: Call, classes: String = "govuk-body") = @{
+    Seq(
+        TableRow(
+            content = Text(messages(key)),
+            classes = classes
+        ),
+        TableRow(
+            content = Text(value.getOrElse("") + s" $postFixMetric"),
+            classes = classes,
+            format = Some("numeric")
+        ),
+        TableRow(
+            content =  HtmlContent(link(text = messages("site.link.change"), call = call)),
+            classes = classes,
+            format = Some("numeric")
+        )
+    )
+}
+
+@govukLayout(
+    title = Title("returns.checkYourReturnPage.title"),
+    backButton = Some(BackButton(messages("site.back"), returnsRoutes.ConvertedPackagingCreditController.displayPage()))) {
+
+    @pageTitle(text = messages("returns.checkYourReturnPage.title"), classes = "govuk-label--l")
+
+    <h2 id="check-return-label" class="govuk-heading-m govuk-!-padding-bottom-4">
+        @messages("returns.checkYourReturnPage.label")</h2>
+
+    @formHelper(action = returnsRoutes.CheckYourReturnController.submit(), 'autoComplete -> "off") {
+
+        @govukTable(Table(
+            rows = Seq(
+                row("returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.manufacturedPackaging.liable", taxReturn.manufacturedPlasticWeight.map(_.totalKgBelowThreshold.toString), "kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), "kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
+                ),
+            head = Some(Seq(
+                HeadCell(
+                    content = Text(messages("returns.checkYourReturnPage.header.item")),
+                    classes = "govuk-!-width-one-half"),
+                HeadCell(
+                    content = Text(messages("returns.checkYourReturnPage.header.amount")),
+                    classes = "govuk-!-width-one-quarter",
+                    format = Some("numeric")
+                ),
+                HeadCell(
+                    content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("returns.checkYourReturnPage.header.changeLink")}</span>""")),
+                    classes = "govuk-!-width-one-quarter"
+                )
+            )),
+            firstCellIsHeader = true
+        ))
+
+        <h2 id="send-your-application" class="govuk-heading-s">
+            @messages("returns.checkYourReturnPage.sendReturn.paragraph")</h2>
+
+        @paragraphBody(messages("returns.checkYourReturnPage.sendReturn.description"), classes = "govuk-body-s govuk-!-padding-bottom-6")
+
+        @saveButtons()
+        }
+    }
+)

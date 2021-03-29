@@ -26,7 +26,9 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 
-class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector with GuiceOneAppPerSuite {
+class UnitViewSpec
+    extends AnyWordSpec with MockTaxReturnsConnector with ViewMatchers with Injector
+    with GuiceOneAppPerSuite {
 
   import utils.FakeRequestCSRFSupport._
 

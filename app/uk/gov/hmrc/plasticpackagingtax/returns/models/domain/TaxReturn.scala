@@ -24,7 +24,8 @@ case class TaxReturn(
   importedPlasticWeight: Option[ImportedPlasticWeight] = None,
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
-  convertedPackagingCredit: Option[ConvertedPackagingCredit] = None
+  convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
+  metaData: MetaData = MetaData()
 ) {
 
   def toTaxReturn: TaxReturn =
@@ -35,6 +36,9 @@ case class TaxReturn(
               exportedPlasticWeight = this.exportedPlasticWeight,
               convertedPackagingCredit = this.convertedPackagingCredit
     )
+
+  def isReturnSubmitReady: Boolean =
+    manufacturedPlasticWeight.isDefined && importedPlasticWeight.isDefined && humanMedicinesPlasticWeight.isDefined && exportedPlasticWeight.isDefined && convertedPackagingCredit.isDefined
 
 }
 
