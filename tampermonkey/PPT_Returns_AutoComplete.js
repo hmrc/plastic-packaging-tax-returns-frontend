@@ -7,7 +7,7 @@
 // @match        http*://*/plastic-packaging-tax/returns*
 // @grant GM_setValue
 // @grant GM_getValue
-// @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_AutoComplete.js
+// @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_AutoComplete.js
 // ==/UserScript==
 
 /*eslint no-undef: "error"*/
