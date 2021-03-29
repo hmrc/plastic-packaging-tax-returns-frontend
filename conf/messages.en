@@ -1,5 +1,6 @@
 service.name=Plastic Packaging Tax
 
+site.link.change = Change
 site.back = Back
 site.backToGovUk = Back to GOV.UK
 site.button.continue = Save and Continue
@@ -104,3 +105,19 @@ returns.convertedPackagingCredit.details.line2 = If a third-party company carrie
 returns.convertedPackagingCredit.empty.error = Enter an amount to continue
 returns.convertedPackagingCredit.format.error = Amount must be entered as numbers only
 returns.convertedPackagingCredit.aboveMax.error = Amount cannot exceed £99,999,999.99
+
+returns.checkYourReturnPage.title = Check your return
+returns.checkYourReturnPage.label = Plastic Packaging Tax Return
+returns.checkYourReturnPage.header.item = Item
+returns.checkYourReturnPage.header.amount = Amount
+returns.checkYourReturnPage.header.changeLink = Change link
+returns.checkYourReturnPage.manufacturedPackaging.total = 1a. Manufactured packaging total
+returns.checkYourReturnPage.manufacturedPackaging.liable = 1b. Manufactured packaging liable
+returns.checkYourReturnPage.importedPackaging.total = 2a. Imported packaging total
+returns.checkYourReturnPage.importedPackaging.liable = 2b. Imported packaging liable
+returns.checkYourReturnPage.humansMedicinesPackaging = 3. Humans medicines packaging
+returns.checkYourReturnPage.directExports = 4a. Direct exports
+returns.checkYourReturnPage.exportsCredit = 4b. Exports credit
+returns.checkYourReturnPage.conversionCredit = 5. Conversion credit
+returns.checkYourReturnPage.sendReturn.paragraph = Now send your return
+returns.checkYourReturnPage.sendReturn.description = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
