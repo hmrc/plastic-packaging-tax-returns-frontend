@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.siteHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.partials.phaseBanner
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.timeoutDialog
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.govukFlexibleLayout
+@import uk.gov.hmrc.plasticpackagingtax.returns.config.TimeoutDialogConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 
@@ -29,6 +32,7 @@
     govukBackLink: GovukBackLink,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+    timeoutDialogConfig: TimeoutDialogConfig,
     siteHeader: siteHeader,
     phaseBanner: phaseBanner,
     hmrcFooter: hmrcStandardFooter,
@@ -39,6 +43,7 @@
     useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
+@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]]}
 
 @head = {
     @hmrcTrackingConsentSnippet()
@@ -61,10 +66,19 @@
     <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
     <script>window.HMRCFrontend.initAll();</script>
     <script>window.GOVUKFrontend.initAll();</script>
+
+    @if(useTimeoutDialog) {
+        <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")'> </script>
+    }
 }
+
 
 @beforeContentBlock = {
     @phaseBanner("alpha")
+
+    @if(useTimeoutDialog) {
+        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
+    }
 }
 
 @content = {

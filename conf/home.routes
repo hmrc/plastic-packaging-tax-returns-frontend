@@ -1,3 +1,6 @@
 # microservice specific routes
 
-GET        /                    uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.HomeController.displayPage()
+GET        /                        uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.HomeController.displayPage()
+
+GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.returns.views.model.SignOutReason)
+GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.sessionTimeoutSignedOut()

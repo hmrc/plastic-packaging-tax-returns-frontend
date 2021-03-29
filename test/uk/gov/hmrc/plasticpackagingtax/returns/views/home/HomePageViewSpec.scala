@@ -17,20 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
-import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest
 class HomePageViewSpec extends UnitViewSpec with Matchers {
-
-  override implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   private val homePage = instanceOf[home_page]
 
@@ -61,6 +56,16 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
       homePage.render(request, messages).select("title").text() must include(
         messages("account.homePage.title")
       )
+    }
+
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view)
     }
 
     "display title" in {

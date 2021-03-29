@@ -24,15 +24,18 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 
 class UnitViewSpec
     extends AnyWordSpec with MockTaxReturnsConnector with ViewMatchers with Injector
-    with GuiceOneAppPerSuite {
+    with GuiceOneAppPerSuite with ViewAssertions {
 
   import utils.FakeRequestCSRFSupport._
 
-  implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
+  implicit val request: Request[AnyContent] =
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), Some("123"))
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     realMessagesApi.preferred(request)
@@ -40,7 +43,7 @@ class UnitViewSpec
   protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
     messages(request)(key, args: _*)
 
-  val realMessagesApi = UnitViewSpec.realMessagesApi
+  val realMessagesApi: MessagesApi = UnitViewSpec.realMessagesApi
 
   override def fakeApplication(): Application = {
     SharedMetricRegistries.clear()

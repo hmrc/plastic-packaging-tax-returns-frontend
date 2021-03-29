@@ -62,6 +62,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
+  lazy val exitSurveyUrl = config.get[String]("urls.exitSurvey")
+  lazy val govUkUrl      = config.get[String]("urls.govUk")
+
   lazy val feedbackUnauthenticatedLink: String =
     config.get[String]("urls.feedback.unauthenticatedLink")
 
