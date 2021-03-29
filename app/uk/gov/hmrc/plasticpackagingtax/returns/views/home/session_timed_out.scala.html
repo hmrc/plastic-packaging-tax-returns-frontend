@@ -33,17 +33,17 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-   title = Title("sessionTimout.title")) {
+   title = Title("sessionTimeout.title")) {
 
-  @pageTitle(messages("sessionTimout.title"))
+  @pageTitle(messages("sessionTimeout.title"))
 
-  @paragraphBody(messages("sessionTimout.paragraph.saved"))
+  @paragraphBody(messages("sessionTimeout.paragraph.saved"))
 
   @govukButton(
     Button(
       href = Some(pptRoutes.HomeController.displayPage().url),
       isStartButton = false,
-      content = Text(messages("sessionTimout.signin.button"))
+      content = Text(messages("sessionTimeout.signin.button"))
     )
   )
 

@@ -53,13 +53,15 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-heading-xl").first() must containMessage("sessionTimout.title")
+      view.getElementsByClass("govuk-heading-xl").first() must containMessage(
+        "sessionTimeout.title"
+      )
     }
 
     "display saved answers info" in {
 
       view.getElementsByClass("govuk-body").first() must containMessage(
-        "sessionTimout.paragraph.saved"
+        "sessionTimeout.paragraph.saved"
       )
     }
 
@@ -67,7 +69,7 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
       view must containElementWithClass("govuk-button")
       view.getElementsByClass("govuk-button").first() must containMessage(
-        "sessionTimout.signin.button"
+        "sessionTimeout.signin.button"
       )
       view.getElementsByClass("govuk-button").first() must haveHref(
         homeRoutes.HomeController.displayPage().url
