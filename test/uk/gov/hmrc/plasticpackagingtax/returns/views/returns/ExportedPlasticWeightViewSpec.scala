@@ -47,8 +47,14 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.exportedPlasticWeight.details.link")
       messages must haveTranslationFor("returns.exportedPlasticWeight.details.body")
 
-      messages must haveTranslationFor("returns.exportedPlasticWeight.empty.error")
-      messages must haveTranslationFor("returns.exportedPlasticWeight.format.error")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.totalKg.empty.error")
+      messages must haveTranslationFor(
+        "returns.exportedPlasticWeight.totalValueForCredit.empty.error"
+      )
+      messages must haveTranslationFor("returns.exportedPlasticWeight.totalKg.format.error")
+      messages must haveTranslationFor(
+        "returns.exportedPlasticWeight.totalValueForCredit.format.error"
+      )
       messages must haveTranslationFor("returns.exportedPlasticWeight.weight.aboveMax.error")
       messages must haveTranslationFor("returns.exportedPlasticWeight.credit.aboveMax.error")
     }
@@ -155,7 +161,7 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("totalKg", "Enter an amount to continue")
-      view must haveGovukFieldError("totalValueForCredit", "Enter an amount to continue")
+      view must haveGovukFieldError("totalValueForCredit", "Enter £0.00 or higher to continue")
     }
   }
 }

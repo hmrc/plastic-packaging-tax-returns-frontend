@@ -79,6 +79,37 @@ const importedWeightPage = () => {
     }
 }
 
+const humanMedicinesWeightPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/returns/human-medicines-plastic-packaging-weight')) {
+
+        document.getElementById('totalKg').value = '1'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const exportedPackagingWeightPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/returns/exported-plastic-packaging-weight')) {
+
+        document.getElementById('totalKg').value = '2'
+        document.getElementById('totalValueForCredit').value = '3'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const convertedPackagingCreditPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/returns/converted-plastic-packaging-credit')) {
+
+        document.getElementById('totalInPence').value = '200.34'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const reviewReturn = () => {
+     if (currentPageIs('/plastic-packaging-tax/returns/check-your-return')) {
+
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+ }
 
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
@@ -86,4 +117,9 @@ const completeJourney = () => {
     startPage()
     manufacturedWeightPage()
     importedWeightPage()
+    humanMedicinesWeightPage()
+    exportedPackagingWeightPage()
+    convertedPackagingCreditPage()
+    reviewReturn()
+
 }
