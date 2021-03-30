@@ -65,8 +65,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       "tax return completed and display page method is invoked" in {
         authorizedUser()
         mockTaxReturnFind(
-          aTaxReturn(withManufacturedPlasticWeight(5, 5),
-                     withConvertedPackagingCredit(5),
+          aTaxReturn(withConvertedPackagingCredit(5),
                      withDirectExportDetails(2, 2),
                      withHumanMedicinesPlasticWeight(4),
                      withImportedPlasticWeight(2, 2),
