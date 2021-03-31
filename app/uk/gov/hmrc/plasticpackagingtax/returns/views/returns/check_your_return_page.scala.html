@@ -45,7 +45,7 @@ paragraphBody:paragraphBody
             classes = classes
         ),
         TableRow(
-            content = Text(value.getOrElse("") + s" $postFixMetric"),
+            content = Text(value.getOrElse("") + s"$postFixMetric"),
             classes = classes,
             format = Some("numeric")
         ),
@@ -55,6 +55,30 @@ paragraphBody:paragraphBody
             format = Some("numeric")
         )
     )
+}
+
+@taxCalculationRow(key: String, value: String, postFixMetric: String = "", classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
+    Seq(
+        TableRow(
+            content = Text(messages(key)),
+            classes = classes,
+            attributes = attributes
+        ),
+        TableRow(
+            content = Text(s"$value$postFixMetric"),
+            classes = classes,
+            format = Some("numeric"),
+            attributes = attributes
+        ),
+        TableRow(
+            classes = classes,
+            attributes = attributes
+        )
+    )
+}
+
+@hiddenText(key: String) = @{
+    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>""")),
 }
 
 @govukLayout(
@@ -70,36 +94,91 @@ paragraphBody:paragraphBody
 
         @govukTable(Table(
             rows = Seq(
-                row("returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.manufacturedPackaging.liable", taxReturn.manufacturedPlasticWeight.map(_.totalKgBelowThreshold.toString), "kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), "kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), "kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.manufacturedPackaging.liable", taxReturn.manufacturedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
+                row("returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),
                 row("returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
                 ),
             head = Some(Seq(
                 HeadCell(
                     content = Text(messages("returns.checkYourReturnPage.header.item")),
-                    classes = "govuk-!-width-one-half"),
+                    classes = "govuk-!-width-one-half"
+                ),
                 HeadCell(
                     content = Text(messages("returns.checkYourReturnPage.header.amount")),
                     classes = "govuk-!-width-one-quarter",
                     format = Some("numeric")
                 ),
                 HeadCell(
-                    content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("returns.checkYourReturnPage.header.changeLink")}</span>""")),
+                    content = hiddenText("returns.checkYourReturnPage.header.changeLink"),
                     classes = "govuk-!-width-one-quarter"
                 )
             )),
             firstCellIsHeader = true
         ))
 
+        @govukTable(Table(
+            rows = Seq(
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.exemptPackaging.label", taxReturn.taxLiability.totalKgExempt.toString, " kg"),
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.liablePackaging.label", taxReturn.taxLiability.totalKgLiable.toString, " kg","", Map("id" -> "row-border")),
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.label", s"£${taxReturn.taxLiability.taxDue.toString}", "" ,"", Map("id" -> "row-border"))
+                ),
+            head = Some(Seq(
+                HeadCell(
+                    content = hiddenText("returns.checkYourReturnPage.header.item"),
+                    classes = "govuk-!-width-one-half"
+                ),
+                HeadCell(
+                    content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                    classes = "govuk-!-width-one-quarter",
+                    format = Some("numeric")
+                ),
+                HeadCell(
+                    content = hiddenText("returns.checkYourReturnPage.header.empty"),
+                    classes = "govuk-!-width-one-quarter"
+                ))),
+            caption = Some(messages("returns.checkYourReturnPage.taxLiability.label")),
+            captionClasses = "govuk-table__caption--m",
+            firstCellIsHeader = true,
+            classes = "row-header--no-border cell--no-border "
+            ))
+
+        @paragraphBody(messages("returns.checkYourReturnPage.taxLiability.description"), classes = "govuk-body-m")
+
+        @govukTable(Table(
+            rows = Seq(
+                taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", s"£${taxReturn.taxLiability.totalCredit.toString}", "", "", Map("id" -> "row-border")),
+            ),
+            head = Some(Seq(
+                HeadCell(
+                    classes = "govuk-!-width-one-half",
+                    content = hiddenText("returns.checkYourReturnPage.header.amount")
+                ),
+                HeadCell(
+                    content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                    classes = "govuk-!-width-one-quarter",
+                    format = Some("numeric")
+                ),
+                HeadCell(
+                    content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                    classes = "govuk-!-width-one-quarter"
+                ))),
+            caption = Some(messages("returns.checkYourReturnPage.totalCredits.label")),
+            captionClasses = "govuk-table__caption--m",
+            firstCellIsHeader = true,
+            classes = "row-header--no-border cell--no-border"
+        ))
+
+        @paragraphBody(messages("returns.checkYourReturnPage.totalCredits.description"), classes = "govuk-body-m")
+
         <h2 id="send-your-application" class="govuk-heading-s">
             @messages("returns.checkYourReturnPage.sendReturn.paragraph")</h2>
 
-        @paragraphBody(messages("returns.checkYourReturnPage.sendReturn.description"), classes = "govuk-body-s govuk-!-padding-bottom-6")
+        @paragraphBody(messages("returns.checkYourReturnPage.sendReturn.description"), classes = "govuk-body-m govuk-!-padding-bottom-6")
 
         @saveButtons()
         }

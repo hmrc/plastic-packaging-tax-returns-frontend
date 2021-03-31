@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.views.returns
 
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
@@ -49,6 +50,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
       messages must haveTranslationFor("returns.checkYourReturnPage.header.item")
       messages must haveTranslationFor("returns.checkYourReturnPage.header.amount")
+      messages must haveTranslationFor("returns.checkYourReturnPage.header.empty")
       messages must haveTranslationFor("returns.checkYourReturnPage.header.changeLink")
 
       messages must haveTranslationFor("returns.checkYourReturnPage.manufacturedPackaging.total")
@@ -66,6 +68,21 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
       messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.paragraph")
       messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.description")
+
+      messages must haveTranslationFor("returns.checkYourReturnPage.taxLiability.label")
+      messages must haveTranslationFor(
+        "returns.checkYourReturnPage.taxLiability.exemptPackaging.label"
+      )
+      messages must haveTranslationFor(
+        "returns.checkYourReturnPage.taxLiability.liablePackaging.label"
+      )
+      messages must haveTranslationFor("returns.checkYourReturnPage.taxLiability.description")
+
+      messages must haveTranslationFor("returns.checkYourReturnPage.totalCredits.description")
+      messages must haveTranslationFor("returns.checkYourReturnPage.totalCredits.label")
+      messages must haveTranslationFor(
+        "returns.checkYourReturnPage.totalCredits.creditsRequested.label"
+      )
     }
 
     val view = createView()
@@ -90,48 +107,25 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display labels, values and change links" when {
-      def getTableRows =
-        view.getElementsByClass("govuk-table__body").first()
-          .getElementsByClass("govuk-table__row")
 
-      def getRowHeaderFor(section: Int) =
-        getTableRows.get(section).getElementsByClass("govuk-table__header").first()
+      val checkYourReturnView = new CheckYourReturnView(view)
 
-      def getRowValueFor(section: Int) =
-        getTableRows.get(section).getElementsByClass("govuk-table__cell").first().text()
-
-      def getRowChangeLinkFor(section: Int) =
-        getTableRows.get(section).getElementsByClass("govuk-table__cell").get(1).getElementsByClass(
-          "govuk-link"
-        ).first()
-
-      def rowExists(rowNo: Int, label: String, value: String, href: Call): Unit = {
-        getRowHeaderFor(rowNo) must containMessage(label)
-        getRowValueFor(rowNo) mustBe value
-        getRowChangeLinkFor(rowNo) must haveHref(href)
+      "tax return table has total 8 rows" in {
+        checkYourReturnView.getTableRows(0).size() mustBe 8
       }
 
-      def tableHeaderForColumn(colNo: Int) =
-        view.getElementsByClass("govuk-table__head").first().getElementsByClass(
-          "govuk-table__header"
-        ).get(colNo)
+      "tax return table table headers" in {
 
-      "display has total 8 rows" in {
-        getTableRows.size() mustBe 8
-      }
-
-      "display table headers" in {
-
-        tableHeaderForColumn(0).text() must include(
+        checkYourReturnView.tableHeaderForColumn(0, 0).text() must include(
           messages("returns.checkYourReturnPage.header.item")
         )
-        tableHeaderForColumn(1).text() must include(
+        checkYourReturnView.tableHeaderForColumn(0, 1).text() must include(
           messages("returns.checkYourReturnPage.header.amount")
         )
       }
 
-      "contain hidden table header for change link" in {
-        val changeLinkTableHeader = tableHeaderForColumn(2)
+      "tax return table contain hidden table header for change link" in {
+        val changeLinkTableHeader = checkYourReturnView.tableHeaderForColumn(0, 2)
         changeLinkTableHeader.text() must include(
           messages("returns.checkYourReturnPage.header.changeLink")
         )
@@ -141,53 +135,139 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       def asKg(value: String)     = s"$value kg"
       def asPounds(value: String) = s"£$value"
 
-      "displaying organisation details section" in {
+      "tax return table displaying organisation details section" in {
 
-        rowExists(0,
-                  "returns.checkYourReturnPage.manufacturedPackaging.total",
-                  asKg(taxReturn.manufacturedPlasticWeight.get.totalKg.toString),
-                  returnRoutes.ManufacturedPlasticWeightController.displayPage()
+        checkYourReturnView.rowExists(0,
+                                      0,
+                                      "returns.checkYourReturnPage.manufacturedPackaging.total",
+                                      asKg(
+                                        taxReturn.manufacturedPlasticWeight.get.totalKg.toString
+                                      ),
+                                      returnRoutes.ManufacturedPlasticWeightController.displayPage()
         )
-        rowExists(1,
-                  "returns.checkYourReturnPage.manufacturedPackaging.liable",
-                  asKg(taxReturn.manufacturedPlasticWeight.get.totalKgBelowThreshold.toString),
-                  returnRoutes.ManufacturedPlasticWeightController.displayPage()
+        checkYourReturnView.rowExists(0,
+                                      1,
+                                      "returns.checkYourReturnPage.manufacturedPackaging.liable",
+                                      asKg(
+                                        taxReturn.manufacturedPlasticWeight.get.totalKgBelowThreshold.toString
+                                      ),
+                                      returnRoutes.ManufacturedPlasticWeightController.displayPage()
         )
-
-        rowExists(2,
-                  "returns.checkYourReturnPage.importedPackaging.total",
-                  asKg(taxReturn.importedPlasticWeight.get.totalKg.toString),
-                  returnRoutes.ImportedPlasticWeightController.displayPage()
+        checkYourReturnView.rowExists(0,
+                                      2,
+                                      "returns.checkYourReturnPage.importedPackaging.total",
+                                      asKg(taxReturn.importedPlasticWeight.get.totalKg.toString),
+                                      returnRoutes.ImportedPlasticWeightController.displayPage()
         )
-        rowExists(3,
-                  "returns.checkYourReturnPage.importedPackaging.liable",
-                  asKg(taxReturn.importedPlasticWeight.get.totalKgBelowThreshold.toString),
-                  returnRoutes.ImportedPlasticWeightController.displayPage()
-        )
-
-        rowExists(4,
-                  "returns.checkYourReturnPage.humansMedicinesPackaging",
-                  asKg(taxReturn.humanMedicinesPlasticWeight.get.totalKg.toString),
-                  returnRoutes.HumanMedicinesPlasticWeightController.displayPage()
-        )
-
-        rowExists(5,
-                  "returns.checkYourReturnPage.directExports",
-                  asKg(taxReturn.exportedPlasticWeight.get.totalKg.toString),
-                  returnRoutes.ExportedPlasticWeightController.displayPage()
-        )
-        rowExists(6,
-                  "returns.checkYourReturnPage.exportsCredit",
-                  asPounds(taxReturn.exportedPlasticWeight.get.totalValueForCreditAsString),
-                  returnRoutes.ExportedPlasticWeightController.displayPage()
+        checkYourReturnView.rowExists(0,
+                                      3,
+                                      "returns.checkYourReturnPage.importedPackaging.liable",
+                                      asKg(
+                                        taxReturn.importedPlasticWeight.get.totalKgBelowThreshold.toString
+                                      ),
+                                      returnRoutes.ImportedPlasticWeightController.displayPage()
         )
 
-        rowExists(7,
-                  "returns.checkYourReturnPage.conversionCredit",
-                  asPounds(taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString),
-                  returnRoutes.ConvertedPackagingCreditController.displayPage()
+        checkYourReturnView.rowExists(0,
+                                      4,
+                                      "returns.checkYourReturnPage.humansMedicinesPackaging",
+                                      asKg(
+                                        taxReturn.humanMedicinesPlasticWeight.get.totalKg.toString
+                                      ),
+                                      returnRoutes.HumanMedicinesPlasticWeightController.displayPage()
+        )
+
+        checkYourReturnView.rowExists(0,
+                                      5,
+                                      "returns.checkYourReturnPage.directExports",
+                                      asKg(taxReturn.exportedPlasticWeight.get.totalKg.toString),
+                                      returnRoutes.ExportedPlasticWeightController.displayPage()
+        )
+        checkYourReturnView.rowExists(0,
+                                      6,
+                                      "returns.checkYourReturnPage.exportsCredit",
+                                      asPounds(
+                                        taxReturn.exportedPlasticWeight.get.totalValueForCreditAsString
+                                      ),
+                                      returnRoutes.ExportedPlasticWeightController.displayPage()
+        )
+
+        checkYourReturnView.rowExists(0,
+                                      7,
+                                      "returns.checkYourReturnPage.conversionCredit",
+                                      asPounds(
+                                        taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString
+                                      ),
+                                      returnRoutes.ConvertedPackagingCreditController.displayPage()
         )
       }
+
+      "tax liability table has total 4 rows" in {
+        checkYourReturnView.getTableRows(1).size() mustBe 3
+      }
+
+      "tax liability table title" in {
+
+        checkYourReturnView.getTableTitleFor(1) must include(
+          messages("returns.checkYourReturnPage.taxLiability.label")
+        )
+      }
+
+      "tax liability table displaying tax liability section" in {
+
+        checkYourReturnView.rowHasValue(
+          1,
+          0,
+          "returns.checkYourReturnPage.taxLiability.exemptPackaging.label",
+          asKg(taxReturn.taxLiability.totalKgExempt.toString)
+        )
+        checkYourReturnView.rowHasValue(
+          1,
+          1,
+          "returns.checkYourReturnPage.taxLiability.liablePackaging.label",
+          asKg(taxReturn.taxLiability.totalKgLiable.toString)
+        )
+        checkYourReturnView.rowHasValue(1,
+                                        2,
+                                        "returns.checkYourReturnPage.taxLiability.label",
+                                        asPounds(taxReturn.taxLiability.taxDue.toString)
+        )
+      }
+
+      "tax credits table has total 1 row" in {
+        checkYourReturnView.getTableRows(2).size() mustBe 1
+      }
+
+      "tax credits table title" in {
+
+        checkYourReturnView.getTableTitleFor(2) must include(
+          messages("returns.checkYourReturnPage.totalCredits.label")
+        )
+      }
+
+      "tax credits table displaying tax credit section" in {
+
+        checkYourReturnView.rowHasValue(
+          2,
+          0,
+          "returns.checkYourReturnPage.totalCredits.creditsRequested.label",
+          asPounds(taxReturn.taxLiability.totalCredit.toString)
+        )
+      }
+    }
+
+    "display tax liability paragraph" in {
+
+      view.getElementsByClass("govuk-body-m").first().text() must include(
+        messages("returns.checkYourReturnPage.taxLiability.description")
+      )
+    }
+
+    "display total credits paragraph" in {
+
+      view.getElementsByClass("govuk-body-m").get(1).text() must include(
+        messages("returns.checkYourReturnPage.totalCredits.description")
+      )
     }
 
     "display send your application paragraph" in {
@@ -199,7 +279,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
     "display send your application declaration" in {
 
-      view.getElementsByClass("govuk-body-s").text() must include(
+      view.getElementsByClass("govuk-body-m").last().text() must include(
         messages("returns.checkYourReturnPage.sendReturn.description")
       )
     }
@@ -215,4 +295,45 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("save_and_come_back_later").text() mustBe "Save and come back later"
     }
   }
+}
+
+class CheckYourReturnView(view: Document) extends UnitViewSpec with Matchers {
+
+  def getTable(tableNo: Int): Element =
+    view.getElementsByClass("govuk-table").get(tableNo)
+
+  def getTableRows(tableNo: Int): Elements =
+    getTable(tableNo).getElementsByClass("govuk-table__body").first()
+      .getElementsByClass("govuk-table__row")
+
+  def getRowHeaderFor(tableNo: Int, rowNo: Int): Element =
+    getTableRows(tableNo).get(rowNo).getElementsByClass("govuk-table__header").first()
+
+  def getTableTitleFor(tableNo: Int): String =
+    getTable(tableNo).getElementsByClass("govuk-table__caption").first().text()
+
+  def getRowValueFor(tableNo: Int, rowNo: Int): String =
+    getTableRows(tableNo).get(rowNo).getElementsByClass("govuk-table__cell").first().text()
+
+  def getRowChangeLinkFor(tableNo: Int, rowNo: Int): Element =
+    getTableRows(tableNo).get(rowNo).getElementsByClass("govuk-table__cell").get(
+      1
+    ).getElementsByClass("govuk-link").first()
+
+  def rowExists(tableNo: Int, rowNo: Int, label: String, value: String, href: Call): Unit = {
+    getRowHeaderFor(tableNo, rowNo) must containMessage(label)
+    getRowValueFor(tableNo, rowNo) mustBe value
+    getRowChangeLinkFor(tableNo, rowNo) must haveHref(href)
+  }
+
+  def rowHasValue(tableNo: Int, rowNo: Int, label: String, value: String): Unit = {
+    getRowHeaderFor(tableNo, rowNo) must containMessage(label)
+    getRowValueFor(tableNo, rowNo) mustBe value
+  }
+
+  def tableHeaderForColumn(tableNo: Int, colNo: Int) =
+    view.getElementsByClass("govuk-table__head").get(tableNo).getElementsByClass(
+      "govuk-table__header"
+    ).get(colNo)
+
 }

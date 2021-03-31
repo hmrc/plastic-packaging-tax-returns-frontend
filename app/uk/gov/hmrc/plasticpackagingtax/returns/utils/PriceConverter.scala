@@ -21,7 +21,12 @@ trait PriceConverter {
   def convertDecimalRepresentationToPences(amountAsString: String): Long =
     (BigDecimal(amountAsString.trim) * 100).toLong
 
+  def toBigDecimal(totalInPences: Long): BigDecimal = format(BigDecimal(totalInPences) / 100.00)
+
   def convertPencesToDecimalRepresentation(totalInPences: Long): String =
-    (BigDecimal(totalInPences) / 100.00).setScale(2).toString
+    toBigDecimal(totalInPences).toString()
+
+  def format(value: BigDecimal): BigDecimal =
+    value.setScale(2)
 
 }

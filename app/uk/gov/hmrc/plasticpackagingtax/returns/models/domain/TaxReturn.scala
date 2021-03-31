@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.utils.TaxLiabilityFactory
 
 case class TaxReturn(
   id: String,
@@ -27,6 +28,21 @@ case class TaxReturn(
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
   metaData: MetaData = MetaData()
 ) {
+
+  import TaxReturn.LongOption
+
+  lazy val taxLiability = TaxLiabilityFactory.create(
+    totalManufacturedKg = manufacturedPlasticWeight.map(_.totalKg).getOrZero,
+    totalImportedKg = importedPlasticWeight.map(_.totalKg).getOrZero,
+    totalImportedKgBelowThreshold = importedPlasticWeight.map(_.totalKgBelowThreshold).getOrZero,
+    totalManufacturedKgBelowThreshold =
+      manufacturedPlasticWeight.map(_.totalKgBelowThreshold).getOrZero,
+    totalHumanMedicinesKg = humanMedicinesPlasticWeight.map(_.totalKg).getOrZero,
+    totalDirectExportsKg = exportedPlasticWeight.map(_.totalKg).getOrZero,
+    totalConversionCreditPence = convertedPackagingCredit.map(_.totalInPence).getOrZero,
+    totalDirectExportsCreditPence =
+      exportedPlasticWeight.map(_.totalValueForCreditInPence).getOrZero
+  )
 
   def toTaxReturn: TaxReturn =
     TaxReturn(id = this.id,
@@ -44,4 +60,9 @@ case class TaxReturn(
 
 object TaxReturn {
   implicit val format: OFormat[TaxReturn] = Json.format[TaxReturn]
+
+  implicit class LongOption(option: Option[Long]) {
+    def getOrZero: Long = option.getOrElse(0)
+  }
+
 }
