@@ -109,7 +109,14 @@ const reviewReturn = () => {
 
          document.getElementsByClassName('govuk-button')[0].click()
      }
- }
+}
+
+const confirmationPage = () => {
+     if (currentPageIs('/plastic-packaging-tax/returns/return-complete')) {
+
+         document.getElementsByClassName('govuk-link')[5].click()
+     }
+}
 
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
@@ -121,5 +128,6 @@ const completeJourney = () => {
     exportedPackagingWeightPage()
     convertedPackagingCreditPage()
     reviewReturn()
+    confirmationPage()
 
 }

@@ -29,6 +29,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
@@ -103,33 +104,21 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           mockTaxReturnUpdate(aTaxReturn())
 
           val result =
-            controller.submit()(postRequest(JsObject.empty))
+            controller.submit()(postRequestEncoded(JsObject.empty, formAction))
 
           status(result) mustBe Assets.SEE_OTHER
           formAction match {
             case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
-            case _ =>
               updatedTaxReturn.metaData.returnCompleted mustBe true
+              flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
+              redirectLocation(result) mustBe Some(
+                returnRoutes.ConfirmationController.displayPage().url
+              )
+            case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
           reset(mockTaxReturnsConnector)
         }
-      }
-    }
-
-    "adds referenceId to response as flashkey" when {
-
-      "user submits tax return" in {
-
-        authorizedUser()
-        mockTaxReturnFind(aTaxReturn())
-        mockTaxReturnUpdate(aTaxReturn())
-
-        val result =
-          controller.submit()(postRequest(JsObject.empty))
-
-        flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
       }
     }
 
@@ -139,7 +128,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(postRequest(JsObject.empty))
+          controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -148,7 +137,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(postRequest(JsObject.empty))
+          controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
         intercept[RuntimeException](status(result))
       }

@@ -19,3 +19,5 @@ POST       /converted-plastic-packaging-credit   uk.gov.hmrc.plasticpackagingtax
 
 GET        /check-your-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.CheckYourReturnController.displayPage()
 POST       /check-your-return  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.CheckYourReturnController.submit()
+
+GET        /return-complete   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConfirmationController.displayPage()
