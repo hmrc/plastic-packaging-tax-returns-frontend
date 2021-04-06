@@ -140,3 +140,17 @@ returns.checkYourReturnPage.taxLiability.description = Liable Packaging is calcu
 returns.checkYourReturnPage.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
 returns.checkYourReturnPage.totalCredits.label = Total Credits
 returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Requested
+
+returns.confirmationPage.title = Return complete
+returns.confirmationPage.panel.body = Your reference number {0}
+returns.confirmationPage.panel.body.default = Your return has already been submitted
+returns.confirmationPage.body = We have sent you a confirmation email.
+returns.confirmationPage.body.print = Print page
+returns.confirmationPage.body.downloadPdf = Download pdf
+returns.confirmationPage.whatHappensNext.title = What happens next
+returns.confirmationPage.whatHappensNext.liable.title = If you are liable for the tax, the first payment will be due by 31 July 2022
+returns.confirmationPage.inTheMeantime.title = In the meantime you can
+returns.confirmationPage.inTheMeantime.payLink = Pay your liability
+returns.confirmationPage.inTheMeantime.homeLink = Go to the Plastic Packaging Tax homepage
+returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
+returns.confirmationPage.exitSurvey.text.link = What did you think of this service?

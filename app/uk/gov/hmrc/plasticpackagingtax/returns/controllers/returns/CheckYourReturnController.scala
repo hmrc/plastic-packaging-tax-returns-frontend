@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, MetaData, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
@@ -57,16 +58,17 @@ class CheckYourReturnController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       FormAction.bindFromRequest match {
-        case SaveAndContinue => Future.successful(Redirect(homeRoutes.HomeController.displayPage()))
-        case _ =>
+        case SaveAndContinue =>
           val refId = s"PPTR12345678${Random.nextInt(1000000)}"
           markReturnCompleted().map {
             case Right(_) =>
-              Redirect(homeRoutes.HomeController.displayPage()).flashing(
+              Redirect(returnRoutes.ConfirmationController.displayPage()).flashing(
                 Flash(Map(FlashKeys.referenceId -> refId))
               )
             case Left(error) => throw error
           }
+        case _ =>
+          Future.successful(Redirect(homeRoutes.HomeController.displayPage()))
       }
     }
 
