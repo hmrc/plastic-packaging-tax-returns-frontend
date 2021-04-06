@@ -48,3 +48,47 @@
     font-size: 19px;
   }
 }
+.button-link {
+  background: none !important;
+  color: #1d70b8;
+  border: none;
+  padding: 5px !important;
+  font: inherit;
+  font-size: 1.20em;
+  cursor: pointer;
+  text-decoration: underline;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+
+  &:hover {
+    color: #1d70b8;
+  }
+  &:focus {
+    color: inherit;
+  }
+  &:visited {
+    color: #1d70b8;
+  }
+}
+
+button.button-link.govuk-link.govuk-link--no-visited-state:focus {
+  background: #fd0!important;
+}
+
+.row-header--no-border .govuk-table__header {
+  border: none !important;
+}
+.cell--no-border .govuk-table__cell {
+  border: none !important;
+}
+#row-border {
+  border-bottom: 1px solid #b1b4b6 !important;
+}
+
+.float-to-right {
+  float: right;
+}
+
+.clear-float {
+  clear: both;
+}
