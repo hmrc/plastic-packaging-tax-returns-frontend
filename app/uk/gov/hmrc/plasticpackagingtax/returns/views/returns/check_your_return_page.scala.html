@@ -50,7 +50,7 @@ paragraphBody:paragraphBody
             format = Some("numeric")
         ),
         TableRow(
-            content =  HtmlContent(link(text = messages("site.link.change"), call = call)),
+            content =  HtmlContent(link(text = messages("site.link.change"), call = call, textHidden = Some(s"Change ${messages(key)}"))),
             classes = classes,
             format = Some("numeric")
         )
