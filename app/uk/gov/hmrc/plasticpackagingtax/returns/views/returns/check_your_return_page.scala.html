@@ -38,10 +38,10 @@ paragraphBody:paragraphBody
 
 @(taxReturn: TaxReturn)(implicit request: Request[_], messages: Messages)
 
-@row(key: String, value: Option[String], postFixMetric: String, call: Call, classes: String = "govuk-body") = @{
+@row(index: String, key: String, value: Option[String], postFixMetric: String, call: Call, classes: String = "govuk-body") = @{
     Seq(
         TableRow(
-            content = Text(messages(key)),
+            content = Text(s"$index. ${messages(key)}"),
             classes = classes
         ),
         TableRow(
@@ -94,14 +94,14 @@ paragraphBody:paragraphBody
 
         @govukTable(Table(
             rows = Seq(
-                row("returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.manufacturedPackaging.liable", taxReturn.manufacturedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),
-                row("returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
+                row("1a", "returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("1b", "returns.checkYourReturnPage.manufacturedPackaging.liable", taxReturn.manufacturedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
+                row("2a", "returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("2b", "returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
+                row("3", "returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("4a", "returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
+                row("4b", "returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),
+                row("5", "returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
                 ),
             head = Some(Seq(
                 HeadCell(
