@@ -62,7 +62,7 @@
 
 @govukLayout(
     title = Title("returns.exportedPlasticWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), returnsRoutes.HumanMedicinesPlasticWeightController.displayPage()))) {
+    backButton = Some(BackButton(messages("site.back"), returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), messages("site.back.hiddenText")))) {
 
         @errorSummary(form.errors)
 
