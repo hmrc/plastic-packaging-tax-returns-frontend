@@ -1,7 +1,7 @@
 service.name=Plastic Packaging Tax
 
 site.link.change = Change
-site.back.hiddenText = Back to previous page
+site.back.hiddenText = to previous page
 site.back = Back
 site.backToGovUk = Back to GOV.UK
 site.button.continue = Save and Continue
