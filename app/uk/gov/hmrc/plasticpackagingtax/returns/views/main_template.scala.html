@@ -59,6 +59,10 @@
     <!--[if gt IE 8]><!-->
         <link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css"/>
     <!--<![endif]-->
+
+    @if(useTimeoutDialog) {
+        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
+    }
 }
 
 @scripts = {
@@ -75,10 +79,6 @@
 
 @beforeContentBlock = {
     @phaseBanner("alpha")
-
-    @if(useTimeoutDialog) {
-        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
-    }
 }
 
 @content = {
