@@ -20,7 +20,7 @@
 
 @(keepAliveUrl: String, timeout: Duration, countdown: Duration)(implicit request: Request[_], messages: Messages)
 
-<div id="timeout-dialog"
+<meta id="timeout-dialog"
     class="govuk-visually-hidden"
     style="display: none;"
     data-title="@{messages("timeoutDialog.title")}"
@@ -32,4 +32,4 @@
     data-keep-alive-url="@{keepAliveUrl}"
     data-sign-out-url="@pptRoutes.SignOutController.signOut(SignOutReason.UserAction).url"
     data-timeout-url="@pptRoutes.SignOutController.signOut(SignOutReason.SessionTimeout).url">
-</div>
+</meta>
