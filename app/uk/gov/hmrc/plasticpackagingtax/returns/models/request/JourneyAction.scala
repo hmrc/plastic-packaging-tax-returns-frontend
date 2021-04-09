@@ -17,11 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
 import play.api.Logger
-import play.api.mvc.{ActionRefiner, Result, Results}
+import play.api.mvc.{ActionRefiner, Result}
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+
 import javax.inject.Inject
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
@@ -46,7 +47,7 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit
         }
       case None =>
         logger.warn(s"Enrolment not present, redirecting to Start")
-        Future.successful(Left(Results.Redirect(returnRoutes.StartController.displayPage())))
+        throw InsufficientEnrolments()
     }
   }
 

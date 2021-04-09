@@ -16,17 +16,23 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.config
 
+import controllers.Assets.SEE_OTHER
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Helpers.stubMessagesApi
+import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
+import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.Injector
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.error_template
 
+import scala.concurrent.Future
+
 class ErrorHandlerSpec
     extends AnyWordSpec with Injector with DefaultAwaitTimeout with Matchers
-    with GuiceOneAppPerSuite {
+    with GuiceOneAppPerSuite with OptionValues {
 
   private val errorPage    = instanceOf[error_template]
   private val appConfig    = app.injector.instanceOf[AppConfig]
@@ -42,6 +48,28 @@ class ErrorHandlerSpec
       result must include("title")
       result must include("heading")
       result must include("message")
+    }
+
+    "handle no active session authorisation exception" in {
+
+      val error  = new NoActiveSession("A user is not logged in") {}
+      val result = Future.successful(errorHandler.resolveError(FakeRequest(), error))
+      val expectedLocation =
+        s"""http://localhost:9949/auth-login-stub/gg-sign-in?continue=${urlEncode(
+          "http://localhost:8505/plastic-packaging-tax-returns/returns/submit-return"
+        )}"""
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedLocation)
+    }
+
+    "handle insufficient enrolments authorisation exception" in {
+
+      val error  = InsufficientEnrolments("HMRC-PPT-ORG")
+      val result = Future.successful(errorHandler.resolveError(FakeRequest(), error))
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value must endWith("/unauthorised")
     }
   }
 }

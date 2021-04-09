@@ -19,9 +19,10 @@ package uk.gov.hmrc.plasticpackagingtax.returns.config
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, RequestHeader, Result, Results}
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core.NoActiveSession
+import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.error_template
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 
 import javax.inject.{Inject, Singleton}
 
@@ -39,6 +40,8 @@ class ErrorHandler @Inject() (error_template: error_template, val messagesApi: M
     ex match {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+      case _: InsufficientEnrolments =>
+        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
       case _ => super.resolveError(rh, ex)
     }
 

@@ -20,33 +20,22 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.{AnyContentAsEmpty, Headers, Result, Results}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.mvc.{Headers, Result, Results}
 import play.api.test.Helpers.await
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
-  DownstreamServiceError,
-  TaxReturnsConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyActionSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with DefaultAwaitTimeout
-    with BeforeAndAfterEach {
+class JourneyActionSpec extends ControllerSpec {
 
-  private val mockTaxReturnsConnector = mock[TaxReturnsConnector]
-  private val responseGenerator       = mock[JourneyRequest[_] => Future[Result]]
-  private val actionRefiner           = new JourneyAction(mockTaxReturnsConnector)
+  private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
+  private val actionRefiner     = new JourneyAction(mockTaxReturnsConnector)(ExecutionContext.global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -56,15 +45,6 @@ class JourneyActionSpec
 
   val taxReturnId: String = "123"
 
-  private def request(
-    enrolmentIdentifier: Option[String] = None,
-    headers: Headers = Headers()
-  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(FakeRequest().withHeaders(headers),
-                             SignedInUser(Enrolments(Set.empty), IdentityData()),
-                             enrolmentIdentifier
-    )
-
   "action refine" should {
 
     "permit request" when {
@@ -73,7 +53,12 @@ class JourneyActionSpec
           Future.successful(Right(Option(TaxReturn(taxReturnId))))
         )
 
-        await(actionRefiner.invokeBlock(request(Some("123")), responseGenerator)) mustBe Results.Ok
+        await(
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            responseGenerator
+          )
+        ) mustBe Results.Ok
       }
     }
 
@@ -85,7 +70,10 @@ class JourneyActionSpec
         )
 
         await(
-          actionRefiner.invokeBlock(request(Some(taxReturnId), headers), responseGenerator)
+          actionRefiner.invokeBlock(
+            authRequest(headers, user = PptTestData.newUser("123", Some(taxReturnId))),
+            responseGenerator
+          )
         ) mustBe Results.Ok
 
         getHeaders.requestId mustBe Some(RequestId("req1"))
@@ -102,7 +90,10 @@ class JourneyActionSpec
         ).willReturn(Future.successful(Right(TaxReturn(taxReturnId))))
 
         await(
-          actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator)
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            responseGenerator
+          )
         ) mustBe Results.Ok
       }
     }
@@ -114,7 +105,10 @@ class JourneyActionSpec
         )
 
         await(
-          actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator)
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            responseGenerator
+          )
         ) mustBe Results.Ok
       }
     }
@@ -126,21 +120,26 @@ class JourneyActionSpec
     captor.getValue
   }
 
-  "redirect to StartController" when {
+  "throw exception" when {
     "enrolmentId not found" in {
-      await(actionRefiner.invokeBlock(request(), responseGenerator)) mustBe Results.Redirect(
-        returnRoutes.StartController.displayPage()
-      )
+      intercept[InsufficientEnrolments] {
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", None)),
+                                    responseGenerator
+          )
+        )
+      }
     }
 
     "enrolmentId is empty" in {
-      await(
-        actionRefiner.invokeBlock(request(Some("")), responseGenerator)
-      ) mustBe Results.Redirect(returnRoutes.StartController.displayPage())
+      intercept[InsufficientEnrolments] {
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some(""))),
+                                    responseGenerator
+          )
+        )
+      }
     }
-  }
-
-  "throw exception" when {
     "cannot load user tax return" in {
       given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
         Future.successful(
@@ -149,7 +148,12 @@ class JourneyActionSpec
       )
 
       intercept[DownstreamServiceError] {
-        await(actionRefiner.invokeBlock(request(Some(taxReturnId)), responseGenerator))
+        await(
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            responseGenerator
+          )
+        )
       }
     }
   }
