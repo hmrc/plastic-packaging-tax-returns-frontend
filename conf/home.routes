@@ -4,3 +4,5 @@ GET        /                        uk.gov.hmrc.plasticpackagingtax.returns.cont
 
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.returns.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.sessionTimeoutSignedOut()
+
+GET        /unauthorised            uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.UnauthorisedController.onPageLoad()

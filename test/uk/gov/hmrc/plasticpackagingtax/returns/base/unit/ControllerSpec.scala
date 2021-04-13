@@ -27,12 +27,15 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.returns.base.MockAuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.base.{MockAuthAction, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
+  AuthAction,
   SaveAndComeBackLater,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 
 import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,6 +57,18 @@ trait ControllerSpec
     FakeRequest("GET", "").withSession(session)
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
+
+  def authRequest(
+    headers: Headers = Headers(),
+    user: SignedInUser = PptTestData.newUser("123", Some("333"))
+  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
+    new AuthenticatedRequest(
+      FakeRequest().withHeaders(headers),
+      user,
+      user.enrolments.getEnrolment(AuthAction.pptEnrolmentKey).flatMap(
+        e => e.getIdentifier(AuthAction.pptEnrolmentIdentifierName).map(i => i.value)
+      )
+    )
 
   protected def postRequestEncoded(
     form: AnyRef,

@@ -28,16 +28,22 @@ object PptTestData {
 
   val nrsCredentials = Credentials(providerId = "providerId", providerType = "providerType")
 
-  def newUser(externalId: String = "123", pptEnrolmentId: String = "123"): SignedInUser =
+  def newUser(
+    externalId: String = "123",
+    pptEnrolmentId: Option[String] = Some("123")
+  ): SignedInUser =
     SignedInUser(
-      Enrolments(
-        Set(
-          Enrolment(AuthAction.pptEnrolmentKey).withIdentifier(
-            AuthAction.pptEnrolmentIdentifierName,
-            pptEnrolmentId
+      pptEnrolmentId.map(
+        id =>
+          Enrolments(
+            Set(
+              Enrolment(AuthAction.pptEnrolmentKey).withIdentifier(
+                AuthAction.pptEnrolmentIdentifierName,
+                id
+              )
+            )
           )
-        )
-      ),
+      ).getOrElse(Enrolments(Set.empty)),
       IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
                    Some(externalId),
                    None,
