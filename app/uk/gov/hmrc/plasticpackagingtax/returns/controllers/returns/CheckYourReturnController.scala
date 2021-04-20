@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
@@ -41,11 +42,18 @@ import scala.util.Random
 class CheckYourReturnController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
+  metrics: Metrics,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
   page: check_your_return_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
+
+  private val successSubmissionCounter =
+    metrics.defaultRegistry.counter("ppt.returns.success.submission.counter")
+
+  private val failedSubmissionCounter =
+    metrics.defaultRegistry.counter("ppt.returns.failed.submission.counter")
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
@@ -62,10 +70,13 @@ class CheckYourReturnController @Inject() (
           val refId = s"PPTR12345678${Random.nextInt(1000000)}"
           markReturnCompleted().map {
             case Right(_) =>
+              successSubmissionCounter.inc()
               Redirect(returnRoutes.ConfirmationController.displayPage()).flashing(
                 Flash(Map(FlashKeys.referenceId -> refId))
               )
-            case Left(error) => throw error
+            case Left(error) =>
+              failedSubmissionCounter.inc()
+              throw error
           }
         case _ =>
           Future.successful(Redirect(homeRoutes.HomeController.displayPage()))

@@ -45,7 +45,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
                                                          mcc = mcc,
                                                          page = page,
                                                          returnsConnector =
-                                                           mockTaxReturnsConnector
+                                                           mockTaxReturnsConnector,
+                                                         metrics = metricsMock
   )
 
   override protected def beforeEach(): Unit = {
@@ -109,12 +110,18 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           status(result) mustBe Assets.SEE_OTHER
           formAction match {
             case ("SaveAndContinue", "") =>
+              metricsMock.defaultRegistry.counter(
+                "ppt.returns.success.submission.counter"
+              ).getCount mustBe 1
               updatedTaxReturn.metaData.returnCompleted mustBe true
               flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
               redirectLocation(result) mustBe Some(
                 returnRoutes.ConfirmationController.displayPage().url
               )
             case _ =>
+              metricsMock.defaultRegistry.counter(
+                "ppt.returns.success.submission.counter"
+              ).getCount mustBe 1
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
           reset(mockTaxReturnsConnector)
@@ -131,6 +138,9 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
         intercept[DownstreamServiceError](status(result))
+        metricsMock.defaultRegistry.counter(
+          "ppt.returns.failed.submission.counter"
+        ).getCount mustBe 1
       }
 
       "user submits the tax return and runtime exception occurs" in {
