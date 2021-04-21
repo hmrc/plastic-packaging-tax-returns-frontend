@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
+import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
@@ -54,6 +55,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         val res = await(connector.create(TaxReturn("123")))
 
         res.value.id mustBe "123"
+        getTimer("ppt.returns.create.timer").getCount mustBe 1
       }
 
       "tax return already exists" in {
@@ -110,6 +112,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         val res = await(connector.find("123"))
 
         res.value.get.id mustBe "123"
+        getTimer("ppt.returns.find.timer").getCount mustBe 1
       }
     }
 
@@ -163,7 +166,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         val res = await(connector.update(TaxReturn("123")))
 
         res.value.id mustBe "123"
-
+        getTimer("ppt.returns.update.timer").getCount mustBe 1
       }
 
       "tax return already exists" in {
@@ -211,5 +214,11 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
             .withBody(body)
         )
     )
+
+  private def getTimer(name: String): Timer =
+    SharedMetricRegistries
+      .getOrCreate("plastic-packaging-tax-returns-frontend")
+      .getTimers(MetricFilter.startsWith(name))
+      .get(name)
 
 }

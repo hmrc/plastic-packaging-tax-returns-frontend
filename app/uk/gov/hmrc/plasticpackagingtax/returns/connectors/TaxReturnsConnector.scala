@@ -36,7 +36,7 @@ class TaxReturnsConnector @Inject() (
     id: String
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[TaxReturn]]] = {
     import uk.gov.hmrc.http.HttpReads.Implicits.readOptionOfNotFound
-    val timer = metrics.defaultRegistry.timer("ppt.find.return.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.returns.find.timer").time()
     httpClient.GET[Option[TaxReturn]](appConfig.pptReturnUrl(id))
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toTaxReturn)))
@@ -49,7 +49,7 @@ class TaxReturnsConnector @Inject() (
   def create(
     payload: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.create.return.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.returns.create.timer").time()
     httpClient.POST[TaxReturn, TaxReturn](appConfig.pptReturnsUrl, payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toTaxReturn))
@@ -62,7 +62,7 @@ class TaxReturnsConnector @Inject() (
   def update(
     payload: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.update.return.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.returns.update.timer").time()
     httpClient.PUT[TaxReturn, TaxReturn](appConfig.pptReturnUrl(payload.id), payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toTaxReturn))

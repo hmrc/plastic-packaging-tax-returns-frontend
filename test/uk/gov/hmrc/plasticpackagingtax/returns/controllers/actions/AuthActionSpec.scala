@@ -20,19 +20,23 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
 
-class AuthActionSpec extends ControllerSpec {
+class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
   private def createAuthAction(
     utrAllowedList: UtrAllowedList = new UtrAllowedList(Seq.empty)
   ): AuthAction =
-    new AuthActionImpl(mockAuthConnector, utrAllowedList, stubMessagesControllerComponents())
+    new AuthActionImpl(mockAuthConnector,
+                       utrAllowedList,
+                       metricsMock,
+                       stubMessagesControllerComponents()
+    )
 
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
@@ -54,7 +58,14 @@ class AuthActionSpec extends ControllerSpec {
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
       ) mustBe Results.Ok
+    }
 
+    "time calls to authorisation" in {
+      val user = PptTestData.newUser("123", Some("555"))
+      authorizedUser(user)
+
+      await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
+      metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount should be > 1L
     }
 
     "process request when UTR number is present and allowed" in {

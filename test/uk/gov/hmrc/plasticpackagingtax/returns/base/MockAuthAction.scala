@@ -33,12 +33,13 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 
 import scala.concurrent.Future
 
-trait MockAuthAction extends MockitoSugar {
+trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val mockAuthAction = new AuthActionImpl(mockAuthConnector,
                                           new UtrAllowedList(Seq.empty),
+                                          metricsMock,
                                           stubMessagesControllerComponents()
   )
 
