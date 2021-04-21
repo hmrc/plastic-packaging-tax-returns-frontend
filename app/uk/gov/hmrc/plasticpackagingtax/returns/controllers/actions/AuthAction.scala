@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  utrWhitelist: UtrWhitelist,
+  utrAllowedList: UtrAllowedList,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
@@ -104,11 +104,11 @@ class AuthActionImpl @Inject() (
     id: String,
     allEnrolments: Enrolments
   ) =
-    if (utrWhitelist.isAllowed(id)) {
+    if (utrAllowedList.isAllowed(id)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
       block(new AuthenticatedRequest(request, pptLoggedInUser, Some(id)))
     } else {
-      logger.warn("User id is not whitelisted, access denied")
+      logger.warn("User id is not allowed, access denied")
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad()))
     }
 
