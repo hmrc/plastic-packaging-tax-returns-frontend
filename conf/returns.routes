@@ -5,8 +5,8 @@ GET        /submit-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.
 GET        /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.displayPage()
 POST       /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.submit()
 
-GET        /human-medicines-plastic-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.displayPage()
-POST       /human-medicines-plastic-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.submit()
+GET        /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.displayPage()
+POST       /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.submit()
 
 GET        /imported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.displayPage()
 POST       /imported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.submit()
@@ -14,10 +14,10 @@ POST       /imported-plastic-packaging-weight           uk.gov.hmrc.plasticpacka
 GET        /exported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ExportedPlasticWeightController.displayPage()
 POST       /exported-plastic-packaging-weight           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ExportedPlasticWeightController.submit()
 
-GET        /converted-plastic-packaging-credit   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.displayPage()
-POST       /converted-plastic-packaging-credit   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.submit()
+GET        /converted-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.displayPage()
+POST       /converted-plastic-packaging-weight   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConvertedPackagingCreditController.submit()
 
 GET        /check-your-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.CheckYourReturnController.displayPage()
 POST       /check-your-return  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.CheckYourReturnController.submit()
 
-GET        /return-complete   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConfirmationController.displayPage()
+GET        /return-submitted   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConfirmationController.displayPage()

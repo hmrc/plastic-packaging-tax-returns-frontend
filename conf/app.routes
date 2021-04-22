@@ -2,6 +2,6 @@
 
 ->         /returns                 returns.Routes
 
-->         /home                    home.Routes
+->         /account                 home.Routes
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)

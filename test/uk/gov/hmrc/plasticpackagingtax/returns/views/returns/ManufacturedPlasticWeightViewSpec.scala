@@ -39,6 +39,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   "Manufactured Plastic Weight View" should {
 
     "have proper messages for labels" in {
+      messages must haveTranslationFor("returns.manufacturedPlasticWeight.meta.title")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.title")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.sectionHeader")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.total.weight")
@@ -60,10 +61,10 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "validate other rendering  methods" in {
       page.f(form())(request, messages).select("title").text() must include(
-        messages("returns.manufacturedPlasticWeight.title")
+        messages("returns.manufacturedPlasticWeight.meta.title")
       )
       page.render(form(), request, messages).select("title").text() must include(
-        messages("returns.manufacturedPlasticWeight.title")
+        messages("returns.manufacturedPlasticWeight.meta.title")
       )
     }
 
@@ -84,7 +85,9 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("returns.manufacturedPlasticWeight.title"))
+      view.select("title").text() must include(
+        messages("returns.manufacturedPlasticWeight.meta.title")
+      )
     }
 
     "display header" in {
