@@ -39,6 +39,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   "Human Medicines Plastic Weight View" should {
 
     "have proper messages for labels" in {
+      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.meta.title")
       messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.title")
       messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.hint")
       messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.sectionHeader")
@@ -57,10 +58,10 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "validate other rendering  methods" in {
       page.f(form())(request, messages).select("title").text() must include(
-        messages("returns.humanMedicinesPlasticWeight.title")
+        messages("returns.humanMedicinesPlasticWeight.meta.title")
       )
       page.render(form(), request, messages).select("title").text() must include(
-        messages("returns.humanMedicinesPlasticWeight.title")
+        messages("returns.humanMedicinesPlasticWeight.meta.title")
       )
     }
 
@@ -84,7 +85,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(
-        messages("returns.humanMedicinesPlasticWeight.title")
+        messages("returns.humanMedicinesPlasticWeight.meta.title")
       )
     }
 

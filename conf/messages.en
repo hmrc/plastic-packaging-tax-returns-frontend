@@ -62,6 +62,7 @@ returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycl
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
 
+returns.manufacturedPlasticWeight.meta.title = Manufactured plastic packaging components
 returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging
 returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax Return
 returns.manufacturedPlasticWeight.total.weight = Total weight of manufactured packaging components
@@ -76,6 +77,7 @@ returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbe
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 returns.manufacturedPlasticWeight.invalidValue.error = Amount cannot be more than the total manufactured weight
 
+returns.importedPlasticWeight.meta.title = Imported plastic packaging components
 returns.importedPlasticWeight.title = 2. Imported plastic packaging
 returns.importedPlasticWeight.hint = This applies to all complete plastic packaging, whether it is filled or unfilled.
 returns.importedPlasticWeight.sectionHeader = Plastic Packaging Tax Return
@@ -90,6 +92,7 @@ returns.importedPlasticWeight.format.error = Amount must be entered as numbers o
 returns.importedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 returns.importedPlasticWeight.invalidValue.error = Amount cannot be more than the total imported weight
 
+returns.humanMedicinesPlasticWeight.meta.title = Immediate packaging of licenced human medicines
 returns.humanMedicinesPlasticWeight.title = 3. Immediate human medicines packaging
 returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into immediate contact with licensed human medicines is not liable for the tax, but must still be declared below.
 returns.humanMedicinesPlasticWeight.sectionHeader = Plastic Packaging Tax Return
@@ -114,6 +117,7 @@ returns.exportedPlasticWeight.totalValueForCredit.format.error = Enter an amount
 returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 returns.exportedPlasticWeight.credit.aboveMax.error = Amount cannot exceed £99,999,999
 
+returns.convertedPackagingCredit.meta.title = Converted packaging
 returns.convertedPackagingCredit.title = 5. Converted packaging
 returns.convertedPackagingCredit.sectionHeader = Plastic Packaging Tax Return
 returns.convertedPackagingCredit.total.weight = Total value of packaging for credit
@@ -148,7 +152,7 @@ returns.checkYourReturnPage.totalCredits.description = Credits will be updated t
 returns.checkYourReturnPage.totalCredits.label = Total Credits
 returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Requested
 
-returns.confirmationPage.title = Return complete
+returns.confirmationPage.title = Return submitted
 returns.confirmationPage.panel.body = Your reference number {0}
 returns.confirmationPage.panel.body.default = Your return has already been submitted
 returns.confirmationPage.body = We have sent you a confirmation email.

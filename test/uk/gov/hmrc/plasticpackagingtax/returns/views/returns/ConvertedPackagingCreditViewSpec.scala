@@ -38,6 +38,7 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
   "Converted Packaging Credit View" should {
 
     "have proper messages for labels" in {
+      messages must haveTranslationFor("returns.convertedPackagingCredit.meta.title")
       messages must haveTranslationFor("returns.convertedPackagingCredit.title")
       messages must haveTranslationFor("returns.convertedPackagingCredit.sectionHeader")
       messages must haveTranslationFor("returns.convertedPackagingCredit.total.weight")
@@ -62,7 +63,9 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("returns.convertedPackagingCredit.title"))
+      view.select("title").text() must include(
+        messages("returns.convertedPackagingCredit.meta.title")
+      )
     }
 
     "display header" in {
