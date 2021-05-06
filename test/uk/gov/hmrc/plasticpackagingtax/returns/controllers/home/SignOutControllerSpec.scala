@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, session, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
@@ -148,7 +147,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.sessionTimeoutSignedOut()(getRequest())
 
-        status(result) mustBe OK.intValue
+        status(result) mustBe OK
       }
     }
 

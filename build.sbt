@@ -1,5 +1,4 @@
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "plastic-packaging-tax-returns-frontend"
@@ -10,10 +9,7 @@ val silencerVersion = "1.7.1"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,
-                 SbtAutoBuildPlugin,
-                 SbtGitVersioning,
                  SbtDistributablesPlugin,
-                 SbtArtifactory,
                  SbtWeb
   )
   .disablePlugins(JUnitXmlReportPlugin)
@@ -33,7 +29,8 @@ lazy val microservice = Project(appName, file("."))
                 "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full
               ),
               "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-            )
+            ),
+            isPublicArtefact := true
             // ***************
   )
   .settings(publishingSettings: _*)

@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import controllers.Assets
-import controllers.Assets.{BAD_REQUEST, OK}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -95,7 +94,7 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
               )
             )
 
-          status(result) mustBe Assets.SEE_OTHER
+          status(result) mustBe SEE_OTHER
           modifiedTaxReturn.exportedPlasticWeight.get.totalKg mustBe 10
           modifiedTaxReturn.exportedPlasticWeight.get.totalValueForCreditInPence mustBe 575
           formAction match {

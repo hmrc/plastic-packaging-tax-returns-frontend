@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.config
 
-import controllers.Assets.SEE_OTHER
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
