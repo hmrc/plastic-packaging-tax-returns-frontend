@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
@@ -27,7 +27,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 
 @this(
-formHelper: FormWithCSRF,
+formHelper: formWithCSRF,
 govukLayout: main_template,
 pageTitle: pageTitle,
 saveButtons: saveButtons,
@@ -78,7 +78,7 @@ paragraphBody:paragraphBody
 }
 
 @hiddenText(key: String) = @{
-    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>""")),
+    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
 }
 
 @govukLayout(

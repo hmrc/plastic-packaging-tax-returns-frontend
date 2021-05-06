@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
@@ -50,7 +50,7 @@ class StartControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(getRequest())
 
-        status(result) mustBe OK.intValue
+        status(result) mustBe OK
       }
     }
   }

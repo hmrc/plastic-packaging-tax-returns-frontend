@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
@@ -38,7 +38,7 @@
   paragraphBody: paragraphBody,
   govukDetails : GovukDetails,
   govukFieldset : GovukFieldset,
-  formHelper: FormWithCSRF
+  formHelper: formWithCSRF
 )
 
 @(form: Form[ImportedPlasticWeight])(implicit request: Request[_], messages: Messages)

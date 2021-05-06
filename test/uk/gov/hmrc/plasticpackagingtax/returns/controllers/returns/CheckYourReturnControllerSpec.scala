@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import controllers.Assets
-import controllers.Assets.OK
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{flash, redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -107,7 +106,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
 
-          status(result) mustBe Assets.SEE_OTHER
+          status(result) mustBe SEE_OTHER
           formAction match {
             case ("SaveAndContinue", "") =>
               metricsMock.defaultRegistry.counter(
