@@ -21,15 +21,17 @@ import play.api.Configuration
 
 import javax.inject.Provider
 
-@ProvidedBy(classOf[UtrAllowedListProvider])
-class UtrAllowedList(values: Seq[String]) {
+@ProvidedBy(classOf[PptReferenceAllowedListProvider])
+class PptReferenceAllowedList(values: Seq[String]) {
   def isAllowed(utr: String): Boolean = values.isEmpty || values.contains(utr)
 }
 
-class UtrAllowedListProvider @Inject() (configuration: Configuration)
-    extends Provider[UtrAllowedList] {
+class PptReferenceAllowedListProvider @Inject() (configuration: Configuration)
+    extends Provider[PptReferenceAllowedList] {
 
-  override def get(): UtrAllowedList =
-    new UtrAllowedList(configuration.get[Seq[String]]("allowedList.utr").map(_.trim))
+  override def get(): PptReferenceAllowedList =
+    new PptReferenceAllowedList(
+      configuration.get[Seq[String]]("allowedList.pptReference").map(_.trim)
+    )
 
 }

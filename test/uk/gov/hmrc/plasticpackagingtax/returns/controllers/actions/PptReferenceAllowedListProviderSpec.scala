@@ -21,34 +21,34 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 
-class UtrAllowedListProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class PptReferenceAllowedListProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "UtrAllowedListProvider" should {
+  "PptReferenceAllowedListProvider" should {
 
     "load correctly from configuration" in {
 
-      val config   = Configuration("allowedList.utr.0" -> "1234")
-      val provider = new UtrAllowedListProvider(config)
-      provider.get() mustBe a[UtrAllowedList]
+      val config   = Configuration("allowedList.pptReference.0" -> "1234")
+      val provider = new PptReferenceAllowedListProvider(config)
+      provider.get() mustBe a[PptReferenceAllowedList]
     }
 
     "trim spaces during loading" in {
 
-      val config   = Configuration("allowedList.utr.0" -> " 1234 ")
-      val provider = new UtrAllowedListProvider(config)
+      val config   = Configuration("allowedList.pptReference.0" -> " 1234 ")
+      val provider = new PptReferenceAllowedListProvider(config)
       provider.get().isAllowed("1234") mustBe true
     }
 
     "allow empty list" in {
 
-      val config   = Configuration("allowedList.utr.0" -> "")
-      val provider = new UtrAllowedListProvider(config)
-      provider.get() mustBe a[UtrAllowedList]
+      val config   = Configuration("allowedList.pptReference.0" -> "")
+      val provider = new PptReferenceAllowedListProvider(config)
+      provider.get() mustBe a[PptReferenceAllowedList]
     }
 
     "throw exception when there is not configuration key" in {
 
-      val provider = new UtrAllowedListProvider(Configuration.empty)
+      val provider = new PptReferenceAllowedListProvider(Configuration.empty)
       an[Exception] mustBe thrownBy {
         provider.get()
       }

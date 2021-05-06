@@ -27,6 +27,7 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, MockAuthAction, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
@@ -61,7 +62,7 @@ trait ControllerSpec
 
   def authRequest(
     headers: Headers = Headers(),
-    user: SignedInUser = PptTestData.newUser("123", Some("333"))
+    user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
     new AuthenticatedRequest(
       FakeRequest().withHeaders(headers),

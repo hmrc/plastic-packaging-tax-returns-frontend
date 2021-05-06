@@ -26,6 +26,7 @@ import play.api.test.Helpers.await
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
@@ -55,7 +56,7 @@ class JourneyActionSpec extends ControllerSpec {
 
         await(
           actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
             responseGenerator
           )
         ) mustBe Results.Ok
@@ -71,7 +72,9 @@ class JourneyActionSpec extends ControllerSpec {
 
         await(
           actionRefiner.invokeBlock(
-            authRequest(headers, user = PptTestData.newUser("123", Some(taxReturnId))),
+            authRequest(headers,
+                        user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))
+            ),
             responseGenerator
           )
         ) mustBe Results.Ok
@@ -91,7 +94,7 @@ class JourneyActionSpec extends ControllerSpec {
 
         await(
           actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
             responseGenerator
           )
         ) mustBe Results.Ok
@@ -106,7 +109,7 @@ class JourneyActionSpec extends ControllerSpec {
 
         await(
           actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
             responseGenerator
           )
         ) mustBe Results.Ok
@@ -134,8 +137,9 @@ class JourneyActionSpec extends ControllerSpec {
     "enrolmentId is empty" in {
       intercept[InsufficientEnrolments] {
         await(
-          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some(""))),
-                                    responseGenerator
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment("")))),
+            responseGenerator
           )
         )
       }
@@ -150,7 +154,7 @@ class JourneyActionSpec extends ControllerSpec {
       intercept[DownstreamServiceError] {
         await(
           actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(taxReturnId))),
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
             responseGenerator
           )
         )
