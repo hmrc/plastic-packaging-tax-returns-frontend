@@ -11,8 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc"                     %% "play-frontend-govuk"        % "0.71.0-play-28",
     "uk.gov.hmrc"                     %% "play-frontend-hmrc"         % "0.60.0-play-28",
     "org.webjars.npm"                 %  "govuk-frontend"             % "3.11.0",
-    "org.webjars.npm"                 %  "hmrc-frontend"              % "1.32.0",
-    "com.fasterxml.jackson.module"    %% "jackson-module-scala"       % "2.12.3"
+    "org.webjars.npm"                 %  "hmrc-frontend"              % "1.32.0"
   )
 
   val test = Seq(
@@ -24,7 +23,7 @@ object AppDependencies {
     "org.scalatestplus"       %% "scalatestplus-mockito"    % "1.0.0-M2"              % Test,
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"                % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0"                 % "test, it",
-    "com.github.tomakehurst"  %  "wiremock-jre8"            % "2.27.2"                % "test, it",
+    "com.github.tomakehurst"  %  "wiremock-jre8"            % "2.26.3"                % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it"
   )
 }
