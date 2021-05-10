@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      2.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/returns*
@@ -80,7 +80,7 @@ const importedWeightPage = () => {
 }
 
 const humanMedicinesWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/human-medicines-plastic-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/returns/human-medicines-packaging-weight')) {
 
         document.getElementById('totalKg').value = '1'
         document.getElementsByClassName('govuk-button')[0].click()
