@@ -56,7 +56,7 @@ class ErrorHandlerSpec
       val result = Future.successful(errorHandler.resolveError(FakeRequest(), error))
       val expectedLocation =
         s"""http://localhost:9949/auth-login-stub/gg-sign-in?continue=${urlEncode(
-          "http://localhost:8505/plastic-packaging-tax-returns/returns/submit-return"
+          "http://localhost:8505/plastic-packaging-tax/returns/submit-return"
         )}"""
 
       status(result) mustBe SEE_OTHER

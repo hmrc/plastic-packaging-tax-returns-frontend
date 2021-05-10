@@ -27,8 +27,11 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.newUser
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{AuthActionImpl, UtrAllowedList}
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newUser, pptEnrolment}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
+  AuthActionImpl,
+  PptReferenceAllowedList
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 
 import scala.concurrent.Future
@@ -38,12 +41,12 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val mockAuthAction = new AuthActionImpl(mockAuthConnector,
-                                          new UtrAllowedList(Seq.empty),
+                                          new PptReferenceAllowedList(Seq.empty),
                                           metricsMock,
                                           stubMessagesControllerComponents()
   )
 
-  val exampleUser             = newUser("external1", Some("123"))
+  val exampleUser             = newUser("external1", Some(pptEnrolment("123")))
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
   val nrsCredentialRole       = Some(User)
   val nrsMdtpInformation      = MdtpInformation("deviceId", "sessionId")

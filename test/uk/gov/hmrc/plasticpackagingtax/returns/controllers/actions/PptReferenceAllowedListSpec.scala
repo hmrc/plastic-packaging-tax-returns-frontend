@@ -20,23 +20,23 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-class UtrAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class PptReferenceAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "utr allow list" when {
+  "ppt reference allow list" when {
     "is empty" should {
       "allow everyone" in {
-        val utrAllowedList = new UtrAllowedList(Seq.empty)
-        utrAllowedList.isAllowed("12345") mustBe true
-        utrAllowedList.isAllowed("0987") mustBe true
+        val pptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
+        pptReferenceAllowedList.isAllowed("12345") mustBe true
+        pptReferenceAllowedList.isAllowed("0987") mustBe true
       }
     }
     "has elements" should {
-      val utrAllowedList = new UtrAllowedList(Seq("12345"))
-      "allow listed utr" in {
-        utrAllowedList.isAllowed("12345") mustBe true
+      val pptReferenceAllowedList = new PptReferenceAllowedList(Seq("12345"))
+      "allow listed ppt reference" in {
+        pptReferenceAllowedList.isAllowed("12345") mustBe true
       }
-      "disallow not listed utr" in {
-        utrAllowedList.isAllowed("0987") mustBe false
+      "disallow not listed ppt reference" in {
+        pptReferenceAllowedList.isAllowed("0987") mustBe false
       }
     }
   }
