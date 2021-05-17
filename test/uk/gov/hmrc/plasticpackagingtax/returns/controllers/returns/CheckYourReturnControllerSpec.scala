@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.test.Helpers.{flash, redirectLocation, status}
+import play.api.test.Helpers.{await, flash, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
@@ -45,6 +45,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
                                                          page = page,
                                                          returnsConnector =
                                                            mockTaxReturnsConnector,
+                                                         auditor = mockAuditor,
                                                          metrics = metricsMock
   )
 
@@ -125,6 +126,22 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           }
           reset(mockTaxReturnsConnector)
         }
+      }
+    }
+
+    "send audit event" when {
+      "submission of audit event" in {
+        authorizedUser()
+        val taxReturn = aTaxReturn()
+        mockTaxReturnFind(taxReturn)
+        mockTaxReturnUpdate(taxReturn)
+
+        await(controller.submit()(postRequest(JsObject.empty)))
+
+        verify(mockAuditor, Mockito.atLeast(1)).auditTaxReturn(ArgumentMatchers.eq(taxReturn))(
+          any(),
+          any()
+        )
       }
     }
 

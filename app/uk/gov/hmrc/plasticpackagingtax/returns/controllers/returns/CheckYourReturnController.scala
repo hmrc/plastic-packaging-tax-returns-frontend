@@ -32,8 +32,9 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, Jo
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
@@ -44,6 +45,7 @@ class CheckYourReturnController @Inject() (
   journeyAction: JourneyAction,
   metrics: Metrics,
   override val returnsConnector: TaxReturnsConnector,
+  auditor: Auditor,
   mcc: MessagesControllerComponents,
   page: check_your_return_page
 )(implicit ec: ExecutionContext)
@@ -70,6 +72,7 @@ class CheckYourReturnController @Inject() (
           val refId = s"PPTR12345678${Random.nextInt(1000000)}"
           markReturnCompleted().map {
             case Right(_) =>
+              auditor.auditTaxReturn(request.taxReturn)
               successSubmissionCounter.inc()
               Redirect(returnRoutes.ConfirmationController.displayPage()).flashing(
                 Flash(Map(FlashKeys.referenceId -> refId))
