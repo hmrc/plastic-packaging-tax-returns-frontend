@@ -50,7 +50,8 @@ case class TaxReturn(
               importedPlasticWeight = this.importedPlasticWeight,
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
               exportedPlasticWeight = this.exportedPlasticWeight,
-              convertedPackagingCredit = this.convertedPackagingCredit
+              convertedPackagingCredit = this.convertedPackagingCredit,
+              metaData = this.metaData
     )
 
   def isReturnSubmitReady: Boolean =
