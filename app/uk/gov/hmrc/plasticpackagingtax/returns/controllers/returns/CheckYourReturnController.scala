@@ -71,13 +71,14 @@ class CheckYourReturnController @Inject() (
         case SaveAndContinue =>
           val refId = s"PPTR12345678${Random.nextInt(1000000)}"
           markReturnCompleted().map {
-            case Right(_) =>
-              auditor.auditTaxReturn(request.taxReturn)
+            case Right(taxReturn) =>
+              auditor.auditTaxReturn(taxReturn)
               successSubmissionCounter.inc()
               Redirect(returnRoutes.ConfirmationController.displayPage()).flashing(
                 Flash(Map(FlashKeys.referenceId -> refId))
               )
             case Left(error) =>
+              auditor.auditTaxReturn(request.taxReturn)
               failedSubmissionCounter.inc()
               throw error
           }
