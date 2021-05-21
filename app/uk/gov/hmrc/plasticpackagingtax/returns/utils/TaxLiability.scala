@@ -31,7 +31,6 @@ object TaxLiabilityFactory extends PriceConverter {
     totalManufacturedKg: Long,
     totalImportedKg: Long,
     totalManufacturedKgBelowThreshold: Long,
-    totalImportedKgBelowThreshold: Long,
     totalHumanMedicinesKg: Long,
     totalDirectExportsKg: Long,
     totalDirectExportsCreditPence: Long,
@@ -39,10 +38,10 @@ object TaxLiabilityFactory extends PriceConverter {
   ): TaxLiability = {
 
     val totalKgAboveThreshold =
-      (totalManufacturedKg + totalImportedKg) - (totalManufacturedKgBelowThreshold + totalImportedKgBelowThreshold)
+      (totalManufacturedKg + totalImportedKg) - totalManufacturedKgBelowThreshold
 
     val totalKgLiable =
-      (totalManufacturedKgBelowThreshold + totalImportedKgBelowThreshold) - (totalHumanMedicinesKg + totalDirectExportsKg)
+      totalManufacturedKgBelowThreshold - (totalHumanMedicinesKg + totalDirectExportsKg)
 
     val totalKgExempt =
       totalKgAboveThreshold + (totalHumanMedicinesKg + totalDirectExportsKg)

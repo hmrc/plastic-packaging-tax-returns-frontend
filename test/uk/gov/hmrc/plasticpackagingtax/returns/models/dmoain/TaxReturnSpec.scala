@@ -47,7 +47,7 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
                                    withConvertedPackagingCredit(5),
                                    withDirectExportDetails(2, 2),
                                    withHumanMedicinesPlasticWeight(4),
-                                   withImportedPlasticWeight(2, 2),
+                                   withImportedPlasticWeight(2),
                                    withManufacturedPlasticWeight(7, 7)
         )
 
@@ -64,12 +64,12 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
 
         val taxReturn = aTaxReturn(withId("01"),
                                    withManufacturedPlasticWeight(5, 5),
-                                   withImportedPlasticWeight(2, 2)
+                                   withImportedPlasticWeight(2)
         )
 
         taxReturn.taxLiability.totalKgLiable must (not be 0)
         taxReturn.taxLiability.totalCredit mustBe 0
-        taxReturn.taxLiability.totalKgExempt mustBe 0
+        taxReturn.taxLiability.totalKgExempt mustBe 2
         taxReturn.taxLiability.taxDue must (not be 0)
       }
     }

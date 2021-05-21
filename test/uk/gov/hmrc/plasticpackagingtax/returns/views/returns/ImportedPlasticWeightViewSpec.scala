@@ -44,17 +44,17 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.importedPlasticWeight.hint")
       messages must haveTranslationFor("returns.importedPlasticWeight.sectionHeader")
       messages must haveTranslationFor("returns.importedPlasticWeight.total.weight")
-      messages must haveTranslationFor("returns.importedPlasticWeight.belowThreshold.weight")
 
       messages must haveTranslationFor("returns.importedPlasticWeight.details.link")
       messages must haveTranslationFor("returns.importedPlasticWeight.details.line1")
       messages must haveTranslationFor("returns.importedPlasticWeight.details.line2")
       messages must haveTranslationFor("returns.importedPlasticWeight.details.line3")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.line4")
+      messages must haveTranslationFor("returns.importedPlasticWeight.details.line5")
 
       messages must haveTranslationFor("returns.importedPlasticWeight.empty.error")
       messages must haveTranslationFor("returns.importedPlasticWeight.format.error")
       messages must haveTranslationFor("returns.importedPlasticWeight.aboveMax.error")
-      messages must haveTranslationFor("returns.importedPlasticWeight.invalidValue.error")
     }
 
     val view = createView()
@@ -99,14 +99,14 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display hint" in {
 
-      view.getElementsByClass("govuk-!-margin-bottom-7").text() must include(
+      view.getElementsByClass("govuk-body-m").text() must include(
         messages("returns.importedPlasticWeight.hint")
       )
     }
 
     "display total weight label" in {
 
-      view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
+      view.getElementsByClass("govuk-label--s").text() must include(
         messages("returns.importedPlasticWeight.total.weight")
       )
     }
@@ -114,18 +114,6 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display total weight input box" in {
 
       view must containElementWithID("totalKg")
-    }
-
-    "display total weight below threshold label" in {
-
-      view.getElementsByAttributeValueMatching("for", "totalKgBelowThreshold").text() must include(
-        messages("returns.importedPlasticWeight.belowThreshold.weight")
-      )
-    }
-
-    "display total weight below threshold input box" in {
-
-      view must containElementWithID("totalKgBelowThreshold")
     }
 
     "display 'Save and Continue' button" in {
@@ -146,11 +134,10 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ImportedPlasticWeight
         .form()
-        .fill(ImportedPlasticWeight("1000", "5"))
+        .fill(ImportedPlasticWeight("1000"))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
-      view.getElementById("totalKgBelowThreshold").attr("value") mustBe "5"
     }
   }
 
@@ -160,13 +147,12 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ImportedPlasticWeight
         .form()
-        .fillAndValidate(ImportedPlasticWeight("", ""))
+        .fillAndValidate(ImportedPlasticWeight(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("totalKg", "Enter an amount to continue")
-      view must haveGovukFieldError("totalKgBelowThreshold", "Enter an amount to continue")
     }
   }
 }

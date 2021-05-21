@@ -34,7 +34,6 @@ case class TaxReturn(
   lazy val taxLiability = TaxLiabilityFactory.create(
     totalManufacturedKg = manufacturedPlasticWeight.map(_.totalKg).getOrZero,
     totalImportedKg = importedPlasticWeight.map(_.totalKg).getOrZero,
-    totalImportedKgBelowThreshold = importedPlasticWeight.map(_.totalKgBelowThreshold).getOrZero,
     totalManufacturedKgBelowThreshold =
       manufacturedPlasticWeight.map(_.totalKgBelowThreshold).getOrZero,
     totalHumanMedicinesKg = humanMedicinesPlasticWeight.map(_.totalKg).getOrZero,
