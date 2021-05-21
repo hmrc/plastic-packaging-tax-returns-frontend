@@ -43,7 +43,6 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.title")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.sectionHeader")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.total.weight")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.belowThreshold.weight")
 
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.link")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line1")
@@ -54,7 +53,6 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.empty.error")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.format.error")
       messages must haveTranslationFor("returns.manufacturedPlasticWeight.aboveMax.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.invalidValue.error")
     }
 
     val view = createView()
@@ -99,7 +97,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display total weight label" in {
 
-      view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
+      view.getElementsByClass("govuk-label--s").text() must include(
         messages("returns.manufacturedPlasticWeight.total.weight")
       )
     }
@@ -107,18 +105,6 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display total weight input box" in {
 
       view must containElementWithID("totalKg")
-    }
-
-    "display total weight below threshold label" in {
-
-      view.getElementsByAttributeValueMatching("for", "totalKgBelowThreshold").text() must include(
-        messages("returns.manufacturedPlasticWeight.belowThreshold.weight")
-      )
-    }
-
-    "display total weight below threshold input box" in {
-
-      view must containElementWithID("totalKgBelowThreshold")
     }
 
     "display 'Save and Continue' button" in {
@@ -139,11 +125,10 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ManufacturedPlasticWeight
         .form()
-        .fill(ManufacturedPlasticWeight("1000", "5"))
+        .fill(ManufacturedPlasticWeight("1000"))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
-      view.getElementById("totalKgBelowThreshold").attr("value") mustBe "5"
     }
   }
 
@@ -153,13 +138,12 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ManufacturedPlasticWeight
         .form()
-        .fillAndValidate(ManufacturedPlasticWeight("", ""))
+        .fillAndValidate(ManufacturedPlasticWeight(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("totalKg", "Enter an amount to continue")
-      view must haveGovukFieldError("totalKgBelowThreshold", "Enter an amount to continue")
     }
   }
 }

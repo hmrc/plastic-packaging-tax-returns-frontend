@@ -17,7 +17,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukFieldset
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
@@ -34,14 +33,12 @@
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
   govukDetails : GovukDetails,
-  govukFieldset : GovukFieldset,
   formHelper: formWithCSRF
 )
 
 @(form: Form[ManufacturedPlasticWeight])(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
-@totalWeightBelowThresholdField = @{form("totalKgBelowThreshold")}
 
 @formattedDetailsContent = {
   <ul class="govuk-list">
@@ -52,56 +49,8 @@
   </ul>
 }
 
-@totalWeightBelowThresholdExceededError = @{
-    val errors = (form.errors).filter(e => e.key.isEmpty).map(err => messages(err.message, err.key)).mkString("<br>")
-    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
-@totalWeightBelowThresholdFieldErrors = @{
-    val fieldErrors = totalWeightBelowThresholdField.error.map(err => ErrorMessage(content = Text(messages(err.message))))
-    if (fieldErrors.isEmpty) {
-        totalWeightBelowThresholdExceededError
-    } else {
-        fieldErrors
-    }
-}
-
-@inputFields= {
-    @govukInput(
-        Input(
-            id = s"${totalWeightField.name}",
-            name = totalWeightField.name,
-            value = totalWeightField.value,
-            errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-            label = Label(
-                isPageHeading = true,
-                classes = s"govuk-label",
-                content = Text(messages("returns.manufacturedPlasticWeight.total.weight"))),
-                classes = "govuk-input--width-10",
-                spellcheck = Some(false),
-                suffix = Some(PrefixOrSuffix(
-                    content = Text("kg")
-                ))
-        )
-    )
-
-    @govukInput(
-        Input(
-            id = s"${totalWeightBelowThresholdField.name}",
-            name = totalWeightBelowThresholdField.name,
-            value = totalWeightBelowThresholdField.value,
-            errorMessage = totalWeightBelowThresholdFieldErrors,
-            label = Label(
-                isPageHeading = true,
-                classes = s"govuk-label",
-                content = Text(messages("returns.manufacturedPlasticWeight.belowThreshold.weight"))),
-                classes = "govuk-input--width-10",
-                spellcheck = Some(false),
-                suffix = Some(PrefixOrSuffix(
-                    content = Text("kg")
-                ))
-            )
-        )
+@hintContent = {
+    <p class="govuk-label govuk-label--s">@messages("returns.manufacturedPlasticWeight.total.weight")</p>
 }
 
 @govukLayout(
@@ -114,13 +63,22 @@
 
         @formHelper(action = returnsRoutes.ManufacturedPlasticWeightController.submit(), 'autoComplete -> "off") {
 
-        @govukFieldset(
-            Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("returns.manufacturedPlasticWeight.title")),
-                    classes = "govuk-fieldset__legend--l",
-                    isPageHeading = true)),
-                html = inputFields
+        @govukInput(
+            Input(
+                id = s"${totalWeightField.name}",
+                name = totalWeightField.name,
+                value = totalWeightField.value,
+                hint = Some(Hint(content = HtmlContent(hintContent))),
+                errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                label = Label(
+                    isPageHeading = true,
+                    classes = s"govuk-label--l",
+                    content = Text(messages("returns.manufacturedPlasticWeight.title"))),
+                    spellcheck = Some(false),
+                    suffix = Some(PrefixOrSuffix(
+                    content = Text("kg")
+                    )
+                )
             )
         )
 

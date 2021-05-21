@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 
-case class ManufacturedPlasticWeight(totalKg: String, totalKgBelowThreshold: String) {}
+case class ManufacturedPlasticWeight(totalKg: String) {}
 
 object ManufacturedPlasticWeight extends CommonFormValidators {
 
@@ -32,10 +32,6 @@ object ManufacturedPlasticWeight extends CommonFormValidators {
   val weightEmptyError      = "returns.manufacturedPlasticWeight.empty.error"
   val invalidFormatError    = "returns.manufacturedPlasticWeight.format.error"
   val aboveMaxError         = "returns.manufacturedPlasticWeight.aboveMax.error"
-  val invalidValueError     = "returns.manufacturedPlasticWeight.invalidValue.error"
-
-  val isValid: ManufacturedPlasticWeight => Boolean = value =>
-    value.totalKgBelowThreshold.trim.toLong <= value.totalKg.trim.toLong
 
   def form(): Form[ManufacturedPlasticWeight] =
     Form(
@@ -43,13 +39,8 @@ object ManufacturedPlasticWeight extends CommonFormValidators {
         totalKg -> text()
           .verifying(weightEmptyError, isNonEmpty)
           .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
-          .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
-        totalKgBelowThreshold -> text()
-          .verifying(weightEmptyError, isNonEmpty)
-          .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
       )(ManufacturedPlasticWeight.apply)(ManufacturedPlasticWeight.unapply)
-        .verifying(invalidValueError, isValid(_))
     )
 
 }
