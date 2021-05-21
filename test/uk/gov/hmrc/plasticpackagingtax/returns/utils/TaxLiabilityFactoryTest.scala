@@ -26,7 +26,6 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
 
     val taxLiability = TaxLiabilityFactory.create(totalManufacturedKg = 200,
                                                   totalImportedKg = 100,
-                                                  totalImportedKgBelowThreshold = 50,
                                                   totalHumanMedicinesKg = 4,
                                                   totalDirectExportsKg = 3,
                                                   totalDirectExportsCreditPence = 204,
@@ -34,11 +33,11 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
     )
 
     "calculate totalKgLiable" in {
-      taxLiability.totalKgLiable mustBe 43
+      taxLiability.totalKgLiable mustBe 300
     }
 
     "calculate totalKgExempt" in {
-      taxLiability.totalKgExempt mustBe 257
+      taxLiability.totalKgExempt mustBe 7
     }
 
     "calculate totalCredit" in {
@@ -46,25 +45,7 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
     }
 
     "calculate taxLiability" in {
-      taxLiability.taxDue mustBe BigDecimal("8.60")
-    }
-
-    "calculate taxLiability" when {
-
-      "totals below threshold are zero" in {
-        val taxLiability = TaxLiabilityFactory.create(totalManufacturedKg = 200,
-                                                      totalImportedKg = 100,
-                                                      totalImportedKgBelowThreshold = 0,
-                                                      totalHumanMedicinesKg = 4,
-                                                      totalDirectExportsKg = 3,
-                                                      totalDirectExportsCreditPence = 204,
-                                                      totalConversionCreditPence = 134
-        )
-        taxLiability.taxDue mustBe BigDecimal("-1.4")
-        taxLiability.totalKgExempt mustBe 307
-        taxLiability.totalCredit mustBe BigDecimal("3.38")
-        taxLiability.totalKgLiable mustBe -7
-      }
+      taxLiability.taxDue mustBe BigDecimal("60.00")
     }
 
     "returns taxLiability as zero" when {
@@ -72,7 +53,6 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
       "all values are zero's" in {
         val taxLiability = TaxLiabilityFactory.create(totalManufacturedKg = 0,
                                                       totalImportedKg = 0,
-                                                      totalImportedKgBelowThreshold = 0,
                                                       totalHumanMedicinesKg = 0,
                                                       totalDirectExportsKg = 0,
                                                       totalDirectExportsCreditPence = 0,

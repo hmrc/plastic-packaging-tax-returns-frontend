@@ -20,22 +20,17 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 
-case class ImportedPlasticWeight(totalKg: String, totalKgBelowThreshold: String)
+case class ImportedPlasticWeight(totalKg: String)
 
 object ImportedPlasticWeight extends CommonFormValidators {
 
   implicit val format: OFormat[ImportedPlasticWeight] = Json.format[ImportedPlasticWeight]
 
-  val maxTotalKg            = 99999999
-  val totalKg               = "totalKg"
-  val totalKgBelowThreshold = "totalKgBelowThreshold"
-  val weightEmptyError      = "returns.importedPlasticWeight.empty.error"
-  val invalidFormatError    = "returns.importedPlasticWeight.format.error"
-  val aboveMaxError         = "returns.importedPlasticWeight.aboveMax.error"
-  val invalidValueError     = "returns.importedPlasticWeight.invalidValue.error"
-
-  val isValid: ImportedPlasticWeight => Boolean = value =>
-    value.totalKgBelowThreshold.trim.toLong <= value.totalKg.trim.toLong
+  val maxTotalKg         = 99999999
+  val totalKg            = "totalKg"
+  val weightEmptyError   = "returns.importedPlasticWeight.empty.error"
+  val invalidFormatError = "returns.importedPlasticWeight.format.error"
+  val aboveMaxError      = "returns.importedPlasticWeight.aboveMax.error"
 
   def form(): Form[ImportedPlasticWeight] =
     Form(
@@ -43,13 +38,8 @@ object ImportedPlasticWeight extends CommonFormValidators {
         totalKg -> text()
           .verifying(weightEmptyError, isNonEmpty)
           .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
-          .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
-        totalKgBelowThreshold -> text()
-          .verifying(weightEmptyError, isNonEmpty)
-          .verifying(invalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
           .verifying(aboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
       )(ImportedPlasticWeight.apply)(ImportedPlasticWeight.unapply)
-        .verifying(invalidValueError, isValid(_))
     )
 
 }

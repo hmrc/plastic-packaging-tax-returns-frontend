@@ -35,7 +35,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                      withConvertedPackagingCredit(5),
                                      withDirectExportDetails(2, 2),
                                      withHumanMedicinesPlasticWeight(4),
-                                     withImportedPlasticWeight(2, 2)
+                                     withImportedPlasticWeight(2)
   )
 
   private def createView(): Document =
@@ -110,7 +110,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       val checkYourReturnView = new CheckYourReturnView(view)
 
       "tax return table has total 8 rows" in {
-        checkYourReturnView.getTableRows(0).size() mustBe 7
+        checkYourReturnView.getTableRows(0).size() mustBe 6
       }
 
       "tax return table table headers" in {
@@ -152,15 +152,6 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         )
         checkYourReturnView.rowExists(0,
                                       2,
-                                      "returns.checkYourReturnPage.importedPackaging.liable",
-                                      asKg(
-                                        taxReturn.importedPlasticWeight.get.totalKgBelowThreshold.toString
-                                      ),
-                                      returnRoutes.ImportedPlasticWeightController.displayPage()
-        )
-
-        checkYourReturnView.rowExists(0,
-                                      3,
                                       "returns.checkYourReturnPage.humansMedicinesPackaging",
                                       asKg(
                                         taxReturn.humanMedicinesPlasticWeight.get.totalKg.toString
@@ -169,13 +160,13 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         )
 
         checkYourReturnView.rowExists(0,
-                                      4,
+                                      3,
                                       "returns.checkYourReturnPage.directExports",
                                       asKg(taxReturn.exportedPlasticWeight.get.totalKg.toString),
                                       returnRoutes.ExportedPlasticWeightController.displayPage()
         )
         checkYourReturnView.rowExists(0,
-                                      5,
+                                      4,
                                       "returns.checkYourReturnPage.exportsCredit",
                                       asPounds(
                                         taxReturn.exportedPlasticWeight.get.totalValueForCreditAsString
@@ -184,7 +175,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         )
 
         checkYourReturnView.rowExists(0,
-                                      6,
+                                      5,
                                       "returns.checkYourReturnPage.conversionCredit",
                                       asPounds(
                                         taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString

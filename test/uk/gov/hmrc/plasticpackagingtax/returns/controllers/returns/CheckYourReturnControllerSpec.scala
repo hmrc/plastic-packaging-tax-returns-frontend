@@ -70,7 +70,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           aTaxReturn(withConvertedPackagingCredit(5),
                      withDirectExportDetails(2, 2),
                      withHumanMedicinesPlasticWeight(4),
-                     withImportedPlasticWeight(2, 2),
+                     withImportedPlasticWeight(2),
                      withManufacturedPlasticWeight(7)
           )
         )

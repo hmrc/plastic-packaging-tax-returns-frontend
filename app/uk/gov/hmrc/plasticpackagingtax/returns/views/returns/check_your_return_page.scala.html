@@ -95,8 +95,7 @@ paragraphBody:paragraphBody
         @govukTable(Table(
             rows = Seq(
                 row("1", "returns.checkYourReturnPage.manufacturedPackaging.total", taxReturn.manufacturedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ManufacturedPlasticWeightController.displayPage()),
-                row("2a", "returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("2b", "returns.checkYourReturnPage.importedPackaging.liable", taxReturn.importedPlasticWeight.map(_.totalKgBelowThreshold.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage()),
+                row("2", "returns.checkYourReturnPage.importedPackaging.total", taxReturn.importedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ImportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("3", "returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("4a", "returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("4b", "returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),

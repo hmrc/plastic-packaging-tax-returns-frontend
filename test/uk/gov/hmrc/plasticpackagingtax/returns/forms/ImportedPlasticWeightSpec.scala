@@ -22,10 +22,8 @@ import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.{
   aboveMaxError,
   invalidFormatError,
-  invalidValueError,
   maxTotalKg,
   totalKg,
-  totalKgBelowThreshold,
   weightEmptyError
 }
 
@@ -35,17 +33,9 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "total and totalKgBelowThreshold is equal" in {
+      "total is valid" in {
 
-        val input = Map(totalKg -> "100", totalKgBelowThreshold -> "100")
-
-        val form = ImportedPlasticWeight.form().bind(input)
-        form.errors.size mustBe 0
-      }
-
-      "totalKgBelowThreshold is smaller than total" in {
-
-        val input = Map(totalKg -> "100", totalKgBelowThreshold -> "10")
+        val input = Map(totalKg -> "100")
 
         val form = ImportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -53,7 +43,7 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
       "is 0" in {
 
-        val input = Map(totalKg -> "0", totalKgBelowThreshold -> "0")
+        val input = Map(totalKg -> "0")
 
         val form = ImportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -62,7 +52,7 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "is exactly max allowed amount" in {
 
         val input =
-          Map(totalKg -> maxTotalKg.toString, totalKgBelowThreshold -> maxTotalKg.toString)
+          Map(totalKg -> maxTotalKg.toString)
 
         val form = ImportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -71,7 +61,7 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "contains spaces before and after value" in {
 
         val input =
-          Map(totalKg -> " 3 ", totalKgBelowThreshold -> " 3 ")
+          Map(totalKg -> " 3 ")
 
         val form = ImportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -83,52 +73,35 @@ class ImportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "provided with empty data" in {
 
         val input =
-          Map(totalKg -> "", totalKgBelowThreshold -> "")
+          Map(totalKg -> "")
         val expectedErrors =
-          Seq(FormError(totalKg, weightEmptyError),
-              FormError(totalKgBelowThreshold, weightEmptyError)
-          )
+          Seq(FormError(totalKg, weightEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains alphanumerical or special character" in {
 
-        val input = Map(totalKg -> "20A #", totalKgBelowThreshold -> "£$%8")
+        val input = Map(totalKg -> "20A #&^$")
         val expectedErrors =
-          Seq(FormError(totalKg, invalidFormatError),
-              FormError(totalKgBelowThreshold, invalidFormatError)
-          )
+          Seq(FormError(totalKg, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains negative number" in {
 
-        val input = Map(totalKg -> "-1", totalKgBelowThreshold -> "-1")
-        val expectedErrors = Seq(FormError(totalKg, invalidFormatError),
-                                 FormError(totalKgBelowThreshold, invalidFormatError)
-        )
+        val input          = Map(totalKg -> "-1")
+        val expectedErrors = Seq(FormError(totalKg, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "total is more than maximum allowed weight" in {
 
-        val input = Map(totalKg -> (maxTotalKg + 1).toString,
-                        totalKgBelowThreshold -> (maxTotalKg + 1).toString
-        )
+        val input = Map(totalKg -> (maxTotalKg + 1).toString)
         val expectedErrors =
-          Seq(FormError(totalKg, aboveMaxError), FormError(totalKgBelowThreshold, aboveMaxError))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
-      "totalKgBelowThreshold is more than total" in {
-
-        val input = Map(totalKg -> "10", totalKgBelowThreshold -> "100")
-        val expectedErrors =
-          Seq(FormError("", invalidValueError))
+          Seq(FormError(totalKg, aboveMaxError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

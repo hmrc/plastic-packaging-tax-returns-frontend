@@ -86,14 +86,11 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(ImportedPlasticWeight(totalKg = "10", totalKgBelowThreshold = "5"),
-                                 formAction
-              )
+              postRequestEncoded(ImportedPlasticWeight(totalKg = "10"), formAction)
             )
 
           status(result) mustBe SEE_OTHER
           modifiedTaxReturn.importedPlasticWeight.get.totalKg mustBe 10
-          modifiedTaxReturn.importedPlasticWeight.get.totalKgBelowThreshold mustBe 5
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
@@ -117,14 +114,11 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(
-          aTaxReturn(withImportedPlasticWeight(totalKg = 10, totalKgBelowThreshold = 5))
-        )
+        mockTaxReturnFind(aTaxReturn(withImportedPlasticWeight(totalKg = 10)))
 
         await(controller.displayPage()(getRequest()))
 
         pageForm.get.totalKg mustBe "10"
-        pageForm.get.totalKgBelowThreshold mustBe "5"
 
       }
     }
@@ -134,11 +128,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
       "user submits invalid imported plastic weight" in {
         authorizedUser()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ImportedPlasticWeight(totalKg = "0", totalKgBelowThreshold = ""))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = ""))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -150,11 +140,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ImportedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -163,11 +149,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ImportedPlasticWeight(totalKg = "5", totalKgBelowThreshold = "5"))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
 
         intercept[RuntimeException](status(result))
       }
