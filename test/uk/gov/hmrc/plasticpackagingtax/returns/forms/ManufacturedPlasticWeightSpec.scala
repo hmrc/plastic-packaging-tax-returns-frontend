@@ -20,9 +20,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.{
-  aboveMaxError,
   invalidFormatError,
-  invalidValueError,
   maxTotalKg,
   totalKg,
   totalKgBelowThreshold,
@@ -100,30 +98,8 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
       "contains negative number" in {
 
-        val input = Map(totalKg -> "-1", totalKgBelowThreshold -> "-1")
-        val expectedErrors = Seq(FormError(totalKg, invalidFormatError),
-                                 FormError(totalKgBelowThreshold, invalidFormatError)
-        )
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
-      "total is more than maximum allowed weight" in {
-
-        val input = Map(totalKg -> (maxTotalKg + 1).toString,
-                        totalKgBelowThreshold -> (maxTotalKg + 1).toString
-        )
-        val expectedErrors =
-          Seq(FormError(totalKg, aboveMaxError), FormError(totalKgBelowThreshold, aboveMaxError))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
-      "totalKgBelowThreshold is more than total" in {
-
-        val input = Map(totalKg -> "10", totalKgBelowThreshold -> "100")
-        val expectedErrors =
-          Seq(FormError("", invalidValueError))
+        val input          = Map(totalKg -> "-1")
+        val expectedErrors = Seq(FormError(totalKg, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

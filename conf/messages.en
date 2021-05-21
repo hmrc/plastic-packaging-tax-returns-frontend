@@ -63,19 +63,17 @@ returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by wei
 returns.startPage.buttonName = Start now
 
 returns.manufacturedPlasticWeight.meta.title = Manufactured plastic packaging components
-returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging
-returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax Return
-returns.manufacturedPlasticWeight.total.weight = Total weight of manufactured packaging components
-returns.manufacturedPlasticWeight.belowThreshold.weight = Total weight of finished manufactured packaging containing less than 30% recycled plastic
-returns.manufacturedPlasticWeight.details.link = How are plastic packaging, components and recycled plastic defined?
-returns.manufacturedPlasticWeight.details.line1 = A ‘packaging component’ is something created to carry or protect other goods, including products made to be sold for future use as packaging, such as cling film.
-returns.manufacturedPlasticWeight.details.line2 = A packaging component is ‘plastic’ if it contains more plastic by weight than any other individual material.
-returns.manufacturedPlasticWeight.details.line3 = A plastic packaging component is considered ‘finished’ when the final manufacturing step or last substantial modification is made. The party responsible for this step is liable for the tax.
-returns.manufacturedPlasticWeight.details.line4 = ‘Recycled plastic’ is plastic that has been reprocessed from recovered material by means of a  chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
+returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging components
+returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
+returns.manufacturedPlasticWeight.total.weight = Total weight of packaging components manufactured in the quarter (kgs)
+returns.manufacturedPlasticWeight.details.link = How are plastic packaging and components defined?
+returns.manufacturedPlasticWeight.details.line1 = A ‘packaging component’ is a product that is designed to be suitable for use, whether alone or in combination with other products, to contain, protect, handle, deliver or present goods.
+returns.manufacturedPlasticWeight.details.line2 = A packaging component is ‘plastic’ if it contains more plastic by weight than any other individual material. This includes bioplastics, such as biodegradable, compostable and oxo-degradable plastics.
+returns.manufacturedPlasticWeight.details.line3 = Plastic Packaging components are liable for the tax once they are considered ‘finished.’ This is when the last plastic component is added to the packaging, whether the packaging is filled or unfilled. The party responsible for adding the final plastic component to the packaging is liable for the tax.
+returns.manufacturedPlasticWeight.details.line4 = The Plastic Packaging Tax guidance has more key definitions, returns information and exemptions to help you complete your return.
 returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-returns.manufacturedPlasticWeight.invalidValue.error = Amount cannot be more than the total manufactured weight
 
 returns.importedPlasticWeight.meta.title = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.title = 2. Imported plastic packaging

@@ -43,12 +43,11 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
       "all data is present" in {
 
         val taxReturn = aTaxReturn(withId("01"),
-                                   withManufacturedPlasticWeight(5, 5),
+                                   withManufacturedPlasticWeight(5),
                                    withConvertedPackagingCredit(5),
                                    withDirectExportDetails(2, 2),
                                    withHumanMedicinesPlasticWeight(4),
-                                   withImportedPlasticWeight(2),
-                                   withManufacturedPlasticWeight(7, 7)
+                                   withImportedPlasticWeight(2)
         )
 
         taxReturn.taxLiability.totalKgLiable must (not be 0)
@@ -62,14 +61,12 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
 
       "partial data is present" in {
 
-        val taxReturn = aTaxReturn(withId("01"),
-                                   withManufacturedPlasticWeight(5, 5),
-                                   withImportedPlasticWeight(2)
-        )
+        val taxReturn =
+          aTaxReturn(withId("01"), withManufacturedPlasticWeight(5), withImportedPlasticWeight(2))
 
-        taxReturn.taxLiability.totalKgLiable must (not be 0)
+        taxReturn.taxLiability.totalKgLiable mustBe 7
         taxReturn.taxLiability.totalCredit mustBe 0
-        taxReturn.taxLiability.totalKgExempt mustBe 2
+        taxReturn.taxLiability.totalKgExempt mustBe 0
         taxReturn.taxLiability.taxDue must (not be 0)
       }
     }
