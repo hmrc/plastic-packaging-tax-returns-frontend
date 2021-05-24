@@ -27,60 +27,52 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
-  ConvertedPackagingCredit => ConvertedPackagingCreditDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
   Cacheable,
-  ConvertedPackagingCredit,
-  TaxReturn
+  TaxReturn,
+  RecycledPlasticWeight => RecycledPlasticWeightDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.recycled_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConvertedPackagingCreditController @Inject() (
+class RecycledPlasticWeightController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
-  page: converted_packaging_credit_page
+  page: recycled_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with PriceConverter {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.convertedPackagingCredit match {
+      request.taxReturn.recycledPlasticWeight match {
         case Some(data) =>
-          Ok(
-            page(
-              ConvertedPackagingCreditDetails.form().fill(
-                ConvertedPackagingCreditDetails(totalInPence = data.totalValueForCreditAsString)
-              )
-            )
-          )
-        case _ => Ok(page(ConvertedPackagingCreditDetails.form()))
+          Ok(page(form().fill(RecycledPlasticWeight(totalKg = data.totalKg.toString))))
+        case _ => Ok(page(form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
-      ConvertedPackagingCreditDetails.form()
+      RecycledPlasticWeight.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[ConvertedPackagingCreditDetails]) =>
+          (formWithErrors: Form[RecycledPlasticWeight]) =>
             Future.successful(BadRequest(page(formWithErrors))),
-          credit =>
-            updateTaxReturn(credit).map {
+          weight =>
+            updateTaxReturn(weight).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(returnRoutes.RecycledPlasticWeightController.displayPage())
+                    Redirect(returnRoutes.CheckYourReturnController.displayPage())
                   case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error
@@ -89,11 +81,11 @@ class ConvertedPackagingCreditController @Inject() (
     }
 
   private def updateTaxReturn(
-    formData: ConvertedPackagingCreditDetails
+    formData: RecycledPlasticWeight
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
-      taxReturn.copy(convertedPackagingCredit =
-        Some(ConvertedPackagingCredit(totalInPence = formData.totalInPenceAsLong()))
+      taxReturn.copy(recycledPlasticWeight =
+        Some(RecycledPlasticWeightDetails(totalKg = formData.totalKg.toLong))
       )
     }
 

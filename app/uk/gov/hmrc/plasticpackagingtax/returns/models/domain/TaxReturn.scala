@@ -26,6 +26,7 @@ case class TaxReturn(
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
+  recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
   metaData: MetaData = MetaData()
 ) {
 
@@ -38,7 +39,8 @@ case class TaxReturn(
     totalDirectExportsKg = exportedPlasticWeight.map(_.totalKg).getOrZero,
     totalConversionCreditPence = convertedPackagingCredit.map(_.totalInPence).getOrZero,
     totalDirectExportsCreditPence =
-      exportedPlasticWeight.map(_.totalValueForCreditInPence).getOrZero
+      exportedPlasticWeight.map(_.totalValueForCreditInPence).getOrZero,
+    totalRecycledKg = recycledPlasticWeight.map(_.totalKg).getOrZero
   )
 
   def toTaxReturn: TaxReturn =
@@ -48,11 +50,12 @@ case class TaxReturn(
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
               exportedPlasticWeight = this.exportedPlasticWeight,
               convertedPackagingCredit = this.convertedPackagingCredit,
+              recycledPlasticWeight = this.recycledPlasticWeight,
               metaData = this.metaData
     )
 
   def isReturnSubmitReady: Boolean =
-    manufacturedPlasticWeight.isDefined && importedPlasticWeight.isDefined && humanMedicinesPlasticWeight.isDefined && exportedPlasticWeight.isDefined && convertedPackagingCredit.isDefined
+    manufacturedPlasticWeight.isDefined && importedPlasticWeight.isDefined && humanMedicinesPlasticWeight.isDefined && exportedPlasticWeight.isDefined && convertedPackagingCredit.isDefined && recycledPlasticWeight.isDefined
 
 }
 

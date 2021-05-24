@@ -22,6 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
   HumanMedicinesPlasticWeight,
   ImportedPlasticWeight,
   ManufacturedPlasticWeight,
+  RecycledPlasticWeight,
   TaxReturn
 }
 
@@ -59,6 +60,11 @@ trait TaxReturnBuilder {
                               totalValueForCreditInPence = totalValueForCreditInPence
         )
       )
+    )
+
+  def withRecycledPlasticWeight(totalKg: Long): TaxReturnModifier =
+    _.copy(recycledPlasticWeight =
+      Some(RecycledPlasticWeight(totalKg))
     )
 
 }

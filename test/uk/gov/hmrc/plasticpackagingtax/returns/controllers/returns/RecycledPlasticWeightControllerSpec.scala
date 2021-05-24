@@ -30,26 +30,26 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.recycled_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
+class RecycledPlasticWeightControllerSpec extends ControllerSpec {
 
   private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[converted_packaging_credit_page]
+  private val page = mock[recycled_plastic_weight_page]
 
-  private val controller = new ConvertedPackagingCreditController(authenticate = mockAuthAction,
-                                                                  journeyAction = mockJourneyAction,
-                                                                  mcc = mcc,
-                                                                  page = page,
-                                                                  returnsConnector =
-                                                                    mockTaxReturnsConnector
+  private val controller = new RecycledPlasticWeightController(authenticate = mockAuthAction,
+                                                               journeyAction = mockJourneyAction,
+                                                               mcc = mcc,
+                                                               page = page,
+                                                               returnsConnector =
+                                                                 mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ConvertedPackagingCredit]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[RecycledPlasticWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -57,20 +57,22 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "ConvertedPackagingCreditController" should {
+  "RecycledPlasticWeightController" should {
 
     "return 200" when {
 
       "display page method is invoked" in {
         authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "tax return already exists and display page method is invoked" in {
-        authorizedUser()
         mockTaxReturnFind(aTaxReturn())
+        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -79,22 +81,22 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the amount of credit" in {
+        "user submits the weight details" in {
           authorizedUser()
           mockTaxReturnFind(aTaxReturn())
           mockTaxReturnUpdate(aTaxReturn())
 
           val result =
             controller.submit()(
-              postRequestEncoded(ConvertedPackagingCredit(totalInPence = "10.2"), formAction)
+              postRequestEncoded(RecycledPlasticWeight(totalKg = "10"), formAction)
             )
 
           status(result) mustBe SEE_OTHER
-          modifiedTaxReturn.convertedPackagingCredit.get.totalInPence mustBe 1020
+          modifiedTaxReturn.recycledPlasticWeight.get.totalKg mustBe 10
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
-                returnRoutes.RecycledPlasticWeightController.displayPage().url
+                returnRoutes.CheckYourReturnController.displayPage().url
               )
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
@@ -106,28 +108,28 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
     "return prepopulated form" when {
 
-      def pageForm: Form[ConvertedPackagingCredit] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedPackagingCredit]])
+      def pageForm: Form[RecycledPlasticWeight] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[RecycledPlasticWeight]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(aTaxReturn(withConvertedPackagingCredit(totalInPence = 5500)))
+        mockTaxReturnFind(aTaxReturn(withRecycledPlasticWeight(totalKg = 10)))
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalInPence mustBe "55.00"
+        pageForm.get.totalKg mustBe "10"
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid job title" in {
+      "user submits invalid recycled plastic weight" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = ""))))
+          controller.submit()(postRequest(Json.toJson(RecycledPlasticWeight(totalKg = ""))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -139,9 +141,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(
-            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
-          )
+          controller.submit()(postRequest(Json.toJson(RecycledPlasticWeight(totalKg = "5"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -150,9 +150,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(
-            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
-          )
+          controller.submit()(postRequest(Json.toJson(RecycledPlasticWeight(totalKg = "5"))))
 
         intercept[RuntimeException](status(result))
       }

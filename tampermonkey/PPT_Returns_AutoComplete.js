@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      4.0
+// @version      5.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/returns*
@@ -102,6 +102,14 @@ const convertedPackagingCreditPage = () => {
     }
 }
 
+const recycledWeightPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/returns/recycled-plastic-packaging')) {
+
+        document.getElementById('totalKg').value = '10'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const reviewReturn = () => {
      if (currentPageIs('/plastic-packaging-tax/returns/check-your-return')) {
 
@@ -125,6 +133,7 @@ const completeJourney = () => {
     humanMedicinesWeightPage()
     exportedPackagingWeightPage()
     convertedPackagingCreditPage()
+    recycledWeightPage()
     reviewReturn()
     confirmationPage()
 

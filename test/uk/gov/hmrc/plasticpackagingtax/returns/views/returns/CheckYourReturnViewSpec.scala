@@ -35,7 +35,8 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                      withConvertedPackagingCredit(5),
                                      withDirectExportDetails(2, 2),
                                      withHumanMedicinesPlasticWeight(4),
-                                     withImportedPlasticWeight(2)
+                                     withImportedPlasticWeight(2),
+                                     withRecycledPlasticWeight(7)
   )
 
   private def createView(): Document =
@@ -64,6 +65,8 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.checkYourReturnPage.exportsCredit")
 
       messages must haveTranslationFor("returns.checkYourReturnPage.conversionCredit")
+
+      messages must haveTranslationFor("returns.checkYourReturnPage.recycledPackaging.total")
 
       messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.paragraph")
       messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.description")
@@ -110,7 +113,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       val checkYourReturnView = new CheckYourReturnView(view)
 
       "tax return table has total 8 rows" in {
-        checkYourReturnView.getTableRows(0).size() mustBe 6
+        checkYourReturnView.getTableRows(0).size() mustBe 7
       }
 
       "tax return table table headers" in {
@@ -181,6 +184,13 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                         taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString
                                       ),
                                       returnRoutes.ConvertedPackagingCreditController.displayPage()
+        )
+
+        checkYourReturnView.rowExists(0,
+                                      6,
+                                      "returns.checkYourReturnPage.recycledPackaging.total",
+                                      asKg(taxReturn.recycledPlasticWeight.get.totalKg.toString),
+                                      returnRoutes.RecycledPlasticWeightController.displayPage()
         )
       }
 
