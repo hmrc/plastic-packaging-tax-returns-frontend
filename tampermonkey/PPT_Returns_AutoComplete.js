@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      3.0
+// @version      4.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/returns*
@@ -73,7 +73,6 @@ const importedWeightPage = () => {
     if (currentPageIs('/plastic-packaging-tax/returns/imported-plastic-packaging-weight')) {
 
         document.getElementById('totalKg').value = '20'
-        document.getElementById('totalKgBelowThreshold').value = '8'
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
