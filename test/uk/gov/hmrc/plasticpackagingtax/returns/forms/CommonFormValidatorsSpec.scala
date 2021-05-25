@@ -59,6 +59,27 @@ class CommonFormValidatorsSpec
     }
   }
 
+  "isLowerOrEqual" should {
+    "return false" when {
+      "value is not a number" in {
+
+        isLowerOrEqualTo(2)("a") mustBe false
+      }
+
+      "value is above threshold" in {
+
+        isLowerOrEqualTo(5)("6") mustBe false
+      }
+    }
+
+    "return true" when {
+      "value is below threshold" in {
+
+        isLowerOrEqualTo(5)("2") mustBe true
+      }
+    }
+  }
+
   "isNonEmpty" should {
 
     "return false" when {

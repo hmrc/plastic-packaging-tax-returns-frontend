@@ -20,10 +20,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.{
+  aboveMaxError,
   invalidFormatError,
   maxTotalKg,
   totalKg,
-  totalKgBelowThreshold,
   weightEmptyError
 }
 
@@ -33,17 +33,9 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "total and totalKgBelowThreshold is equal" in {
+      "total is valid" in {
 
-        val input = Map(totalKg -> "100", totalKgBelowThreshold -> "100")
-
-        val form = ManufacturedPlasticWeight.form().bind(input)
-        form.errors.size mustBe 0
-      }
-
-      "totalKgBelowThreshold is smaller than total" in {
-
-        val input = Map(totalKg -> "100", totalKgBelowThreshold -> "10")
+        val input = Map(totalKg -> "100")
 
         val form = ManufacturedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -51,7 +43,7 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
       "is 0" in {
 
-        val input = Map(totalKg -> "0", totalKgBelowThreshold -> "0")
+        val input = Map(totalKg -> "0")
 
         val form = ManufacturedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -60,7 +52,7 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "is exactly max allowed amount" in {
 
         val input =
-          Map(totalKg -> maxTotalKg.toString, totalKgBelowThreshold -> maxTotalKg.toString)
+          Map(totalKg -> maxTotalKg.toString)
 
         val form = ManufacturedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -69,7 +61,7 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "contains spaces before and after value" in {
 
         val input =
-          Map(totalKg -> " 3 ", totalKgBelowThreshold -> " 3 ")
+          Map(totalKg -> " 3 ")
 
         val form = ManufacturedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -80,18 +72,18 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
       "provided with empty data" in {
 
-        val input = Map(totalKg -> "", totalKgBelowThreshold -> "")
+        val input = Map(totalKg -> "")
         val expectedErrors =
-          Seq(FormError(totalKg, weightEmptyError), FormError(totalKg, weightEmptyError))
+          Seq(FormError(totalKg, weightEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains alphanumerical or special character" in {
 
-        val input = Map(totalKg -> "20A #", totalKgBelowThreshold -> "£$%8")
+        val input = Map(totalKg -> "20A #£$")
         val expectedErrors =
-          Seq(FormError(totalKg, invalidFormatError), FormError(totalKg, invalidFormatError))
+          Seq(FormError(totalKg, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -100,6 +92,14 @@ class ManufacturedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
         val input          = Map(totalKg -> "-1")
         val expectedErrors = Seq(FormError(totalKg, invalidFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "is above max allowed" in {
+
+        val input          = Map(totalKg -> (maxTotalKg + 1).toString)
+        val expectedErrors = Seq(FormError(totalKg, aboveMaxError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

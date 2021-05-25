@@ -8,10 +8,7 @@ PlayKeys.devSettings := Seq("play.server.http.port" -> "8505")
 val silencerVersion = "1.7.1"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala,
-                 SbtDistributablesPlugin,
-                 SbtWeb
-  )
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, SbtWeb)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(majorVersion := 0,
             scalaVersion := "2.12.11",
@@ -47,13 +44,13 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
                                    ".*(BuildInfo|Routes|Options).*",
                                    "logger.*\\(.*\\)"
   ).mkString(";"),
-  coverageMinimum := 95,
+  coverageMinimum := 94,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false
 )
 
-lazy val silencerSettings: Seq[Setting[_]] = {
+lazy val silencerSettings: Seq[Setting[_]] =
   Seq(
     libraryDependencies ++= Seq(
       compilerPlugin(
@@ -65,4 +62,3 @@ lazy val silencerSettings: Seq[Setting[_]] = {
     // Make sure you only exclude warnings for the project directories, i.e. make builds reproducible
     scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}"
   )
-}

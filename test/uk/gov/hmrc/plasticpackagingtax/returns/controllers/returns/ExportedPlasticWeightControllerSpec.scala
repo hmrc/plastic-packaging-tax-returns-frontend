@@ -88,15 +88,11 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(
-                ExportedPlasticWeight(totalKg = "10", totalValueForCredit = "5.75"),
-                formAction
-              )
+              postRequestEncoded(ExportedPlasticWeight(totalKg = "10"), formAction)
             )
 
           status(result) mustBe SEE_OTHER
           modifiedTaxReturn.exportedPlasticWeight.get.totalKg mustBe 10
-          modifiedTaxReturn.exportedPlasticWeight.get.totalValueForCreditInPence mustBe 575
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
@@ -120,26 +116,21 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(
-          aTaxReturn(withDirectExportDetails(totalKg = 10, totalValueForCreditInPence = 575))
-        )
+        mockTaxReturnFind(aTaxReturn(withDirectExportDetails(totalKg = 10)))
 
         await(controller.displayPage()(getRequest()))
 
         pageForm.get.totalKg mustBe "10"
-        pageForm.get.totalValueForCredit mustBe "5.75"
 
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid job title" in {
+      "user submits invalid total kg" in {
         authorizedUser()
         val result =
-          controller.submit()(
-            postRequest(Json.toJson(ExportedPlasticWeight(totalKg = "0", totalValueForCredit = "")))
-          )
+          controller.submit()(postRequest(Json.toJson(ExportedPlasticWeight(totalKg = "-1"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -151,11 +142,7 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ExportedPlasticWeight(totalKg = "5", totalValueForCredit = "5"))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ExportedPlasticWeight(totalKg = "5"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -164,11 +151,7 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(
-            postRequest(
-              Json.toJson(ExportedPlasticWeight(totalKg = "5", totalValueForCredit = "5"))
-            )
-          )
+          controller.submit()(postRequest(Json.toJson(ExportedPlasticWeight(totalKg = "5"))))
 
         intercept[RuntimeException](status(result))
       }

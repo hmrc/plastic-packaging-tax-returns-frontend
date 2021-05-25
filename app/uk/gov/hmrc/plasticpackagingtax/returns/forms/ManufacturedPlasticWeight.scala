@@ -26,12 +26,11 @@ object ManufacturedPlasticWeight extends CommonFormValidators {
 
   implicit val format: OFormat[ManufacturedPlasticWeight] = Json.format[ManufacturedPlasticWeight]
 
-  val maxTotalKg            = 99999999
-  val totalKg               = "totalKg"
-  val totalKgBelowThreshold = "totalKgBelowThreshold"
-  val weightEmptyError      = "returns.manufacturedPlasticWeight.empty.error"
-  val invalidFormatError    = "returns.manufacturedPlasticWeight.format.error"
-  val aboveMaxError         = "returns.manufacturedPlasticWeight.aboveMax.error"
+  val maxTotalKg         = 99999999
+  val totalKg            = "totalKg"
+  val weightEmptyError   = "returns.manufacturedPlasticWeight.empty.error"
+  val invalidFormatError = "returns.manufacturedPlasticWeight.format.error"
+  val aboveMaxError      = "returns.manufacturedPlasticWeight.aboveMax.error"
 
   def form(): Form[ManufacturedPlasticWeight] =
     Form(

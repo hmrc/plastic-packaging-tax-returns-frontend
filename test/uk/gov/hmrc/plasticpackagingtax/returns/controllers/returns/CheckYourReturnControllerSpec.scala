@@ -68,7 +68,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
         authorizedUser()
         mockTaxReturnFind(
           aTaxReturn(withConvertedPackagingCredit(5),
-                     withDirectExportDetails(2, 2),
+                     withDirectExportDetails(2),
                      withHumanMedicinesPlasticWeight(4),
                      withImportedPlasticWeight(2),
                      withManufacturedPlasticWeight(7),

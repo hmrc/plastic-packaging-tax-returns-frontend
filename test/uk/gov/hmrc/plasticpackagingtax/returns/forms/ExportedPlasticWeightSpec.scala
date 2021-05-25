@@ -20,15 +20,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight.{
-  creditAboveMaxError,
   maxTotalKg,
-  oneHundredMillion,
   totalKg,
   totalKgEmptyError,
   totalKgInvalidFormatError,
-  totalValueForCredit,
-  totalValueForCreditEmptyError,
-  totalValueForCreditInvalidFormatError,
   weightAboveMaxError
 }
 
@@ -38,17 +33,17 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "totalKg and totalValueForCredit input values are valid" in {
+      "totalKg value is valid" in {
 
-        val input = Map(totalKg -> "100", totalValueForCredit -> "123.96")
+        val input = Map(totalKg -> "100")
 
         val form = ExportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
       }
 
-      "both values are 0" in {
+      "totalKg value is 0" in {
 
-        val input = Map(totalKg -> "0", totalValueForCredit -> "0.00")
+        val input = Map(totalKg -> "0")
 
         val form = ExportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -57,9 +52,7 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "is exactly max allowed amount" in {
 
         val input =
-          Map(totalKg             -> maxTotalKg.toString,
-              totalValueForCredit -> (oneHundredMillion - 1).toString
-          )
+          Map(totalKg -> maxTotalKg.toString)
 
         val form = ExportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -68,7 +61,7 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "contains spaces before and after value" in {
 
         val input =
-          Map(totalKg -> " 3 ", totalValueForCredit -> " 3 ")
+          Map(totalKg -> " 3 ")
 
         val form = ExportedPlasticWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -80,51 +73,36 @@ class ExportedPlasticWeightSpec extends AnyWordSpec with Matchers {
       "provided with empty data" in {
 
         val input =
-          Map(totalKg -> "", totalValueForCredit -> "")
+          Map(totalKg -> "")
         val expectedErrors =
-          Seq(FormError(totalKg, totalKgEmptyError),
-              FormError(totalValueForCredit, totalValueForCreditEmptyError)
-          )
+          Seq(FormError(totalKg, totalKgEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains invalid characters" in {
 
-        val input = Map(totalKg -> "20A #", totalValueForCredit -> "66,898.00")
+        val input = Map(totalKg -> "20A #,%")
         val expectedErrors =
-          Seq(FormError(totalKg, totalKgInvalidFormatError),
-              FormError(totalValueForCredit, totalValueForCreditInvalidFormatError)
-          )
+          Seq(FormError(totalKg, totalKgInvalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains negative numbers" in {
 
-        val input = Map(totalKg -> "-1", totalValueForCredit -> "-1000.00")
+        val input = Map(totalKg -> "-1")
         val expectedErrors =
-          Seq(FormError(totalKg, totalKgInvalidFormatError),
-              FormError(totalValueForCredit, totalValueForCreditInvalidFormatError)
-          )
+          Seq(FormError(totalKg, totalKgInvalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "totalKg is bigger than maximum allowed weight" in {
 
-        val input = Map(totalKg -> (maxTotalKg + 1).toString, totalValueForCredit -> "123.45")
+        val input = Map(totalKg -> (maxTotalKg + 1).toString)
         val expectedErrors =
           Seq(FormError(totalKg, weightAboveMaxError))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
-      "totalValueForCredit is bigger than maximum credit" in {
-
-        val input = Map(totalKg -> "10", totalValueForCredit -> oneHundredMillion.toString)
-        val expectedErrors =
-          Seq(FormError(totalValueForCredit, creditAboveMaxError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

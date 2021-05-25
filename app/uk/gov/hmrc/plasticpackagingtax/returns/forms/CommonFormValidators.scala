@@ -41,21 +41,8 @@ trait CommonFormValidators {
         case _: java.lang.NumberFormatException => false
       }
 
-  val isLowerThan: BigDecimal => String => Boolean = (threshold: BigDecimal) =>
-    (input: String) =>
-      try isValidDecimal(input) &&
-        BigDecimal(input.trim) < threshold
-      catch {
-        case _: java.lang.NumberFormatException => false
-      }
-
   val isLowerOrEqualTo: BigDecimal => String => Boolean = (threshold: BigDecimal) =>
-    (input: String) =>
-      try isValidDecimal(input) &&
-        BigDecimal(input.trim) <= threshold
-      catch {
-        case _: java.lang.NumberFormatException => false
-      }
+    (input: String) => isValidDecimal(input) && BigDecimal(input.trim) <= threshold
 
   private val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.trim.length <= maxLength

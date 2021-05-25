@@ -53,13 +53,9 @@ trait TaxReturnBuilder {
   def withHumanMedicinesPlasticWeight(totalKg: Long): TaxReturnModifier =
     _.copy(humanMedicinesPlasticWeight = Some(HumanMedicinesPlasticWeight(totalKg)))
 
-  def withDirectExportDetails(totalKg: Long, totalValueForCreditInPence: Long): TaxReturnModifier =
+  def withDirectExportDetails(totalKg: Long): TaxReturnModifier =
     _.copy(exportedPlasticWeight =
-      Some(
-        ExportedPlasticWeight(totalKg = totalKg,
-                              totalValueForCreditInPence = totalValueForCreditInPence
-        )
-      )
+      Some(ExportedPlasticWeight(totalKg = totalKg))
     )
 
   def withRecycledPlasticWeight(totalKg: Long): TaxReturnModifier =

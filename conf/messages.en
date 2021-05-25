@@ -102,18 +102,18 @@ returns.humanMedicinesPlasticWeight.empty.error = Enter an amount to continue
 returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
 returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
-returns.exportedPlasticWeight.title = 4. Exported packaging
-returns.exportedPlasticWeight.sectionHeader = Plastic Packaging Tax return
-returns.exportedPlasticWeight.totalKg.label = Total weight of plastic packaging directly exported
-returns.exportedPlasticWeight.totalValueForCredit.label = Total value of exported plastic packaging for credit
-returns.exportedPlasticWeight.details.link = What is exported plastic packaging for credit?
-returns.exportedPlasticWeight.details.body = This is when a packaging manufacturer pays tax on the packaging they produce before sending it to a third-party for further conversion. The third party will pay additional tax on the whole, complete packaging.
+returns.exportedPlasticWeight.title = 4. Exported plastic packaging
+returns.exportedPlasticWeight.total.weight.label = Total weight of plastic packaging directly exported in the quarter (kgs)
+returns.exportedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
+returns.exportedPlasticWeight.details.link = Exemptions for exporters of plastic packaging
+returns.exportedPlasticWeight.details.line1 = Plastic packaging that is exported is exempt from the tax.
+returns.exportedPlasticWeight.details.line2 = You can defer paying the tax on plastic packaging for up to 12 months if it is intended for export.
+returns.exportedPlasticWeight.details.line3 = You will not have to pay the tax if the packaging is exported within that 12 month period.
+returns.exportedPlasticWeight.details.line4 = If the packaging is not exported within the 12 month period, you may be able to claim it back as credit once it has been exported.
+returns.exportedPlasticWeight.details.line5 = Read the Plastic Packaging Tax guidance for more information on exports and the records you must keep to prove compliance.
 returns.exportedPlasticWeight.totalKg.empty.error = Enter an amount to continue
-returns.exportedPlasticWeight.totalValueForCredit.empty.error = Enter £0.00 or higher to continue
 returns.exportedPlasticWeight.totalKg.format.error = Amount must be entered as numbers only
-returns.exportedPlasticWeight.totalValueForCredit.format.error = Enter an amount in pounds. For example, £123.00
 returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-returns.exportedPlasticWeight.credit.aboveMax.error = Amount cannot exceed £99,999,999
 
 returns.convertedPackagingCredit.meta.title = Converted packaging
 returns.convertedPackagingCredit.title = 5. Converted packaging

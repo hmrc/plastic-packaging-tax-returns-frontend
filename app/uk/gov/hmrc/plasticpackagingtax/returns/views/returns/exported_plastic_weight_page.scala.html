@@ -17,7 +17,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukFieldset
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
@@ -36,28 +35,25 @@
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
   govukDetails : GovukDetails,
-  govukFieldset : GovukFieldset,
   formHelper: formWithCSRF
 )
 
 @(form: Form[ExportedPlasticWeight])(implicit request: Request[_], messages: Messages)
 
-@inputFields= {
-    @inputText(
-        field = form("totalKg"),
-        labelClasses = "govuk-label",
-        classes = Some("govuk-input--width-10"),
-        labelKey = "returns.exportedPlasticWeight.totalKg.label",
-        suffix = Some("kg")
-    )
+@totalKg = @{form("totalKg")}
 
-    @inputText(
-        field = form("totalValueForCredit"),
-        labelClasses = "govuk-label",
-        classes = Some("govuk-input--width-10"),
-        labelKey = "returns.exportedPlasticWeight.totalValueForCredit.label",
-        suffix = Some("£")
-    )
+@hintContent = {
+    <p class="govuk-label govuk-label--s">@messages("returns.exportedPlasticWeight.total.weight.label")</p>
+}
+
+@formattedDetailsContent = {
+    <ul class="govuk-list">
+        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line1")</li>
+        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line2")</li>
+        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line3")</li>
+        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line4")</li>
+        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line5")</li>
+    </ul>
 }
 
 @govukLayout(
@@ -70,19 +66,28 @@
 
         @formHelper(action = returnsRoutes.ExportedPlasticWeightController.submit(), 'autoComplete -> "off") {
 
-        @govukFieldset(
-            Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("returns.exportedPlasticWeight.title")),
-                    classes = "govuk-fieldset__legend--l",
-                    isPageHeading = true)),
-                html = inputFields
+        @govukInput(
+            Input(
+                id = s"${totalKg.name}",
+                name = totalKg.name,
+                value = totalKg.value,
+                hint = Some(Hint(content = HtmlContent(hintContent))),
+                errorMessage = totalKg.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                label = Label(
+                    isPageHeading = true,
+                    classes = s"govuk-label--l",
+                    content = Text(messages("returns.exportedPlasticWeight.title"))),
+                    spellcheck = Some(false),
+                    suffix = Some(PrefixOrSuffix(
+                        content = Text("kg")
+                    )
+                )
             )
         )
 
         @govukDetails(Details(
             summary = Text(messages("returns.exportedPlasticWeight.details.link")),
-            content = Text(messages("returns.exportedPlasticWeight.details.body"))
+            content = HtmlContent(formattedDetailsContent)
         ))
 
         @saveButtons()
