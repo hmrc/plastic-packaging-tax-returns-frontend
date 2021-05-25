@@ -126,6 +126,16 @@ returns.convertedPackagingCredit.empty.error = Enter £0.00 or higher to continu
 returns.convertedPackagingCredit.format.error = Enter an amount in pounds. For example, £123.00
 returns.convertedPackagingCredit.aboveMax.error = Amount cannot exceed £99,999,999.99
 
+returns.recycledPlasticWeight.meta.title = Recycled plastic packaging
+returns.recycledPlasticWeight.title = 6. Recycled plastic packaging
+returns.recycledPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
+returns.recycledPlasticWeight.total.weight = Total weight of packaging components containing more than 30% recycled plastic manufactured in the quarter (kg)
+returns.recycledPlasticWeight.details.link = How ‘recycled plastic packaging’ defined?
+returns.recycledPlasticWeight.details.line1 = ‘Recycled plastic’ is plastic that has been reprocessed from recovered plastic by means of a chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
+returns.recycledPlasticWeight.empty.error = Enter an amount to continue
+returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
+returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+
 returns.checkYourReturnPage.title = Check your return
 returns.checkYourReturnPage.label = Plastic Packaging Tax Return
 returns.checkYourReturnPage.header.item = Item
@@ -149,6 +159,7 @@ returns.checkYourReturnPage.taxLiability.description = Liable Packaging is calcu
 returns.checkYourReturnPage.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
 returns.checkYourReturnPage.totalCredits.label = Total Credits
 returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Requested
+returns.checkYourReturnPage.recycledPackaging.total = Recycled packaging total
 
 returns.confirmationPage.title = Return submitted
 returns.confirmationPage.panel.body = Your reference number {0}

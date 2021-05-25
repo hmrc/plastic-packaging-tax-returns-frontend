@@ -99,7 +99,8 @@ paragraphBody:paragraphBody
                 row("3", "returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("4a", "returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("4b", "returns.checkYourReturnPage.exportsCredit", taxReturn.exportedPlasticWeight.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ExportedPlasticWeightController.displayPage()),
-                row("5", "returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
+                row("5", "returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7"),
+                row("6", "returns.checkYourReturnPage.recycledPackaging.total", taxReturn.recycledPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.RecycledPlasticWeightController.displayPage(), "govuk-!-padding-top-7")
                 ),
             head = Some(Seq(
                 HeadCell(

@@ -71,7 +71,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
                      withDirectExportDetails(2, 2),
                      withHumanMedicinesPlasticWeight(4),
                      withImportedPlasticWeight(2),
-                     withManufacturedPlasticWeight(7)
+                     withManufacturedPlasticWeight(7),
+                     withRecycledPlasticWeight(3)
           )
         )
 

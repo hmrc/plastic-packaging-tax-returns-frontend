@@ -33,12 +33,13 @@ object TaxLiabilityFactory extends PriceConverter {
     totalHumanMedicinesKg: Long,
     totalDirectExportsKg: Long,
     totalDirectExportsCreditPence: Long,
-    totalConversionCreditPence: Long
+    totalConversionCreditPence: Long,
+    totalRecycledKg: Long
   ): TaxLiability = {
 
     val totalKgLiable = totalManufacturedKg + totalImportedKg
 
-    val totalKgExempt = totalHumanMedicinesKg + totalDirectExportsKg
+    val totalKgExempt = totalHumanMedicinesKg + totalDirectExportsKg + totalRecycledKg
 
     val totalCredit =
       totalDirectExportsCreditPence + totalConversionCreditPence

@@ -47,7 +47,8 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
                                    withConvertedPackagingCredit(5),
                                    withDirectExportDetails(2, 2),
                                    withHumanMedicinesPlasticWeight(4),
-                                   withImportedPlasticWeight(2)
+                                   withImportedPlasticWeight(2),
+                                   withRecycledPlasticWeight(6)
         )
 
         taxReturn.taxLiability.totalKgLiable must (not be 0)
