@@ -48,7 +48,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
 
   "Auditor" should {
     "post taxReturn event" when {
-      "submit Tax Return invoked" in {
+      "auditTaxReturn invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
         val taxReturn = aTaxReturn()
 
@@ -61,7 +61,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
     }
 
     "not throw exception" when {
-      "submit taxReturn audit event fails" in {
+      "auditTaxReturn event fails" in {
         givenAuditReturns(Status.BAD_REQUEST)
         val taxReturn = aTaxReturn()
 
@@ -69,6 +69,54 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
 
         eventually(timeout(Span(5, Seconds))) {
           eventSendToAudit(auditUrl, taxReturn) mustBe true
+        }
+      }
+    }
+
+    "post new taxReturn started event" when {
+      "newTaxReturnStarted invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.newTaxReturnStarted()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.NEW)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "newTaxReturnStarted event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.newTaxReturnStarted()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.NEW)) mustBe true
+        }
+      }
+    }
+
+    "post existing taxReturn started event" when {
+      "existingTaxReturnLoaded invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.existingTaxReturnLoaded()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.RETURNING)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "existingTaxReturnLoaded event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.existingTaxReturnLoaded()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.RETURNING)) mustBe true
         }
       }
     }
@@ -84,14 +132,24 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
     )
 
   private def eventSendToAudit(url: String, taxReturn: TaxReturn): Boolean =
+    eventSendToAudit(url,
+                     CreateTaxReturnEvent.eventType,
+                     TaxReturn.format.writes(taxReturn).toString()
+    )
+
+  private def eventSendToAudit(url: String, startTaxReturnEvent: StartTaxReturnEvent): Boolean =
+    eventSendToAudit(url,
+                     StartTaxReturnEvent.eventType,
+                     StartTaxReturnEvent.format.writes(startTaxReturnEvent).toString()
+    )
+
+  private def eventSendToAudit(url: String, eventType: String, body: String): Boolean =
     try {
       verify(
         postRequestedFor(urlEqualTo(url))
-          .withRequestBody(
-            equalToJson(
-              """{
+          .withRequestBody(equalToJson("""{
                   "auditSource": "plastic-packaging-tax-returns-frontend",
-                  "auditType": """" + CreateTaxReturnEvent.eventType + """",
+                  "auditType": """" + eventType + """",
                   "eventId": "${json-unit.any-string}",
                   "tags": {
                     "clientIP": "-",
@@ -102,18 +160,14 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
                     "deviceID": "-",
                     "clientPort": "-"
                   },
-                  "detail": """ + TaxReturn.format.writes(taxReturn).toString() + """,
+                  "detail": """ + body + """,
                   "generatedAt": "${json-unit.any-string}",
                   "metadata": {
                     "sendAttemptAt": "${json-unit.any-string}",
                     "instanceID": "${json-unit.any-string}",
                     "sequence": "${json-unit.any-number}"
                   }
-                }""".stripMargin,
-              true,
-              true
-            )
-          )
+                }""".stripMargin, true, true))
       )
       true
     } catch {

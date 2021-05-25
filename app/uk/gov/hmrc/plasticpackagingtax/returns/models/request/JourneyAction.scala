@@ -20,6 +20,7 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -28,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit
+class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: Auditor)(implicit
   val exec: ExecutionContext
 ) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
@@ -55,8 +56,14 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector)(implicit
     returnsConnector.find(id).flatMap {
       case Right(taxReturn) =>
         taxReturn
-          .map(r => Future.successful(Right(r)))
-          .getOrElse(returnsConnector.create(TaxReturn(id)))
+          .map { r =>
+            auditor.existingTaxReturnLoaded()
+            Future.successful(Right(r))
+          }
+          .getOrElse {
+            auditor.newTaxReturnStarted()
+            returnsConnector.create(TaxReturn(id))
+          }
       case Left(error) => Future.successful(Left(error))
     }
 
