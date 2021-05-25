@@ -96,7 +96,7 @@ class ExportedPlasticWeightControllerSpec extends ControllerSpec {
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
-                returnRoutes.ConvertedPackagingCreditController.displayPage().url
+                returnRoutes.RecycledPlasticWeightController.displayPage().url
               )
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
