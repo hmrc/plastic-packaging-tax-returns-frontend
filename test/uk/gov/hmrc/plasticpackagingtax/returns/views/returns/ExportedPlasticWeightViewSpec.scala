@@ -41,22 +41,18 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "have proper messages for labels" in {
       messages must haveTranslationFor("returns.exportedPlasticWeight.title")
       messages must haveTranslationFor("returns.exportedPlasticWeight.sectionHeader")
-      messages must haveTranslationFor("returns.exportedPlasticWeight.totalKg.label")
-      messages must haveTranslationFor("returns.exportedPlasticWeight.totalValueForCredit.label")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.total.weight.label")
 
       messages must haveTranslationFor("returns.exportedPlasticWeight.details.link")
-      messages must haveTranslationFor("returns.exportedPlasticWeight.details.body")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.details.line1")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.details.line2")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.details.line3")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.details.line4")
+      messages must haveTranslationFor("returns.exportedPlasticWeight.details.line5")
 
       messages must haveTranslationFor("returns.exportedPlasticWeight.totalKg.empty.error")
-      messages must haveTranslationFor(
-        "returns.exportedPlasticWeight.totalValueForCredit.empty.error"
-      )
       messages must haveTranslationFor("returns.exportedPlasticWeight.totalKg.format.error")
-      messages must haveTranslationFor(
-        "returns.exportedPlasticWeight.totalValueForCredit.format.error"
-      )
       messages must haveTranslationFor("returns.exportedPlasticWeight.weight.aboveMax.error")
-      messages must haveTranslationFor("returns.exportedPlasticWeight.credit.aboveMax.error")
     }
 
     val view = createView()
@@ -101,26 +97,14 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display total weight label" in {
 
-      view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
-        messages("returns.exportedPlasticWeight.totalKg.label")
+      view.getElementsByClass("govuk-label--s").text() must include(
+        messages("returns.exportedPlasticWeight.total.weight.label")
       )
     }
 
     "display total weight input box" in {
 
       view must containElementWithID("totalKg")
-    }
-
-    "display total direct value label" in {
-
-      view.getElementsByAttributeValueMatching("for", "totalValueForCredit").text() must include(
-        messages("returns.exportedPlasticWeight.totalValueForCredit.label")
-      )
-    }
-
-    "display total direct value input box" in {
-
-      view must containElementWithID("totalValueForCredit")
     }
 
     "display 'Save and Continue' button" in {
@@ -141,11 +125,10 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ExportedPlasticWeight
         .form()
-        .fill(ExportedPlasticWeight("1000", "5.75"))
+        .fill(ExportedPlasticWeight("1000"))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"
-      view.getElementById("totalValueForCredit").attr("value") mustBe "5.75"
     }
   }
 
@@ -155,13 +138,12 @@ class ExportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = ExportedPlasticWeight
         .form()
-        .fillAndValidate(ExportedPlasticWeight("", ""))
+        .fillAndValidate(ExportedPlasticWeight(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("totalKg", "Enter an amount to continue")
-      view must haveGovukFieldError("totalValueForCredit", "Enter £0.00 or higher to continue")
     }
   }
 }

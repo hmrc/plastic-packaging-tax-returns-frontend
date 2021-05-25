@@ -56,13 +56,7 @@ class ExportedPlasticWeightController @Inject() (
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       request.taxReturn.exportedPlasticWeight match {
         case Some(data) =>
-          Ok(
-            page(
-              form().fill(
-                ExportedPlasticWeight(data.totalKgAsString, data.totalValueForCreditAsString)
-              )
-            )
-          )
+          Ok(page(form().fill(ExportedPlasticWeight(data.totalKgAsString))))
         case _ => Ok(page(form()))
       }
     }
@@ -92,13 +86,7 @@ class ExportedPlasticWeightController @Inject() (
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
       taxReturn.copy(exportedPlasticWeight =
-        Some(
-          DirectExportDetailsModel(
-            totalKg = formData.totalKg.trim.toLong,
-            totalValueForCreditInPence =
-              convertDecimalRepresentationToPences(formData.totalValueForCredit)
-          )
-        )
+        Some(DirectExportDetailsModel(totalKg = formData.totalKg.trim.toLong))
       )
     }
 

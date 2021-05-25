@@ -23,7 +23,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.{
   invalidFormatError,
   maxTotalKg,
   totalKg,
-  totalKgBelowThreshold,
   weightEmptyError
 }
 

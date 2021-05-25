@@ -21,6 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
@@ -70,6 +71,14 @@ class ErrorHandlerSpec
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value must endWith("/unauthorised")
+    }
+
+    "handle all exceptions" in {
+
+      val error  = new RuntimeException("error")
+      val result = Future.successful(errorHandler.resolveError(FakeRequest(), error))
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 }

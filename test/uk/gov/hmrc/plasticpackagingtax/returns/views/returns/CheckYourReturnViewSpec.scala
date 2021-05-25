@@ -33,7 +33,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
   private val taxReturn = aTaxReturn(withId("01"),
                                      withManufacturedPlasticWeight(5),
                                      withConvertedPackagingCredit(5),
-                                     withDirectExportDetails(2, 2),
+                                     withDirectExportDetails(2),
                                      withHumanMedicinesPlasticWeight(4),
                                      withImportedPlasticWeight(2),
                                      withRecycledPlasticWeight(7)
@@ -62,7 +62,6 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("returns.checkYourReturnPage.humansMedicinesPackaging")
 
       messages must haveTranslationFor("returns.checkYourReturnPage.directExports")
-      messages must haveTranslationFor("returns.checkYourReturnPage.exportsCredit")
 
       messages must haveTranslationFor("returns.checkYourReturnPage.conversionCredit")
 
@@ -113,7 +112,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
       val checkYourReturnView = new CheckYourReturnView(view)
 
       "tax return table has total 8 rows" in {
-        checkYourReturnView.getTableRows(0).size() mustBe 7
+        checkYourReturnView.getTableRows(0).size() mustBe 6
       }
 
       "tax return table table headers" in {
@@ -168,17 +167,9 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                       asKg(taxReturn.exportedPlasticWeight.get.totalKg.toString),
                                       returnRoutes.ExportedPlasticWeightController.displayPage()
         )
-        checkYourReturnView.rowExists(0,
-                                      4,
-                                      "returns.checkYourReturnPage.exportsCredit",
-                                      asPounds(
-                                        taxReturn.exportedPlasticWeight.get.totalValueForCreditAsString
-                                      ),
-                                      returnRoutes.ExportedPlasticWeightController.displayPage()
-        )
 
         checkYourReturnView.rowExists(0,
-                                      5,
+                                      4,
                                       "returns.checkYourReturnPage.conversionCredit",
                                       asPounds(
                                         taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString
@@ -187,7 +178,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         )
 
         checkYourReturnView.rowExists(0,
-                                      6,
+                                      5,
                                       "returns.checkYourReturnPage.recycledPackaging.total",
                                       asKg(taxReturn.recycledPlasticWeight.get.totalKg.toString),
                                       returnRoutes.RecycledPlasticWeightController.displayPage()
@@ -323,7 +314,7 @@ class CheckYourReturnView(view: Document) extends UnitViewSpec with Matchers {
     getRowValueFor(tableNo, rowNo) mustBe value
   }
 
-  def tableHeaderForColumn(tableNo: Int, colNo: Int) =
+  def tableHeaderForColumn(tableNo: Int, colNo: Int): Element =
     view.getElementsByClass("govuk-table__head").get(tableNo).getElementsByClass(
       "govuk-table__header"
     ).get(colNo)

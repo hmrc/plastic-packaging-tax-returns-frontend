@@ -45,7 +45,7 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
         val taxReturn = aTaxReturn(withId("01"),
                                    withManufacturedPlasticWeight(5),
                                    withConvertedPackagingCredit(5),
-                                   withDirectExportDetails(2, 2),
+                                   withDirectExportDetails(2),
                                    withHumanMedicinesPlasticWeight(4),
                                    withImportedPlasticWeight(2),
                                    withRecycledPlasticWeight(6)

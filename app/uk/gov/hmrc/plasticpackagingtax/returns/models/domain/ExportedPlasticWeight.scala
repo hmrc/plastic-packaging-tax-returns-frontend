@@ -19,13 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
-case class ExportedPlasticWeight(totalKg: Long, totalValueForCreditInPence: Long)
-    extends PriceConverter {
+case class ExportedPlasticWeight(totalKg: Long) extends PriceConverter {
   def totalKgAsString = this.totalKg.toString
-
-  def totalValueForCreditAsString =
-    convertPencesToDecimalRepresentation(this.totalValueForCreditInPence)
-
 }
 
 object ExportedPlasticWeight {

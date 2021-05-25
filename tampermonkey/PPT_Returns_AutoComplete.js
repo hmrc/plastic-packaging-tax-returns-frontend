@@ -89,7 +89,6 @@ const exportedPackagingWeightPage = () => {
     if (currentPageIs('/plastic-packaging-tax/returns/exported-plastic-packaging-weight')) {
 
         document.getElementById('totalKg').value = '2'
-        document.getElementById('totalValueForCredit').value = '3'
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }

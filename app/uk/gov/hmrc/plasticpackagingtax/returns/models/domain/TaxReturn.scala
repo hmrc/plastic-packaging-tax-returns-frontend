@@ -38,8 +38,6 @@ case class TaxReturn(
     totalHumanMedicinesKg = humanMedicinesPlasticWeight.map(_.totalKg).getOrZero,
     totalDirectExportsKg = exportedPlasticWeight.map(_.totalKg).getOrZero,
     totalConversionCreditPence = convertedPackagingCredit.map(_.totalInPence).getOrZero,
-    totalDirectExportsCreditPence =
-      exportedPlasticWeight.map(_.totalValueForCreditInPence).getOrZero,
     totalRecycledKg = recycledPlasticWeight.map(_.totalKg).getOrZero
   )
 

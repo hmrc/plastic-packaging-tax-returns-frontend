@@ -20,41 +20,25 @@ import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 
-case class ExportedPlasticWeight(totalKg: String, totalValueForCredit: String)
+case class ExportedPlasticWeight(totalKg: String)
 
 object ExportedPlasticWeight extends CommonFormValidators {
 
   implicit val format: OFormat[ExportedPlasticWeight] = Json.format[ExportedPlasticWeight]
 
-  val totalKg             = "totalKg"
-  val totalValueForCredit = "totalValueForCredit"
-  val totalKgEmptyError   = "returns.exportedPlasticWeight.totalKg.empty.error"
-
-  val totalValueForCreditEmptyError =
-    "returns.exportedPlasticWeight.totalValueForCredit.empty.error"
-
+  val totalKg                   = "totalKg"
+  val totalKgEmptyError         = "returns.exportedPlasticWeight.totalKg.empty.error"
   val totalKgInvalidFormatError = "returns.exportedPlasticWeight.totalKg.format.error"
+  val weightAboveMaxError       = "returns.exportedPlasticWeight.weight.aboveMax.error"
 
-  val totalValueForCreditInvalidFormatError =
-    "returns.exportedPlasticWeight.totalValueForCredit.format.error"
-
-  val weightAboveMaxError = "returns.exportedPlasticWeight.weight.aboveMax.error"
-  val creditAboveMaxError = "returns.exportedPlasticWeight.credit.aboveMax.error"
-
-  val maxTotalKg        = 99999999
-  val oneHundredMillion = BigDecimal(100000000)
+  val maxTotalKg = 99999999
 
   private val mapping = Forms.mapping(
     totalKg ->
       text()
         .verifying(totalKgEmptyError, isNonEmpty)
         .verifying(totalKgInvalidFormatError, v => !isNonEmpty(v) || isDigitsOnly(v))
-        .verifying(weightAboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg)),
-    totalValueForCredit ->
-      text()
-        .verifying(totalValueForCreditEmptyError, isNonEmpty)
-        .verifying(totalValueForCreditInvalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
-        .verifying(creditAboveMaxError, v => !isNonEmpty(v) || isLowerThan(oneHundredMillion)(v))
+        .verifying(weightAboveMaxError, v => !isDigitsOnly(v) || isEqualToOrBelow(v, maxTotalKg))
   )(ExportedPlasticWeight.apply)(ExportedPlasticWeight.unapply)
 
   def form(): Form[ExportedPlasticWeight] = Form(mapping)
