@@ -170,6 +170,13 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
         checkYourReturnView.rowExists(0,
                                       4,
+                                      "returns.checkYourReturnPage.recycledPackaging.total",
+                                      asKg(taxReturn.recycledPlasticWeight.get.totalKg.toString),
+                                      returnRoutes.RecycledPlasticWeightController.displayPage()
+        )
+
+        checkYourReturnView.rowExists(0,
+                                      5,
                                       "returns.checkYourReturnPage.conversionCredit",
                                       asPounds(
                                         taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString
@@ -177,12 +184,6 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                       returnRoutes.ConvertedPackagingCreditController.displayPage()
         )
 
-        checkYourReturnView.rowExists(0,
-                                      5,
-                                      "returns.checkYourReturnPage.recycledPackaging.total",
-                                      asKg(taxReturn.recycledPlasticWeight.get.totalKg.toString),
-                                      returnRoutes.RecycledPlasticWeightController.displayPage()
-        )
       }
 
       "tax liability table has total 4 rows" in {

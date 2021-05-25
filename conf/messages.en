@@ -115,8 +115,18 @@ returns.exportedPlasticWeight.totalKg.empty.error = Enter an amount to continue
 returns.exportedPlasticWeight.totalKg.format.error = Amount must be entered as numbers only
 returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
+returns.recycledPlasticWeight.meta.title = Recycled plastic packaging
+returns.recycledPlasticWeight.title = 5. Recycled plastic packaging
+returns.recycledPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
+returns.recycledPlasticWeight.total.weight = Total weight of packaging components containing more than 30% recycled plastic manufactured in the quarter (kg)
+returns.recycledPlasticWeight.details.link = How ‘recycled plastic packaging’ defined?
+returns.recycledPlasticWeight.details.line1 = ‘Recycled plastic’ is plastic that has been reprocessed from recovered plastic by means of a chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
+returns.recycledPlasticWeight.empty.error = Enter an amount to continue
+returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
+returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+
 returns.convertedPackagingCredit.meta.title = Converted packaging
-returns.convertedPackagingCredit.title = 5. Converted packaging
+returns.convertedPackagingCredit.title = 6. Converted packaging
 returns.convertedPackagingCredit.sectionHeader = Plastic Packaging Tax Return
 returns.convertedPackagingCredit.total.weight = Total value of packaging for credit
 returns.convertedPackagingCredit.details.link = What is converted plastic packaging?
@@ -125,16 +135,6 @@ returns.convertedPackagingCredit.details.line2 = If a third-party company carrie
 returns.convertedPackagingCredit.empty.error = Enter £0.00 or higher to continue
 returns.convertedPackagingCredit.format.error = Enter an amount in pounds. For example, £123.00
 returns.convertedPackagingCredit.aboveMax.error = Amount cannot exceed £99,999,999.99
-
-returns.recycledPlasticWeight.meta.title = Recycled plastic packaging
-returns.recycledPlasticWeight.title = 6. Recycled plastic packaging
-returns.recycledPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
-returns.recycledPlasticWeight.total.weight = Total weight of packaging components containing more than 30% recycled plastic manufactured in the quarter (kg)
-returns.recycledPlasticWeight.details.link = How ‘recycled plastic packaging’ defined?
-returns.recycledPlasticWeight.details.line1 = ‘Recycled plastic’ is plastic that has been reprocessed from recovered plastic by means of a chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
-returns.recycledPlasticWeight.empty.error = Enter an amount to continue
-returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
-returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
 returns.checkYourReturnPage.title = Check your return
 returns.checkYourReturnPage.label = Plastic Packaging Tax Return

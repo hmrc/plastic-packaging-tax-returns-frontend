@@ -73,7 +73,7 @@ class ExportedPlasticWeightController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(returnRoutes.ConvertedPackagingCreditController.displayPage())
+                    Redirect(returnRoutes.RecycledPlasticWeightController.displayPage())
                   case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error

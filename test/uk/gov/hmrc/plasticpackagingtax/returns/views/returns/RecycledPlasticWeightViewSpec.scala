@@ -76,7 +76,7 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        returnRoutes.ConvertedPackagingCreditController.displayPage()
+        returnRoutes.ExportedPlasticWeightController.displayPage()
       )
     }
 

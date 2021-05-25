@@ -57,7 +57,7 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ExportedPlasticWeightController.displayPage()
+        routes.RecycledPlasticWeightController.displayPage()
       )
     }
 
