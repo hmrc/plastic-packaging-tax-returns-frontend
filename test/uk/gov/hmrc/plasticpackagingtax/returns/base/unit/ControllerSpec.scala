@@ -37,10 +37,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
+
 import java.lang.reflect.Field
-
-import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
-
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
@@ -51,8 +49,6 @@ trait ControllerSpec
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   implicit val config: AppConfig = mock[AppConfig]
-
-  protected val mockAuditor = mock[Auditor]
 
   protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
 

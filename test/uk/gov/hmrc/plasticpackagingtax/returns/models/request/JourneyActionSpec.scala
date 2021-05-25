@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
@@ -36,7 +36,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class JourneyActionSpec extends ControllerSpec {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
-  private val actionRefiner     = new JourneyAction(mockTaxReturnsConnector)(ExecutionContext.global)
+
+  private val actionRefiner = new JourneyAction(mockTaxReturnsConnector, mockAuditor)(
+    ExecutionContext.global
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -48,7 +51,7 @@ class JourneyActionSpec extends ControllerSpec {
 
   "action refine" should {
 
-    "permit request" when {
+    "permit request and send audit event" when {
       "enrolmentId found" in {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(TaxReturn(taxReturnId))))
@@ -60,6 +63,7 @@ class JourneyActionSpec extends ControllerSpec {
             responseGenerator
           )
         ) mustBe Results.Ok
+        verify(mockAuditor, Mockito.atLeast(1)).existingTaxReturnLoaded()(any(), any())
       }
     }
 
@@ -83,7 +87,7 @@ class JourneyActionSpec extends ControllerSpec {
       }
     }
 
-    "create tax return" when {
+    "create tax return and send audit event" when {
       "tax return details not found" in {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(None))
@@ -98,6 +102,7 @@ class JourneyActionSpec extends ControllerSpec {
             responseGenerator
           )
         ) mustBe Results.Ok
+        verify(mockAuditor, Mockito.atLeast(1)).newTaxReturnStarted()(any(), any())
       }
     }
 
