@@ -57,7 +57,6 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: A
       case Right(taxReturn) =>
         taxReturn
           .map { r =>
-            auditor.existingTaxReturnLoaded()
             Future.successful(Right(r))
           }
           .getOrElse {

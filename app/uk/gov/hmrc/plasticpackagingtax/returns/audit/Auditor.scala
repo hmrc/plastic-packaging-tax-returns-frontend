@@ -36,9 +36,4 @@ class Auditor @Inject() (auditConnector: AuditConnector) {
                                      StartTaxReturnEvent(UserType.NEW)
     )
 
-  def existingTaxReturnLoaded()(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
-    auditConnector.sendExplicitAudit(StartTaxReturnEvent.eventType,
-                                     StartTaxReturnEvent(UserType.RETURNING)
-    )
-
 }
