@@ -96,30 +96,6 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
         }
       }
     }
-
-    "post existing taxReturn started event" when {
-      "existingTaxReturnLoaded invoked" in {
-        givenAuditReturns(Status.NO_CONTENT)
-
-        auditor.existingTaxReturnLoaded()
-
-        eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.RETURNING)) mustBe true
-        }
-      }
-    }
-
-    "not throw exception" when {
-      "existingTaxReturnLoaded event fails" in {
-        givenAuditReturns(Status.BAD_REQUEST)
-
-        auditor.existingTaxReturnLoaded()
-
-        eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartTaxReturnEvent(UserType.RETURNING)) mustBe true
-        }
-      }
-    }
   }
 
   private def givenAuditReturns(statusCode: Int): Unit =
