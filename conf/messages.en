@@ -174,3 +174,25 @@ returns.confirmationPage.inTheMeantime.payLink = Pay your liability
 returns.confirmationPage.inTheMeantime.homeLink = Go to the Plastic Packaging Tax homepage
 returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
 returns.confirmationPage.exitSurvey.text.link = What did you think of this service?
+
+account.viewSubscription.organisationDetails.title = View your registration details
+account.viewSubscription.organisationDetails.label = Registered organisation details
+account.viewSubscription.organisationDetails.registeredBusinessAddress = Registered business address
+account.viewSubscription.organisationDetails.organisationType = Organisation type
+account.viewSubscription.organisationDetails.businessName = Business name
+
+account.viewSubscription.organisationDetails.soleTrader.firstName = First name
+account.viewSubscription.organisationDetails.soleTrader.lastName = Last name
+
+account.viewSubscription.primaryContactDetails.meta.title = Primary contact details
+account.viewSubscription.primaryContactDetails.label = Primary contact details
+account.viewSubscription.primaryContactDetails.fullName = Name
+account.viewSubscription.primaryContactDetails.jobTitle = Job title
+account.viewSubscription.primaryContactDetails.address = Address
+account.viewSubscription.primaryContactDetails.phoneNumber = Phone Number
+account.viewSubscription.primaryContactDetails.email = Email Address
+
+account.viewSubscription.businessDetails.title = Business contact details
+account.viewSubscription.businessDetails.phoneNumber = Business Phone Number
+account.viewSubscription.businessDetails.name = Business name
+account.viewSubscription.businessDetails.email = Business Email Address

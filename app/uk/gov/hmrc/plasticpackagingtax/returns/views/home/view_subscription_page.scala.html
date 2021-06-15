@@ -1,0 +1,141 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.Address
+@import java.time.format.DateTimeFormatter
+
+@this(
+    formHelper: formWithCSRF,
+    govukLayout: main_template,
+    govukSummaryList: GovukSummaryList,
+    pageTitle: pageTitle,
+    saveAndContinue: saveAndContinue,
+    paragraphBody: paragraphBody
+)
+
+@(subscription: PptSubscription)(implicit request: Request[_], messages: Messages)
+
+@extractAddress(address: Address) = @{
+    Seq(address.addressLine1,
+    address.addressLine2,
+    address.addressLine3.getOrElse(""),
+    address.addressLine4.getOrElse(""),
+    address.postCode.getOrElse("")).filter(_.nonEmpty).mkString("<br>")
+}
+
+@row(key: String, value: Option[String] , call: Option[Call] = None) = @{
+    SummaryListRow(
+        key = Key(
+            content = Text(messages(key))
+            ),
+        value = Value(
+            content = HtmlContent(value.getOrElse(""))
+        ),
+        actions = call.flatMap(c => Some(Actions(
+        items = Seq(
+            ActionItem(
+                href = c.url,
+                content = Text(messages("site.link.change")),
+                visuallyHiddenText = Some(messages(key))
+                )
+            )
+    )))
+    )
+}
+
+@ukCompanyOrganisationDetails() = @{
+    SummaryList(
+        rows = Seq(
+            row("account.viewSubscription.businessDetails.name", subscription.organisationDetails.incorporationDetails.flatMap(_.companyName)),
+            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", subscription.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+            row("account.viewSubscription.organisationDetails.organisationType", subscription.organisationDetails.organisationType)
+            ).filterNot(_.value.content == Empty)
+    )
+}
+
+@soleTraderOrganisationDetails() = @{
+    SummaryList(
+        rows = Seq(
+            row("account.viewSubscription.organisationDetails.soleTrader.firstName", Some(subscription.organisationDetails.soleTraderDetails.flatMap(s => s.firstName).getOrElse(""))),
+            row("account.viewSubscription.organisationDetails.soleTrader.lastName", Some(subscription.organisationDetails.soleTraderDetails.flatMap(s => s.lastName).getOrElse(""))),
+            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", subscription.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+            row("account.viewSubscription.organisationDetails.organisationType", Some("Sole Trader"))
+        ).filterNot(_.value.content == Empty)
+    )
+}
+
+@ukCompanyBusinessContactDetails() = @{
+    SummaryList(
+        rows = Seq(
+            row("account.viewSubscription.businessDetails.phoneNumber", subscription.organisationDetails.incorporationDetails.flatMap(_.phoneNumber)),
+            row("account.viewSubscription.businessDetails.email", subscription.organisationDetails.incorporationDetails.flatMap(_.email))
+        ).filterNot(_.value.content == Empty)
+    )
+}
+
+@soleTraderBusinessContactDetails() = @{
+    SummaryList(
+        rows = Seq(
+            row("account.viewSubscription.businessDetails.phoneNumber", subscription.primaryContactDetails.phoneNumber),
+            row("account.viewSubscription.businessDetails.email", subscription.primaryContactDetails.email)
+        ).filterNot(_.value.content == Empty)
+    )
+}
+@govukLayout(
+    title = Title("account.viewSubscription.organisationDetails.title"),
+    backButton = Some(BackButton(messages("site.back"), homeRoutes.HomeController.displayPage(), messages("site.back.hiddenText")))) {
+
+    @pageTitle(text = messages("account.viewSubscription.organisationDetails.title"), classes = "govuk-label--l")
+
+    @formHelper(action = homeRoutes.ViewSubscriptionController.submit(), 'autoComplete -> "off") {
+
+    <h2 id="primary-contact-details" class="govuk-heading-m">
+        @messages("account.viewSubscription.organisationDetails.label")</h2>
+    @govukSummaryList(
+        {if (subscription.organisationDetails.incorporationDetails.isEmpty)  soleTraderOrganisationDetails() else ukCompanyOrganisationDetails() }
+    )
+
+    <h2 id="primary-contact-details" class="govuk-heading-m">@messages("account.viewSubscription.primaryContactDetails.label")</h2>
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
+                    row("account.viewSubscription.primaryContactDetails.fullName", subscription.primaryContactDetails.fullName, Some(homeRoutes.ViewSubscriptionController.displayPage())),
+                    row("account.viewSubscription.primaryContactDetails.jobTitle", subscription.primaryContactDetails.jobTitle),
+                    row("account.viewSubscription.primaryContactDetails.address", subscription.primaryContactDetails.address.map(extractAddress)),
+                    row("account.viewSubscription.primaryContactDetails.phoneNumber", subscription.primaryContactDetails.phoneNumber),
+                    row("account.viewSubscription.primaryContactDetails.email", subscription.primaryContactDetails.email)
+                ).filterNot(_.value.content == Empty)
+            )
+        )
+
+    <h2 id="send-your-application" class="govuk-heading-m">@messages("account.viewSubscription.businessDetails.title")</h2>
+    @govukSummaryList(
+        {if (subscription.organisationDetails.incorporationDetails.isEmpty)  soleTraderBusinessContactDetails() else ukCompanyBusinessContactDetails() }
+    )
+
+    @saveAndContinue()
+    }
+}

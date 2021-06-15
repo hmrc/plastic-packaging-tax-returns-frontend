@@ -44,7 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpec
     extends AnyWordSpecLike with MockitoSugar with Matchers with GuiceOneAppPerSuite
     with BeforeAndAfterEach with DefaultAwaitTimeout with MockJourneyAction with MockAuthAction
-    with MetricsMocks {
+    with MockSubscriptionConnector with MetricsMocks {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 

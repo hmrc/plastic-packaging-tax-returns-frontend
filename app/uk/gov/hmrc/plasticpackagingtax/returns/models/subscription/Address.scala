@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.connectors
+package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 
-class ServiceError(private val message: String, private val cause: Throwable)
-    extends RuntimeException(message, cause) {}
+import play.api.libs.json.{Json, OFormat}
 
-case class DownstreamServiceError(private val message: String, private val cause: Throwable)
-    extends ServiceError(message, cause) {}
+case class Address(
+  addressLine1: String,
+  addressLine2: String,
+  addressLine3: Option[String] = None,
+  addressLine4: Option[String] = None,
+  postCode: Option[String] = None
+)
+
+object Address {
+  implicit val format: OFormat[Address] = Json.format[Address]
+}
