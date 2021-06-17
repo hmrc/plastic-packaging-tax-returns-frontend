@@ -115,14 +115,14 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
         "account.homePage.card.registration.link.1"
       )
       view.select(".card .govuk-link").get(1) must haveHref(
-        homeRoutes.HomeController.displayPage().url
+        homeRoutes.ViewSubscriptionController.displayPage().url
       )
 
       view.select(".card .govuk-link").get(2) must containMessage(
         "account.homePage.card.registration.link.2"
       )
       view.select(".card .govuk-link").get(2) must haveHref(
-        homeRoutes.HomeController.displayPage().url
+        homeRoutes.ViewSubscriptionController.displayPage().url
       )
 
     }

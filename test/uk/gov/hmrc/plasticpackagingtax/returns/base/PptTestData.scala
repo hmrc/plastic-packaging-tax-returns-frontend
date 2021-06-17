@@ -22,7 +22,10 @@ import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.IdentityData
+
+import java.util.UUID
 
 object PptTestData {
 
@@ -74,5 +77,65 @@ object PptTestData {
 
   def newEnrolment(key: String, identifierName: String, identifierValue: String): Enrolment =
     Enrolment(key).withIdentifier(identifierName, identifierValue)
+
+  def ukLimitedCompanySubscription(
+    pptReference: String = UUID.randomUUID().toString
+  ): PptSubscription =
+    PptSubscription(pptReference = pptReference,
+                    primaryContactDetails =
+                      PrimaryContactDetails(Some("FirstName LastName"),
+                                            jobTitle = Some("CEO"),
+                                            email =
+                                              Some("test@test.com"),
+                                            phoneNumber =
+                                              Some("1234567890"),
+                                            address = Some(
+                                              Address(addressLine1 =
+                                                        "addressLine1",
+                                                      addressLine2 =
+                                                        "line2",
+                                                      addressLine3 =
+                                                        Some("Town"),
+                                                      postCode =
+                                                        Some("PostCode")
+                                              )
+                                            )
+                      ),
+                    organisationDetails =
+                      OrganisationDetails(isBasedInUk = Some(true),
+                                          organisationType =
+                                            Some("UK_COMPANY"),
+                                          businessRegisteredAddress =
+                                            Some(
+                                              Address(addressLine1 =
+                                                        "addressLine1",
+                                                      addressLine3 =
+                                                        Some("Town"),
+                                                      addressLine2 = "line2",
+                                                      postCode =
+                                                        Some("PostCode")
+                                              )
+                                            ),
+                                          safeNumber = Some("123"),
+                                          incorporationDetails = Some(
+                                            IncorporationDetails(companyName =
+                                                                   Some("Plastics Limited"),
+                                                                 phoneNumber = Some("12345678"),
+                                                                 email = Some("test@email.com")
+                                            )
+                                          )
+                      )
+    )
+
+  def soleTraderSubscription(pptReference: String = UUID.randomUUID().toString): PptSubscription = {
+    val regDetails = ukLimitedCompanySubscription(pptReference)
+    regDetails.copy(organisationDetails =
+      regDetails.organisationDetails.copy(
+        soleTraderDetails =
+          Some(SoleTraderIncorporationDetails(firstName = Some("James"), lastName = Some("Bond"))),
+        incorporationDetails = None
+      )
+    )
+  }
 
 }

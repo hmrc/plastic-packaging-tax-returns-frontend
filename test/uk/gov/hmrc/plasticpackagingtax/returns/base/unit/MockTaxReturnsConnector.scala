@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.base.unit
 
-import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   DownstreamServiceError,
   ServiceError,

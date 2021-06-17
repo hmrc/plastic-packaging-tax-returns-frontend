@@ -60,6 +60,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def pptReturnUrl(id: String): String = s"$pptReturnsUrl/$id"
 
+  def pptSubscriptionUrl(pptReference: String): String =
+    s"$pptServiceHost/subscriptions/$pptReference"
+
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
