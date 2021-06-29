@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
+package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OrganisationDetails(
-  organisationType: Option[String] = None,
-  organisationName: Option[String]
+import java.time.ZonedDateTime
+
+case class SubscriptionUpdateResponse(
+  pptReference: String,
+  processingDate: ZonedDateTime,
+  formBundleNumber: String
 )
 
-object OrganisationDetails {
-  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+object SubscriptionUpdateResponse {
+
+  implicit val format: OFormat[SubscriptionUpdateResponse] =
+    Json.format[SubscriptionUpdateResponse]
+
 }

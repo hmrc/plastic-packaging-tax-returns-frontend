@@ -18,11 +18,14 @@ package uk.gov.hmrc.plasticpackagingtax.returns.forms.subscriptions
 
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms, Mapping}
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.CommonFormValidators
 
 case class Name(value: String)
 
 object Name extends CommonFormValidators {
+
+  implicit val format: OFormat[Name] = Json.format[Name]
 
   val emptyError  = "subscription.primaryContactDetails.name.error.empty"
   val lengthError = "subscription.primaryContactDetails.name.error.length"

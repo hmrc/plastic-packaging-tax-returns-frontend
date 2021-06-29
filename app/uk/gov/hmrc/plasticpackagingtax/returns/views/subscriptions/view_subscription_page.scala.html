@@ -22,10 +22,11 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.Address
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.AddressDetails
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.BusinessCorrespondenceDetails
 
 @this(
     formHelper: formWithCSRF,
@@ -36,14 +37,22 @@
     paragraphBody: paragraphBody
 )
 
-@(subscription: PptSubscription)(implicit request: Request[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse)(implicit request: Request[_], messages: Messages)
 
-@extractAddress(address: Address) = @{
+@extractBusinessAddress(address: BusinessCorrespondenceDetails) = @{
     Seq(address.addressLine1,
     address.addressLine2,
     address.addressLine3.getOrElse(""),
     address.addressLine4.getOrElse(""),
-    address.postCode.getOrElse("")).filter(_.nonEmpty).mkString("<br>")
+    address.postalCode.getOrElse("")).filter(_.nonEmpty).mkString("<br>")
+}
+
+@extractPrimaryContactAddress(address: AddressDetails) = @{
+    Seq(address.addressLine1,
+        address.addressLine2,
+        address.addressLine3.getOrElse(""),
+        address.addressLine4.getOrElse(""),
+        address.postalCode.getOrElse("")).filter(_.nonEmpty).mkString("<br>")
 }
 
 @row(key: String, value: Option[String] , call: Option[Call] = None) = @{
@@ -69,9 +78,9 @@
 @ukCompanyOrganisationDetails() = @{
     SummaryList(
         rows = Seq(
-            row("account.viewSubscription.businessDetails.name", subscription.organisationDetails.incorporationDetails.flatMap(_.companyName)),
-            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", subscription.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            row("account.viewSubscription.organisationDetails.organisationType", subscription.organisationDetails.organisationType)
+            row("account.viewSubscription.businessDetails.name", subscription.legalEntityDetails.customerDetails.organisationDetails.flatMap( details => details.organisationName)),
+            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", Some(extractBusinessAddress(subscription.businessCorrespondenceDetails))),
+            row("account.viewSubscription.organisationDetails.organisationType", subscription.legalEntityDetails.customerDetails.organisationDetails.flatMap( details => details.organisationType))
             ).filterNot(_.value.content == Empty)
     )
 }
@@ -79,9 +88,9 @@
 @soleTraderOrganisationDetails() = @{
     SummaryList(
         rows = Seq(
-            row("account.viewSubscription.organisationDetails.soleTrader.firstName", Some(subscription.organisationDetails.soleTraderDetails.flatMap(s => s.firstName).getOrElse(""))),
-            row("account.viewSubscription.organisationDetails.soleTrader.lastName", Some(subscription.organisationDetails.soleTraderDetails.flatMap(s => s.lastName).getOrElse(""))),
-            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", subscription.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+            row("account.viewSubscription.organisationDetails.soleTrader.firstName", subscription.legalEntityDetails.customerDetails.individualDetails.map( details => details.firstName)),
+            row("account.viewSubscription.organisationDetails.soleTrader.lastName", subscription.legalEntityDetails.customerDetails.individualDetails.map( details => details.lastName)),
+            row("account.viewSubscription.organisationDetails.registeredBusinessAddress", Some(extractBusinessAddress(subscription.businessCorrespondenceDetails))),
             row("account.viewSubscription.organisationDetails.organisationType", Some("Sole Trader"))
         ).filterNot(_.value.content == Empty)
     )
@@ -90,8 +99,8 @@
 @ukCompanyBusinessContactDetails() = @{
     SummaryList(
         rows = Seq(
-            row("account.viewSubscription.businessDetails.phoneNumber", subscription.organisationDetails.incorporationDetails.flatMap(_.phoneNumber)),
-            row("account.viewSubscription.businessDetails.email", subscription.organisationDetails.incorporationDetails.flatMap(_.email))
+            row("account.viewSubscription.businessDetails.phoneNumber", Some(subscription.principalPlaceOfBusinessDetails.contactDetails.telephone)),
+            row("account.viewSubscription.businessDetails.email", Some(subscription.principalPlaceOfBusinessDetails.contactDetails.email))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -99,8 +108,8 @@
 @soleTraderBusinessContactDetails() = @{
     SummaryList(
         rows = Seq(
-            row("account.viewSubscription.businessDetails.phoneNumber", subscription.primaryContactDetails.phoneNumber),
-            row("account.viewSubscription.businessDetails.email", subscription.primaryContactDetails.email)
+            row("account.viewSubscription.businessDetails.phoneNumber", Some(subscription.principalPlaceOfBusinessDetails.contactDetails.telephone)),
+            row("account.viewSubscription.businessDetails.email", Some(subscription.principalPlaceOfBusinessDetails.contactDetails.email))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -115,25 +124,25 @@
     <h2 id="primary-contact-details" class="govuk-heading-m">
         @messages("account.viewSubscription.organisationDetails.label")</h2>
     @govukSummaryList(
-        {if (subscription.organisationDetails.incorporationDetails.isEmpty)  soleTraderOrganisationDetails() else ukCompanyOrganisationDetails() }
+        {if (subscription.legalEntityDetails.customerDetails.individualDetails.isDefined)  soleTraderOrganisationDetails() else ukCompanyOrganisationDetails() }
     )
 
     <h2 id="primary-contact-details" class="govuk-heading-m">@messages("account.viewSubscription.primaryContactDetails.label")</h2>
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                    row("account.viewSubscription.primaryContactDetails.fullName", subscription.primaryContactDetails.fullName, Some(subscriptionsRoutes.PrimaryContactNameController.displayPage())),
-                    row("account.viewSubscription.primaryContactDetails.jobTitle", subscription.primaryContactDetails.jobTitle),
-                    row("account.viewSubscription.primaryContactDetails.address", subscription.primaryContactDetails.address.map(extractAddress)),
-                    row("account.viewSubscription.primaryContactDetails.phoneNumber", subscription.primaryContactDetails.phoneNumber),
-                    row("account.viewSubscription.primaryContactDetails.email", subscription.primaryContactDetails.email)
+                    row("account.viewSubscription.primaryContactDetails.fullName", Some(subscription.primaryContactDetails.name), Some(subscriptionsRoutes.PrimaryContactNameController.displayPage())),
+                    row("account.viewSubscription.primaryContactDetails.jobTitle", Some(subscription.primaryContactDetails.positionInCompany)),
+                    row("account.viewSubscription.primaryContactDetails.address", Some(extractPrimaryContactAddress(subscription.principalPlaceOfBusinessDetails.addressDetails))),
+                    row("account.viewSubscription.primaryContactDetails.phoneNumber", Some(subscription.primaryContactDetails.contactDetails.telephone)),
+                    row("account.viewSubscription.primaryContactDetails.email", Some(subscription.primaryContactDetails.contactDetails.email))
                 ).filterNot(_.value.content == Empty)
             )
         )
 
     <h2 id="send-your-application" class="govuk-heading-m">@messages("account.viewSubscription.businessDetails.title")</h2>
     @govukSummaryList(
-        {if (subscription.organisationDetails.incorporationDetails.isEmpty)  soleTraderBusinessContactDetails() else ukCompanyBusinessContactDetails() }
+        {if (subscription.legalEntityDetails.customerDetails.organisationDetails.isEmpty)  soleTraderBusinessContactDetails() else ukCompanyBusinessContactDetails() }
     )
 
     @saveAndContinue()

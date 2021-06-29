@@ -24,9 +24,16 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.ukLimitedCompanySubscription
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  createSubscriptionUpdateRequest,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.ChangeOfCircumstanceDetails
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.SubscriptionUpdateResponse
 
+import java.time.ZonedDateTime
 import java.util.UUID
 
 class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues {
@@ -51,7 +58,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
       "retrieving existing subscription details" in {
 
         val pptReference       = UUID.randomUUID().toString
-        val expectedRegDetails = ukLimitedCompanySubscription(pptReference)
+        val expectedRegDetails = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         givenGetSubscriptionEndpointReturns(Status.OK,
                                             pptReference,
                                             Json.toJsObject(expectedRegDetails).toString
@@ -86,6 +93,72 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
     }
   }
 
+  "update subscription details" should {
+
+    "return success response" when {
+
+      "updating existing subscription details" in {
+
+        val pptReference = UUID.randomUUID().toString
+        val expectedUpdateResponse = SubscriptionUpdateResponse(pptReference = pptReference,
+                                                                processingDate = ZonedDateTime.now,
+                                                                formBundleNumber = "123456789"
+        )
+        givenUpdateSubscriptionEndpointReturns(Status.OK,
+                                               pptReference,
+                                               Json.toJsObject(expectedUpdateResponse).toString
+        )
+
+        val res = await(
+          connector.update(
+            pptReference,
+            createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
+                                            ChangeOfCircumstanceDetails("Update to details")
+            )
+          )
+        )
+
+        res mustBe expectedUpdateResponse
+        getTimer("ppt.subscription.update.timer").getCount mustBe 1
+      }
+    }
+
+    "throws exception" when {
+
+      "service returns non success status code" in {
+        val pptReference = UUID.randomUUID().toString
+        givenUpdateSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
+
+        intercept[DownstreamServiceError] {
+          await(
+            connector.update(
+              pptReference,
+              createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
+                                              ChangeOfCircumstanceDetails("Update to details")
+              )
+            )
+          )
+        }
+      }
+
+      "service returns invalid response" in {
+        val pptReference = UUID.randomUUID().toString
+        givenUpdateSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
+
+        intercept[DownstreamServiceError] {
+          await(
+            connector.update(
+              pptReference,
+              createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
+                                              ChangeOfCircumstanceDetails("Update to details")
+              )
+            )
+          )
+        }
+      }
+    }
+  }
+
   private def givenGetSubscriptionEndpointReturns(
     status: Int,
     pptReference: String,
@@ -93,6 +166,20 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
   ) =
     stubFor(
       WireMock.get(s"/subscriptions/$pptReference")
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(body)
+        )
+    )
+
+  private def givenUpdateSubscriptionEndpointReturns(
+    status: Int,
+    pptReference: String,
+    body: String = ""
+  ) =
+    stubFor(
+      WireMock.put(s"/subscriptions/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)

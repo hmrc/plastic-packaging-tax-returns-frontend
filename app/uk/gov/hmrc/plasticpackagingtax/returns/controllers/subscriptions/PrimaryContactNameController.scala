@@ -16,18 +16,21 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.subscriptions.Name
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.ChangeOfCircumstanceDetails
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.SubscriptionUpdateRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.primary_contact_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PrimaryContactNameController @Inject() (
@@ -45,11 +48,7 @@ class PrimaryContactNameController @Inject() (
         case Some(id) =>
           subscriptionConnector.get(id)
             .map { subscription =>
-              Ok(
-                page(
-                  Name.form().fill(Name(subscription.primaryContactDetails.fullName.getOrElse("")))
-                )
-              )
+              Ok(page(Name.form().fill(Name(subscription.primaryContactDetails.name))))
             }
 
         case _ =>
@@ -57,33 +56,42 @@ class PrimaryContactNameController @Inject() (
       }
     }
 
-//
-//  def submit(): Action[AnyContent] =
-//    (authenticate andThen journeyAction).async { implicit request =>
-//      JobTitle.form()
-//        .bindFromRequest()
-//        .fold(
-//          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(page(formWithErrors))),
-//          jobTitle =>
-//            updateRegistration(jobTitle).map {
-//              case Right(_) =>
-//                FormAction.bindFromRequest match {
-//                  case SaveAndContinue =>
-//                    Redirect(routes.ContactDetailsEmailAddressController.displayPage())
-//                  case _ =>
-//                    Redirect(routes.RegistrationController.displayPage())
-//                }
-//              case Left(error) => throw error
-//            }
-//        )
-//    }
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.enrolmentId match {
+        case Some(id) =>
+          Name.form()
+            .bindFromRequest()
+            .fold(
+              (formWithErrors: Form[Name]) => Future.successful(BadRequest(page(formWithErrors))),
+              name =>
+                updateSubscription(id, name).flatMap { updateSubscription =>
+                  subscriptionConnector.update(id, updateSubscription).map { _ =>
+                    Redirect(routes.ViewSubscriptionController.displayPage())
+                  }
+                }
+            )
+        case _ =>
+          throw InsufficientEnrolments("Enrolment id not found on request")
+      }
+    }
 
-//  private def updateRegistration(
-//    formData: JobTitle
-//  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-//    update { registration =>
-//      val updatedJobTitle =
-//        registration.primaryContactDetails.copy(jobTitle = Some(formData.value))
-//      registration.copy(primaryContactDetails = updatedJobTitle)
-//    }
+  private def updateSubscription(pptReference: String, formData: Name)(implicit
+    req: JourneyRequest[_]
+  ): Future[SubscriptionUpdateRequest] =
+    subscriptionConnector.get(pptReference).map { subscription =>
+      val updatedPrimaryContactDetails =
+        subscription.primaryContactDetails.copy(name = formData.value)
+      val updatedLegalEntityDetails =
+        subscription.legalEntityDetails.copy(regWithoutIDFlag = Some(false))
+
+      val updatedSubscription =
+        subscription.copy(legalEntityDetails = updatedLegalEntityDetails,
+                          primaryContactDetails = updatedPrimaryContactDetails,
+                          changeOfCircumstanceDetails =
+                            ChangeOfCircumstanceDetails("Update to details")
+        )
+      SubscriptionUpdateRequest(updatedSubscription)
+    }
+
 }

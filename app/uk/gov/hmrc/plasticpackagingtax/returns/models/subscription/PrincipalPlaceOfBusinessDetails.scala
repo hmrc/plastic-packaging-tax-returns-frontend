@@ -16,16 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.Json
 
-case class Address(
-  addressLine1: String,
-  addressLine2: String,
-  addressLine3: Option[String] = None,
-  addressLine4: Option[String] = None,
-  postCode: Option[String] = None
+case class PrincipalPlaceOfBusinessDetails(
+  addressDetails: AddressDetails,
+  contactDetails: ContactDetails
 )
 
-object Address {
-  implicit val format: OFormat[Address] = Json.format[Address]
+object PrincipalPlaceOfBusinessDetails {
+  implicit val format = Json.format[PrincipalPlaceOfBusinessDetails]
+
 }

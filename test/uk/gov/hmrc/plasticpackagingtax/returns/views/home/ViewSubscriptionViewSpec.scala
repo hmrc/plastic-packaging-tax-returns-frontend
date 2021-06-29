@@ -18,12 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  soleTraderSubscription,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
   routes => subscriptionsRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -32,11 +36,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[view_subscription_page]
 
-  private val subscriptionUkCompany  = PptTestData.ukLimitedCompanySubscription()
-  private val subscriptionSoleTrader = PptTestData.soleTraderSubscription()
+  private val ukCompanyView =
+    page(createSubscriptionDisplayResponse(ukLimitedCompanySubscription))(request, messages)
 
-  private val ukCompanyView  = page(subscriptionUkCompany)(request, messages)
-  private val soleTraderView = page(subscriptionSoleTrader)(request, messages)
+  private val soleTraderView =
+    page(createSubscriptionDisplayResponse(soleTraderSubscription))(request, messages)
 
   "ViewSubscriptionView" should {
 
@@ -127,11 +131,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(0,
                   2,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.organisationDetails.organisationType.get
+      ) mustBe ukLimitedCompanySubscription.legalEntityDetails.customerDetails.organisationDetails.get.organisationType.get
       getValueFor(0,
                   0,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.organisationDetails.incorporationDetails.get.companyName.get
+      ) mustBe ukLimitedCompanySubscription.legalEntityDetails.customerDetails.organisationDetails.get.organisationName.get
     }
 
     "displaying primary contact details section" in {
@@ -159,17 +163,20 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(1,
                   0,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.primaryContactDetails.fullName.get
+      ) mustBe ukLimitedCompanySubscription.primaryContactDetails.name
       getValueFor(1,
                   1,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.primaryContactDetails.jobTitle.get
-      getValueFor(1, 2, ukCompanyView) mustBe "addressLine1 line2 Town PostCode"
+      ) mustBe ukLimitedCompanySubscription.primaryContactDetails.positionInCompany
+      getValueFor(1, 2, ukCompanyView) mustBe "2-3 Scala Street London W1T 2HN"
       getValueFor(1,
                   3,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.primaryContactDetails.phoneNumber.get
-      getValueFor(1, 4, ukCompanyView) mustBe subscriptionUkCompany.primaryContactDetails.email.get
+      ) mustBe ukLimitedCompanySubscription.primaryContactDetails.contactDetails.telephone
+      getValueFor(1,
+                  4,
+                  ukCompanyView
+      ) mustBe ukLimitedCompanySubscription.primaryContactDetails.contactDetails.email
 
       getChangeLinkFor(1, 0, ukCompanyView) must haveHref(
         subscriptionsRoutes.PrimaryContactNameController.displayPage()
@@ -190,11 +197,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(2,
                   0,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.organisationDetails.incorporationDetails.get.phoneNumber.get
+      ) mustBe ukLimitedCompanySubscription.principalPlaceOfBusinessDetails.contactDetails.telephone
       getValueFor(2,
                   1,
                   ukCompanyView
-      ) mustBe subscriptionUkCompany.organisationDetails.incorporationDetails.get.email.get
+      ) mustBe ukLimitedCompanySubscription.principalPlaceOfBusinessDetails.contactDetails.email
 
     }
 
@@ -219,11 +226,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(0,
                   0,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.organisationDetails.soleTraderDetails.get.firstName.get
+      ) mustBe soleTraderSubscription.legalEntityDetails.customerDetails.individualDetails.get.firstName
       getValueFor(0,
                   1,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.organisationDetails.soleTraderDetails.get.lastName.get
+      ) mustBe soleTraderSubscription.legalEntityDetails.customerDetails.individualDetails.get.lastName
       getValueFor(0, 2, soleTraderView) mustBe "addressLine1 line2 Town PostCode"
       getValueFor(0, 3, soleTraderView) mustBe "Sole Trader"
 
@@ -250,24 +257,21 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
         "account.viewSubscription.primaryContactDetails.email"
       )
 
-      getValueFor(1,
-                  0,
-                  soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.fullName.get
+      getValueFor(1, 0, soleTraderView) mustBe soleTraderSubscription.primaryContactDetails.name
       getValueFor(1,
                   1,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.jobTitle.get
-      getValueFor(1, 2, soleTraderView) mustBe "addressLine1 line2 Town PostCode"
+      ) mustBe soleTraderSubscription.primaryContactDetails.positionInCompany
+      getValueFor(1, 2, soleTraderView) mustBe "2-3 Scala Street London W1T 2HN"
 
       getValueFor(1,
                   3,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.phoneNumber.get
+      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.telephone
       getValueFor(1,
                   4,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.email.get
+      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.email
 
       getChangeLinkFor(1, 0, soleTraderView) must haveHref(
         subscriptionsRoutes.PrimaryContactNameController.displayPage()
@@ -289,11 +293,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(2,
                   0,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.phoneNumber.get
+      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.telephone
       getValueFor(2,
                   1,
                   soleTraderView
-      ) mustBe subscriptionSoleTrader.primaryContactDetails.email.get
+      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.email
 
     }
 
