@@ -24,8 +24,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.Address
-@import java.time.format.DateTimeFormatter
 
 @this(
     formHelper: formWithCSRF,
@@ -110,7 +110,7 @@
 
     @pageTitle(text = messages("account.viewSubscription.organisationDetails.title"), classes = "govuk-label--l")
 
-    @formHelper(action = homeRoutes.ViewSubscriptionController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = subscriptionsRoutes.ViewSubscriptionController.submit(), 'autoComplete -> "off") {
 
     <h2 id="primary-contact-details" class="govuk-heading-m">
         @messages("account.viewSubscription.organisationDetails.label")</h2>
@@ -122,7 +122,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                    row("account.viewSubscription.primaryContactDetails.fullName", subscription.primaryContactDetails.fullName, Some(homeRoutes.ViewSubscriptionController.displayPage())),
+                    row("account.viewSubscription.primaryContactDetails.fullName", subscription.primaryContactDetails.fullName, Some(subscriptionsRoutes.PrimaryContactNameController.displayPage())),
                     row("account.viewSubscription.primaryContactDetails.jobTitle", subscription.primaryContactDetails.jobTitle),
                     row("account.viewSubscription.primaryContactDetails.address", subscription.primaryContactDetails.address.map(extractAddress)),
                     row("account.viewSubscription.primaryContactDetails.phoneNumber", subscription.primaryContactDetails.phoneNumber),

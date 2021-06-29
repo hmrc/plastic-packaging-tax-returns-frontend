@@ -20,8 +20,11 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
+  routes => subscriptionsRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.view_subscription_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest
@@ -169,7 +172,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       getValueFor(1, 4, ukCompanyView) mustBe subscriptionUkCompany.primaryContactDetails.email.get
 
       getChangeLinkFor(1, 0, ukCompanyView) must haveHref(
-        homeRoutes.ViewSubscriptionController.displayPage()
+        subscriptionsRoutes.PrimaryContactNameController.displayPage()
       )
     }
 
@@ -267,7 +270,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       ) mustBe subscriptionSoleTrader.primaryContactDetails.email.get
 
       getChangeLinkFor(1, 0, soleTraderView) must haveHref(
-        homeRoutes.ViewSubscriptionController.displayPage()
+        subscriptionsRoutes.PrimaryContactNameController.displayPage()
       )
     }
 

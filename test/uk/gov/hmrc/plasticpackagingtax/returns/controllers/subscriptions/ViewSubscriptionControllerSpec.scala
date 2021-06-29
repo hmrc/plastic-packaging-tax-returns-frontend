@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.view_subscription_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ViewSubscriptionControllerSpec extends ControllerSpec {

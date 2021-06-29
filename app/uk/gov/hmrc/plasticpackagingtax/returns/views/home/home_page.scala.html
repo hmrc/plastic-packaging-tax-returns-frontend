@@ -24,7 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingM
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 
 @this(
@@ -58,8 +58,8 @@
         @card(headerKey = "account.homePage.card.registration.header",
           bodyKey = "account.homePage.card.registration.body",
           links = Seq(
-              Link("account.homePage.card.registration.link.1", homeRoutes.ViewSubscriptionController.displayPage()),
-              Link("account.homePage.card.registration.link.2", homeRoutes.ViewSubscriptionController.displayPage())))
+              Link("account.homePage.card.registration.link.1", subscriptionsRoutes.ViewSubscriptionController.displayPage()),
+              Link("account.homePage.card.registration.link.2", subscriptionsRoutes.ViewSubscriptionController.displayPage())))
     </div>
 }
 

@@ -2,8 +2,11 @@
 
 GET        /                        uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.HomeController.displayPage()
 
-GET        /view-registration       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.ViewSubscriptionController.displayPage()
-POST       /view-registration       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.ViewSubscriptionController.submit()
+GET        /view-registration       uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.ViewSubscriptionController.displayPage()
+POST       /view-registration       uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.ViewSubscriptionController.submit()
+
+GET        /contact-name            uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.PrimaryContactNameController.displayPage()
+#POST       /contact-name            uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.PrimaryContactNameController.submit()
 
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.returns.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.sessionTimeoutSignedOut()

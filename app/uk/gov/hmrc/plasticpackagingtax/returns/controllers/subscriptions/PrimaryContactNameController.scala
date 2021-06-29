@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.subscriptions.Name
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.view_subscription_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.primary_contact_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class ViewSubscriptionController @Inject() (
+class PrimaryContactNameController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   subscriptionConnector: SubscriptionConnector,
   mcc: MessagesControllerComponents,
-  page: view_subscription_page
+  page: primary_contact_name_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -45,7 +45,11 @@ class ViewSubscriptionController @Inject() (
         case Some(id) =>
           subscriptionConnector.get(id)
             .map { subscription =>
-              Ok(page(subscription))
+              Ok(
+                page(
+                  Name.form().fill(Name(subscription.primaryContactDetails.fullName.getOrElse("")))
+                )
+              )
             }
 
         case _ =>
@@ -53,9 +57,33 @@ class ViewSubscriptionController @Inject() (
       }
     }
 
-  def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { _ =>
-      Future.successful(Redirect(homeRoutes.HomeController.displayPage()))
-    }
+//
+//  def submit(): Action[AnyContent] =
+//    (authenticate andThen journeyAction).async { implicit request =>
+//      JobTitle.form()
+//        .bindFromRequest()
+//        .fold(
+//          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(page(formWithErrors))),
+//          jobTitle =>
+//            updateRegistration(jobTitle).map {
+//              case Right(_) =>
+//                FormAction.bindFromRequest match {
+//                  case SaveAndContinue =>
+//                    Redirect(routes.ContactDetailsEmailAddressController.displayPage())
+//                  case _ =>
+//                    Redirect(routes.RegistrationController.displayPage())
+//                }
+//              case Left(error) => throw error
+//            }
+//        )
+//    }
 
+//  private def updateRegistration(
+//    formData: JobTitle
+//  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+//    update { registration =>
+//      val updatedJobTitle =
+//        registration.primaryContactDetails.copy(jobTitle = Some(formData.value))
+//      registration.copy(primaryContactDetails = updatedJobTitle)
+//    }
 }
