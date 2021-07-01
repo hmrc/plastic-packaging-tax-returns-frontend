@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
+package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OrganisationDetails(
-  organisationType: Option[String] = None,
-  organisationName: Option[String]
+case class GroupSubscription(
+  representativeControl: Boolean,
+  groupDetails: GroupDetails,
+  allMembersControl: Boolean
 )
 
-object OrganisationDetails {
-  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+object GroupSubscription {
+  implicit val format: OFormat[GroupSubscription] = Json.format[GroupSubscription]
 }

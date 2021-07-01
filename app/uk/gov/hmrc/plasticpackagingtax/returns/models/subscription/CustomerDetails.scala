@@ -17,12 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.CustomerType.CustomerType
 
-case class OrganisationDetails(
-  organisationType: Option[String] = None,
-  organisationName: Option[String]
+case class CustomerDetails(
+  customerType: CustomerType,
+  individualDetails: Option[IndividualDetails] = None,
+  organisationDetails: Option[OrganisationDetails] = None
 )
 
-object OrganisationDetails {
-  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+object CustomerDetails {
+  implicit val format: OFormat[CustomerDetails] = Json.format[CustomerDetails]
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.view_subscription_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}

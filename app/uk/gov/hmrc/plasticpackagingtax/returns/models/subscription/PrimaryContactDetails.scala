@@ -19,14 +19,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 import play.api.libs.json.{Json, OFormat}
 
 case class PrimaryContactDetails(
-  fullName: Option[String] = None,
-  jobTitle: Option[String] = None,
-  email: Option[String] = None,
-  phoneNumber: Option[String] = None,
-  useRegisteredAddress: Option[Boolean] = None,
-  address: Option[Address] = None
+  name: String,
+  contactDetails: ContactDetails,
+  positionInCompany: String
 )
 
 object PrimaryContactDetails {
   implicit val format: OFormat[PrimaryContactDetails] = Json.format[PrimaryContactDetails]
+
 }

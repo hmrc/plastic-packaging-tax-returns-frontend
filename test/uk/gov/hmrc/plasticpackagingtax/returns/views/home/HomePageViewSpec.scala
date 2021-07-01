@@ -19,7 +19,9 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
+  routes => subscriptionsRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
@@ -115,14 +117,14 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
         "account.homePage.card.registration.link.1"
       )
       view.select(".card .govuk-link").get(1) must haveHref(
-        homeRoutes.ViewSubscriptionController.displayPage().url
+        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
       )
 
       view.select(".card .govuk-link").get(2) must containMessage(
         "account.homePage.card.registration.link.2"
       )
       view.select(".card .govuk-link").get(2) must haveHref(
-        homeRoutes.ViewSubscriptionController.displayPage().url
+        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
       )
 
     }

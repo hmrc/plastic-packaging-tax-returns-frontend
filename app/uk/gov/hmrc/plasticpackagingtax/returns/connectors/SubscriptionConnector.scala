@@ -20,7 +20,11 @@ import com.kenshoo.play.metrics.Metrics
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.{
+  SubscriptionUpdateRequest,
+  SubscriptionUpdateResponse
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,14 +36,34 @@ class SubscriptionConnector @Inject() (
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PptSubscription] = {
+  def get(
+    pptReferenceNumber: String
+  )(implicit hc: HeaderCarrier): Future[SubscriptionDisplayResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
-    httpClient.GET[PptSubscription](appConfig.pptSubscriptionUrl(pptReferenceNumber))
+    httpClient.GET[SubscriptionDisplayResponse](appConfig.pptSubscriptionUrl(pptReferenceNumber))
       .andThen { case _ => timer.stop() }
       .recover {
         case exception: Exception =>
           throw DownstreamServiceError(
             s"Failed to retrieve subscription details for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+            exception
+          )
+      }
+  }
+
+  def update(pptReferenceNumber: String, updateRequest: SubscriptionUpdateRequest)(implicit
+    hc: HeaderCarrier
+  ): Future[SubscriptionUpdateResponse] = {
+    val timer = metrics.defaultRegistry.timer("ppt.subscription.update.timer").time()
+    httpClient.PUT[SubscriptionUpdateRequest, SubscriptionUpdateResponse](
+      appConfig.pptSubscriptionUrl(pptReferenceNumber),
+      updateRequest
+    )
+      .andThen { case _ => timer.stop() }
+      .recover {
+        case exception: Exception =>
+          throw DownstreamServiceError(
+            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
             exception
           )
       }

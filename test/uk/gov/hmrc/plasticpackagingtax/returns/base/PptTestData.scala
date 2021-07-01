@@ -21,15 +21,87 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.IdentityData
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.{
+  ChangeOfCircumstanceDetails,
+  SubscriptionDisplayResponse
+}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.SubscriptionUpdateRequest
+import uk.gov.hmrc.plasticpackagingtax.returns.models.{subscription, SignedInUser}
 
-import java.util.UUID
+import java.time.ZoneOffset.UTC
+import java.time.ZonedDateTime.now
+import java.time.format.DateTimeFormatter
 
 object PptTestData {
 
   val nrsCredentials = Credentials(providerId = "providerId", providerType = "providerType")
+
+  val ukLimitedCompanySubscription: Subscription = Subscription(
+    legalEntityDetails =
+      LegalEntityDetails(dateOfApplication =
+                           now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                         customerIdentification1 = "123456789",
+                         customerIdentification2 = Some("1234567890"),
+                         customerDetails = CustomerDetails(customerType = CustomerType.Organisation,
+                                                           organisationDetails =
+                                                             Some(
+                                                               subscription.OrganisationDetails(
+                                                                 organisationName =
+                                                                   Some("Plastics Ltd"),
+                                                                 organisationType =
+                                                                   Some("UK Limited Company")
+                                                               )
+                                                             )
+                         )
+      ),
+    principalPlaceOfBusinessDetails =
+      PrincipalPlaceOfBusinessDetails(
+        addressDetails = AddressDetails(addressLine1 = "2-3 Scala Street",
+                                        addressLine2 = "London",
+                                        postalCode = Some("W1T 2HN"),
+                                        countryCode = "GB"
+        ),
+        contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
+      ),
+    primaryContactDetails =
+      PrimaryContactDetails(name = "Kevin Durant",
+                            contactDetails =
+                              ContactDetails(email = "test@test.com", telephone = "02034567890"),
+                            positionInCompany = "Director"
+      ),
+    businessCorrespondenceDetails = BusinessCorrespondenceDetails(addressLine1 = "addressLine1",
+                                                                  addressLine2 = " line2 Town",
+                                                                  postalCode = Some("PostCode"),
+                                                                  countryCode = "GB"
+    ),
+    taxObligationStartDate = now(UTC).toString,
+    last12MonthTotalTonnageAmt = Some(15000),
+    declaration = Declaration(declarationBox1 = true),
+    groupSubscription = None
+  )
+
+  val soleTraderSubscription: Subscription = {
+    val subscription = ukLimitedCompanySubscription.copy(legalEntityDetails =
+      LegalEntityDetails(dateOfApplication =
+                           now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                         customerIdentification1 = "123456789",
+                         customerIdentification2 = Some("1234567890"),
+                         customerDetails =
+                           CustomerDetails(customerType = CustomerType.Individual,
+                                           individualDetails =
+                                             Some(
+                                               IndividualDetails(title = Some("MR"),
+                                                                 firstName = "James",
+                                                                 lastName = "Bond"
+                                               )
+                                             )
+                           )
+      )
+    )
+    subscription
+  }
 
   def newUser(
     externalId: String = "123",
@@ -78,64 +150,51 @@ object PptTestData {
   def newEnrolment(key: String, identifierName: String, identifierValue: String): Enrolment =
     Enrolment(key).withIdentifier(identifierName, identifierValue)
 
-  def ukLimitedCompanySubscription(
-    pptReference: String = UUID.randomUUID().toString
-  ): PptSubscription =
-    PptSubscription(pptReference = pptReference,
-                    primaryContactDetails =
-                      PrimaryContactDetails(Some("FirstName LastName"),
-                                            jobTitle = Some("CEO"),
-                                            email =
-                                              Some("test@test.com"),
-                                            phoneNumber =
-                                              Some("1234567890"),
-                                            address = Some(
-                                              Address(addressLine1 =
-                                                        "addressLine1",
-                                                      addressLine2 =
-                                                        "line2",
-                                                      addressLine3 =
-                                                        Some("Town"),
-                                                      postCode =
-                                                        Some("PostCode")
-                                              )
-                                            )
-                      ),
-                    organisationDetails =
-                      OrganisationDetails(isBasedInUk = Some(true),
-                                          organisationType =
-                                            Some("UK_COMPANY"),
-                                          businessRegisteredAddress =
-                                            Some(
-                                              Address(addressLine1 =
-                                                        "addressLine1",
-                                                      addressLine3 =
-                                                        Some("Town"),
-                                                      addressLine2 = "line2",
-                                                      postCode =
-                                                        Some("PostCode")
-                                              )
-                                            ),
-                                          safeNumber = Some("123"),
-                                          incorporationDetails = Some(
-                                            IncorporationDetails(companyName =
-                                                                   Some("Plastics Limited"),
-                                                                 phoneNumber = Some("12345678"),
-                                                                 email = Some("test@email.com")
-                                            )
-                                          )
-                      )
+  def createSubscriptionDisplayResponse(subscription: Subscription) =
+    SubscriptionDisplayResponse(processingDate = "2020-05-05",
+                                changeOfCircumstanceDetails =
+                                  ChangeOfCircumstanceDetails(changeOfCircumstance =
+                                    "update"
+                                  ),
+                                legalEntityDetails =
+                                  subscription.legalEntityDetails,
+                                principalPlaceOfBusinessDetails =
+                                  subscription.principalPlaceOfBusinessDetails,
+                                primaryContactDetails =
+                                  subscription.primaryContactDetails,
+                                businessCorrespondenceDetails =
+                                  subscription.businessCorrespondenceDetails,
+                                taxObligationStartDate =
+                                  subscription.taxObligationStartDate,
+                                last12MonthTotalTonnageAmt =
+                                  subscription.last12MonthTotalTonnageAmt.map(_.toLong),
+                                declaration =
+                                  subscription.declaration,
+                                groupSubscription =
+                                  subscription.groupSubscription
     )
 
-  def soleTraderSubscription(pptReference: String = UUID.randomUUID().toString): PptSubscription = {
-    val regDetails = ukLimitedCompanySubscription(pptReference)
-    regDetails.copy(organisationDetails =
-      regDetails.organisationDetails.copy(
-        soleTraderDetails =
-          Some(SoleTraderIncorporationDetails(firstName = Some("James"), lastName = Some("Bond"))),
-        incorporationDetails = None
-      )
+  def createSubscriptionUpdateRequest(
+    subscription: Subscription,
+    changeOfCircumstanceDetails: ChangeOfCircumstanceDetails
+  ) =
+    SubscriptionUpdateRequest(changeOfCircumstanceDetails = changeOfCircumstanceDetails,
+                              legalEntityDetails =
+                                subscription.legalEntityDetails,
+                              principalPlaceOfBusinessDetails =
+                                subscription.principalPlaceOfBusinessDetails,
+                              primaryContactDetails =
+                                subscription.primaryContactDetails,
+                              businessCorrespondenceDetails =
+                                subscription.businessCorrespondenceDetails,
+                              taxObligationStartDate =
+                                subscription.taxObligationStartDate,
+                              last12MonthTotalTonnageAmt =
+                                subscription.last12MonthTotalTonnageAmt.map(_.toLong),
+                              declaration =
+                                subscription.declaration,
+                              groupSubscription =
+                                subscription.groupSubscription
     )
-  }
 
 }

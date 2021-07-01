@@ -26,7 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   DownstreamServiceError,
   SubscriptionConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.{
+  SubscriptionUpdateRequest,
+  SubscriptionUpdateResponse
+}
 
 import scala.concurrent.Future
 
@@ -35,12 +39,24 @@ trait MockSubscriptionConnector extends MockitoSugar with BeforeAndAfterEach {
 
   protected val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
-  def mockGetSubscription(dataToReturn: PptSubscription): OngoingStubbing[Future[PptSubscription]] =
+  def mockGetSubscription(
+    dataToReturn: SubscriptionDisplayResponse
+  ): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
     when(mockSubscriptionConnector.get(any[String])(any()))
       .thenReturn(Future.successful(dataToReturn))
 
-  def mockGetSubscriptionFailure(): OngoingStubbing[Future[PptSubscription]] =
+  def mockGetSubscriptionFailure(): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
     when(mockSubscriptionConnector.get(any[String])(any()))
+      .thenThrow(DownstreamServiceError("some error", new Exception("some error")))
+
+  def mockUpdateSubscription(
+    dataToReturn: SubscriptionUpdateResponse
+  ): OngoingStubbing[Future[SubscriptionUpdateResponse]] =
+    when(mockSubscriptionConnector.update(any[String], any[SubscriptionUpdateRequest])(any()))
+      .thenReturn(Future.successful(dataToReturn))
+
+  def mockUpdateSubscriptionFailure(): OngoingStubbing[Future[SubscriptionUpdateResponse]] =
+    when(mockSubscriptionConnector.update(any[String], any[SubscriptionUpdateRequest])(any()))
       .thenThrow(DownstreamServiceError("some error", new Exception("some error")))
 
   override protected def afterEach(): Unit = {

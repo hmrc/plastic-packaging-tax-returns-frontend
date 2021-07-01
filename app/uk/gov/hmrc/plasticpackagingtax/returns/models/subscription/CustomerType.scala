@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Reads, Writes}
 
-case class OrganisationDetails(
-  organisationType: Option[String] = None,
-  organisationName: Option[String]
-)
+object CustomerType extends Enumeration {
+  type CustomerType = Value
+  val Individual: Value   = Value
+  val Organisation: Value = Value
 
-object OrganisationDetails {
-  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+  implicit val format: Format[CustomerType] =
+    Format(Reads.enumNameReads(CustomerType), Writes.enumNameWrites)
+
 }

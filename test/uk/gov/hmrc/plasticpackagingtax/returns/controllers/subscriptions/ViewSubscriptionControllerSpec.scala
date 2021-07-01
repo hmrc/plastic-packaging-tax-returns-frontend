@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -27,12 +27,17 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  pptEnrolment,
+  soleTraderSubscription,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.PptSubscription
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.view_subscription_page
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ViewSubscriptionControllerSpec extends ControllerSpec {
@@ -50,7 +55,7 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[PptSubscription])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[SubscriptionDisplayResponse])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -64,12 +69,12 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
 
       "uk company subscription exists and display page method is invoked" in {
         authorizedUser()
-        val subscription = PptTestData.ukLimitedCompanySubscription()
+        val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         mockGetSubscription(subscription)
 
         val result = controller.displayPage()(
           authRequest(user =
-            PptTestData.newUser("123", Some(pptEnrolment(subscription.pptReference)))
+            PptTestData.newUser("123", Some(pptEnrolment("XMPPT123456789")))
           )
         )
 
@@ -78,12 +83,12 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
 
       "sole trader subscription and display page method is invoked" in {
         authorizedUser()
-        val subscription = PptTestData.soleTraderSubscription()
+        val subscription = createSubscriptionDisplayResponse(soleTraderSubscription)
         mockGetSubscription(subscription)
 
         val result = controller.displayPage()(
           authRequest(user =
-            PptTestData.newUser("123", Some(pptEnrolment(subscription.pptReference)))
+            PptTestData.newUser("123", Some(pptEnrolment("XMPPT123456789")))
           )
         )
 
@@ -113,8 +118,8 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
 
     "return populated page with subscription" when {
 
-      def pageData: PptSubscription = {
-        val captor = ArgumentCaptor.forClass(classOf[PptSubscription])
+      def pageData: SubscriptionDisplayResponse = {
+        val captor = ArgumentCaptor.forClass(classOf[SubscriptionDisplayResponse])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
@@ -122,13 +127,13 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
       "subscription exist and display method is invoked" in {
 
         authorizedUser()
-        val subscription = PptTestData.ukLimitedCompanySubscription()
+        val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         mockGetSubscription(subscription)
 
         await(
           controller.displayPage()(
             authRequest(user =
-              PptTestData.newUser("123", Some(pptEnrolment(subscription.pptReference)))
+              PptTestData.newUser("123", Some(pptEnrolment("XMPPT123456789")))
             )
           )
         )

@@ -16,13 +16,21 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupSubscription
 
-case class SoleTraderIncorporationDetails(firstName: Option[String], lastName: Option[String])
+case class Subscription(
+  legalEntityDetails: LegalEntityDetails,
+  principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
+  primaryContactDetails: PrimaryContactDetails,
+  businessCorrespondenceDetails: BusinessCorrespondenceDetails,
+  declaration: Declaration,
+  taxObligationStartDate: String,
+  last12MonthTotalTonnageAmt: Option[Long] = None,
+  groupSubscription: Option[GroupSubscription] = None
+)
 
-object SoleTraderIncorporationDetails {
-
-  implicit val format: Format[SoleTraderIncorporationDetails] =
-    Json.format[SoleTraderIncorporationDetails]
+object Subscription {
+  implicit val format: OFormat[Subscription] = Json.format[Subscription]
 
 }
