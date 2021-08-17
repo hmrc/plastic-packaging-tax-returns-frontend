@@ -122,8 +122,8 @@ paragraphBody:paragraphBody
         @govukTable(Table(
             rows = Seq(
                 taxCalculationRow("returns.checkYourReturnPage.taxLiability.exemptPackaging.label", taxReturn.taxLiability.totalKgExempt.toString, " kg"),
-                taxCalculationRow("returns.checkYourReturnPage.taxLiability.liablePackaging.label", taxReturn.taxLiability.totalKgLiable.toString, " kg","", Map("id" -> "row-border")),
-                taxCalculationRow("returns.checkYourReturnPage.taxLiability.label", s"£${taxReturn.taxLiability.taxDue.toString}", "" ,"", Map("id" -> "row-border"))
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.liablePackaging.label", taxReturn.taxLiability.totalKgLiable.toString, " kg","row-border"),
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.label", s"£${taxReturn.taxLiability.taxDue.toString}", "" ,"row-border")
                 ),
             head = Some(Seq(
                 HeadCell(
@@ -149,7 +149,7 @@ paragraphBody:paragraphBody
 
         @govukTable(Table(
             rows = Seq(
-                taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", s"£${taxReturn.taxLiability.totalCredit.toString}", "", "", Map("id" -> "row-border")),
+                taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", s"£${taxReturn.taxLiability.totalCredit.toString}", "", "row-border"),
             ),
             head = Some(Seq(
                 HeadCell(
