@@ -71,6 +71,7 @@ govukButton: GovukButton
         @paragraphBody(message = messages("returns.startPage.informationYouNeed.body"))
 
         @bulletList(
+            id = "information-you-need-list",
             title = Some(messages("returns.startPage.informationYouNeed.listItems.header")),
             elements = Seq(
                 Html(messages("returns.startPage.informationYouNeed.listItem.1")),
@@ -97,6 +98,7 @@ govukButton: GovukButton
             @paragraphBody(message = messages("returns.startPage.whatIsLiable.body.2"))
 
             @bulletList(
+                id = "what-is-liable-list",
                 title = Some(messages("returns.startPage.whatIsLiable.listItems.header")),
                 elements = Seq(
                     Html(messages("returns.startPage.whatIsLiable.listItem.1")),
