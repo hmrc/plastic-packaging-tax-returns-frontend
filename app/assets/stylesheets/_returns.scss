@@ -55,7 +55,11 @@
 .cell--no-border .govuk-table__cell {
   border: none !important;
 }
-#row-border {
+th.govuk-table__header.row-border {
+  border-bottom: 1px solid #b1b4b6 !important;
+}
+
+td.govuk-table__cell.row-border {
   border-bottom: 1px solid #b1b4b6 !important;
 }
 
