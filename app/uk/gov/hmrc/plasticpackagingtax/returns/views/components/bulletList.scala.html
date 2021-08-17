@@ -16,9 +16,9 @@
 
 @this(paragraphBody: paragraphBody)
 
-@(title: Option[String] = None, elements: Seq[Html], classes: String = "govuk-body")
+@(id: String, title: Option[String] = None, elements: Seq[Html], classes: String = "govuk-body")
 
-<nav>
+<nav title="@id">
     @title.map(paragraphBody(_, classes))
     <ul class="govuk-list govuk-list--bullet">
         @elements.map { element =>
