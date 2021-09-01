@@ -59,7 +59,8 @@ object PptTestData {
     principalPlaceOfBusinessDetails =
       PrincipalPlaceOfBusinessDetails(
         addressDetails = AddressDetails(addressLine1 = "2-3 Scala Street",
-                                        addressLine2 = "London",
+                                        addressLine2 = "Soho",
+                                        addressLine3 = Some("London"),
                                         postalCode = Some("W1T 2HN"),
                                         countryCode = "GB"
         ),
@@ -71,10 +72,10 @@ object PptTestData {
                               ContactDetails(email = "test@test.com", telephone = "02034567890"),
                             positionInCompany = "Director"
       ),
-    businessCorrespondenceDetails = BusinessCorrespondenceDetails(addressLine1 = "addressLine1",
-                                                                  addressLine2 = " line2 Town",
-                                                                  postalCode = Some("PostCode"),
-                                                                  countryCode = "GB"
+    businessCorrespondenceDetails = AddressDetails(addressLine1 = "addressLine1",
+                                                   addressLine2 = " line2 Town",
+                                                   postalCode = Some("PostCode"),
+                                                   countryCode = "GB"
     ),
     taxObligationStartDate = now(UTC).toString,
     last12MonthTotalTonnageAmt = Some(15000),
