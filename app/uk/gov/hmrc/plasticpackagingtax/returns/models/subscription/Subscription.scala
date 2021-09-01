@@ -23,7 +23,7 @@ case class Subscription(
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
-  businessCorrespondenceDetails: BusinessCorrespondenceDetails,
+  businessCorrespondenceDetails: AddressDetails,
   declaration: Declaration,
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: Option[Long] = None,

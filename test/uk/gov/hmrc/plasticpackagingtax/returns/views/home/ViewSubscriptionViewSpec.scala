@@ -127,7 +127,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
         "account.viewSubscription.organisationDetails.organisationType"
       )
 
-      getValueFor(0, 1, ukCompanyView) mustBe "addressLine1 line2 Town PostCode"
+      getValueFor(0, 1, ukCompanyView) mustBe "2-3 Scala Street Soho London W1T 2HN"
       getValueFor(0,
                   2,
                   ukCompanyView
@@ -168,7 +168,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
                   1,
                   ukCompanyView
       ) mustBe ukLimitedCompanySubscription.primaryContactDetails.positionInCompany
-      getValueFor(1, 2, ukCompanyView) mustBe "2-3 Scala Street London W1T 2HN"
+      getValueFor(1, 2, ukCompanyView) mustBe "addressLine1 line2 Town PostCode"
       getValueFor(1,
                   3,
                   ukCompanyView
@@ -231,7 +231,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
                   1,
                   soleTraderView
       ) mustBe soleTraderSubscription.legalEntityDetails.customerDetails.individualDetails.get.lastName
-      getValueFor(0, 2, soleTraderView) mustBe "addressLine1 line2 Town PostCode"
+      getValueFor(0, 2, soleTraderView) mustBe "2-3 Scala Street Soho London W1T 2HN"
       getValueFor(0, 3, soleTraderView) mustBe "Sole Trader"
 
     }
@@ -262,7 +262,7 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
                   1,
                   soleTraderView
       ) mustBe soleTraderSubscription.primaryContactDetails.positionInCompany
-      getValueFor(1, 2, soleTraderView) mustBe "2-3 Scala Street London W1T 2HN"
+      getValueFor(1, 2, soleTraderView) mustBe "addressLine1 line2 Town PostCode"
 
       getValueFor(1,
                   3,

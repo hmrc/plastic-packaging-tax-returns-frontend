@@ -26,7 +26,7 @@ case class SubscriptionDisplayResponse(
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
-  businessCorrespondenceDetails: BusinessCorrespondenceDetails,
+  businessCorrespondenceDetails: AddressDetails,
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: Option[BigDecimal],
   declaration: Declaration,
