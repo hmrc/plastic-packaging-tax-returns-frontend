@@ -40,7 +40,10 @@ object SubscriptionUpdateRequest {
 
   def apply(subscriptionDisplayResponse: SubscriptionDisplayResponse): SubscriptionUpdateRequest =
     SubscriptionUpdateRequest(
-      changeOfCircumstanceDetails = subscriptionDisplayResponse.changeOfCircumstanceDetails,
+      changeOfCircumstanceDetails =
+        subscriptionDisplayResponse.changeOfCircumstanceDetails.getOrElse {
+          throw new IllegalStateException("Change of circumstance required")
+        },
       legalEntityDetails = subscriptionDisplayResponse.legalEntityDetails,
       principalPlaceOfBusinessDetails = subscriptionDisplayResponse.principalPlaceOfBusinessDetails,
       primaryContactDetails = subscriptionDisplayResponse.primaryContactDetails,

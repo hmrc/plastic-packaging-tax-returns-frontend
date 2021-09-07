@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 
 case class SubscriptionDisplayResponse(
   processingDate: String,
-  changeOfCircumstanceDetails: ChangeOfCircumstanceDetails,
+  changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
