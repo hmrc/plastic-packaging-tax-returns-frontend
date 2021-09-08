@@ -154,8 +154,10 @@ object PptTestData {
   def createSubscriptionDisplayResponse(subscription: Subscription) =
     SubscriptionDisplayResponse(processingDate = "2020-05-05",
                                 changeOfCircumstanceDetails =
-                                  ChangeOfCircumstanceDetails(changeOfCircumstance =
-                                    "update"
+                                  Some(
+                                    ChangeOfCircumstanceDetails(changeOfCircumstance =
+                                      "update"
+                                    )
                                   ),
                                 legalEntityDetails =
                                   subscription.legalEntityDetails,

@@ -89,7 +89,7 @@ class PrimaryContactNameController @Inject() (
         subscription.copy(legalEntityDetails = updatedLegalEntityDetails,
                           primaryContactDetails = updatedPrimaryContactDetails,
                           changeOfCircumstanceDetails =
-                            ChangeOfCircumstanceDetails("Update to details")
+                            Some(ChangeOfCircumstanceDetails("Update to details"))
         )
       SubscriptionUpdateRequest(updatedSubscription)
     }
