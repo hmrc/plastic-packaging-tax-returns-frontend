@@ -33,7 +33,7 @@ case class SubscriptionUpdateRequest(
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: Option[BigDecimal],
   declaration: Declaration,
-  groupSubscription: Option[GroupOrPartnershipSubscription]
+  groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 )
 
 object SubscriptionUpdateRequest {
@@ -51,7 +51,7 @@ object SubscriptionUpdateRequest {
       taxObligationStartDate = subscriptionDisplayResponse.taxObligationStartDate,
       last12MonthTotalTonnageAmt = subscriptionDisplayResponse.last12MonthTotalTonnageAmt,
       declaration = subscriptionDisplayResponse.declaration,
-      groupSubscription = subscriptionDisplayResponse.groupPartnershipSubscription
+      groupOrPartnershipSubscription = subscriptionDisplayResponse.groupOrPartnershipSubscription
     )
 
   implicit val format: OFormat[SubscriptionUpdateRequest] = Json.format[SubscriptionUpdateRequest]
