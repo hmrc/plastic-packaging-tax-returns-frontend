@@ -173,7 +173,7 @@ object PptTestData {
                                   subscription.last12MonthTotalTonnageAmt.map(_.toLong),
                                 declaration =
                                   subscription.declaration,
-                                groupSubscription =
+                                groupPartnershipSubscription =
                                   subscription.groupSubscription
     )
 

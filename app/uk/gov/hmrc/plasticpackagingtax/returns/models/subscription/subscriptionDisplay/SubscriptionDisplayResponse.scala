@@ -17,20 +17,20 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupSubscription
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupOrPartnershipSubscription
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 
 case class SubscriptionDisplayResponse(
-  processingDate: String,
-  changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
-  legalEntityDetails: LegalEntityDetails,
-  principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
-  primaryContactDetails: PrimaryContactDetails,
-  businessCorrespondenceDetails: AddressDetails,
-  taxObligationStartDate: String,
-  last12MonthTotalTonnageAmt: Option[BigDecimal],
-  declaration: Declaration,
-  groupSubscription: Option[GroupSubscription]
+                                        processingDate: String,
+                                        changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
+                                        legalEntityDetails: LegalEntityDetails,
+                                        principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
+                                        primaryContactDetails: PrimaryContactDetails,
+                                        businessCorrespondenceDetails: AddressDetails,
+                                        taxObligationStartDate: String,
+                                        last12MonthTotalTonnageAmt: Option[BigDecimal],
+                                        declaration: Declaration,
+                                        groupPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 )
 
 object SubscriptionDisplayResponse {
