@@ -20,10 +20,13 @@ import play.api.libs.json.{Json, OFormat}
 
 case class GroupOrPartnershipSubscription(
   representativeControl: Boolean,
-  groupDetails: GroupDetails,
+  groupOrPartnershipDetails: GroupOrPartnershipDetails,
   allMembersControl: Boolean
 )
 
 object GroupOrPartnershipSubscription {
-  implicit val format: OFormat[GroupOrPartnershipSubscription] = Json.format[GroupOrPartnershipSubscription]
+
+  implicit val format: OFormat[GroupOrPartnershipSubscription] =
+    Json.format[GroupOrPartnershipSubscription]
+
 }

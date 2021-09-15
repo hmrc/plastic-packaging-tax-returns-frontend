@@ -21,16 +21,16 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupOr
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 
 case class SubscriptionDisplayResponse(
-                                        processingDate: String,
-                                        changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
-                                        legalEntityDetails: LegalEntityDetails,
-                                        principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
-                                        primaryContactDetails: PrimaryContactDetails,
-                                        businessCorrespondenceDetails: AddressDetails,
-                                        taxObligationStartDate: String,
-                                        last12MonthTotalTonnageAmt: Option[BigDecimal],
-                                        declaration: Declaration,
-                                        groupPartnershipSubscription: Option[GroupOrPartnershipSubscription]
+  processingDate: String,
+  changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
+  legalEntityDetails: LegalEntityDetails,
+  principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
+  primaryContactDetails: PrimaryContactDetails,
+  businessCorrespondenceDetails: AddressDetails,
+  taxObligationStartDate: String,
+  last12MonthTotalTonnageAmt: Option[BigDecimal],
+  declaration: Declaration,
+  groupPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 )
 
 object SubscriptionDisplayResponse {
