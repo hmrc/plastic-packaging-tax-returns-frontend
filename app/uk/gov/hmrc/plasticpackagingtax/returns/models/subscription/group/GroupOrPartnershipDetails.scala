@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.{
   OrganisationDetails
 }
 
-case class GroupDetails(
+case class GroupOrPartnershipDetails(
   relationship: String,
   customerIdentification1: String,
   customerIdentification2: Option[String],
@@ -34,6 +34,6 @@ case class GroupDetails(
   contactDetails: ContactDetails
 )
 
-object GroupDetails {
-  implicit val format: OFormat[GroupDetails] = Json.format[GroupDetails]
+object GroupOrPartnershipDetails {
+  implicit val format: OFormat[GroupOrPartnershipDetails] = Json.format[GroupOrPartnershipDetails]
 }

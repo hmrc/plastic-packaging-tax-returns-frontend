@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupSubscription
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupOrPartnershipSubscription
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
 
 case class SubscriptionDisplayResponse(
@@ -30,7 +30,7 @@ case class SubscriptionDisplayResponse(
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: Option[BigDecimal],
   declaration: Declaration,
-  groupSubscription: Option[GroupSubscription]
+  groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 )
 
 object SubscriptionDisplayResponse {
