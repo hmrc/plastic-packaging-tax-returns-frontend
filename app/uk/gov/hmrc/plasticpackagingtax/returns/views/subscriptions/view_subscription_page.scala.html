@@ -112,7 +112,7 @@
 
     @formHelper(action = subscriptionsRoutes.ViewSubscriptionController.submit(), 'autoComplete -> "off") {
 
-    <h2 id="primary-contact-details" class="govuk-heading-m">
+    <h2 id="organisation-details" class="govuk-heading-m">
         @messages("account.viewSubscription.organisationDetails.label")</h2>
     @govukSummaryList(
         {if (subscription.legalEntityDetails.customerDetails.individualDetails.isDefined)  soleTraderOrganisationDetails() else ukCompanyOrganisationDetails() }
@@ -131,7 +131,7 @@
             )
         )
 
-    <h2 id="send-your-application" class="govuk-heading-m">@messages("account.viewSubscription.businessDetails.title")</h2>
+    <h2 id="business-contact-details" class="govuk-heading-m">@messages("account.viewSubscription.businessDetails.title")</h2>
     @govukSummaryList(
         {if (subscription.legalEntityDetails.customerDetails.organisationDetails.isEmpty)  soleTraderBusinessContactDetails() else ukCompanyBusinessContactDetails() }
     )
