@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Returns(PPT) Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   3.0
+// @version   3.1
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax%2Freturns*
@@ -20,7 +20,7 @@
     document.getElementById("input-0-0-name").value = "PPTReference";
     document.getElementById("input-0-0-value").value = "XMPPT0000000001";
 
-    document.getElementById('global-header').appendChild(createQuickButton())
+    document.querySelector('header').appendChild(createQuickButton())
 
 })();
 
@@ -37,7 +37,7 @@ function createQuickButton() {
     button.style.position = 'absolute'
     button.style.top = '50px'
     button.innerHTML = 'Quick Submit'
-    button.onclick = () => document.getElementsByClassName('button')[0].click();
+    button.onclick = () => document.getElementById('submit').click();
     return button;
 }
 
