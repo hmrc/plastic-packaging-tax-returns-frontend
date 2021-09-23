@@ -123,27 +123,23 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Ta
     try {
       verify(
         postRequestedFor(urlEqualTo(url))
-          .withRequestBody(equalToJson("""{
-                  "auditSource": "plastic-packaging-tax-returns-frontend",
-                  "auditType": """" + eventType + """",
-                  "eventId": "${json-unit.any-string}",
-                  "tags": {
-                    "clientIP": "-",
-                    "path": "-",
-                    "X-Session-ID": "-",
-                    "Akamai-Reputation": "-",
-                    "X-Request-ID": "-",
-                    "deviceID": "-",
-                    "clientPort": "-"
-                  },
-                  "detail": """ + body + """,
-                  "generatedAt": "${json-unit.any-string}",
-                  "metadata": {
-                    "sendAttemptAt": "${json-unit.any-string}",
-                    "instanceID": "${json-unit.any-string}",
-                    "sequence": "${json-unit.any-number}"
-                  }
-                }""".stripMargin, true, true))
+          .withRequestBody(equalToJson(s"""{
+      |                  "auditSource": "plastic-packaging-tax-returns-frontend",
+      |                  "auditType": "$eventType",
+      |                  "eventId": "$${json-unit.any-string}",
+      |                  "tags": {
+      |                    "clientIP": "-",
+      |                    "path": "-",
+      |                    "X-Session-ID": "-",
+      |                    "Akamai-Reputation": "-",
+      |                    "X-Request-ID": "-",
+      |                    "deviceID": "-",
+      |                    "clientPort": "-"
+      |                  },
+      |                  "detail": $body,
+      |                  "generatedAt": "$${json-unit.any-string}"
+      |                  }
+      |                }""".stripMargin, true, true))
       )
       true
     } catch {

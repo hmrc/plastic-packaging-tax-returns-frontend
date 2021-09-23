@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
@@ -33,7 +32,7 @@
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
   govukDetails : GovukDetails,
-  formHelper: formWithCSRF
+  formHelper: FormWithCSRF
 )
 
 @(form: Form[RecycledPlasticWeight])(implicit request: Request[_], messages: Messages)
