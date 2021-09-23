@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newUser, pptEnrolment}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   AuthActionImpl,
   PptReferenceAllowedList
@@ -40,8 +41,11 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
+  private val appConfig = mock[AppConfig]
+
   val mockAuthAction = new AuthActionImpl(mockAuthConnector,
                                           new PptReferenceAllowedList(Seq.empty),
+                                          appConfig,
                                           metricsMock,
                                           stubMessagesControllerComponents()
   )
@@ -158,5 +162,9 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
                                   )
       )(any(), any())
     ).thenReturn(Future.failed(new RuntimeException))
+
+  def whenAuthFailsWith(exc: AuthorisationException): Unit =
+    when(mockAuthConnector.authorise(any(), any())(any(), any()))
+      .thenReturn(Future.failed(exc))
 
 }

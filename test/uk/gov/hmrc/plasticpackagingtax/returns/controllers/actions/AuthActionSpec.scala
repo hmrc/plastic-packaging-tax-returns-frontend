@@ -16,17 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions
 
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.auth.core.{InsufficientEnrolments, MissingBearerToken}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   newEnrolment,
   newEnrolments,
   pptEnrolment
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, PptTestData}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
   pptEnrolmentIdentifierName,
   pptEnrolmentKey
@@ -38,11 +40,14 @@ import scala.concurrent.Future
 
 class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
+  private val appConfig = mock[AppConfig]
+
   private def createAuthAction(
     pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
   ): AuthAction =
     new AuthActionImpl(mockAuthConnector,
                        pptReferenceAllowedList,
+                       appConfig,
                        metricsMock,
                        stubMessagesControllerComponents()
     )
@@ -51,13 +56,13 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
   "Auth Action" should {
 
-    "return InsufficientEnrolments when enrolment id is missing" in {
+    "redirect to unauthorised page when enrolment id is missing" in {
       val user = PptTestData.newUser("123", Some(pptEnrolment("")))
       authorizedUser(user)
 
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
+      val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
     "process request when enrolment id is present" in {
@@ -85,7 +90,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       ) mustBe Results.Ok
     }
 
-    "return InsufficientEnrolments when enrolment id is not present and multiple identifier exist for same key" in {
+    "redirect to unauthorised page when enrolment id is not present and multiple identifier exist for same key" in {
       val user = PptTestData.newUser(
         "123",
         Some(
@@ -96,12 +101,12 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       )
       authorizedUser(user)
 
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
+      val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
-    "return InsufficientEnrolments when enrolment id is present but no ppt enrolment key found" in {
+    "redirect to unauthorised page when enrolment id is present but no ppt enrolment key found" in {
       val user = PptTestData.newUser("123",
                                      Some(
                                        newEnrolments(
@@ -115,9 +120,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       )
       authorizedUser(user)
 
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
+      val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
     "time calls to authorisation" in {
@@ -149,6 +154,33 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         createAuthAction(new PptReferenceAllowedList(Seq("someOtherEnrolmentId"))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+    }
+
+    "redirect when user not logged in" in {
+
+      when(appConfig.loginUrl).thenReturn("login-url")
+      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
+
+      whenAuthFailsWith(MissingBearerToken())
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
+    }
+
+    "redirect when authorisation fails" in {
+
+      whenAuthFailsWith(InsufficientEnrolments())
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
         )
 
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
