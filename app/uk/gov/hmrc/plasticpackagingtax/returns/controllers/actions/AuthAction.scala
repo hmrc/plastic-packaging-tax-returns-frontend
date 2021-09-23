@@ -24,6 +24,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
   pptEnrolmentIdentifierName,
   pptEnrolmentKey
@@ -38,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
   pptReferenceAllowedList: PptReferenceAllowedList,
+  appConfig: AppConfig,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
@@ -94,7 +96,12 @@ class AuthActionImpl @Inject() (
               )
             case Some(id) => executeRequest(request, block, identityData, id, allEnrolments)
           }
-      }
+      } recover {
+      case _: NoActiveSession =>
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+      case _: AuthorisationException =>
+        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
+    }
   }
 
   private def executeRequest[A](

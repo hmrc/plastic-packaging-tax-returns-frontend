@@ -143,13 +143,15 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
       }
     }
 
-    "throw exception" when {
+    "prevent access to page" when {
 
       "user doesn't have correct enrolment" in {
         authorizedUser(PptTestData.newUser("123", None))
-        intercept[InsufficientEnrolments] {
-          await(controller.displayPage()(authRequest(user = PptTestData.newUser("123", None))))
-        }
+
+        val result = controller.displayPage()(authRequest(user = PptTestData.newUser("123", None)))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
       }
     }
 
