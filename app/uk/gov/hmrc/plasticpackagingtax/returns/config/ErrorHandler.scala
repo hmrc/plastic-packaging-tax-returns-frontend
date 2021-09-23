@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.error_template
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -31,11 +31,5 @@ class ErrorHandler @Inject() (error_template: error_template, val messagesApi: M
     request: Request[_]
   ): Html =
     error_template(pageTitle, heading, message)
-
-  override def resolveError(rh: RequestHeader, ex: Throwable): Result =
-    ex match {
-
-      case _ => super.resolveError(rh, ex)
-    }
 
 }
