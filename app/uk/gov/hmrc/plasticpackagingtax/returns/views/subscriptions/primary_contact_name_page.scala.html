@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.subscriptions.Name
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
@@ -29,7 +28,7 @@
 
 
 @this(
-    formHelper: formWithCSRF,
+    formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukSummaryList: GovukSummaryList,
     govukInput: GovukInput,

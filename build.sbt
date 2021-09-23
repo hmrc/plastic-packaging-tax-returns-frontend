@@ -14,8 +14,7 @@ lazy val microservice = Project(appName, file("."))
             scalaVersion := "2.12.11",
             libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
             TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.hmrcfrontend.views.html.components._",
-                                              "uk.gov.hmrc.govukfrontend.views.html.components._",
-                                              "uk.gov.hmrc.govukfrontend.views.html.helpers._"
+                                              "uk.gov.hmrc.govukfrontend.views.html.components._"
             ),
             // ***************
             // Use the silencer plugin to suppress warnings
