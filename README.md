@@ -1,4 +1,3 @@
-
 # Plastic Packaging Tax Returns (PPT)
 
 This is the Scala microservice responsible for the transient storage of PPT returns information and PPT Account section,
