@@ -42,6 +42,20 @@ account.homePage.card.registration.body = Review your company’s registration d
 account.homePage.card.registration.link.1 = View your business registration
 account.homePage.card.registration.link.2 = View your primary contact details
 
+returns.information.title = Preparing your Plastic Packaging Tax (PPT) return
+returns.information.heading1 = Information you need to prepare your PPT return
+returns.information.body.1 = You’ll need to enter details of the finished plastic packaging components that you’ve manufactured or imported in this quarter.
+returns.information.body.2 = This includes the total weight of all components that:
+returns.information.listItem.1 = you manufactured, imported or directly exported
+returns.information.listItem.2 = you manufactured or imported but exported through a third party
+returns.information.listItem.3 = you processed and then sent to a third party for further conversion
+returns.information.listItem.4 = contain 30% or more recycled plastic content
+returns.information.listItem.5 = are used for the immediate packaging of human medicine
+returns.information.heading2 = When is a plastic packaging component considered finished?
+returns.information.body.3 = A plastic packaging component is finished when the final manufacturing step is made. You are liable for PPT if you make this final step.
+returns.information.body.4.text = More information, including liability criteria and exemption details, is available in the {0}.
+returns.information.body.4.link.text = PPT guidance (opens in a new tab)
+
 returns.startPage.title = Submit a return
 returns.startPage.title.sectionHeader = Plastic Packaging Tax return
 returns.startPage.informationYouNeed.header = Information you need

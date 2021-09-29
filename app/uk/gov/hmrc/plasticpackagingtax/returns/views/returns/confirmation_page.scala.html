@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.bulletList
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.bulletListNavigation
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -28,7 +28,7 @@
     govukLayout: main_template,
     govukPanel : GovukPanel,
     paragraphBody: paragraphBody,
-    bulletList: bulletList,
+    bulletListNavigation: bulletListNavigation,
     link: link,
     appConfig: AppConfig
 )
@@ -66,7 +66,7 @@
 
     @paragraphBody(message = messages("returns.confirmationPage.whatHappensNext.liable.title"))
     <br>
-    @bulletList(
+    @bulletListNavigation(
         id = "in-the-meantime",
         title = Some(messages("returns.confirmationPage.inTheMeantime.title")),
         classes = "govuk-heading-m",
