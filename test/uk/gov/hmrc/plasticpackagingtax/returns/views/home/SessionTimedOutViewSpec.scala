@@ -34,6 +34,11 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
   private val page                   = instanceOf[session_timed_out]
   private def createView(): Document = page()(request, messages)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
   "Session Timeout View" should {
 
     "have proper messages for labels" in {

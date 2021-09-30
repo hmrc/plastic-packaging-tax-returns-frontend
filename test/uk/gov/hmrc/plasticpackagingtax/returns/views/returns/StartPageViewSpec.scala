@@ -35,6 +35,11 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
   private def createView(): Html = startPage()
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    startPage.f()(request, messages)
+    startPage.render(request, messages)
+  }
+
   "Start Page view" should {
 
     "have proper messages for labels" in {
@@ -61,15 +66,6 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view: Html = createView()
-
-    "validate other rendering  methods" in {
-      startPage.f()(request, messages).select("title").text() must include(
-        messages("returns.startPage.title")
-      )
-      startPage.render(request, messages).select("title").text() must include(
-        messages("returns.startPage.title")
-      )
-    }
 
     "display title" in {
 

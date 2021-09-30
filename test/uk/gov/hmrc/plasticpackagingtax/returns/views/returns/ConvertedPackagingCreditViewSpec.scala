@@ -22,6 +22,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit.form
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -34,6 +35,11 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
     form: Form[ConvertedPackagingCredit] = ConvertedPackagingCredit.form()
   ): Document =
     page(form)(request, messages)
+
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(form())(request, messages)
+    page.render(form(), request, messages)
+  }
 
   "Converted Packaging Credit View" should {
 

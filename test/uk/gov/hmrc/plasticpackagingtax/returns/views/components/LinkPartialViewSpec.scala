@@ -35,6 +35,11 @@ class LinkPartialViewSpec extends UnitViewSpec with Matchers {
   private def createPartial(hiddenText: Option[String] = None): Html =
     linkPartial(text = "visible text", call = Call("GET", "#overview"), textHidden = hiddenText)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    linkPartial.f("text", None, Call("GET", "#overview"), false, None, "")
+    linkPartial.render("text", None, Call("GET", "#overview"), true, None, "")
+  }
+
   "Link partial" should {
 
     val partial: Html = createPartial()

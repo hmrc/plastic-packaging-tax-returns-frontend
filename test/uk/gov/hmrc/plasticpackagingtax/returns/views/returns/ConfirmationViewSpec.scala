@@ -34,6 +34,11 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
     page()(request, messages, flash)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f()(request, messages, new Flash(Map.empty))
+    page.render(request, messages, new Flash(Map.empty))
+  }
+
   "Confirmation Page view" should {
 
     "have proper messages for labels" in {
