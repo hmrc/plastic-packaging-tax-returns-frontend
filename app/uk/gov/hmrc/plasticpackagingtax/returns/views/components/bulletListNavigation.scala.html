@@ -14,10 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingM
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 
-@this()
+@this(paragraphBody: paragraphBody)
 
-@(message: String, classes: String = gdsPageHeadingM, id: Option[String] = Some("section-header"))
+@(id: String, title: Option[String] = None, elements: Seq[Html], classes: String = "govuk-body")
 
-<h2 class="@classes" @id.map{id => id="@id"}>@message</h2>
+<nav title="@id">
+    @title.map(paragraphBody(_, classes))
+    <ul class="govuk-list govuk-list--bullet">
+        @elements.map { element =>
+            <li class="dashed-list-item">
+                @element
+            </li>
+        }
+    </ul>
+</nav>

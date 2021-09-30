@@ -87,7 +87,7 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-xl").text() must include(
+      view.getElementById("section-header").text() must include(
         messages("returns.recycledPlasticWeight.sectionHeader")
       )
     }

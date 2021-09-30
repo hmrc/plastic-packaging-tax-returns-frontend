@@ -70,9 +70,10 @@ govukButton: GovukButton
         <h2 id="section-1" class="govuk-heading-m">@messages("returns.startPage.informationYouNeed.header")</h2>
         @paragraphBody(message = messages("returns.startPage.informationYouNeed.body"))
 
+        @paragraphBody(message = messages("returns.startPage.informationYouNeed.listItems.header"))
+
         @bulletList(
-            id = "information-you-need-list",
-            title = Some(messages("returns.startPage.informationYouNeed.listItems.header")),
+            id = Some("information-you-need-list"),
             elements = Seq(
                 Html(messages("returns.startPage.informationYouNeed.listItem.1")),
                 Html(messages("returns.startPage.informationYouNeed.listItem.2")),
@@ -97,9 +98,10 @@ govukButton: GovukButton
             @paragraphBody(message = messages("returns.startPage.whatIsLiable.body.1"))
             @paragraphBody(message = messages("returns.startPage.whatIsLiable.body.2"))
 
+            @paragraphBody(message = messages("returns.startPage.whatIsLiable.listItems.header"))
+
             @bulletList(
-                id = "what-is-liable-list",
-                title = Some(messages("returns.startPage.whatIsLiable.listItems.header")),
+                id = Some("what-is-liable-list"),
                 elements = Seq(
                     Html(messages("returns.startPage.whatIsLiable.listItem.1")),
                     Html(messages("returns.startPage.whatIsLiable.listItem.2")),

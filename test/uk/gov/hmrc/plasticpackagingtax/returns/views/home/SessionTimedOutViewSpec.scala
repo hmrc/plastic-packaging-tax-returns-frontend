@@ -53,9 +53,7 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-heading-xl").first() must containMessage(
-        "sessionTimeout.title"
-      )
+      view.getElementById("title") must containMessage("sessionTimeout.title")
     }
 
     "display saved answers info" in {

@@ -14,17 +14,14 @@
  * limitations under the License.
  *@
 
-@this(paragraphBody: paragraphBody)
+@this()
 
-@(id: String, title: Option[String] = None, elements: Seq[Html], classes: String = "govuk-body")
+@(elements: Seq[Html], classes: String = "govuk-list govuk-list--bullet", id: Option[String] = None)
 
-<nav title="@id">
-    @title.map(paragraphBody(_, classes))
-    <ul class="govuk-list govuk-list--bullet">
-        @elements.map { element =>
-            <li class="dashed-list-item">
-                @element
-            </li>
-        }
-    </ul>
-</nav>
+<ul class="@classes" @id.map{id => id="@id"}>
+    @elements.map { element =>
+        <li class="dashed-list-item">
+            @element
+        </li>
+    }
+</ul>
