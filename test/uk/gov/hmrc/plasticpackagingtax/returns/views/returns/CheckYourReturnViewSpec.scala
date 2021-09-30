@@ -19,9 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.returns
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.{MessagesSupport, UnitViewSpec}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -41,6 +43,11 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
   private def createView(): Document =
     page(taxReturn)(request, messages)
+
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(taxReturn)(request, messages)
+    page.render(taxReturn, request, messages)
+  }
 
   "Check Your Return View" should {
 
@@ -281,7 +288,8 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
   }
 }
 
-class CheckYourReturnView(view: Document) extends UnitViewSpec with Matchers {
+class CheckYourReturnView(view: Document)
+    extends AnyWordSpec with MessagesSupport with ViewMatchers with Matchers {
 
   def getTable(tableNo: Int): Element =
     view.getElementsByClass("govuk-table").get(tableNo)

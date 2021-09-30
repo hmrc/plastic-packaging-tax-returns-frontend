@@ -19,10 +19,10 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
   routes => subscriptionsRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -32,6 +32,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   private val homePage = instanceOf[home_page]
 
   private def createView(): Html = homePage()
+
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    homePage.f()(request, messages)
+    homePage.render(request, messages)
+  }
 
   "Home Page view" should {
 
@@ -50,15 +55,6 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view: Html = createView()
-
-    "validate other rendering  methods" in {
-      homePage.f()(request, messages).select("title").text() must include(
-        messages("account.homePage.title")
-      )
-      homePage.render(request, messages).select("title").text() must include(
-        messages("account.homePage.title")
-      )
-    }
 
     "contain timeout dialog function" in {
 

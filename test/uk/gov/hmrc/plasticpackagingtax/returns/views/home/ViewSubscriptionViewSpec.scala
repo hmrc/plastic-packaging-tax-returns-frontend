@@ -42,6 +42,11 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
   private val soleTraderView =
     page(createSubscriptionDisplayResponse(soleTraderSubscription))(request, messages)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(createSubscriptionDisplayResponse(ukLimitedCompanySubscription))(request, messages)
+    page.render(createSubscriptionDisplayResponse(ukLimitedCompanySubscription), request, messages)
+  }
+
   "ViewSubscriptionView" should {
 
     "have proper messages for labels" in {

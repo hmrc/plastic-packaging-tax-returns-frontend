@@ -17,9 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.views.model
 
 import org.scalatest.matchers.must.Matchers
-import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.MessagesSupport
 
-class TitleSpec extends UnitViewSpec with Matchers {
+class TitleSpec extends AnyWordSpec with MessagesSupport with Matchers {
 
   "Title" should {
     "display title without section header" in {

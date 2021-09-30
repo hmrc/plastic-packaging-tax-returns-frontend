@@ -36,6 +36,11 @@ class ReturnsInformationPageViewSpec extends UnitViewSpec with Matchers {
 
   private def createView(): Html = returnsInformationPage()
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    returnsInformationPage.f()(request, messages)
+    returnsInformationPage.render(request, messages)
+  }
+
   "Returns information page" should {
     "have proper messages for labels" in {
       messages must haveTranslationFor("returns.information.title")
@@ -54,11 +59,6 @@ class ReturnsInformationPageViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view: Html = createView()
-
-    "validate other rendering methods" in {
-      returnsInformationPage.f()(request, messages)
-      returnsInformationPage.render(request, messages)
-    }
 
     "display title" in {
       view.select("title").text() must include(messages("returns.information.title"))

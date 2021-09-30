@@ -36,6 +36,11 @@ class PrimaryContactNameViewSpec extends UnitViewSpec with Matchers {
   private def createView(form: Form[Name] = Name.form()): Document =
     page(form)(request, messages)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(form())(request, messages)
+    page.render(form(), request, messages)
+  }
+
   "Primary Contact Name View" should {
 
     "have proper messages for labels" in {
@@ -49,15 +54,6 @@ class PrimaryContactNameViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view = createView()
-
-    "validate other rendering  methods" in {
-      page.f(form())(request, messages).select("title").text() must include(
-        messages("subscription.primaryContactDetails.name.title")
-      )
-      page.render(form(), request, messages).select("title").text() must include(
-        messages("subscription.primaryContactDetails.name.title")
-      )
-    }
 
     "contain timeout dialog function" in {
 

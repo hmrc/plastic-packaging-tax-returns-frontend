@@ -31,6 +31,11 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
   private def createView(): Document =
     page()(request, messages)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
   "Unauthorised Page view" should {
 
     "have proper messages for labels" in {

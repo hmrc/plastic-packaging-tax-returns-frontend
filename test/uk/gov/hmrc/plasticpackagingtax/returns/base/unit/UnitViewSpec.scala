@@ -28,9 +28,24 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 
-class UnitViewSpec
+abstract class UnitViewSpec
     extends AnyWordSpec with MockTaxReturnsConnector with ViewMatchers with Injector
-    with GuiceOneAppPerSuite with ViewAssertions {
+    with GuiceOneAppPerSuite with ViewAssertions with MessagesSupport {
+
+  override def fakeApplication(): Application = {
+    SharedMetricRegistries.clear()
+    new GuiceApplicationBuilder().build()
+  }
+
+  "Exercise generated rendering methods" in {
+    exerciseGeneratedRenderingMethods()
+  }
+
+  def exerciseGeneratedRenderingMethods(): Unit
+
+}
+
+trait MessagesSupport {
 
   import utils.FakeRequestCSRFSupport._
 
@@ -43,16 +58,10 @@ class UnitViewSpec
   protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
     messages(request)(key, args: _*)
 
-  private val realMessagesApi: MessagesApi = UnitViewSpec.realMessagesApi
-
-  override def fakeApplication(): Application = {
-    SharedMetricRegistries.clear()
-    new GuiceApplicationBuilder().build()
-  }
-
+  private val realMessagesApi: MessagesApi = MessagesSupport.realMessagesApi
 }
 
-object UnitViewSpec extends Injector {
+object MessagesSupport extends Injector {
   val realMessagesApi: MessagesApi = instanceOf[MessagesApi]
 }
 

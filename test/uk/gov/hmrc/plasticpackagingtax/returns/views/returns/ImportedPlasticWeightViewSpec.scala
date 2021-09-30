@@ -36,6 +36,11 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   ): Document =
     page(form)(request, messages)
 
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(form())(request, messages)
+    page.render(form(), request, messages)
+  }
+
   "Imported Plastic Weight View" should {
 
     "have proper messages for labels" in {
@@ -58,15 +63,6 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view = createView()
-
-    "validate other rendering  methods" in {
-      page.f(form())(request, messages).select("title").text() must include(
-        messages("returns.importedPlasticWeight.meta.title")
-      )
-      page.render(form(), request, messages).select("title").text() must include(
-        messages("returns.importedPlasticWeight.meta.title")
-      )
-    }
 
     "contain timeout dialog function" in {
 

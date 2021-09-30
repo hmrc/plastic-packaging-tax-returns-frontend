@@ -18,9 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.model
 
 import org.scalatest.EitherValues
 import org.scalatest.matchers.must.Matchers
-import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.MessagesSupport
 
-class SignOutReasonSpec extends UnitViewSpec with Matchers with EitherValues {
+class SignOutReasonSpec extends AnyWordSpec with MessagesSupport with Matchers with EitherValues {
 
   "Sign out request params binder" should {
 
