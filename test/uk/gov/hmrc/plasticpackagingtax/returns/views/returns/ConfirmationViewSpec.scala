@@ -41,23 +41,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
 
   "Confirmation Page view" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("returns.confirmationPage.title")
-      messages must haveTranslationFor("returns.confirmationPage.panel.body")
-      messages must haveTranslationFor("returns.confirmationPage.panel.body.default")
-      messages must haveTranslationFor("returns.confirmationPage.body")
-      messages must haveTranslationFor("returns.confirmationPage.body.print")
-      messages must haveTranslationFor("returns.confirmationPage.body.downloadPdf")
-      messages must haveTranslationFor("returns.confirmationPage.whatHappensNext.title")
-      messages must haveTranslationFor("returns.confirmationPage.whatHappensNext.liable.title")
-      messages must haveTranslationFor("returns.confirmationPage.inTheMeantime.title")
-      messages must haveTranslationFor("returns.confirmationPage.inTheMeantime.payLink")
-      messages must haveTranslationFor("returns.confirmationPage.inTheMeantime.homeLink")
-      messages must haveTranslationFor("returns.confirmationPage.exitSurvey.text.link")
-      messages must haveTranslationFor("returns.confirmationPage.exitSurvey.text")
-    }
-
     val view: Html = createView()
 
     "contain timeout dialog function" in {

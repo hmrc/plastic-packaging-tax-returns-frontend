@@ -43,22 +43,6 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   "Human Medicines Plastic Weight View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.meta.title")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.title")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.hint")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.sectionHeader")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.total.weight")
-
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.details.link")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.details.line1")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.details.line2")
-
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.empty.error")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.format.error")
-      messages must haveTranslationFor("returns.humanMedicinesPlasticWeight.aboveMax.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

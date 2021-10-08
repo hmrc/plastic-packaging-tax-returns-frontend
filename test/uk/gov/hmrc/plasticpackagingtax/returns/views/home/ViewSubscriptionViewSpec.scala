@@ -49,39 +49,6 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
   "ViewSubscriptionView" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("account.viewSubscription.organisationDetails.title")
-      messages must haveTranslationFor("account.viewSubscription.organisationDetails.label")
-      messages must haveTranslationFor(
-        "account.viewSubscription.organisationDetails.registeredBusinessAddress"
-      )
-      messages must haveTranslationFor(
-        "account.viewSubscription.organisationDetails.organisationType"
-      )
-      messages must haveTranslationFor("account.viewSubscription.organisationDetails.businessName")
-      messages must haveTranslationFor(
-        "account.viewSubscription.organisationDetails.soleTrader.firstName"
-      )
-      messages must haveTranslationFor(
-        "account.viewSubscription.organisationDetails.soleTrader.lastName"
-      )
-
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.meta.title")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.label")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.fullName")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.jobTitle")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.address")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.phoneNumber")
-      messages must haveTranslationFor("account.viewSubscription.primaryContactDetails.email")
-
-      messages must haveTranslationFor("account.viewSubscription.businessDetails.title")
-      messages must haveTranslationFor("account.viewSubscription.businessDetails.phoneNumber")
-      messages must haveTranslationFor("account.viewSubscription.businessDetails.name")
-      messages must haveTranslationFor("account.viewSubscription.businessDetails.email")
-
-    }
-
     def getKeyFor(section: Int, index: Int, view: Document) =
       view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
         "govuk-summary-list__key"

@@ -43,21 +43,6 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
   "Converted Packaging Credit View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.convertedPackagingCredit.meta.title")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.title")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.sectionHeader")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.total.weight")
-
-      messages must haveTranslationFor("returns.convertedPackagingCredit.details.link")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.details.line1")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.details.line2")
-
-      messages must haveTranslationFor("returns.convertedPackagingCredit.empty.error")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.format.error")
-      messages must haveTranslationFor("returns.convertedPackagingCredit.aboveMax.error")
-    }
-
     val view = createView()
 
     "display 'Back' button" in {

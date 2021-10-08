@@ -144,8 +144,6 @@ trait ViewMatchers {
   def haveGovukGlobalErrorSummary: Matcher[Document] =
     new ContainElementWithClassMatcher("govuk-error-summary")
 
-  def haveTranslationFor(key: String): Matcher[Messages] = new TranslationKeyMatcher(key)
-
   def submitTo(path: String): Matcher[Element] = new FormSubmitTo(path)
 
   def submitTo(call: Call): Matcher[Element] = new FormSubmitTo(call.url)

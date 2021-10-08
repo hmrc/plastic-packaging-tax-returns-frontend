@@ -42,21 +42,6 @@ class ReturnsInformationPageViewSpec extends UnitViewSpec with Matchers {
   }
 
   "Returns information page" should {
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.information.title")
-      messages must haveTranslationFor("returns.information.heading1")
-      messages must haveTranslationFor("returns.information.body.1")
-      messages must haveTranslationFor("returns.information.body.2")
-      messages must haveTranslationFor("returns.information.listItem.1")
-      messages must haveTranslationFor("returns.information.listItem.2")
-      messages must haveTranslationFor("returns.information.listItem.3")
-      messages must haveTranslationFor("returns.information.listItem.4")
-      messages must haveTranslationFor("returns.information.listItem.5")
-      messages must haveTranslationFor("returns.information.heading2")
-      messages must haveTranslationFor("returns.information.body.3")
-      messages must haveTranslationFor("returns.information.body.4.text")
-      messages must haveTranslationFor("returns.information.body.4.link.text")
-    }
 
     val view: Html = createView()
 

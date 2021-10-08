@@ -42,29 +42,6 @@ class StartPageViewSpec extends UnitViewSpec with Matchers {
 
   "Start Page view" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("returns.startPage.title")
-      messages must haveTranslationFor("returns.startPage.title.sectionHeader")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.header")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.body")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItems.header")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.1")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.2")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.3")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.4")
-      messages must haveTranslationFor("returns.startPage.informationYouNeed.listItem.5")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.header")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.1")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.2")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.body.3")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItems.header")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.1")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.2")
-      messages must haveTranslationFor("returns.startPage.whatIsLiable.listItem.3")
-      messages must haveTranslationFor("returns.startPage.buttonName")
-    }
-
     val view: Html = createView()
 
     "display title" in {
