@@ -51,48 +51,6 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
   "Check Your Return View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.checkYourReturnPage.title")
-      messages must haveTranslationFor("returns.checkYourReturnPage.label")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.header.item")
-      messages must haveTranslationFor("returns.checkYourReturnPage.header.amount")
-      messages must haveTranslationFor("returns.checkYourReturnPage.header.empty")
-      messages must haveTranslationFor("returns.checkYourReturnPage.header.changeLink")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.manufacturedPackaging.total")
-      messages must haveTranslationFor("returns.checkYourReturnPage.manufacturedPackaging.liable")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.importedPackaging.total")
-      messages must haveTranslationFor("returns.checkYourReturnPage.importedPackaging.liable")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.humansMedicinesPackaging")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.directExports")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.conversionCredit")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.recycledPackaging.total")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.paragraph")
-      messages must haveTranslationFor("returns.checkYourReturnPage.sendReturn.description")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.taxLiability.label")
-      messages must haveTranslationFor(
-        "returns.checkYourReturnPage.taxLiability.exemptPackaging.label"
-      )
-      messages must haveTranslationFor(
-        "returns.checkYourReturnPage.taxLiability.liablePackaging.label"
-      )
-      messages must haveTranslationFor("returns.checkYourReturnPage.taxLiability.description")
-
-      messages must haveTranslationFor("returns.checkYourReturnPage.totalCredits.description")
-      messages must haveTranslationFor("returns.checkYourReturnPage.totalCredits.label")
-      messages must haveTranslationFor(
-        "returns.checkYourReturnPage.totalCredits.creditsRequested.label"
-      )
-    }
-
     val view = createView()
 
     "display 'Back' button" in {

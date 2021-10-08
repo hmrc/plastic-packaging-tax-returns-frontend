@@ -40,20 +40,6 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
   "Home Page view" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("account.homePage.title")
-      messages must haveTranslationFor("account.homePage.currentBalance")
-      messages must haveTranslationFor("account.homePage.currentBalance.onDate")
-      messages must haveTranslationFor("account.homePage.card.transactions.header")
-      messages must haveTranslationFor("account.homePage.card.transactions.body")
-      messages must haveTranslationFor("account.homePage.card.transactions.link.1")
-      messages must haveTranslationFor("account.homePage.card.registration.header")
-      messages must haveTranslationFor("account.homePage.card.registration.body")
-      messages must haveTranslationFor("account.homePage.card.registration.link.1")
-      messages must haveTranslationFor("account.homePage.card.registration.link.2")
-    }
-
     val view: Html = createView()
 
     "contain timeout dialog function" in {

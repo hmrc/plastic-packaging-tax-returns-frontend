@@ -43,23 +43,6 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   "Manufactured Plastic Weight View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.meta.title")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.title")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.sectionHeader")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.total.weight")
-
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.link")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line1")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line2")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line3")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.details.line4")
-
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.empty.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.format.error")
-      messages must haveTranslationFor("returns.manufacturedPlasticWeight.aboveMax.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

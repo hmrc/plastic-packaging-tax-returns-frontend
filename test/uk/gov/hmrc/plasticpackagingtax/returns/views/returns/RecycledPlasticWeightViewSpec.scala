@@ -43,20 +43,6 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   "Recycled Plastic Weight View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("returns.recycledPlasticWeight.meta.title")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.title")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.sectionHeader")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.total.weight")
-
-      messages must haveTranslationFor("returns.recycledPlasticWeight.details.link")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.details.line1")
-
-      messages must haveTranslationFor("returns.recycledPlasticWeight.empty.error")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.format.error")
-      messages must haveTranslationFor("returns.recycledPlasticWeight.aboveMax.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {
