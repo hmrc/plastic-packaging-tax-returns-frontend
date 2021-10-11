@@ -78,7 +78,7 @@ object PptTestData {
                                                    countryCode = "GB"
     ),
     taxObligationStartDate = now(UTC).toString,
-    last12MonthTotalTonnageAmt = Some(15000),
+    last12MonthTotalTonnageAmt = 15000,
     declaration = Declaration(declarationBox1 = true),
     groupSubscription = None
   )
@@ -170,7 +170,7 @@ object PptTestData {
                                 taxObligationStartDate =
                                   subscription.taxObligationStartDate,
                                 last12MonthTotalTonnageAmt =
-                                  subscription.last12MonthTotalTonnageAmt.map(_.toLong),
+                                  subscription.last12MonthTotalTonnageAmt.toLong,
                                 declaration =
                                   subscription.declaration,
                                 groupOrPartnershipSubscription =
@@ -193,7 +193,7 @@ object PptTestData {
                               taxObligationStartDate =
                                 subscription.taxObligationStartDate,
                               last12MonthTotalTonnageAmt =
-                                subscription.last12MonthTotalTonnageAmt.map(_.toLong),
+                                subscription.last12MonthTotalTonnageAmt.toLong,
                               declaration =
                                 subscription.declaration,
                               groupOrPartnershipSubscription =
