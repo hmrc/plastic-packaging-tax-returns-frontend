@@ -18,41 +18,39 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components._
 
 @this(
-  govukLayout: main_template,
-  pageTitle: pageTitle,
-  link: link,
-  config: AppConfig
+        govukLayout: main_template,
+        pageTitle: pageTitle,
+        paragraph: paragraph,
+        link: link,
+        config: AppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@helpSection = {
-<p class="govuk-body">
-    @Html(messages("unauthorised.paragraph.1", link(
-    id = Some("register_for_ppt_link"),
-    text = messages("unauthorised.paragraph.1.link"),
-    call = Call("GET", returnsRoutes.StartController.displayPage().url)
+@pptRegistrationLink = {
+    @link(
+        id = Some("register_for_ppt_link"),
+        text = messages("unauthorised.paragraph.1.link"),
+        call = Call("GET", config.pptRegistrationUrl)
     )
-    ))
-</p>
-<p class="govuk-body">
-    @Html(messages("unauthorised.paragraph.2", link(
-    id = Some("find_out_about_ppt_link"),
-    text = messages("unauthorised.paragraph.2.link"),
-    call = Call("GET", config.pptRegistrationInfoUrl)
+}
+
+@pptGuidanceLink = {
+    @link(
+        id = Some("find_out_about_ppt_link"),
+        text = messages("unauthorised.paragraph.2.link"),
+        call = Call("GET", config.pptRegistrationInfoUrl)
     )
-    ))
-</p>
 }
 
 @govukLayout(title = Title("unauthorised.heading")) {
 
-@pageTitle(messages("unauthorised.heading"))
+    @pageTitle(messages("unauthorised.heading"))
 
-@helpSection
+    @paragraph(content = Html(messages("unauthorised.paragraph.1", pptRegistrationLink)))
+    @paragraph(content = Html(messages("unauthorised.paragraph.2", pptGuidanceLink)))
 
 }

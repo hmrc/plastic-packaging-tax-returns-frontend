@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
@@ -26,7 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => re
 @ViewTest
 class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[unauthorised]
+  private val page      = instanceOf[unauthorised]
+  private val appConfig = instanceOf[AppConfig]
 
   private def createView(): Document =
     page()(request, messages)
@@ -48,7 +50,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       val link = view.getElementById("register_for_ppt_link")
 
       link must containMessage("unauthorised.paragraph.1.link")
-      link must haveHref(returnRoutes.StartController.displayPage().url)
+      link must haveHref(appConfig.pptRegistrationUrl)
       link.attributes().hasKey("target") mustBe false
     }
 
