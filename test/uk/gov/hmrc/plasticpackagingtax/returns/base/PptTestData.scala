@@ -170,7 +170,7 @@ object PptTestData {
                                 taxObligationStartDate =
                                   subscription.taxObligationStartDate,
                                 last12MonthTotalTonnageAmt =
-                                  subscription.last12MonthTotalTonnageAmt.toLong,
+                                  subscription.last12MonthTotalTonnageAmt.longValue(),
                                 declaration =
                                   subscription.declaration,
                                 groupOrPartnershipSubscription =
@@ -193,7 +193,7 @@ object PptTestData {
                               taxObligationStartDate =
                                 subscription.taxObligationStartDate,
                               last12MonthTotalTonnageAmt =
-                                subscription.last12MonthTotalTonnageAmt.toLong,
+                                subscription.last12MonthTotalTonnageAmt.longValue(),
                               declaration =
                                 subscription.declaration,
                               groupOrPartnershipSubscription =
