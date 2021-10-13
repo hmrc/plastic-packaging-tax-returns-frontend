@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{bulletList, pageTitle, link, paragraph, paragraphBody, sectionHeader}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{bulletList, pageTitle, link, paragraph, paragraphBody, subHeading}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -23,7 +23,7 @@
 @this(
  govukLayout: main_template,
  pageTitle: pageTitle,
- sectionHeader: sectionHeader,
+ subHeading: subHeading,
  paragraphBody: paragraphBody,
  paragraph: paragraph,
  bulletList: bulletList,
@@ -51,7 +51,7 @@
 ) {
  @pageTitle(text = messages("returns.information.title"))
 
- @sectionHeader(message = messages("returns.information.heading1"), id=Some("info-heading"))
+ @subHeading(message = messages("returns.information.heading1"), id=Some("info-heading"))
  @paragraphBody(message = messages("returns.information.body.1"), id=Some("info-detail1"))
  @paragraphBody(message = messages("returns.information.body.2"), id=Some("info-detail2"))
  @bulletList(
@@ -66,7 +66,7 @@
   )
  )
 
- @sectionHeader(message = messages("returns.information.heading2"), id=Some("finished-heading"))
+ @subHeading(message = messages("returns.information.heading2"), id=Some("finished-heading"))
  @paragraphBody(message = messages("returns.information.body.3"), id=Some("finished-detail1"))
  @paragraph(content = Html(messages("returns.information.body.4.text", guidanceLink)), id=Some("finished-detail2"))
 }
