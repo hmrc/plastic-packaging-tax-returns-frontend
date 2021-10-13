@@ -18,7 +18,7 @@
  ***********  Mobile Styling  **********
  ***************************************/
 @media only screen and (max-width: 640px) {
-  .card .card-body .govuk-heading-s {
+  .card .card-body .govuk-heading-m {
     color: #1d70b8;
   }
 
@@ -37,11 +37,6 @@
     background: #f8f8f8;
     margin-bottom: 20px;
     min-height: 260px;
-  }
-
-  .card .card-body .govuk-heading-s {
-    color: #1d70b8;
-    min-height: 50px;
   }
 
   .card .govuk-link {

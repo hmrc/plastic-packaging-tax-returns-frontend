@@ -16,10 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
 class JourneyRequest[+A](
   val authenticatedRequest: AuthenticatedRequest[A],
   val taxReturn: TaxReturn,
   override val enrolmentId: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId)
+) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId) {
+
+  val pptReference =
+    enrolmentId.getOrElse(throw InsufficientEnrolments("Enrolment id not found on request"))
+
+}
