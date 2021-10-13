@@ -32,17 +32,17 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 account.homePage.section = Account home
-account.homePage.title = Account home
+account.homePage.title = Your Plastic Packaging Tax account home
 account.homePage.registrationNumber = Registration number:
 account.homePage.currentBalance = Your current balance
 account.homePage.currentBalance.onDate = on {0}
 
 account.homePage.card.makeReturn.header = Make a return
-account.homePage.card.makeReturn.body = Your first quarterly return is due on 31 July 2022.
+account.homePage.card.makeReturn.body = Your first quarterly return is due by 31 July 2022.
 account.homePage.card.makeReturn.link = Information you need to prepare your return
 
 account.homePage.card.balance.header = Your balance
-account.homePage.card.balance.body = You have no tax to pay..
+account.homePage.card.balance.body = You have no tax to pay.
 
 returns.information.title = Preparing your Plastic Packaging Tax (PPT) return
 returns.information.heading1 = Information you need to prepare your PPT return
