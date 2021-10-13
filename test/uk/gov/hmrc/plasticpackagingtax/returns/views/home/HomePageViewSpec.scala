@@ -19,10 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
-  createSubscriptionDisplayResponse,
-  ukLimitedCompanySubscription
-}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
