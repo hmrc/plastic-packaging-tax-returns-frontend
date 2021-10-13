@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
@@ -26,7 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,16 +40,10 @@ class ViewSubscriptionController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.enrolmentId match {
-        case Some(id) =>
-          subscriptionConnector.get(id)
-            .map { subscription =>
-              Ok(page(subscription))
-            }
-
-        case _ =>
-          throw InsufficientEnrolments("Enrolment id not found on request")
-      }
+      subscriptionConnector.get(request.pptReference)
+        .map { subscription =>
+          Ok(page(subscription))
+        }
     }
 
   def submit(): Action[AnyContent] =

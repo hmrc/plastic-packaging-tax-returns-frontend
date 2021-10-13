@@ -22,7 +22,12 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -33,13 +38,15 @@ class HomeControllerSpec extends ControllerSpec {
 
   private val controller = new HomeController(authenticate = mockAuthAction,
                                               journeyAction = mockJourneyAction,
+                                              subscriptionConnector =
+                                                mockSubscriptionConnector,
                                               mcc = mcc,
                                               page = page
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[SubscriptionDisplayResponse])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -53,6 +60,9 @@ class HomeControllerSpec extends ControllerSpec {
 
       "use is authorised and display page method is invoked" in {
         authorizedUser()
+
+        val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
+        mockGetSubscription(subscription)
 
         val result = controller.displayPage()(getRequest())
 

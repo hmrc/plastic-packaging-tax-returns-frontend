@@ -16,13 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
-  routes => subscriptionsRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -31,11 +34,14 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
   private val homePage = instanceOf[home_page]
 
-  private def createView(): Html = homePage()
+  private val subscription = mock[SubscriptionDisplayResponse]
+  when(subscription.entityName).thenReturn(Some("Organisation Name"))
+
+  private def createView(): Html = homePage(subscription)(journeyRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f()(request, messages)
-    homePage.render(request, messages)
+    homePage.f(subscription)(journeyRequest, messages)
+    homePage.render(subscription, journeyRequest, messages)
   }
 
   "Home Page view" should {
@@ -59,54 +65,38 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementById("title") must containMessage("account.homePage.title")
-      view.getElementById("entityName").text() mustBe "Plastic Packaging Ltd."
+      view.getElementById("title").text() mustBe "Organisation Name"
+      view.getElementById("section-header") must containMessage("account.homePage.section")
     }
 
-    "display 'balance' section" in {
+    "displayPPT reference number" in {
 
-      view.getElementById("currentBalance") must containMessage("account.homePage.currentBalance")
-      view.getElementById("accountBalance").text() mustBe "£2720.00"
-      view.getElementById("accountBalanceOnDate").text() must include("on ")
+      view.select(".govuk-body .govuk-label--s").text() must include(journeyRequest.pptReference)
     }
 
-    "display 'Returns and transactions' card" in {
+    "display 'returns' card" in {
 
-      view.select(".card .card-body .govuk-heading-s").first() must containMessage(
-        "account.homePage.card.transactions.header"
+      view.select(".card .card-body .govuk-heading-m").first() must containMessage(
+        "account.homePage.card.makeReturn.header"
       )
       view.select(".card .card-body .govuk-body").first() must containMessage(
-        "account.homePage.card.transactions.body"
+        "account.homePage.card.makeReturn.body"
       )
       view.select(".card .govuk-link").first() must containMessage(
-        "account.homePage.card.transactions.link.1"
+        "account.homePage.card.makeReturn.link"
       )
       view.select(".card .govuk-link").first() must haveHref(
-        returnsRoutes.ManufacturedPlasticWeightController.displayPage().url
+        returnsRoutes.ReturnsInformationController.displayPage().url
       )
     }
 
-    "display 'Registration and primary contacts' card" in {
+    "display 'balance' card" in {
 
-      view.select(".card .card-body .govuk-heading-s").get(1) must containMessage(
-        "account.homePage.card.registration.header"
+      view.select(".card .card-body .govuk-heading-m").get(1) must containMessage(
+        "account.homePage.card.balance.header"
       )
       view.select(".card .card-body .govuk-body").get(1) must containMessage(
-        "account.homePage.card.registration.body"
-      )
-
-      view.select(".card .govuk-link").get(1) must containMessage(
-        "account.homePage.card.registration.link.1"
-      )
-      view.select(".card .govuk-link").get(1) must haveHref(
-        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
-      )
-
-      view.select(".card .govuk-link").get(2) must containMessage(
-        "account.homePage.card.registration.link.2"
-      )
-      view.select(".card .govuk-link").get(2) must haveHref(
-        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
+        "account.homePage.card.balance.body"
       )
 
     }

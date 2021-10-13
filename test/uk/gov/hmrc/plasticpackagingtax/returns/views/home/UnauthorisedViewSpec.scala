@@ -22,7 +22,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 
 @ViewTest
 class UnauthorisedViewSpec extends UnitViewSpec with Matchers {

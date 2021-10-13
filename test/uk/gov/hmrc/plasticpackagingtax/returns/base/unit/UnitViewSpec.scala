@@ -25,12 +25,20 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
+import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
+import utils.FakeRequestCSRFSupport._
 
 abstract class UnitViewSpec
     extends AnyWordSpec with MockTaxReturnsConnector with ViewMatchers with Injector
-    with GuiceOneAppPerSuite with ViewAssertions with MessagesSupport {
+    with GuiceOneAppPerSuite with ViewAssertions with MessagesSupport with TaxReturnBuilder {
+
+  val journeyRequest: JourneyRequest[AnyContent] = new JourneyRequest(
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), Some("123")),
+    aTaxReturn(),
+    Some("XMPPT0000000001")
+  )
 
   override def fakeApplication(): Application = {
     SharedMetricRegistries.clear()
@@ -46,8 +54,6 @@ abstract class UnitViewSpec
 }
 
 trait MessagesSupport {
-
-  import utils.FakeRequestCSRFSupport._
 
   implicit val request: Request[AnyContent] =
     new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), Some("123"))
