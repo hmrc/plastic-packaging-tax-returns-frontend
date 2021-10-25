@@ -31,7 +31,7 @@ case class SubscriptionUpdateRequest(
   primaryContactDetails: PrimaryContactDetails,
   businessCorrespondenceDetails: AddressDetails,
   taxObligationStartDate: String,
-  last12MonthTotalTonnageAmt: Option[BigDecimal],
+  last12MonthTotalTonnageAmt: BigDecimal,
   declaration: Declaration,
   groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 )

@@ -26,7 +26,7 @@ case class Subscription(
   businessCorrespondenceDetails: AddressDetails,
   declaration: Declaration,
   taxObligationStartDate: String,
-  last12MonthTotalTonnageAmt: Option[Long] = None,
+  last12MonthTotalTonnageAmt: Long,
   groupSubscription: Option[GroupOrPartnershipSubscription] = None
 )
 
