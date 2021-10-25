@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.request
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingM
 
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+@this()
 
-class JourneyRequest[+A](
-  val authenticatedRequest: AuthenticatedRequest[A],
-  val taxReturn: TaxReturn,
-  override val enrolmentId: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId) {
+@(message: String, classes: String = gdsPageHeadingM, id: Option[String] = None)
 
-  val pptReference =
-    enrolmentId.getOrElse(throw InsufficientEnrolments("Enrolment id not found on request"))
-
-}
+<h2 class="@{classes}" @id.map{id => id="@id"}>@message</h2>

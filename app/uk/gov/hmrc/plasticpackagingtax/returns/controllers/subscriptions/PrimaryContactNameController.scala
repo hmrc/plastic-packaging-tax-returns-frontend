@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.subscriptions.Name
@@ -29,7 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionU
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.primary_contact_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,36 +43,24 @@ class PrimaryContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.enrolmentId match {
-        case Some(id) =>
-          subscriptionConnector.get(id)
-            .map { subscription =>
-              Ok(page(Name.form().fill(Name(subscription.primaryContactDetails.name))))
-            }
-
-        case _ =>
-          throw InsufficientEnrolments("Enrolment id not found on request")
-      }
+      subscriptionConnector.get(request.pptReference)
+        .map { subscription =>
+          Ok(page(Name.form().fill(Name(subscription.primaryContactDetails.name))))
+        }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.enrolmentId match {
-        case Some(id) =>
-          Name.form()
-            .bindFromRequest()
-            .fold(
-              (formWithErrors: Form[Name]) => Future.successful(BadRequest(page(formWithErrors))),
+      Name.form()
+        .bindFromRequest()
+        .fold((formWithErrors: Form[Name]) => Future.successful(BadRequest(page(formWithErrors))),
               name =>
-                updateSubscription(id, name).flatMap { updateSubscription =>
-                  subscriptionConnector.update(id, updateSubscription).map { _ =>
+                updateSubscription(request.pptReference, name).flatMap { updateSubscription =>
+                  subscriptionConnector.update(request.pptReference, updateSubscription).map { _ =>
                     Redirect(routes.ViewSubscriptionController.displayPage())
                   }
                 }
-            )
-        case _ =>
-          throw InsufficientEnrolments("Enrolment id not found on request")
-      }
+        )
     }
 
   private def updateSubscription(pptReference: String, formData: Name)(implicit

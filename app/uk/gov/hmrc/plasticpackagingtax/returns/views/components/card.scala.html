@@ -16,19 +16,18 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingS
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
 
 @this(paragraphBody: paragraphBody, link: link)
 
-@(headerKey: String, bodyKey: String, links: Seq[Link])(implicit messages: Messages)
+@(header: String, body: String, links: Seq[Link])(implicit messages: Messages)
 
 <div class="govuk-grid-column-one-third">
    <div class="card">
        <div class="card-body">
 
-           <h2 class="@gdsPageHeadingS">@messages(headerKey)</h2>
-           @paragraphBody(messages(bodyKey))
+           <h2 class="govuk-heading-m">@header</h2>
+           @paragraphBody(body)
 
             <ul class="govuk-list">
                 @for(l <- links) {

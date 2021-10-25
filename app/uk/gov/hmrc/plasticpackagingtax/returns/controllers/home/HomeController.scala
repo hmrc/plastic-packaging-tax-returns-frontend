@@ -19,21 +19,29 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import scala.concurrent.ExecutionContext
+
 class HomeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
+  subscriptionConnector: SubscriptionConnector,
   mcc: MessagesControllerComponents,
   page: home_page
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      Ok(page())
+    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+      subscriptionConnector.get(request.pptReference)
+        .map { subscription =>
+          Ok(page(subscription))
+        }
     }
 
 }

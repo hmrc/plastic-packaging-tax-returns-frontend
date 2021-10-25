@@ -17,8 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupOrPartnershipSubscription
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.CustomerType.{
+  Individual,
+  Organisation
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.group.GroupOrPartnershipSubscription
 
 case class SubscriptionDisplayResponse(
   processingDate: String,
@@ -31,7 +35,19 @@ case class SubscriptionDisplayResponse(
   last12MonthTotalTonnageAmt: BigDecimal,
   declaration: Declaration,
   groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
-)
+) {
+
+  val entityName: Option[String] = legalEntityDetails.customerDetails.customerType match {
+    case Individual =>
+      legalEntityDetails.customerDetails.individualDetails.map(
+        details =>
+          s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
+      )
+    case Organisation =>
+      legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName)
+  }
+
+}
 
 object SubscriptionDisplayResponse {
 

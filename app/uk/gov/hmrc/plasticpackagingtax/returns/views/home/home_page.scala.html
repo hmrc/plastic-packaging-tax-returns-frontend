@@ -17,49 +17,51 @@
 @import java.time.LocalDate
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.card
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingM
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
 
 @this(
   govukLayout: main_template,
   pageTitle: pageTitle,
-  paragraphBody: paragraphBody,
+  sectionHeader: sectionHeader,
+  paragraph: paragraph,
   card: card
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse)(implicit request: JourneyRequest[_], messages: Messages)
+
 
 @govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
-    @pageTitle(text = messages("account.homePage.title"), classes = gdsPageHeadingL)
 
-    <h2 id="entityName" class="@gdsPageHeadingL">Plastic Packaging Ltd.</h2>
+    @sectionHeader(messages("account.homePage.section"))
+    @pageTitle(text = subscription.entityName.getOrElse(messages("service.name")), classes = gdsPageHeadingL)
 
-    <div class="card-balance">
-      <h2 id='currentBalance' class="@gdsPageHeadingM">@messages("account.homePage.currentBalance")</h2>
-      <h3 id='accountBalance' class="@gdsPageHeadingL">£2720.00</h3>
-      @paragraphBody(id=Some("accountBalanceOnDate"), message = messages("account.homePage.currentBalance.onDate",
-          LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
-    </div>
+    @paragraph {
+        @messages("account.homePage.registrationNumber")<br>
+        <span class="govuk-body govuk-label--s">@request.pptReference</span>
+    }
 
     <div class="govuk-grid-row">
 
-        @card(headerKey = "account.homePage.card.transactions.header",
-          bodyKey = "account.homePage.card.transactions.body",
+        @card(header = messages("account.homePage.card.makeReturn.header"),
+          body = messages("account.homePage.card.makeReturn.body"),
           links = Seq(
-              Link("account.homePage.card.transactions.link.1", returnsRoutes.ManufacturedPlasticWeightController.displayPage())))
+              Link("account.homePage.card.makeReturn.link", returnsRoutes.ReturnsInformationController.displayPage()))
+        )
 
-        @card(headerKey = "account.homePage.card.registration.header",
-          bodyKey = "account.homePage.card.registration.body",
-          links = Seq(
-              Link("account.homePage.card.registration.link.1", subscriptionsRoutes.ViewSubscriptionController.displayPage()),
-              Link("account.homePage.card.registration.link.2", subscriptionsRoutes.ViewSubscriptionController.displayPage())))
+        @card(header = messages("account.homePage.card.balance.header"),
+          body = messages("account.homePage.card.balance.body"),
+          links = Seq.empty
+        )
     </div>
 }
 
