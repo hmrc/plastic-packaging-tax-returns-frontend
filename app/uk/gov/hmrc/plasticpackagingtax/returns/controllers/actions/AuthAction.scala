@@ -138,7 +138,7 @@ class AuthActionImpl @Inject() (
 
 object AuthAction {
   val pptEnrolmentKey            = "HMRC-PPT-ORG"
-  val pptEnrolmentIdentifierName = "PPTReference"
+  val pptEnrolmentIdentifierName = "EtmpRegistrationNumber"
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
