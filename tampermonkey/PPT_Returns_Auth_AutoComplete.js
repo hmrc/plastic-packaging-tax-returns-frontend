@@ -17,7 +17,7 @@
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
     document.getElementsByName("enrolment[0].name")[0].value = "HMRC-PPT-ORG";
-    document.getElementById("input-0-0-name").value = "PPTReference";
+    document.getElementById("input-0-0-name").value = "EtmpRegistrationNumber";
     document.getElementById("input-0-0-value").value = "XMPPT0000000001";
 
     document.querySelector('header').appendChild(createQuickButton())
