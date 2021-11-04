@@ -17,6 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.Logger
+import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -32,6 +34,8 @@ class TaxReturnsConnector @Inject() (
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
+  private val logger = Logger(this.getClass)
+
   def find(
     id: String
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[TaxReturn]]] = {
@@ -39,10 +43,19 @@ class TaxReturnsConnector @Inject() (
     val timer = metrics.defaultRegistry.timer("ppt.returns.find.timer").time()
     httpClient.GET[Option[TaxReturn]](appConfig.pptReturnUrl(id))
       .andThen { case _ => timer.stop() }
-      .map(resp => Right(resp.map(_.toTaxReturn)))
+      .map {
+        resp =>
+          logger.info(s"Found ppt tax returns for id [$id] had response [${toJson(resp)}]")
+          Right(resp.map(_.toTaxReturn))
+      }
       .recover {
         case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to retrieve return, error: ${ex.getMessage}", ex))
+          Left(
+            DownstreamServiceError(
+              s"Failed to retrieve return for id [$id], error: ${ex.getMessage}",
+              ex
+            )
+          )
       }
   }
 
@@ -52,7 +65,11 @@ class TaxReturnsConnector @Inject() (
     val timer = metrics.defaultRegistry.timer("ppt.returns.create.timer").time()
     httpClient.POST[TaxReturn, TaxReturn](appConfig.pptReturnsUrl, payload)
       .andThen { case _ => timer.stop() }
-      .map(response => Right(response.toTaxReturn))
+      .map {
+        response =>
+          logger.info(s"Create ppt tax returns had response [${toJson(response)}]")
+          Right(response.toTaxReturn)
+      }
       .recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Failed to create return, error: ${ex.getMessage}", ex))
@@ -65,7 +82,12 @@ class TaxReturnsConnector @Inject() (
     val timer = metrics.defaultRegistry.timer("ppt.returns.update.timer").time()
     httpClient.PUT[TaxReturn, TaxReturn](appConfig.pptReturnUrl(payload.id), payload)
       .andThen { case _ => timer.stop() }
-      .map(response => Right(response.toTaxReturn))
+      .map { response =>
+        logger.info(
+          s"Updated ppt tax returns for id [${payload.id}] had response [${toJson(response)}]"
+        )
+        Right(response.toTaxReturn)
+      }
       .recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Failed to update return, error: ${ex.getMessage}", ex))
