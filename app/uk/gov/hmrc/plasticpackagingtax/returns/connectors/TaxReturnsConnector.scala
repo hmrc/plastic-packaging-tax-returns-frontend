@@ -45,7 +45,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map {
         resp =>
-          logger.info(s"Found ppt tax returns for id [$id] had response [${toJson(resp)}]")
+          logger.info(s"Found ppt tax returns for id [$id] ")
           Right(resp.map(_.toTaxReturn))
       }
       .recover {
