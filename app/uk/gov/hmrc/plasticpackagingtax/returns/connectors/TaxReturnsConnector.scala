@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
-import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -83,9 +82,7 @@ class TaxReturnsConnector @Inject() (
     httpClient.PUT[TaxReturn, TaxReturn](appConfig.pptReturnUrl(payload.id), payload)
       .andThen { case _ => timer.stop() }
       .map { response =>
-        logger.info(
-          s"Updated ppt tax returns for id [${payload.id}]"
-        )
+        logger.info(s"Updated ppt tax returns for id [${payload.id}]")
         Right(response.toTaxReturn)
       }
       .recover {
