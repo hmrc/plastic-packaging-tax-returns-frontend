@@ -67,7 +67,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map {
         response =>
-          logger.info(s"Create ppt tax returns had response [${toJson(response)}]")
+          logger.info(s"Create ppt tax returns with id [${response.id}]")
           Right(response.toTaxReturn)
       }
       .recover {
@@ -84,7 +84,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map { response =>
         logger.info(
-          s"Updated ppt tax returns for id [${payload.id}] had response [${toJson(response)}]"
+          s"Updated ppt tax returns for id [${payload.id}]"
         )
         Right(response.toTaxReturn)
       }
