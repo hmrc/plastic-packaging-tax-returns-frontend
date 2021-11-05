@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.Logger
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -36,11 +37,18 @@ class SubscriptionConnector @Inject() (
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
+  private val logger = Logger(this.getClass)
+
   def get(
     pptReferenceNumber: String
   )(implicit hc: HeaderCarrier): Future[SubscriptionDisplayResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
     httpClient.GET[SubscriptionDisplayResponse](appConfig.pptSubscriptionUrl(pptReferenceNumber))
+      .map {
+        response =>
+          logger.info(s"Retrieved subscription for ppt reference number [$pptReferenceNumber]")
+          response
+      }
       .andThen { case _ => timer.stop() }
       .recover {
         case exception: Exception =>
@@ -58,7 +66,11 @@ class SubscriptionConnector @Inject() (
     httpClient.PUT[SubscriptionUpdateRequest, SubscriptionUpdateResponse](
       appConfig.pptSubscriptionUrl(pptReferenceNumber),
       updateRequest
-    )
+    ).map {
+      response =>
+        logger.info(s"Update subscription for ppt reference number [$pptReferenceNumber]")
+        response
+    }
       .andThen { case _ => timer.stop() }
       .recover {
         case exception: Exception =>
