@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Returns(PPT) Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   3.1
+// @version   3.2
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax%2Freturns*
