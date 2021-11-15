@@ -20,7 +20,9 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
+  routes => subscriptionsRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
@@ -33,11 +35,14 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   private val subscription = mock[SubscriptionDisplayResponse]
   when(subscription.entityName).thenReturn(Some("Organisation Name"))
 
-  private def createView(): Html = homePage(subscription)(journeyRequest, messages)
+  val completeReturnUrl = "/complete-return-url"
+
+  private def createView(): Html =
+    homePage(subscription, completeReturnUrl)(journeyRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(subscription)(journeyRequest, messages)
-    homePage.render(subscription, journeyRequest, messages)
+    homePage.f(subscription, "url")(journeyRequest, messages)
+    homePage.render(subscription, "url", journeyRequest, messages)
   }
 
   "Home Page view" should {
@@ -72,29 +77,46 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
     "display 'returns' card" in {
 
-      view.select(".card .card-body .govuk-heading-m").first() must containMessage(
+      val card = view.select(".card .card-body").get(0)
+
+      card.select(".govuk-heading-m").first() must containMessage(
         "account.homePage.card.makeReturn.header"
       )
-      view.select(".card .card-body .govuk-body").first() must containMessage(
+      card.select(".govuk-body").first() must containMessage(
         "account.homePage.card.makeReturn.body"
       )
-      view.select(".card .govuk-link").first() must containMessage(
+      card.select(".govuk-link").first() must containMessage(
         "account.homePage.card.makeReturn.link"
       )
-      view.select(".card .govuk-link").first() must haveHref(
-        returnsRoutes.ReturnsInformationController.displayPage().url
-      )
+      card.select(".govuk-link").first() must haveHref(completeReturnUrl)
     }
 
     "display 'balance' card" in {
 
-      view.select(".card .card-body .govuk-heading-m").get(1) must containMessage(
+      val card = view.select(".card .card-body").get(1)
+
+      card.select(".govuk-heading-m").first() must containMessage(
         "account.homePage.card.balance.header"
       )
-      view.select(".card .card-body .govuk-body").get(1) must containMessage(
-        "account.homePage.card.balance.body"
-      )
+      card.select(".govuk-body").first() must containMessage("account.homePage.card.balance.body")
+    }
 
+    "display 'business details' card" in {
+
+      val card = view.select(".card .card-body").get(2)
+
+      card.select(".govuk-heading-m").first() must containMessage(
+        "account.homePage.card.business.details.header"
+      )
+      card.select(".govuk-body").first() must containMessage(
+        "account.homePage.card.business.details.body"
+      )
+      card.select(".govuk-link").first() must containMessage(
+        "account.homePage.card.business.details.link.1"
+      )
+      card.select(".govuk-link").first() must haveHref(
+        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
+      )
     }
   }
 }

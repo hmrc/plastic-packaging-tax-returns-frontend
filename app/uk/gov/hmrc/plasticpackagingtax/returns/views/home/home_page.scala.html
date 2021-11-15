@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-@import java.time.LocalDate
-@import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.card
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
 
@@ -34,10 +31,11 @@
   pageTitle: pageTitle,
   sectionHeader: sectionHeader,
   paragraph: paragraph,
-  card: card
+  card: card,
+  link: link
 )
 
-@(subscription: SubscriptionDisplayResponse)(implicit request: JourneyRequest[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse, completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
 
 
 @govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
@@ -55,12 +53,23 @@
         @card(header = messages("account.homePage.card.makeReturn.header"),
           body = messages("account.homePage.card.makeReturn.body"),
           links = Seq(
-              Link("account.homePage.card.makeReturn.link", returnsRoutes.ReturnsInformationController.displayPage()))
+            link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true)
+          )
         )
 
         @card(header = messages("account.homePage.card.balance.header"),
           body = messages("account.homePage.card.balance.body"),
           links = Seq.empty
+        )
+    </div>
+
+    <div class="govuk-grid-row">
+
+        @card(header = messages("account.homePage.card.business.details.header"),
+            body = messages("account.homePage.card.business.details.body"),
+            links = Seq(
+                link(text = messages("account.homePage.card.business.details.link.1"), call = subscriptionsRoutes.ViewSubscriptionController.displayPage())
+            )
         )
     </div>
 }

@@ -39,10 +39,15 @@ account.homePage.currentBalance.onDate = on {0}
 
 account.homePage.card.makeReturn.header = Make a return
 account.homePage.card.makeReturn.body = Your first quarterly return is due by 31 July 2022.
-account.homePage.card.makeReturn.link = Information you need to prepare your return
+account.homePage.card.makeReturn.link = Information you need to prepare your return (opens in a new tab)
 
 account.homePage.card.balance.header = Your balance
 account.homePage.card.balance.body = You have no tax to pay.
+
+account.homePage.card.business.details.header = Business details
+account.homePage.card.business.details.body = View your business or contact details.
+account.homePage.card.business.details.link.1 = View your business details
+
 
 returns.information.title = Preparing your Plastic Packaging Tax (PPT) return
 returns.information.heading1 = Information you need to prepare your PPT return
@@ -192,9 +197,9 @@ returns.confirmationPage.inTheMeantime.homeLink = Go to the Plastic Packaging Ta
 returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
 returns.confirmationPage.exitSurvey.text.link = What did you think of this service?
 
-account.viewSubscription.organisationDetails.title = View your registration details
+account.viewSubscription.organisationDetails.title = Your business details
 account.viewSubscription.organisationDetails.label = Registered organisation details
-account.viewSubscription.organisationDetails.registeredBusinessAddress = Registered business address
+account.viewSubscription.organisationDetails.registeredBusinessAddress = Business address
 account.viewSubscription.organisationDetails.organisationType = Organisation type
 account.viewSubscription.organisationDetails.businessName = Business name
 
@@ -206,8 +211,8 @@ account.viewSubscription.primaryContactDetails.label = Primary contact details
 account.viewSubscription.primaryContactDetails.fullName = Name
 account.viewSubscription.primaryContactDetails.jobTitle = Job title
 account.viewSubscription.primaryContactDetails.address = Address
-account.viewSubscription.primaryContactDetails.phoneNumber = Phone Number
-account.viewSubscription.primaryContactDetails.email = Email Address
+account.viewSubscription.primaryContactDetails.phoneNumber = Phone number
+account.viewSubscription.primaryContactDetails.email = Email address
 
 account.viewSubscription.businessDetails.title = Business contact details
 account.viewSubscription.businessDetails.phoneNumber = Business Phone Number

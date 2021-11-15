@@ -40,13 +40,16 @@ class HomeControllerSpec extends ControllerSpec {
                                               journeyAction = mockJourneyAction,
                                               subscriptionConnector =
                                                 mockSubscriptionConnector,
+                                              appConfig = config,
                                               mcc = mcc,
                                               page = page
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[SubscriptionDisplayResponse])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[SubscriptionDisplayResponse], any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {

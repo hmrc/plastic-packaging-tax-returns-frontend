@@ -121,7 +121,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                    row("account.viewSubscription.primaryContactDetails.fullName", Some(subscription.primaryContactDetails.name), Some(subscriptionsRoutes.PrimaryContactNameController.displayPage())),
+                    row("account.viewSubscription.primaryContactDetails.fullName", Some(subscription.primaryContactDetails.name)),
                     row("account.viewSubscription.primaryContactDetails.jobTitle", Some(subscription.primaryContactDetails.positionInCompany)),
                     row("account.viewSubscription.primaryContactDetails.address", Some(extractAddress(subscription.businessCorrespondenceDetails))),
                     row("account.viewSubscription.primaryContactDetails.phoneNumber", Some(subscription.primaryContactDetails.contactDetails.telephone)),
@@ -130,11 +130,5 @@
             )
         )
 
-    <h2 id="business-contact-details" class="govuk-heading-m">@messages("account.viewSubscription.businessDetails.title")</h2>
-    @govukSummaryList(
-        {if (subscription.legalEntityDetails.customerDetails.organisationDetails.isEmpty)  soleTraderBusinessContactDetails() else ukCompanyBusinessContactDetails() }
-    )
-
-    @saveAndContinue()
     }
 }

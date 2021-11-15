@@ -15,12 +15,10 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Link
 
-@this(paragraphBody: paragraphBody, link: link)
+@this(paragraphBody: paragraphBody)
 
-@(header: String, body: String, links: Seq[Link])(implicit messages: Messages)
+@(header: String, body: String, links: Seq[Html])(implicit messages: Messages)
 
 <div class="govuk-grid-column-one-third">
    <div class="card">
@@ -30,9 +28,9 @@
            @paragraphBody(body)
 
             <ul class="govuk-list">
-                @for(l <- links) {
+                @for(link <- links) {
                    <li>
-                      @link(text = messages(l.messageKey), call = l.call)
+                      @link
                    </li>
                 }
             </ul>
