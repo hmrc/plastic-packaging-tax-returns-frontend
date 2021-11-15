@@ -16,21 +16,20 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{returns_information_page}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ReturnsInformationController @Inject() (
   mcc: MessagesControllerComponents,
-  returnsInformationPage: returns_information_page
+  appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
   val displayPage: Action[AnyContent] = Action { implicit request =>
-    Ok(returnsInformationPage())
+    Redirect(appConfig.pptCompleteReturnGuidanceUrl)
   }
 
 }
