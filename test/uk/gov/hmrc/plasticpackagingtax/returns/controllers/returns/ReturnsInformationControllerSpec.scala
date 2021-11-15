@@ -16,35 +16,29 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.OK
-import play.api.test.Helpers.{contentAsString, status}
-import play.twirl.api.HtmlFormat
+import play.api.http.Status.SEE_OTHER
+import play.api.test.Helpers.{redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.returns_information_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ReturnsInformationControllerSpec extends ControllerSpec {
 
-  private val mcc                    = stubMessagesControllerComponents()
-  private val returnsInformationPage = mock[returns_information_page]
-  private val controller             = new ReturnsInformationController(mcc, returnsInformationPage)
+  private val mcc        = stubMessagesControllerComponents()
+  private val controller = new ReturnsInformationController(mcc, config)
 
-  override protected def beforeEach(): Unit = {
+  override protected def beforeEach(): Unit =
     super.beforeEach()
-    when(returnsInformationPage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw("this is the returns information page")
-    )
-  }
 
   "ReturnsInformationController" should {
-    "display the returns information page" in {
+    "re-direct to app config pptCompleteReturnGuidanceUrl" in {
+
+      when(config.pptCompleteReturnGuidanceUrl).thenReturn("/some-return-guidance")
       val resp = controller.displayPage()(getRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "this is the returns information page"
+      status(resp) mustBe SEE_OTHER
+      redirectLocation(resp) mustBe Some("/some-return-guidance")
     }
   }
 }
