@@ -32,10 +32,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.config
 
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
@@ -65,7 +64,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptGuidanceUrl: String         = config.get[String]("urls.pptGuidanceLink")
-  lazy val pptCompleteReturnGuidanceUrl: String   = config.get[String]("urls.pptCompleteReturnGuidanceLink")
+
+  lazy val pptCompleteReturnGuidanceUrl: String =
+    config.get[String]("urls.pptCompleteReturnGuidanceLink")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
