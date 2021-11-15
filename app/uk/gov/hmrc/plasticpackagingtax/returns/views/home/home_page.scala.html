@@ -63,5 +63,15 @@
           links = Seq.empty
         )
     </div>
+
+    <div class="govuk-grid-row">
+
+        @card(header = messages("account.homePage.card.business.details.header"),
+            body = messages("account.homePage.card.business.details.body"),
+            links = Seq(
+                Link("account.homePage.card.business.details.link.1", subscriptionsRoutes.ViewSubscriptionController.displayPage()),
+            )
+        )
+    </div>
 }
 
