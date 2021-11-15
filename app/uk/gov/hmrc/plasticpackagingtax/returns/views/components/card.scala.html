@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
 
-@this(paragraphBody: paragraphBody, link: link)
+@this(paragraphBody: paragraphBody)
 
 @(header: String, body: String, links: Seq[Html])(implicit messages: Messages)
 
@@ -29,9 +28,9 @@
            @paragraphBody(body)
 
             <ul class="govuk-list">
-                @for(lnk <- links) {
+                @for(link <- links) {
                    <li>
-                      @lnk
+                      @link
                    </li>
                 }
             </ul>
