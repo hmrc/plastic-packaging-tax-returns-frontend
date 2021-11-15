@@ -42,7 +42,7 @@ class HomeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       subscriptionConnector.get(request.pptReference)
         .map { subscription =>
-          Ok(page(subscription, appConfig.pptCompleteReturnUrl))
+          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl))
         }
     }
 
