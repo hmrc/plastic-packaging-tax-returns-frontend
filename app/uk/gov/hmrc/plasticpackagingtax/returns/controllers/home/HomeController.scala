@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
@@ -31,6 +32,7 @@ class HomeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   subscriptionConnector: SubscriptionConnector,
+  appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: home_page
 )(implicit ec: ExecutionContext)
@@ -40,7 +42,7 @@ class HomeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       subscriptionConnector.get(request.pptReference)
         .map { subscription =>
-          Ok(page(subscription))
+          Ok(page(subscription, appConfig.pptCompleteReturnUrl))
         }
     }
 

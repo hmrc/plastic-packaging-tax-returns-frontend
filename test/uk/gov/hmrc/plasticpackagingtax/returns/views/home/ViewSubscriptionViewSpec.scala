@@ -25,9 +25,6 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
-  routes => subscriptionsRoutes
-}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.subscriptions.view_subscription_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
@@ -57,10 +54,6 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
         "govuk-summary-list__value"
       ).get(index).text()
-    def getChangeLinkFor(section: Int, index: Int, view: Document) =
-      view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
-        "govuk-link"
-      ).get(index)
 
     "display 'Back' button" in {
 
@@ -150,31 +143,6 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
                   ukCompanyView
       ) mustBe ukLimitedCompanySubscription.primaryContactDetails.contactDetails.email
 
-      getChangeLinkFor(1, 0, ukCompanyView) must haveHref(
-        subscriptionsRoutes.PrimaryContactNameController.displayPage()
-      )
-    }
-
-    "displaying business contact details section" in {
-
-      ukCompanyView.getElementsByClass("govuk-heading-m").get(2).text() must include(
-        messages("account.viewSubscription.businessDetails.title")
-      )
-      getKeyFor(2, 0, ukCompanyView) must containMessage(
-        "account.viewSubscription.businessDetails.phoneNumber"
-      )
-      getKeyFor(2, 1, ukCompanyView) must containMessage(
-        "account.viewSubscription.businessDetails.email"
-      )
-      getValueFor(2,
-                  0,
-                  ukCompanyView
-      ) mustBe ukLimitedCompanySubscription.principalPlaceOfBusinessDetails.contactDetails.telephone
-      getValueFor(2,
-                  1,
-                  ukCompanyView
-      ) mustBe ukLimitedCompanySubscription.principalPlaceOfBusinessDetails.contactDetails.email
-
     }
 
     "displaying organisation details section for sole trader" in {
@@ -245,38 +213,8 @@ class ViewSubscriptionViewSpec extends UnitViewSpec with Matchers {
                   soleTraderView
       ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.email
 
-      getChangeLinkFor(1, 0, soleTraderView) must haveHref(
-        subscriptionsRoutes.PrimaryContactNameController.displayPage()
-      )
     }
 
-    "displaying business contact details section for sole trader" in {
-
-      soleTraderView.getElementsByClass("govuk-heading-m").get(2).text() must include(
-        messages("account.viewSubscription.businessDetails.title")
-      )
-
-      getKeyFor(2, 0, soleTraderView) must containMessage(
-        "account.viewSubscription.businessDetails.phoneNumber"
-      )
-      getKeyFor(2, 1, soleTraderView) must containMessage(
-        "account.viewSubscription.businessDetails.email"
-      )
-      getValueFor(2,
-                  0,
-                  soleTraderView
-      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.telephone
-      getValueFor(2,
-                  1,
-                  soleTraderView
-      ) mustBe soleTraderSubscription.primaryContactDetails.contactDetails.email
-
-    }
-
-    "display 'Save and Continue' button" in {
-
-      ukCompanyView.getElementById("submit").text() mustBe "Save and Continue"
-    }
   }
 
 }
