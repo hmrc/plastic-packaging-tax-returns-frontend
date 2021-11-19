@@ -45,22 +45,23 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByTag("h1").first() must containMessage("unauthorised.heading")
     }
 
-    "display register for ppt link" in {
-      val link = view.getElementById("register_for_ppt_link")
+    "display required information" in {
+      val contentParagraphs = view.select("p.govuk-body")
 
-      link must containMessage("unauthorised.paragraph.1.link")
-      link must haveHref(appConfig.pptRegistrationUrl)
-      link.attributes().hasKey("target") mustBe false
+      contentParagraphs.get(0) must containMessage("unauthorised.paragraph.1")
+      stripSpaceBeforeFullstop(contentParagraphs.get(1).text()) must include(
+        messages("unauthorised.paragraph.2", messages("unauthorised.paragraph.2.link"))
+      )
     }
 
-    "display ppt guidance link" in {
-      val link = view.getElementById("find_out_about_ppt_link")
+    "display contact HMRC/deskpro link" in {
+      val link = view.getElementById("deskpro_link")
 
       link must containMessage("unauthorised.paragraph.2.link")
-      link must haveHref(
-        "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
-      )
+      link must haveHref(appConfig.contactHmrcUrl)
       link.attributes().hasKey("target") mustBe false
     }
   }
+
+  private def stripSpaceBeforeFullstop(text: String) = text.replaceAll(" \\.", ".")
 }

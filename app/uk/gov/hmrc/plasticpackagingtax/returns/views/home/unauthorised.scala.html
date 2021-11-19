@@ -30,19 +30,11 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@pptRegistrationLink = {
+@contactHmrcLink = {
     @link(
-        id = Some("register_for_ppt_link"),
-        text = messages("unauthorised.paragraph.1.link"),
-        call = Call("GET", config.pptRegistrationUrl)
-    )
-}
-
-@pptGuidanceLink = {
-    @link(
-        id = Some("find_out_about_ppt_link"),
+        id = Some("deskpro_link"),
         text = messages("unauthorised.paragraph.2.link"),
-        call = Call("GET", config.pptRegistrationInfoUrl)
+        call = Call("GET", config.contactHmrcUrl)
     )
 }
 
@@ -50,7 +42,7 @@
 
     @pageTitle(messages("unauthorised.heading"))
 
-    @paragraph(content = Html(messages("unauthorised.paragraph.1", pptRegistrationLink)))
-    @paragraph(content = Html(messages("unauthorised.paragraph.2", pptGuidanceLink)))
+    @paragraph(content = Html(messages("unauthorised.paragraph.1")))
+    @paragraph(content = Html(messages("unauthorised.paragraph.2", contactHmrcLink)))
 
 }

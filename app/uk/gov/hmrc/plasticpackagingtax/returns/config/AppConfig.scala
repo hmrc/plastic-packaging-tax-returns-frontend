@@ -87,4 +87,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptRegistrationUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
 
+  lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+
+  lazy val contactHmrcUrl: String =
+    s"$contactBaseUrl/contact/contact-hmrc?service=$serviceIdentifier"
+
 }
