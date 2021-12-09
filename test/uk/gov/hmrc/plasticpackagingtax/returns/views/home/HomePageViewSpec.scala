@@ -20,9 +20,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{
-  routes => subscriptionsRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
@@ -30,7 +28,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 @ViewTest
 class HomePageViewSpec extends UnitViewSpec with Matchers {
 
-  private val homePage = instanceOf[home_page]
+  private val homePage  = instanceOf[home_page]
+  private val appConfig = instanceOf[AppConfig]
 
   private val subscription = mock[SubscriptionDisplayResponse]
   when(subscription.entityName).thenReturn(Some("Organisation Name"))
@@ -114,9 +113,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
       card.select(".govuk-link").first() must containMessage(
         "account.homePage.card.business.details.link.1"
       )
-      card.select(".govuk-link").first() must haveHref(
-        subscriptionsRoutes.ViewSubscriptionController.displayPage().url
-      )
+      card.select(".govuk-link").first() must haveHref(appConfig.pptRegistrationAmendUrl)
     }
   }
 }

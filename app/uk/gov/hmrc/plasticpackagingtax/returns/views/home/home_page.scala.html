@@ -14,25 +14,22 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.card
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, link, pageTitle, paragraph, sectionHeader}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 
 @this(
-  govukLayout: main_template,
-  pageTitle: pageTitle,
-  sectionHeader: sectionHeader,
-  paragraph: paragraph,
-  card: card,
-  link: link
+        govukLayout: main_template,
+        pageTitle: pageTitle,
+        sectionHeader: sectionHeader,
+        paragraph: paragraph,
+        card: card,
+        link: link,
+        appConfig: AppConfig
 )
 
 @(subscription: SubscriptionDisplayResponse, completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
@@ -44,33 +41,33 @@
     @pageTitle(text = subscription.entityName.getOrElse(messages("service.name")), classes = gdsPageHeadingL)
 
     @paragraph {
-        @messages("account.homePage.registrationNumber")<br>
+        @messages("account.homePage.registrationNumber") <br>
         <span class="govuk-body govuk-label--s">@request.pptReference</span>
     }
 
     <div class="govuk-grid-row">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
-          body = messages("account.homePage.card.makeReturn.body"),
-          links = Seq(
-            link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true)
-          )
+            body = messages("account.homePage.card.makeReturn.body"),
+            links = Seq(
+                link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true)
+            )
         )
 
         @card(header = messages("account.homePage.card.balance.header"),
-          body = messages("account.homePage.card.balance.body"),
-          links = Seq.empty
+            body = messages("account.homePage.card.balance.body"),
+            links = Seq.empty
         )
     </div>
 
     <div class="govuk-grid-row">
 
-        @card(header = messages("account.homePage.card.business.details.header"),
-            body = messages("account.homePage.card.business.details.body"),
-            links = Seq(
-                link(text = messages("account.homePage.card.business.details.link.1"), call = subscriptionsRoutes.ViewSubscriptionController.displayPage())
-            )
+    @card(header = messages("account.homePage.card.business.details.header"),
+        body = messages("account.homePage.card.business.details.body"),
+        links = Seq(
+            link(text = messages("account.homePage.card.business.details.link.1"), call = Call("GET", appConfig.pptRegistrationAmendUrl))
         )
+    )
     </div>
 }
 

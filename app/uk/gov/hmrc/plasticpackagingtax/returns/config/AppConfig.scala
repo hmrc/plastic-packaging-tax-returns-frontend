@@ -32,9 +32,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
@@ -86,5 +87,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val pptRegistrationUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
+
+  lazy val pptRegistrationAmendUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/amend-registration"
 
 }
