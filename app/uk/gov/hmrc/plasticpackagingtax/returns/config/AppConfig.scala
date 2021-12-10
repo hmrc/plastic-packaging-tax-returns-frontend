@@ -83,7 +83,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
-  lazy val pptRegistrationFrontEnd = servicesConfig.baseUrl("ppt-registration-frontend")
+  lazy val pptRegistrationFrontEnd =
+    config.getOptional[String]("platform.frontend.host").getOrElse(
+      servicesConfig.baseUrl("ppt-registration-frontend")
+    )
 
   lazy val pptRegistrationUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
