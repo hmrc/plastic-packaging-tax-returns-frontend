@@ -15,10 +15,11 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, link, pageTitle, paragraph, sectionHeader}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, cardSection, link, pageTitle, paragraph, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 
@@ -28,12 +29,20 @@
         sectionHeader: sectionHeader,
         paragraph: paragraph,
         card: card,
-        link: link,
+        cardSection: cardSection,
+  link: link,
         appConfig: AppConfig
 )
 
 @(subscription: SubscriptionDisplayResponse, completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
 
+@linkText = @{
+    subscription.organisationType match {
+        case Some("Partnership") => messages("account.homePage.card.registration.details.link.partnership")
+        case _ if subscription.isGroup => messages("account.homePage.card.registration.details.link.group")
+        case _ => messages("account.homePage.card.registration.details.link.single")
+    }
+}
 
 @govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
 
@@ -45,7 +54,7 @@
         <span class="govuk-body govuk-label--s">@request.pptReference</span>
     }
 
-    <div class="govuk-grid-row">
+    <div class="govuk-grid-row govuk-!-margin-top-6">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
             body = messages("account.homePage.card.makeReturn.body"),
@@ -59,15 +68,12 @@
             links = Seq.empty
         )
     </div>
-
-    <div class="govuk-grid-row">
-
-    @card(header = messages("account.homePage.card.business.details.header"),
-        body = messages("account.homePage.card.business.details.body"),
-        links = Seq(
-            link(text = messages("account.homePage.card.business.details.link.1"), call = Call("GET", appConfig.pptRegistrationAmendUrl))
-        )
-    )
+    <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div class="govuk-grid-column-one-third">
+            @cardSection(body = messages("account.homePage.card.registration.details.body"),
+                link = link(text = linkText, call = Call("GET", appConfig.pptRegistrationAmendUrl)))
+        </div>
     </div>
 }
 

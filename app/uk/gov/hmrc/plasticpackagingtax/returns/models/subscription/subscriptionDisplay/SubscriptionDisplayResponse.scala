@@ -47,6 +47,11 @@ case class SubscriptionDisplayResponse(
       legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName)
   }
 
+  val organisationType: Option[String] =
+    legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationType)
+
+  val isGroup = legalEntityDetails.groupSubscriptionFlag
+
 }
 
 object SubscriptionDisplayResponse {
