@@ -103,7 +103,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
     "display 'business details' card for partnership" in {
       when(subscription.organisationType).thenReturn(Some("Partnership"))
       val view =
-      homePage(subscription, completeReturnUrl)(journeyRequest, messages)
+        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
       val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
 
       card.select(".govuk-body").get(0) must containMessage(
