@@ -100,20 +100,50 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
       card.select(".govuk-body").first() must containMessage("account.homePage.card.balance.body")
     }
 
-    "display 'business details' card" in {
+    "display 'business details' card for partnership" in {
+      when(subscription.organisationType).thenReturn(Some("Partnership"))
+      val view =
+        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
+      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
 
-      val card = view.select(".card .card-body").get(2)
+      card.select(".govuk-body").get(0) must containMessage(
+        "account.homePage.card.registration.details.body"
+      )
+      card.select(".govuk-link").get(0) must containMessage(
+        "account.homePage.card.registration.details.link.partnership"
+      )
+      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
+    }
 
-      card.select(".govuk-heading-m").first() must containMessage(
-        "account.homePage.card.business.details.header"
+    "display 'business details' card for single" in {
+      when(subscription.organisationType).thenReturn(Some("UK Company"))
+      val view =
+        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
+      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
+
+      card.select(".govuk-body").get(0) must containMessage(
+        "account.homePage.card.registration.details.body"
       )
-      card.select(".govuk-body").first() must containMessage(
-        "account.homePage.card.business.details.body"
+      card.select(".govuk-link").get(0) must containMessage(
+        "account.homePage.card.registration.details.link.single"
       )
-      card.select(".govuk-link").first() must containMessage(
-        "account.homePage.card.business.details.link.1"
+      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
+    }
+
+    "display 'business details' card for group" in {
+      when(subscription.organisationType).thenReturn(Some("UK Company"))
+      when(subscription.isGroup).thenReturn(true)
+      val view =
+        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
+      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
+
+      card.select(".govuk-body").get(0) must containMessage(
+        "account.homePage.card.registration.details.body"
       )
-      card.select(".govuk-link").first() must haveHref(appConfig.pptRegistrationAmendUrl)
+      card.select(".govuk-link").get(0) must containMessage(
+        "account.homePage.card.registration.details.link.group"
+      )
+      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
     }
   }
 }

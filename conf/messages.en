@@ -44,9 +44,11 @@ account.homePage.card.makeReturn.link = Information you need to prepare your ret
 account.homePage.card.balance.header = Your balance
 account.homePage.card.balance.body = You have no tax to pay.
 
-account.homePage.card.business.details.header = Business details
-account.homePage.card.business.details.body = View your business or contact details.
-account.homePage.card.business.details.link.1 = View your business details
+account.homePage.manage.ppt.account.header = Manage your PPT
+account.homePage.card.registration.details.link.single = Registration details
+account.homePage.card.registration.details.body = View account and change contact details.
+account.homePage.card.registration.details.link.group = Representative member details
+account.homePage.card.registration.details.link.partnership = Partnership details
 
 returns.startPage.title = Submit a return
 returns.startPage.title.sectionHeader = Plastic Packaging Tax return
