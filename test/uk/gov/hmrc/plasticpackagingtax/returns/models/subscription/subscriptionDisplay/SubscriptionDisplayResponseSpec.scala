@@ -29,31 +29,16 @@ class SubscriptionDisplayResponseSpec extends AnyWordSpecLike with Matchers {
   "SubscriptionDisplayResponse" should {
 
     "return valid entity name" when {
-
       "subscription is for organisation" in {
         val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
 
-        subscription.entityName mustBe Some("Plastics Ltd")
-      }
-
-      "subscription is for organisation but details are missing" in {
-        val subscription = createSubscriptionDisplayResponse(
-          ukLimitedCompanySubscription.copy(legalEntityDetails =
-            ukLimitedCompanySubscription.legalEntityDetails.copy(customerDetails =
-              ukLimitedCompanySubscription.legalEntityDetails.customerDetails.copy(
-                organisationDetails = None
-              )
-            )
-          )
-        )
-
-        subscription.entityName mustBe None
+        subscription.entityName mustBe "Plastics Ltd"
       }
 
       "subscription is for individual" in {
         val subscription = createSubscriptionDisplayResponse(soleTraderSubscription)
 
-        subscription.entityName mustBe Some("MR James Bond")
+        subscription.entityName mustBe "MR James Bond"
       }
 
       "subscription is for individual with no title" in {
@@ -69,21 +54,37 @@ class SubscriptionDisplayResponseSpec extends AnyWordSpecLike with Matchers {
           )
         )
 
-        subscription.entityName mustBe Some("James Bond")
+        subscription.entityName mustBe "James Bond"
       }
+    }
 
-      "subscription is for individual but details are missing" in {
-        val subscription = createSubscriptionDisplayResponse(
-          soleTraderSubscription.copy(legalEntityDetails =
-            soleTraderSubscription.legalEntityDetails.copy(customerDetails =
-              soleTraderSubscription.legalEntityDetails.customerDetails.copy(individualDetails =
-                None
+    "throw IllegalStateException" when {
+      "subscription is for organisation but details are missing" in {
+        intercept[IllegalStateException] {
+          createSubscriptionDisplayResponse(
+            ukLimitedCompanySubscription.copy(legalEntityDetails =
+              ukLimitedCompanySubscription.legalEntityDetails.copy(customerDetails =
+                ukLimitedCompanySubscription.legalEntityDetails.customerDetails.copy(
+                  organisationDetails = None
+                )
               )
             )
           )
-        )
+        }
+      }
 
-        subscription.entityName mustBe None
+      "subscription is for individual but details are missing" in {
+        intercept[IllegalStateException] {
+          createSubscriptionDisplayResponse(
+            soleTraderSubscription.copy(legalEntityDetails =
+              soleTraderSubscription.legalEntityDetails.copy(customerDetails =
+                soleTraderSubscription.legalEntityDetails.customerDetails.copy(individualDetails =
+                  None
+                )
+              )
+            )
+          )
+        }
       }
 
     }

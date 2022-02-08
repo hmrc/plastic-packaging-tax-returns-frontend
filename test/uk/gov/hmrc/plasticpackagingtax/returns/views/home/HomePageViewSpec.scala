@@ -22,8 +22,19 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import uk.gov.hmrc.plasticpackagingtax.returns.views.home.SubscriptionTypes.{
+  Group,
+  Partnership,
+  SingleEntity
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+
+object SubscriptionTypes extends Enumeration {
+  type SubscriptionType = Value
+
+  val SingleEntity, Group, Partnership = Value
+}
 
 @ViewTest
 class HomePageViewSpec extends UnitViewSpec with Matchers {
@@ -31,119 +42,159 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   private val homePage  = instanceOf[home_page]
   private val appConfig = instanceOf[AppConfig]
 
-  private val subscription = mock[SubscriptionDisplayResponse]
-  when(subscription.entityName).thenReturn(Some("Organisation Name"))
+  private val singleEntitySubscription = mock[SubscriptionDisplayResponse]
+  when(singleEntitySubscription.entityName).thenReturn("Single entity subscription")
+
+  private val groupSubscription = mock[SubscriptionDisplayResponse]
+  when(groupSubscription.entityName).thenReturn("Group subscription")
+  when(groupSubscription.isGroup).thenReturn(true)
+
+  private val partnershipSubscription = mock[SubscriptionDisplayResponse]
+  when(partnershipSubscription.entityName).thenReturn("Partnership subscription")
+  when(partnershipSubscription.isPartnership).thenReturn(true)
 
   val completeReturnUrl = "/complete-return-url"
 
-  private def createView(): Html =
+  private def createView(subscription: SubscriptionDisplayResponse): Html =
     homePage(subscription, completeReturnUrl)(journeyRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(subscription, "url")(journeyRequest, messages)
-    homePage.render(subscription, "url", journeyRequest, messages)
+    homePage.f(singleEntitySubscription, "url")(journeyRequest, messages)
+    homePage.render(singleEntitySubscription, "url", journeyRequest, messages)
   }
 
-  "Home Page view" should {
+  "Home Page view" when {
 
-    val view: Html = createView()
+    Seq((SingleEntity, singleEntitySubscription),
+        (Group, groupSubscription),
+        (Partnership, partnershipSubscription)
+    ).foreach {
+      case (subscriptionType, subscription) =>
+        val view: Html = createView(subscription)
 
-    "contain timeout dialog function" in {
+        s"displaying $subscriptionType subscription" should {
 
-      containTimeoutDialogFunction(view) mustBe true
-    }
+          "contain timeout dialog function" in {
+            containTimeoutDialogFunction(view) mustBe true
+          }
 
-    "display sign out link" in {
+          "display sign out link" in {
+            displaySignOutLink(view)
+          }
 
-      displaySignOutLink(view)
-    }
+          "display title" in {
+            view.select("title").text() must include(messages("account.homePage.title"))
+          }
 
-    "display title" in {
+          "display header" in {
+            view.getElementById("title").text() mustBe messages("account.homePage.title")
+          }
 
-      view.select("title").text() must include(messages("account.homePage.title"))
-    }
+          "display PPT reference number" in {
+            val mainText = view.select("main").text()
 
-    "display header" in {
+            mainText must include(
+              messages("account.homePage.registrationNumber", journeyRequest.pptReference)
+            )
+            subscriptionType match {
+              case SingleEntity =>
+                mainText must include(
+                  messages("account.homePage.organisation.singleEntity", subscription.entityName)
+                )
+              case Group =>
+                mainText must include(
+                  messages("account.homePage.organisation.group", subscription.entityName)
+                )
+              case Partnership =>
+                mainText must include(
+                  messages("account.homePage.organisation.partnership", subscription.entityName)
+                )
+            }
+          }
 
-      view.getElementById("title").text() mustBe "Organisation Name"
-      view.getElementById("section-header") must containMessage("account.homePage.section")
-    }
+          "display 'returns' card" in {
+            val card = view.select(".card .card-body").get(0)
 
-    "displayPPT reference number" in {
+            card.select(".govuk-heading-m").first() must containMessage(
+              "account.homePage.card.makeReturn.header"
+            )
+            card.select(".govuk-body").first() must containMessage(
+              "account.homePage.card.makeReturn.body"
+            )
+            card.select(".govuk-link").first() must containMessage(
+              "account.homePage.card.makeReturn.link"
+            )
+            card.select(".govuk-link").first() must haveHref(completeReturnUrl)
+          }
 
-      view.select(".govuk-body .govuk-label--s").text() must include(journeyRequest.pptReference)
-    }
+          "display 'balance' card" in {
+            val card = view.select(".card .card-body").get(1)
 
-    "display 'returns' card" in {
+            card.select(".govuk-heading-m").first() must containMessage(
+              "account.homePage.card.balance.header"
+            )
+            card.select(".govuk-body").first() must containMessage(
+              "account.homePage.card.balance.body"
+            )
+          }
 
-      val card = view.select(".card .card-body").get(0)
+          "display account management heading" in {
+            view.select("h2").text() must include(
+              messages("account.homePage.manage.ppt.account.header")
+            )
+          }
 
-      card.select(".govuk-heading-m").first() must containMessage(
-        "account.homePage.card.makeReturn.header"
-      )
-      card.select(".govuk-body").first() must containMessage(
-        "account.homePage.card.makeReturn.body"
-      )
-      card.select(".govuk-link").first() must containMessage(
-        "account.homePage.card.makeReturn.link"
-      )
-      card.select(".govuk-link").first() must haveHref(completeReturnUrl)
-    }
+          "display account management sections" in {
+            val coreManagement       = view.getElementById("core-management")
+            val additionalManagement = view.getElementById("additional-management")
 
-    "display 'balance' card" in {
+            subscriptionType match {
+              case SingleEntity =>
+                coreManagement.select("h3").text() must include(
+                  messages("account.homePage.card.registration.details.1.link.single")
+                )
+                coreManagement.select("p").text() mustBe messages(
+                  "account.homePage.card.registration.details.1.body"
+                )
+                coreManagement.select("a").first() must haveHref(appConfig.pptRegistrationAmendUrl)
+              case Group =>
+                coreManagement.select("h3").text() must include(
+                  messages("account.homePage.card.registration.details.1.link.group")
+                )
+                coreManagement.select("p").text() mustBe messages(
+                  "account.homePage.card.registration.details.1.body"
+                )
+                coreManagement.select("a").first() must haveHref(appConfig.pptRegistrationAmendUrl)
+                additionalManagement.select("h3").text() must include(
+                  messages("account.homePage.card.registration.details.2.link.group")
+                )
+                additionalManagement.select("p").text() mustBe messages(
+                  "account.homePage.card.registration.details.2.body.group"
+                )
+                additionalManagement.select("a").first() must haveHref(
+                  appConfig.pptRegistrationManageGroupUrl
+                )
+              case Partnership =>
+                coreManagement.select("h3").text() must include(
+                  messages("account.homePage.card.registration.details.1.link.partnership")
+                )
+                coreManagement.select("p").text() mustBe messages(
+                  "account.homePage.card.registration.details.1.body"
+                )
+                coreManagement.select("a").first() must haveHref(appConfig.pptRegistrationAmendUrl)
+                additionalManagement.select("h3").text() must include(
+                  messages("account.homePage.card.registration.details.2.link.partnership")
+                )
+                additionalManagement.select("p").text() mustBe messages(
+                  "account.homePage.card.registration.details.2.body.partnership"
+                )
+                additionalManagement.select("a").first() must haveHref(
+                  appConfig.pptRegistrationAmendUrl
+                )
+            }
 
-      val card = view.select(".card .card-body").get(1)
-
-      card.select(".govuk-heading-m").first() must containMessage(
-        "account.homePage.card.balance.header"
-      )
-      card.select(".govuk-body").first() must containMessage("account.homePage.card.balance.body")
-    }
-
-    "display 'business details' card for partnership" in {
-      when(subscription.organisationType).thenReturn(Some("Partnership"))
-      val view =
-        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
-      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
-
-      card.select(".govuk-body").get(0) must containMessage(
-        "account.homePage.card.registration.details.body"
-      )
-      card.select(".govuk-link").get(0) must containMessage(
-        "account.homePage.card.registration.details.link.partnership"
-      )
-      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
-    }
-
-    "display 'business details' card for single" in {
-      when(subscription.organisationType).thenReturn(Some("UK Company"))
-      val view =
-        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
-      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
-
-      card.select(".govuk-body").get(0) must containMessage(
-        "account.homePage.card.registration.details.body"
-      )
-      card.select(".govuk-link").get(0) must containMessage(
-        "account.homePage.card.registration.details.link.single"
-      )
-      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
-    }
-
-    "display 'business details' card for group" in {
-      when(subscription.organisationType).thenReturn(Some("UK Company"))
-      when(subscription.isGroup).thenReturn(true)
-      val view =
-        homePage(subscription, completeReturnUrl)(journeyRequest, messages)
-      val card = view.select(".govuk-grid-column-one-third .column-one-third").get(0)
-
-      card.select(".govuk-body").get(0) must containMessage(
-        "account.homePage.card.registration.details.body"
-      )
-      card.select(".govuk-link").get(0) must containMessage(
-        "account.homePage.card.registration.details.link.group"
-      )
-      card.select(".govuk-link").get(0) must haveHref(appConfig.pptRegistrationAmendUrl)
+          }
+        }
     }
   }
 }

@@ -94,4 +94,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptRegistrationAmendUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/amend-registration"
 
+  lazy val pptRegistrationManageGroupUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/manage-group-members"
+
 }
