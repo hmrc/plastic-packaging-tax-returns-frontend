@@ -15,10 +15,8 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.subscriptions.{routes => subscriptionsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeadingL
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, cardSection, link, pageTitle, paragraph, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
@@ -30,28 +28,101 @@
         paragraph: paragraph,
         card: card,
         cardSection: cardSection,
-  link: link,
+        link: link,
         appConfig: AppConfig
 )
 
 @(subscription: SubscriptionDisplayResponse, completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
 
-@linkText = @{
-    subscription.organisationType match {
-        case Some("Partnership") => messages("account.homePage.card.registration.details.link.partnership")
-        case _ if subscription.isGroup => messages("account.homePage.card.registration.details.link.group")
-        case _ => messages("account.homePage.card.registration.details.link.single")
-    }
+@organisationName = @{
+    if(subscription.isGroup)
+        messages("account.homePage.organisation.group", subscription.entityName)
+    else if(subscription.isPartnership)
+        messages("account.homePage.organisation.partnership", subscription.entityName)
+    else
+        messages("account.homePage.organisation.singleEntity", subscription.entityName)
+}
+
+@link1Text = @{
+    if(subscription.isGroup)
+        messages("account.homePage.card.registration.details.1.link.group")
+    else if(subscription.isPartnership)
+        messages("account.homePage.card.registration.details.1.link.partnership")
+    else
+        messages("account.homePage.card.registration.details.1.link.single")
+}
+
+@link2Text = @{
+    if(subscription.isGroup)
+        messages("account.homePage.card.registration.details.2.link.group")
+    else if(subscription.isPartnership)
+        messages("account.homePage.card.registration.details.2.link.partnership")
+    else
+        ""
+}
+
+@singleEntityManagement = {
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div id="core-management" class="govuk-grid-column-one-third">
+            @cardSection(
+                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+                body = messages("account.homePage.card.registration.details.1.body")
+            )
+        </div>
+    </div>
+}
+
+@groupManagement = {
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div id="core-management" class="govuk-grid-column-one-third">
+            @cardSection(
+                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+                body = messages("account.homePage.card.registration.details.1.body")
+            )
+        </div>
+        <div id="additional-management" class="govuk-grid-column-one-third">
+            @cardSection(
+                link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
+                body = messages("account.homePage.card.registration.details.2.body.group")
+            )
+        </div>
+    </div>
+}
+
+@partnershipManagement = {
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div id="core-management" class="govuk-grid-column-one-third">
+            @cardSection(
+                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+                body = messages("account.homePage.card.registration.details.1.body")
+            )
+        </div>
+        <div id="additional-management" class="govuk-grid-column-one-third">
+            @cardSection(
+                link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+                body = messages("account.homePage.card.registration.details.2.body.partnership")
+            )
+        </div>
+    </div>
+}
+
+@managementCards = @{
+        if (subscription.isGroup) {
+            groupManagement
+        } else if (subscription.isPartnership) {
+            partnershipManagement
+        } else {
+            singleEntityManagement
+        }
 }
 
 @govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
 
-    @sectionHeader(messages("account.homePage.section"))
-    @pageTitle(text = subscription.entityName.getOrElse(messages("service.name")), classes = gdsPageHeadingL)
+    @pageTitle(text = messages("account.homePage.title"))
 
     @paragraph {
-        @messages("account.homePage.registrationNumber") <br>
-        <span class="govuk-body govuk-label--s">@request.pptReference</span>
+        @messages("account.homePage.registrationNumber", request.pptReference) </br>
+        @organisationName
     }
 
     <div class="govuk-grid-row govuk-!-margin-top-6">
@@ -68,12 +139,9 @@
             links = Seq.empty
         )
     </div>
+
     <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-        <div class="govuk-grid-column-one-third">
-            @cardSection(body = messages("account.homePage.card.registration.details.body"),
-                link = link(text = linkText, call = Call("GET", appConfig.pptRegistrationAmendUrl)))
-        </div>
-    </div>
+
+    @managementCards
 }
 

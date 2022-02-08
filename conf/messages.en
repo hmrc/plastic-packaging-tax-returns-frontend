@@ -31,9 +31,12 @@ timeoutDialog.signout.text= Sign out
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-account.homePage.section = Account home
-account.homePage.title = Your Plastic Packaging Tax account home
-account.homePage.registrationNumber = Registration number:
+account.homePage.title = Your Plastic Packaging Tax account
+account.homePage.registrationNumber = PPT registration number: {0}
+account.homePage.organisation.singleEntity = {0}
+account.homePage.organisation.group = {0} (representative organisation for group)
+account.homePage.organisation.partnership = {0} (nominated partner for partnership)
+
 account.homePage.currentBalance = Your current balance
 account.homePage.currentBalance.onDate = on {0}
 
@@ -44,11 +47,15 @@ account.homePage.card.makeReturn.link = Information you need to prepare your ret
 account.homePage.card.balance.header = Your balance
 account.homePage.card.balance.body = You have no tax to pay.
 
-account.homePage.manage.ppt.account.header = Manage your PPT
-account.homePage.card.registration.details.link.single = Registration details
-account.homePage.card.registration.details.body = View account and change contact details.
-account.homePage.card.registration.details.link.group = Representative member details
-account.homePage.card.registration.details.link.partnership = Partnership details
+account.homePage.manage.ppt.account.header = Manage your account
+account.homePage.card.registration.details.1.link.single = Registration details
+account.homePage.card.registration.details.1.link.group = Representative member details
+account.homePage.card.registration.details.1.link.partnership = Nominated partner details
+account.homePage.card.registration.details.1.body = View and change contact details.
+account.homePage.card.registration.details.2.link.group = Group member details
+account.homePage.card.registration.details.2.link.partnership = Partner details
+account.homePage.card.registration.details.2.body.group = View and change contact details, and add or remove group members.
+account.homePage.card.registration.details.2.body.partnership = View and change contact details, and add or remove partners.
 
 returns.startPage.title = Submit a return
 returns.startPage.title.sectionHeader = Plastic Packaging Tax return

@@ -37,20 +37,23 @@ case class SubscriptionDisplayResponse(
   groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
 ) {
 
-  val entityName: Option[String] = legalEntityDetails.customerDetails.customerType match {
+  val entityName: String = legalEntityDetails.customerDetails.customerType match {
     case Individual =>
       legalEntityDetails.customerDetails.individualDetails.map(
         details =>
           s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
-      )
+      ).getOrElse(throw new IllegalStateException("Individual name absent"))
     case Organisation =>
-      legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName)
+      legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName).getOrElse(
+        throw new IllegalStateException("Organisation name absent")
+      )
   }
 
   val organisationType: Option[String] =
     legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationType)
 
-  val isGroup = legalEntityDetails.groupSubscriptionFlag
+  val isGroup: Boolean       = legalEntityDetails.groupSubscriptionFlag
+  val isPartnership: Boolean = legalEntityDetails.partnershipSubscriptionFlag
 
 }
 
