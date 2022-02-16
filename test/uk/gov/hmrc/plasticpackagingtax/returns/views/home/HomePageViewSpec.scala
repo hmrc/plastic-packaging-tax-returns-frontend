@@ -189,7 +189,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                   "account.homePage.card.registration.details.2.body.partnership"
                 )
                 additionalManagement.select("a").first() must haveHref(
-                  appConfig.pptRegistrationAmendUrl
+                  appConfig.pptRegistrationManagePartnersUrl
                 )
             }
 
