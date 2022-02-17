@@ -58,7 +58,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
       link must containMessage("unauthorised.paragraph.2.link")
       link must haveHref(
-        "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
+        "https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax"
       )
       link.attributes().hasKey("target") mustBe false
     }
