@@ -33,9 +33,7 @@ title.withSection.format={0} - {1} - {2} - GOV.UK
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
-account.homePage.organisation.singleEntity = {0}
 account.homePage.organisation.group = {0} (representative organisation for group)
-account.homePage.organisation.partnership = {0} (nominated partner for partnership)
 
 account.homePage.currentBalance = Your current balance
 account.homePage.currentBalance.onDate = on {0}
