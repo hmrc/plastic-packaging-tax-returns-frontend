@@ -37,10 +37,8 @@
 @organisationName = @{
     if(subscription.isGroup)
         messages("account.homePage.organisation.group", subscription.entityName)
-    else if(subscription.isPartnership)
-        messages("account.homePage.organisation.partnership", subscription.entityName)
     else
-        messages("account.homePage.organisation.singleEntity", subscription.entityName)
+        subscription.entityName
 }
 
 @link1Text = @{

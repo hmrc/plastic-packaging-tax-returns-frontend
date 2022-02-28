@@ -98,17 +98,13 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             )
             subscriptionType match {
               case SingleEntity =>
-                mainText must include(
-                  messages("account.homePage.organisation.singleEntity", subscription.entityName)
-                )
+                mainText must include(subscription.entityName)
               case Group =>
                 mainText must include(
                   messages("account.homePage.organisation.group", subscription.entityName)
                 )
               case Partnership =>
-                mainText must include(
-                  messages("account.homePage.organisation.partnership", subscription.entityName)
-                )
+                mainText must include(subscription.entityName)
             }
           }
 
