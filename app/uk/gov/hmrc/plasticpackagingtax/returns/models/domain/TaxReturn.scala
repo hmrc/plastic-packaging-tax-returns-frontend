@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.utils.TaxLiabilityFactory
 
 case class TaxReturn(
   id: String,
+  manufacturedPlastic: Option[Boolean] = None,
   manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
   importedPlasticWeight: Option[ImportedPlasticWeight] = None,
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,

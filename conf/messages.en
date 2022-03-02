@@ -10,6 +10,9 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 
+general.true = Yes
+general.false = No
+
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
@@ -75,6 +78,12 @@ returns.startPage.whatIsLiable.listItem.1 = is produced in or imported into the 
 returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycled plastic
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
+
+returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
+returns.manufacturedPlastic.details.link = What do we mean by components?
+returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
+returns.manufacturedPlastic.details.line2.link = See examples of components
+returns.manufacturedPlastic.details.empty.error = Choose an option
 
 returns.manufacturedPlasticWeight.meta.title = Manufactured plastic packaging components
 returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging components
