@@ -44,6 +44,7 @@ case class TaxReturn(
 
   def toTaxReturn: TaxReturn =
     TaxReturn(id = this.id,
+              manufacturedPlastic = this.manufacturedPlastic,
               manufacturedPlasticWeight = this.manufacturedPlasticWeight,
               importedPlasticWeight = this.importedPlasticWeight,
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
