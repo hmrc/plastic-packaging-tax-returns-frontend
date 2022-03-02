@@ -26,13 +26,18 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final case class OpenObligationsRequest[+A](nextObligationToPay: Obligation, request: JourneyRequest[A]) extends WrappedRequest[A](request)
+final case class OpenObligationsRequest[+A](
+  nextObligationToPay: Obligation,
+  request: JourneyRequest[A]
+) extends WrappedRequest[A](request)
 
 class ReturnAction @Inject() (obligations: ObligationsConnector)(implicit
   override val executionContext: ExecutionContext
 ) extends ActionTransformer[JourneyRequest, OpenObligationsRequest] {
 
-  override protected def transform[A](request: JourneyRequest[A]): Future[OpenObligationsRequest[A]] = {
+  override protected def transform[A](
+    request: JourneyRequest[A]
+  ): Future[OpenObligationsRequest[A]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     obligations.get(request.pptReference).map { obligations =>
