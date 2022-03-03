@@ -54,7 +54,7 @@ class JourneyActionSpec extends ControllerSpec {
     "permit request and send audit event" when {
       "enrolmentId found" in {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
-          Future.successful(Right(Option(TaxReturn(taxReturnId))))
+          Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
 
         await(
@@ -70,7 +70,7 @@ class JourneyActionSpec extends ControllerSpec {
       "enrolmentId found" in {
         val headers = Headers().add(HeaderNames.xRequestId -> "req1")
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
-          Future.successful(Right(Option(TaxReturn(taxReturnId))))
+          Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
 
         await(
@@ -91,9 +91,9 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(None))
         )
-        given(
-          mockTaxReturnsConnector.create(refEq(TaxReturn(taxReturnId)))(any[HeaderCarrier])
-        ).willReturn(Future.successful(Right(TaxReturn(taxReturnId))))
+        given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
+          Future.successful(Right(aTaxReturn(withId(taxReturnId))))
+        )
 
         await(
           actionRefiner.invokeBlock(
@@ -108,7 +108,7 @@ class JourneyActionSpec extends ControllerSpec {
     "load tax return" when {
       "tax return exists" in {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
-          Future.successful(Right(Option(TaxReturn(taxReturnId))))
+          Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
 
         await(
