@@ -10,18 +10,18 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 
-JANUARY = January
-FEBRUARY = February
-MARCH = March
-APRIL = April
-MAY = May
-JUNE = June
-JULY = July
-AUGUST = August
-SEPTEMBER = September
-OCTOBER = October
-NOVEMBER = November
-DECEMBER = December
+month.1 = January
+month.2 = February
+month.3 = March
+month.4 = April
+month.5 = May
+month.6 = June
+month.7 = July
+month.8 = August
+month.9 = September
+month.10 = October
+month.11 = November
+month.12 = December
 
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
@@ -208,7 +208,6 @@ returns.startDateReturns.radio.yes = Yes
 returns.startDateReturns.radio.no = No
 returns.startDateReturns.button = Continue
 returns.startDateReturns.error.required = Choose an option
-
 
 account.viewSubscription.organisationDetails.title = Your business details
 account.viewSubscription.organisationDetails.label = Registered organisation details

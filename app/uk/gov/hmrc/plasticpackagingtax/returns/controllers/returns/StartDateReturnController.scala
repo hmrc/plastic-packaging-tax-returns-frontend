@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   OpenObligationsRequest,
   ReturnAction
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
@@ -38,25 +38,24 @@ import scala.concurrent.ExecutionContext
 class StartDateReturnController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  returns: ReturnAction,
   mcc: MessagesControllerComponents,
   view: start_date_returns_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] = //TODO: which dates to populate title message?
-    (authenticate andThen journeyAction andThen returns) {
-      implicit request: OpenObligationsRequest[AnyContent] =>
-        Ok(view(StartDateReturnForm.form(), request.nextObligationToPay))
+    (authenticate andThen journeyAction) {
+      implicit request: JourneyRequest[AnyContent] =>
+        Ok(view(StartDateReturnForm.form(), request.taxReturn.obligation))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction andThen returns) {
-      implicit request: OpenObligationsRequest[AnyContent] =>
+    (authenticate andThen journeyAction) {
+      implicit request: JourneyRequest[AnyContent] =>
         StartDateReturnForm.form().bindFromRequest()
           .fold(
             (formWithErrors: Form[Boolean]) =>
-              BadRequest(view(formWithErrors, request.nextObligationToPay)),
+              BadRequest(view(formWithErrors, request.taxReturn.obligation)),
             (startReturn: Boolean) =>
               if (startReturn)
                 Redirect(
@@ -72,7 +71,6 @@ class StartDateReturnController @Inject() (
 //todo:
 //  formSpec
 //  controllerSpec
-//  merge main
 //  viewSpec
 //  plug in the connector
 

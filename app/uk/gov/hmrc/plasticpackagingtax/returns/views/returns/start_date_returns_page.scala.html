@@ -32,7 +32,14 @@
 )
 
 @(form: Form[Boolean], obligation: Obligation)(implicit request: Request[_], messages: Messages)
-@heading = @{messages("returns.startDateReturns.heading",messages(obligation.fromDate.getMonth.toString),messages(obligation.toDate.getMonth.toString),obligation.toDate.getYear.toString)}
+
+@heading = @{messages(
+    "returns.startDateReturns.heading",
+    messages(s"month.${obligation.fromDate.getMonthValue}"),
+    messages(s"month.${obligation.toDate.getMonthValue}"),
+    obligation.toDate.getYear.toString)
+}
+
 @govukLayout(
     title = Title(heading),
     backButton = Some(BackButton(messages("site.back"),routes.HomeController.displayPage(),messages("site.back.hiddenText")))
