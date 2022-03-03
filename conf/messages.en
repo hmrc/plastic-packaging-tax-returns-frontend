@@ -89,6 +89,8 @@ returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycl
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
 
+returns.sectionHeader = {0} to {1} {2}
+
 returns.manufacturedPlasticWeight.meta.title = Manufactured plastic packaging components
 returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging components
 returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
