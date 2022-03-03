@@ -29,7 +29,7 @@ class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers 
 
       "no data present" in {
 
-        val taxReturn = TaxReturn("id")
+        val taxReturn = aTaxReturn(withId("id"))
 
         taxReturn.taxLiability.totalKgLiable mustBe 0
         taxReturn.taxLiability.totalCredit mustBe 0
