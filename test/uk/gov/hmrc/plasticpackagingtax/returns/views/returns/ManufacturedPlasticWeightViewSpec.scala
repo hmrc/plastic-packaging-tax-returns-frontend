@@ -19,7 +19,9 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.returns
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlasticWeight.form
@@ -27,18 +29,20 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_p
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest
-class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
+class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers with TaxReturnBuilder {
 
   private val page = instanceOf[manufactured_plastic_weight_page]
+
+  private val guidanceLink = Call("GET", "/guidance-link")
 
   private def createView(
     form: Form[ManufacturedPlasticWeight] = ManufacturedPlasticWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form, guidanceLink, defaultObligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), guidanceLink, defaultObligation)(request, messages)
+    page.render(form(), guidanceLink, defaultObligation, request, messages)
   }
 
   "Manufactured Plastic Weight View" should {
@@ -46,62 +50,61 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain timeout dialog function" in {
-
       containTimeoutDialogFunction(view) mustBe true
     }
 
     "display sign out link" in {
-
       displaySignOutLink(view)
     }
 
     "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(returnRoutes.StartController.displayPage())
+      view.getElementById("back-link") must haveHref(
+        returnRoutes.ManufacturedPlasticController.contribution()
+      )
     }
 
     "display title" in {
-
-      view.select("title").text() must include(
-        messages("returns.manufacturedPlasticWeight.meta.title")
-      )
+      view.select("title").text() must include(messages("returns.manufacturedPlasticWeight.title"))
     }
 
-    "display header" in {
-
+    "display section header" in {
       view.getElementById("section-header").text() must include(
-        messages("returns.manufacturedPlasticWeight.sectionHeader")
+        "April to June 2022"
+      ) // from defaultObligation
+    }
+
+    "display manufactured weight label" in {
+      view.select("label").text() must include(messages("returns.manufacturedPlasticWeight.title"))
+    }
+
+    "display hints on excluded items" in {
+      view.select("div#totalKg-hint").text() must (
+        include(messages("returns.manufacturedPlasticWeight.hint")) and
+          include(messages("returns.manufacturedPlasticWeight.hint.1")) and
+          include(messages("returns.manufacturedPlasticWeight.hint.2")) and
+          include(messages("returns.manufacturedPlasticWeight.hint.3")) and
+          include(messages("returns.manufacturedPlasticWeight.hint.4")) and
+          include(messages("returns.manufacturedPlasticWeight.hint.4.link"))
       )
     }
 
-    "display total weight label" in {
-
-      view.getElementsByClass("govuk-label--s").text() must include(
-        messages("returns.manufacturedPlasticWeight.total.weight")
-      )
+    "link to guidance" in {
+      view.select("div#totalKg-hint a").get(0) must haveHref(guidanceLink.url)
     }
 
     "display total weight input box" in {
-
       view must containElementWithID("totalKg")
     }
 
     "display 'Save and Continue' button" in {
-
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and Continue"
-    }
-
-    "display 'Save and come back later' button" in {
-
-      view.getElementById("save_and_come_back_later").text() mustBe "Save and come back later"
     }
   }
 
   "Manufactured Plastic Weight View when filled" should {
 
     "display data in total weight input" in {
-
       val form = ManufacturedPlasticWeight
         .form()
         .fill(ManufacturedPlasticWeight("1000"))
@@ -114,7 +117,6 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   "display error" when {
 
     "weight is not entered" in {
-
       val form = ManufacturedPlasticWeight
         .form()
         .fillAndValidate(ManufacturedPlasticWeight(""))

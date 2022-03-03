@@ -24,7 +24,7 @@ object Styles {
   val gdsPageLegendS  = "govuk-fieldset__legend--s"
 
   val gdsPageHeadingXl = "govuk-heading-xl"
-  val gdsPageHeadingL  = "govuk-heading-l"
+  val gdsPageHeading   = "govuk-heading-l"
   val gdsPageHeadingM  = "govuk-heading-m"
   val gdsPageHeadingS  = "govuk-heading-s"
 

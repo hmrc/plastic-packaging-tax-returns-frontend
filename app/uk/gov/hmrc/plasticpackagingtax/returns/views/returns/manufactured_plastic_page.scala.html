@@ -1,0 +1,82 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukDetails, GovukInput}
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
+@import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlastic
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{errorSummary, link, pageTitle, returnsSectionHeading, saveAndContinue}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
+
+@this(
+        govukLayout: main_template,
+        pageTitle: pageTitle,
+        saveAndContinue: saveAndContinue,
+        govukInput: GovukInput,
+        returnsSectionHeading: returnsSectionHeading,
+        errorSummary: errorSummary,
+        govukDetails: GovukDetails,
+        govukRadios: GovukRadios,
+        formHelper: FormWithCSRF,
+        link: link,
+        paragraph: paragraph
+)
+
+@(form: Form[Boolean], guidanceLink: Call, obligation: Obligation)(implicit request: Request[_], messages: Messages)
+
+@formattedDetailsContent = {
+    @paragraph(content = Html(messages("returns.manufacturedPlastic.details.line1")))
+    @paragraph(content = link(text = messages("returns.manufacturedPlastic.details.line2.link"), call = guidanceLink, newTab = true))
+}
+
+@hintContent = {
+    @govukDetails(Details(
+        summary = Text(messages("returns.manufacturedPlastic.details.link")),
+        content = HtmlContent(formattedDetailsContent)
+    ))
+}
+
+@govukLayout(
+    title = Title("returns.manufacturedPlastic.title"),
+    backButton = Some(BackButton(messages("site.back"), routes.StartController.displayPage(), messages("site.back.hiddenText")))) {
+
+    @errorSummary(form.errors)
+
+    @returnsSectionHeading(obligation)
+    @pageTitle(
+        text = messages("returns.manufacturedPlastic.title")
+    )
+
+    @formHelper(action = routes.ManufacturedPlasticController.submitContribution(), 'autoComplete -> "off") {
+
+        @govukRadios(Radios(
+            idPrefix = Some(form("answer").name),
+            name = form("answer").name,
+            hint = Some(Hint(content = HtmlContent(hintContent))),
+            items = Seq(
+                RadioItem(content = Text(messages("general.true")), value = Some(ManufacturedPlastic.YES), checked = form.value.contains(true)),
+                RadioItem(content = Text(messages("general.false")), value = Some(ManufacturedPlastic.NO), checked = form.value.contains(false))
+            ),
+            classes = "govuk-radios--inline",
+            errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        )
+        )
+
+        @saveAndContinue()
+    }
+}

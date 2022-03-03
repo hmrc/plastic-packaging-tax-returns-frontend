@@ -4,8 +4,10 @@ GET        /return-information   uk.gov.hmrc.plasticpackagingtax.returns.control
 
 GET        /submit-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartController.displayPage()
 
-GET        /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.displayPage()
-POST       /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.submit()
+GET        /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.contribution()
+POST       /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.submitContribution()
+GET        /manufactured-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.weight()
+POST       /manufactured-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.submitWeight()
 
 GET        /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.displayPage()
 POST       /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.submit()

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeading
+package uk.gov.hmrc.plasticpackagingtax.returns.models.obligations
 
-@this()
+import play.api.libs.json.{Json, OFormat}
 
-@(text: String, classes: String = gdsPageHeading)
+import java.time.LocalDate
 
-<h1 id="title" class="@{classes}">@text</h1>
+final case class Obligation(
+  fromDate: LocalDate,
+  toDate: LocalDate,
+  dueDate: LocalDate,
+  periodKey: String
+)
 
+object Obligation {
+  implicit val format: OFormat[Obligation] = Json.format[Obligation]
+}

@@ -14,11 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeading
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 
-@this()
+@this(
+        sectionHeader: sectionHeader,
+)
 
-@(text: String, classes: String = gdsPageHeading)
+@(obligation: Obligation)(implicit messages: Messages)
 
-<h1 id="title" class="@{classes}">@text</h1>
-
+@sectionHeader(message =
+    messages("returns.sectionHeader",
+        messages(s"month.${obligation.fromDate.getMonthValue}"),
+        messages(s"month.${obligation.toDate.getMonthValue}"),
+        obligation.toDate.getYear.toString)
+)

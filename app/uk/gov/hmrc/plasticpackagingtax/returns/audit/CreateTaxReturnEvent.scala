@@ -18,9 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.returns.audit
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain._
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 case class CreateTaxReturnEvent(
   id: String,
+  obligation: Obligation,
   manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
   importedPlasticWeight: Option[ImportedPlasticWeight] = None,
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
@@ -35,6 +37,7 @@ object CreateTaxReturnEvent {
 
   def apply(taxReturn: TaxReturn): CreateTaxReturnEvent =
     CreateTaxReturnEvent(id = taxReturn.id,
+                         obligation = taxReturn.obligation,
                          manufacturedPlasticWeight = taxReturn.manufacturedPlasticWeight,
                          importedPlasticWeight = taxReturn.importedPlasticWeight,
                          humanMedicinesPlasticWeight = taxReturn.humanMedicinesPlasticWeight,

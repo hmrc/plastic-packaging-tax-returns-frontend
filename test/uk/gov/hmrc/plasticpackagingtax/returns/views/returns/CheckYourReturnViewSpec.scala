@@ -109,7 +109,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                       asKg(
                                         taxReturn.manufacturedPlasticWeight.get.totalKg.toString
                                       ),
-                                      returnRoutes.ManufacturedPlasticWeightController.displayPage()
+                                      returnRoutes.ManufacturedPlasticController.weight()
         )
         checkYourReturnView.rowExists(0,
                                       1,

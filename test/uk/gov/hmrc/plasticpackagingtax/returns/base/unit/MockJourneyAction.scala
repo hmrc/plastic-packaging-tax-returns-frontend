@@ -20,7 +20,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +36,7 @@ trait MockJourneyAction
   override protected def beforeEach() {
     super.beforeEach()
     given(mockTaxReturnsConnector.find(any())(any())).willReturn(
-      Future.successful(Right(Option(TaxReturn("001"))))
+      Future.successful(Right(Option(aTaxReturn(withId("001")))))
     )
   }
 

@@ -22,11 +22,12 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import java.time.LocalDate
 import javax.inject.Inject
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: Auditor)(implicit
@@ -61,7 +62,13 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: A
           }
           .getOrElse {
             auditor.newTaxReturnStarted()
-            returnsConnector.create(TaxReturn(id))
+            // TODO: get this from the PPT obligations API
+            val oldestObligation = Obligation(fromDate = LocalDate.parse("2022-04-01"),
+                                              toDate = LocalDate.parse("2022-06-30"),
+                                              dueDate = LocalDate.parse("2022-06-30"),
+                                              periodKey = "22AP"
+            )
+            returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
           }
       case Left(error) => Future.successful(Left(error))
     }

@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
 import org.scalatest.EitherValues
@@ -25,9 +24,11 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
+import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 
-class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues {
+class TaxReturnsConnectorSpec
+    extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder {
 
   lazy val connector: TaxReturnsConnector = app.injector.instanceOf[TaxReturnsConnector]
 
@@ -49,10 +50,10 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
       "valid request send" in {
 
         givenPostToReturnsEndpointReturns(Status.CREATED,
-                                          Json.toJsObject(TaxReturn("123")).toString
+                                          Json.toJsObject(aTaxReturn(withId("123"))).toString
         )
 
-        val res = await(connector.create(TaxReturn("123")))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.value.id mustBe "123"
         getTimer("ppt.returns.create.timer").getCount mustBe 1
@@ -60,9 +61,11 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
       "tax return already exists" in {
 
-        givenPostToReturnsEndpointReturns(Status.OK, Json.toJsObject(TaxReturn("123")).toString)
+        givenPostToReturnsEndpointReturns(Status.OK,
+                                          Json.toJsObject(aTaxReturn(withId("123"))).toString
+        )
 
-        val res = await(connector.create(TaxReturn("123")))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.value.id mustBe "123"
 
@@ -75,7 +78,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPostToReturnsEndpointReturns(Status.BAD_REQUEST)
 
-        val res = await(connector.create(TaxReturn("123")))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -84,7 +87,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPostToReturnsEndpointReturns(Status.CREATED, "someRubbish")
 
-        val res = await(connector.create(TaxReturn("123")))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -107,7 +110,9 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
       "exists" in {
 
-        givenGetReturnsEndpointReturns(Status.OK, Json.toJsObject(TaxReturn("123")).toString())
+        givenGetReturnsEndpointReturns(Status.OK,
+                                       Json.toJsObject(aTaxReturn(withId("123"))).toString()
+        )
 
         val res = await(connector.find("123"))
 
@@ -160,10 +165,10 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPutToReReturnsEndpointReturns(Status.CREATED,
                                            "123",
-                                           Json.toJsObject(TaxReturn("123")).toString
+                                           Json.toJsObject(aTaxReturn(withId("123"))).toString
         )
 
-        val res = await(connector.update(TaxReturn("123")))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.value.id mustBe "123"
         getTimer("ppt.returns.update.timer").getCount mustBe 1
@@ -173,10 +178,10 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPutToReReturnsEndpointReturns(Status.OK,
                                            "123",
-                                           Json.toJsObject(TaxReturn("123")).toString
+                                           Json.toJsObject(aTaxReturn(withId("123"))).toString
         )
 
-        val res = await(connector.update(TaxReturn("123")))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.value.id mustBe "123"
 
@@ -189,7 +194,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPutToReReturnsEndpointReturns(Status.BAD_REQUEST, "123")
 
-        val res = await(connector.update(TaxReturn("123")))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }
@@ -198,7 +203,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         givenPutToReReturnsEndpointReturns(Status.CREATED, "123", "someRubbish")
 
-        val res = await(connector.update(TaxReturn("123")))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }
