@@ -18,6 +18,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.routes
 
 @this(
     formHelper: FormWithCSRF,
@@ -29,7 +31,8 @@
 @(form: Form[Boolean], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 @heading = @{messages("returns.startDateReturns.heading",messages(obligation.fromDate.getMonth.toString),messages(obligation.toDate.getMonth.toString),obligation.toDate.getYear.toString)}
 @govukLayout(
-    title = Title(heading)
+    title = Title(heading),
+    backButton = Some(BackButton(messages("site.back"),routes.HomeController.displayPage(),messages("site.back.hiddenText")))
     ){
     @formHelper(action = controllers.returns.routes.StartDateReturnController.submit(), 'autoComplete -> "off") {
 

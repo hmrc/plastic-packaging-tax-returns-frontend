@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import play.api.data.Form
-import play.api.data.Forms.{localDate, mapping, optional, text}
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
@@ -25,11 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   OpenObligationsRequest,
   ReturnAction
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -52,15 +51,24 @@ class StartDateReturnController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction andThen returns) {
       implicit request: OpenObligationsRequest[AnyContent] =>
-        Ok(view(form().bindFromRequest(), request.nextObligationToPay))
-
+        form().bindFromRequest()
+          .fold(
+            (formWithErrors: Form[Boolean]) =>
+              BadRequest(view(formWithErrors, request.nextObligationToPay)),
+            (startReturn: Boolean) =>
+              if (startReturn)
+                Ok(
+                  "/manufactured-components"
+                )            //todo: implement redirect to /manufactured-components
+              else Ok("Nay") //todo: implement redirect to /no-other-periods
+          )
     }
 
   def form(): Form[Boolean] =
     Form(
       mapping(
-        "startPanReturns" -> optional(text)
-          .verifying("err", _.nonEmpty)
+        "startDateReturns" -> optional(text)
+          .verifying("returns.startDateReturns.error.required", _.nonEmpty)
           .transform[String](_.get, Some.apply)
           .transform[Boolean](_ == "yes", _.toString)
       )(identity)(Some.apply)
