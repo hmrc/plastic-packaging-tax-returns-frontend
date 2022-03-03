@@ -20,12 +20,15 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.routes
+@import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm._
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    errorSummary: errorSummary
 )
 
 @(form: Form[Boolean], obligation: Obligation)(implicit request: Request[_], messages: Messages)
@@ -34,30 +37,32 @@
     title = Title(heading),
     backButton = Some(BackButton(messages("site.back"),routes.HomeController.displayPage(),messages("site.back.hiddenText")))
     ){
-    @formHelper(action = controllers.returns.routes.StartDateReturnController.submit(), 'autoComplete -> "off") {
+        @errorSummary(form.errors)
 
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(heading),
-                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--l",
-                    isPageHeading = true
-                ))
-            )),
-            idPrefix = Some(form("startDateReturns").name),
-            name = form("startDateReturns").name,
-            items = Seq(
-                RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.yes")), value = Some("yes"), checked = form("startDateReturns").value.contains("yes")),
-                RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.no")), value = Some("no"), checked = form("startDateReturns").value.contains("no"))
-            ),
-            classes = "govuk-radios--inline",
-            errorMessage = form("startDateReturns").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-        ))
-        @govukButton(Button(
-            content = Text(messages("returns.startDateReturns.button")),
-            classes = "govuk-!-margin-right-1",
-            attributes = Map("id" -> "submit")
-        ))
+        @formHelper(action = controllers.returns.routes.StartDateReturnController.submit(), 'autoComplete -> "off") {
+
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(heading),
+                        classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--l",
+                        isPageHeading = true
+                    ))
+                )),
+                idPrefix = Some(form(field).name),
+                name = form(field).name,
+                items = Seq(
+                    RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.yes")), value = Some(yes), checked = form(field).value.contains(yes)),
+                    RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.no")), value = Some(no), checked = form(field).value.contains(no))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = form(field).error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+            @govukButton(Button(
+                content = Text(messages("returns.startDateReturns.button")),
+                classes = "govuk-!-margin-right-1",
+                attributes = Map("id" -> "submit")
+            ))
 
     }
 

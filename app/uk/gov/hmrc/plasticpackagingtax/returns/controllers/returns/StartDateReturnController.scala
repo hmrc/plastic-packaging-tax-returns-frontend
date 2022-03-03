@@ -28,6 +28,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -45,33 +47,33 @@ class StartDateReturnController @Inject() (
   def displayPage(): Action[AnyContent] = //TODO: which dates to populate title message?
     (authenticate andThen journeyAction andThen returns) {
       implicit request: OpenObligationsRequest[AnyContent] =>
-        Ok(view(form(), request.nextObligationToPay))
+        Ok(view(StartDateReturnForm.form(), request.nextObligationToPay))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction andThen returns) {
       implicit request: OpenObligationsRequest[AnyContent] =>
-        form().bindFromRequest()
+        StartDateReturnForm.form().bindFromRequest()
           .fold(
             (formWithErrors: Form[Boolean]) =>
               BadRequest(view(formWithErrors, request.nextObligationToPay)),
             (startReturn: Boolean) =>
               if (startReturn)
-                Ok(
-                  "/manufactured-components"
-                )            //todo: implement redirect to /manufactured-components
-              else Ok("Nay") //todo: implement redirect to /no-other-periods
+                Redirect(
+                  homeRoutes.HomeController.displayPage()
+                ) //todo: implement redirect to /manufactured-components
+              else
+                Redirect(
+                  routes.StartDateReturnController.displayPage()
+                ) //todo: implement redirect to /no-other-periods
           )
     }
 
-  def form(): Form[Boolean] =
-    Form(
-      mapping(
-        "startDateReturns" -> optional(text)
-          .verifying("returns.startDateReturns.error.required", _.nonEmpty)
-          .transform[String](_.get, Some.apply)
-          .transform[Boolean](_ == "yes", _.toString)
-      )(identity)(Some.apply)
-    )
+//todo:
+//  formSpec
+//  controllerSpec
+//  merge main
+//  viewSpec
+//  plug in the connector
 
 }
