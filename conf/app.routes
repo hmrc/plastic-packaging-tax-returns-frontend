@@ -1,9 +1,9 @@
 # microservice specific routes
 
-->         /hmrc-frontend           hmrcfrontend.Routes
+->         /hmrc-frontend                               hmrcfrontend.Routes
 
-->         /returns                 returns.Routes
+->         /submit-return-for-plastic-packaging-tax     returns.Routes
 
-->         /account                 home.Routes
+->         /account                                     home.Routes
 
-GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)

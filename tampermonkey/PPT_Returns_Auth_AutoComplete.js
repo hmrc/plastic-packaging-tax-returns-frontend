@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Returns(PPT) Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   3.2
+// @version   3.3
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
-// @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax%2Freturns*
+// @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax%2Fsubmit-return-for-plastic-packaging-tax*
 // @grant     none
 // @updateURL https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_Auth_AutoComplete.js
 // ==/UserScript==
@@ -12,7 +12,7 @@
 (function() {
     'use strict';
 
-    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/returns/submit-return";
+    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return";
 
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
