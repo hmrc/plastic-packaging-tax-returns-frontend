@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,17 +28,14 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.{ImportedPlastic, ImportedPlasticWeight}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
   imported_plastic_page,
   imported_plastic_weight_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class ImportedPlasticWeightControllerSpec extends ControllerSpec {

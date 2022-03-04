@@ -35,6 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
   TaxReturn,
   ImportedPlasticWeight => ImportedPlasticWeightDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
   imported_plastic_page,
@@ -58,12 +59,13 @@ class ImportedPlasticWeightController @Inject() (
 
   def contribution(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      val obligation = request.taxReturn.obligation
-      request.taxReturn.importedPlastic match {
+      val form = request.taxReturn.importedPlastic match {
         case Some(data) =>
-          Ok(importedComponentPage(importedPlasticForm().fill(data), obligation))
-        case _ => Ok(importedComponentPage(importedPlasticForm(), obligation))
+          importedPlasticForm().fill(data)
+        case _ => importedPlasticForm()
       }
+      Ok(importedComponentPage(form, getObligation(request.taxReturn)))
+
     }
 
   def submitContribution(): Action[AnyContent] =
@@ -73,7 +75,7 @@ class ImportedPlasticWeightController @Inject() (
         .fold(
           (formWithErrors: Form[Boolean]) =>
             Future.successful(
-              BadRequest(importedComponentPage(formWithErrors, request.taxReturn.obligation))
+              BadRequest(importedComponentPage(formWithErrors, getObligation(request.taxReturn)))
             ),
           contribution =>
             updateTaxReturn(contribution).map {
@@ -130,5 +132,10 @@ class ImportedPlasticWeightController @Inject() (
     update { taxReturn =>
       taxReturn.copy(importedPlastic = Some(formData))
     }
+
+  private def getObligation(taxReturn: TaxReturn): Obligation =
+    taxReturn.obligation.getOrElse(
+      throw new IllegalStateException("Tax return obligation not present")
+    )
 
 }

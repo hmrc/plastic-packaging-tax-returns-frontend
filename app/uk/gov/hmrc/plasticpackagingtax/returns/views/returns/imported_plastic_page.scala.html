@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsFieldsetPageHeading
 
 @this(
     formHelper: FormWithCSRF,
@@ -34,7 +34,7 @@
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
-        pageTitle: pageTitle
+    govukFieldset: GovukFieldset,
 )
 
 
@@ -48,20 +48,25 @@
 
     @sectionHeader(messages("returns.sectionHeader", messages(s"month.${obligation.fromDate.getMonthValue}"), messages(s"month.${obligation.toDate.getMonthValue}"), obligation.toDate.getYear.toString))
 
-   @pageTitle(text = messages("returns.importedPlasticWeight.component.title"))
     @formHelper(action = returnRoutes.ImportedPlasticWeightController.submitContribution(), 'autoComplete -> "off") {
-
-        @govukRadios(Radios(
-            idPrefix = Some(form("answer").name),
-            name = form("answer").name,
-            items = Seq(
-                RadioItem(content = Text(messages("general.true")), value = Some(ImportedPlastic.YES), checked = form("answer").value == true),
-                RadioItem(content = Text(messages("general.false")), value = Some(ImportedPlastic.NO), checked = form("answer").value == false)
-            ),
-            classes = "govuk-radios",
-            errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("returns.importedPlasticWeight.component.title")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = govukRadios(Radios(
+                idPrefix = Some(form("answer").name),
+                name = form("answer").name,
+                items = Seq(
+                    RadioItem(content = Text(messages("general.true")), value = Some(ImportedPlastic.YES), checked = form("answer").value == true),
+                    RadioItem(content = Text(messages("general.false")), value = Some(ImportedPlastic.NO), checked = form("answer").value == false)
+                ),
+                classes = "govuk-radios",
+                errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             )
-        )
+        )))
+
 
         @saveButtons()
     }

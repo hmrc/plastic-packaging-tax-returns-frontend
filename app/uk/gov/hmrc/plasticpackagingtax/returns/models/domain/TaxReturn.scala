@@ -50,6 +50,7 @@ case class TaxReturn(
               obligation = this.obligation,
               manufacturedPlastic = this.manufacturedPlastic,
               manufacturedPlasticWeight = this.manufacturedPlasticWeight,
+              importedPlastic = this.importedPlastic,
               importedPlasticWeight = this.importedPlasticWeight,
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
               exportedPlasticWeight = this.exportedPlasticWeight,
