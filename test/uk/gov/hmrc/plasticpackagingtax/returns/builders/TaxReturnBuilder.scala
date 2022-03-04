@@ -38,7 +38,7 @@ trait TaxReturnBuilder {
     modifiers.foldLeft(modelWithDefaults)((current, modifier) => modifier(current))
 
   private def modelWithDefaults: TaxReturn =
-    TaxReturn(id = "id", obligation = defaultObligation)
+    TaxReturn(id = "id", obligation = Some(defaultObligation))
 
   val defaultObligation = Obligation(fromDate = LocalDate.parse("2022-04-01"),
                                      toDate = LocalDate.parse("2022-06-30"),

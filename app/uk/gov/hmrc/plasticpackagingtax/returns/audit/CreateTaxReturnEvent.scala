@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 case class CreateTaxReturnEvent(
   id: String,
-  obligation: Obligation,
+  obligation: Option[Obligation] = None,
   manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
   importedPlasticWeight: Option[ImportedPlasticWeight] = None,
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
