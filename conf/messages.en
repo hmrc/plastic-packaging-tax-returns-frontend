@@ -113,6 +113,10 @@ returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
+returns.importedPlasticWeight.component.title = Have you imported finished plastic packaging components in this period?
+returns.importedPlasticWeight.component.details.line1 = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
+returns.importedPlasticWeight.component.details.empty.error = Choose an option
+
 returns.importedPlasticWeight.meta.title = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.title = 2. Imported plastic packaging
 returns.importedPlasticWeight.hint = This applies to all complete plastic packaging components, whether it is filled or unfilled.

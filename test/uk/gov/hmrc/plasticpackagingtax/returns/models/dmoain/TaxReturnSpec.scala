@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.dmoain
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
 class TaxReturnSpec extends AnyWordSpecLike with TaxReturnBuilder with Matchers {
 
