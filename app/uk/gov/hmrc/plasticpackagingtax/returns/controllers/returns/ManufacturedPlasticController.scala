@@ -43,16 +43,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManufacturedPlasticController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val returnsConnector: TaxReturnsConnector,
-  mcc: MessagesControllerComponents,
-  appConfig: AppConfig,
-  manufacturedPlasticPage: manufactured_plastic_page,
-  manufacturedPlasticWeightPage: manufactured_plastic_weight_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+class ManufacturedPlasticController @Inject()(
+                                               authenticate: AuthAction,
+                                               journeyAction: JourneyAction,
+                                               override val returnsConnector: TaxReturnsConnector,
+                                               mcc: MessagesControllerComponents,
+                                               appConfig: AppConfig,
+                                               manufacturedPlasticPage: manufactured_plastic_page,
+                                               manufacturedPlasticWeightPage: manufactured_plastic_weight_page
+                                             )(implicit ec: ExecutionContext)
+  extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   private val liablePackagingGuidanceLink = Call("GET", appConfig.pptLiablePackagingGuidanceLink)
 
@@ -63,9 +63,9 @@ class ManufacturedPlasticController @Inject() (
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       val form = request.taxReturn.manufacturedPlastic match {
         case Some(manufacturedPlastic) => ManufacturedPlastic.form().fill(manufacturedPlastic)
-        case _                         => ManufacturedPlastic.form()
+        case _ => ManufacturedPlastic.form()
       }
-      Ok(manufacturedPlasticPage(form, liablePackagingGuidanceLink, request.taxReturn.obligation))
+      Ok(manufacturedPlasticPage(form, liablePackagingGuidanceLink, getTaxReturnObligation(request.taxReturn)))
     }
 
   def submitContribution(): Action[AnyContent] =
@@ -77,8 +77,8 @@ class ManufacturedPlasticController @Inject() (
             Future.successful(
               BadRequest(
                 manufacturedPlasticPage(formWithErrors,
-                                        liablePackagingGuidanceLink,
-                                        request.taxReturn.obligation
+                  liablePackagingGuidanceLink,
+                  getTaxReturnObligation(request.taxReturn)
                 )
               )
             ),
@@ -105,8 +105,8 @@ class ManufacturedPlasticController @Inject() (
       }
       Ok(
         manufacturedPlasticWeightPage(form,
-                                      excludedPackagingGuidanceLink,
-                                      request.taxReturn.obligation
+          excludedPackagingGuidanceLink,
+          getTaxReturnObligation(request.taxReturn)
         )
       )
     }
@@ -120,8 +120,8 @@ class ManufacturedPlasticController @Inject() (
             Future.successful(
               BadRequest(
                 manufacturedPlasticWeightPage(formWithErrors,
-                                              excludedPackagingGuidanceLink,
-                                              request.taxReturn.obligation
+                  excludedPackagingGuidanceLink,
+                  getTaxReturnObligation(request.taxReturn)
                 )
               )
             ),
@@ -134,22 +134,25 @@ class ManufacturedPlasticController @Inject() (
         )
     }
 
+  private def getTaxReturnObligation(taxReturn: TaxReturn) =
+    taxReturn.obligation.getOrElse(throw new IllegalStateException("Tax return obligation details absent"))
+
   private def updateTaxReturn(
-    manufacturedContribution: Boolean
-  )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
+                               manufacturedContribution: Boolean
+                             )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
       if (manufacturedContribution)
         taxReturn.copy(manufacturedPlastic = Some(true))
       else
         taxReturn.copy(manufacturedPlastic = Some(false),
-                       manufacturedPlasticWeight =
-                         Some(ManufacturedPlasticWeightDetails(totalKg = 0))
+          manufacturedPlasticWeight =
+            Some(ManufacturedPlasticWeightDetails(totalKg = 0))
         )
     }
 
   private def updateTaxReturn(
-    manufacturedPlasticWeight: ManufacturedPlasticWeight
-  )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
+                               manufacturedPlasticWeight: ManufacturedPlasticWeight
+                             )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
       taxReturn.copy(manufacturedPlasticWeight =
         Some(ManufacturedPlasticWeightDetails(totalKg = manufacturedPlasticWeight.totalKg.toLong))
