@@ -49,6 +49,11 @@ class AuthActionImpl @Inject() (
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
+  private def authPredicate = {
+    val delegatedAuthRule = "ppt-auth" // Agent access control
+    AffinityGroup.Organisation and (Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule(delegatedAuthRule))
+  }
+
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
@@ -61,12 +66,13 @@ class AuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val authorisation = authTimer.time()
-    authorised()
+    authorised(authPredicate)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
+
           val identityData = IdentityData(internalId,
                                           externalId,
                                           agentCode,
@@ -94,38 +100,47 @@ class AuthActionImpl @Inject() (
               throw InsufficientEnrolments(
                 s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
               )
-            case Some(id) => executeRequest(request, block, identityData, id, allEnrolments)
+            case Some(pptEnrolmentIdentifier) => executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
           }
+
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-      case _: AuthorisationException =>
-        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
+
+      case t: InsufficientEnrolments =>
+        // Redirect to register
+        Results.Ok("InsufficientEnrolments: " + t.toString)
+
+      case t: Throwable =>
+        // TODO
+        Results.Ok("!!!!!!!!!!!!!! Random fail" + t.toString)
     }
   }
 
   private def executeRequest[A](
-    request: Request[A],
-    block: AuthenticatedRequest[A] => Future[Result],
-    identityData: IdentityData,
-    id: String,
-    allEnrolments: Enrolments
+                                 request: Request[A],
+                                 block: AuthenticatedRequest[A] => Future[Result],
+                                 identityData: IdentityData,
+                                 pptEnrolmentIdentifier: String,
+                                 allEnrolments: Enrolments
   ) =
-    if (pptReferenceAllowedList.isAllowed(id)) {
+    if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(id)))
+      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(pptEnrolmentIdentifier)))
     } else {
       logger.warn("User id is not allowed, access denied")
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad()))
     }
 
-  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
-    getPptEnrolment(enrolments, identifier) match {
-      case Some(enrolmentId) => Option(enrolmentId).filter(_.value.trim.nonEmpty).map(_.value)
-      case None              => Option.empty
+  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] = {
+    val maybeEnrolmentIdentifier = getPptEnrolmentIdentifier(enrolments, identifier)
+    maybeEnrolmentIdentifier match {
+      case Some(enrolmentIdentifier) => Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
+      case None => Option.empty
     }
+  }
 
-  private def getPptEnrolment(
+  private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
     identifier: String
   ): Option[EnrolmentIdentifier] =
