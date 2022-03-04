@@ -68,7 +68,7 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: A
                                               dueDate = LocalDate.parse("2022-06-30"),
                                               periodKey = "22AP"
             )
-            returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
+            returnsConnector.create(TaxReturn(id = id, obligation = Some(oldestObligation)))
           }
       case Left(error) => Future.successful(Left(error))
     }
