@@ -22,6 +22,7 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -29,21 +30,21 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject()(returnsConnector: TaxReturnsConnector, auditor: Auditor)(implicit
-                                                                                       val exec: ExecutionContext
+class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: Auditor)(implicit
+  val exec: ExecutionContext
 ) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   private val logger = Logger(this.getClass)
 
   override protected def refine[A](
-                                    request: AuthenticatedRequest[A]
-                                  ): Future[Either[Result, JourneyRequest[A]]] = {
+    request: AuthenticatedRequest[A]
+  ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.enrolmentId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateReturn(id).map {
-          case Right(reg) => Right(new JourneyRequest[A](request, reg, Some(id)))
+          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
           case Left(error) => throw error
         }
       case None =>
@@ -63,9 +64,9 @@ class JourneyAction @Inject()(returnsConnector: TaxReturnsConnector, auditor: Au
             auditor.newTaxReturnStarted()
             // TODO: get this from the PPT obligations API
             val oldestObligation = Obligation(fromDate = LocalDate.parse("2022-04-01"),
-              toDate = LocalDate.parse("2022-06-30"),
-              dueDate = LocalDate.parse("2022-06-30"),
-              periodKey = "22AP"
+                                              toDate = LocalDate.parse("2022-06-30"),
+                                              dueDate = LocalDate.parse("2022-06-30"),
+                                              periodKey = "22AP"
             )
             returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
           }
