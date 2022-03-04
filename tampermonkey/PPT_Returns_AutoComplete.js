@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.0
+// @version      5.1
 // @description
 // @author       pmonteiro
-// @match        http*://*/plastic-packaging-tax/returns*
+// @match        http*://*/plastic-packaging-tax/submit-return-for-plastic-packaging-tax*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_AutoComplete.js
@@ -55,14 +55,14 @@ const currentPageIs = (path) => {
 
 /*########################     PPT REGISTRATION PAGES     ########################## */
 const startPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/submit-return')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
 
 const manufacturedWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/manufactured-plastic-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/manufactured-plastic-packaging-weight')) {
 
         document.getElementById('totalKg').value = '10'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -70,7 +70,7 @@ const manufacturedWeightPage = () => {
 }
 
 const importedWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/imported-plastic-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/imported-plastic-packaging-weight')) {
 
         document.getElementById('totalKg').value = '20'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -78,7 +78,7 @@ const importedWeightPage = () => {
 }
 
 const humanMedicinesWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/human-medicines-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/human-medicines-packaging-weight')) {
 
         document.getElementById('totalKg').value = '1'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -86,7 +86,7 @@ const humanMedicinesWeightPage = () => {
 }
 
 const exportedPackagingWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/exported-plastic-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/exported-plastic-packaging-weight')) {
 
         document.getElementById('totalKg').value = '2'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -94,7 +94,7 @@ const exportedPackagingWeightPage = () => {
 }
 
 const convertedPackagingCreditPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/converted-plastic-packaging-credit')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/converted-plastic-packaging-credit')) {
 
         document.getElementById('totalInPence').value = '200.34'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -102,7 +102,7 @@ const convertedPackagingCreditPage = () => {
 }
 
 const recycledWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/returns/recycled-plastic-packaging')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/recycled-plastic-packaging')) {
 
         document.getElementById('totalKg').value = '10'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -110,14 +110,14 @@ const recycledWeightPage = () => {
 }
 
 const reviewReturn = () => {
-     if (currentPageIs('/plastic-packaging-tax/returns/check-your-return')) {
+     if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/check-your-return')) {
 
          document.getElementsByClassName('govuk-button')[0].click()
      }
 }
 
 const confirmationPage = () => {
-     if (currentPageIs('/plastic-packaging-tax/returns/return-complete')) {
+     if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/return-complete')) {
 
          document.getElementsByClassName('govuk-link')[5].click()
      }

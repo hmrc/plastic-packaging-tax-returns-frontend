@@ -97,7 +97,7 @@ class TaxReturnsConnectorSpec
 
   private def givenPostToReturnsEndpointReturns(status: Int, body: String = "") =
     stubFor(
-      post("/returns")
+      post("/submit-return-for-plastic-packaging-tax")
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -150,7 +150,7 @@ class TaxReturnsConnectorSpec
 
   private def givenGetReturnsEndpointReturns(status: Int, body: String = "") =
     stubFor(
-      get("/returns/123")
+      get("/submit-return-for-plastic-packaging-tax/123")
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -213,7 +213,7 @@ class TaxReturnsConnectorSpec
 
   private def givenPutToReReturnsEndpointReturns(status: Int, id: String, body: String = "") =
     stubFor(
-      put(s"/returns/$id")
+      put(s"/submit-return-for-plastic-packaging-tax/$id")
         .willReturn(
           aResponse()
             .withStatus(status)
