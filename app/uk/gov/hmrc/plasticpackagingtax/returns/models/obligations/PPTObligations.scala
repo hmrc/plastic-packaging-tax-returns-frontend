@@ -27,7 +27,7 @@ final case class PPTObligations(
 ) {
 
   //todo confirm this? what happens if there isnt one? illegal state?
-  def nextObligationToPay: Option[Obligation] =
+  def nextObligationToReturn: Option[Obligation] =
     oldestOverdueObligation.orElse {
       if (isNextObligationDue) nextObligation else None
     }

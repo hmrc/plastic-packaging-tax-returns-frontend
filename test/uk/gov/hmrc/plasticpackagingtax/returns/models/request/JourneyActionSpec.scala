@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.request
 
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Result, Results}
 import play.api.test.Helpers.await
@@ -29,21 +29,23 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyActionSpec extends ControllerSpec {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
-  private val actionRefiner = new JourneyAction(mockTaxReturnsConnector, mockAuditor)(
-    ExecutionContext.global
-  )
+  private val actionRefiner =
+    new JourneyAction(mockTaxReturnsConnector, mockAuditor, mockObligationsConnector)(
+      ExecutionContext.global
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockTaxReturnsConnector, responseGenerator)
+    reset(mockTaxReturnsConnector, responseGenerator, mockObligationsConnector)
     given(responseGenerator.apply(any())).willReturn(Future.successful(Results.Ok))
   }
 
@@ -94,6 +96,18 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
           Future.successful(Right(aTaxReturn(withId(taxReturnId))))
         )
+        given(mockObligationsConnector.get(refEq(taxReturnId))(any[HeaderCarrier]))
+          .willReturn(
+            Future.successful(
+              PPTObligations(
+                None,
+                Some(Obligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "str")),
+                0,
+                false,
+                false
+              )
+            )
+          )
 
         await(
           actionRefiner.invokeBlock(
@@ -103,6 +117,7 @@ class JourneyActionSpec extends ControllerSpec {
         ) mustBe Results.Ok
         verify(mockAuditor, Mockito.atLeast(1)).newTaxReturnStarted()(any(), any())
       }
+
     }
 
     "load tax return" when {
@@ -163,6 +178,26 @@ class JourneyActionSpec extends ControllerSpec {
           )
         )
       }
+    }
+    "the user has no obligations" in {
+      given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
+        Future.successful(Right(None))
+      )
+      given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
+        Future.successful(Right(aTaxReturn(withId(taxReturnId))))
+      )
+      given(mockObligationsConnector.get(refEq(taxReturnId))(any[HeaderCarrier]))
+        .willReturn(Future.successful(PPTObligations(None, None, 0, false, false)))
+
+      val exception = intercept[IllegalStateException](
+        await(
+          actionRefiner.invokeBlock(
+            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
+            responseGenerator
+          )
+        )
+      )
+      exception.getMessage mustBe s"No Obligation for return id:$taxReturnId"
     }
   }
 }

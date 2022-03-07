@@ -17,19 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
-  AuthAction,
-  OpenObligationsRequest,
-  ReturnAction
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -64,14 +59,8 @@ class StartDateReturnController @Inject() (
               else
                 Redirect(
                   routes.StartDateReturnController.displayPage()
-                ) //todo: implement redirect to /no-other-periods
+                ) //todo: implement redirect to /no-other-periods BUILD THIS eventually
           )
     }
-
-//todo:
-//  formSpec
-//  controllerSpec
-//  viewSpec
-//  plug in the connector
 
 }

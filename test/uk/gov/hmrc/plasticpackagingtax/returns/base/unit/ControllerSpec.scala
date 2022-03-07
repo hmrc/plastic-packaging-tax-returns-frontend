@@ -87,7 +87,7 @@ trait ControllerSpec
       .withJsonBody(body)
       .withCSRFToken
 
-  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
+  protected def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
     cc.getClass.getDeclaredFields.foldLeft(Map.empty[String, String]) { (a, f) =>

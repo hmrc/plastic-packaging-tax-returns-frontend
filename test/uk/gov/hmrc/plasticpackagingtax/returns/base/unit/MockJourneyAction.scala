@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.ObligationsConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 
@@ -30,9 +31,12 @@ trait MockJourneyAction
     with MockitoSugar {
   self: MockitoSugar with Suite =>
 
-  val mockJourneyAction: JourneyAction = new JourneyAction(mockTaxReturnsConnector, mockAuditor)(
-    ExecutionContext.global
-  )
+  val mockObligationsConnector: ObligationsConnector = mock[ObligationsConnector]
+
+  val mockJourneyAction: JourneyAction =
+    new JourneyAction(mockTaxReturnsConnector, mockAuditor, mockObligationsConnector)(
+      ExecutionContext.global
+    )
 
   override protected def beforeEach() {
     super.beforeEach()
