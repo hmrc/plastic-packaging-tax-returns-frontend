@@ -91,4 +91,19 @@ class TaxReturnsConnector @Inject() (
       }
   }
 
+  def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Boolean]] = {
+    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val taxReturnId = payload.id
+    httpClient.POST[TaxReturn, TaxReturn](appConfig.pptReturnSubmissionUrl(taxReturnId), payload) // TODO types
+      .andThen { case _ => timer.stop() }
+      .map { response =>
+        logger.info(s"Submitted ppt tax returns for id [$taxReturnId]")
+        Right(true) // TODO meaningful response
+      }
+      .recover {
+        case ex: Exception =>
+          Left(DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex))
+      }
+  }
+
 }

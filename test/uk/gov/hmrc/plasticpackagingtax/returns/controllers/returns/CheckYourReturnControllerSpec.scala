@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import com.codahale.metrics.MetricRegistry
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
@@ -33,6 +34,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class CheckYourReturnControllerSpec extends ControllerSpec {
 
@@ -82,6 +85,20 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       }
     }
 
+    "submit return when user selects save and continue" in {
+      authorizedUser()
+      mockTaxReturnFind(aTaxReturn())
+      mockTaxReturnUpdate(aTaxReturn())
+      mockTaxReturnSubmission(aTaxReturn())
+
+      val result = controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
+
+      status(result) mustBe SEE_OTHER
+
+      // Verify that a submit call occurred
+      verify(mockTaxReturnsConnector).submit(ArgumentMatchers.eq(aTaxReturn()))(any())
+    }
+
     "return 303 and redirect to HomeController" when {
 
       "tax return not completed and display page method is invoked" in {
@@ -92,18 +109,13 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       }
     }
 
-    def updatedTaxReturn: TaxReturn = {
-      val captor = ArgumentCaptor.forClass(classOf[TaxReturn])
-      verify(mockTaxReturnsConnector).update(captor.capture())(any())
-      captor.getValue
-    }
-
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits tax return" in {
           authorizedUser()
           mockTaxReturnFind(aTaxReturn())
           mockTaxReturnUpdate(aTaxReturn())
+          mockTaxReturnSubmission(aTaxReturn())
 
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
@@ -150,6 +162,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
       "user submits the tax return and update fails" in {
         authorizedUser()
+        mockTaxReturnSubmission(aTaxReturn())
         mockTaxReturnFailure()
         val result =
           controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
@@ -176,5 +189,18 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
         intercept[RuntimeException](status(result))
       }
     }
+
+    def updatedTaxReturn: TaxReturn = {
+      val captor = ArgumentCaptor.forClass(classOf[TaxReturn])
+      verify(mockTaxReturnsConnector).update(captor.capture())(any())
+      captor.getValue
+    }
+
   }
+
+  private def mockTaxReturnSubmission(taxReturn: TaxReturn): Any = {
+    when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
+      .thenReturn(Future.successful(Right(true)))
+  }
+
 }
