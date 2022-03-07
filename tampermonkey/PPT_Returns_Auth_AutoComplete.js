@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Returns(PPT) Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   3.3
+// @version   3.4
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax%2Fsubmit-return-for-plastic-packaging-tax*
@@ -12,7 +12,7 @@
 (function() {
     'use strict';
 
-    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return";
+    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/submit-return-for-plastic-packaging-tax/submit-return";
 
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
