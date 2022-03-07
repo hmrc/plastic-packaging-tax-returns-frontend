@@ -44,13 +44,13 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
   private val weightPage = mock[imported_plastic_weight_page]
   private val page       = mock[imported_plastic_page]
 
-  private val controller = new ImportedPlasticWeightController(authenticate = mockAuthAction,
-                                                               journeyAction = mockJourneyAction,
-                                                               mcc = mcc,
-                                                               importedWeightPage = weightPage,
-                                                               importedComponentPage = page,
-                                                               returnsConnector =
-                                                                 mockTaxReturnsConnector
+  private val controller = new ImportedPlasticController(authenticate = mockAuthAction,
+                                                         journeyAction = mockJourneyAction,
+                                                         mcc = mcc,
+                                                         importedWeightPage = weightPage,
+                                                         importedComponentPage = page,
+                                                         returnsConnector =
+                                                           mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
@@ -112,9 +112,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         modifiedTaxReturn.importedPlastic.get mustBe true
-        redirectLocation(result) mustBe Some(
-          returnRoutes.ImportedPlasticWeightController.weight().url
-        )
+        redirectLocation(result) mustBe Some(returnRoutes.ImportedPlasticController.weight().url)
         reset(mockTaxReturnsConnector)
       }
       "user submits the weight details" in {

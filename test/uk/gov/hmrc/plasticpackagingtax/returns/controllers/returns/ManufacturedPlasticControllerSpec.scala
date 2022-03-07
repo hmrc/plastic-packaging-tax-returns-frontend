@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, contains}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -25,8 +25,8 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlastic
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
+  ManufacturedPlastic,
   ManufacturedPlasticWeight => ManufacturedPlasticWeightForm
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.ManufacturedPlasticWeight
@@ -145,7 +145,7 @@ class ManufacturedPlasticControllerSpec extends ControllerSpec {
 
         modifiedTaxReturn.manufacturedPlastic mustBe Some(false)
         redirectLocation(Future.successful(res)) mustBe Some(
-          routes.ImportedPlasticWeightController.displayPage().url
+          routes.ImportedPlasticController.contribution().url
         )
       }
 
@@ -156,7 +156,7 @@ class ManufacturedPlasticControllerSpec extends ControllerSpec {
 
         modifiedTaxReturn.manufacturedPlasticWeight mustBe Some(ManufacturedPlasticWeight(15000))
         redirectLocation(Future.successful(res)) mustBe Some(
-          routes.ImportedPlasticWeightController.displayPage().url
+          routes.ImportedPlasticController.contribution().url
         )
       }
     }

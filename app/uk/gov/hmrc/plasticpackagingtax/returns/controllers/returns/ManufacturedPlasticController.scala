@@ -93,7 +93,7 @@ class ManufacturedPlasticController @Inject() (
                 if (manufacturedContribution)
                   Redirect(returnRoutes.ManufacturedPlasticController.weight())
                 else
-                  Redirect(returnRoutes.ImportedPlasticWeightController.displayPage())
+                  Redirect(returnRoutes.ImportedPlasticController.contribution())
               case Left(error) => throw error
             }
         )
@@ -133,7 +133,7 @@ class ManufacturedPlasticController @Inject() (
           weight =>
             updateTaxReturn(weight).map {
               case Right(_) =>
-                Redirect(returnRoutes.ImportedPlasticWeightController.displayPage())
+                Redirect(returnRoutes.ImportedPlasticController.contribution())
               case Left(error) => throw error
             }
         )

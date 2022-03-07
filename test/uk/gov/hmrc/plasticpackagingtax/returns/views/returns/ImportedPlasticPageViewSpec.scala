@@ -21,13 +21,10 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.{ImportedPlastic, ImportedPlasticWeight}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic.form
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
-  imported_plastic_page,
-  imported_plastic_weight_page
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 import java.time.LocalDate
@@ -68,7 +65,7 @@ class ImportedPlasticPageViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ManufacturedPlasticWeightController.displayPage()
+        routes.ManufacturedPlasticController.contribution()
       )
     }
 
