@@ -71,7 +71,7 @@ class ManufacturedPlasticWeightController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(returnRoutes.ImportedPlasticWeightController.displayPage())
+                    Redirect(returnRoutes.ImportedPlasticWeightController.contribution())
                   case _ => Redirect(homeRoutes.HomeController.displayPage())
                 }
               case Left(error) => throw error

@@ -19,104 +19,133 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Result
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
+  imported_plastic_page,
+  imported_plastic_weight_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
-  private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[imported_plastic_weight_page]
+  private val mcc        = stubMessagesControllerComponents()
+  private val weightPage = mock[imported_plastic_weight_page]
+  private val page       = mock[imported_plastic_page]
 
   private val controller = new ImportedPlasticWeightController(authenticate = mockAuthAction,
                                                                journeyAction = mockJourneyAction,
                                                                mcc = mcc,
-                                                               page = page,
+                                                               importedWeightPage = weightPage,
+                                                               importedComponentPage = page,
                                                                returnsConnector =
                                                                  mockTaxReturnsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ImportedPlasticWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[Boolean]], any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(weightPage.apply(any[Form[ImportedPlasticWeight]])(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(weightPage)
     super.afterEach()
   }
 
   "ImportedPlasticWeightController" should {
 
     "return 200" when {
-
-      "display page method is invoked" in {
+      "contribution page method is invoked" in {
         authorizedUser()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.contribution()(getRequest())
 
         status(result) mustBe OK
       }
 
-      "tax return already exists and display page method is invoked" in {
+      "imported plastic value exists and contribution page method is invoked" in {
+        authorizedUser()
+        mockTaxReturnFind(aTaxReturn().copy(importedPlastic = Some(true)))
+        val result = controller.contribution()(getRequest())
+
+        status(result) mustBe OK
+      }
+      "weight page method is invoked" in {
+        authorizedUser()
+        val result = controller.weight()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "imported plastic weight already exists and weight page method is invoked" in {
         authorizedUser()
         mockTaxReturnFind(aTaxReturn())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.weight()(getRequest())
 
         status(result) mustBe OK
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits the weight details" in {
-          authorizedUser()
-          mockTaxReturnFind(aTaxReturn())
-          mockTaxReturnUpdate(aTaxReturn())
+    "return 303 (OK) for " when {
+      "user submits the contribution details" in {
+        authorizedUser()
+        val taxReturn = aTaxReturn()
+        mockTaxReturnFind(taxReturn)
+        mockTaxReturnUpdate(taxReturn)
 
-          val result =
-            controller.submit()(
-              postRequestEncoded(ImportedPlasticWeight(totalKg = "10"), formAction)
-            )
+        val correctForm = Seq("answer" -> "yes")
+        val result: Future[Result] =
+          controller.submitContribution()(postJsonRequestEncoded(correctForm: _*))
 
-          status(result) mustBe SEE_OTHER
-          modifiedTaxReturn.importedPlasticWeight.get.totalKg mustBe 10
-          formAction match {
-            case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                returnRoutes.HumanMedicinesPlasticWeightController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
-          }
-          reset(mockTaxReturnsConnector)
-        }
+        status(result) mustBe SEE_OTHER
+        modifiedTaxReturn.importedPlastic.get mustBe true
+        redirectLocation(result) mustBe Some(
+          returnRoutes.ImportedPlasticWeightController.weight().url
+        )
+        reset(mockTaxReturnsConnector)
+      }
+      "user submits the weight details" in {
+        authorizedUser()
+        mockTaxReturnFind(aTaxReturn())
+        mockTaxReturnUpdate(aTaxReturn())
+
+        val result =
+          controller.submitWeight()(postRequestEncoded(ImportedPlasticWeight(totalKg = "10")))
+
+        status(result) mustBe SEE_OTHER
+        modifiedTaxReturn.importedPlasticWeight.get.totalKg mustBe 10
+        redirectLocation(result) mustBe Some(
+          returnRoutes.HumanMedicinesPlasticWeightController.displayPage().url
+        )
+        reset(mockTaxReturnsConnector)
       }
     }
 
     "return prepopulated form" when {
 
-      def pageForm: Form[ImportedPlasticWeight] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[ImportedPlasticWeight]])
-        verify(page).apply(captor.capture())(any(), any())
-        captor.getValue
-      }
-
-      "data exist" in {
+      "weight exist" in {
+        def pageForm: Form[ImportedPlasticWeight] = {
+          val captor = ArgumentCaptor.forClass(classOf[Form[ImportedPlasticWeight]])
+          verify(weightPage).apply(captor.capture())(any(), any())
+          captor.getValue
+        }
         authorizedUser()
         mockTaxReturnFind(aTaxReturn(withImportedPlasticWeight(totalKg = 10)))
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.weight()(getRequest()))
 
         pageForm.get.totalKg mustBe "10"
 
@@ -125,10 +154,18 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
     "return 400 (BAD_REQUEST)" when {
 
+      "user submits imported plastic question" in {
+        authorizedUser()
+        val result =
+          controller.submitContribution()(postRequest(JsObject.empty))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
       "user submits invalid imported plastic weight" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = ""))))
+          controller.submitWeight()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = ""))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -136,27 +173,57 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
 
     "return an error" when {
 
+      "user submits imported plastic contribution form and the tax return update fails" in {
+        authorizedUser()
+        mockTaxReturnFailure()
+        val correctForm = Seq("answer" -> "yes")
+        val result: Future[Result] =
+          controller.submitContribution()(postJsonRequestEncoded(correctForm: _*))
+
+        intercept[DownstreamServiceError](status(result))
+      }
+
       "user submits form and the tax return update fails" in {
         authorizedUser()
         mockTaxReturnFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
+          controller.submitWeight()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
 
         intercept[DownstreamServiceError](status(result))
+      }
+
+      "user submits imported plastic contribution form and a tax return update runtime exception occurs" in {
+        authorizedUser()
+        mockTaxReturnException()
+
+        val correctForm = Seq("answer" -> "yes")
+        val result: Future[Result] =
+          controller.submitContribution()(postJsonRequestEncoded(correctForm: _*))
+
+        intercept[RuntimeException] {
+          status(result)
+        }
       }
 
       "user submits form and a tax return update runtime exception occurs" in {
         authorizedUser()
         mockTaxReturnException()
         val result =
-          controller.submit()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
+          controller.submitWeight()(postRequest(Json.toJson(ImportedPlasticWeight(totalKg = "5"))))
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user is not authorised to submit the contribution page" in {
+        unAuthorizedUser()
+        val result = controller.submitContribution()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.submitWeight()(getRequest())
 
         intercept[RuntimeException](status(result))
       }

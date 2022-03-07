@@ -23,7 +23,9 @@ import uk.gov.hmrc.plasticpackagingtax.returns.utils.TaxLiabilityFactory
 case class TaxReturn(
   id: String,
   obligation: Option[Obligation] = None,
+  manufacturedPlastic: Option[Boolean] = None,
   manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
+  importedPlastic: Option[Boolean] = None,
   importedPlasticWeight: Option[ImportedPlasticWeight] = None,
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
@@ -46,7 +48,9 @@ case class TaxReturn(
   def toTaxReturn: TaxReturn =
     TaxReturn(id = this.id,
               obligation = this.obligation,
+              manufacturedPlastic = this.manufacturedPlastic,
               manufacturedPlasticWeight = this.manufacturedPlasticWeight,
+              importedPlastic = this.importedPlastic,
               importedPlasticWeight = this.importedPlasticWeight,
               humanMedicinesPlasticWeight = this.humanMedicinesPlasticWeight,
               exportedPlasticWeight = this.exportedPlasticWeight,

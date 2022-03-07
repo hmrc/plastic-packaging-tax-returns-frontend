@@ -98,7 +98,7 @@ class ManufacturedPlasticWeightControllerSpec extends ControllerSpec {
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
-                returnRoutes.ImportedPlasticWeightController.displayPage().url
+                returnRoutes.ImportedPlasticWeightController.contribution().url
               )
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)

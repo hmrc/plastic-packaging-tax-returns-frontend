@@ -17,12 +17,20 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
 import com.google.common.base.Strings
+import play.api.data.Forms.{optional, text}
+import play.api.data.Mapping
 
 import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
   val maxLength = 100
+
+  def nonEmptyString(errorKey: String): Mapping[String] =
+    optional(text)
+      .verifying(errorKey, _.nonEmpty)
+      .transform[String](_.get, Some.apply)
+      .verifying(errorKey, _.trim.nonEmpty)
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
@@ -57,5 +65,7 @@ trait CommonFormValidators {
 
   private val namePattern =
     Pattern.compile("^[a-zA-Z0-9À-ÿ !#$%&''‘’\\\"“”«»()*+,./:;=?@\\[\\]£€¥\\\\—–‐-]{1,160}$")
+
+  val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 
 }

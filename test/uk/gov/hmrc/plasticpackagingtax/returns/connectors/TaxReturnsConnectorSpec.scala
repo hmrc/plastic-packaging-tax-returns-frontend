@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
 import org.scalatest.EitherValues
@@ -25,8 +24,8 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
 class TaxReturnsConnectorSpec
     extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder {

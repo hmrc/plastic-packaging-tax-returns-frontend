@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,16 +27,23 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.{ImportedPlastic, ImportedPlasticWeight}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic.{form => importedPlasticForm}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  Cacheable,
+  TaxReturn,
   ImportedPlasticWeight => ImportedPlasticWeightDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
+  imported_plastic_page,
+  imported_plastic_weight_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -46,26 +52,58 @@ class ImportedPlasticWeightController @Inject() (
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
   mcc: MessagesControllerComponents,
-  page: imported_plastic_weight_page
+  importedComponentPage: imported_plastic_page,
+  importedWeightPage: imported_plastic_weight_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def contribution(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
+      val form = request.taxReturn.importedPlastic match {
+        case Some(data) =>
+          importedPlasticForm().fill(data)
+        case _ => importedPlasticForm()
+      }
+      Ok(importedComponentPage(form, getObligation(request.taxReturn)))
+
+    }
+
+  def submitContribution(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+      ImportedPlastic.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[Boolean]) =>
+            Future.successful(
+              BadRequest(importedComponentPage(formWithErrors, getObligation(request.taxReturn)))
+            ),
+          contribution =>
+            updateTaxReturn(contribution).map {
+              case Right(_) =>
+                Redirect(returnRoutes.ImportedPlasticWeightController.weight())
+              case Left(error) => throw error
+            }
+        )
+    }
+
+  def weight(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       request.taxReturn.importedPlasticWeight match {
         case Some(data) =>
-          Ok(page(form().fill(ImportedPlasticWeight(totalKg = data.totalKg.toString))))
-        case _ => Ok(page(form()))
+          Ok(
+            importedWeightPage(form().fill(ImportedPlasticWeight(totalKg = data.totalKg.toString)))
+          )
+        case _ => Ok(importedWeightPage(form()))
       }
     }
 
-  def submit(): Action[AnyContent] =
+  def submitWeight(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       ImportedPlasticWeight.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[ImportedPlasticWeight]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+            Future.successful(BadRequest(importedWeightPage(formWithErrors))),
           weight =>
             updateTaxReturn(weight).map {
               case Right(_) =>
@@ -87,5 +125,17 @@ class ImportedPlasticWeightController @Inject() (
         Some(ImportedPlasticWeightDetails(totalKg = formData.totalKg.toLong))
       )
     }
+
+  private def updateTaxReturn(
+    formData: Boolean
+  )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
+    update { taxReturn =>
+      taxReturn.copy(importedPlastic = Some(formData))
+    }
+
+  private def getObligation(taxReturn: TaxReturn): Obligation =
+    taxReturn.obligation.getOrElse(
+      throw new IllegalStateException("Tax return obligation not present")
+    )
 
 }
