@@ -49,10 +49,8 @@ class AuthActionImpl @Inject() (
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
-  private def authPredicate = {
-    val delegatedAuthRule = "ppt-auth" // Agent access control
-    AffinityGroup.Organisation and (Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule(delegatedAuthRule))
-  }
+  private def authPredicate =
+    AffinityGroup.Organisation and (Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule("ppt-auth"))
 
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
@@ -100,29 +98,27 @@ class AuthActionImpl @Inject() (
               throw InsufficientEnrolments(
                 s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
               )
-            case Some(pptEnrolmentIdentifier) => executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
+            case Some(pptEnrolmentIdentifier) =>
+              executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
           }
 
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-
-      case t: InsufficientEnrolments =>
-        // Redirect to register
-        Results.Ok("InsufficientEnrolments: " + t.toString)
-
-      case t: Throwable =>
-        // TODO
-        Results.Ok("!!!!!!!!!!!!!! Random fail" + t.toString)
+      case _: InsufficientEnrolments =>
+        // Authenticated users who lack PPT enrolments are redirected to registration frontend
+        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
+      case _: AuthorisationException =>
+        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
     }
   }
 
   private def executeRequest[A](
-                                 request: Request[A],
-                                 block: AuthenticatedRequest[A] => Future[Result],
-                                 identityData: IdentityData,
-                                 pptEnrolmentIdentifier: String,
-                                 allEnrolments: Enrolments
+    request: Request[A],
+    block: AuthenticatedRequest[A] => Future[Result],
+    identityData: IdentityData,
+    pptEnrolmentIdentifier: String,
+    allEnrolments: Enrolments
   ) =
     if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
@@ -135,7 +131,8 @@ class AuthActionImpl @Inject() (
   private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] = {
     val maybeEnrolmentIdentifier = getPptEnrolmentIdentifier(enrolments, identifier)
     maybeEnrolmentIdentifier match {
-      case Some(enrolmentIdentifier) => Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
+      case Some(enrolmentIdentifier) =>
+        Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
       case None => Option.empty
     }
   }
