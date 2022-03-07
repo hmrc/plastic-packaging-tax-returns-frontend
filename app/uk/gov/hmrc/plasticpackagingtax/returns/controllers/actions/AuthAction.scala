@@ -128,14 +128,12 @@ class AuthActionImpl @Inject() (
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad()))
     }
 
-  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] = {
-    val maybeEnrolmentIdentifier = getPptEnrolmentIdentifier(enrolments, identifier)
-    maybeEnrolmentIdentifier match {
+  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
+    getPptEnrolmentIdentifier(enrolments, identifier) match {
       case Some(enrolmentIdentifier) =>
         Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
       case None => Option.empty
     }
-  }
 
   private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
