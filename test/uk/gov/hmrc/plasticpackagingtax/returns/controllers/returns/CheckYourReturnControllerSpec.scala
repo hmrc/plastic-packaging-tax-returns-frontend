@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.{Counter, MetricRegistry}
+import com.kenshoo.play.metrics.Metrics
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
@@ -24,6 +25,7 @@ import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
+import play.api.mvc.Result
 import play.api.test.Helpers.{await, flash, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
@@ -42,6 +44,17 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
   private val page = mock[check_your_return_page]
 
+  private val resettableMockMetrics = mock[Metrics]
+  private val mockDefaultRegistry = mock[MetricRegistry]
+  private val submissionSuccessCounter = mock[Counter]
+  private val submissionFailedCounter = mock[Counter]
+
+  {
+    when(resettableMockMetrics.defaultRegistry).thenReturn(mockDefaultRegistry)
+    when(mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.success.submission.counter"))).thenReturn(submissionSuccessCounter)
+    when(mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.failed.submission.counter"))).thenReturn(submissionFailedCounter)
+  }
+
   private val controller = new CheckYourReturnController(authenticate = mockAuthAction,
                                                          journeyAction = mockJourneyAction,
                                                          mcc = mcc,
@@ -49,7 +62,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
                                                          returnsConnector =
                                                            mockTaxReturnsConnector,
                                                          auditor = mockAuditor,
-                                                         metrics = metricsMock
+                                                         metrics = resettableMockMetrics
   )
 
   override protected def beforeEach(): Unit = {
@@ -60,6 +73,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
   override protected def afterEach(): Unit = {
     reset(page)
     reset(mockTaxReturnsConnector)
+    reset(submissionSuccessCounter)
+    reset(submissionFailedCounter)
     super.afterEach()
   }
 
@@ -117,24 +132,20 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           mockTaxReturnUpdate(aTaxReturn())
           mockTaxReturnSubmission(aTaxReturn())
 
-          val result =
+          val result: Future[Result] =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
 
           status(result) mustBe SEE_OTHER
+
           formAction match {
             case ("SaveAndContinue", "") =>
-              metricsMock.defaultRegistry.counter(
-                "ppt.returns.success.submission.counter"
-              ).getCount mustBe 1
               updatedTaxReturn.metaData.returnCompleted mustBe true
               flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
               redirectLocation(result) mustBe Some(
                 returnRoutes.ConfirmationController.displayPage().url
               )
+              verify(submissionSuccessCounter).inc()
             case _ =>
-              metricsMock.defaultRegistry.counter(
-                "ppt.returns.success.submission.counter"
-              ).getCount mustBe 1
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
           }
           reset(mockTaxReturnsConnector)
@@ -168,9 +179,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
         intercept[DownstreamServiceError](status(result))
-        metricsMock.defaultRegistry.counter(
-          "ppt.returns.failed.submission.counter"
-        ).getCount mustBe 1
+        verify(submissionFailedCounter).inc()
       }
 
       "user submits the tax return and runtime exception occurs" in {
