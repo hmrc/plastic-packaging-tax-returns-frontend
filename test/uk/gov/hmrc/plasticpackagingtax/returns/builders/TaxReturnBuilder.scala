@@ -16,15 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.builders
 
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
-  ConvertedPackagingCredit,
-  ExportedPlasticWeight,
-  HumanMedicinesPlasticWeight,
-  ImportedPlasticWeight,
-  ManufacturedPlasticWeight,
-  RecycledPlasticWeight,
-  TaxReturn
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain._
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 import java.time.LocalDate
@@ -47,6 +39,9 @@ trait TaxReturnBuilder {
   )
 
   def withId(id: String): TaxReturnModifier = _.copy(id = id)
+
+  def withManufacturedPlastic(manufacturedPlastic: Boolean): TaxReturnModifier =
+    _.copy(manufacturedPlastic = Some(manufacturedPlastic))
 
   def withManufacturedPlasticWeight(totalKg: Long): TaxReturnModifier =
     _.copy(manufacturedPlasticWeight =

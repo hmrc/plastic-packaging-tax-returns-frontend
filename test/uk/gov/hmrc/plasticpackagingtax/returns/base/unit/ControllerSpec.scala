@@ -82,6 +82,15 @@ trait ControllerSpec
       .withCSRFToken
   }
 
+  // This function exists because getTuples used in the above may not always encode values correctly
+  protected def postRequestTuplesEncoded(
+    formTuples: Seq[(String, String)],
+    formAction: (String, String) = saveAndContinueFormAction
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequest
+      .withFormUrlEncodedBody(formTuples :+ formAction: _*)
+      .withCSRFToken
+
   protected def postJsonRequestEncoded(
     body: (String, String)*
   ): Request[AnyContentAsFormUrlEncoded] =

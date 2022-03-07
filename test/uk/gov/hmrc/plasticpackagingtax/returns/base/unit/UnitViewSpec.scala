@@ -51,6 +51,7 @@ abstract class UnitViewSpec
 
   def exerciseGeneratedRenderingMethods(): Unit
 
+  def getRequest() = FakeRequest()
 }
 
 trait MessagesSupport {

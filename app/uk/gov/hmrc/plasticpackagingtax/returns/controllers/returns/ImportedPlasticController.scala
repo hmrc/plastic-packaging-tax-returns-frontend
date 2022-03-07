@@ -47,7 +47,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ImportedPlasticWeightController @Inject() (
+class ImportedPlasticController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
@@ -80,7 +80,7 @@ class ImportedPlasticWeightController @Inject() (
           contribution =>
             updateTaxReturn(contribution).map {
               case Right(_) =>
-                Redirect(returnRoutes.ImportedPlasticWeightController.weight())
+                Redirect(returnRoutes.ImportedPlasticController.weight())
               case Left(error) => throw error
             }
         )

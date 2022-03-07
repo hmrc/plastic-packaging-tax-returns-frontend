@@ -42,13 +42,13 @@
 
 @govukLayout(
     title = Title("returns.importedPlasticWeight.component.title"),
-    backButton = Some(BackButton(messages("site.back"), returnRoutes.ManufacturedPlasticWeightController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), returnRoutes.ManufacturedPlasticController.contribution(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
 
     @sectionHeader(messages("returns.sectionHeader", messages(s"month.${obligation.fromDate.getMonthValue}"), messages(s"month.${obligation.toDate.getMonthValue}"), obligation.toDate.getYear.toString))
 
-    @formHelper(action = returnRoutes.ImportedPlasticWeightController.submitContribution(), 'autoComplete -> "off") {
+    @formHelper(action = returnRoutes.ImportedPlasticController.submitContribution(), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
                 content = Text(messages("returns.importedPlasticWeight.component.title")),

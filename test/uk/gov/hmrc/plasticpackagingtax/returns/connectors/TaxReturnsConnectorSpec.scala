@@ -78,7 +78,7 @@ class TaxReturnsConnectorSpec
 
         givenPostToReturnsEndpointReturns(Status.BAD_REQUEST)
 
-        val res = await(connector.create(aTaxReturn()))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -87,7 +87,7 @@ class TaxReturnsConnectorSpec
 
         givenPostToReturnsEndpointReturns(Status.CREATED, "someRubbish")
 
-        val res = await(connector.create(aTaxReturn()))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -194,7 +194,7 @@ class TaxReturnsConnectorSpec
 
         givenPutToReReturnsEndpointReturns(Status.BAD_REQUEST, "123")
 
-        val res = await(connector.update(aTaxReturn()))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }
@@ -203,7 +203,7 @@ class TaxReturnsConnectorSpec
 
         givenPutToReReturnsEndpointReturns(Status.CREATED, "123", "someRubbish")
 
-        val res = await(connector.update(aTaxReturn()))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }

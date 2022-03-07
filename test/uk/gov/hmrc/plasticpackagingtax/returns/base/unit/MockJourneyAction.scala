@@ -36,7 +36,7 @@ trait MockJourneyAction
   override protected def beforeEach() {
     super.beforeEach()
     given(mockTaxReturnsConnector.find(any())(any())).willReturn(
-      Future.successful(Right(Option(aTaxReturn())))
+      Future.successful(Right(Option(aTaxReturn(withId("001")))))
     )
   }
 

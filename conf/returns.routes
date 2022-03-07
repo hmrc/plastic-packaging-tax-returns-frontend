@@ -4,13 +4,15 @@ GET        /return-information   uk.gov.hmrc.plasticpackagingtax.returns.control
 
 GET        /submit-return   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartController.displayPage()
 
-GET        /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.displayPage()
-POST       /manufactured-plastic-packaging-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticWeightController.submit()
+GET        /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.contribution()
+POST       /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.submitContribution()
+GET        /manufactured-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.weight()
+POST       /manufactured-weight       uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.submitWeight()
 
-GET        /imported-components           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.contribution()
-POST       /imported-components           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.submitContribution()
-GET        /imported-weight               uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.weight()
-POST       /imported-weight               uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticWeightController.submitWeight()
+GET        /imported-components           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticController.contribution()
+POST       /imported-components           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticController.submitContribution()
+GET        /imported-weight               uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticController.weight()
+POST       /imported-weight               uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ImportedPlasticController.submitWeight()
 
 GET        /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.displayPage()
 POST       /human-medicines-packaging-weight    uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.HumanMedicinesPlasticWeightController.submit()

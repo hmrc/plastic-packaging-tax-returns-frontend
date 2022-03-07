@@ -58,7 +58,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ManufacturedPlasticWeightController.displayPage()
+        routes.ImportedPlasticController.contribution()
       )
     }
 

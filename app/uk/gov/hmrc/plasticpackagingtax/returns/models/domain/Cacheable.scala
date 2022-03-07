@@ -25,12 +25,12 @@ import scala.concurrent.{ExecutionContext, Future}
 trait Cacheable {
   def returnsConnector: TaxReturnsConnector
 
-  protected def update(cache: TaxReturn => TaxReturn)(implicit
+  protected def update(updateReturn: TaxReturn => TaxReturn)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext,
     request: JourneyRequest[_]
   ): Future[Either[ServiceError, TaxReturn]] =
-    returnsConnector.update(cache(request.taxReturn)).flatMap {
+    returnsConnector.update(updateReturn(request.taxReturn)).flatMap {
       case Right(reg)  => Future.successful(Right(reg))
       case Left(error) => Future.successful(Left(error))
     }

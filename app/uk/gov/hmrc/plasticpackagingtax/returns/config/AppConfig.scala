@@ -68,6 +68,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptCompleteReturnGuidanceUrl: String =
     config.get[String]("urls.pptCompleteReturnGuidanceLink")
 
+  lazy val pptLiablePackagingGuidanceLink =
+    config.get[String]("urls.pptLiablePackagingGuidanceLink")
+
+  lazy val pptExcludedPackagingGuidanceLink =
+    config.get[String]("urls.pptExcludedPackagingGuidanceLink")
+
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
   lazy val exitSurveyUrl = config.get[String]("urls.exitSurvey")
