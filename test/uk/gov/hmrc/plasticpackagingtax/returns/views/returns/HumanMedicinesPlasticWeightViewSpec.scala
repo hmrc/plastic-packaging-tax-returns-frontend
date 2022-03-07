@@ -62,19 +62,18 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    val heading = messages("returns.startDateReturns.heading",
-                           messages(s"month.${defaultObligation.fromDate.getMonthValue}"),
-                           messages(s"month.${defaultObligation.toDate.getMonthValue}"),
-                           defaultObligation.toDate.getYear.toString
-    )
     "display title" in {
 
-      view.select("title").text() must include(heading)
+      view.select("title").text() must include(
+        messages("returns.humanMedicinesPlasticWeight.meta.title")
+      )
     }
 
     "display header" in {
 
-      view.getElementById("section-header").text() must include(heading)
+      view.getElementById("section-header").text() must include(
+        messages("returns.humanMedicinesPlasticWeight.sectionHeader")
+      )
     }
 
     "display hint" in {
