@@ -91,6 +91,13 @@ trait ControllerSpec
       .withFormUrlEncodedBody(formTuples :+ formAction: _*)
       .withCSRFToken
 
+  protected def postJsonRequestEncoded(
+    body: (String, String)*
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequest
+      .withFormUrlEncodedBody(body: _*)
+      .withCSRFToken
+
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
     postRequest
       .withJsonBody(body)

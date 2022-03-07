@@ -26,6 +26,9 @@ month.10 = October
 month.11 = November
 month.12 = December
 
+general.true = Yes
+general.false = No
+
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
@@ -92,6 +95,12 @@ returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycl
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
 
+returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
+returns.manufacturedPlastic.details.link = What do we mean by components?
+returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
+returns.manufacturedPlastic.details.line2.link = See examples of components
+returns.manufacturedPlastic.details.empty.error = Choose an option
+
 returns.sectionHeader = {0} to {1} {2}
 
 returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
@@ -111,6 +120,10 @@ returns.manufacturedPlasticWeight.hint.4.link = examples of things you should no
 returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+
+returns.importedPlasticWeight.component.title = Have you imported finished plastic packaging components in this period?
+returns.importedPlasticWeight.component.details.line1 = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
+returns.importedPlasticWeight.component.details.empty.error = Choose an option
 
 returns.importedPlasticWeight.meta.title = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.title = 2. Imported plastic packaging
