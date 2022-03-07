@@ -22,7 +22,11 @@ import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, MetaData, TaxReturn}
@@ -85,16 +89,16 @@ class CheckYourReturnController @Inject() (
 
   private def submitReturnAndMarkAsCompleted()(implicit
     req: JourneyRequest[_]
-  ): Future[Either[ServiceError, TaxReturn]] = {
+  ): Future[Either[ServiceError, TaxReturn]] =
     submit(req.taxReturn).flatMap { _ =>
       update { taxReturn =>
         taxReturn.copy(metaData = MetaData(returnCompleted = true))
       }
     }
-  }
 
-  private def submit(taxReturn: TaxReturn)(implicit hc: HeaderCarrier):  Future[Either[ServiceError, Boolean]] = {
+  private def submit(
+    taxReturn: TaxReturn
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Boolean]] =
     returnsConnector.submit(taxReturn)
-  }
 
 }

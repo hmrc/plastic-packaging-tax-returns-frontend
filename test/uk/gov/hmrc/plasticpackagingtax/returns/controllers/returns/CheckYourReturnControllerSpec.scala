@@ -44,15 +44,19 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
   private val page = mock[check_your_return_page]
 
-  private val resettableMockMetrics = mock[Metrics]
-  private val mockDefaultRegistry = mock[MetricRegistry]
+  private val resettableMockMetrics    = mock[Metrics]
+  private val mockDefaultRegistry      = mock[MetricRegistry]
   private val submissionSuccessCounter = mock[Counter]
-  private val submissionFailedCounter = mock[Counter]
+  private val submissionFailedCounter  = mock[Counter]
 
   {
     when(resettableMockMetrics.defaultRegistry).thenReturn(mockDefaultRegistry)
-    when(mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.success.submission.counter"))).thenReturn(submissionSuccessCounter)
-    when(mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.failed.submission.counter"))).thenReturn(submissionFailedCounter)
+    when(
+      mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.success.submission.counter"))
+    ).thenReturn(submissionSuccessCounter)
+    when(
+      mockDefaultRegistry.counter(ArgumentMatchers.eq("ppt.returns.failed.submission.counter"))
+    ).thenReturn(submissionFailedCounter)
   }
 
   private val controller = new CheckYourReturnController(authenticate = mockAuthAction,
@@ -106,7 +110,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       mockTaxReturnUpdate(aTaxReturn())
       mockTaxReturnSubmission(aTaxReturn())
 
-      val result = controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
+      val result =
+        controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
       status(result) mustBe SEE_OTHER
 
@@ -207,9 +212,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
   }
 
-  private def mockTaxReturnSubmission(taxReturn: TaxReturn): Any = {
+  private def mockTaxReturnSubmission(taxReturn: TaxReturn): Any =
     when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
       .thenReturn(Future.successful(Right(true)))
-  }
 
 }

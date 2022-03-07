@@ -219,7 +219,7 @@ class TaxReturnsConnectorSpec
 
         val res = await(connector.submit(aTaxReturn(withId("123"))))
 
-        res mustBe Right(true)
+        res.right.get mustBe true
         getTimer("ppt.returns.submit.timer").getCount mustBe 1
       }
 
@@ -241,7 +241,9 @@ class TaxReturnsConnectorSpec
       post(s"/returns-submission/$id")
         .willReturn(
           aResponse()
-            .withStatus(status)
+            .withStatus(status).withBody(
+              "\"TODO what's a good response format for this end point\""
+            )
         )
     )
 

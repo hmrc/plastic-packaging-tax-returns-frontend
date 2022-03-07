@@ -56,10 +56,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
 
-  lazy val pptReturnsUrl: String = s"$pptServiceHost/returns"
+  lazy val pptReturnsUrl: String           = s"$pptServiceHost/returns"
   lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
 
-  def pptReturnUrl(id: String): String = s"$pptReturnsUrl/$id"
+  def pptReturnUrl(id: String): String           = s"$pptReturnsUrl/$id"
   def pptReturnSubmissionUrl(id: String): String = s"$pptReturnsSubmissionUrl/$id"
 
   def pptSubscriptionUrl(pptReference: String): String =
