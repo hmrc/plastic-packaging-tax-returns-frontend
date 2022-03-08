@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import com.codahale.metrics.{Counter, MetricRegistry}
 import com.kenshoo.play.metrics.Metrics
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -152,6 +152,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
               verify(submissionSuccessCounter).inc()
             case _ =>
               redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
+              verifyNoInteractions(submissionSuccessCounter)
           }
           reset(mockTaxReturnsConnector)
         }
