@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.base.unit
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
@@ -52,6 +52,10 @@ trait MockTaxReturnsConnector extends MockitoSugar with TaxReturnBuilder with Be
   ): OngoingStubbing[Future[Either[ServiceError, Option[TaxReturn]]]] =
     when(mockTaxReturnsConnector.find(any[String])(any()))
       .thenReturn(Future.successful(Right(Some(dataToReturn))))
+
+  def mockTaxReturnSubmission(taxReturn: TaxReturn): Any =
+    when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
+      .thenReturn(Future.successful(Right(true)))
 
   def mockTaxReturnException(): OngoingStubbing[Future[Either[ServiceError, TaxReturn]]] =
     when(mockTaxReturnsConnector.update(any[TaxReturn])(any()))

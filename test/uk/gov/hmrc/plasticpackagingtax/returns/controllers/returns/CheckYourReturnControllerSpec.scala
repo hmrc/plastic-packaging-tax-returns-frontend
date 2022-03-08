@@ -79,6 +79,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
     reset(mockTaxReturnsConnector)
     reset(submissionSuccessCounter)
     reset(submissionFailedCounter)
+    reset(mockAuditor)
     super.afterEach()
   }
 
@@ -106,17 +107,17 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
     "submit return when user selects save and continue" in {
       authorizedUser()
-      mockTaxReturnFind(aTaxReturn())
-      mockTaxReturnUpdate(aTaxReturn())
-      mockTaxReturnSubmission(aTaxReturn())
+      val taxReturn = aTaxReturn()
+      mockTaxReturnFind(taxReturn)
+      mockTaxReturnUpdate(taxReturn)
+      mockTaxReturnSubmission(taxReturn)
 
       val result =
         controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
       status(result) mustBe SEE_OTHER
 
-      // Verify that a submit call occurred
-      verify(mockTaxReturnsConnector).submit(ArgumentMatchers.eq(aTaxReturn()))(any())
+      verify(mockTaxReturnsConnector).submit(ArgumentMatchers.eq(taxReturn))(any())
     }
 
     "return 303 and redirect to HomeController" when {
@@ -132,10 +133,11 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits tax return" in {
+          val taxReturn = aTaxReturn()
           authorizedUser()
-          mockTaxReturnFind(aTaxReturn())
-          mockTaxReturnUpdate(aTaxReturn())
-          mockTaxReturnSubmission(aTaxReturn())
+          mockTaxReturnFind(taxReturn)
+          mockTaxReturnUpdate(taxReturn)
+          mockTaxReturnSubmission(taxReturn)
 
           val result: Future[Result] =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
@@ -144,7 +146,9 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
           formAction match {
             case ("SaveAndContinue", "") =>
+              submittedTaxReturn.id mustBe taxReturn.id
               updatedTaxReturn.metaData.returnCompleted mustBe true
+
               flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
               redirectLocation(result) mustBe Some(
                 returnRoutes.ConfirmationController.displayPage().url
@@ -160,26 +164,31 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
     }
 
     "send audit event" when {
-      "submission of audit event" in {
+      "on successful submission" in {
         authorizedUser()
         val taxReturn = aTaxReturn()
         mockTaxReturnFind(taxReturn)
         mockTaxReturnUpdate(taxReturn)
+        when(mockAuditor.auditTaxReturn(any())(any(), any())).thenReturn()
 
-        await(controller.submit()(postRequest(JsObject.empty)))
+        await(controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction)))
 
-        verify(mockAuditor, Mockito.atLeast(1)).auditTaxReturn(ArgumentMatchers.eq(taxReturn))(
-          any(),
-          any()
-        )
+        def auditedTaxReturn: TaxReturn = {
+          val captor = ArgumentCaptor.forClass(classOf[TaxReturn])
+          verify(mockAuditor).auditTaxReturn(captor.capture())(any(), any())
+          captor.getValue
+        }
+
+        auditedTaxReturn mustBe taxReturn
       }
     }
 
     "return an error" when {
 
       "user submits the tax return and update fails" in {
+        val taxReturn = aTaxReturn()
         authorizedUser()
-        mockTaxReturnSubmission(aTaxReturn())
+        mockTaxReturnSubmission(taxReturn)
         mockTaxReturnFailure()
         val result =
           controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
@@ -211,10 +220,12 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       captor.getValue
     }
 
-  }
+    def submittedTaxReturn: TaxReturn = {
+      val captor = ArgumentCaptor.forClass(classOf[TaxReturn])
+      verify(mockTaxReturnsConnector).submit(captor.capture())(any())
+      captor.getValue
+    }
 
-  private def mockTaxReturnSubmission(taxReturn: TaxReturn): Any =
-    when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
-      .thenReturn(Future.successful(Right(true)))
+  }
 
 }
