@@ -69,7 +69,7 @@ class CheckYourReturnController @Inject() (
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       FormAction.bindFromRequest match {
         case SaveAndContinue =>
-          val refId = s"PPTR12345678${Random.nextInt(1000000)}"
+          val refId = s"PPTR12345678${Random.nextInt(1000000)}" // TODO not very production like format
           submitReturnAndMarkAsCompleted().map {
             case Right(taxReturn) =>
               auditor.auditTaxReturn(taxReturn)

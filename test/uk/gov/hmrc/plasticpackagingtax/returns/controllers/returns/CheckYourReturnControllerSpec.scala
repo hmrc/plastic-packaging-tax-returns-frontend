@@ -19,8 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import com.codahale.metrics.{Counter, MetricRegistry}
 import com.kenshoo.play.metrics.Metrics
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
+import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -105,21 +105,6 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       }
     }
 
-    "submit return when user selects save and continue" in {
-      authorizedUser()
-      val taxReturn = aTaxReturn()
-      mockTaxReturnFind(taxReturn)
-      mockTaxReturnUpdate(taxReturn)
-      mockTaxReturnSubmission(taxReturn)
-
-      val result =
-        controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
-
-      status(result) mustBe SEE_OTHER
-
-      verify(mockTaxReturnsConnector).submit(ArgumentMatchers.eq(taxReturn))(any())
-    }
-
     "return 303 and redirect to HomeController" when {
 
       "tax return not completed and display page method is invoked" in {
@@ -169,7 +154,8 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
         val taxReturn = aTaxReturn()
         mockTaxReturnFind(taxReturn)
         mockTaxReturnUpdate(taxReturn)
-        when(mockAuditor.auditTaxReturn(any())(any(), any())).thenReturn()
+        mockTaxReturnSubmission(taxReturn)
+        doNothing().when(mockAuditor).auditTaxReturn(ArgumentMatchers.eq(taxReturn))(any(), any())
 
         await(controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction)))
 
