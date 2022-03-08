@@ -174,6 +174,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       "user submits the tax return and update fails" in {
         val taxReturn = aTaxReturn()
         authorizedUser()
+        mockTaxReturnFind(taxReturn)
         mockTaxReturnSubmission(taxReturn)
         mockTaxReturnFailure()
         val result =
