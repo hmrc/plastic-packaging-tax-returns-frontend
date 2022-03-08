@@ -58,13 +58,13 @@
 
 @govukLayout(
     title = Title("returns.importedPlasticWeight.meta.title"),
-    backButton = Some(BackButton(messages("site.back"), returnsRoutes.ManufacturedPlasticWeightController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), returnsRoutes.ImportedPlasticController.contribution(), messages("site.back.hiddenText")))) {
 
         @errorSummary(form.errors)
 
         @sectionHeader(messages("returns.importedPlasticWeight.sectionHeader"))
 
-        @formHelper(action = returnsRoutes.ImportedPlasticWeightController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = returnsRoutes.ImportedPlasticController.submitWeight(), 'autoComplete -> "off") {
 
         @govukInput(
             Input(

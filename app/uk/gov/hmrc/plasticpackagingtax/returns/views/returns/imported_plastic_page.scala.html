@@ -1,0 +1,73 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.model.{BackButton, Title}
+@import play.api.data.Form
+@import play.api.mvc.Request
+@import play.api.i18n.Messages
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsFieldsetPageHeading
+
+@this(
+    formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
+    govukLayout: main_template,
+    govukRadios : GovukRadios,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary,
+    govukFieldset: GovukFieldset,
+)
+
+
+@(form: Form[Boolean], obligation: Obligation)(implicit request: Request[_], messages: Messages)
+
+@govukLayout(
+    title = Title("returns.importedPlasticWeight.component.title"),
+    backButton = Some(BackButton(messages("site.back"), returnRoutes.ManufacturedPlasticController.contribution(), messages("site.back.hiddenText")))) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("returns.sectionHeader", messages(s"month.${obligation.fromDate.getMonthValue}"), messages(s"month.${obligation.toDate.getMonthValue}"), obligation.toDate.getYear.toString))
+
+    @formHelper(action = returnRoutes.ImportedPlasticController.submitContribution(), 'autoComplete -> "off") {
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("returns.importedPlasticWeight.component.title")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = govukRadios(Radios(
+                idPrefix = Some(form("answer").name),
+                name = form("answer").name,
+                items = Seq(
+                    RadioItem(content = Text(messages("general.true")), value = Some(ImportedPlastic.YES), checked = form("answer").value == true),
+                    RadioItem(content = Text(messages("general.false")), value = Some(ImportedPlastic.NO), checked = form("answer").value == false)
+                ),
+                classes = "govuk-radios",
+                errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            )
+        )))
+
+
+        @saveButtons()
+    }
+}

@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
 import org.scalatest.EitherValues
@@ -25,8 +24,8 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 
 class TaxReturnsConnectorSpec
     extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder {
@@ -79,7 +78,7 @@ class TaxReturnsConnectorSpec
 
         givenPostToReturnsEndpointReturns(Status.BAD_REQUEST)
 
-        val res = await(connector.create(aTaxReturn()))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -88,7 +87,7 @@ class TaxReturnsConnectorSpec
 
         givenPostToReturnsEndpointReturns(Status.CREATED, "someRubbish")
 
-        val res = await(connector.create(aTaxReturn()))
+        val res = await(connector.create(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to create return")
       }
@@ -97,7 +96,7 @@ class TaxReturnsConnectorSpec
 
   private def givenPostToReturnsEndpointReturns(status: Int, body: String = "") =
     stubFor(
-      post("/returns")
+      post("/submit-return-for-plastic-packaging-tax")
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -150,7 +149,7 @@ class TaxReturnsConnectorSpec
 
   private def givenGetReturnsEndpointReturns(status: Int, body: String = "") =
     stubFor(
-      get("/returns/123")
+      get("/submit-return-for-plastic-packaging-tax/123")
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -195,7 +194,7 @@ class TaxReturnsConnectorSpec
 
         givenPutToReReturnsEndpointReturns(Status.BAD_REQUEST, "123")
 
-        val res = await(connector.update(aTaxReturn()))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }
@@ -204,7 +203,7 @@ class TaxReturnsConnectorSpec
 
         givenPutToReReturnsEndpointReturns(Status.CREATED, "123", "someRubbish")
 
-        val res = await(connector.update(aTaxReturn()))
+        val res = await(connector.update(aTaxReturn(withId("123"))))
 
         res.left.value.getMessage must include("Failed to update return")
       }
@@ -213,7 +212,7 @@ class TaxReturnsConnectorSpec
 
   private def givenPutToReReturnsEndpointReturns(status: Int, id: String, body: String = "") =
     stubFor(
-      put(s"/returns/$id")
+      put(s"/submit-return-for-plastic-packaging-tax/$id")
         .willReturn(
           aResponse()
             .withStatus(status)

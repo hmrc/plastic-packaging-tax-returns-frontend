@@ -20,7 +20,7 @@ sm -s
 ```
 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
-* Enter the redirect url: http://localhost:8505/plastic-packaging-tax/returns/submit-return and press **Submit**.
+* Enter the redirect url: http://localhost:8505/submit-return-for-plastic-packaging-tax/submit-return and press **Submit**.
 
 
 ### Precheck

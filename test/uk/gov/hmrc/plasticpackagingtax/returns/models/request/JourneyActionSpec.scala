@@ -117,7 +117,6 @@ class JourneyActionSpec extends ControllerSpec {
         ) mustBe Results.Ok
         verify(mockAuditor, Mockito.atLeast(1)).newTaxReturnStarted()(any(), any())
       }
-
     }
 
     "load tax return" when {

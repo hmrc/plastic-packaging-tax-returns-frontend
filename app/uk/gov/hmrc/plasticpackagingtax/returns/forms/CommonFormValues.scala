@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsPageHeading
+package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
-@this()
-
-@(text: String, classes: String = gdsPageHeading)
-
-<h1 id="title" class="@{classes}">@text</h1>
-
+trait CommonFormValues {
+  val YES = "yes"
+  val NO  = "no"
+}

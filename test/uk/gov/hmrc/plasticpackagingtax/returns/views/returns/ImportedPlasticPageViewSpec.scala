@@ -21,27 +21,34 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlastic.form
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
+import java.time.LocalDate
+
 @ViewTest
-class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
+class ImportedPlasticPageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[imported_plastic_weight_page]
+  private val page = instanceOf[imported_plastic_page]
 
-  private def createView(
-    form: Form[ImportedPlasticWeight] = ImportedPlasticWeight.form()
-  ): Document =
-    page(form)(request, messages)
+  private val obligation = Obligation(LocalDate.of(2022, 4, 1),
+                                      LocalDate.of(2022, 7, 31),
+                                      LocalDate.of(2023, 3, 31),
+                                      "22C2"
+  )
+
+  private def createView(form: Form[Boolean] = ImportedPlastic.form()): Document =
+    page(form, obligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), obligation)(request, messages)
+    page.render(form(), obligation, request, messages)
   }
 
-  "Imported Plastic Weight View" should {
+  "Imported Plastic Page View" should {
 
     val view = createView()
 
@@ -58,39 +65,27 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ImportedPlasticController.contribution()
+        routes.ManufacturedPlasticController.contribution()
       )
     }
 
     "display title" in {
 
-      view.select("title").text() must include(messages("returns.importedPlasticWeight.meta.title"))
+      view.select("title").text() must include(
+        messages("returns.importedPlasticWeight.component.title")
+      )
     }
 
     "display header" in {
 
       view.getElementById("section-header").text() must include(
-        messages("returns.importedPlasticWeight.sectionHeader")
+        messages("returns.sectionHeader", "April", "July", "2022")
       )
     }
 
-    "display hint" in {
+    "display radio buttons for contribution" in {
 
-      view.getElementsByClass("govuk-body-m").text() must include(
-        messages("returns.importedPlasticWeight.hint")
-      )
-    }
-
-    "display total weight label" in {
-
-      view.getElementsByClass("govuk-label--s").text() must include(
-        messages("returns.importedPlasticWeight.total.weight")
-      )
-    }
-
-    "display total weight input box" in {
-
-      view must containElementWithID("totalKg")
+      view must containElementWithID("answer")
     }
 
     "display 'Save and Continue' button" in {
@@ -105,31 +100,16 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  "Imported Plastic Weight View when filled" should {
+  "Imported Plastic Page when filled" should {
 
-    "display data in total weight input" in {
+    "display data in contribution input" in {
 
-      val form = ImportedPlasticWeight
+      val form = ImportedPlastic
         .form()
-        .fill(ImportedPlasticWeight("1000"))
+        .fill(true)
       val view = createView(form)
 
-      view.getElementById("totalKg").attr("value") mustBe "1000"
-    }
-  }
-
-  "display error" when {
-
-    "weight is not entered" in {
-
-      val form = ImportedPlasticWeight
-        .form()
-        .fillAndValidate(ImportedPlasticWeight(""))
-      val view = createView(form)
-
-      view must haveGovukGlobalErrorSummary
-
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view.getElementById("answer").attr("value") mustBe "yes"
     }
   }
 }

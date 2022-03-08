@@ -37,6 +37,10 @@ trait MockTaxReturnsConnector extends MockitoSugar with TaxReturnBuilder with Be
 
   protected val mockTaxReturnsConnector: TaxReturnsConnector = mock[TaxReturnsConnector]
 
+  def mockTaxReturnUpdate(): OngoingStubbing[Future[Either[ServiceError, TaxReturn]]] =
+    when(mockTaxReturnsConnector.update(any[TaxReturn])(any()))
+      .thenAnswer(inv => Future.successful(Right(inv.getArgument(0))))
+
   def mockTaxReturnUpdate(
     dataToReturn: TaxReturn
   ): OngoingStubbing[Future[Either[ServiceError, TaxReturn]]] =

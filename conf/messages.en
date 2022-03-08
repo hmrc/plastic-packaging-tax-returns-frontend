@@ -10,6 +10,9 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 
+general.true = Yes
+general.false = No
+
 month.1 = January
 month.2 = February
 month.3 = March
@@ -89,18 +92,35 @@ returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycl
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
 
-returns.manufacturedPlasticWeight.meta.title = Manufactured plastic packaging components
-returns.manufacturedPlasticWeight.title = 1. Manufactured plastic packaging components
+returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
+returns.manufacturedPlastic.details.link = What do we mean by components?
+returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
+returns.manufacturedPlastic.details.line2.link = See examples of components
+returns.manufacturedPlastic.details.empty.error = Choose an option
+
+returns.sectionHeader = {0} to {1} {2}
+
+returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
+returns.manufacturedPlastic.details.link = What do we mean by components?
+returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
+returns.manufacturedPlastic.details.line2.link = See examples of components
+returns.manufacturedPlastic.details.empty.error = Choose an option
+
+returns.manufacturedPlasticWeight.title = How much did your manufactured plastic packaging components weigh?
 returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
-returns.manufacturedPlasticWeight.total.weight = Total weight of packaging components manufactured in the quarter (kgs)
-returns.manufacturedPlasticWeight.details.link = How are plastic packaging and components defined?
-returns.manufacturedPlasticWeight.details.line1 = A ‘packaging component’ is a product that is designed to be suitable for use, whether alone or in combination with other products, to contain, protect, handle, deliver or present goods.
-returns.manufacturedPlasticWeight.details.line2 = A packaging component is ‘plastic’ if it contains more plastic by weight than any other individual material. This includes bioplastics, such as biodegradable, compostable and oxo-degradable plastics.
-returns.manufacturedPlasticWeight.details.line3 = Plastic Packaging components are liable for the tax once they are considered ‘finished.’ This is when the last plastic component is added to the packaging, whether the packaging is filled or unfilled. The party responsible for adding the final plastic component to the packaging is liable for the tax.
-returns.manufacturedPlasticWeight.details.line4 = The Plastic Packaging Tax guidance has more key definitions, returns information and exemptions to help you complete your return.
+returns.manufacturedPlasticWeight.hint = Do not include plastic packaging components which are (any of the following):
+returns.manufacturedPlasticWeight.hint.1 = used in the long-term storage of goods
+returns.manufacturedPlasticWeight.hint.2 = an integral part of the goods
+returns.manufacturedPlasticWeight.hint.3 = reused for the presentation of goods
+returns.manufacturedPlasticWeight.hint.4 = See
+returns.manufacturedPlasticWeight.hint.4.link = examples of things you should not include
 returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+
+returns.importedPlasticWeight.component.title = Have you imported finished plastic packaging components in this period?
+returns.importedPlasticWeight.component.details.line1 = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
+returns.importedPlasticWeight.component.details.empty.error = Choose an option
 
 returns.importedPlasticWeight.meta.title = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.title = 2. Imported plastic packaging
