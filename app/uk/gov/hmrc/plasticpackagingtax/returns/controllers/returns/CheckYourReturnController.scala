@@ -19,6 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   AuthAction,
@@ -32,13 +34,11 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, Jo
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
-// TODO: the logic below requires refactoring once we include call to submit tax return.
 @Singleton
 class CheckYourReturnController @Inject() (
   authenticate: AuthAction,
@@ -69,8 +69,8 @@ class CheckYourReturnController @Inject() (
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       FormAction.bindFromRequest match {
         case SaveAndContinue =>
-          val refId = s"PPTR12345678${Random.nextInt(1000000)}"
-          markReturnCompleted().map {
+          val refId = s"PPTR12345678${Random.nextInt(1000000)}" // TODO Will be obtained from NRS
+          submitReturnAndMarkAsCompleted().map {
             case Right(taxReturn) =>
               auditor.auditTaxReturn(taxReturn)
               successSubmissionCounter.inc()
@@ -87,11 +87,18 @@ class CheckYourReturnController @Inject() (
       }
     }
 
-  private def markReturnCompleted()(implicit
+  private def submitReturnAndMarkAsCompleted()(implicit
     req: JourneyRequest[_]
   ): Future[Either[ServiceError, TaxReturn]] =
-    update { taxReturn =>
-      taxReturn.copy(metaData = MetaData(returnCompleted = true))
+    submit(req.taxReturn).flatMap { _ =>
+      update { taxReturn =>
+        taxReturn.copy(metaData = MetaData(returnCompleted = true))
+      }
     }
+
+  private def submit(
+    taxReturn: TaxReturn
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+    returnsConnector.submit(taxReturn)
 
 }

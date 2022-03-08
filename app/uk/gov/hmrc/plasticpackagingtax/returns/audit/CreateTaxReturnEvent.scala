@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.audit
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.ReturnType.ReturnType
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain._
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
@@ -28,7 +29,8 @@ case class CreateTaxReturnEvent(
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
-  metaData: MetaData = MetaData()
+  metaData: MetaData = MetaData(),
+  returnType: Option[ReturnType]
 )
 
 object CreateTaxReturnEvent {
@@ -43,7 +45,8 @@ object CreateTaxReturnEvent {
                          humanMedicinesPlasticWeight = taxReturn.humanMedicinesPlasticWeight,
                          exportedPlasticWeight = taxReturn.exportedPlasticWeight,
                          convertedPackagingCredit = taxReturn.convertedPackagingCredit,
-                         metaData = taxReturn.metaData
+                         metaData = taxReturn.metaData,
+                         returnType = taxReturn.returnType
     )
 
 }

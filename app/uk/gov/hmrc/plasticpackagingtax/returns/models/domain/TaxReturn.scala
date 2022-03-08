@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.ReturnType.ReturnType
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.utils.TaxLiabilityFactory
 
@@ -31,7 +32,8 @@ case class TaxReturn(
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
   recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
-  metaData: MetaData = MetaData()
+  metaData: MetaData = MetaData(),
+  returnType: Option[ReturnType] = Some(ReturnType.NEW)
 ) {
 
   import TaxReturn.LongOption
@@ -56,7 +58,8 @@ case class TaxReturn(
               exportedPlasticWeight = this.exportedPlasticWeight,
               convertedPackagingCredit = this.convertedPackagingCredit,
               recycledPlasticWeight = this.recycledPlasticWeight,
-              metaData = this.metaData
+              metaData = this.metaData,
+              returnType = this.returnType
     )
 
   def isReturnSubmitReady: Boolean =

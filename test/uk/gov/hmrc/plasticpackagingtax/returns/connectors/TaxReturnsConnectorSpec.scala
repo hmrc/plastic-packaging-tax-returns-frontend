@@ -210,6 +210,21 @@ class TaxReturnsConnectorSpec
     }
   }
 
+  "submit tax return" should {
+
+    "return success response" when {
+
+      "valid request sent" in {
+        givenPostToReturnsSubmissionEndpointReturns(Status.OK, "123")
+
+        val res = await(connector.submit(aTaxReturn(withId("123"))))
+
+        getTimer("ppt.returns.submit.timer").getCount mustBe 1
+      }
+
+    }
+  }
+
   private def givenPutToReReturnsEndpointReturns(status: Int, id: String, body: String = "") =
     stubFor(
       put(s"/returns/$id")
@@ -217,6 +232,17 @@ class TaxReturnsConnectorSpec
           aResponse()
             .withStatus(status)
             .withBody(body)
+        )
+    )
+
+  private def givenPostToReturnsSubmissionEndpointReturns(status: Int, id: String) =
+    stubFor(
+      post(s"/returns-submission/$id")
+        .willReturn(
+          aResponse()
+            .withStatus(status).withBody(
+              "\"TODO what's a good response format for this end point\""
+            )
         )
     )
 
