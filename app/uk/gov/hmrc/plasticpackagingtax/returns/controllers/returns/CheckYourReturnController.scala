@@ -98,7 +98,7 @@ class CheckYourReturnController @Inject() (
 
   private def submit(
     taxReturn: TaxReturn
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Boolean]] =
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
     returnsConnector.submit(taxReturn)
 
 }

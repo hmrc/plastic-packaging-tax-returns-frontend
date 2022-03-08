@@ -219,7 +219,6 @@ class TaxReturnsConnectorSpec
 
         val res = await(connector.submit(aTaxReturn(withId("123"))))
 
-        res.right.get mustBe true
         getTimer("ppt.returns.submit.timer").getCount mustBe 1
       }
 
