@@ -58,6 +58,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -74,6 +75,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -96,18 +98,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
           Future.successful(Right(aTaxReturn(withId(taxReturnId))))
         )
-        given(mockObligationsConnector.get(refEq(taxReturnId))(any[HeaderCarrier]))
-          .willReturn(
-            Future.successful(
-              PPTObligations(
-                None,
-                Some(Obligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "str")),
-                0,
-                false,
-                false
-              )
-            )
-          )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -124,6 +115,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -168,6 +160,7 @@ class JourneyActionSpec extends ControllerSpec {
           Left(DownstreamServiceError("error", new InternalServerException("error")))
         )
       )
+      mockGetObligation()
 
       intercept[DownstreamServiceError] {
         await(
@@ -177,26 +170,6 @@ class JourneyActionSpec extends ControllerSpec {
           )
         )
       }
-    }
-    "the user has no obligations" in {
-      given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
-        Future.successful(Right(None))
-      )
-      given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
-        Future.successful(Right(aTaxReturn(withId(taxReturnId))))
-      )
-      given(mockObligationsConnector.get(refEq(taxReturnId))(any[HeaderCarrier]))
-        .willReturn(Future.successful(PPTObligations(None, None, 0, false, false)))
-
-      val exception = intercept[IllegalStateException](
-        await(
-          actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment(taxReturnId)))),
-            responseGenerator
-          )
-        )
-      )
-      exception.getMessage mustBe s"No Obligation for return id:$taxReturnId"
     }
   }
 }

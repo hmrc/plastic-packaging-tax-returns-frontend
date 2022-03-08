@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.routes
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm._
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.components.Styles.gdsFieldsetPageHeading
 
 @this(
     formHelper: FormWithCSRF,
@@ -59,15 +60,15 @@
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(heading),
-                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--l",
+                    classes = gdsFieldsetPageHeading,
                     isPageHeading = true
                 ))
             )),
             idPrefix = Some(form(FieldKey).name),
             name = form(FieldKey).name,
             items = Seq(
-                RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.yes")), value = Some(Yes), checked = form(FieldKey).value.contains(Yes)),
-                RadioItem(content = HtmlContent(messages("returns.startDateReturns.radio.no")), value = Some(No), checked = form(FieldKey).value.contains(No))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(YES), checked = form(FieldKey).value.contains(YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(NO), checked = form(FieldKey).value.contains(NO))
             ),
             classes = "govuk-radios--inline",
             errorMessage = form(FieldKey).error.map(err => ErrorMessage(content = Text(messages(err.message)))),

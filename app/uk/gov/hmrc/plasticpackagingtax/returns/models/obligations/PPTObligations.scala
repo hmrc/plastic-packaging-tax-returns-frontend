@@ -26,7 +26,6 @@ final case class PPTObligations(
   displaySubmitReturnsLink: Boolean
 ) {
 
-  //todo confirm this? what happens if there isnt one? illegal state?
   def nextObligationToReturn: Option[Obligation] =
     oldestOverdueObligation.orElse {
       if (isNextObligationDue) nextObligation else None

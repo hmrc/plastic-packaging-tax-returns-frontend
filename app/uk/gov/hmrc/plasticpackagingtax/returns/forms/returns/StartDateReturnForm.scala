@@ -18,11 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.returns.forms.returns
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.CommonFormValues
 
-object StartDateReturnForm {
+object StartDateReturnForm extends CommonFormValues {
   val FieldKey: String = "startDateReturns"
-  val Yes: String      = "yes"
-  val No: String       = "no"
   val ErrorKey: String = "returns.startDateReturns.error.required"
 
   def form(): Form[Boolean] =
@@ -31,8 +30,8 @@ object StartDateReturnForm {
         FieldKey -> optional(text)
           .verifying(ErrorKey, _.nonEmpty)
           .transform[String](_.get, Some.apply)
-          .verifying(ErrorKey, Seq(Yes, No).contains(_))
-          .transform[Boolean](_ == Yes, _.toString)
+          .verifying(ErrorKey, Seq(YES, NO).contains(_))
+          .transform[Boolean](_ == YES, _.toString)
       )(identity)(Some.apply)
     )
 

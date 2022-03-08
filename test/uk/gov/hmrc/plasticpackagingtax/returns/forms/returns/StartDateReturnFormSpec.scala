@@ -21,7 +21,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm.{
   ErrorKey,
   FieldKey,
-  Yes
+  YES
 }
 
 class StartDateReturnFormSpec extends PlaySpec {
@@ -31,13 +31,13 @@ class StartDateReturnFormSpec extends PlaySpec {
   "Start Date Return form" must {
     "bind" when {
       "yes" in {
-        val ans: Form[Boolean] = form.bind(Map(FieldKey -> Yes))
+        val ans: Form[Boolean] = form.bind(Map(FieldKey -> YES))
 
         ans.value mustBe Some(true)
         ans.errors mustBe empty
       }
       "no" in {
-        val ans: Form[Boolean] = form.bind(Map(FieldKey -> StartDateReturnForm.No))
+        val ans: Form[Boolean] = form.bind(Map(FieldKey -> StartDateReturnForm.NO))
 
         ans.value mustBe Some(false)
         ans.errors mustBe empty

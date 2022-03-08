@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
@@ -41,25 +40,27 @@ class StartDateReturnController @Inject() (
   def displayPage(): Action[AnyContent] = //TODO: which dates to populate title message?
     (authenticate andThen journeyAction) {
       implicit request: JourneyRequest[AnyContent] =>
-        Ok(view(StartDateReturnForm.form(), request.taxReturn.obligation))
+        val obligation = request.taxReturn.obligation.getOrElse(
+          throw new IllegalStateException(s"No Obligation for return id:${request.enrolmentId}")
+        )
+        Ok(view(StartDateReturnForm.form(), obligation))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) {
       implicit request: JourneyRequest[AnyContent] =>
+        val obligation = request.taxReturn.obligation.getOrElse(
+          throw new IllegalStateException(s"No Obligation for return id:${request.enrolmentId}")
+        )
         StartDateReturnForm.form().bindFromRequest()
-          .fold(
-            (formWithErrors: Form[Boolean]) =>
-              BadRequest(view(formWithErrors, request.taxReturn.obligation)),
-            (startReturn: Boolean) =>
-              if (startReturn)
-                Redirect(
-                  homeRoutes.HomeController.displayPage()
-                ) //todo: implement redirect to /manufactured-components
-              else
-                Redirect(
-                  routes.StartDateReturnController.displayPage()
-                ) //todo: implement redirect to /no-other-periods BUILD THIS eventually
+          .fold((formWithErrors: Form[Boolean]) => BadRequest(view(formWithErrors, obligation)),
+                (startReturn: Boolean) =>
+                  if (startReturn)
+                    Redirect(routes.ManufacturedPlasticController.contribution())
+                  else
+                    Redirect(
+                      routes.StartDateReturnController.displayPage()
+                    ) //todo: implement redirect to /no-other-periods BUILD THIS eventually
           )
     }
 

@@ -224,8 +224,6 @@ returns.confirmationPage.exitSurvey.text.link = What did you think of this servi
 
 returns.startDateReturns.title = Do you want to start your return for {0} to {1} {2}?
 returns.startDateReturns.heading = Do you want to start your return for {0} to {1} {2}?
-returns.startDateReturns.radio.yes = Yes
-returns.startDateReturns.radio.no = No
 returns.startDateReturns.button = Continue
 returns.startDateReturns.error.required = Choose an option
 

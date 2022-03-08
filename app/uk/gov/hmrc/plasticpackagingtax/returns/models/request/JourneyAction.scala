@@ -21,7 +21,11 @@ import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  ObligationsConnector,
+  ServiceError,
+  TaxReturnsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -29,24 +33,24 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject()(
-                               returnsConnector: TaxReturnsConnector,
-                               auditor: Auditor,
-                               obligationsConnector: ObligationsConnector
-                             )(implicit val exec: ExecutionContext)
-  extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+class JourneyAction @Inject() (
+  returnsConnector: TaxReturnsConnector,
+  auditor: Auditor,
+  obligationsConnector: ObligationsConnector
+)(implicit val exec: ExecutionContext)
+    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   private val logger = Logger(this.getClass)
 
   override protected def refine[A](
-                                    request: AuthenticatedRequest[A]
-                                  ): Future[Either[Result, JourneyRequest[A]]] = {
+    request: AuthenticatedRequest[A]
+  ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.enrolmentId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateReturn(id).map {
-          case Right(reg) => Right(new JourneyRequest[A](request, reg, Some(id)))
+          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
           case Left(error) => throw error
         }
       case None =>
@@ -56,34 +60,35 @@ class JourneyAction @Inject()(
   }
 
   private def loadOrCreateReturn[A](
-                                     id: String
-                                   )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
+    id: String
+  )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
     val futureReturn: Future[Either[ServiceError, Option[TaxReturn]]] = returnsConnector.find(id)
-    val futureObligation: Future[PPTObligations] = obligationsConnector.get(id)
+    val futureObligation: Future[PPTObligations]                      = obligationsConnector.get(id)
 
     (for {
       eitherTaxReturn <- futureReturn
       openObligations <- futureObligation
-
     } yield {
-      val oldestObligation = openObligations.nextObligationToReturn.getOrElse(throw new IllegalStateException(s"No Obligation for return id:$id"))
+      val oldestObligation: Option[Obligation] = openObligations.nextObligationToReturn
 
       eitherTaxReturn match {
         case Right(Some(taxReturn)) =>
           Future.successful(Right(ensureObligationDetailPresent(taxReturn, oldestObligation)))
         case Right(None) =>
           auditor.newTaxReturnStarted()
-          returnsConnector.create(TaxReturn(id = id, obligation = Some(oldestObligation)))
+          returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
         case Left(error) => Future.successful(Left(error))
       }
     }).flatten
   }
 
-
   // This is necessary since we may have in-flight production tax returns without obligation details
-  private def ensureObligationDetailPresent(taxReturn: TaxReturn, oldestObligation: Obligation) =
+  private def ensureObligationDetailPresent(
+    taxReturn: TaxReturn,
+    oldestObligation: Option[Obligation]
+  ): TaxReturn =
     if (taxReturn.obligation.isEmpty)
-      taxReturn.copy(obligation = Some(oldestObligation))
+      taxReturn.copy(obligation = oldestObligation)
     else
       taxReturn
 
