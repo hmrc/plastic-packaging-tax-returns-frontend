@@ -20,7 +20,14 @@ sm -s
 ```
 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
-* Enter the redirect url: http://localhost:8505/submit-return-for-plastic-packaging-tax/submit-return and press **Submit**.
+* You may need to add some user details to the form:
+  * `Enrolment Key`: `HMRC-PPT-ORG`
+  * `Identifier Name`: `EtmpRegistrationNumber`
+  * `Identifier Value`: `XMPPT0000000001`
+* Then enter a redirect url:
+  * To start a return: http://localhost:8505/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return 
+  * To see account page: http://localhost:8505/plastic-packaging-tax/account 
+* Press **Submit**.
 
 
 ### Precheck
