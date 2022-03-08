@@ -60,7 +60,7 @@ case class TaxReturn(
               recycledPlasticWeight = this.recycledPlasticWeight,
               metaData = this.metaData,
               returnType = this.returnType
-  )
+    )
 
   def isReturnSubmitReady: Boolean =
     manufacturedPlasticWeight.isDefined && importedPlasticWeight.isDefined && humanMedicinesPlasticWeight.isDefined && exportedPlasticWeight.isDefined && convertedPackagingCredit.isDefined && recycledPlasticWeight.isDefined

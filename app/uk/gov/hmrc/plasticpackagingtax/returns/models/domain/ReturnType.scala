@@ -24,5 +24,7 @@ object ReturnType extends Enumeration {
   val NEW: Value   = Value("New")
   val AMEND: Value = Value("Amend")
 
-  implicit val format: Format[ReturnType] = Format(Reads.enumNameReads(ReturnType), Writes.enumNameWrites)
+  implicit val format: Format[ReturnType] =
+    Format(Reads.enumNameReads(ReturnType), Writes.enumNameWrites)
+
 }
