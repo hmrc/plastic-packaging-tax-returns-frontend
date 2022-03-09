@@ -75,13 +75,10 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
 
   // format: off
-  def authorizedUser(user: SignedInUser = exampleUser): Unit = {
-    val delegatedAuthRule = "ppt-auth" // Required for Agent access control; tells auth how the agent access decision is made
-    val enrolmentPredicate = Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule(delegatedAuthRule)
-
+  def authorizedUser(user: SignedInUser = exampleUser): Unit =
     when(
       mockAuthConnector.authorise(
-        ArgumentMatchers.eq(enrolmentPredicate),
+        any(),
         ArgumentMatchers.eq(
           credentials and name and email and externalId and internalId and affinityGroup and allEnrolments
             and agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
@@ -153,7 +150,6 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
         )
       )
     )
-  }
   // format: on
 
   def unAuthorizedUser(): Unit =
