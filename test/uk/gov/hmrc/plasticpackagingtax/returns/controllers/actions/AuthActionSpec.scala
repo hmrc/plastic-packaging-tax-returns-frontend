@@ -103,7 +103,6 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
-      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
@@ -184,7 +183,6 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
                                        okResponseGenerator
         )
 
-      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
   }

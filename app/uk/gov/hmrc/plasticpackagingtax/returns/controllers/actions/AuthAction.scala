@@ -49,8 +49,6 @@ class AuthActionImpl @Inject() (
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
-  private def authPredicate = Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule("ppt-auth")
-
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
@@ -63,13 +61,12 @@ class AuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val authorisation = authTimer.time()
-    authorised(authPredicate)
+    authorised()
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
-
           val identityData = IdentityData(internalId,
                                           externalId,
                                           agentCode,
@@ -97,16 +94,11 @@ class AuthActionImpl @Inject() (
               throw InsufficientEnrolments(
                 s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
               )
-            case Some(pptEnrolmentIdentifier) =>
-              executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
+            case Some(id) => executeRequest(request, block, identityData, id, allEnrolments)
           }
-
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-      case _: InsufficientEnrolments =>
-        // Authenticated users who lack PPT enrolments are redirected to registration frontend
-        Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
       case _: AuthorisationException =>
         Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
     }
@@ -116,25 +108,24 @@ class AuthActionImpl @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result],
     identityData: IdentityData,
-    pptEnrolmentIdentifier: String,
+    id: String,
     allEnrolments: Enrolments
   ) =
-    if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
+    if (pptReferenceAllowedList.isAllowed(id)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(pptEnrolmentIdentifier)))
+      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(id)))
     } else {
       logger.warn("User id is not allowed, access denied")
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad()))
     }
 
   private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
-    getPptEnrolmentIdentifier(enrolments, identifier) match {
-      case Some(enrolmentIdentifier) =>
-        Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
-      case None => Option.empty
+    getPptEnrolment(enrolments, identifier) match {
+      case Some(enrolmentId) => Option(enrolmentId).filter(_.value.trim.nonEmpty).map(_.value)
+      case None              => Option.empty
     }
 
-  private def getPptEnrolmentIdentifier(
+  private def getPptEnrolment(
     enrolmentsList: Enrolments,
     identifier: String
   ): Option[EnrolmentIdentifier] =
