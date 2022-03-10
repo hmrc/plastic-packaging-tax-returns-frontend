@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.3
+// @version      5.4
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/submit-return-for-plastic-packaging-tax*
@@ -53,10 +53,26 @@ const currentPageIs = (path) => {
     }
 }
 
-/*########################     PPT REGISTRATION PAGES     ########################## */
+/*########################     PPT RETURNS PAGES     ########################## */
 const startPage = () => {
     if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return')) {
 
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const manufacturedComponentsPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/manufactured-components')) {
+
+        document.getElementById('answer-2').click()
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const importedComponentsPage = () => {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/imported-components')) {
+
+        document.getElementById('answer-2').click()
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -70,7 +86,7 @@ const manufacturedWeightPage = () => {
 }
 
 const importedWeightPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/imported-plastic-packaging-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/imported-weight')) {
 
         document.getElementById('totalKg').value = '20'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -127,6 +143,8 @@ const confirmationPage = () => {
 const completeJourney = () => {
 
     startPage()
+    manufacturedComponentsPage()
+    importedComponentsPage()
     manufacturedWeightPage()
     importedWeightPage()
     humanMedicinesWeightPage()
