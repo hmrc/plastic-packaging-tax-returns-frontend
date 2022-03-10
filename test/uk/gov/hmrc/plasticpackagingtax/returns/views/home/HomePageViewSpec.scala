@@ -115,12 +115,21 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
               "account.homePage.card.makeReturn.header"
             )
             card.select(".govuk-body").first() must containMessage(
-              "account.homePage.card.makeReturn.body"
+              "account.homePage.card.makeReturn.body",
+              "April",
+              "June",
+              "2022",
+              "29 July 2022"
             )
             card.select(".govuk-link").first() must containMessage(
               "account.homePage.card.makeReturn.link"
             )
             card.select(".govuk-link").first() must haveHref(completeReturnUrl)
+
+            card.select(".govuk-link").get(1) must containMessage(
+              "account.homePage.card.makeReturn.link.2"
+            )
+            card.select(".govuk-link").get(1) must haveHref("")
           }
 
           "display 'balance' card" in {
