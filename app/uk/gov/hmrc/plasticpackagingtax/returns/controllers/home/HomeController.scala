@@ -42,7 +42,14 @@ class HomeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       subscriptionConnector.get(request.pptReference)
         .map { subscription =>
-          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl))
+          Ok(
+            page(subscription,
+                 request.taxReturn.obligation.getOrElse(
+                   throw new IllegalStateException("Obligation is absent")
+                 ),
+                 appConfig.pptCompleteReturnGuidanceUrl
+            )
+          )
         }
     }
 

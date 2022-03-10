@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, cardSection, link, pageTitle, paragraph, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.displayMonth
 
 @this(
         govukLayout: main_template,
@@ -29,10 +31,11 @@
         card: card,
         cardSection: cardSection,
         link: link,
-        appConfig: AppConfig
+        appConfig: AppConfig,
+        displayMonth: displayMonth
 )
 
-@(subscription: SubscriptionDisplayResponse, completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse, obligation: Obligation,  completeReturnUrl: String)(implicit request: JourneyRequest[_], messages: Messages)
 
 @organisationName = @{
     if(subscription.isGroup)
@@ -126,10 +129,12 @@
     <div class="govuk-grid-row govuk-!-margin-top-6">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
-            body = messages("account.homePage.card.makeReturn.body"),
+            body = messages("account.homePage.card.makeReturn.body", displayMonth(obligation.fromDate.getMonthValue), displayMonth(obligation.toDate.getMonthValue), obligation.toDate.getYear.toString, s"${obligation.dueDate.getDayOfMonth}" + displayMonth(obligation.dueDate.getMonthValue) + s" ${obligation.dueDate.getYear}"),
             links = Seq(
-                link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true)
+                link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true),
+                link(text = messages("account.homePage.card.makeReturn.link.2"), call = Call("GET", completeReturnUrl), newTab = false)
             )
+
         )
 
         @card(header = messages("account.homePage.card.balance.header"),
