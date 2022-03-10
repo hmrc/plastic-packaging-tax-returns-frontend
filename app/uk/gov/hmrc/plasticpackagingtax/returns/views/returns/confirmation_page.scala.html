@@ -46,20 +46,6 @@
             )
     )
 
-    @link(
-        id = Some("downloadPdf"),
-        text = messages("returns.confirmationPage.body.downloadPdf"),
-        call = returnsRoutes.ConfirmationController.displayPage(),
-        classes = "button-link govuk-link govuk-link--no-visited-state focus float-to-right"
-    )
-
-    @link(
-        id = Some("printPage"),
-        text = messages("returns.confirmationPage.body.print"),
-        call = returnsRoutes.ConfirmationController.displayPage(),
-        classes = "button-link govuk-link govuk-link--no-visited-state focus float-to-right"
-    )
-
     @paragraphBody(message = messages("returns.confirmationPage.body"), classes = "govuk-body clear-float")
 
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("returns.confirmationPage.whatHappensNext.title")</h2>
