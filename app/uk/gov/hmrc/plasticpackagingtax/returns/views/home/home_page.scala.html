@@ -132,7 +132,7 @@
             body = messages("account.homePage.card.makeReturn.body", displayMonth(obligation.fromDate.getMonthValue), displayMonth(obligation.toDate.getMonthValue), obligation.toDate.getYear.toString, s"${obligation.dueDate.getDayOfMonth}" + displayMonth(obligation.dueDate.getMonthValue) + s" ${obligation.dueDate.getYear}"),
             links = Seq(
                 link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true),
-                link(text = messages("account.homePage.card.makeReturn.link.2"), call = Call("GET", completeReturnUrl), newTab = false)
+                link(text = messages("account.homePage.card.makeReturn.link.2"), call = Call("GET", ""), newTab = false)
             )
 
         )

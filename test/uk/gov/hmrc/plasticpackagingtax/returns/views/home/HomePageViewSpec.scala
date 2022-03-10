@@ -125,6 +125,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
               "account.homePage.card.makeReturn.link"
             )
             card.select(".govuk-link").first() must haveHref(completeReturnUrl)
+
+            card.select(".govuk-link").get(1) must containMessage(
+              "account.homePage.card.makeReturn.link.2"
+            )
+            card.select(".govuk-link").get(1) must haveHref("")
           }
 
           "display 'balance' card" in {
