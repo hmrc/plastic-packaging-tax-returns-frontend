@@ -90,17 +90,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display print page link" in {
-      view.getElementById("printPage") must (containMessage("returns.confirmationPage.body.print")
-        and haveHref(returnRoutes.ConfirmationController.displayPage()))
-    }
-
-    "display download pdf link" in {
-      view.getElementById("downloadPdf") must (containMessage(
-        "returns.confirmationPage.body.downloadPdf"
-      ) and haveHref(returnRoutes.ConfirmationController.displayPage()))
-    }
-
     "display 'What happens next'" in {
 
       view.getElementsByClass("govuk-heading-m").first() must containMessage(
