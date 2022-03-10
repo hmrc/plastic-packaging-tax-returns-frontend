@@ -21,18 +21,24 @@ import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.audit.Auditor
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.TaxReturnsConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  ObligationsConnector,
+  ServiceError,
+  TaxReturnsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.TaxReturn
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: Auditor)(implicit
-  val exec: ExecutionContext
-) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+class JourneyAction @Inject() (
+  returnsConnector: TaxReturnsConnector,
+  auditor: Auditor,
+  obligationsConnector: ObligationsConnector
+)(implicit val exec: ExecutionContext)
+    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   private val logger = Logger(this.getClass)
 
@@ -53,33 +59,36 @@ class JourneyAction @Inject() (returnsConnector: TaxReturnsConnector, auditor: A
     }
   }
 
-  private def loadOrCreateReturn[A](id: String)(implicit headerCarrier: HeaderCarrier) = {
+  private def loadOrCreateReturn[A](
+    id: String
+  )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
+    val futureReturn: Future[Either[ServiceError, Option[TaxReturn]]] = returnsConnector.find(id)
+    val futureObligation: Future[PPTObligations]                      = obligationsConnector.get(id)
 
-    // TODO: get this from the PPT obligations API
-    val oldestObligation = Obligation(fromDate = LocalDate.parse("2022-04-01"),
-                                      toDate = LocalDate.parse("2022-06-30"),
-                                      dueDate = LocalDate.parse("2022-06-30"),
-                                      periodKey = "22C1"
-    )
+    (for {
+      eitherTaxReturn <- futureReturn
+      openObligations <- futureObligation
+    } yield {
+      val oldestObligation: Option[Obligation] = openObligations.nextObligationToReturn
 
-    returnsConnector.find(id).flatMap {
-      case Right(taxReturn) =>
-        taxReturn
-          .map { taxReturn =>
-            Future.successful(Right(ensureObligationDetailPresent(taxReturn, oldestObligation)))
-          }
-          .getOrElse {
-            auditor.newTaxReturnStarted()
-            returnsConnector.create(TaxReturn(id = id, obligation = Some(oldestObligation)))
-          }
-      case Left(error) => Future.successful(Left(error))
-    }
+      eitherTaxReturn match {
+        case Right(Some(taxReturn)) =>
+          Future.successful(Right(ensureObligationDetailPresent(taxReturn, oldestObligation)))
+        case Right(None) =>
+          auditor.newTaxReturnStarted()
+          returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
+        case Left(error) => Future.successful(Left(error))
+      }
+    }).flatten
   }
 
   // This is necessary since we may have in-flight production tax returns without obligation details
-  private def ensureObligationDetailPresent(taxReturn: TaxReturn, oldestObligation: Obligation) =
+  private def ensureObligationDetailPresent(
+    taxReturn: TaxReturn,
+    oldestObligation: Option[Obligation]
+  ): TaxReturn =
     if (taxReturn.obligation.isEmpty)
-      taxReturn.copy(obligation = Some(oldestObligation))
+      taxReturn.copy(obligation = oldestObligation)
     else
       taxReturn
 

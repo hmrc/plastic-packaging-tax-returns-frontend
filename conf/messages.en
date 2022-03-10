@@ -26,9 +26,6 @@ month.10 = October
 month.11 = November
 month.12 = December
 
-general.true = Yes
-general.false = No
-
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
@@ -224,6 +221,11 @@ returns.confirmationPage.inTheMeantime.payLink = Pay your liability
 returns.confirmationPage.inTheMeantime.homeLink = Go to the Plastic Packaging Tax homepage
 returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
 returns.confirmationPage.exitSurvey.text.link = What did you think of this service?
+
+returns.startDateReturns.title = Do you want to start your return for {0} to {1} {2}?
+returns.startDateReturns.heading = Do you want to start your return for {0} to {1} {2}?
+returns.startDateReturns.button = Continue
+returns.startDateReturns.error.required = Choose an option
 
 account.viewSubscription.organisationDetails.title = Your business details
 account.viewSubscription.organisationDetails.label = Registered organisation details

@@ -20,8 +20,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.ObligationsConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockJourneyAction
@@ -29,15 +33,32 @@ trait MockJourneyAction
     with MockitoSugar {
   self: MockitoSugar with Suite =>
 
-  val mockJourneyAction: JourneyAction = new JourneyAction(mockTaxReturnsConnector, mockAuditor)(
-    ExecutionContext.global
-  )
+  val mockObligationsConnector: ObligationsConnector = mock[ObligationsConnector]
+
+  val mockJourneyAction: JourneyAction =
+    new JourneyAction(mockTaxReturnsConnector, mockAuditor, mockObligationsConnector)(
+      ExecutionContext.global
+    )
+
+  def mockGetObligation() =
+    given(mockObligationsConnector.get(any())(any[HeaderCarrier]))
+      .willReturn(
+        Future.successful(
+          PPTObligations(None,
+                         Some(Obligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "str")),
+                         0,
+                         false,
+                         false
+          )
+        )
+      )
 
   override protected def beforeEach() {
     super.beforeEach()
     given(mockTaxReturnsConnector.find(any())(any())).willReturn(
       Future.successful(Right(Option(aTaxReturn(withId("001")))))
     )
+    mockGetObligation()
   }
 
 }

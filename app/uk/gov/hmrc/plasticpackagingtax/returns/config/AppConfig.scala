@@ -65,6 +65,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"
 
+  def pptObligationUrl(pptReference: String): String =
+    s"$pptServiceHost/obligations/open/$pptReference"
+
   lazy val pptGuidanceUrl: String = config.get[String]("urls.pptGuidanceLink")
 
   lazy val pptCompleteReturnGuidanceUrl: String =

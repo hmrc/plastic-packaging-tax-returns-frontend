@@ -29,20 +29,23 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyActionSpec extends ControllerSpec {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
-  private val actionRefiner = new JourneyAction(mockTaxReturnsConnector, mockAuditor)(
-    ExecutionContext.global
-  )
+  private val actionRefiner =
+    new JourneyAction(mockTaxReturnsConnector, mockAuditor, mockObligationsConnector)(
+      ExecutionContext.global
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockTaxReturnsConnector, responseGenerator)
+    reset(mockTaxReturnsConnector, responseGenerator, mockObligationsConnector)
     given(responseGenerator.apply(any())).willReturn(Future.successful(Results.Ok))
   }
 
@@ -55,6 +58,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -71,6 +75,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -93,6 +98,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.create(any())(any[HeaderCarrier])).willReturn(
           Future.successful(Right(aTaxReturn(withId(taxReturnId))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -109,6 +115,7 @@ class JourneyActionSpec extends ControllerSpec {
         given(mockTaxReturnsConnector.find(refEq(taxReturnId))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(aTaxReturn(withId(taxReturnId)))))
         )
+        mockGetObligation()
 
         await(
           actionRefiner.invokeBlock(
@@ -153,6 +160,7 @@ class JourneyActionSpec extends ControllerSpec {
           Left(DownstreamServiceError("error", new InternalServerException("error")))
         )
       )
+      mockGetObligation()
 
       intercept[DownstreamServiceError] {
         await(
