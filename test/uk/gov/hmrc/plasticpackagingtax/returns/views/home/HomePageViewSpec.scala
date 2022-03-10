@@ -56,11 +56,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   val completeReturnUrl = "/complete-return-url"
 
   private def createView(subscription: SubscriptionDisplayResponse): Html =
-    homePage(subscription, defaultObligation, completeReturnUrl)(journeyRequest, messages)
+    homePage(subscription, completeReturnUrl)(journeyRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(singleEntitySubscription, defaultObligation, "url")(journeyRequest, messages)
-    homePage.render(singleEntitySubscription, defaultObligation, "url", journeyRequest, messages)
+    homePage.f(singleEntitySubscription, "url")(journeyRequest, messages)
+    homePage.render(singleEntitySubscription, "url", journeyRequest, messages)
   }
 
   "Home Page view" when {
@@ -119,7 +119,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
               "April",
               "June",
               "2022",
-              "30 September 2022"
+              "29 July 2022"
             )
             card.select(".govuk-link").first() must containMessage(
               "account.homePage.card.makeReturn.link"

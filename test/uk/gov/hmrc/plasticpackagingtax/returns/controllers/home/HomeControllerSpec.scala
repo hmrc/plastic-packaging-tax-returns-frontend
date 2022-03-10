@@ -47,7 +47,7 @@ class HomeControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[SubscriptionDisplayResponse], any(), any())(any(), any())).thenReturn(
+    when(page.apply(any[SubscriptionDisplayResponse], any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }
