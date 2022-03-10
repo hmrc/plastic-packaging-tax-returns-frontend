@@ -23,12 +23,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 
 @this(
   govukLayout: main_template,
-  saveButtons: saveButtons,
+  saveAndContinue: saveAndContinue,
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
@@ -90,7 +90,7 @@
             content = HtmlContent(formattedDetailsContent)
         ))
 
-        @saveButtons()
+        @saveAndContinue()
         }
     }
 )

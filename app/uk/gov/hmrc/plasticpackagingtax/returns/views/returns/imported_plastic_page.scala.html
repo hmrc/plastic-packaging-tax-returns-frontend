@@ -19,7 +19,7 @@
 @import play.api.data.Form
 @import play.api.mvc.Request
 @import play.api.i18n.Messages
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
@@ -32,7 +32,7 @@
     sectionHeader: sectionHeader,
     govukLayout: main_template,
     govukRadios : GovukRadios,
-    saveButtons: saveButtons,
+    saveAndContinue: saveAndContinue,
     errorSummary: errorSummary,
     govukFieldset: GovukFieldset,
 )
@@ -68,6 +68,6 @@
         )))
 
 
-        @saveButtons()
+        @saveAndContinue()
     }
 }

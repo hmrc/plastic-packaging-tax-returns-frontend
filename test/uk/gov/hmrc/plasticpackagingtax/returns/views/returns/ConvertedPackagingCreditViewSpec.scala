@@ -81,13 +81,9 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and Continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe messages("site.button.continue")
     }
 
-    "display 'Save and come back later' button" in {
-
-      view.getElementById("save_and_come_back_later").text() mustBe "Save and come back later"
-    }
   }
 
   "Converted Packaging Credit View when filled" should {

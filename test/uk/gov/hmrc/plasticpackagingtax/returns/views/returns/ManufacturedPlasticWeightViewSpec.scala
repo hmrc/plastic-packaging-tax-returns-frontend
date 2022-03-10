@@ -98,7 +98,7 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers with 
 
     "display 'Save and Continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe messages("site.button.continue")
     }
   }
 
