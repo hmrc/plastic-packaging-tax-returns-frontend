@@ -26,10 +26,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
-  pptEnrolmentIdentifierName,
-  pptEnrolmentKey
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
@@ -111,7 +108,10 @@ class AuthActionImpl @Inject() (
                 // And agent has authed with a selected client and past auth
                 // We can probably proceed as if nothing has changed
                 // TODO work out double match to remove duplication
-                getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
+                getPptEnrolmentId(allEnrolments,
+                                  pptEnrolmentIdentifierName,
+                                  selectedClientIdentifier
+                ) match {
                   case None =>
                     throw InsufficientEnrolments(
                       s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
@@ -125,7 +125,7 @@ class AuthActionImpl @Inject() (
                     )
                 }
             case _ =>
-              getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
+              getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName, None) match {
                 case None =>
                   throw InsufficientEnrolments(
                     s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
@@ -146,7 +146,6 @@ class AuthActionImpl @Inject() (
       case _: InsufficientEnrolments =>
         // TODO this (or another as yet unknown auth exception) could be an agent without a delegated auth
         // How to trap this; look closer at Self Assessment for hints
-
         // Authenticated users who lack PPT enrolments are redirected to registration frontend
         Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
 
@@ -170,12 +169,21 @@ class AuthActionImpl @Inject() (
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad()))
     }
 
-  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
-    getPptEnrolmentIdentifier(enrolments, identifier) match {
-      case Some(enrolmentIdentifier) =>
-        Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
-      case None => Option.empty
+  private def getPptEnrolmentId(
+    enrolments: Enrolments,
+    identifier: String,
+    selectedClientIdentifier: Option[String]
+  ): Option[String] = {
+    // It appears Auth with never return a delegrated enrolment in
+    // it's response; so we have to use the one we past to the predicate!
+    selectedClientIdentifier.map(Some(_)).getOrElse {
+      getPptEnrolmentIdentifier(enrolments, identifier) match {
+        case Some(enrolmentIdentifier) =>
+          Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
+        case None => Option.empty
+      }
     }
+  }
 
   private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
@@ -190,6 +198,7 @@ class AuthActionImpl @Inject() (
     selectedClientIdentifier.map { clientIdentifier =>
       // If this request is decorated with a selected client identifier this indicates
       // an agent at work; we need to request the delegated authority
+      println("!!!!!!!!!!!!!!!!!! AUTHING WITH CLIENT: " + clientIdentifier)
       Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
                                                 clientIdentifier
       ).withDelegatedAuthRule("ppt-auth")
