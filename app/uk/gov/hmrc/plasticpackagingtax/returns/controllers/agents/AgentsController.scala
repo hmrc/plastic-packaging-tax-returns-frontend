@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,9 +37,14 @@ class AgentsController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
+  val clientIdentifierSessionKey = "clientPPT"
+
   val displayPage: Action[AnyContent] = Action.async { implicit request =>
     // TODO needs to be wrapped in an agents only auth
-    val form = ClientIdentifier.form().fill(ClientIdentifier(""))
+    val currentlySelectedClientIdentifier = request.session.get(clientIdentifierSessionKey)
+    val form = ClientIdentifier.form().fill(
+      ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
+    )
     Future.successful(Ok(page(form)))
   }
 
@@ -50,9 +56,15 @@ class AgentsController @Inject() (
       .fold(
         (formWithErrors: Form[ClientIdentifier]) =>
           Future.successful(BadRequest(page(formWithErrors))),
-        clientIdentifier =>
-          // Set this on the session and then redirect account
-          Future.successful(Ok("Got client identifier: " + clientIdentifier.identifier))
+        {
+          clientIdentifier =>
+            // Set this on the session and then redirect account
+            val sessionValues: Seq[(String, String)] =
+              Seq(clientIdentifierSessionKey -> clientIdentifier.identifier)
+            Future.successful(
+              Redirect(homeRoutes.HomeController.displayPage()).addingToSession(sessionValues: _*)
+            )
+        }
       )
   }
 

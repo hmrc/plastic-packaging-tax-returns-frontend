@@ -30,13 +30,14 @@ object ClientIdentifier extends CommonFormValidators {
   val identifier           = "identifier"
   val identifierEmptyError = "agents.client.identifier.empty.error"
 
-  def form(): Form[ClientIdentifier] = {
-    val m: Mapping[ClientIdentifier] = mapping(
-      identifier -> text()
-        .verifying(identifierEmptyError, isNonEmpty)
-    )(ClientIdentifier.apply)(ClientIdentifier.unapply)
-
-    Form(mapping = m)
-  }
+  def form(): Form[ClientIdentifier] =
+    Form(mapping =
+      mapping(
+        identifier -> text()
+          .verifying(identifierEmptyError,
+                     isNonEmpty
+          ) // TODO format and over length protection needed
+      )(ClientIdentifier.apply)(ClientIdentifier.unapply)
+    )
 
 }
