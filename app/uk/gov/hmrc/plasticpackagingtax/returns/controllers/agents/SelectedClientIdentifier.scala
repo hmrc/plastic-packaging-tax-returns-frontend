@@ -1,0 +1,40 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
+
+import play.api.mvc.{AnyContent, Request, Result}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
+
+trait SelectedClientIdentifier {
+
+  private val clientIdentifierSessionKey = "clientPPT"
+
+  def getSelectedClientIdentifierFrom(request: Request[AnyContent]): Option[String] =
+    request.session.get(clientIdentifierSessionKey)
+
+  def appendSelectedClientIdentifierToResult(clientIdentifier: ClientIdentifier, result: Result)(
+    implicit request: Request[AnyContent]
+  ): Result = {
+    val sessionValues: Seq[(String, String)] =
+      Seq(clientIdentifierSessionKey -> clientIdentifier.identifier)
+    result.addingToSession(sessionValues: _*)
+  }
+
+  // TODO This possibly needs to be cleared down; see Self Assessment for prior art
+  def cleanSelectedClientIdentifier = ???
+
+}

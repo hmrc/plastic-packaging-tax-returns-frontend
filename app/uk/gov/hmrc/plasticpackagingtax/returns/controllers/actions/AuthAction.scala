@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -30,8 +30,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
   pptEnrolmentIdentifierName,
   pptEnrolmentKey
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{AuthenticatedRequest, IdentityData}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -51,8 +51,6 @@ class AuthActionImpl @Inject() (
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
-  private def authPredicate = Enrolment("HMRC-PPT-ORG")
-
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
@@ -64,13 +62,22 @@ class AuthActionImpl @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val authorisation = authTimer.time()
-    authorised(authPredicate)
+
+    // TODO duplicate but too tied to fight the [A] placeholder just now
+    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+
+    val authorisation            = authTimer.time()
+    val selectedClientIdentifier = getSelectedClientIdentifier()
+
+    authorised(authPredicate(selectedClientIdentifier))
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
+          logger.info(
+            "Authorised with affinity group " + affinityGroup + " and enrolments " + allEnrolments
+          )
 
           val identityData = IdentityData(internalId,
                                           externalId,
@@ -96,8 +103,27 @@ class AuthActionImpl @Inject() (
 
           affinityGroup match {
             case Some(AffinityGroup.Agent) =>
-              // prevent agent access while the service is unable to support them
-              Future.successful(Redirect(agentRoutes.AgentsController.displayPage()))
+              if (selectedClientIdentifier.isEmpty)
+                // An agent has authed but we can't see a selected client identifier;
+                // we should prompt them to select one
+                Future.successful(Redirect(agentRoutes.AgentsController.displayPage()))
+              else
+                // And agent has authed with a selected client and past auth
+                // We can probably proceed as if nothing has changed
+                // TODO work out double match to remove duplication
+                getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
+                  case None =>
+                    throw InsufficientEnrolments(
+                      s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
+                    )
+                  case Some(pptEnrolmentIdentifier) =>
+                    executeRequest(request,
+                                   block,
+                                   identityData,
+                                   pptEnrolmentIdentifier,
+                                   allEnrolments
+                    )
+                }
             case _ =>
               getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
                 case None =>
@@ -118,8 +144,12 @@ class AuthActionImpl @Inject() (
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
       case _: InsufficientEnrolments =>
+        // TODO this (or another as yet unknown auth exception) could be an agent without a delegated auth
+        // How to trap this; look closer at Self Assessment for hints
+
         // Authenticated users who lack PPT enrolments are redirected to registration frontend
         Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
+
       case _: AuthorisationException =>
         Results.Redirect(homeRoutes.UnauthorisedController.onPageLoad())
     }
@@ -155,6 +185,17 @@ class AuthActionImpl @Inject() (
       .filter(_.key == pptEnrolmentKey)
       .flatMap(_.identifiers)
       .find(_.key == identifier)
+
+  private def authPredicate(selectedClientIdentifier: Option[String] = None) =
+    selectedClientIdentifier.map { clientIdentifier =>
+      // If this request is decorated with a selected client identifier this indicates
+      // an agent at work; we need to request the delegated authority
+      Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
+                                                clientIdentifier
+      ).withDelegatedAuthRule("ppt-auth")
+    }.getOrElse {
+      Enrolment(pptEnrolmentKey)
+    }
 
 }
 
