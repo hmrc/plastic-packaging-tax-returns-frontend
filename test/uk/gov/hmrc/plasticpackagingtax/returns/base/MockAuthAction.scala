@@ -76,8 +76,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   // format: off
   def authorizedUser(user: SignedInUser = exampleUser): Unit = {
-    val delegatedAuthRule = "ppt-auth" // Required for Agent access control; tells auth how the agent access decision is made
-    val enrolmentPredicate = Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule(delegatedAuthRule)
+    val enrolmentPredicate = Enrolment("HMRC-PPT-ORG")
 
     when(
       mockAuthConnector.authorise(

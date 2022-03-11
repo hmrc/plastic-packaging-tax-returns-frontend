@@ -49,7 +49,7 @@ class AuthActionImpl @Inject() (
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
-  private def authPredicate = Enrolment("HMRC-PPT-ORG").withDelegatedAuthRule("ppt-auth")
+  private def authPredicate = Enrolment("HMRC-PPT-ORG")
 
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
