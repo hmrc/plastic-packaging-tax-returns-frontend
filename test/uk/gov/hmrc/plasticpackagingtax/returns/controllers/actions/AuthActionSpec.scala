@@ -65,6 +65,16 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
+    "fail if an agent tries to access this non agent aware service" in {
+      val agent = PptTestData.newAgent("456")
+      authorizedUser(agent)
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), agent), okResponseGenerator)
+
+      status(result) mustBe PRECONDITION_FAILED
+    }
+
     "process request when enrolment id is present" in {
       val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
       authorizedUser(user)

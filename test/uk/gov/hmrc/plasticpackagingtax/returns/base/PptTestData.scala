@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.base
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.IdentityData
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription._
@@ -106,7 +106,8 @@ object PptTestData {
 
   def newUser(
     externalId: String = "123",
-    enrolments: Option[Enrolments] = Some(pptEnrolment("123"))
+    enrolments: Option[Enrolments] = Some(pptEnrolment("123")),
+    affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
     SignedInUser(enrolments.getOrElse(Enrolments(Set())),
                  IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
@@ -131,11 +132,14 @@ object PptTestData {
                               None,
                               None,
                               None,
-                              None,
+                              affinityGroup,
                               Some("crdentialStrength 50"),
                               Some(LoginTimes(DateTime.now, None))
                  )
     )
+
+  def newAgent(externalId: String = "123") =
+    newUser(externalId, enrolments = None, affinityGroup = Some(AffinityGroup.Agent))
 
   def pptEnrolment(pptEnrolmentId: String) =
     newEnrolments(

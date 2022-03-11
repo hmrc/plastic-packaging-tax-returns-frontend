@@ -92,13 +92,24 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
-            case None =>
-              throw InsufficientEnrolments(
-                s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
-              )
-            case Some(pptEnrolmentIdentifier) =>
-              executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
+          affinityGroup match {
+            case Some(AffinityGroup.Agent) =>
+              // prevent agent access while the service is unable to support them
+              Future.successful(Results.PreconditionFailed)
+            case _ =>
+              getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
+                case None =>
+                  throw InsufficientEnrolments(
+                    s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
+                  )
+                case Some(pptEnrolmentIdentifier) =>
+                  executeRequest(request,
+                                 block,
+                                 identityData,
+                                 pptEnrolmentIdentifier,
+                                 allEnrolments
+                  )
+              }
           }
 
       } recover {
