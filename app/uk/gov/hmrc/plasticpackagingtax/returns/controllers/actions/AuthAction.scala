@@ -100,42 +100,35 @@ class AuthActionImpl @Inject() (
 
           affinityGroup match {
             case Some(AffinityGroup.Agent) =>
-              if (selectedClientIdentifier.isEmpty)
+              selectedClientIdentifier.map { pptEnrolmentIdentifier =>
+                // And agent has authed with a selected client and past the enrolment predicate using that identifier
+                // The identifier can be trusted as good pptEnrolmentIdentifier.
+                executeRequest(request,
+                  block,
+                  identityData,
+                  pptEnrolmentIdentifier,
+                  allEnrolments
+                )
+              }.getOrElse {
                 // An agent has authed but we can't see a selected client identifier;
                 // we should prompt them to select one
                 Future.successful(Redirect(agentRoutes.AgentsController.displayPage()))
-              else
-                // And agent has authed with a selected client and past auth
-                // We can probably proceed as if nothing has changed
-                // TODO work out double match to remove duplication
-                getPptEnrolmentId(allEnrolments,
-                                  pptEnrolmentIdentifierName,
-                                  selectedClientIdentifier
-                ) match {
-                  case None =>
-                    throw InsufficientEnrolments(
-                      s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
-                    )
-                  case Some(pptEnrolmentIdentifier) =>
-                    executeRequest(request,
-                                   block,
-                                   identityData,
-                                   pptEnrolmentIdentifier,
-                                   allEnrolments
-                    )
-                }
+              }
+
             case _ =>
+              // A non agent has presented; their ppt enrolment will have been returned
+              // from auth as it is a principal enrolment
               getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName, None) match {
-                case None =>
-                  throw InsufficientEnrolments(
-                    s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
-                  )
                 case Some(pptEnrolmentIdentifier) =>
                   executeRequest(request,
                                  block,
                                  identityData,
                                  pptEnrolmentIdentifier,
                                  allEnrolments
+                  )
+                case None =>
+                  throw InsufficientEnrolments(
+                    s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
                   )
               }
           }
