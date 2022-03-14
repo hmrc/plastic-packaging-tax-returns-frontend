@@ -29,24 +29,25 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 @ViewTest
 class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[converted_packaging_credit_page]
+  private val page             = instanceOf[converted_packaging_credit_page]
+  private val balanceAvailable = Some(BigDecimal("1.23"))
 
   private def createView(
-    form: Form[ConvertedPackagingCredit] = ConvertedPackagingCredit.form()
+    form: Form[ConvertedPackagingCredit] = ConvertedPackagingCredit.form(),
+    balance: Option[BigDecimal] = balanceAvailable
   ): Document =
-    page(form)(request, messages)
+    page(form, balance)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), balanceAvailable)(request, messages)
+    page.render(form(), balanceAvailable, request, messages)
   }
 
   "Converted Packaging Credit View" should {
 
-    val view = createView()
-
     "display 'Back' button" in {
 
+      val view = createView()
       view.getElementById("back-link") must haveHref(
         routes.RecycledPlasticWeightController.displayPage()
       )
@@ -54,6 +55,7 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
+      val view = createView()
       view.select("title").text() must include(
         messages("returns.convertedPackagingCredit.meta.title")
       )
@@ -61,25 +63,45 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
+      val view = createView()
       view.getElementById("section-header").text() must include(
         messages("returns.convertedPackagingCredit.sectionHeader")
       )
     }
 
-    "display total weight label" in {
+    "display balance available when present" in {
 
+      val view = createView()
       view.getElementsByAttributeValueMatching("for", "totalInPence").text() must include(
+        "Credit balance £1.23"
+      )
+    }
+
+    "display unavailable for balance when none is present" in {
+
+      val view = page(form(), None)(request, messages)
+      view.getElementsByAttributeValueMatching("for", "totalInPence").text() must include(
+        "£unavailable"
+      )
+    }
+
+    "display total weight text" in {
+
+      val view = createView()
+      view.getElementsByClass("govuk-body").text() must include(
         messages("returns.convertedPackagingCredit.total.weight")
       )
     }
 
     "display total weight input box" in {
 
+      val view = createView()
       view must containElementWithID("totalInPence")
     }
 
     "display 'Save and Continue' button" in {
 
+      val view = createView()
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe messages("site.button.continue")
     }

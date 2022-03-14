@@ -35,6 +35,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.config
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -67,6 +68,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def pptObligationUrl(pptReference: String): String =
     s"$pptServiceHost/obligations/open/$pptReference"
+
+  def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
+    s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
 
   lazy val pptGuidanceUrl: String = config.get[String]("urls.pptGuidanceLink")
 
