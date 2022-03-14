@@ -18,9 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.views.home
 
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
+import play.api.test.FakeRequest
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.home.SubscriptionTypes.{
   Group,
@@ -29,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.home.SubscriptionTypes.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 object SubscriptionTypes extends Enumeration {
   type SubscriptionType = Value
@@ -55,12 +59,22 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
   val completeReturnUrl = "/complete-return-url"
 
+  val authenticatedRequest = new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                                      PptTestData.newUser(),
+                                                      Some("XMPPT0000000001")
+  )
+
   private def createView(subscription: SubscriptionDisplayResponse): Html =
-    homePage(subscription, completeReturnUrl)(journeyRequest, messages)
+    homePage(subscription, completeReturnUrl, "XMPPT0000000001")(authenticatedRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(singleEntitySubscription, "url")(journeyRequest, messages)
-    homePage.render(singleEntitySubscription, "url", journeyRequest, messages)
+    homePage.f(singleEntitySubscription, "url", "XMPPT0000000001")(authenticatedRequest, messages)
+    homePage.render(singleEntitySubscription,
+                    "url",
+                    "XMPPT0000000001",
+                    authenticatedRequest,
+                    messages
+    )
   }
 
   "Home Page view" when {
