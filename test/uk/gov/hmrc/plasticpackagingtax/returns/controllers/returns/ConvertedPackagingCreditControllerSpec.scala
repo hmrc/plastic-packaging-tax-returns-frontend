@@ -109,6 +109,11 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
         )(any())
         val dates = dateCaptor.getAllValues
 
+        val obligationFromDate = aTaxReturn().obligation.get.fromDate
+        //export credits date range spans 8 quarters before current obligation quarter
+        dates.get(0).toString mustBe obligationFromDate.minusYears(2).toString
+        dates.get(1).toString mustBe obligationFromDate.minusDays(1).toString
+
         dates.get(0).toString mustBe "2020-04-01"
         dates.get(1).toString mustBe "2022-03-31"
       }
