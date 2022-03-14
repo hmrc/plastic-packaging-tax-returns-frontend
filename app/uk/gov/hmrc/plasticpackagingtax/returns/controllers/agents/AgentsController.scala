@@ -19,47 +19,44 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class AgentsController @Inject() (
-  authenticate: AuthAction,
+  authenticate: AuthAgentAction,
   mcc: MessagesControllerComponents,
   page: agents_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with SelectedClientIdentifier {
 
-  val displayPage: Action[AnyContent] = Action.async { implicit request =>
-    // TODO needs to be wrapped in an agents only auth
-    val currentlySelectedClientIdentifier = getSelectedClientIdentifierFrom(request)
-    val form = ClientIdentifier.form().fill(
-      ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
-    )
-    Future.successful(Ok(page(form)))
-  }
-
-  val submit: Action[AnyContent] = Action.async { implicit request =>
-    // TODO needs to be wrapped in an agents only auth
-    // Catch client identifier; validate and stash somewhere accessible pre auth and only to this user
-    ClientIdentifier.form()
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[ClientIdentifier]) =>
-          Future.successful(BadRequest(page(formWithErrors))),
-        clientIdentifier =>
-          // Set this on the session and then redirect account
-          Future.successful {
-            appendSelectedClientIdentifierToResult(clientIdentifier,
-                                                   Redirect(homeRoutes.HomeController.displayPage())
-            )
-          }
+  val displayPage: Action[AnyContent] =
+    authenticate { implicit request =>
+      val currentlySelectedClientIdentifier = getSelectedClientIdentifierFrom(request)
+      val form = ClientIdentifier.form().fill(
+        ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
       )
-  }
+      Ok(page(form))
+    }
+
+  val submit: Action[AnyContent] =
+    authenticate { implicit request =>
+      // Catch client identifier; validate and stash somewhere accessible pre auth and only to this user
+      ClientIdentifier.form()
+        .bindFromRequest()
+        .fold((formWithErrors: Form[ClientIdentifier]) => BadRequest(page(formWithErrors)),
+              clientIdentifier =>
+                // Set this on the session and then redirect account
+                appendSelectedClientIdentifierToResult(
+                  clientIdentifier,
+                  Redirect(homeRoutes.HomeController.displayPage())
+                )
+        )
+    }
 
 }
