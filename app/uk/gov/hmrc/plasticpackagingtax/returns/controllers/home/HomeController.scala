@@ -30,7 +30,6 @@ import scala.concurrent.ExecutionContext
 
 class HomeController @Inject() (
   authenticate: AuthAction,
-  journeyAction: JourneyAction,
   subscriptionConnector: SubscriptionConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
@@ -39,10 +38,12 @@ class HomeController @Inject() (
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
-      subscriptionConnector.get(request.pptReference)
+    authenticate.async { implicit request =>
+      val pptReference =
+        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+      subscriptionConnector.get(pptReference)
         .map { subscription =>
-          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl))
+          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl, pptReference))
         }
     }
 
