@@ -150,7 +150,7 @@ class ViewSubscriptionControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(authRequest(user = PptTestData.newUser("123", None)))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
       }
     }
 

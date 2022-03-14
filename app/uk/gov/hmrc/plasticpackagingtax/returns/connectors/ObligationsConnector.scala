@@ -34,20 +34,17 @@ class ObligationsConnector @Inject() (
 
   def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.open.get.timer").time()
-    httpClient.GET[PPTObligations](appConfig.pptObligationUrl(pptReferenceNumber))
-      .map {
-        response =>
-          logger.info(s"Retrieved open obligations for ppt reference number [$pptReferenceNumber]")
-          response
-      }
-      .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to retrieve open obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
-      }
+
+    Future.successful {
+
+      PPTObligations(nextObligation = None,
+                     oldestOverdueObligation = None,
+                     overdueObligationCount = 0,
+                     isNextObligationDue = false,
+                     displaySubmitReturnsLink = true
+      )
+
+    }
   }
 
 }

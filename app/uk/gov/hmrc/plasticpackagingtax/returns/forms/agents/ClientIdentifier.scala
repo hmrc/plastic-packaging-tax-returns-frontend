@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.forms.agents
 
-import play.api.data.{Form, Mapping}
+import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.CommonFormValidators

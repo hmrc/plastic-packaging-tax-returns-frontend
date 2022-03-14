@@ -19,18 +19,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions
 import com.google.inject.{ImplementedBy, Inject}
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
-import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
-  pptEnrolmentIdentifierName,
-  pptEnrolmentKey
-}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{AuthenticatedRequest, IdentityData}
@@ -38,13 +32,12 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (
+class AuthCheckActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  pptReferenceAllowedList: PptReferenceAllowedList,
   appConfig: AppConfig,
   metrics: Metrics,
   mcc: MessagesControllerComponents
-) extends AuthAction with AuthorisedFunctions {
+) extends AuthCheckAction with AuthorisedFunctions {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -63,13 +56,9 @@ class AuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    // TODO duplicate but too tied to fight the [A] placeholder just now
-    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+    val authorisation = authTimer.time()
 
-    val authorisation            = authTimer.time()
-    val selectedClientIdentifier = getSelectedClientIdentifier()
-
-    authorised(authPredicate(selectedClientIdentifier))
+    authorised()
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -101,44 +90,11 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          affinityGroup match {
-            case Some(AffinityGroup.Agent) =>
-              selectedClientIdentifier.map { pptEnrolmentIdentifier =>
-                // And agent has authed with a selected client and past the enrolment predicate using that identifier
-                // The identifier can be trusted as good pptEnrolmentIdentifier.
-                executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
-              }.getOrElse {
-                // An agent has authed but we can't see a selected client identifier;
-                // we should prompt them to select one
-                Future.successful(Redirect(agentRoutes.AgentsController.displayPage()))
-              }
-
-            case _ =>
-              // A non agent has presented; their ppt enrolment will have been returned
-              // from auth as it is a principal enrolment
-              getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName, None) match {
-                case Some(pptEnrolmentIdentifier) =>
-                  executeRequest(request,
-                                 block,
-                                 identityData,
-                                 pptEnrolmentIdentifier,
-                                 allEnrolments
-                  )
-                case None =>
-                  throw InsufficientEnrolments(
-                    s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
-                  )
-              }
-          }
+          executeRequest(request, block, identityData, allEnrolments)
 
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-
-      case _: InsufficientEnrolments =>
-        // Redirected to the non enrolled page; this is authed by doesn't need enrolments.
-        // There we can examine the user and determine where to send them.
-        Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
 
       case _: AuthorisationException =>
         Results.Redirect(homeRoutes.UnauthorisedController.unauthorised())
@@ -149,60 +105,17 @@ class AuthActionImpl @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result],
     identityData: IdentityData,
-    pptEnrolmentIdentifier: String,
     allEnrolments: Enrolments
-  ) =
-    if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
-      val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(pptEnrolmentIdentifier)))
-    } else {
-      logger.warn("User id is not allowed, access denied")
-      Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.unauthorised()))
-    }
-
-  private def getPptEnrolmentId(
-    enrolments: Enrolments,
-    identifier: String,
-    selectedClientIdentifier: Option[String]
-  ): Option[String] =
-    // It appears Auth with never return a delegrated enrolment in
-    // it's response; so we have to use the one we past to the predicate!
-    selectedClientIdentifier.map(Some(_)).getOrElse {
-      getPptEnrolmentIdentifier(enrolments, identifier) match {
-        case Some(enrolmentIdentifier) =>
-          Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
-        case None => Option.empty
-      }
-    }
-
-  private def getPptEnrolmentIdentifier(
-    enrolmentsList: Enrolments,
-    identifier: String
-  ): Option[EnrolmentIdentifier] =
-    enrolmentsList.enrolments
-      .filter(_.key == pptEnrolmentKey)
-      .flatMap(_.identifiers)
-      .find(_.key == identifier)
-
-  private def authPredicate(selectedClientIdentifier: Option[String] = None) =
-    selectedClientIdentifier.map { clientIdentifier =>
-      // If this request is decorated with a selected client identifier this indicates
-      // an agent at work; we need to request the delegated authority
-      Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
-                                                clientIdentifier
-      ).withDelegatedAuthRule("ppt-auth")
-    }.getOrElse {
-      Enrolment(pptEnrolmentKey)
-    }
+  ) = {
+    val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
+    block(new AuthenticatedRequest(request, pptLoggedInUser, None))
+  }
 
 }
 
-object AuthAction {
-  val pptEnrolmentKey            = "HMRC-PPT-ORG"
-  val pptEnrolmentIdentifierName = "EtmpRegistrationNumber"
-}
+object AuthCheckAction {}
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction
+@ImplementedBy(classOf[AuthCheckActionImpl])
+trait AuthCheckAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]

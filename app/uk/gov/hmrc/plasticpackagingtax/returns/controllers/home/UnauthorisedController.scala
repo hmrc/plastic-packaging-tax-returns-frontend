@@ -18,17 +18,39 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckAction
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
 class UnauthorisedController @Inject() (
+  authenticate: AuthCheckAction,
   mcc: MessagesControllerComponents,
   unauthorisedPage: unauthorised
 ) extends FrontendController(mcc) with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] =
+  def notEnrolled(): Action[AnyContent] =
+    authenticate { implicit authenticatedRequest =>
+      // A signed in user has been redirect here for having no enrolment.
+      // If this is an agent then they have landed here for one of 2 reasons:
+      // - They have not supplied a client identifier
+      // - They have supplied a client identifier but failed auth enrolment (invalid identifier or not one of their clients)
+      // These can be sent to the agents client page
+      val affinityGroup = authenticatedRequest.user.identityData.affinityGroup
+      affinityGroup match {
+        case Some(AffinityGroup.Agent) =>
+          Redirect(agentRoutes.AgentsController.displayPage())
+        case _ =>
+          // All other users see the you need to register page.
+          Ok(unauthorisedPage())
+      }
+    }
+
+  def unauthorised: Action[AnyContent] =
+    // General auth errors are redirected here
     Action { implicit request =>
       Ok(unauthorisedPage())
     }

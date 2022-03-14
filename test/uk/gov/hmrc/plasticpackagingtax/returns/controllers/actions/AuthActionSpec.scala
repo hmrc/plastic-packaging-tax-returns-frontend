@@ -57,13 +57,13 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
   "Auth Action" should {
 
-    "redirect to unauthorised page when enrolment id is missing" in {
+    "redirect to not enrolled page when enrolment id is missing" in {
       val user = PptTestData.newUser("123", Some(pptEnrolment("")))
       authorizedUser(user)
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
     }
 
     "redirect to an agent specific sorry page to access this non agent aware service" in {
@@ -116,7 +116,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
     }
 
     "redirect to unauthorised page when enrolment id is present but no ppt enrolment key found" in {
@@ -135,7 +135,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
     }
 
     "time calls to authorisation" in {
@@ -169,7 +169,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
           okResponseGenerator
         )
 
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
     }
 
     "redirect when user not logged in" in {
@@ -197,7 +197,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         )
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
     }
   }
 }

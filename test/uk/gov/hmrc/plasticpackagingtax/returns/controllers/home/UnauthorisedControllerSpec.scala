@@ -30,7 +30,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
   private val page = mock[unauthorised]
 
   val controller =
-    new UnauthorisedController(stubMessagesControllerComponents(), page)
+    new UnauthorisedController(???, stubMessagesControllerComponents(), page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -48,7 +48,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
       "display page method is invoked" in {
 
-        val result = controller.onPageLoad()(getRequest())
+        val result = controller.unauthorised()(getRequest())
 
         status(result) must be(OK)
       }
