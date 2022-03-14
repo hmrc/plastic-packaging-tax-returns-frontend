@@ -19,7 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  ExportCreditsConnector,
+  ServiceError,
+  TaxReturnsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
   AuthAction,
   FormAction,
@@ -35,6 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
   ConvertedPackagingCredit,
   TaxReturn
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,23 +53,28 @@ class ConvertedPackagingCreditController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val returnsConnector: TaxReturnsConnector,
+  exportCreditsConnector: ExportCreditsConnector,
   mcc: MessagesControllerComponents,
   page: converted_packaging_credit_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with PriceConverter {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      request.taxReturn.convertedPackagingCredit match {
-        case Some(data) =>
-          Ok(
-            page(
-              ConvertedPackagingCreditDetails.form().fill(
-                ConvertedPackagingCreditDetails(totalInPence = data.totalValueForCreditAsString)
+    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+      exportCreditBalanceAvailable().map { balanceAvailable =>
+        request.taxReturn.convertedPackagingCredit match {
+          case Some(data) =>
+            Ok(
+              page(
+                ConvertedPackagingCreditDetails.form().fill(
+                  ConvertedPackagingCreditDetails(totalInPence = data.totalValueForCreditAsString)
+                ),
+                balanceAvailable
               )
             )
-          )
-        case _ => Ok(page(ConvertedPackagingCreditDetails.form()))
+          case _ =>
+            Ok(page(ConvertedPackagingCreditDetails.form(), balanceAvailable))
+        }
       }
     }
 
@@ -74,7 +84,9 @@ class ConvertedPackagingCreditController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[ConvertedPackagingCreditDetails]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+            exportCreditBalanceAvailable().map { balanceAvailable =>
+              BadRequest(page(formWithErrors, balanceAvailable))
+            },
           credit =>
             updateTaxReturn(credit).map {
               case Right(_) =>
@@ -87,6 +99,25 @@ class ConvertedPackagingCreditController @Inject() (
             }
         )
     }
+
+  private def exportCreditBalanceAvailable()(implicit
+    request: JourneyRequest[_]
+  ): Future[Option[BigDecimal]] = {
+
+    val obligation = getTaxReturnObligation(request.taxReturn)
+    exportCreditsConnector.get(request.pptReference,
+                               obligation.fromDate.minusYears(2),
+                               obligation.fromDate.minusDays(1)
+    )
+  }.map {
+    case Right(balance) => Some(balance.totalExportCreditAvailable)
+    case Left(_)        => None
+  }
+
+  private def getTaxReturnObligation(taxReturn: TaxReturn): Obligation =
+    taxReturn.obligation.getOrElse(
+      throw new IllegalStateException("Tax return obligation details absent")
+    )
 
   private def updateTaxReturn(
     formData: ConvertedPackagingCreditDetails

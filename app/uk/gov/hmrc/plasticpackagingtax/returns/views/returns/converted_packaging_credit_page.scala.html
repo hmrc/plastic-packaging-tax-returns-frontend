@@ -39,9 +39,11 @@
   formHelper: FormWithCSRF
 )
 
-@(form: Form[ConvertedPackagingCredit])(implicit request: Request[_], messages: Messages)
+@(form: Form[ConvertedPackagingCredit], creditBalanceAvailable: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 
 @totalCreditInPenceField = @{form("totalInPence")}
+
+@creditBalanceForDisplay = @{ " £" + creditBalanceAvailable.getOrElse(messages("returns.convertedPackagingCredit.balanceUnavailable")) }
 
 @formattedDetailsContent = {
   <ul class="govuk-list">
@@ -52,6 +54,8 @@
 
 @inputFields= {
 
+    @paragraphBody(message = messages("returns.convertedPackagingCredit.total.weight"), classes = "govuk-body")
+
     @govukInput(
         Input(
             id = s"${totalCreditInPenceField.name}",
@@ -61,7 +65,7 @@
             label = Label(
                 isPageHeading = true,
                 classes = s"govuk-label",
-                content = Text(messages("returns.convertedPackagingCredit.total.weight"))),
+                content = Text(messages("returns.convertedPackagingCredit.balanceAvailable") + creditBalanceForDisplay)),
                 classes = "govuk-input--width-10",
                 spellcheck = Some(false),
                 suffix = Some(PrefixOrSuffix(

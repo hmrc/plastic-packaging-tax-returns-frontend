@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -26,34 +26,55 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  DownstreamServiceError,
+  ExportCreditsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit
+import uk.gov.hmrc.plasticpackagingtax.returns.models.exportcredits.ExportCreditBalance
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import java.time.LocalDate
+import scala.concurrent.Future
+
 class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
-  private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[converted_packaging_credit_page]
+  private val mcc                        = stubMessagesControllerComponents()
+  private val page                       = mock[converted_packaging_credit_page]
+  private val mockExportCreditsConnector = mock[ExportCreditsConnector]
+
+  private val balance = ExportCreditBalance(totalPPTCharges = BigDecimal("1234.56"),
+                                            totalExportCreditClaimed = BigDecimal("12.34"),
+                                            totalExportCreditAvailable = BigDecimal("123.45")
+  )
 
   private val controller = new ConvertedPackagingCreditController(authenticate = mockAuthAction,
                                                                   journeyAction = mockJourneyAction,
                                                                   mcc = mcc,
                                                                   page = page,
                                                                   returnsConnector =
-                                                                    mockTaxReturnsConnector
+                                                                    mockTaxReturnsConnector,
+                                                                  exportCreditsConnector =
+                                                                    mockExportCreditsConnector
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ConvertedPackagingCredit]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(
+      page.apply(any[Form[ConvertedPackagingCredit]], any[Option[BigDecimal]])(any(), any())
+    ).thenReturn(HtmlFormat.empty)
+    when(mockExportCreditsConnector.get(anyString(), any(), any())(any())).thenReturn(
+      Future.successful(Right(balance))
+    )
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(page, mockExportCreditsConnector)
     super.afterEach()
   }
 
@@ -71,6 +92,39 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
       "tax return already exists and display page method is invoked" in {
         authorizedUser()
         mockTaxReturnFind(aTaxReturn())
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "correct date parameters are set in export credits call" in {
+        authorizedUser()
+        mockTaxReturnFind(aTaxReturn())
+        await(controller.displayPage()(getRequest()))
+
+        val dateCaptor = ArgumentCaptor.forClass(classOf[LocalDate])
+        verify(mockExportCreditsConnector).get(anyString(),
+                                               dateCaptor.capture(),
+                                               dateCaptor.capture()
+        )(any())
+        val dates = dateCaptor.getAllValues
+
+        val obligationFromDate = aTaxReturn().obligation.get.fromDate
+        //export credits date range spans 8 quarters before current obligation quarter
+        dates.get(0).toString mustBe obligationFromDate.minusYears(2).toString
+        dates.get(1).toString mustBe obligationFromDate.minusDays(1).toString
+
+        dates.get(0).toString mustBe "2020-04-01"
+        dates.get(1).toString mustBe "2022-03-31"
+      }
+
+      "display page method is invoked even when export credits call fails" in {
+        authorizedUser()
+        when(mockExportCreditsConnector.get(any(), any(), any())(any())).thenReturn(
+          Future.successful(
+            Left(DownstreamServiceError("error", new InternalServerException("error")))
+          )
+        )
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -108,7 +162,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
       def pageForm: Form[ConvertedPackagingCredit] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedPackagingCredit]])
-        verify(page).apply(captor.capture())(any(), any())
+        verify(page).apply(captor.capture(), any())(any(), any())
         captor.getValue
       }
 
