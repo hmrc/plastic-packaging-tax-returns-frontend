@@ -61,8 +61,9 @@ class TaxReturnsConnector @Inject() (
   def create(
     payload: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.returns.create.timer").time()
-    httpClient.POST[TaxReturn, TaxReturn](appConfig.pptReturnsUrl, payload)
+    val timer        = metrics.defaultRegistry.timer("ppt.returns.create.timer").time()
+    val pptReference = payload.id
+    httpClient.POST[TaxReturn, TaxReturn](appConfig.pptReturnUrl(pptReference), payload)
       .andThen { case _ => timer.stop() }
       .map {
         response =>
