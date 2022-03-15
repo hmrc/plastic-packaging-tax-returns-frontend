@@ -69,6 +69,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptObligationUrl(pptReference: String): String =
     s"$pptServiceHost/obligations/open/$pptReference"
 
+  def pptFinancialsUrl(pptReference: String): String =
+    s"$pptServiceHost/financials/open/$pptReference"
+
   def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
     s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
 
