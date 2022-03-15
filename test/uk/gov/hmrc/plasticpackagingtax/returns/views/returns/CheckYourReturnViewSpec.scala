@@ -27,6 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.spec.ViewMatchers
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
+import scala.math.BigDecimal.RoundingMode
+
 @ViewTest
 class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
 
@@ -144,7 +146,9 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                       5,
                                       "returns.checkYourReturnPage.conversionCredit",
                                       asPounds(
-                                        taxReturn.convertedPackagingCredit.get.totalValueForCreditAsString
+                                        taxReturn.convertedPackagingCredit.get.totalInPounds.setScale(
+                                          2
+                                        ).toString
                                       ),
                                       returnRoutes.ConvertedPackagingCreditController.displayPage()
         )
@@ -200,7 +204,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
           2,
           0,
           "returns.checkYourReturnPage.totalCredits.creditsRequested.label",
-          asPounds(taxReturn.taxLiability.totalCredit.toString)
+          asPounds(taxReturn.taxLiability.totalCredit.setScale(2).toString)
         )
       }
     }

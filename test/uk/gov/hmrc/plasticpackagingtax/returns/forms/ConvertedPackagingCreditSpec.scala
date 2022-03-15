@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.forms.ConvertedPackagingCredit.{
   creditEmptyError,
   invalidFormatError,
   maxTotalCredit,
-  totalInPence
+  totalInPounds
 }
 
 class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
@@ -35,7 +35,7 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
 
       "totalInPence is withing allowed range" in {
 
-        val input = Map(totalInPence -> "100")
+        val input = Map(totalInPounds -> "100")
 
         val form = ConvertedPackagingCredit.form().bind(input)
         form.errors.size mustBe 0
@@ -43,7 +43,7 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
 
       "totalInPence allows two decimal values" in {
 
-        val input = Map(totalInPence -> "100.34")
+        val input = Map(totalInPounds -> "100.34")
 
         val form = ConvertedPackagingCredit.form().bind(input)
         form.errors.size mustBe 0
@@ -51,7 +51,7 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
 
       "totalInPence is 0" in {
 
-        val input = Map(totalInPence -> "0")
+        val input = Map(totalInPounds -> "0")
 
         val form = ConvertedPackagingCredit.form().bind(input)
         form.errors.size mustBe 0
@@ -60,7 +60,7 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
       "totalInPence is exactly max allowed amount" in {
 
         val input =
-          Map(totalInPence -> maxTotalCredit.toString)
+          Map(totalInPounds -> maxTotalCredit.toString)
 
         val form = ConvertedPackagingCredit.form().bind(input)
         form.errors.size mustBe 0
@@ -69,7 +69,7 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
       "totalInPence contains spaces before and after value" in {
 
         val input =
-          Map(totalInPence -> " 3 ")
+          Map(totalInPounds -> " 3 ")
 
         val form = ConvertedPackagingCredit.form().bind(input)
         form.errors.size mustBe 0
@@ -80,43 +80,43 @@ class ConvertedPackagingCreditSpec extends AnyWordSpec with Matchers {
 
       "provided with empty data" in {
 
-        val input = Map(totalInPence -> "")
+        val input = Map(totalInPounds -> "")
         val expectedErrors =
-          Seq(FormError(totalInPence, creditEmptyError))
+          Seq(FormError(totalInPounds, creditEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "totalInPence contains alphanumerical or special character" in {
 
-        val input = Map(totalInPence -> "20A #,")
+        val input = Map(totalInPounds -> "20A #,")
         val expectedErrors =
-          Seq(FormError(totalInPence, invalidFormatError))
+          Seq(FormError(totalInPounds, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "totalInPence contains negative number" in {
 
-        val input          = Map(totalInPence -> "-1")
-        val expectedErrors = Seq(FormError(totalInPence, invalidFormatError))
+        val input          = Map(totalInPounds -> "-1")
+        val expectedErrors = Seq(FormError(totalInPounds, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "totalInPence contains more than two decimals" in {
 
-        val input          = Map(totalInPence -> "5.467")
-        val expectedErrors = Seq(FormError(totalInPence, invalidFormatError))
+        val input          = Map(totalInPounds -> "5.467")
+        val expectedErrors = Seq(FormError(totalInPounds, invalidFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "totalInPence is more than maximum allowed weight" in {
 
-        val input = Map(totalInPence -> (maxTotalCredit + 1).toString)
+        val input = Map(totalInPounds -> (maxTotalCredit + 1).toString)
         val expectedErrors =
-          Seq(FormError(totalInPence, aboveMaxError))
+          Seq(FormError(totalInPounds, aboveMaxError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

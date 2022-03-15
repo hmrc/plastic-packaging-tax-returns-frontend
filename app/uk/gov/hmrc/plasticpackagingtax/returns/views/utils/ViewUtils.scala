@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.utils
+package uk.gov.hmrc.plasticpackagingtax.returns.views.utils
 
-trait PriceConverter {
+import scala.math.BigDecimal.RoundingMode
 
-  def convertDecimalRepresentationToPences(amountAsString: String): Long =
-    (BigDecimal(amountAsString.trim) * 100).toLong
-
-  def toBigDecimal(totalInPences: Long): BigDecimal = format(BigDecimal(totalInPences) / 100.00)
-
-  def convertPencesToDecimalRepresentation(totalInPences: Long): String =
-    toBigDecimal(totalInPences).toString()
-
-  def format(value: BigDecimal): BigDecimal =
-    value.setScale(2)
-
+object ViewUtils {
+  def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
 }
