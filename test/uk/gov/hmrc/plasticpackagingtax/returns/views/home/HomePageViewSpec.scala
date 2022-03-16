@@ -23,6 +23,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.home.SubscriptionTypes.{
@@ -64,12 +65,21 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                                                       Some("XMPPT0000000001")
   )
 
+  val pptFinancials = Some("You owe £100")
+
   private def createView(subscription: SubscriptionDisplayResponse): Html =
-    homePage(subscription, completeReturnUrl, "XMPPT0000000001")(authenticatedRequest, messages)
+    homePage(subscription, pptFinancials, completeReturnUrl, "XMPPT0000000001")(
+      authenticatedRequest,
+      messages
+    )
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(singleEntitySubscription, "url", "XMPPT0000000001")(authenticatedRequest, messages)
+    homePage.f(singleEntitySubscription, pptFinancials, "url", "XMPPT0000000001")(
+      authenticatedRequest,
+      messages
+    )
     homePage.render(singleEntitySubscription,
+                    pptFinancials,
                     "url",
                     "XMPPT0000000001",
                     authenticatedRequest,
@@ -145,11 +155,9 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             val card = view.select(".card .card-body").get(1)
 
             card.select(".govuk-heading-m").first() must containMessage(
-              "account.homePage.card.balance.header"
+              "account.homePage.card.payments.header"
             )
-            card.select(".govuk-body").first() must containMessage(
-              "account.homePage.card.balance.body"
-            )
+            card.select(".govuk-body").first().text() mustBe "You owe £100"
           }
 
           "display account management heading" in {

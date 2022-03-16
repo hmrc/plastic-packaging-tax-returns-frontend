@@ -16,21 +16,26 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  FinancialsConnector,
+  SubscriptionConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import java.time.LocalDate
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class HomeController @Inject() (
   authenticate: AuthAction,
   subscriptionConnector: SubscriptionConnector,
+  financialsConnector: FinancialsConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: home_page
@@ -41,10 +46,16 @@ class HomeController @Inject() (
     authenticate.async { implicit request =>
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
-      subscriptionConnector.get(pptReference)
-        .map { subscription =>
-          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl, pptReference))
-        }
+
+      for {
+        subscription <- subscriptionConnector.get(pptReference)
+        paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
+          response => Some(response.paymentStatement())
+        ).recoverWith { case _: Exception => Future(None) }
+      } yield Ok(
+        page(subscription, paymentStatement, appConfig.pptCompleteReturnGuidanceUrl, pptReference)
+      )
+
     }
 
 }
