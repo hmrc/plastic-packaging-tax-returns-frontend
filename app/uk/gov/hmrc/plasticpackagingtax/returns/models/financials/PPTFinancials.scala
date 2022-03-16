@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.models.financials
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
@@ -24,7 +25,27 @@ final case class PPTFinancials(
   creditAmount: Option[BigDecimal],
   debitAmount: Option[(BigDecimal, LocalDate)],
   overdueAmount: Option[BigDecimal]
-)
+) {
+
+  private def getMonth(date: LocalDate)(implicit messages: Messages) =
+    messages(s"month.${date.getMonthValue}")
+
+  def paymentStatement()(implicit messages: Messages): String =
+    (creditAmount, debitAmount, overdueAmount) match {
+      case (None, None, None)         => messages("account.homePage.card.payments.nothingOutstanding")
+      case (Some(amount), None, None) => messages("account.homePage.card.payments.inCredit", amount)
+      case (None, Some((amount, date)), None) =>
+        messages("account.homePage.card.payments.debitDue",
+                 amount,
+                 s"${date.getDayOfMonth} ${getMonth(date)} ${date.getYear}"
+        )
+      case (None, None, Some(amount)) => messages("account.homePage.card.payments.overDue", amount)
+      case (None, Some((debit, _)), Some(overdue)) =>
+        messages("account.homePage.card.payments.debitAndOverDue", debit, overdue)
+      case _ => messages("account.homePage.card.payments.error")
+    }
+
+}
 
 object PPTFinancials {
   implicit val format: OFormat[PPTFinancials] = Json.format[PPTFinancials]
