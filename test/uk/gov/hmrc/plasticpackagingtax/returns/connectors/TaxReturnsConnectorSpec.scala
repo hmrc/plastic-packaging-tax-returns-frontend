@@ -96,7 +96,7 @@ class TaxReturnsConnectorSpec
 
   private def givenPostToReturnsEndpointReturns(status: Int, body: String = "") =
     stubFor(
-      post("/returns")
+      post("/returns/123")
         .willReturn(
           aResponse()
             .withStatus(status)
