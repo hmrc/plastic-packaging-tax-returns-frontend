@@ -64,7 +64,7 @@ account.homePage.card.payments.inCredit = You are £{0} in credit.
 account.homePage.card.payments.debitDue = You owe £{0}. You must pay in {1}.
 account.homePage.card.payments.overDue = You owe £{0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe £{0}. This include £{1} which is overdue.
-account.homePage.card.payments.error = We cannot display payment details..
+account.homePage.card.payments.error = We cannot display payment details.
 
 account.homePage.manage.ppt.account.header = Manage your account
 account.homePage.card.registration.details.1.link.single = Registration details

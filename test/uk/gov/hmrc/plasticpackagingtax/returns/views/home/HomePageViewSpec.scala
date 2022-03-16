@@ -65,7 +65,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                                                       Some("XMPPT0000000001")
   )
 
-  val pptFinancials = PPTFinancials(Some(BigDecimal(100)), None, None)
+  val pptFinancials = "You owe £100"
 
   private def createView(subscription: SubscriptionDisplayResponse): Html =
     homePage(subscription, pptFinancials, completeReturnUrl, "XMPPT0000000001")(
@@ -157,10 +157,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             card.select(".govuk-heading-m").first() must containMessage(
               "account.homePage.card.payments.header"
             )
-            card.select(".govuk-body").first() must containMessage(
-              "account.homePage.card.payments.inCredit",
-              "100"
-            )
+            card.select(".govuk-body").first().text() mustBe "You owe £100"
           }
 
           "display account management heading" in {

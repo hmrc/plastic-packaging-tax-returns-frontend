@@ -20,8 +20,6 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, cardSection, link, pageTitle, paragraph, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
-@import scala.concurrent.Future
-@import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 
 @this(
         govukLayout: main_template,
@@ -35,7 +33,7 @@
 )
 
 
-@(subscription: SubscriptionDisplayResponse, pptFinancials: PPTFinancials, completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse, paymentStatement: String, completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @organisationName = @{
     if(subscription.isGroup)
@@ -137,7 +135,7 @@
         )
 
         @card(header = messages("account.homePage.card.payments.header"),
-            body = pptFinancials.paymentStatement(),
+            body = paymentStatement,
             links = Seq.empty
         )
     </div>

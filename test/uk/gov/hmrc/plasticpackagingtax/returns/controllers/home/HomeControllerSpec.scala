@@ -71,9 +71,9 @@ class HomeControllerSpec extends ControllerSpec {
 
         val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         mockGetSubscription(subscription)
-        val pptFinancials = PPTFinancials(Some(BigDecimal(100)), None, None)
-        when(mockFinancialsConnector.get(any[String])(any())).thenReturn(
-          Future.successful(pptFinancials)
+
+        when(mockFinancialsConnector.getPaymentStatement(any[String])(any(), any())).thenReturn(
+          Future.successful("You owe")
         )
 
         val result = controller.displayPage()(getRequest())

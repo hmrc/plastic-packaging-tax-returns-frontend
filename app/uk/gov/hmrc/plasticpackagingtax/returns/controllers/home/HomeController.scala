@@ -46,10 +46,10 @@ class HomeController @Inject() (
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
       for {
-        subscription  <- subscriptionConnector.get(pptReference)
-        pptFinancials <- financialsConnector.get(pptReference)
+        subscription     <- subscriptionConnector.get(pptReference)
+        paymentStatement <- financialsConnector.getPaymentStatement(pptReference)
       } yield Ok(
-        page(subscription, pptFinancials, appConfig.pptCompleteReturnGuidanceUrl, pptReference)
+        page(subscription, paymentStatement, appConfig.pptCompleteReturnGuidanceUrl, pptReference)
       )
 
     }
