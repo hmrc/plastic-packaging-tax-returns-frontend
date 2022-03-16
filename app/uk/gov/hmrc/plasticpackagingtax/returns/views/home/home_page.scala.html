@@ -33,7 +33,7 @@
 )
 
 
-@(subscription: SubscriptionDisplayResponse, paymentStatement: String, completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse, paymentStatement: Option[String], completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @organisationName = @{
     if(subscription.isGroup)
@@ -135,7 +135,7 @@
         )
 
         @card(header = messages("account.homePage.card.payments.header"),
-            body = paymentStatement,
+            body = paymentStatement.getOrElse(messages("account.homePage.card.payments.error")),
             links = Seq.empty
         )
     </div>

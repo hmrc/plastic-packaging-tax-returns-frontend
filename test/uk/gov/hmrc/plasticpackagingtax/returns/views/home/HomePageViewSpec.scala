@@ -65,7 +65,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                                                       Some("XMPPT0000000001")
   )
 
-  val pptFinancials = "You owe £100"
+  val pptFinancials = Some("You owe £100")
 
   private def createView(subscription: SubscriptionDisplayResponse): Html =
     homePage(subscription, pptFinancials, completeReturnUrl, "XMPPT0000000001")(

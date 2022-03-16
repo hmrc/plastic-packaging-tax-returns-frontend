@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logging
-import play.api.i18n.Messages
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
@@ -35,18 +34,21 @@ class FinancialsConnector @Inject() (
 
   def getPaymentStatement(
     pptReferenceNumber: String
-  )(implicit hc: HeaderCarrier, messages: Messages): Future[String] = {
+  )(implicit hc: HeaderCarrier): Future[PPTFinancials] = {
     val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
     httpClient.GET[PPTFinancials](appConfig.pptFinancialsUrl(pptReferenceNumber))
       .map {
         response =>
           logger.info(s"Retrieved open financials for ppt reference number [$pptReferenceNumber]")
-          response.paymentStatement()
+          response
       }
       .andThen { case _ => timer.stop() }
       .recover {
-        case _ =>
-          messages("account.homePage.card.payments.error")
+        case exception: Exception =>
+          throw DownstreamServiceError(
+            s"Failed to retrieve open financials for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+            exception
+          )
       }
   }
 

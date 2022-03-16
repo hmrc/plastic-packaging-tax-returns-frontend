@@ -18,26 +18,18 @@ package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, any}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.plasticpackagingtax.returns.base.it.ConnectorISpec
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 
 import java.util.UUID
 
 class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues {
-
-  val mockMessages: Messages = mock[Messages]
-  when(mockMessages.apply(anyString(), ArgumentMatchers.any())).thenReturn("some message")
 
   lazy val connector: FinancialsConnector = app.injector.instanceOf[FinancialsConnector]
 
@@ -64,8 +56,10 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
                                             pptReference,
                                             Json.toJsObject(expectedFinancials).toString
         )
-        val res = await(connector.getPaymentStatement(pptReference)(hc, mockMessages))
-        res mustBe "some message"
+
+        val res = await(connector.getPaymentStatement(pptReference))
+
+        res mustBe expectedFinancials
         getTimer("ppt.financials.open.get.timer").getCount mustBe 1
       }
     }
@@ -75,18 +69,19 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
       "service returns non success status code" in {
         val pptReference = UUID.randomUUID().toString
         givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
-        val res = await(connector.getPaymentStatement(pptReference)(hc, mockMessages))
 
-        res mustBe "some message"
+        intercept[DownstreamServiceError] {
+          await(connector.getPaymentStatement(pptReference))
+        }
       }
 
       "service returns invalid response" in {
         val pptReference = UUID.randomUUID().toString
         givenGetSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
 
-        val res = await(connector.getPaymentStatement(pptReference)(hc, mockMessages))
-
-        res mustBe "some message"
+        intercept[DownstreamServiceError] {
+          await(connector.getPaymentStatement(pptReference))
+        }
       }
     }
   }

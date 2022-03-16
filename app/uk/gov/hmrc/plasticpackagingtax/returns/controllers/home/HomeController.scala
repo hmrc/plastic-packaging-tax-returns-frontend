@@ -24,11 +24,13 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   SubscriptionConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class HomeController @Inject() (
   authenticate: AuthAction,
@@ -46,8 +48,10 @@ class HomeController @Inject() (
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
       for {
-        subscription     <- subscriptionConnector.get(pptReference)
-        paymentStatement <- financialsConnector.getPaymentStatement(pptReference)
+        subscription <- subscriptionConnector.get(pptReference)
+        paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
+          response => Some(response.paymentStatement())
+        ).recoverWith { case _: Exception => Future(None) }
       } yield Ok(
         page(subscription, paymentStatement, appConfig.pptCompleteReturnGuidanceUrl, pptReference)
       )
