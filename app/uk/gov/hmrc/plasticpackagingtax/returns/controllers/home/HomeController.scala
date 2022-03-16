@@ -16,21 +16,24 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.SubscriptionConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  ObligationsConnector,
+  SubscriptionConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class HomeController @Inject() (
   authenticate: AuthAction,
   subscriptionConnector: SubscriptionConnector,
+  obligationsConnector: ObligationsConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: home_page
@@ -42,8 +45,19 @@ class HomeController @Inject() (
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
       subscriptionConnector.get(pptReference)
-        .map { subscription =>
-          Ok(page(subscription, appConfig.pptCompleteReturnGuidanceUrl, pptReference))
+        .flatMap { subscription =>
+          obligationsConnector.get(pptReference).map { obligations =>
+            Ok(
+              page(subscription,
+                   Some(obligations),
+                   appConfig.pptCompleteReturnGuidanceUrl,
+                   pptReference
+              )
+            )
+          }.recover {
+            case _ =>
+              Ok(page(subscription, None, appConfig.pptCompleteReturnGuidanceUrl, pptReference))
+          }
         }
     }
 

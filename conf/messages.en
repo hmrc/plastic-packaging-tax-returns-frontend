@@ -25,6 +25,8 @@ month.10 = October
 month.11 = November
 month.12 = December
 
+return.quarter = {0} to {1} {2}
+
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
@@ -53,10 +55,15 @@ account.homePage.organisation.group = {0} (representative organisation for group
 account.homePage.currentBalance = Your current balance
 account.homePage.currentBalance.onDate = on {0}
 
-account.homePage.card.makeReturn.header = Returns
-account.homePage.card.makeReturn.body = Your return for {0} to {1} {2} is due by {3}.
-account.homePage.card.makeReturn.link = Find out how to complete a return (opens in new tab)
-account.homePage.card.makeReturn.link.2 = Return dates
+account.homePage.card.makeReturn.header = Your returns
+account.homePage.card.makeReturn.line1.multipleOverdue = You have {0} returns overdue.
+account.homePage.card.makeReturn.line1.singleOverdue = Your return for {0} is overdue.
+account.homePage.card.makeReturn.line1.none = You have no returns to submit.
+account.homePage.card.makeReturn.line2.due = You must submit your return for {0} by {1}.
+account.homePage.card.makeReturn.line3.createLink = Submit return
+account.homePage.card.makeReturn.guidance.link = Find out how to complete a return (opens in new tab)
+account.homePage.card.makeReturn.returnDates.link = Return dates
+account.homePage.card.makeReturn.failure = We cannot display tax return details.
 
 account.homePage.card.balance.header = Your balance
 account.homePage.card.balance.body = You have no tax to pay.

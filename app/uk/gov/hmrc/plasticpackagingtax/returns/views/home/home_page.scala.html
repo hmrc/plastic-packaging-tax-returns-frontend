@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
+@import play.api.libs.json.Json
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{card, cardSection, link, pageTitle, paragraph, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
 
 @this(
         govukLayout: main_template,
@@ -32,7 +36,7 @@
         appConfig: AppConfig
 )
 
-@(subscription: SubscriptionDisplayResponse, completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(subscription: SubscriptionDisplayResponse, obligations: Option[PPTObligations], completeReturnUrl: String, pptReference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @organisationName = @{
     if(subscription.isGroup)
@@ -62,10 +66,10 @@
 @singleEntityManagement = {
     <div class="govuk-grid-row govuk-!-margin-top-4">
         <div id="core-management" class="govuk-grid-column-one-third">
-            @cardSection(
-                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-                body = messages("account.homePage.card.registration.details.1.body")
-            )
+        @cardSection(
+            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+            body = messages("account.homePage.card.registration.details.1.body")
+        )
         </div>
     </div>
 }
@@ -73,16 +77,16 @@
 @groupManagement = {
     <div class="govuk-grid-row govuk-!-margin-top-4">
         <div id="core-management" class="govuk-grid-column-one-third">
-            @cardSection(
-                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-                body = messages("account.homePage.card.registration.details.1.body")
-            )
+        @cardSection(
+            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+            body = messages("account.homePage.card.registration.details.1.body")
+        )
         </div>
         <div id="additional-management" class="govuk-grid-column-one-third">
-            @cardSection(
-                link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
-                body = messages("account.homePage.card.registration.details.2.body.group")
-            )
+        @cardSection(
+            link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
+            body = messages("account.homePage.card.registration.details.2.body.group")
+        )
         </div>
     </div>
 }
@@ -90,28 +94,69 @@
 @partnershipManagement = {
     <div class="govuk-grid-row govuk-!-margin-top-4">
         <div id="core-management" class="govuk-grid-column-one-third">
-            @cardSection(
-                link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-                body = messages("account.homePage.card.registration.details.1.body")
-            )
+        @cardSection(
+            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+            body = messages("account.homePage.card.registration.details.1.body")
+        )
         </div>
         <div id="additional-management" class="govuk-grid-column-one-third">
-            @cardSection(
-                link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
-                body = messages("account.homePage.card.registration.details.2.body.partnership")
-            )
+        @cardSection(
+            link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
+            body = messages("account.homePage.card.registration.details.2.body.partnership")
+        )
         </div>
     </div>
 }
 
 @managementCards = @{
-        if (subscription.isGroup) {
-            groupManagement
-        } else if (subscription.isPartnership) {
-            partnershipManagement
-        } else {
-            singleEntityManagement
+    if(subscription.isGroup) {
+        groupManagement
+    } else if(subscription.isPartnership) {
+        partnershipManagement
+    } else {
+        singleEntityManagement
+    }
+}
+
+@returnsLine1 = @{
+    obligations.flatMap { obligations =>
+        obligations.overdueObligationCount match {
+            case 0 =>
+                if(obligations.isNextObligationDue) {
+                    None
+                } else {
+                    Some(messages("account.homePage.card.makeReturn.line1.none"))
+                }
+            case 1 => Some(messages("account.homePage.card.makeReturn.line1.singleOverdue", ViewUtils.displayReturnQuarter(obligations.oldestOverdueObligation.get)))
+            case _ => Some(messages("account.homePage.card.makeReturn.line1.multipleOverdue", obligations.overdueObligationCount))
         }
+    }
+}
+
+@returnsLine2 = @{
+    obligations.flatMap { obligations =>
+        obligations.nextObligation.map { nextObligation =>
+            messages("account.homePage.card.makeReturn.line2.due", ViewUtils.displayReturnQuarter(nextObligation), ViewUtils.displayLocalDate(nextObligation.dueDate))
+        }
+    }
+}
+
+@returnsError = @{
+    if (obligations.isEmpty) {
+      Some(messages("account.homePage.card.makeReturn.failure"))
+    } else {
+      None
+    }
+}
+
+@returnsLink = @{
+    obligations.flatMap { obligations =>
+        if(obligations.displaySubmitReturnsLink) {
+            Some(link(text = messages("account.homePage.card.makeReturn.line3.createLink"), call = routes.StartDateReturnController.displayPage()))
+        } else {
+            None
+        }
+    }
 }
 
 @govukLayout(title = Title("account.homePage.title"), useCustomContentWidth = true) {
@@ -126,15 +171,22 @@
     <div class="govuk-grid-row govuk-!-margin-top-6">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
-            body = messages("account.homePage.card.makeReturn.body", "April", "June", "2022", "29 July 2022"),
-            links = Seq(
-                link(text = messages("account.homePage.card.makeReturn.link"), call = Call("GET", completeReturnUrl), newTab = true)
-            )
+            lines = Seq[Option[String]](
+                returnsLine1,
+                returnsLine2,
+                returnsError
+            ).filter(_.isDefined).flatten,
+            links = Seq[Option[Html]](
+                returnsLink,
+                Some(link(text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
+            ).filter(_.isDefined).flatten,
 
         )
 
         @card(header = messages("account.homePage.card.balance.header"),
-            body = messages("account.homePage.card.balance.body"),
+            lines = Seq(
+                messages("account.homePage.card.balance.body")
+            ),
             links = Seq.empty
         )
     </div>
@@ -142,5 +194,13 @@
     <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
 
     @managementCards
+
+    <div>
+        <code>
+        @{
+            Json.prettyPrint(Json.toJson(obligations))
+        }
+        </code>
+    </div>
 }
 
