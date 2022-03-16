@@ -22,15 +22,24 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckActionImpl
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
   private val page = mock[unauthorised]
 
+  private val appConfig = mock[AppConfig]
+
+  val mockAuthCheckAction = new AuthCheckActionImpl(mockAuthConnector,
+                                                    appConfig,
+                                                    metricsMock,
+                                                    stubMessagesControllerComponents()
+  )
+
   val controller =
-    new UnauthorisedController(???, stubMessagesControllerComponents(), page)
+    new UnauthorisedController(mockAuthCheckAction, stubMessagesControllerComponents(), page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
