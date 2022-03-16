@@ -20,22 +20,15 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{InsufficientEnrolments, MissingBearerToken}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
-  newEnrolment,
-  newEnrolments,
-  pptEnrolment
-}
+import uk.gov.hmrc.auth.core.{InternalError, MissingBearerToken}
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
-  pptEnrolmentIdentifierName,
-  pptEnrolmentKey
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 
 import scala.concurrent.Future
 
@@ -102,7 +95,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       ) mustBe Results.Ok
     }
 
-    "redirect to unauthorised page when enrolment id is not present and multiple identifier exist for same key" in {
+    "redirect to not enrolled page when enrolment id is not present and multiple identifier exist for same key" in {
       val user = PptTestData.newUser(
         "123",
         Some(
@@ -116,10 +109,10 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
     }
 
-    "redirect to unauthorised page when enrolment id is present but no ppt enrolment key found" in {
+    "redirect to not enrolled page when enrolment id is present but no ppt enrolment key found" in {
       val user = PptTestData.newUser("123",
                                      Some(
                                        newEnrolments(
@@ -135,7 +128,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
-      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
+      redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
     }
 
     "time calls to authorisation" in {
@@ -187,9 +180,8 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
     }
 
-    "redirect when authorisation fails" in {
-
-      whenAuthFailsWith(InsufficientEnrolments())
+    "redirect to unauthorised page when authorisation fails for a reason unrelated to insufficient enrolments" in {
+      whenAuthFailsWith(InternalError("Some unexpected auth error"))
 
       val result =
         createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
