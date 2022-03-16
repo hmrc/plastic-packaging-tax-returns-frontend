@@ -21,11 +21,18 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{InternalError, MissingBearerToken}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  newEnrolment,
+  newEnrolments,
+  pptEnrolment
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
+  pptEnrolmentIdentifierName,
+  pptEnrolmentKey
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
@@ -55,7 +62,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
-
+unauthorised
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
     }
 
