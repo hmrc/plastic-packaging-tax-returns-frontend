@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   ExportCreditsConnector,
@@ -34,19 +33,13 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => re
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
   ConvertedPackagingCredit => ConvertedPackagingCreditDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
-  Cacheable,
-  ConvertedPackagingCredit,
-  TaxReturn
-}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{ConvertedPackagingCredit, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.converted_packaging_credit_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 
 @Singleton
 class ConvertedPackagingCreditController @Inject() (
@@ -57,23 +50,33 @@ class ConvertedPackagingCreditController @Inject() (
   mcc: MessagesControllerComponents,
   page: converted_packaging_credit_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with PriceConverter {
+    extends ReturnsController(mcc) {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
       exportCreditBalanceAvailable().map { balanceAvailable =>
         request.taxReturn.convertedPackagingCredit match {
-          case Some(data) =>
+          case Some(convertedPackagingCredit) =>
             Ok(
               page(
                 ConvertedPackagingCreditDetails.form().fill(
-                  ConvertedPackagingCreditDetails(totalInPence = data.totalValueForCreditAsString)
+                  ConvertedPackagingCreditDetails(totalInPounds =
+                    convertedPackagingCredit.totalInPounds.setScale(2,
+                                                                    RoundingMode.HALF_EVEN
+                    ).toString
+                  )
                 ),
-                balanceAvailable
+                balanceAvailable,
+                getTaxReturnObligation(request.taxReturn)
               )
             )
           case _ =>
-            Ok(page(ConvertedPackagingCreditDetails.form(), balanceAvailable))
+            Ok(
+              page(ConvertedPackagingCreditDetails.form(),
+                   balanceAvailable,
+                   getTaxReturnObligation(request.taxReturn)
+              )
+            )
         }
       }
     }
@@ -85,7 +88,9 @@ class ConvertedPackagingCreditController @Inject() (
         .fold(
           (formWithErrors: Form[ConvertedPackagingCreditDetails]) =>
             exportCreditBalanceAvailable().map { balanceAvailable =>
-              BadRequest(page(formWithErrors, balanceAvailable))
+              BadRequest(
+                page(formWithErrors, balanceAvailable, getTaxReturnObligation(request.taxReturn))
+              )
             },
           credit =>
             updateTaxReturn(credit).map {
@@ -114,17 +119,12 @@ class ConvertedPackagingCreditController @Inject() (
     case Left(_)        => None
   }
 
-  private def getTaxReturnObligation(taxReturn: TaxReturn): Obligation =
-    taxReturn.obligation.getOrElse(
-      throw new IllegalStateException("Tax return obligation details absent")
-    )
-
   private def updateTaxReturn(
     formData: ConvertedPackagingCreditDetails
   )(implicit req: JourneyRequest[_]): Future[Either[ServiceError, TaxReturn]] =
     update { taxReturn =>
       taxReturn.copy(convertedPackagingCredit =
-        Some(ConvertedPackagingCredit(totalInPence = formData.totalInPenceAsLong()))
+        Some(ConvertedPackagingCredit(totalInPounds = formData.totalInPounds))
       )
     }
 

@@ -21,8 +21,11 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.math.BigDecimal.RoundingMode
 
 object ViewUtils {
+
+  def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
 
   def displayReturnQuarter(obligation: Obligation)(implicit messages: Messages): String =
     messages("return.quarter",

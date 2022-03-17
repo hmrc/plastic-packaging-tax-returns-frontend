@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.text
+import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight.{
   isLowerOrEqualTo,
   isNonEmpty,
   isValidDecimal
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
-case class ConvertedPackagingCredit(totalInPence: String) extends PriceConverter {
-  def totalInPenceAsLong() = convertDecimalRepresentationToPences(this.totalInPence)
-}
+case class ConvertedPackagingCredit(totalInPounds: String)
 
 object ConvertedPackagingCredit {
 
@@ -36,21 +33,17 @@ object ConvertedPackagingCredit {
     Json.format[ConvertedPackagingCredit]
 
   val maxTotalCredit     = BigDecimal("99999999.99")
-  val totalInPence       = "totalInPence"
+  val totalInPounds      = "totalInPounds"
   val creditEmptyError   = "returns.convertedPackagingCredit.empty.error"
   val invalidFormatError = "returns.convertedPackagingCredit.format.error"
   val aboveMaxError      = "returns.convertedPackagingCredit.aboveMax.error"
 
-  val toPence: Option[String] => Long = value => value.map(BigDecimal(_).toLong).getOrElse(0)
+  private val mapping = Forms.mapping(
+    totalInPounds -> text()
+      .verifying(creditEmptyError, isNonEmpty)
+      .verifying(invalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
+      .verifying(aboveMaxError, v => !isValidDecimal(v) || isLowerOrEqualTo(maxTotalCredit)(v))
+  )(apply)(unapply)
 
-  def form(): Form[ConvertedPackagingCredit] =
-    Form(
-      mapping(
-        totalInPence -> text()
-          .verifying(creditEmptyError, isNonEmpty)
-          .verifying(invalidFormatError, v => !isNonEmpty(v) || isValidDecimal(v))
-          .verifying(aboveMaxError, v => !isValidDecimal(v) || isLowerOrEqualTo(maxTotalCredit)(v))
-      )(ConvertedPackagingCredit.apply)(ConvertedPackagingCredit.unapply)
-    )
-
+  def form(): Form[ConvertedPackagingCredit] = Form(mapping)
 }

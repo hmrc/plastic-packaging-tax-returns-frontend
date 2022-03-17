@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
 
 @this(
 formHelper: FormWithCSRF,
@@ -98,7 +99,7 @@ paragraphBody:paragraphBody
                 row("3", "returns.checkYourReturnPage.humansMedicinesPackaging", taxReturn.humanMedicinesPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.HumanMedicinesPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("4", "returns.checkYourReturnPage.directExports", taxReturn.exportedPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.ExportedPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
                 row("5", "returns.checkYourReturnPage.recycledPackaging.total", taxReturn.recycledPlasticWeight.map(_.totalKg.toString), " kg", returnsRoutes.RecycledPlasticWeightController.displayPage(), "govuk-!-padding-top-7"),
-                row("6", "returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => "£" + v.totalValueForCreditAsString), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
+                row("6", "returns.checkYourReturnPage.conversionCredit", taxReturn.convertedPackagingCredit.map(v => ViewUtils.displayMonetaryValue(v.totalInPounds)), "", returnsRoutes.ConvertedPackagingCreditController.displayPage(), "govuk-!-padding-top-7")
                 ),
             head = Some(Seq(
                 HeadCell(
@@ -122,7 +123,7 @@ paragraphBody:paragraphBody
             rows = Seq(
                 taxCalculationRow("returns.checkYourReturnPage.taxLiability.exemptPackaging.label", taxReturn.taxLiability.totalKgExempt.toString, " kg"),
                 taxCalculationRow("returns.checkYourReturnPage.taxLiability.liablePackaging.label", taxReturn.taxLiability.totalKgLiable.toString, " kg","row-border"),
-                taxCalculationRow("returns.checkYourReturnPage.taxLiability.label", s"£${taxReturn.taxLiability.taxDue.toString}", "" ,"row-border")
+                taxCalculationRow("returns.checkYourReturnPage.taxLiability.label", ViewUtils.displayMonetaryValue(taxReturn.taxLiability.taxDue), "" ,"row-border")
                 ),
             head = Some(Seq(
                 HeadCell(
@@ -148,7 +149,7 @@ paragraphBody:paragraphBody
 
         @govukTable(Table(
             rows = Seq(
-                taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", s"£${taxReturn.taxLiability.totalCredit.toString}", "", "row-border"),
+                taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", ViewUtils.displayMonetaryValue(taxReturn.taxLiability.totalCredit), "", "row-border"),
             ),
             head = Some(Seq(
                 HeadCell(
