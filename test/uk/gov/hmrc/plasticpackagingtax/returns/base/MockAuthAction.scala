@@ -30,7 +30,10 @@ import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newUser, pptEnrolment}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{AuthActionImpl, PptReferenceAllowedList}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
+  AuthActionImpl,
+  PptReferenceAllowedList
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 
 import scala.concurrent.Future

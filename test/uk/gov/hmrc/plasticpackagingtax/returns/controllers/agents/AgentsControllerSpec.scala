@@ -17,15 +17,18 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.OK
-import play.api.test.Helpers.{status, stubMessagesControllerComponents}
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
+import play.api.test.Helpers.{await, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentActionImpl
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 
 class AgentsControllerSpec extends ControllerSpec {
@@ -44,11 +47,11 @@ class AgentsControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   "Agents Controller" should {
-    "return 200" when {
+    "display client identifier page" when {
       "agent is authorised and display select client page is requested" in {
         val agent = PptTestData.newAgent("456")
         authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
@@ -56,6 +59,22 @@ class AgentsControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) must be(OK)
+      }
+    }
+
+    "set selected client identifier on session and redirect to account page" when {
+      "a correctly formatted PPT identifier is submitted" in {
+        val agent = PptTestData.newAgent("456")
+        authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
+
+        val result = controller.submit(
+          postRequest(Json.toJson(ClientIdentifier(identifier = "XMPPT1234567890")))
+        )
+
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some(homeRoutes.HomeController.displayPage().url))
+
+        await(result).newSession.flatMap(_.get("clientPPT")) must be(Some("XMPPT1234567890"))
       }
     }
   }
