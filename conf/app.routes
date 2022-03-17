@@ -14,3 +14,5 @@ GET        /assets/*file                                controllers.Assets.versi
 #Welsh Translation
 GET        /lang/enGb                                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.LanguageController.enGb()
 GET        /lang/cyGb                                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.LanguageController.cyGb()
+
+GET        /agents                                      uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.AgentsController.displayPage()

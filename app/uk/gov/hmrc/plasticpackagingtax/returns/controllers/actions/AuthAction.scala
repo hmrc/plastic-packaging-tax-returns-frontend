@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions
 import com.google.inject.{ImplementedBy, Inject}
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
@@ -30,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
   pptEnrolmentKey
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{AuthenticatedRequest, IdentityData}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -95,7 +97,7 @@ class AuthActionImpl @Inject() (
           affinityGroup match {
             case Some(AffinityGroup.Agent) =>
               // prevent agent access while the service is unable to support them
-              Future.successful(Results.PreconditionFailed)
+              Future.successful(Redirect(agentRoutes.AgentsController.displayPage()))
             case _ =>
               getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
                 case None =>

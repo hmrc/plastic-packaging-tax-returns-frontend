@@ -35,6 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 
 import scala.concurrent.Future
 
@@ -65,14 +66,15 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.onPageLoad().url)
     }
 
-    "fail if an agent tries to access this non agent aware service" in {
+    "redirect to an agent specific sorry page to access this non agent aware service" in {
       val agent = PptTestData.newAgent("456")
       authorizedUser(agent)
 
       val result =
         createAuthAction().invokeBlock(authRequest(Headers(), agent), okResponseGenerator)
 
-      status(result) mustBe PRECONDITION_FAILED
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(agentRoutes.AgentsController.displayPage().url)
     }
 
     "process request when enrolment id is present" in {

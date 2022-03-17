@@ -48,6 +48,8 @@ timeoutDialog.signout.text= Sign out
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+account.agents.nonSupported.header=Agents access to PPT accounts is not currently supported
+
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
 account.homePage.organisation.group = {0} (representative organisation for group)
