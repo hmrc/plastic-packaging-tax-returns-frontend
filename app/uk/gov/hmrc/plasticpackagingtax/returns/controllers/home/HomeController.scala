@@ -28,11 +28,12 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class HomeController @Inject() (
   authenticate: AuthAction,
   subscriptionConnector: SubscriptionConnector,
+  financialsConnector: FinancialsConnector,
   obligationsConnector: ObligationsConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
@@ -44,21 +45,22 @@ class HomeController @Inject() (
     authenticate.async { implicit request =>
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
-      subscriptionConnector.get(pptReference)
-        .flatMap { subscription =>
-          obligationsConnector.get(pptReference).map { obligations =>
-            Ok(
-              page(subscription,
-                   Some(obligations),
-                   appConfig.pptCompleteReturnGuidanceUrl,
-                   pptReference
-              )
-            )
-          }.recover {
-            case _ =>
-              Ok(page(subscription, None, appConfig.pptCompleteReturnGuidanceUrl, pptReference))
-          }
-        }
+
+      for {
+        subscription <- subscriptionConnector.get(pptReference)
+        paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
+          response => Some(response.paymentStatement())
+        ).recoverWith { case _: Exception => Future(None) }
+        obligations <- obligationsConnector.get(pptReference).recoverWith { case _ => Future(None) }
+      } yield Ok(
+        page(subscription,
+             obligations,
+             paymentStatement,
+             appConfig.pptCompleteReturnGuidanceUrl,
+             pptReference
+        )
+      )
+
     }
 
 }
