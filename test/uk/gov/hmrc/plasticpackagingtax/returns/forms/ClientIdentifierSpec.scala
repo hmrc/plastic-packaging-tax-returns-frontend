@@ -20,7 +20,12 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier.{identifier, identifierEmptyError}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier.{
+  formatError,
+  identifier,
+  identifierEmptyError,
+  lengthError
+}
 
 class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 
@@ -29,7 +34,7 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
     "return success" when {
 
       "total is valid" in {
-        val input = Map(identifier -> "XMTP0000000001")
+        val input = Map(identifier -> "XMPPT0000000123")
 
         val form = ClientIdentifier.form().bind(input)
         form.errors.size mustBe 0
@@ -42,6 +47,42 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
           Map(identifier -> " ")
         val expectedErrors =
           Seq(FormError(identifier, identifierEmptyError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "provided with shorter than 15 character long input" in {
+        val input =
+          Map(identifier -> "XMPPT000000012")
+        val expectedErrors =
+          Seq(FormError(identifier, lengthError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "provided with longer than 15 character input" in {
+        val input =
+          Map(identifier -> "XMPPT00000001234")
+        val expectedErrors =
+          Seq(FormError(identifier, lengthError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "provided with an identifier which doesn't start with XMPTT" in {
+        val input =
+          Map(identifier -> "ABCDE0000000123")
+        val expectedErrors =
+          Seq(FormError(identifier, formatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "provided with an identifier with none digits in the tail" in {
+        val input =
+          Map(identifier -> "XMPPT0000000ABC")
+        val expectedErrors =
+          Seq(FormError(identifier, formatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

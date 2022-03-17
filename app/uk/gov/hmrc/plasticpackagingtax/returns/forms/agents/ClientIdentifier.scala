@@ -21,6 +21,8 @@ import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.CommonFormValidators
 
+import java.util.regex.Pattern
+
 case class ClientIdentifier(identifier: String)
 
 object ClientIdentifier extends CommonFormValidators {
@@ -29,14 +31,18 @@ object ClientIdentifier extends CommonFormValidators {
 
   val identifier           = "identifier"
   val identifierEmptyError = "agents.client.identifier.empty.error"
+  val formatError          = "agents.client.identifier.format.error"
+  val lengthError          = "agents.client.identifier.length.error"
+
+  private val validFormatPattern = Pattern.compile("^XMPPT\\d{10}$")
 
   def form(): Form[ClientIdentifier] =
     Form(mapping =
       mapping(
         identifier -> text()
-          .verifying(identifierEmptyError,
-                     isNonEmpty
-          ) // TODO format and over length protection needed
+          .verifying(identifierEmptyError, isNonEmpty)
+          .verifying(lengthError, isLength(_, 15))
+          .verifying(formatError, isMatchingPattern(_, validFormatPattern))
       )(ClientIdentifier.apply)(ClientIdentifier.unapply)
     )
 
