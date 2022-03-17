@@ -46,12 +46,11 @@ class AgentsController @Inject() (
 
   val submit: Action[AnyContent] =
     authenticate { implicit request =>
-      // Catch client identifier; validate and stash somewhere accessible pre auth and only to this user
       ClientIdentifier.form()
         .bindFromRequest()
         .fold((formWithErrors: Form[ClientIdentifier]) => BadRequest(page(formWithErrors)),
               clientIdentifier =>
-                // Set this on the session and then redirect account
+                // Set this on the session and then redirect to account page to attempt to auth with it
                 appendSelectedClientIdentifierToResult(
                   clientIdentifier,
                   Redirect(homeRoutes.HomeController.displayPage())
