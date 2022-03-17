@@ -34,12 +34,20 @@ package uk.gov.hmrc.plasticpackagingtax.returns.config
 
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, Language}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.{routes => returnsRoutes}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
+
+  lazy val welshEnabled: Boolean = config.get[Boolean]("lang.welsh.enabled")
+
+  def languageLinks: Seq[(Language, String)] =
+    Seq((En, returnsRoutes.LanguageController.enGb().url),
+        (Cy, returnsRoutes.LanguageController.cyGb().url)
+    )
 
   lazy val assetsUrl: String = config.get[String]("assets.url")
 
@@ -60,7 +68,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptReturnsUrl: String           = s"$pptServiceHost/returns"
   lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
 
-  def pptReturnUrl(id: String): String           = s"$pptReturnsUrl/$id"
+  def pptReturnUrl(id: String): String = s"$pptReturnsUrl/$id"
+
   def pptReturnSubmissionUrl(id: String): String = s"$pptReturnsSubmissionUrl/$id"
 
   def pptSubscriptionUrl(pptReference: String): String =
