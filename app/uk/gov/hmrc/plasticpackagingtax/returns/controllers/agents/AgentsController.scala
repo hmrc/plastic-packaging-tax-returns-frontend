@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -35,7 +37,23 @@ class AgentsController @Inject() (
     extends FrontendController(mcc) with I18nSupport {
 
   val displayPage: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(page()))
+    // TODO needs to be wrapped in an agents only auth
+    val form = ClientIdentifier.form().fill(ClientIdentifier(""))
+    Future.successful(Ok(page(form)))
+  }
+
+  val submit: Action[AnyContent] = Action.async { implicit request =>
+    // TODO needs to be wrapped in an agents only auth
+    // Catch client identifier; validate and stash somewhere accessible pre auth and only to this user
+    ClientIdentifier.form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[ClientIdentifier]) =>
+          Future.successful(BadRequest(page(formWithErrors))),
+        clientIdentifier =>
+          // Set this on the session and then redirect account
+          Future.successful(Ok("Got client identifier: " + clientIdentifier.identifier))
+      )
   }
 
 }

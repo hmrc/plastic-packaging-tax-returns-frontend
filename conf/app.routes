@@ -16,3 +16,4 @@ GET        /lang/enGb                                   uk.gov.hmrc.plasticpacka
 GET        /lang/cyGb                                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.LanguageController.cyGb()
 
 GET        /agents                                      uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.AgentsController.displayPage()
+POST       /agents                                      uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.AgentsController.submit()
