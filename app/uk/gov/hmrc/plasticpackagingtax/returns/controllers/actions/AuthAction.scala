@@ -63,8 +63,8 @@ class AuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    // TODO duplicate but too tied to fight the [A] placeholder just now
-    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+    // In theory this could be deduplicated with SelectedClientIdentifier by the generic makes it too differcult
+    def getSelectedClientIdentifier() = request.session.get("clientPPT")
 
     val authorisation            = authTimer.time()
     val selectedClientIdentifier = getSelectedClientIdentifier()
