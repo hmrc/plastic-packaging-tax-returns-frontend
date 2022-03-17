@@ -164,7 +164,7 @@ class AuthActionImpl @Inject() (
     enrolments: Enrolments,
     identifier: String,
     selectedClientIdentifier: Option[String]
-  ): Option[String] = {
+  ): Option[String] =
     // It appears Auth with never return a delegated enrolment in it's response to an agent auth request;
     // therefore we have to use the one the agent past in. This is safe because this identifier has just
     // past auth for this this agent.
@@ -175,7 +175,6 @@ class AuthActionImpl @Inject() (
         case None => Option.empty
       }
     }
-  }
 
   private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
