@@ -16,24 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.views.agents
 
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
-import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
-import uk.gov.hmrc.plasticpackagingtax.returns.views.home.SubscriptionTypes.{
-  Group,
-  Partnership,
-  SingleEntity
-}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
