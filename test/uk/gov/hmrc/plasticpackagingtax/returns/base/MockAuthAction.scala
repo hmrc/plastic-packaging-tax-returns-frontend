@@ -75,9 +75,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
 
   // format: off
-  def authorizedUser(user: SignedInUser = exampleUser): Unit = {
-    val enrolmentPredicate = Enrolment("HMRC-PPT-ORG")
-
+  def authorizedUser(user: SignedInUser = exampleUser, enrolmentPredicate: Enrolment= Enrolment("HMRC-PPT-ORG")): Unit = {
     when(
       mockAuthConnector.authorise(
         ArgumentMatchers.eq(enrolmentPredicate),

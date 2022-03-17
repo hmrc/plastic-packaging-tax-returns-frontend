@@ -20,7 +20,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{Enrolment, InternalError, MissingBearerToken}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   newEnrolment,
   newEnrolments,
@@ -62,11 +62,10 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       val result = createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
-unauthorised
       redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
     }
 
-    "redirect to an agent specific sorry page to access this non agent aware service" in {
+    "redirect agents to client identification page if we can see client identifier on the agents session" in {
       val agent = PptTestData.newAgent("456")
       authorizedUser(agent)
 
@@ -77,12 +76,26 @@ unauthorised
       redirectLocation(result) mustBe Some(agentRoutes.AgentsController.displayPage().url)
     }
 
-    "process request when enrolment id is present" in {
+    "process request when enrolment id is present on a normal user's auth response" in {
       val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
       authorizedUser(user)
 
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+      ) mustBe Results.Ok
+    }
+
+    "process request when an authorised client identifier is seen on an agents session" in {
+      val agent = PptTestData.newAgent("456")
+      val agentEnrolmentPredicate =
+        Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
+                                                 "XMPPT0000000123"
+        ).withDelegatedAuthRule("ppt-auth")
+      authorizedUser(agent, enrolmentPredicate = agentEnrolmentPredicate)
+      await(
+        createAuthAction().invokeBlock(authRequest(Headers(), agent, Some("XMPPT0000000123")),
+                                       okResponseGenerator
+        )
       ) mustBe Results.Ok
     }
 
