@@ -34,7 +34,4 @@ trait SelectedClientIdentifier {
     result.addingToSession(sessionValues: _*)
   }
 
-  // TODO This possibly needs to be cleared down; see Self Assessment for prior art
-  def cleanSelectedClientIdentifier = ???
-
 }
