@@ -164,9 +164,10 @@ class AuthActionImpl @Inject() (
     enrolments: Enrolments,
     identifier: String,
     selectedClientIdentifier: Option[String]
-  ): Option[String] =
-    // It appears Auth with never return a delegrated enrolment in
-    // it's response; so we have to use the one we past to the predicate!
+  ): Option[String] = {
+    // It appears Auth with never return a delegated enrolment in it's response to an agent auth request;
+    // therefore we have to use the one the agent past in. This is safe because this identifier has just
+    // past auth for this this agent.
     selectedClientIdentifier.map(Some(_)).getOrElse {
       getPptEnrolmentIdentifier(enrolments, identifier) match {
         case Some(enrolmentIdentifier) =>
@@ -174,6 +175,7 @@ class AuthActionImpl @Inject() (
         case None => Option.empty
       }
     }
+  }
 
   private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
