@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  FinancialsConnector,
   ObligationsConnector,
   SubscriptionConnector
 }
@@ -51,7 +52,9 @@ class HomeController @Inject() (
         paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
           response => Some(response.paymentStatement())
         ).recoverWith { case _: Exception => Future(None) }
-        obligations <- obligationsConnector.get(pptReference).recoverWith { case _ => Future(None) }
+        obligations <- obligationsConnector.get(pptReference).map(
+          response => Some(response)
+        ).recoverWith { case _ => Future(None) }
       } yield Ok(
         page(subscription,
              obligations,
