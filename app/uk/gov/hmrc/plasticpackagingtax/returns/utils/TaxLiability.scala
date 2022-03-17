@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.utils
 
+import scala.math.BigDecimal.RoundingMode
+
 case class TaxLiability(
   totalKgLiable: Long = 0,
   totalKgExempt: Long = 0,
@@ -23,7 +25,7 @@ case class TaxLiability(
   taxDue: BigDecimal = 0
 )
 
-object TaxLiabilityFactory extends PriceConverter {
+object TaxLiabilityFactory {
 
   private val taxValueInPencePerKg = BigDecimal("0.20")
 
@@ -32,7 +34,7 @@ object TaxLiabilityFactory extends PriceConverter {
     totalImportedKg: Long,
     totalHumanMedicinesKg: Long,
     totalDirectExportsKg: Long,
-    totalConversionCreditPence: Long,
+    totalConversionCreditPounds: BigDecimal,
     totalRecycledKg: Long
   ): TaxLiability = {
 
@@ -40,12 +42,12 @@ object TaxLiabilityFactory extends PriceConverter {
 
     val totalKgExempt = totalHumanMedicinesKg + totalDirectExportsKg + totalRecycledKg
 
-    val taxDue = taxValueInPencePerKg * totalKgLiable
+    val taxDue = (taxValueInPencePerKg * totalKgLiable).setScale(2, RoundingMode.HALF_EVEN)
 
     TaxLiability(totalKgLiable = totalKgLiable,
                  totalKgExempt = totalKgExempt,
-                 totalCredit = toBigDecimal(totalConversionCreditPence),
-                 taxDue = format(taxDue)
+                 totalCredit = totalConversionCreditPounds,
+                 taxDue = taxDue
     )
   }
 

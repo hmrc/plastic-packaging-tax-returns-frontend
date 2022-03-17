@@ -28,7 +28,7 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
                                                   totalImportedKg = 100,
                                                   totalHumanMedicinesKg = 4,
                                                   totalDirectExportsKg = 3,
-                                                  totalConversionCreditPence = 134,
+                                                  totalConversionCreditPounds = 134,
                                                   totalRecycledKg = 20
     )
 
@@ -41,7 +41,7 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
     }
 
     "calculate totalCredit" in {
-      taxLiability.totalCredit mustBe BigDecimal("1.34")
+      taxLiability.totalCredit mustBe BigDecimal("134")
     }
 
     "calculate taxLiability" in {
@@ -55,7 +55,7 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
                                                       totalImportedKg = 0,
                                                       totalHumanMedicinesKg = 0,
                                                       totalDirectExportsKg = 0,
-                                                      totalConversionCreditPence = 0,
+                                                      totalConversionCreditPounds = 0,
                                                       totalRecycledKg = 0
         )
         taxLiability.taxDue mustBe BigDecimal("0.00")

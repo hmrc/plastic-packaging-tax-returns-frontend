@@ -17,15 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.returns.utils.PriceConverter
 
-case class ConvertedPackagingCredit(totalInPence: Long) extends PriceConverter {
+import scala.math.BigDecimal.RoundingMode
 
-  def totalValueForCreditAsString =
-    convertPencesToDecimalRepresentation(this.totalInPence)
-
-}
+case class ConvertedPackagingCredit(totalInPounds: BigDecimal)
 
 object ConvertedPackagingCredit {
   implicit val format: OFormat[ConvertedPackagingCredit] = Json.format[ConvertedPackagingCredit]
+
+  def apply(totalInPounds: String): ConvertedPackagingCredit =
+    ConvertedPackagingCredit(BigDecimal(totalInPounds).setScale(2, RoundingMode.HALF_EVEN))
+
 }

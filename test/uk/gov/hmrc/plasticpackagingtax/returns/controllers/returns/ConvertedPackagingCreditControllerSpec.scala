@@ -66,7 +66,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(
-      page.apply(any[Form[ConvertedPackagingCredit]], any[Option[BigDecimal]])(any(), any())
+      page.apply(any[Form[ConvertedPackagingCredit]], any[Option[BigDecimal]], any())(any(), any())
     ).thenReturn(HtmlFormat.empty)
     when(mockExportCreditsConnector.get(anyString(), any(), any())(any())).thenReturn(
       Future.successful(Right(balance))
@@ -140,11 +140,11 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
           val result =
             controller.submit()(
-              postRequestEncoded(ConvertedPackagingCredit(totalInPence = "10.2"), formAction)
+              postRequestEncoded(ConvertedPackagingCredit(totalInPounds = "1020"), formAction)
             )
 
           status(result) mustBe SEE_OTHER
-          modifiedTaxReturn.convertedPackagingCredit.get.totalInPence mustBe 1020
+          modifiedTaxReturn.convertedPackagingCredit.get.totalInPounds mustBe 1020
           formAction match {
             case ("SaveAndContinue", "") =>
               redirectLocation(result) mustBe Some(
@@ -162,17 +162,17 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
 
       def pageForm: Form[ConvertedPackagingCredit] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedPackagingCredit]])
-        verify(page).apply(captor.capture(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any())(any(), any())
         captor.getValue
       }
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(aTaxReturn(withConvertedPackagingCredit(totalInPence = 5500)))
+        mockTaxReturnFind(aTaxReturn(withConvertedPackagingCredit(totalInPounds = 5500)))
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalInPence mustBe "55.00"
+        pageForm.get.totalInPounds mustBe "5500.00"
       }
     }
 
@@ -181,7 +181,9 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
       "user submits invalid job title" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = ""))))
+          controller.submit()(
+            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPounds = "")))
+          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -194,7 +196,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
         mockTaxReturnFailure()
         val result =
           controller.submit()(
-            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
+            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPounds = "10.20")))
           )
 
         intercept[DownstreamServiceError](status(result))
@@ -205,7 +207,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
         mockTaxReturnException()
         val result =
           controller.submit()(
-            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPence = "10.2")))
+            postRequest(Json.toJson(ConvertedPackagingCredit(totalInPounds = "10.20")))
           )
 
         intercept[RuntimeException](status(result))

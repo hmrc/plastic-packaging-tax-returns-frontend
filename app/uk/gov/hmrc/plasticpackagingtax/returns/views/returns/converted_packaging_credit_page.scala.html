@@ -26,51 +26,51 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.returnsSectionHeading
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 @this(
-  govukLayout: main_template,
-  saveAndContinue: saveAndContinue,
-  govukInput: GovukInput,
-  sectionHeader: sectionHeader,
-  errorSummary: errorSummary,
-  paragraphBody: paragraphBody,
-  govukDetails : GovukDetails,
-  govukFieldset : GovukFieldset,
-  formHelper: FormWithCSRF
+        govukLayout: main_template,
+        saveAndContinue: saveAndContinue,
+        govukInput: GovukInput,
+        sectionHeader: sectionHeader,
+        errorSummary: errorSummary,
+        paragraphBody: paragraphBody,
+        govukDetails: GovukDetails,
+        govukFieldset: GovukFieldset,
+        formHelper: FormWithCSRF,
+        returnsSectionHeading: returnsSectionHeading,
 )
 
-@(form: Form[ConvertedPackagingCredit], creditBalanceAvailable: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
+@(form: Form[ConvertedPackagingCredit], creditBalanceAvailable: Option[BigDecimal], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 
-@totalCreditInPenceField = @{form("totalInPence")}
-
-@creditBalanceForDisplay = @{ " £" + creditBalanceAvailable.getOrElse(messages("returns.convertedPackagingCredit.balanceUnavailable")) }
-
-@formattedDetailsContent = {
-  <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.convertedPackagingCredit.details.line1")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.convertedPackagingCredit.details.line2")</li>
-  </ul>
+@creditBalance = @{
+    creditBalanceAvailable.map(v => messages("returns.convertedPackagingCredit.balanceAvailable", ViewUtils.displayMonetaryValue(v)))
+                .getOrElse(messages("returns.convertedPackagingCredit.balanceUnavailable"))
 }
 
-@inputFields= {
+@totalCreditInPoundsField = @{
+    form("totalInPounds")
+}
 
-    @paragraphBody(message = messages("returns.convertedPackagingCredit.total.weight"), classes = "govuk-body")
+@inputFields = @{
 
-    @govukInput(
+    govukInput(
         Input(
-            id = s"${totalCreditInPenceField.name}",
-            name = totalCreditInPenceField.name,
-            value = totalCreditInPenceField.value,
-            errorMessage = totalCreditInPenceField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            id = totalCreditInPoundsField.name,
+            name = totalCreditInPoundsField.name,
+            value = totalCreditInPoundsField.value,
+            errorMessage = totalCreditInPoundsField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,
-                classes = s"govuk-label",
-                content = Text(messages("returns.convertedPackagingCredit.balanceAvailable") + creditBalanceForDisplay)),
-                classes = "govuk-input--width-10",
-                spellcheck = Some(false),
-                suffix = Some(PrefixOrSuffix(
-                    content = Text("£")
-                ))
+                classes = "govuk-label",
+                content = Text(creditBalance)),
+            classes = "govuk-input--width-10",
+            spellcheck = Some(false),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            ))
         )
     )
 
@@ -80,11 +80,11 @@
     title = Title("returns.convertedPackagingCredit.meta.title"),
     backButton = Some(BackButton(messages("site.back"), returnsRoutes.RecycledPlasticWeightController.displayPage(), messages("site.back.hiddenText")))) {
 
-        @errorSummary(form.errors)
+    @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.convertedPackagingCredit.sectionHeader"))
+    @returnsSectionHeading(obligation)
 
-        @formHelper(action = returnsRoutes.ConvertedPackagingCreditController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = returnsRoutes.ConvertedPackagingCreditController.submit(), 'autoComplete -> "off") {
 
         @govukFieldset(
             Fieldset(
@@ -96,11 +96,6 @@
             )
         )
 
-        @govukDetails(Details(
-            summary = Text(messages("returns.convertedPackagingCredit.details.link")),
-            content = HtmlContent(formattedDetailsContent)
-        ))
-
         @saveAndContinue()
-        }
     }
+}
