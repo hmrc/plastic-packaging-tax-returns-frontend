@@ -14,47 +14,46 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.Helpers._
+import play.api.http.Status.OK
+import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckActionImpl
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentActionImpl
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 
-class UnauthorisedControllerSpec extends ControllerSpec {
+class AgentsControllerSpec extends ControllerSpec {
 
-  private val page = mock[unauthorised]
+  private val mcc  = stubMessagesControllerComponents()
+  private val page = mock[agents_page]
 
-  val mockAuthCheckAction = new AuthCheckActionImpl(mockAuthConnector,
+  val mockAuthAgentAction = new AuthAgentActionImpl(mockAuthConnector,
                                                     config,
                                                     metricsMock,
                                                     stubMessagesControllerComponents()
   )
 
-  val controller =
-    new UnauthorisedController(mockAuthCheckAction, stubMessagesControllerComponents(), page)
+  private val controller =
+    new AgentsController(authenticate = mockAuthAgentAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any())(any(),any())).thenReturn(HtmlFormat.empty)
   }
 
-  override protected def afterEach(): Unit = {
-    reset(page)
-    super.afterEach()
-  }
+  "Agents Controller" should {
+    "return 200" when {
+      "agent is authorised and display select client page is requested" in {
+        val agent = PptTestData.newAgent("456")
+        authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
 
-  "Unauthorised controller" should {
-
-    "return 200 (OK)" when {
-
-      "display page method is invoked" in {
-
-        val result = controller.unauthorised()(getRequest())
+        val result = controller.displayPage()(getRequest())
 
         status(result) must be(OK)
       }

@@ -25,14 +25,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers.stubMessagesControllerComponents
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{newUser, pptEnrolment}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
-  AuthActionImpl,
-  PptReferenceAllowedList
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{AuthActionImpl, PptReferenceAllowedList}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 
 import scala.concurrent.Future
@@ -75,10 +73,10 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
 
   // format: off
-  def authorizedUser(user: SignedInUser = exampleUser, enrolmentPredicate: Enrolment= Enrolment("HMRC-PPT-ORG")): Unit = {
+  def authorizedUser(user: SignedInUser = exampleUser, requiredPredicate: Predicate = Enrolment("HMRC-PPT-ORG")): Unit = {
     when(
       mockAuthConnector.authorise(
-        ArgumentMatchers.eq(enrolmentPredicate),
+        ArgumentMatchers.eq(requiredPredicate),
         ArgumentMatchers.eq(
           credentials and name and email and externalId and internalId and affinityGroup and allEnrolments
             and agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and

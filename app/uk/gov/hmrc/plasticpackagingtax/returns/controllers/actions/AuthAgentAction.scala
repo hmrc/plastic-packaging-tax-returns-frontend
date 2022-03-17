@@ -58,7 +58,7 @@ class AuthAgentActionImpl @Inject() (
 
     val authorisation = authTimer.time()
 
-    authorised()
+    authorised(AffinityGroup.Agent)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -86,11 +86,7 @@ class AuthAgentActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          affinityGroup match {
-            case Some(AffinityGroup.Agent) =>
-              executeRequest(request, block, identityData, allEnrolments)
-            case _ => throw UnsupportedAffinityGroup() // TODO can be pused to the auth predicate?
-          }
+          executeRequest(request, block, identityData, allEnrolments)
 
       } recover {
       case _: NoActiveSession =>

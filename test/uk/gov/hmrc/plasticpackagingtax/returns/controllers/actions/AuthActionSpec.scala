@@ -87,11 +87,11 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "process request when an authorised client identifier is seen on an agents session" in {
       val agent = PptTestData.newAgent("456")
-      val agentEnrolmentPredicate =
+      val agentDelegatedAuthPredicate =
         Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
                                                  "XMPPT0000000123"
         ).withDelegatedAuthRule("ppt-auth")
-      authorizedUser(agent, enrolmentPredicate = agentEnrolmentPredicate)
+      authorizedUser(agent, requiredPredicate = agentDelegatedAuthPredicate)
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), agent, Some("XMPPT0000000123")),
                                        okResponseGenerator
