@@ -136,7 +136,10 @@
 @returnsLine2 = @{
     obligations.flatMap { obligations =>
         obligations.nextObligation.map { nextObligation =>
-            messages("account.homePage.card.makeReturn.line2.due", ViewUtils.displayReturnQuarter(nextObligation), ViewUtils.displayLocalDate(nextObligation.dueDate))
+            messages("account.homePage.card.makeReturn.line2.due",
+                ViewUtils.displayReturnQuarter(nextObligation),
+                ViewUtils.displayLocalDate(nextObligation.dueDate.minusDays(nextObligation.dueDate.getDayOfMonth - 1)),
+                ViewUtils.displayLocalDate(nextObligation.dueDate))
         }
     }
 }

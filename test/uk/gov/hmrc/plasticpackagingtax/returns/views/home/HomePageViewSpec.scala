@@ -191,6 +191,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                           messages("account.homePage.card.makeReturn.line2.due",
                                    ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
                                    ViewUtils.displayLocalDate(
+                                     obligations.nextObligation.get.dueDate.minusDays(
+                                       obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                                     )
+                                   ),
+                                   ViewUtils.displayLocalDate(
                                      obligations.nextObligation.get.dueDate
                                    )
                           )
@@ -207,6 +212,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                           messages("account.homePage.card.makeReturn.line2.due",
                                    ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
                                    ViewUtils.displayLocalDate(
+                                     obligations.nextObligation.get.dueDate.minusDays(
+                                       obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                                     )
+                                   ),
+                                   ViewUtils.displayLocalDate(
                                      obligations.nextObligation.get.dueDate
                                    )
                           )
@@ -220,6 +230,11 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                             ),
                             messages("account.homePage.card.makeReturn.line2.due",
                                      ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                                     ViewUtils.displayLocalDate(
+                                       obligations.nextObligation.get.dueDate.minusDays(
+                                         obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                                       )
+                                     ),
                                      ViewUtils.displayLocalDate(
                                        obligations.nextObligation.get.dueDate
                                      )
