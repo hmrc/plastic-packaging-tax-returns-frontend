@@ -73,8 +73,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
 
-  def pptReturnSubmissionUrl(id: String): String = s"$pptReturnsSubmissionUrl/$id"
-
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"
 
