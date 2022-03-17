@@ -18,25 +18,26 @@
 
 @this(paragraphBody: paragraphBody)
 
-@(header: String, body: String, links: Seq[Html])(implicit messages: Messages)
+@(header: String, lines: Seq[String], links: Seq[Html])(implicit messages: Messages)
 
 <div class="govuk-grid-column-one-third">
-   <div class="card">
-       <div class="card-body">
+    <div class="card">
+        <div class="card-body">
 
-           <h2 class="govuk-heading-m">@header</h2>
-           @paragraphBody(body)
+            <h2 class="govuk-heading-m">@header</h2>
+
+            @for(line <- lines) {
+                <p class="govuk-body">@line</p>
+            }
 
             <ul class="govuk-list">
-                @for(link <- links) {
-                  <p class="govuk-body">
-                   <li>
-                      @link
-                   </li>
-                  </p>
-                }
+            @for(link <- links) {
+                <p class="govuk-body">
+                    <li>@link</li>
+                </p>
+            }
             </ul>
 
         </div>
-   </div>
+    </div>
 </div>

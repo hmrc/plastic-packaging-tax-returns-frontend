@@ -21,14 +21,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   FinancialsConnector,
+  ObligationsConnector,
   SubscriptionConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,6 +35,7 @@ class HomeController @Inject() (
   authenticate: AuthAction,
   subscriptionConnector: SubscriptionConnector,
   financialsConnector: FinancialsConnector,
+  obligationsConnector: ObligationsConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: home_page
@@ -52,8 +52,16 @@ class HomeController @Inject() (
         paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
           response => Some(response.paymentStatement())
         ).recoverWith { case _: Exception => Future(None) }
+        obligations <- obligationsConnector.get(pptReference).map(
+          response => Some(response)
+        ).recoverWith { case _ => Future(None) }
       } yield Ok(
-        page(subscription, paymentStatement, appConfig.pptCompleteReturnGuidanceUrl, pptReference)
+        page(subscription,
+             obligations,
+             paymentStatement,
+             appConfig.pptCompleteReturnGuidanceUrl,
+             pptReference
+        )
       )
 
     }

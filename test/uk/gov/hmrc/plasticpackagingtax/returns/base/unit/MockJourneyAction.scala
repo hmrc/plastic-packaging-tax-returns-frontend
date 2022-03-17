@@ -29,11 +29,9 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockJourneyAction
-    extends MockTaxReturnsConnector with MockAuditorConnector with BeforeAndAfterEach
-    with MockitoSugar {
+    extends MockTaxReturnsConnector with MockObligationsConnector with MockAuditorConnector
+    with BeforeAndAfterEach with MockitoSugar {
   self: MockitoSugar with Suite =>
-
-  val mockObligationsConnector: ObligationsConnector = mock[ObligationsConnector]
 
   val mockJourneyAction: JourneyAction =
     new JourneyAction(mockTaxReturnsConnector, mockAuditor, mockObligationsConnector)(

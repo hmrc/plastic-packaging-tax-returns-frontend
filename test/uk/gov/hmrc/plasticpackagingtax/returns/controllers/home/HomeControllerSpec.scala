@@ -45,6 +45,7 @@ class HomeControllerSpec extends ControllerSpec {
   private val controller = new HomeController(authenticate = mockAuthAction,
                                               subscriptionConnector = mockSubscriptionConnector,
                                               financialsConnector = mockFinancialsConnector,
+                                              obligationsConnector = mockObligationsConnector,
                                               appConfig = config,
                                               mcc = mcc,
                                               page = page
@@ -53,7 +54,7 @@ class HomeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(
-      page.apply(any[SubscriptionDisplayResponse], any(), any(), any())(any(), any())
+      page.apply(any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
     ).thenReturn(HtmlFormat.empty)
   }
 
