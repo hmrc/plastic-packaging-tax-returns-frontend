@@ -24,6 +24,9 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.config.TimeoutDialogConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+@import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
 
 @this(
     govukHeader: GovukHeader,
@@ -37,6 +40,8 @@
     phaseBanner: phaseBanner,
     hmrcFooter: HmrcStandardFooter,
     govukFlexibleLayout: govukFlexibleLayout,
+    hmrcLanguageSelect: HmrcLanguageSelect,
+    appConfig: AppConfig
 )
 @(title: Title,
     backButton: Option[BackButton] = None,
@@ -79,6 +84,20 @@
 
 @beforeContentBlock = {
     @phaseBanner("alpha")
+    @{
+        def playLangToUiLanguage(l: Lang) = l.code.take(2) match {
+            case "cy" => Cy
+            case "en" => En
+            case _ => En
+        }
+
+        if(appConfig.welshEnabled) {
+            hmrcLanguageSelect(LanguageSelect(
+            playLangToUiLanguage(messages.lang),
+            appConfig.languageLinks: _*
+            ))
+        }
+    }
 }
 
 @content = {
