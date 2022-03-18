@@ -18,8 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.returns.models.financials
 
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.CurrencyFormatters.formatCurrencyAmount
 
+import java.text.NumberFormat
 import java.time.LocalDate
+import java.util.Locale
 
 final case class PPTFinancials(
   creditAmount: Option[BigDecimal],
@@ -32,16 +35,21 @@ final case class PPTFinancials(
 
   def paymentStatement()(implicit messages: Messages): String =
     (creditAmount, debitAmount, overdueAmount) match {
-      case (None, None, None)         => messages("account.homePage.card.payments.nothingOutstanding")
-      case (Some(amount), None, None) => messages("account.homePage.card.payments.inCredit", amount)
+      case (None, None, None) => messages("account.homePage.card.payments.nothingOutstanding")
+      case (Some(amount), None, None) =>
+        messages("account.homePage.card.payments.inCredit", formatCurrencyAmount(amount))
       case (None, Some((amount, date)), None) =>
         messages("account.homePage.card.payments.debitDue",
-                 amount,
+                 formatCurrencyAmount(amount),
                  s"${date.getDayOfMonth} ${getMonth(date)} ${date.getYear}"
         )
-      case (None, None, Some(amount)) => messages("account.homePage.card.payments.overDue", amount)
+      case (None, None, Some(amount)) =>
+        messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount))
       case (None, Some((debit, _)), Some(overdue)) =>
-        messages("account.homePage.card.payments.debitAndOverDue", debit, overdue)
+        messages("account.homePage.card.payments.debitAndOverDue",
+                 formatCurrencyAmount(debit),
+                 formatCurrencyAmount(overdue)
+        )
       case _ => messages("account.homePage.card.payments.error")
     }
 
@@ -49,4 +57,16 @@ final case class PPTFinancials(
 
 object PPTFinancials {
   implicit val format: OFormat[PPTFinancials] = Json.format[PPTFinancials]
+}
+
+object CurrencyFormatters {
+
+  def formatCurrencyAmount(amount: BigDecimal): String = {
+    val maxDecimalPlaces: Int      = 2
+    val numberFormat: NumberFormat = NumberFormat.getCurrencyInstance(Locale.UK)
+    numberFormat.setMaximumFractionDigits(maxDecimalPlaces)
+    numberFormat.setMinimumFractionDigits(maxDecimalPlaces)
+    numberFormat.format(amount)
+  }
+
 }
