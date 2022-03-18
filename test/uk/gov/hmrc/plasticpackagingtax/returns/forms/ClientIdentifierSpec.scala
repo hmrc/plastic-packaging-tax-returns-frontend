@@ -62,14 +62,14 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 
       "provided with longer than 15 character input" in {
         val input =
-          Map(identifier -> "XMPPT00000001234")
+          Map(identifier -> "XBPPT00000001234")
         val expectedErrors =
           Seq(FormError(identifier, lengthError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
-      "provided with an identifier which doesn't start with XMPTT" in {
+      "provided with an identifier which doesn't start with correct prefix" in {
         val input =
           Map(identifier -> "ABCDE0000000123")
         val expectedErrors =
@@ -80,7 +80,7 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 
       "provided with an identifier with none digits in the tail" in {
         val input =
-          Map(identifier -> "XMPPT0000000ABC")
+          Map(identifier -> "XZPPT0000000ABC")
         val expectedErrors =
           Seq(FormError(identifier, formatError))
 

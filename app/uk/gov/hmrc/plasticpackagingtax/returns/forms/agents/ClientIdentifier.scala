@@ -34,7 +34,7 @@ object ClientIdentifier extends CommonFormValidators {
   val formatError          = "agents.client.identifier.format.error"
   val lengthError          = "agents.client.identifier.length.error"
 
-  private val validFormatPattern = Pattern.compile("^XMPPT\\d{10}$")
+  private val validFormatPattern = Pattern.compile("^X[A-Z]PPT000[0-9]{7}$")
 
   def form(): Form[ClientIdentifier] =
     Form(mapping =
