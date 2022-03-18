@@ -48,12 +48,12 @@ timeoutDialog.signout.text= Sign out
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-account.agents.selectClient.header=Tell us which client you wish to access
-account.agents.selectClient.hint.label=Client Identifier
-account.agents.selectClient.hint.body=The client identifier probably looks something like XMPPT0000000001
-agents.client.identifier.empty.error=Client identifier must be supplied and non blank
-agents.client.identifier.format.error=A client identifier should be XMPTT followed by 10 digits
-agents.client.identifier.length.error=Client identifier should be 15 characters in length
+account.agents.selectClient.header=What is your client’s PPT reference?
+account.agents.selectClient.hint.label=Client PPT reference
+account.agents.selectClient.hint.body=This is the 15 character reference they received when they registered for PPT. For example, XMPPT0001234567.
+agents.client.identifier.empty.error=Client PPT reference must be supplied and non blank
+agents.client.identifier.length.error=Client PPT reference should be 15 characters in length
+agents.client.identifier.format.error=A client PPT reference should start with XMPTT and contain 10 digits
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
