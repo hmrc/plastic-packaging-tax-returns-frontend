@@ -75,9 +75,6 @@ class AuthActionImpl @Inject() (
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
-          logger.info(
-            "Authorised with affinity group " + affinityGroup + " and enrolments " + allEnrolments
-          )
 
           val identityData = IdentityData(internalId,
                                           externalId,
@@ -104,8 +101,8 @@ class AuthActionImpl @Inject() (
           affinityGroup match {
             case Some(AffinityGroup.Agent) =>
               selectedClientIdentifier.map { pptEnrolmentIdentifier =>
-                // And agent has authed with a selected client and past the enrolment predicate using that identifier
-                // The identifier can be trusted as good pptEnrolmentIdentifier.
+                // An agent has authed with a selected client and past the enrolment predicate using that identifier
+                // The identifier can be trusted as a good pptEnrolmentIdentifier.
                 executeRequest(request, block, identityData, pptEnrolmentIdentifier, allEnrolments)
               }.getOrElse {
                 // An agent has authed but we can't see a selected client identifier;
@@ -114,7 +111,7 @@ class AuthActionImpl @Inject() (
               }
 
             case _ =>
-              // A non agent has presented; their ppt enrolment will have been returned
+              // A non agent has authed; their ppt enrolment will have been returned
               // from auth as it is a principal enrolment
               getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName, None) match {
                 case Some(pptEnrolmentIdentifier) =>
@@ -136,7 +133,7 @@ class AuthActionImpl @Inject() (
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
 
       case _: InsufficientEnrolments =>
-        // Redirected to the non enrolled page; this is authed by doesn't need enrolments.
+        // Redirect to the non enrolled page; this is authed but doesn't need enrolments.
         // There we can examine the user and determine where to send them.
         Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
 
