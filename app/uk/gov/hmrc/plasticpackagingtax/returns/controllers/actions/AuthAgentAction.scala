@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import com.kenshoo.play.metrics.Metrics
-import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
@@ -41,7 +40,6 @@ class AuthAgentActionImpl @Inject() (
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
-  private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
   private val authData =
@@ -58,7 +56,7 @@ class AuthAgentActionImpl @Inject() (
 
     val authorisation = authTimer.time()
 
-    authorised(AffinityGroup.Agent)
+    authorised(AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong)))
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~

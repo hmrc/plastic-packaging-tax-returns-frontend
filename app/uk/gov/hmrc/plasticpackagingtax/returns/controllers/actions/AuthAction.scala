@@ -22,14 +22,12 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{
-  pptEnrolmentIdentifierName,
-  pptEnrolmentKey
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
@@ -182,7 +180,7 @@ class AuthActionImpl @Inject() (
       .flatMap(_.identifiers)
       .find(_.key == identifier)
 
-  private def authPredicate(selectedClientIdentifier: Option[String] = None) =
+  private def authPredicate(selectedClientIdentifier: Option[String] = None): Predicate =
     selectedClientIdentifier.map { clientIdentifier =>
       // If this request is decorated with a selected client identifier this indicates
       // an agent at work; we need to request the delegated authority
@@ -191,7 +189,7 @@ class AuthActionImpl @Inject() (
       ).withDelegatedAuthRule("ppt-auth")
     }.getOrElse {
       Enrolment(pptEnrolmentKey)
-    }
+    }.and(CredentialStrength(CredentialStrength.strong))
 
 }
 
