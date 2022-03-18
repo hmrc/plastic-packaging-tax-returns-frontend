@@ -48,9 +48,9 @@ class JourneyAction @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.enrolmentId.filter(_.trim.nonEmpty) match {
-      case Some(id) =>
-        loadOrCreateReturn(id).map {
-          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
+      case Some(pptReference) =>
+        loadOrCreateReturn(pptReference).map {
+          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(pptReference)))
           case Left(error) => throw error
         }
       case None =>
@@ -60,10 +60,11 @@ class JourneyAction @Inject() (
   }
 
   private def loadOrCreateReturn[A](
-    id: String
+    pptReference: String
   )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
-    val futureReturn: Future[Either[ServiceError, Option[TaxReturn]]] = returnsConnector.find(id)
-    val futureObligation: Future[PPTObligations]                      = obligationsConnector.get(id)
+    val futureReturn: Future[Either[ServiceError, Option[TaxReturn]]] =
+      returnsConnector.find(pptReference)
+    val futureObligation: Future[PPTObligations] = obligationsConnector.get(pptReference)
 
     (for {
       eitherTaxReturn <- futureReturn
@@ -76,7 +77,7 @@ class JourneyAction @Inject() (
           Future.successful(Right(ensureObligationDetailPresent(taxReturn, oldestObligation)))
         case Right(None) =>
           auditor.newTaxReturnStarted()
-          returnsConnector.create(TaxReturn(id = id, obligation = oldestObligation))
+          returnsConnector.create(TaxReturn(id = pptReference, obligation = oldestObligation))
         case Left(error) => Future.successful(Left(error))
       }
     }).flatten

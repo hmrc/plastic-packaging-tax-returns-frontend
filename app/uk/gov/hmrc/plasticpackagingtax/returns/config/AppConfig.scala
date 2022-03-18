@@ -68,9 +68,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptReturnsUrl: String           = s"$pptServiceHost/returns"
   lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
 
-  def pptReturnUrl(id: String): String = s"$pptReturnsUrl/$id"
+  def pptReturnUrl(pptReference: String): String = s"$pptReturnsUrl/$pptReference"
 
-  def pptReturnSubmissionUrl(id: String): String = s"$pptReturnsSubmissionUrl/$id"
+  def pptReturnSubmissionUrl(pptReference: String): String =
+    s"$pptReturnsSubmissionUrl/$pptReference"
 
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"

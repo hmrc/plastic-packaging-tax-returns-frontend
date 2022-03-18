@@ -36,22 +36,22 @@ class TaxReturnsConnector @Inject() (
   private val logger = Logger(this.getClass)
 
   def find(
-    id: String
+    pptReference: String
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[TaxReturn]]] = {
     import uk.gov.hmrc.http.HttpReads.Implicits.readOptionOfNotFound
     val timer = metrics.defaultRegistry.timer("ppt.returns.find.timer").time()
-    httpClient.GET[Option[TaxReturn]](appConfig.pptReturnUrl(id))
+    httpClient.GET[Option[TaxReturn]](appConfig.pptReturnUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map {
         resp =>
-          logger.info(s"Found ppt tax returns for id [$id] ")
+          logger.info(s"Found ppt tax returns for id [$pptReference] ")
           Right(resp.map(_.toTaxReturn))
       }
       .recover {
         case ex: Exception =>
           Left(
             DownstreamServiceError(
-              s"Failed to retrieve return for id [$id], error: ${ex.getMessage}",
+              s"Failed to retrieve return for id [$pptReference], error: ${ex.getMessage}",
               ex
             )
           )
@@ -67,7 +67,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map {
         response =>
-          logger.info(s"Create ppt tax returns with id [${response.id}]")
+          logger.info(s"Create ppt tax returns with id [$pptReference]")
           Right(response.toTaxReturn)
       }
       .recover {
@@ -79,11 +79,12 @@ class TaxReturnsConnector @Inject() (
   def update(
     payload: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, TaxReturn]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.returns.update.timer").time()
-    httpClient.PUT[TaxReturn, TaxReturn](appConfig.pptReturnUrl(payload.id), payload)
+    val timer        = metrics.defaultRegistry.timer("ppt.returns.update.timer").time()
+    val pptReference = payload.id
+    httpClient.PUT[TaxReturn, TaxReturn](appConfig.pptReturnUrl(pptReference), payload)
       .andThen { case _ => timer.stop() }
       .map { response =>
-        logger.info(s"Updated ppt tax returns for id [${payload.id}]")
+        logger.info(s"Updated ppt tax returns for id [$pptReference]")
         Right(response.toTaxReturn)
       }
       .recover {
@@ -93,12 +94,12 @@ class TaxReturnsConnector @Inject() (
   }
 
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val timer       = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
-    val taxReturnId = payload.id
-    httpClient.POST[String, String](appConfig.pptReturnSubmissionUrl(taxReturnId), payload.id)
+    val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val pptReference = payload.id
+    httpClient.POST[String, String](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
       .andThen { case _ => timer.stop() }
       .map { _ =>
-        logger.info(s"Submitted ppt tax returns for id [$taxReturnId]")
+        logger.info(s"Submitted ppt tax returns for id [$pptReference]")
         Right()
       }
       .recover {

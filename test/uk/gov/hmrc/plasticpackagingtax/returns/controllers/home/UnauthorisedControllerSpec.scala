@@ -21,16 +21,23 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckActionImpl
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
   private val page = mock[unauthorised]
 
+  val mockAuthCheckAction = new AuthCheckActionImpl(mockAuthConnector,
+                                                    config,
+                                                    metricsMock,
+                                                    stubMessagesControllerComponents()
+  )
+
   val controller =
-    new UnauthorisedController(stubMessagesControllerComponents(), page)
+    new UnauthorisedController(mockAuthCheckAction, stubMessagesControllerComponents(), page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -45,13 +52,20 @@ class UnauthorisedControllerSpec extends ControllerSpec {
   "Unauthorised controller" should {
 
     "return 200 (OK)" when {
-
       "display page method is invoked" in {
+        val result = controller.unauthorised()(getRequest())
 
-        val result = controller.onPageLoad()(getRequest())
+        status(result) must be(OK)
+      }
+
+      "enrolments page is invoked with by a signed in user" in {
+        authorizedUser(requiredPredicate = EmptyPredicate)
+
+        val result = controller.notEnrolled()(getRequest())
 
         status(result) must be(OK)
       }
     }
+
   }
 }

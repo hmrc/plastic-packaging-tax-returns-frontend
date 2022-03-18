@@ -54,13 +54,15 @@ trait CommonFormValidators {
   val isLowerOrEqualTo: BigDecimal => String => Boolean = (threshold: BigDecimal) =>
     (input: String) => isValidDecimal(input) && BigDecimal(input.trim) <= threshold
 
+  val isLength: (String, Int) => Boolean = (value, length) => value.trim.length == length
+
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.trim.length <= maxLength
 
   val isValidName: String => Boolean = (name: String) =>
     name.isEmpty || isMatchingPattern(name, namePattern)
 
-  private val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
+  protected val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
 
   private val namePattern =
