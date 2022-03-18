@@ -68,13 +68,13 @@ class AgentsControllerSpec extends ControllerSpec {
         authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
 
         val result = controller.submit(
-          postRequest(Json.toJson(ClientIdentifier(identifier = "XMPPT1234567890")))
+          postRequest(Json.toJson(ClientIdentifier(identifier = "XMPPT0001234567")))
         )
 
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some(homeRoutes.HomeController.displayPage().url))
 
-        await(result).newSession.flatMap(_.get("clientPPT")) must be(Some("XMPPT1234567890"))
+        await(result).newSession.flatMap(_.get("clientPPT")) must be(Some("XMPPT0001234567"))
       }
     }
   }

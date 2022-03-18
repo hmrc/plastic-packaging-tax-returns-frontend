@@ -33,8 +33,8 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "total is valid" in {
-        val input = Map(identifier -> "XMPPT0000000123")
+      "identifier is valid" in {
+        val input = Map(identifier -> "XAPPT0000000123")
 
         val form = ClientIdentifier.form().bind(input)
         form.errors.size mustBe 0
