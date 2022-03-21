@@ -17,25 +17,22 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class BtaEntryPointController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents
-) extends FrontendController(mcc) {
+class BtaEntryPointController @Inject() (mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   def startReturn(): Action[AnyContent] =
-    authenticate { implicit request =>
+    Action { implicit request =>
       Redirect(returnRoutes.StartDateReturnController.displayPage())
     }
 
   def submittedReturns(): Action[AnyContent] =
-    authenticate { implicit request =>
+    Action { implicit request =>
       Redirect(returnRoutes.SubmittedReturnsController.displayPage())
     }
 
