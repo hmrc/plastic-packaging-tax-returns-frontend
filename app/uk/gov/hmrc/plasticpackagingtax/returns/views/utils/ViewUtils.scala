@@ -20,7 +20,6 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.math.BigDecimal.RoundingMode
 
 object ViewUtils {
@@ -29,12 +28,15 @@ object ViewUtils {
 
   def displayReturnQuarter(obligation: Obligation)(implicit messages: Messages): String =
     messages("return.quarter",
-             messages(s"month.${obligation.fromDate.getMonthValue}"),
-             messages(s"month.${obligation.toDate.getMonthValue}"),
+             getMonthName(obligation.fromDate.getMonthValue),
+             getMonthName(obligation.toDate.getMonthValue),
              obligation.toDate.getYear.toString
     )
 
-  def displayLocalDate(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
+
+  private def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
+    messages(s"month.$monthNumber")
 
 }
