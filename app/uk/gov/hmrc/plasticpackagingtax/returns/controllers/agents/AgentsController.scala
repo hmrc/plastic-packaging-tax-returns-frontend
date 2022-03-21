@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier.identifier
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.agents.agents_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -38,10 +39,20 @@ class AgentsController @Inject() (
   val displayPage: Action[AnyContent] =
     authenticate { implicit request =>
       val currentlySelectedClientIdentifier = getSelectedClientIdentifierFrom(request)
-      val form = ClientIdentifier.form().fill(
-        ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
-      )
-      Ok(page(form))
+
+      // Look for a flash signal if the client identifier on the session has failed auth
+      request.flash.get("clientPPTFailed") match {
+        case Some(_) =>
+          val form = ClientIdentifier.form().fill(
+            ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
+          ).withError(identifier, "agents.client.identifier.auth.error")
+          Forbidden(page(form))
+        case _ =>
+          val form = ClientIdentifier.form().fill(
+            ClientIdentifier(currentlySelectedClientIdentifier.getOrElse(""))
+          )
+          Ok(page(form))
+      }
     }
 
   val submit: Action[AnyContent] =
