@@ -20,7 +20,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckAction
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{
+  SelectedClientIdentifier,
+  routes => agentRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -30,7 +33,7 @@ class UnauthorisedController @Inject() (
   authenticate: AuthCheckAction,
   mcc: MessagesControllerComponents,
   unauthorisedPage: unauthorised
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport with SelectedClientIdentifier {
 
   def notEnrolled(): Action[AnyContent] =
     authenticate { implicit authenticatedRequest =>
@@ -42,7 +45,14 @@ class UnauthorisedController @Inject() (
       val affinityGroup = authenticatedRequest.user.identityData.affinityGroup
       affinityGroup match {
         case Some(AffinityGroup.Agent) =>
-          Redirect(agentRoutes.AgentsController.displayPage())
+          getSelectedClientIdentifierFrom(authenticatedRequest) match {
+            case Some(_) =>
+              Redirect(agentRoutes.AgentsController.displayPage()).flashing(
+                ("clientPPTFailed" -> "true")
+              )
+            case _ =>
+              Redirect(agentRoutes.AgentsController.displayPage())
+          }
         case _ =>
           // All other users see the you need to register page.
           Ok(unauthorisedPage())

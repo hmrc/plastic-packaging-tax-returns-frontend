@@ -58,7 +58,7 @@ class AuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    // In theory this could be deduplicated with SelectedClientIdentifier by the generic makes it too differcult
+    // In theory this could be deduplicated with SelectedClientIdentifier by the generic makes it too difficult
     def getSelectedClientIdentifier() = request.session.get("clientPPT")
 
     val authorisation            = authTimer.time()
