@@ -100,8 +100,8 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         changeLinkTableHeader.hasClass("govuk-visually-hidden")
       }
 
-      def asKg(value: String)     = s"$value kg"
-      def asPounds(value: String) = s"£$value"
+      def asKg(value: String)         = s"$value kg"
+      def asPounds(value: BigDecimal) = s"£${value.setScale(2, RoundingMode.HALF_EVEN)}"
 
       "tax return table displaying organisation details section" in {
 
@@ -146,9 +146,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
                                       5,
                                       "returns.checkYourReturnPage.conversionCredit",
                                       asPounds(
-                                        taxReturn.convertedPackagingCredit.get.totalInPounds.setScale(
-                                          2
-                                        ).toString
+                                        taxReturn.convertedPackagingCredit.get.totalInPounds
                                       ),
                                       returnRoutes.ConvertedPackagingCreditController.displayPage()
         )
@@ -183,7 +181,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
         checkYourReturnView.rowHasValue(1,
                                         2,
                                         "returns.checkYourReturnPage.taxLiability.label",
-                                        asPounds(taxReturn.taxLiability.taxDue.toString)
+                                        asPounds(taxReturn.taxLiability.taxDue)
         )
       }
 
@@ -204,7 +202,7 @@ class CheckYourReturnViewSpec extends UnitViewSpec with Matchers {
           2,
           0,
           "returns.checkYourReturnPage.totalCredits.creditsRequested.label",
-          asPounds(taxReturn.taxLiability.totalCredit.setScale(2).toString)
+          asPounds(taxReturn.taxLiability.totalCredit)
         )
       }
     }
