@@ -38,11 +38,29 @@ class BtaEntryPointControllerSpec extends ControllerSpec {
         )
       }
     }
-    "throw an exception" when {
-      "user is unauthenticated" in {
-        unAuthorizedUser()
+    "redirect to the submitted returns page" when {
+      "user is authenticated" in {
+        authorizedUser()
 
-        intercept[RuntimeException](await(controller.startReturn()(getRequest())))
+        redirectLocation(controller.submittedReturns()(getRequest())) mustBe Some(
+          returnRoutes.SubmittedReturnsController.displayPage().url
+        )
+      }
+    }
+
+    "throw an exception" when {
+      "user is unauthenticated" when {
+        "hitting start return endpoint" in {
+          unAuthorizedUser()
+
+          intercept[RuntimeException](await(controller.startReturn()(getRequest())))
+        }
+
+        "submitted returns endpoint" in {
+          unAuthorizedUser()
+
+          intercept[RuntimeException](await(controller.submittedReturns()(getRequest())))
+        }
       }
     }
   }

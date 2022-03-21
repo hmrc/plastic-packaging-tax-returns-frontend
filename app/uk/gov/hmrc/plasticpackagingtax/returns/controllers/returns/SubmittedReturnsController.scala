@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta
+package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.submitted_returns_page
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class BtaEntryPointController @Inject() (
+class SubmittedReturnsController @Inject() (
   authenticate: AuthAction,
-  mcc: MessagesControllerComponents
-) extends FrontendController(mcc) {
+  mcc: MessagesControllerComponents,
+  page: submitted_returns_page
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
-  def startReturn(): Action[AnyContent] =
+  def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>
-      Redirect(returnRoutes.StartDateReturnController.displayPage())
-    }
-
-  def submittedReturns(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Redirect(returnRoutes.SubmittedReturnsController.displayPage())
+      Ok(page())
     }
 
 }

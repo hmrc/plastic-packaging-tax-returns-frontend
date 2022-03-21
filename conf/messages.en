@@ -274,3 +274,7 @@ subscription.primaryContactDetails.name.label = Name
 subscription.primaryContactDetails.name.error.length = Name cannot be more than 160 characters long
 subscription.primaryContactDetails.name.error.empty = Name is required
 subscription.primaryContactDetails.name.error.format = Name format is not supported
+
+returns.submitted.title = Submitted returns
+returns.submitted.none = You have not submitted any returns yet.
+returns.submitted.link = Go to your Plastic Packaging Tax account
