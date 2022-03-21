@@ -38,17 +38,12 @@ class AuthCheckActionImpl @Inject() (
   appConfig: AppConfig,
   metrics: Metrics,
   mcc: MessagesControllerComponents
-) extends AuthCheckAction with AuthorisedFunctions {
+) extends AuthCheckAction with AuthorisedFunctions with CommonAuth {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
   private val logger                                       = Logger(this.getClass)
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
-
-  private val authData =
-    credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
-      agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
-      credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
 
   override def invokeBlock[A](
     request: Request[A],
