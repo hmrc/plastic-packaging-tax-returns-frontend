@@ -111,19 +111,13 @@ returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycl
 returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
 returns.startPage.buttonName = Start now
 
-returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
+returns.manufacturedPlastic.title = Have you manufactured finished plastic packaging components in this period?
 returns.manufacturedPlastic.details.link = What do we mean by components?
 returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
 returns.manufacturedPlastic.details.line2.link = See examples of components
-returns.manufacturedPlastic.details.empty.error = Choose an option
+returns.manufacturedPlastic.details.empty.error = Select yes if you have manufactured finished plastic packaging components in this period
 
 returns.sectionHeader = {0} to {1} {2}
-
-returns.manufacturedPlastic.title = Have you manufactured plastic packaging components in this period?
-returns.manufacturedPlastic.details.link = What do we mean by components?
-returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
-returns.manufacturedPlastic.details.line2.link = See examples of components
-returns.manufacturedPlastic.details.empty.error = Choose an option
 
 returns.manufacturedPlasticWeight.title = How much did your manufactured plastic packaging components weigh?
 returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
