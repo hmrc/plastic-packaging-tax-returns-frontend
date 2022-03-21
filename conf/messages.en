@@ -48,6 +48,13 @@ timeoutDialog.signout.text= Sign out
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+account.agents.selectClient.header=What is your client’s PPT reference?
+account.agents.selectClient.hint.label=Client PPT reference
+account.agents.selectClient.hint.body=This is the 15 character reference they received when they registered for PPT. For example, XMPPT0001234567.
+agents.client.identifier.empty.error=Client PPT reference must be supplied and non blank
+agents.client.identifier.length.error=Client PPT reference should be 15 characters in length
+agents.client.identifier.format.error=A client PPT reference should be 15 characters long and start with X
+
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
 account.homePage.organisation.group = {0} (representative organisation for group)
@@ -67,14 +74,14 @@ account.homePage.card.makeReturn.failure = We cannot display tax return details.
 
 account.homePage.card.payments.header = Payments
 account.homePage.card.payments.nothingOutstanding = You have no payments due.
-account.homePage.card.payments.inCredit = You are £{0} in credit.
-account.homePage.card.payments.debitDue = You owe £{0}. You must pay in {1}.
-account.homePage.card.payments.overDue = You owe £{0}. This payment is overdue.
-account.homePage.card.payments.debitAndOverDue = You owe £{0}. This include £{1} which is overdue.
+account.homePage.card.payments.inCredit = You are {0} in credit.
+account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
+account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
+account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
 
 account.homePage.manage.ppt.account.header = Manage your account
-account.homePage.card.registration.details.1.link.single = Registration details
+account.homePage.card.registration.details.1.link.single = Your Registration details
 account.homePage.card.registration.details.1.link.group = Representative member details
 account.homePage.card.registration.details.1.link.partnership = Nominated partner details
 account.homePage.card.registration.details.1.body = View and change contact details.

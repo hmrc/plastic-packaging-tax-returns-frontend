@@ -62,15 +62,23 @@ trait ControllerSpec
 
   def authRequest(
     headers: Headers = Headers(),
-    user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
-  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
+    user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333"))),
+    pptClient: Option[String] = None
+  ): AuthenticatedRequest[AnyContentAsEmpty.type] = {
+    val request = pptClient.map { clientIdentifier =>
+      FakeRequest().withHeaders(headers).withSession(("clientPPT", clientIdentifier))
+    }.getOrElse {
+      FakeRequest().withHeaders(headers)
+    }
+
     new AuthenticatedRequest(
-      FakeRequest().withHeaders(headers),
+      request,
       user,
       user.enrolments.getEnrolment(AuthAction.pptEnrolmentKey).flatMap(
         e => e.getIdentifier(AuthAction.pptEnrolmentIdentifierName).map(i => i.value)
       )
     )
+  }
 
   protected def postRequestEncoded(
     form: AnyRef,
