@@ -133,11 +133,11 @@ returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,9
 
 returns.importedPlasticWeight.component.title = Have you imported finished plastic packaging components in this period?
 returns.importedPlasticWeight.component.details.line1 = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
-returns.importedPlasticWeight.component.details.empty.error = Choose an option
+returns.importedPlasticWeight.component.details.empty.error = Select yes if you have imported finished plastic packaging components in this period
 
 returns.importedPlasticWeight.meta.title = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.title = 2. Imported plastic packaging
-returns.importedPlasticWeight.hint = This applies to all complete plastic packaging components, whether it is filled or unfilled.
+returns.importedPlasticWeight.hint = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
 returns.importedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
 returns.importedPlasticWeight.total.weight = Total weight of packaging components imported in the quarter (kg)
 returns.importedPlasticWeight.details.link = How are plastic packaging and components defined?
@@ -237,7 +237,7 @@ returns.confirmationPage.exitSurvey.text.link = What did you think of this servi
 returns.startDateReturns.title = Do you want to start your return for {0} to {1} {2}?
 returns.startDateReturns.heading = Do you want to start your return for {0} to {1} {2}?
 returns.startDateReturns.button = Continue
-returns.startDateReturns.error.required = Choose an option
+returns.startDateReturns.error.required = Select yes if you want to start your return for this period
 
 account.viewSubscription.organisationDetails.title = Your business details
 account.viewSubscription.organisationDetails.label = Registered organisation details

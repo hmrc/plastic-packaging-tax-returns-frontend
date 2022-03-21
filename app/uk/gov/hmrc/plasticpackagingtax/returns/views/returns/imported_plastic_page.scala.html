@@ -56,6 +56,7 @@
                 isPageHeading = true
             )),
             html = govukRadios(Radios(
+                hint = Some(Hint(content = Text(messages("returns.importedPlasticWeight.hint")))),
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
