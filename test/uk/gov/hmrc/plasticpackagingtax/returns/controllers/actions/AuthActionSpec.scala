@@ -20,7 +20,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{Enrolment, InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{CredentialStrength, Enrolment, InternalError, MissingBearerToken}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   newEnrolment,
   newEnrolments,
@@ -90,7 +90,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       val agentDelegatedAuthPredicate =
         Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
                                                  "XMPPT0000000123"
-        ).withDelegatedAuthRule("ppt-auth")
+        ).withDelegatedAuthRule("ppt-auth").and(CredentialStrength(CredentialStrength.strong))
       authorizedUser(agent, requiredPredicate = agentDelegatedAuthPredicate)
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), agent, Some("XMPPT0000000123")),

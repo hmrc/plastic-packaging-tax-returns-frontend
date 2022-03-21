@@ -59,7 +59,7 @@ class AuthCheckActionImpl @Inject() (
 
     val authorisation = authTimer.time()
 
-    authorised(EmptyPredicate.and(CredentialStrength(CredentialStrength.strong)))
+    authorised(CredentialStrength(CredentialStrength.strong))
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
