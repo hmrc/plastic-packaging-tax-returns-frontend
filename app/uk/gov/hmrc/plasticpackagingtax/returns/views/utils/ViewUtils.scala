@@ -28,8 +28,8 @@ object ViewUtils {
 
   def displayReturnQuarter(obligation: Obligation)(implicit messages: Messages): String =
     messages("return.quarter",
-             messages(s"month.${obligation.fromDate.getMonthValue}"),
-             messages(s"month.${obligation.toDate.getMonthValue}"),
+             messages(getMonthName(obligation.fromDate.getMonthValue)),
+             messages(getMonthName(obligation.toDate.getMonthValue)),
              obligation.toDate.getYear.toString
     )
 
