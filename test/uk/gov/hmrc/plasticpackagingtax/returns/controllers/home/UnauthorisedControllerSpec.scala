@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.CredentialStrength
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckActionImpl
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
@@ -59,7 +59,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
       }
 
       "enrolments page is invoked with by a signed in user" in {
-        authorizedUser(requiredPredicate = EmptyPredicate)
+        authorizedUser(requiredPredicate = CredentialStrength(CredentialStrength.strong))
 
         val result = controller.notEnrolled()(getRequest())
 

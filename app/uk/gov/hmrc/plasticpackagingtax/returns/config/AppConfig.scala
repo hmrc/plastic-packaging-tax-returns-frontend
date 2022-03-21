@@ -61,6 +61,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
+  lazy val mfaUpliftUrl     = config.get[String]("urls.mfaUplift")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")

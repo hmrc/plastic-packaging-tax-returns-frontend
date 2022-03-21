@@ -23,7 +23,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentActionImpl
@@ -54,7 +54,10 @@ class AgentsControllerSpec extends ControllerSpec {
     "display client identifier page" when {
       "agent is authorised and display select client page is requested" in {
         val agent = PptTestData.newAgent("456")
-        authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
+        authorizedUser(agent,
+                       requiredPredicate =
+                         AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+        )
 
         val result = controller.displayPage()(getRequest())
 
