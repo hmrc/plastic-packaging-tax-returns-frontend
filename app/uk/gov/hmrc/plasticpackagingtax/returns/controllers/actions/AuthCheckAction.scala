@@ -21,8 +21,6 @@ import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -35,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthCheckActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  appConfig: AppConfig,
+  override val appConfig: AppConfig,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthCheckAction with AuthorisedFunctions with CommonAuth {
@@ -90,7 +88,10 @@ class AuthCheckActionImpl @Inject() (
 
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        redirectToSignin
+
+      case _: IncorrectCredentialStrength =>
+        upliftCredentialStrength
 
       case _: AuthorisationException =>
         Results.Redirect(homeRoutes.UnauthorisedController.unauthorised())
