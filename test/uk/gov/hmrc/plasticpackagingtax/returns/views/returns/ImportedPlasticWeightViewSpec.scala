@@ -80,27 +80,11 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("section-header").text() must be("April to June 2022")
     }
 
-    "display hint" in {
-
-      view.getElementsByClass("govuk-body-m").text() must include(
-        messages("returns.importedPlasticWeight.hint")
-      )
-    }
-
-    "display total weight label" in {
-
-      view.getElementsByClass("govuk-label--s").text() must include(
-        messages("returns.importedPlasticWeight.total.weight")
-      )
-    }
-
     "display total weight input box" in {
-
       view must containElementWithID("totalKg")
     }
 
     "display 'Save and Continue' button" in {
-
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe messages("site.button.continue")
     }

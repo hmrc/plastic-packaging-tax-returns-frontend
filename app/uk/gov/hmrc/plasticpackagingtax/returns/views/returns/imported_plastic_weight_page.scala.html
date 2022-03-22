@@ -42,19 +42,14 @@
 
 @totalWeightField = @{form("totalKg")}
 
-@formattedDetailsContent = {
-  <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line1")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line2")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line3")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line4")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line5")</li>
-  </ul>
-}
-
-@hintContent = {
-    <p class="govuk-body-m">@messages("returns.importedPlasticWeight.hint")</p>
-    <p class="govuk-label govuk-label--s">@messages("returns.importedPlasticWeight.total.weight")</p>
+@paragraphContent = {
+    <p class="govuk-label">@messages("returns.importedPlasticWeight.details.line1")
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("returns.importedPlasticWeight.details.line2")</li>
+        <li>@messages("returns.importedPlasticWeight.details.line3")</li>
+        <li>@messages("returns.importedPlasticWeight.details.line4")</li>
+    </ul>
+    </p>
 }
 
 @govukLayout(
@@ -72,7 +67,7 @@
                 id = s"${totalWeightField.name}",
                 name = totalWeightField.name,
                 value = totalWeightField.value,
-                hint = Some(Hint(content = HtmlContent(hintContent))),
+                hint = Some(Hint(content = HtmlContent(paragraphContent))),
                 errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 label = Label(
                     isPageHeading = true,
@@ -86,11 +81,6 @@
                 classes = "govuk-input--width-10"
             )
         )
-
-        @govukDetails(Details(
-            summary = Text(messages("returns.importedPlasticWeight.details.link")),
-            content = HtmlContent(formattedDetailsContent)
-        ))
 
         @saveAndContinue()
         }
