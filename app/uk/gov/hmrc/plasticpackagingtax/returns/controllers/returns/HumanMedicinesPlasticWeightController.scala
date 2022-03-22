@@ -36,6 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,16 +49,18 @@ class HumanMedicinesPlasticWeightController @Inject() (
   mcc: MessagesControllerComponents,
   page: human_medicines_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends ReturnsController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      val taxReturn = getTaxReturnObligation(request.taxReturn)
-
       request.taxReturn.humanMedicinesPlasticWeight match {
         case Some(data) =>
-          Ok(page(form().fill(HumanMedicinesPlasticWeight(data.totalKg.toString)), taxReturn))
-        case _ => Ok(page(form(), taxReturn))
+          Ok(
+            page(form().fill(HumanMedicinesPlasticWeight(data.totalKg.toString)),
+                 request.taxReturn.getTaxReturnObligation()
+            )
+          )
+        case _ => Ok(page(form(), request.taxReturn.getTaxReturnObligation()))
       }
     }
 
@@ -68,7 +71,7 @@ class HumanMedicinesPlasticWeightController @Inject() (
         .fold(
           (formWithErrors: Form[HumanMedicinesPlasticWeight]) =>
             Future.successful(
-              BadRequest(page(formWithErrors, getTaxReturnObligation(request.taxReturn)))
+              BadRequest(page(formWithErrors, request.taxReturn.getTaxReturnObligation()))
             ),
           weight =>
             updateTaxReturn(weight).map {
