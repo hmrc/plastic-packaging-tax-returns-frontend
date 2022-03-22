@@ -56,7 +56,7 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[Boolean]], any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(weightPage.apply(any[Form[ImportedPlasticWeight]])(any(), any())).thenReturn(
+    when(weightPage.apply(any[Form[ImportedPlasticWeight]], any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }
@@ -132,12 +132,12 @@ class ImportedPlasticWeightControllerSpec extends ControllerSpec {
       }
     }
 
-    "return prepopulated form" when {
+    "return pre-populated form" when {
 
       "weight exist" in {
         def pageForm: Form[ImportedPlasticWeight] = {
           val captor = ArgumentCaptor.forClass(classOf[Form[ImportedPlasticWeight]])
-          verify(weightPage).apply(captor.capture())(any(), any())
+          verify(weightPage).apply(captor.capture(), any())(any(), any())
           captor.getValue
         }
         authorizedUser()

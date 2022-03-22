@@ -23,22 +23,31 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[imported_plastic_weight_page]
 
+  private val obligation = Obligation(LocalDate.of(2022, 4, 1),
+                                      LocalDate.of(2022, 6, 30),
+                                      LocalDate.of(2022, 7, 29),
+                                      "key"
+  )
+
   private def createView(
     form: Form[ImportedPlasticWeight] = ImportedPlasticWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form, obligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), obligation)(request, messages)
+    page.render(form(), obligation, request, messages)
   }
 
   "Imported Plastic Weight View" should {
@@ -68,10 +77,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display header" in {
-
-      view.getElementById("section-header").text() must include(
-        messages("returns.importedPlasticWeight.sectionHeader")
-      )
+      view.getElementById("section-header").text() must be("April to June 2022")
     }
 
     "display hint" in {
