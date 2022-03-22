@@ -91,9 +91,11 @@ class ImportedPlasticController @Inject() (
       request.taxReturn.importedPlasticWeight match {
         case Some(data) =>
           Ok(
-            importedWeightPage(form().fill(ImportedPlasticWeight(totalKg = data.totalKg.toString)))
+            importedWeightPage(form().fill(ImportedPlasticWeight(totalKg = data.totalKg.toString)),
+                               request.taxReturn.getTaxReturnObligation()
+            )
           )
-        case _ => Ok(importedWeightPage(form()))
+        case _ => Ok(importedWeightPage(form(), request.taxReturn.getTaxReturnObligation()))
       }
     }
 
@@ -103,7 +105,11 @@ class ImportedPlasticController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[ImportedPlasticWeight]) =>
-            Future.successful(BadRequest(importedWeightPage(formWithErrors))),
+            Future.successful(
+              BadRequest(
+                importedWeightPage(formWithErrors, request.taxReturn.getTaxReturnObligation())
+              )
+            ),
           weight =>
             updateTaxReturn(weight).map {
               case Right(_) =>

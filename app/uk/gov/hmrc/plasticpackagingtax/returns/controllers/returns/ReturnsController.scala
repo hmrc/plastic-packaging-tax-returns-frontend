@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 abstract class ReturnsController(mcc: MessagesControllerComponents)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
+  // todo remove this
   protected def getTaxReturnObligation(taxReturn: TaxReturn) =
     taxReturn.obligation.getOrElse(
       throw new IllegalStateException("Tax return obligation details absent")
