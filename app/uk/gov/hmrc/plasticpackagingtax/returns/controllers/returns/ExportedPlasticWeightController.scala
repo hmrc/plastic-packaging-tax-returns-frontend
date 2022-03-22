@@ -49,14 +49,18 @@ class ExportedPlasticWeightController @Inject() (
   mcc: MessagesControllerComponents,
   page: exported_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends ReturnsController(mcc) {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       request.taxReturn.exportedPlasticWeight match {
         case Some(exportedPlasticWeight) =>
-          Ok(page(form().fill(ExportedPlasticWeight(exportedPlasticWeight.totalKg.toString))))
-        case _ => Ok(page(form()))
+          Ok(
+            page(form().fill(ExportedPlasticWeight(exportedPlasticWeight.totalKg.toString)),
+                 request.taxReturn.getTaxReturnObligation()
+            )
+          )
+        case _ => Ok(page(form(), request.taxReturn.getTaxReturnObligation()))
       }
     }
 
@@ -66,7 +70,9 @@ class ExportedPlasticWeightController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[ExportedPlasticWeight]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+            Future.successful(
+              BadRequest(page(formWithErrors, request.taxReturn.getTaxReturnObligation()))
+            ),
           formData =>
             updateTaxReturn(formData).map {
               case Right(_) =>
