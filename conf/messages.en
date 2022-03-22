@@ -1,4 +1,5 @@
 service.name=Plastic Packaging Tax
+service.section=Submit return
 
 site.link.change = Change
 site.back.hiddenText = to previous page
@@ -150,14 +151,12 @@ returns.importedPlasticWeight.empty.error = Enter an amount to continue
 returns.importedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.importedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
-returns.humanMedicinesPlasticWeight.meta.title = Immediate packaging of licenced human medicines
-returns.humanMedicinesPlasticWeight.title = 3. Immediate human medicines packaging
-returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into immediate contact with licensed human medicines is not liable for the tax, but must still be declared below.
-returns.humanMedicinesPlasticWeight.sectionHeader = Plastic Packaging Tax Return
-returns.humanMedicinesPlasticWeight.total.weight = Total weight of packaging for immediate human medicines
-returns.humanMedicinesPlasticWeight.details.link = What is immediate human medicines plastic packaging?
-returns.humanMedicinesPlasticWeight.details.line1 = It is plastic packaging produced or imported for use in the immediate packaging of a human medicinal product.
-returns.humanMedicinesPlasticWeight.details.line2 = The packaging is ‘immediate’ if it comes into direct contact with a medicinal product.
+returns.humanMedicinesPlasticWeight.meta.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+returns.humanMedicinesPlasticWeight.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into immediate contact with licensed human medicines is not liable for the tax. This will be deducted from your tax liability.
+returns.humanMedicinesPlasticWeight.total.weight = Enter 0, if none of your plastic packaging components were used for the immediate packaging of licensed human medicine.
+returns.humanMedicinesPlasticWeight.details.link = What do you mean by immediate packaging?
+returns.humanMedicinesPlasticWeight.details.line = The packaging is ‘immediate’ if it comes into direct contact with a medicinal product.
 returns.humanMedicinesPlasticWeight.empty.error = Enter an amount to continue
 returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
 returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs

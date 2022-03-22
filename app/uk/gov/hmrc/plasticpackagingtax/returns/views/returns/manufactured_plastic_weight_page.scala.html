@@ -52,7 +52,7 @@
 }
 
 @govukLayout(
-    title = Title("returns.manufacturedPlasticWeight.title"),
+    title = Title("returns.manufacturedPlasticWeight.title", sectionKey = "service.section"),
     backButton = Some(BackButton(messages("site.back"), returnsRoutes.ManufacturedPlasticController.contribution(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
