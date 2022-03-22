@@ -18,15 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.Cacheable
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 abstract class ReturnsController(mcc: MessagesControllerComponents)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  protected def getTaxReturnObligation(taxReturn: TaxReturn) =
-    taxReturn.obligation.getOrElse(
-      throw new IllegalStateException("Tax return obligation details absent")
-    )
+  // TODO remove class?
 
 }
