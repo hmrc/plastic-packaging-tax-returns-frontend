@@ -49,7 +49,7 @@ class ExportedPlasticWeightController @Inject() (
   mcc: MessagesControllerComponents,
   page: exported_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends ReturnsController(mcc) {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
