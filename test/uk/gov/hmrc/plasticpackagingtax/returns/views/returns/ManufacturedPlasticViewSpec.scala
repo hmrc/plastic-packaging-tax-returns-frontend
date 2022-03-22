@@ -23,14 +23,8 @@ import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
-  ManufacturedPlastic,
-  ManufacturedPlasticWeight
-}
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
-  manufactured_plastic_page,
-  manufactured_plastic_weight_page
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.ManufacturedPlastic
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.manufactured_plastic_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest

@@ -119,14 +119,14 @@ returns.manufacturedPlastic.details.empty.error = Select yes if you have manufac
 
 returns.sectionHeader = {0} to {1} {2}
 
-returns.manufacturedPlasticWeight.title = How much did your manufactured plastic packaging components weigh?
+returns.manufacturedPlasticWeight.title = How much did your finished manufactured plastic packaging components weigh?
 returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
 returns.manufacturedPlasticWeight.hint = Do not include plastic packaging components which are (any of the following):
 returns.manufacturedPlasticWeight.hint.1 = used in the long-term storage of goods
 returns.manufacturedPlasticWeight.hint.2 = an integral part of the goods
 returns.manufacturedPlasticWeight.hint.3 = reused for the presentation of goods
 returns.manufacturedPlasticWeight.hint.4 = See
-returns.manufacturedPlasticWeight.hint.4.link = examples of things you should not include
+returns.manufacturedPlasticWeight.hint.4.link = examples of things you should not include.
 returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
