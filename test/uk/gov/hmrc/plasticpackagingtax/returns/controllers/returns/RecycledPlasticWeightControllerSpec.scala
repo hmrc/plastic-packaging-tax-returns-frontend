@@ -49,7 +49,9 @@ class RecycledPlasticWeightControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[RecycledPlasticWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[RecycledPlasticWeight]], any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -110,7 +112,7 @@ class RecycledPlasticWeightControllerSpec extends ControllerSpec {
 
       def pageForm: Form[RecycledPlasticWeight] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[RecycledPlasticWeight]])
-        verify(page).apply(captor.capture())(any(), any())
+        verify(page).apply(captor.capture(), any())(any(), any())
         captor.getValue
       }
 
@@ -120,7 +122,7 @@ class RecycledPlasticWeightControllerSpec extends ControllerSpec {
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe "10"
+        pageForm.get.totalKg equals "10"
       }
     }
 

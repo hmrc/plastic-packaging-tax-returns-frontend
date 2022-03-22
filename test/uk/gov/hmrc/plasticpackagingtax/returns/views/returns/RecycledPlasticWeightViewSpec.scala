@@ -23,22 +23,31 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight.form
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.recycled_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[recycled_plastic_weight_page]
 
+  private val obligation = Obligation(LocalDate.of(2022, 4, 1),
+                                      LocalDate.of(2022, 6, 30),
+                                      LocalDate.of(2022, 7, 29),
+                                      "periodkey"
+  )
+
   private def createView(
     form: Form[RecycledPlasticWeight] = RecycledPlasticWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form, obligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), obligation)(request, messages)
+    page.render(form(), obligation, request, messages)
   }
 
   "Recycled Plastic Weight View" should {
@@ -69,15 +78,13 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementById("section-header").text() must include(
-        messages("returns.recycledPlasticWeight.sectionHeader")
-      )
+      view.getElementById("section-header").text() must include("April to June 2022")
     }
 
     "display total weight label" in {
 
       view.getElementsByClass("govuk-label--s").text() must include(
-        messages("returns.recycledPlasticWeight.total.weight")
+        messages("returns.recycledPlasticWeight.paragraph")
       )
     }
 
