@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
@@ -41,6 +42,7 @@
         govukFieldset: GovukFieldset,
         formHelper: FormWithCSRF,
         returnsSectionHeading: returnsSectionHeading,
+        paragraph: paragraph
 )
 
 @(form: Form[ConvertedPackagingCredit], creditBalanceAvailable: Option[BigDecimal], obligation: Obligation)(implicit request: Request[_], messages: Messages)
@@ -61,6 +63,7 @@
             id = totalCreditInPoundsField.name,
             name = totalCreditInPoundsField.name,
             value = totalCreditInPoundsField.value,
+            hint = Some(Hint(content = Text(messages("returns.convertedPackagingCredit.hint")))),
             errorMessage = totalCreditInPoundsField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,
@@ -74,6 +77,18 @@
         )
     )
 
+}
+@linkHint = {<a href=@messages("returns.convertedPackagingCredit.details.href") class="govuk-link" id="converted-plastic-weight-readMore-link">@messages("returns.convertedPackagingCredit.details.readMore")</a>}
+
+@formattedDetailsContent = {
+    @paragraph(content = Html(messages("returns.convertedPackagingCredit.details.line1")))
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("returns.convertedPackagingCredit.details.bullet1")</li>
+        <li>@messages("returns.convertedPackagingCredit.details.bullet2")</li>
+    </ul>
+
+    @paragraph(linkHint)
 }
 
 @govukLayout(
@@ -95,6 +110,11 @@
                 html = inputFields
             )
         )
+
+        @govukDetails(Details(
+            summary = Text(messages("returns.convertedPackagingCredit.details.link")),
+            content = HtmlContent(formattedDetailsContent)
+        ))
 
         @saveAndContinue()
     }
