@@ -57,6 +57,10 @@ trait MockTaxReturnsConnector extends MockitoSugar with TaxReturnBuilder with Be
     when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
       .thenReturn(Future.successful(Right()))
 
+  def mockTaxReturnSubmissionFailure(taxReturn: TaxReturn, ex: RuntimeException): Any =
+    when(mockTaxReturnsConnector.submit(ArgumentMatchers.eq(taxReturn))(any()))
+      .thenReturn(Future.successful(Left(DownstreamServiceError("Ooops", ex))))
+
   def mockTaxReturnException(): OngoingStubbing[Future[Either[ServiceError, TaxReturn]]] =
     when(mockTaxReturnsConnector.update(any[TaxReturn])(any()))
       .thenThrow(new RuntimeException("some error"))

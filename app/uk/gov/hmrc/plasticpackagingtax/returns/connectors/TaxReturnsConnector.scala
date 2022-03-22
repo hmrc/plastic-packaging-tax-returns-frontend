@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -96,7 +97,7 @@ class TaxReturnsConnector @Inject() (
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
-    httpClient.POST[String, String](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
+    httpClient.POST[String, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax returns for id [$pptReference]")
