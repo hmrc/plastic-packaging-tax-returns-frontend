@@ -67,14 +67,14 @@ class ConvertedPackagingCreditController @Inject() (
                   )
                 ),
                 balanceAvailable,
-                getTaxReturnObligation(request.taxReturn)
+                request.taxReturn.getTaxReturnObligation()
               )
             )
           case _ =>
             Ok(
               page(ConvertedPackagingCreditDetails.form(),
                    balanceAvailable,
-                   getTaxReturnObligation(request.taxReturn)
+                   request.taxReturn.getTaxReturnObligation()
               )
             )
         }
@@ -89,7 +89,7 @@ class ConvertedPackagingCreditController @Inject() (
           (formWithErrors: Form[ConvertedPackagingCreditDetails]) =>
             exportCreditBalanceAvailable().map { balanceAvailable =>
               BadRequest(
-                page(formWithErrors, balanceAvailable, getTaxReturnObligation(request.taxReturn))
+                page(formWithErrors, balanceAvailable, request.taxReturn.getTaxReturnObligation())
               )
             },
           credit =>
@@ -109,7 +109,7 @@ class ConvertedPackagingCreditController @Inject() (
     request: JourneyRequest[_]
   ): Future[Option[BigDecimal]] = {
 
-    val obligation = getTaxReturnObligation(request.taxReturn)
+    val obligation = request.taxReturn.getTaxReturnObligation()
     exportCreditsConnector.get(request.pptReference,
                                obligation.fromDate.minusYears(2),
                                obligation.fromDate.minusDays(1)

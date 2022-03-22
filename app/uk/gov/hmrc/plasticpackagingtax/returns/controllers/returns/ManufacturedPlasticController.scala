@@ -108,7 +108,7 @@ class ManufacturedPlasticController @Inject() (
       Ok(
         manufacturedPlasticWeightPage(form,
                                       excludedPackagingGuidanceLink,
-                                      getTaxReturnObligation(request.taxReturn)
+                                      request.taxReturn.getTaxReturnObligation()
         )
       )
     }
@@ -123,7 +123,7 @@ class ManufacturedPlasticController @Inject() (
               BadRequest(
                 manufacturedPlasticWeightPage(formWithErrors,
                                               excludedPackagingGuidanceLink,
-                                              getTaxReturnObligation(request.taxReturn)
+                                              request.taxReturn.getTaxReturnObligation()
                 )
               )
             ),
