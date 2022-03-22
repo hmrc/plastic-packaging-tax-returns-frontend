@@ -8,6 +8,7 @@
 
 # BTA entry points
 GET        /submit-return                               uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta.BtaEntryPointController.startReturn()
+GET        /submitted-returns                           uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta.BtaEntryPointController.submittedReturns()
 
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
