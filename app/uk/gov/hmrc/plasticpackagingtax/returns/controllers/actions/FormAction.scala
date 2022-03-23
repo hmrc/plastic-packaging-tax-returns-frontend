@@ -21,12 +21,14 @@ import play.api.mvc.{AnyContent, Request}
 sealed trait FormAction
 
 object FormAction {
+  private val continue                  = "Continue"
   private val saveAndContinueLabel      = "SaveAndContinue"
   private val saveAndComeBackLaterLabel = "SaveAndComeBackLater"
 
   def bindFromRequest()(implicit request: Request[AnyContent]): FormAction =
     request.body.asFormUrlEncoded.flatMap { body =>
       body.flatMap {
+        case (`continue`, _)                  => Some(Continue)
         case (`saveAndContinueLabel`, _)      => Some(SaveAndContinue)
         case (`saveAndComeBackLaterLabel`, _) => Some(SaveAndComeBackLater)
         case _                                => None
@@ -36,5 +38,6 @@ object FormAction {
 }
 
 case object Unknown              extends FormAction
+case object Continue             extends FormAction
 case object SaveAndContinue      extends FormAction
 case object SaveAndComeBackLater extends FormAction
