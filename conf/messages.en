@@ -276,6 +276,6 @@ subscription.primaryContactDetails.name.error.length = Name cannot be more than 
 subscription.primaryContactDetails.name.error.empty = Name is required
 subscription.primaryContactDetails.name.error.format = Name format is not supported
 
-returns.submitted.title = Submitted returns
+returns.submitted.title = View submitted returns
 returns.submitted.none = You have not submitted any returns yet.
-returns.submitted.link = Go to your Plastic Packaging Tax account
+returns.submitted.link = Return to your Plastic Packaging Tax account
