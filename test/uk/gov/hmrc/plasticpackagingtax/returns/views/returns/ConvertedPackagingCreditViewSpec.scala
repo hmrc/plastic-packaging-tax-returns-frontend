@@ -68,6 +68,8 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
       view.select("title").text() must include(
         messages("returns.convertedPackagingCredit.meta.title")
       )
+
+      view.select("title").text() must include(messages("service.section"))
     }
 
     "display header" in {
