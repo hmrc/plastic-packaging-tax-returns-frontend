@@ -80,7 +80,7 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+    forAll(Seq(saveAndContinueFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits the weight details" in {
           authorizedUser()

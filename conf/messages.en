@@ -7,7 +7,6 @@ site.backToGovUk = Back to GOV.UK
 site.button.save = Save
 site.button.continue = Continue
 site.button.saveAndContinue = Save and continue
-site.button.acceptAndSend = Accept and send
 site.error.summary.title = There is a problem
 
 general.true = Yes
