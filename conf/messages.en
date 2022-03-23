@@ -184,8 +184,8 @@ returns.recycledPlasticWeight.empty.error = Enter an amount to continue
 returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
 returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
-returns.convertedPackagingCredit.meta.title = How much credit would you like to claim for plastic packaging components declared in a previous return?
-returns.convertedPackagingCredit.title = How much credit would you like to claim for plastic packaging components declared in a previous return?
+returns.convertedPackagingCredit.meta.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+returns.convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 returns.convertedPackagingCredit.sectionHeader = Plastic Packaging Tax Return
 returns.convertedPackagingCredit.total.weight = Total value of packaging for credit
 returns.convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
@@ -193,6 +193,13 @@ returns.convertedPackagingCredit.balanceUnavailable = Credit balance unavailable
 returns.convertedPackagingCredit.empty.error = Enter £0.00 or higher to continue
 returns.convertedPackagingCredit.format.error = Enter an amount in pounds. For example, £123.00
 returns.convertedPackagingCredit.aboveMax.error = Amount cannot exceed £99,999,999.99
+returns.convertedPackagingCredit.hint = Enter 0, if you do not want to claim credit.
+returns.convertedPackagingCredit.details.link = When you can claim credit
+returns.convertedPackagingCredit.details.line1 = You can claim credit if you`ve paid Plastic Packaging Tax for packaging you have manufactured or imported which is then (either of the following):
+returns.convertedPackagingCredit.details.bullet1 = exported (and you have records to show this)
+returns.convertedPackagingCredit.details.bullet2 = converted into a different packaging component
+returns.convertedPackagingCredit.details.readMore = Read more about claiming a credit or deferring payment
+returns.convertedPackagingCredit.details.href =  https://www.gov.uk/guidance/claim-a-credit-or-defer-paying-plastic-packaging-tax
 
 returns.checkYourReturnPage.title = Check your return
 returns.checkYourReturnPage.label = Plastic Packaging Tax Return
