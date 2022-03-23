@@ -53,9 +53,7 @@ class RecycledPlasticWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
-      val obligation = request.taxReturn.obligation.getOrElse(
-        throw new IllegalStateException(s"No Obligation for return id:${request.enrolmentId}")
-      )
+      val obligation = request.taxReturn.getTaxReturnObligation()
       request.taxReturn.recycledPlasticWeight match {
         case Some(data) =>
           Ok(page(form().fill(RecycledPlasticWeight(totalKg = data.totalKg.toString)), obligation))
@@ -65,9 +63,7 @@ class RecycledPlasticWeightController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
-      val obligation = request.taxReturn.obligation.getOrElse(
-        throw new IllegalStateException(s"No Obligation for return id:${request.enrolmentId}")
-      )
+      val obligation = request.taxReturn.getTaxReturnObligation()
       RecycledPlasticWeight.form()
         .bindFromRequest()
         .fold(

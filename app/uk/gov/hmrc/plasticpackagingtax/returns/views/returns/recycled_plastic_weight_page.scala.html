@@ -32,7 +32,6 @@
     govukLayout: main_template,
     saveAndContinue: saveAndContinue,
     govukInput: GovukInput,
-    sectionHeader: sectionHeader,
     errorSummary: errorSummary,
     govukDetails : GovukDetails,
     formHelper: FormWithCSRF,
@@ -89,18 +88,14 @@
                     spellcheck = Some(false),
                     suffix = Some(PrefixOrSuffix(
                     content = Text("kg")
-                    )
-                )
-                )
-            )
+                    ))
+                ))
 
+        @govukDetails(Details(
+            summary = Text(messages("returns.recycledPlasticWeight.details.link")),
+            content = HtmlContent(formattedDetailsContent)
+        ))
 
-
-@govukDetails(Details(
-    summary = Text(messages("returns.recycledPlasticWeight.details.link")),
-    content = HtmlContent(formattedDetailsContent)
-))
-
-@saveAndContinue()
+        @saveAndContinue()
     }
 }

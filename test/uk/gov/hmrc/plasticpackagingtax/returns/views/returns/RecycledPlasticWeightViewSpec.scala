@@ -34,20 +34,14 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[recycled_plastic_weight_page]
 
-  private val obligation = Obligation(LocalDate.of(2022, 4, 1),
-                                      LocalDate.of(2022, 6, 30),
-                                      LocalDate.of(2022, 7, 29),
-                                      "periodkey"
-  )
-
   private def createView(
     form: Form[RecycledPlasticWeight] = RecycledPlasticWeight.form()
   ): Document =
-    page(form, obligation)(request, messages)
+    page(form, defaultObligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form(), obligation)(request, messages)
-    page.render(form(), obligation, request, messages)
+    page.f(form(), defaultObligation)(request, messages)
+    page.render(form(), defaultObligation, request, messages)
   }
 
   "Recycled Plastic Weight View" should {
