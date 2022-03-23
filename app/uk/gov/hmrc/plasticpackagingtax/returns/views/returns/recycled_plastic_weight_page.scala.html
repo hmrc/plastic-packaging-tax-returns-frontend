@@ -24,29 +24,44 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.returnsSectionHeading
 
 @this(
-  govukLayout: main_template,
-  saveAndContinue: saveAndContinue,
-  govukInput: GovukInput,
-  sectionHeader: sectionHeader,
-  errorSummary: errorSummary,
-  govukDetails : GovukDetails,
-  formHelper: FormWithCSRF
+    govukLayout: main_template,
+    saveAndContinue: saveAndContinue,
+    govukInput: GovukInput,
+    sectionHeader: sectionHeader,
+    errorSummary: errorSummary,
+    govukDetails : GovukDetails,
+    formHelper: FormWithCSRF,
+    paragraph: paragraph,
+    returnsSectionHeading: returnsSectionHeading
 )
 
-@(form: Form[RecycledPlasticWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[RecycledPlasticWeight], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
 
 @formattedDetailsContent = {
-  <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.recycledPlasticWeight.details.line1")</li>
-  </ul>
+    <ul class="govuk-list">
+        <li class="govuk-!-margin-bottom-5">@messages("returns.recycledPlasticWeight.details.line1")</li>
+    </ul>
 }
 
 @hintContent = {
-    <p class="govuk-label govuk-label--s">@messages("returns.recycledPlasticWeight.total.weight")</p>
+    <p class="govuk-hint">@messages("returns.recycledPlasticWeight.hint")</p>
+    @paragraph(paragraphContent)
+}
+
+@paragraphContent = {
+    <p class="govuk-label--s">@messages("returns.recycledPlasticWeight.paragraph")
+        <ul class="govuk-list govuk-list--bullet">
+            <li class="govuk-label--s">@messages("returns.recycledPlasticWeight.paragraph.line1")</li>
+            <li class="govuk-label--s">@messages("returns.recycledPlasticWeight.paragraph.line2")</li>
+        </ul>
+    </p>
 }
 
 @govukLayout(
@@ -55,11 +70,12 @@
 
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.recycledPlasticWeight.sectionHeader"))
+        @returnsSectionHeading(obligation)
 
         @formHelper(action = returnsRoutes.RecycledPlasticWeightController.submit(), 'autoComplete -> "off") {
 
         @govukInput(
+
             Input(
                 id = s"${totalWeightField.name}",
                 name = totalWeightField.name,
@@ -75,14 +91,16 @@
                     content = Text("kg")
                     )
                 )
+                )
             )
-        )
 
-        @govukDetails(Details(
-            summary = Text(messages("returns.recycledPlasticWeight.details.link")),
-            content = HtmlContent(formattedDetailsContent)
-        ))
 
-        @saveAndContinue()
-        }
+
+@govukDetails(Details(
+    summary = Text(messages("returns.recycledPlasticWeight.details.link")),
+    content = HtmlContent(formattedDetailsContent)
+))
+
+@saveAndContinue()
     }
+}
