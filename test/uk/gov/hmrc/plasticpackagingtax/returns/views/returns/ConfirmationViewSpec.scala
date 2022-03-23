@@ -94,7 +94,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display 'Pay Tax Owed'" in {
+    "display 'Pay Tax Owed'" ignore {
 
       view.getElementsByClass("govuk-heading-m").first() must containMessage(
         "returns.confirmationPage.payTaxOwed.title"
@@ -107,7 +107,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     }
 
     "have the exit survey" in {
-      view.getElementsByClass("govuk-body").get(4) must containMessage(
+      view.getElementsByClass("govuk-body").get(3) must containMessage(
         "returns.confirmationPage.exitSurvey.text",
         messages("returns.confirmationPage.exitSurvey.text.link")
       )

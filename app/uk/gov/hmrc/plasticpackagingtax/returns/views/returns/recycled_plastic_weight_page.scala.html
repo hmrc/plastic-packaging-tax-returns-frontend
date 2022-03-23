@@ -81,6 +81,7 @@
                 value = totalWeightField.value,
                 hint = Some(Hint(content = HtmlContent(hintContent))),
                 errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                classes = "govuk-input--width-10",
                 label = Label(
                     isPageHeading = true,
                     classes = s"govuk-label--l",

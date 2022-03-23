@@ -57,8 +57,12 @@
     @paragraphBody(message = messages("returns.confirmationPage.body.2"), classes = "govuk-body clear-float")
     @paragraphBody(message = messages("returns.confirmationPage.body.3"), classes = "govuk-body clear-float")
 
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("returns.confirmationPage.payTaxOwed.title")</h2>
-    @paragraphBody(message = messages("returns.confirmationPage.payTaxOwed.text", request.taxReturn.taxLiability.taxDue, ViewUtils.displayLocalDate(request.taxReturn.getTaxReturnObligation().dueDate)))
+@*
+ * todo: v2 uncomment when approved by design.
+ *
+ *   <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("returns.confirmationPage.payTaxOwed.title")</h2>
+ *   @paragraphBody(message = messages("returns.confirmationPage.payTaxOwed.text", request.taxReturn.taxLiability.taxDue, ViewUtils.displayLocalDate(request.taxReturn.getTaxReturnObligation().dueDate)))
+ *@
 
 @*
   * todo: v2 button for pay now, uncomment when href is known.
