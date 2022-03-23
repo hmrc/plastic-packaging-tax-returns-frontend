@@ -97,7 +97,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers wit
     "display 'Save and Continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe messages("site.button.continue")
+      view.getElementById("submit").text() mustBe messages("site.button.saveAndContinue")
     }
 
   }

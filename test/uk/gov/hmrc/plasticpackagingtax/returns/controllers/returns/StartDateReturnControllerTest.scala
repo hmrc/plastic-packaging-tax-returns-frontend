@@ -25,7 +25,6 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm.{FieldKey, YES}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page

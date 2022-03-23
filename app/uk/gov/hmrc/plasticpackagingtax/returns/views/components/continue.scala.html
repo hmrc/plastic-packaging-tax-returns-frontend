@@ -15,13 +15,13 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.SaveAndContinue
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.Continue
 
 @this(govukButton: GovukButton)
 
-@(messageKey: String = "site.button.saveAndContinue")(implicit messages: Messages)
+@(messageKey: String = "site.button.continue")(implicit messages: Messages)
 
 @govukButton(Button(
     content = Text(messages(messageKey)),
     classes = "govuk-!-margin-right-1",
-    attributes = Map("id" -> "submit", "name" -> SaveAndContinue.toString)))
+    attributes = Map("id" -> "submit", "name" -> Continue.toString)))

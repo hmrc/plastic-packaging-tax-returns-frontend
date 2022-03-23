@@ -115,7 +115,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+    forAll(Seq(saveAndContinueFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits tax return" in {
           val taxReturn = aTaxReturn()

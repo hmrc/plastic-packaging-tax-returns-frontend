@@ -148,7 +148,7 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
 
       val view = createView()
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe messages("site.button.continue")
+      view.getElementById("submit").text() mustBe messages("site.button.saveAndContinue")
     }
 
   }
