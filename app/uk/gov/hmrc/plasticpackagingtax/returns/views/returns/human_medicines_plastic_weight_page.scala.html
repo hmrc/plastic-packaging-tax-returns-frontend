@@ -21,17 +21,18 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.returnsSectionHeading
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 @this(
   govukLayout: main_template,
   saveAndContinue: saveAndContinue,
   govukInput: GovukInput,
-  sectionHeader: sectionHeader,
+  returnsSectionHeading: returnsSectionHeading,
   errorSummary: errorSummary,
   paragraphBody: paragraphBody,
   govukDetails : GovukDetails,
@@ -40,14 +41,13 @@
   formHelper: FormWithCSRF
 )
 
-@(form: Form[HumanMedicinesPlasticWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[HumanMedicinesPlasticWeight], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
 
 @formattedDetailsContent = {
   <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.humanMedicinesPlasticWeight.details.line1")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.humanMedicinesPlasticWeight.details.line2")</li>
+      <li class="govuk-!-margin-bottom-5">@messages("returns.humanMedicinesPlasticWeight.details.line")</li>
   </ul>
 }
 
@@ -76,12 +76,14 @@
 }
 
 @govukLayout(
-    title = Title("returns.humanMedicinesPlasticWeight.meta.title"),
+    title = Title(
+                "returns.humanMedicinesPlasticWeight.meta.title",
+                sectionKey = "service.section"),
     backButton = Some(BackButton(messages("site.back"), returnsRoutes.ImportedPlasticController.weight(), messages("site.back.hiddenText")))) {
 
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.humanMedicinesPlasticWeight.sectionHeader"))
+        @returnsSectionHeading(obligation)
 
         @formHelper(action = returnsRoutes.HumanMedicinesPlasticWeightController.submit(), 'autoComplete -> "off") {
 

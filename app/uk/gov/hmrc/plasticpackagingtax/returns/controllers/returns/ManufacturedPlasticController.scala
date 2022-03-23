@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
 import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{ServiceError, TaxReturnsConnector}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.forms.{
   ManufacturedPlasticWeight
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  Cacheable,
   TaxReturn,
   ManufacturedPlasticWeight => ManufacturedPlasticWeightDetails
 }
@@ -35,6 +37,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.{
   manufactured_plastic_page,
   manufactured_plastic_weight_page
 }
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +52,7 @@ class ManufacturedPlasticController @Inject() (
   manufacturedPlasticPage: manufactured_plastic_page,
   manufacturedPlasticWeightPage: manufactured_plastic_weight_page
 )(implicit ec: ExecutionContext)
-    extends ReturnsController(mcc) {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   private val liablePackagingGuidanceLink = Call("GET", appConfig.pptLiablePackagingGuidanceLink)
 
@@ -65,7 +68,7 @@ class ManufacturedPlasticController @Inject() (
       Ok(
         manufacturedPlasticPage(form,
                                 liablePackagingGuidanceLink,
-                                getTaxReturnObligation(request.taxReturn)
+                                request.taxReturn.getTaxReturnObligation()
         )
       )
     }
@@ -80,7 +83,7 @@ class ManufacturedPlasticController @Inject() (
               BadRequest(
                 manufacturedPlasticPage(formWithErrors,
                                         liablePackagingGuidanceLink,
-                                        getTaxReturnObligation(request.taxReturn)
+                                        request.taxReturn.getTaxReturnObligation()
                 )
               )
             ),
@@ -108,7 +111,7 @@ class ManufacturedPlasticController @Inject() (
       Ok(
         manufacturedPlasticWeightPage(form,
                                       excludedPackagingGuidanceLink,
-                                      getTaxReturnObligation(request.taxReturn)
+                                      request.taxReturn.getTaxReturnObligation()
         )
       )
     }
@@ -123,7 +126,7 @@ class ManufacturedPlasticController @Inject() (
               BadRequest(
                 manufacturedPlasticWeightPage(formWithErrors,
                                               excludedPackagingGuidanceLink,
-                                              getTaxReturnObligation(request.taxReturn)
+                                              request.taxReturn.getTaxReturnObligation()
                 )
               )
             ),

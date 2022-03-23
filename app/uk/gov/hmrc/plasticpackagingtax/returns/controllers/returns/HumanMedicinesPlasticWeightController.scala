@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,16 +27,18 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight.form
 import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{
+  Cacheable,
+  TaxReturn,
   HumanMedicinesPlasticWeight => HumanMedicinesPlasticWeightDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -54,8 +55,12 @@ class HumanMedicinesPlasticWeightController @Inject() (
     (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
       request.taxReturn.humanMedicinesPlasticWeight match {
         case Some(data) =>
-          Ok(page(form().fill(HumanMedicinesPlasticWeight(data.totalKg.toString))))
-        case _ => Ok(page(form()))
+          Ok(
+            page(form().fill(HumanMedicinesPlasticWeight(data.totalKg.toString)),
+                 request.taxReturn.getTaxReturnObligation()
+            )
+          )
+        case _ => Ok(page(form(), request.taxReturn.getTaxReturnObligation()))
       }
     }
 
@@ -65,7 +70,9 @@ class HumanMedicinesPlasticWeightController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[HumanMedicinesPlasticWeight]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+            Future.successful(
+              BadRequest(page(formWithErrors, request.taxReturn.getTaxReturnObligation()))
+            ),
           weight =>
             updateTaxReturn(weight).map {
               case Right(_) =>

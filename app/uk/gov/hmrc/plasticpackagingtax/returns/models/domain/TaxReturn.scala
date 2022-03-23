@@ -21,7 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.ReturnType.ReturnTy
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.utils.TaxLiabilityFactory
 
-case class TaxReturn(
+final case class TaxReturn(
   id: String,
   obligation: Option[Obligation] = None,
   manufacturedPlastic: Option[Boolean] = None,
@@ -65,6 +65,9 @@ case class TaxReturn(
 
   def isReturnSubmitReady: Boolean =
     manufacturedPlasticWeight.isDefined && importedPlasticWeight.isDefined && humanMedicinesPlasticWeight.isDefined && exportedPlasticWeight.isDefined && convertedPackagingCredit.isDefined && recycledPlasticWeight.isDefined
+
+  def getTaxReturnObligation(): Obligation =
+    obligation.getOrElse(throw new IllegalStateException("Tax return obligation details absent"))
 
 }
 

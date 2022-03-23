@@ -68,6 +68,8 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
       view.select("title").text() must include(
         messages("returns.convertedPackagingCredit.meta.title")
       )
+
+      view.select("title").text() must include(messages("service.section"))
     }
 
     "display header" in {
@@ -92,10 +94,54 @@ class ConvertedPackagingCreditViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "display hint" in {
+
+      val view = page(form(), None, obligation)(request, messages)
+      view.getElementById("totalInPounds-hint").text() must include(
+        messages("returns.convertedPackagingCredit.hint")
+      )
+    }
+
     "display credit claimed input box" in {
 
       val view = createView()
       view must containElementWithID("totalInPounds")
+    }
+
+    "display progressive reveal" in {
+
+      val view = page(form(), None, obligation)(request, messages)
+      view.getElementsByClass("govuk-details__summary-text").text() must include(
+        messages("returns.convertedPackagingCredit.details.link")
+      )
+    }
+
+    "display progressive reveal paragraph" in {
+
+      val view = page(form(), None, obligation)(request, messages)
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("returns.convertedPackagingCredit.details.line1")
+      )
+    }
+
+    "display progressive reveal bullets" in {
+
+      val view = page(form(), None, obligation)(request, messages)
+      view.getElementsByClass("govuk-list govuk-list--bullet").text() must include(
+        messages("returns.convertedPackagingCredit.details.bullet1")
+      )
+      view.getElementsByClass("govuk-list govuk-list--bullet").text() must include(
+        messages("returns.convertedPackagingCredit.details.bullet2")
+      )
+    }
+
+    "display progressive reveal link" in {
+
+      val view = page(form(), None, obligation)(request, messages)
+      val link = view.getElementById("converted-plastic-weight-readMore-link")
+
+      link must containMessage("returns.convertedPackagingCredit.details.readMore")
+      link must haveHref(messages("returns.convertedPackagingCredit.details.href"))
     }
 
     "display 'Save and Continue' button" in {

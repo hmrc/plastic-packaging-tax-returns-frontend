@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => re
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
 
 @ViewTest
 class ConfirmationViewSpec extends UnitViewSpec with Matchers {
@@ -32,11 +33,11 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
   private val page: confirmation_page = instanceOf[confirmation_page]
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
-    page()(request, messages, flash)
+    page()(journeyRequest, messages, flash)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f()(request, messages, new Flash(Map.empty))
-    page.render(request, messages, new Flash(Map.empty))
+    page.f()(journeyRequest, messages, new Flash(Map.empty))
+    page.render(journeyRequest, messages, new Flash(Map.empty))
   }
 
   "Confirmation Page view" should {
@@ -86,32 +87,27 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     "display body" in {
 
       view.getElementsByClass("govuk-body").first() must containMessage(
-        "returns.confirmationPage.body"
+        "returns.confirmationPage.body.2"
+      )
+      view.getElementsByClass("govuk-body").get(1) must containMessage(
+        "returns.confirmationPage.body.3"
       )
     }
 
-    "display 'What happens next'" in {
+    "display 'Pay Tax Owed'" ignore {
 
       view.getElementsByClass("govuk-heading-m").first() must containMessage(
-        "returns.confirmationPage.whatHappensNext.title"
-      )
-      view.getElementsByClass("govuk-body").get(1) must containMessage(
-        "returns.confirmationPage.whatHappensNext.liable.title"
-      )
-      view.getElementsByClass("govuk-heading-m").get(1) must containMessage(
-        "returns.confirmationPage.inTheMeantime.title"
-      )
-      val bulletPoint1 = view.getElementsByClass("dashed-list-item").get(0)
-      bulletPoint1 must containMessage("returns.confirmationPage.inTheMeantime.payLink")
-      bulletPoint1.getElementsByClass("govuk-link").first() must haveHref(
-        returnRoutes.ConfirmationController.displayPage()
-      )
-      val bulletPoint2 = view.getElementsByClass("dashed-list-item").get(1)
-      bulletPoint2 must containMessage("returns.confirmationPage.inTheMeantime.homeLink")
-      bulletPoint2.getElementsByClass("govuk-link").first() must haveHref(
-        homeRoutes.HomeController.displayPage()
+        "returns.confirmationPage.payTaxOwed.title"
       )
       view.getElementsByClass("govuk-body").get(2) must containMessage(
+        "returns.confirmationPage.payTaxOwed.text",
+        journeyRequest.taxReturn.taxLiability.taxDue,
+        ViewUtils.displayLocalDate(journeyRequest.taxReturn.getTaxReturnObligation().dueDate)
+      )
+    }
+
+    "have the exit survey" in {
+      view.getElementsByClass("govuk-body").get(3) must containMessage(
         "returns.confirmationPage.exitSurvey.text",
         messages("returns.confirmationPage.exitSurvey.text.link")
       )

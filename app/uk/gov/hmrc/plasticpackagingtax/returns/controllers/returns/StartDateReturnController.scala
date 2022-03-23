@@ -25,6 +25,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, Jo
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -58,9 +60,7 @@ class StartDateReturnController @Inject() (
                   if (startReturn)
                     Redirect(routes.ManufacturedPlasticController.contribution())
                   else
-                    Redirect(
-                      routes.StartDateReturnController.displayPage()
-                    ) //todo: implement redirect to /no-other-periods BUILD THIS eventually
+                    Redirect(homeRoutes.HomeController.displayPage())
           )
     }
 

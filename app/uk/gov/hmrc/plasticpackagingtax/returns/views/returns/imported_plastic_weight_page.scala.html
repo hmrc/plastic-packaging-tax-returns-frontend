@@ -20,49 +20,45 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.returnsSectionHeading
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 
 @this(
   govukLayout: main_template,
   saveAndContinue: saveAndContinue,
   govukInput: GovukInput,
-  sectionHeader: sectionHeader,
+  returnsSectionHeading: returnsSectionHeading,
   errorSummary: errorSummary,
   paragraphBody: paragraphBody,
   govukDetails : GovukDetails,
   formHelper: FormWithCSRF
 )
 
-@(form: Form[ImportedPlasticWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[ImportedPlasticWeight], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
 
-@formattedDetailsContent = {
-  <ul class="govuk-list">
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line1")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line2")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line3")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line4")</li>
-      <li class="govuk-!-margin-bottom-5">@messages("returns.importedPlasticWeight.details.line5")</li>
-  </ul>
-}
-
-@hintContent = {
-    <p class="govuk-body-m">@messages("returns.importedPlasticWeight.hint")</p>
-    <p class="govuk-label govuk-label--s">@messages("returns.importedPlasticWeight.total.weight")</p>
+@paragraphContent = {
+    <p class="govuk-label">@messages("returns.importedPlasticWeight.details.line1")
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("returns.importedPlasticWeight.details.line2")</li>
+        <li>@messages("returns.importedPlasticWeight.details.line3")</li>
+        <li>@messages("returns.importedPlasticWeight.details.line4")</li>
+    </ul>
+    </p>
 }
 
 @govukLayout(
     title = Title("returns.importedPlasticWeight.meta.title"),
     backButton = Some(BackButton(messages("site.back"), returnsRoutes.ImportedPlasticController.contribution(), messages("site.back.hiddenText")))) {
 
-        @errorSummary(form.errors)
+    @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.importedPlasticWeight.sectionHeader"))
+    @returnsSectionHeading(obligation)
 
         @formHelper(action = returnsRoutes.ImportedPlasticController.submitWeight(), 'autoComplete -> "off") {
 
@@ -71,7 +67,7 @@
                 id = s"${totalWeightField.name}",
                 name = totalWeightField.name,
                 value = totalWeightField.value,
-                hint = Some(Hint(content = HtmlContent(hintContent))),
+                hint = Some(Hint(content = HtmlContent(paragraphContent))),
                 errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 label = Label(
                     isPageHeading = true,
@@ -81,14 +77,10 @@
                     suffix = Some(PrefixOrSuffix(
                         content = Text("kg")
                     )
-                )
+                ),
+                classes = "govuk-input--width-10"
             )
         )
-
-        @govukDetails(Details(
-            summary = Text(messages("returns.importedPlasticWeight.details.link")),
-            content = HtmlContent(formattedDetailsContent)
-        ))
 
         @saveAndContinue()
         }

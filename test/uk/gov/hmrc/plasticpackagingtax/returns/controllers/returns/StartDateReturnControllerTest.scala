@@ -85,8 +85,7 @@ class StartDateReturnControllerTest extends ControllerSpec {
 
         val result: Future[Result] = controller.submit()(req)
 
-        //todo: update when redirect pages are created
-        redirectLocation(result) mustBe Some(routes.StartDateReturnController.displayPage().url)
+        redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
       }
     }
 

@@ -56,13 +56,14 @@
                 isPageHeading = true
             )),
             html = govukRadios(Radios(
+                hint = Some(Hint(content = Text(messages("returns.importedPlasticWeight.hint")))),
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
-                    RadioItem(content = Text(messages("general.true")), value = Some(ImportedPlastic.YES), checked = form("answer").value == true),
-                    RadioItem(content = Text(messages("general.false")), value = Some(ImportedPlastic.NO), checked = form("answer").value == false)
+                    RadioItem(content = Text(messages("general.true")), value = Some(ImportedPlastic.YES), checked = form.value.contains(true)),
+                    RadioItem(content = Text(messages("general.false")), value = Some(ImportedPlastic.NO), checked = form.value.contains(false))
                 ),
-                classes = "govuk-radios",
+                classes = "govuk-radios--inline",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             )
         )))
