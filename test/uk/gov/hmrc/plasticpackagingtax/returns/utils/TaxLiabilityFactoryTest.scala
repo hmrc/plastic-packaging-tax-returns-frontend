@@ -45,7 +45,7 @@ class TaxLiabilityFactoryTest extends AnyWordSpec with Matchers with TaxReturnBu
     }
 
     "calculate taxLiability" in {
-      taxLiability.taxDue mustBe BigDecimal("60.00")
+      taxLiability.taxDue mustBe BigDecimal(300 - 27) * BigDecimal("0.20")
     }
 
     "returns taxLiability as zero" when {

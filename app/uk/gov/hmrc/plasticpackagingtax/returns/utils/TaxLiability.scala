@@ -39,10 +39,11 @@ object TaxLiabilityFactory {
   ): TaxLiability = {
 
     val totalKgLiable = totalManufacturedKg + totalImportedKg
-
     val totalKgExempt = totalHumanMedicinesKg + totalDirectExportsKg + totalRecycledKg
 
-    val taxDue = (taxValueInPencePerKg * totalKgLiable).setScale(2, RoundingMode.HALF_EVEN)
+    val taxDue = taxValueInPencePerKg * BigDecimal(
+      scala.math.max(totalKgLiable - totalKgExempt, 0)
+    ).setScale(2, RoundingMode.HALF_EVEN)
 
     TaxLiability(totalKgLiable = totalKgLiable,
                  totalKgExempt = totalKgExempt,
