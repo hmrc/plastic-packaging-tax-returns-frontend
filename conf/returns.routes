@@ -1,11 +1,12 @@
 # microservice specific routes
 
-GET        /start-date                                  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartDateReturnController.displayPage()
-POST       /start-date                                  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartDateReturnController.submit()
-
 GET        /return-information                          uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ReturnsInformationController.displayPage()
 
+# Return Submission
 GET        /submit-return                               uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartController.displayPage()
+
+GET        /start-date                                  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartDateReturnController.displayPage()
+POST       /start-date                                  uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.StartDateReturnController.submit()
 
 GET        /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.contribution()
 POST       /manufactured-components   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ManufacturedPlasticController.submitContribution()
@@ -34,3 +35,6 @@ GET        /check-your-return                           uk.gov.hmrc.plasticpacka
 POST       /check-your-return                           uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.CheckYourReturnController.submit()
 
 GET        /return-submitted                            uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.ConfirmationController.displayPage()
+
+# Previous Returns
+GET        /submitted-returns   uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.SubmittedReturnsController.displayPage()

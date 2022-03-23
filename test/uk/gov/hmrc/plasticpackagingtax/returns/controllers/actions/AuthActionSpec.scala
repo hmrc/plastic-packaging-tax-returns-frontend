@@ -20,7 +20,13 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{Enrolment, InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{
+  CredentialStrength,
+  Enrolment,
+  IncorrectCredentialStrength,
+  InternalError,
+  MissingBearerToken
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   newEnrolment,
   newEnrolments,
@@ -90,7 +96,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       val agentDelegatedAuthPredicate =
         Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
                                                  "XMPPT0000000123"
-        ).withDelegatedAuthRule("ppt-auth")
+        ).withDelegatedAuthRule("ppt-auth").and(CredentialStrength(CredentialStrength.strong))
       authorizedUser(agent, requiredPredicate = agentDelegatedAuthPredicate)
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), agent, Some("XMPPT0000000123")),
@@ -156,7 +162,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount should be > 1L
+      metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount should be > 0L
     }
 
     "process request when enrolment id is present and allowed" in {
@@ -198,6 +204,22 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         )
 
       redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
+    }
+
+    "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {
+      when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
+      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
+      when(appConfig.serviceIdentifier).thenReturn("PPT")
+
+      whenAuthFailsWith(IncorrectCredentialStrength())
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(
+        "mfa-uplift-url?origin=PPT&continueUrl=login-continue-url"
+      )
     }
 
     "redirect to unauthorised page when authorisation fails for a reason unrelated to insufficient enrolments" in {

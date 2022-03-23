@@ -19,11 +19,12 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{FORBIDDEN, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentActionImpl
@@ -54,7 +55,10 @@ class AgentsControllerSpec extends ControllerSpec {
     "display client identifier page" when {
       "agent is authorised and display select client page is requested" in {
         val agent = PptTestData.newAgent("456")
-        authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
+        authorizedUser(agent,
+                       requiredPredicate =
+                         AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+        )
 
         val result = controller.displayPage()(getRequest())
 
@@ -75,6 +79,19 @@ class AgentsControllerSpec extends ControllerSpec {
         redirectLocation(result) must be(Some(homeRoutes.HomeController.displayPage().url))
 
         await(result).newSession.flatMap(_.get("clientPPT")) must be(Some("XMPPT0001234567"))
+      }
+    }
+
+    "show error" when {
+      "not enrolled has flashed an auth error" in {
+        val agent = PptTestData.newAgent("456")
+        authorizedUser(agent, requiredPredicate = AffinityGroup.Agent)
+        val requestWithAuthErrorFlash =
+          FakeRequest().withFlash(("clientPPTFailed", "true"))
+
+        val result = controller.displayPage()(requestWithAuthErrorFlash)
+
+        status(result) must be(FORBIDDEN)
       }
     }
   }

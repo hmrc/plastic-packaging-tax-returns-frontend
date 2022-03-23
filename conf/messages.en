@@ -55,6 +55,7 @@ account.agents.selectClient.hint.body=This is the 15 character reference they re
 agents.client.identifier.empty.error=Client PPT reference must be supplied and non blank
 agents.client.identifier.length.error=Client PPT reference should be 15 characters in length
 agents.client.identifier.format.error=A client PPT reference should be 15 characters long and start with X
+agents.client.identifier.auth.error=The PPT reference you have supplied is either incorrect or the client has not delegated you access. Please contact your client to confirm that this PPT reference is correct.
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
@@ -274,3 +275,7 @@ subscription.primaryContactDetails.name.label = Name
 subscription.primaryContactDetails.name.error.length = Name cannot be more than 160 characters long
 subscription.primaryContactDetails.name.error.empty = Name is required
 subscription.primaryContactDetails.name.error.format = Name format is not supported
+
+returns.submitted.title = Submitted returns
+returns.submitted.none = You have not submitted any returns yet.
+returns.submitted.link = Go to your Plastic Packaging Tax account
