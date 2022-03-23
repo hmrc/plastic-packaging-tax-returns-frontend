@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicines_plastic_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -50,7 +51,7 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[HumanMedicinesPlasticWeight]])(any(), any())).thenReturn(
+    when(page.apply(any[Form[HumanMedicinesPlasticWeight]], any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }
@@ -107,22 +108,36 @@ class HumanMedicinesPlasticWeightControllerSpec extends ControllerSpec {
       }
     }
 
-    "return prepopulated form" when {
+    "return pre-populated form" when {
 
-      def pageForm: Form[HumanMedicinesPlasticWeight] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[HumanMedicinesPlasticWeight]])
-        verify(page).apply(captor.capture())(any(), any())
-        captor.getValue
+      def expectedPage: (Form[HumanMedicinesPlasticWeight], Obligation) = {
+        val captor            = ArgumentCaptor.forClass(classOf[Form[HumanMedicinesPlasticWeight]])
+        val obligationCapture = ArgumentCaptor.forClass(classOf[Obligation])
+
+        verify(page).apply(captor.capture(), obligationCapture.capture())(any(), any())
+        (captor.getValue, obligationCapture.getValue)
       }
 
       "data exist" in {
         authorizedUser()
-        mockTaxReturnFind(aTaxReturn(withHumanMedicinesPlasticWeight(totalKg = 10)))
+        val taxReturn = aTaxReturn(withHumanMedicinesPlasticWeight(totalKg = 10))
+        mockTaxReturnFind(taxReturn)
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.totalKg mustBe "10"
+        expectedPage._1.get.totalKg mustBe "10"
+        expectedPage._2.toString mustBe taxReturn.obligation.get.toString
+      }
 
+      "data does not exist" in {
+        authorizedUser()
+        val taxReturn = aTaxReturn()
+        mockTaxReturnFind(taxReturn)
+
+        await(controller.displayPage()(getRequest()))
+
+        expectedPage._1.value mustBe None
+        expectedPage._2.toString mustBe taxReturn.obligation.get.toString
       }
     }
 
