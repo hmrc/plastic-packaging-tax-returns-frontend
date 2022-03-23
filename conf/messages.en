@@ -228,16 +228,17 @@ returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Request
 returns.checkYourReturnPage.recycledPackaging.total = Recycled packaging total
 
 returns.confirmationPage.title = Return submitted
-returns.confirmationPage.panel.body = Your reference number {0}
+returns.confirmationPage.panel.body = Your reference number is {0}
 returns.confirmationPage.panel.body.default = Your return has already been submitted
-returns.confirmationPage.body =
-returns.confirmationPage.body.print = Print page
-returns.confirmationPage.body.downloadPdf = Download pdf
-returns.confirmationPage.whatHappensNext.title = What happens next
-returns.confirmationPage.whatHappensNext.liable.title = If you are liable for the tax, the first payment will be due by 31 July 2022
-returns.confirmationPage.inTheMeantime.title = In the meantime you can
-returns.confirmationPage.inTheMeantime.payLink = Pay your liability
-returns.confirmationPage.inTheMeantime.homeLink = Go to the Plastic Packaging Tax homepage
+returns.confirmationPage.body.1 = {0} for your own records.
+returns.confirmationPage.body.1.link = Download and save this return
+returns.confirmationPage.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
+returns.confirmationPage.body.3 = We will not email you a confirmation.
+returns.confirmationPage.payTaxOwed.title = Pay tax owed
+returns.confirmationPage.payTaxOwed.text = You will need to pay £{0} by {1}.
+returns.confirmationPage.payNow = Pay now
+returns.confirmationPage.return.link = Return to your Plastic Packaging Tax account
+
 returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
 returns.confirmationPage.exitSurvey.text.link = What did you think of this service?
 

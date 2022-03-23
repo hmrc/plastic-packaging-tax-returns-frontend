@@ -23,17 +23,19 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.utils.ViewUtils
 
 @this(
     govukLayout: main_template,
     govukPanel : GovukPanel,
     paragraphBody: paragraphBody,
-    bulletListNavigation: bulletListNavigation,
     link: link,
+    govukButton: GovukButton,
     appConfig: AppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages, flash: Flash)
+@()(implicit request: JourneyRequest[_], messages: Messages, flash: Flash)
 
 @govukLayout(title = Title("returns.confirmationPage.title")) {
 
@@ -46,22 +48,35 @@
             )
     )
 
-    @paragraphBody(message = messages("returns.confirmationPage.body"), classes = "govuk-body clear-float")
+@*
+ *  todo: v2 print link, uncomment when href is known.
+ *
+ * @paragraphBody(message = messages("returns.confirmationPage.body.1", link(messages("returns.confirmationPage.body.1.link"), call = homeRoutes.HomeController.displayPage())), classes = "govuk-body clear-float")-->
+ *@
 
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("returns.confirmationPage.whatHappensNext.title")</h2>
+    @paragraphBody(message = messages("returns.confirmationPage.body.2"), classes = "govuk-body clear-float")
+    @paragraphBody(message = messages("returns.confirmationPage.body.3"), classes = "govuk-body clear-float")
 
-    @paragraphBody(message = messages("returns.confirmationPage.whatHappensNext.liable.title"))
-    <br>
-    @bulletListNavigation(
-        id = "in-the-meantime",
-        title = Some(messages("returns.confirmationPage.inTheMeantime.title")),
-        classes = "govuk-heading-m",
-        elements = Seq(
-            link(text = messages("returns.confirmationPage.inTheMeantime.payLink"), call = returnsRoutes.ConfirmationController.displayPage()),
-            link(messages("returns.confirmationPage.inTheMeantime.homeLink"), call = homeRoutes.HomeController.displayPage())
-        )
-    )
-    <br>
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("returns.confirmationPage.payTaxOwed.title")</h2>
+    @paragraphBody(message = messages("returns.confirmationPage.payTaxOwed.text", request.taxReturn.taxLiability.taxDue, ViewUtils.displayLocalDate(request.taxReturn.getTaxReturnObligation().dueDate)))
+
+@*
+  * todo: v2 button for pay now, uncomment when href is known.
+  *
+  *  @govukButton(
+  *      Button(
+  *          href = Some(homeRoutes.HomeController.displayPage().url),
+  *          content = Text(messages("returns.confirmationPage.payNow"))
+  *      )
+  *  )
+  *@
+
+    <p class="govuk-body">
+        @link(messages("returns.confirmationPage.return.link"), call = homeRoutes.HomeController.displayPage())
+    </p>
+
+
     @paragraphBody(message = messages("returns.confirmationPage.exitSurvey.text",
-        link(text = messages("returns.confirmationPage.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl))))
+        link(text = messages("returns.confirmationPage.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl)))
+    )
 }
