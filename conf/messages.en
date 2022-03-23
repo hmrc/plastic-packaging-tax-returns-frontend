@@ -48,13 +48,12 @@ timeoutDialog.signout.text= Sign out
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-account.agents.selectClient.header=What is your client’s PPT reference?
-account.agents.selectClient.hint.label=Client PPT reference
-account.agents.selectClient.hint.body=This is the 15 character reference they received when they registered for PPT. For example, XMPPT0001234567.
-agents.client.identifier.empty.error=Client PPT reference must be supplied and non blank
-agents.client.identifier.length.error=Client PPT reference should be 15 characters in length
-agents.client.identifier.format.error=A client PPT reference should be 15 characters long and start with X
-agents.client.identifier.auth.error=The PPT reference you have supplied is either incorrect or the client has not delegated you access. Please contact your client to confirm that this PPT reference is correct.
+account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
+account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
+agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax registration number
+agents.client.identifier.length.error=Registration number must be 15 characters
+agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
+agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
