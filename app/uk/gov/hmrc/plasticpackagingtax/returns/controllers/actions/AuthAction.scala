@@ -189,7 +189,7 @@ class AuthActionImpl @Inject() (
       ).withDelegatedAuthRule("ppt-auth")
     }.getOrElse {
       Enrolment(pptEnrolmentKey)
-    }.and(CredentialStrength(CredentialStrength.strong))
+    }.and(acceptableCredentialStrength)
 
 }
 

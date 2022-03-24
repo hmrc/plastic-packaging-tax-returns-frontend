@@ -48,7 +48,7 @@ class AuthCheckSpec extends ControllerSpec with MetricsMocks {
       val user = PptTestData.newUser()
       authorizedUser(user,
                      requiredPredicate =
-                       AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+                       AffinityGroup.Agent.and(expectedAcceptableCredentialsPredicate)
       )
 
       val result =
@@ -60,7 +60,7 @@ class AuthCheckSpec extends ControllerSpec with MetricsMocks {
       val user = PptTestData.newUser()
       authorizedUser(user,
                      requiredPredicate =
-                       AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+                       AffinityGroup.Agent.and(expectedAcceptableCredentialsPredicate)
       )
 
       await(

@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAgentActionImpl
@@ -57,7 +57,7 @@ class AgentsControllerSpec extends ControllerSpec {
         val agent = PptTestData.newAgent("456")
         authorizedUser(agent,
                        requiredPredicate =
-                         AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+                         AffinityGroup.Agent.and(expectedAcceptableCredentialsPredicate)
         )
 
         val result = controller.displayPage()(getRequest())
