@@ -126,9 +126,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers wit
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg",
-                                    messages("returns.humanMedicinesPlasticWeight.empty.error")
-      )
+      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
     }
   }
 }

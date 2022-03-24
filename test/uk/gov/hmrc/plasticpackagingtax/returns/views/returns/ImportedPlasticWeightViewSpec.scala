@@ -115,9 +115,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg",
-                                    messages("returns.importedPlasticWeight.empty.error")
-      )
+      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
     }
   }
 }
