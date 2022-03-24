@@ -20,8 +20,6 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Flash
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest

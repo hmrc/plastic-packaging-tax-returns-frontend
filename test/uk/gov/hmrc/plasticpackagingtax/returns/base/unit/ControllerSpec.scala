@@ -27,6 +27,7 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, MockAuthAction, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
@@ -111,6 +112,9 @@ trait ControllerSpec
       f.setAccessible(true)
       a + (f.getName -> getValue(f, cc))
     }.toList
+
+  protected val expectedAcceptableCredentialsPredicate =
+    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
 
   private def getValue(field: Field, cc: AnyRef): String =
     field.get(cc) match {

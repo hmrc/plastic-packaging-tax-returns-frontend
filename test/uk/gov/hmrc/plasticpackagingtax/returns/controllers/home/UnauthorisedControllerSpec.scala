@@ -22,12 +22,11 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.CredentialStrength
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthCheckActionImpl
-import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.unauthorised
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
@@ -53,7 +52,6 @@ class UnauthorisedControllerSpec extends ControllerSpec {
   }
 
   "Unauthorised controller" should {
-
     "show the unauthorised page" when {
       "display page method is invoked" in {
         val result = controller.unauthorised()(getRequest())
@@ -62,7 +60,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
       }
 
       "enrolments page is invoked with by a signed in user" in {
-        authorizedUser(requiredPredicate = CredentialStrength(CredentialStrength.strong))
+        authorizedUser(requiredPredicate = expectedAcceptableCredentialsPredicate)
 
         val result = controller.notEnrolled()(getRequest())
 
@@ -73,9 +71,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
     "redirect to the agents landing page" when {
       "an agent lands on the not enrolled page after attempt to auth" in {
         val agent = PptTestData.newAgent("456")
-        authorizedUser(user = agent,
-                       requiredPredicate = CredentialStrength(CredentialStrength.strong)
-        )
+        authorizedUser(user = agent, requiredPredicate = expectedAcceptableCredentialsPredicate)
 
         val result = controller.notEnrolled()(getRequest())
 
@@ -86,9 +82,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
       "flashing a client PPT identifier not authorised is an agent set an identifier and still ended up on the not enrolled page" in {
         // This is a strong indication that the client PPT identifier is either unregistered or the client has not setup a delegated authorisation for this agent
         val agent = PptTestData.newAgent("456")
-        authorizedUser(user = agent,
-                       requiredPredicate = CredentialStrength(CredentialStrength.strong)
-        )
+        authorizedUser(user = agent, requiredPredicate = expectedAcceptableCredentialsPredicate)
 
         val requestWithClientIdentifierSet =
           FakeRequest().withSession(("clientPPT", "XMPTT0000000001"))

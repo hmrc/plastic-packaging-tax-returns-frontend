@@ -21,7 +21,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{
-  CredentialStrength,
   Enrolment,
   IncorrectCredentialStrength,
   InternalError,
@@ -93,10 +92,11 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "process request when an authorised client identifier is seen on an agents session" in {
       val agent = PptTestData.newAgent("456")
+
       val agentDelegatedAuthPredicate =
         Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
                                                  "XMPPT0000000123"
-        ).withDelegatedAuthRule("ppt-auth").and(CredentialStrength(CredentialStrength.strong))
+        ).withDelegatedAuthRule("ppt-auth").and(expectedAcceptableCredentialsPredicate)
       authorizedUser(agent, requiredPredicate = agentDelegatedAuthPredicate)
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), agent, Some("XMPPT0000000123")),
