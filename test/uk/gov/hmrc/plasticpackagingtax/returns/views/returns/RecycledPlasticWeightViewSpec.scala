@@ -35,8 +35,8 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[recycled_plastic_weight_page]
 
   private def createView(
-                          form: Form[RecycledPlasticWeight] = RecycledPlasticWeight.form()
-                        ): Document =
+    form: Form[RecycledPlasticWeight] = RecycledPlasticWeight.form()
+  ): Document =
     page(form, defaultObligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
@@ -119,7 +119,7 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg", "Enter the weight, in kilograms")
     }
   }
 }

@@ -115,7 +115,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg", "Enter the weight, in kilograms")
     }
   }
 }
