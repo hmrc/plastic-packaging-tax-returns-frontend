@@ -120,7 +120,7 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("totalKg",
-                                    messages("returns.manufacturedPlasticWeight.empty.error")
+                                    messages("returns.recycledPlasticWeight.empty.error")
       )
     }
   }
