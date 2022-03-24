@@ -125,7 +125,7 @@ class AuthActionImpl @Inject() (
 
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        redirectToSignin
 
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength
