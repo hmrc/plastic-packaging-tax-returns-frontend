@@ -32,11 +32,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmationController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               page = page
-    )
+    new ConfirmationController(authenticate = mockAuthAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

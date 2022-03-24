@@ -32,7 +32,6 @@ final case class TaxReturn(
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
   recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
-  metaData: MetaData = MetaData(),
   returnType: Option[ReturnType] = Some(ReturnType.NEW)
 ) {
 
@@ -59,7 +58,6 @@ final case class TaxReturn(
               exportedPlasticWeight = this.exportedPlasticWeight,
               convertedPackagingCredit = this.convertedPackagingCredit,
               recycledPlasticWeight = this.recycledPlasticWeight,
-              metaData = this.metaData,
               returnType = this.returnType
     )
 
