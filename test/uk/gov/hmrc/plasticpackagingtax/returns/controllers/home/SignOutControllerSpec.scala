@@ -31,7 +31,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
   private val mcc                = stubMessagesControllerComponents()
   private val sessionTimeoutPage = mock[session_timed_out]
-  private val controller         = new SignOutController(mockAuthAction, config, sessionTimeoutPage, mcc)
+  private val controller         = new SignOutController(config, sessionTimeoutPage, mcc)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -85,16 +85,15 @@ class SignOutControllerSpec extends ControllerSpec {
       }
     }
 
-    "throw exception" when {
+    "create new session" when {
 
       "unauthorised user hits sign out url" in {
 
         unAuthorizedUser()
 
-        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
+        val result = controller.signOut(SignOutReason.UserAction)(getRequest("keyA" -> "valueA"))
 
-        intercept[RuntimeException](status(result))
-
+        session(result).get("keyA") shouldBe None
       }
     }
   }
@@ -148,19 +147,6 @@ class SignOutControllerSpec extends ControllerSpec {
         val result = controller.sessionTimeoutSignedOut()(getRequest())
 
         status(result) mustBe OK
-      }
-    }
-
-    "throws exception" when {
-
-      "unauthorised user hits session timeout url" in {
-
-        unAuthorizedUser()
-
-        val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
-
-        intercept[RuntimeException](status(result))
-
       }
     }
   }
