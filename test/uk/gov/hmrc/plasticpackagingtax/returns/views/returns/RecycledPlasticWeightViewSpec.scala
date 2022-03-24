@@ -35,7 +35,7 @@ class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[recycled_plastic_weight_page]
 
   private def createView(
-    form: Form[ManufacturedPlasticWeight] = ManufacturedPlasticWeight.form()
+    form: Form[RecycledPlasticWeight] = RecycledPlasticWeight.form()
   ): Document =
     page(form, defaultObligation)(request, messages)
 
