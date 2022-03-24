@@ -129,7 +129,7 @@ returns.manufacturedPlasticWeight.hint.2 = an integral part of the goods
 returns.manufacturedPlasticWeight.hint.3 = reused for the presentation of goods
 returns.manufacturedPlasticWeight.hint.4 = See
 returns.manufacturedPlasticWeight.hint.4.link = examples of things you should not include.
-returns.manufacturedPlasticWeight.empty.error = Enter an amount to continue
+returns.manufacturedPlasticWeight.empty.error = Enter the weight, in kilograms
 returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
@@ -147,7 +147,7 @@ returns.importedPlasticWeight.details.line2 = used in the long-term storage of g
 returns.importedPlasticWeight.details.line3 = an integral part of the goods
 returns.importedPlasticWeight.details.line4 = reused for the presentation of goods
 returns.importedPlasticWeight.details.line5 =
-returns.importedPlasticWeight.empty.error = Enter an amount to continue
+returns.importedPlasticWeight.empty.error = Enter the weight, in kilograms
 returns.importedPlasticWeight.format.error = Amount must be entered as numbers only
 returns.importedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
@@ -157,7 +157,7 @@ returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into imm
 returns.humanMedicinesPlasticWeight.total.weight = Enter 0, if none of your plastic packaging components were used for the immediate packaging of licensed human medicine.
 returns.humanMedicinesPlasticWeight.details.link = What do you mean by immediate packaging?
 returns.humanMedicinesPlasticWeight.details.line = The packaging is ‘immediate’ if it comes into direct contact with a medicinal product.
-returns.humanMedicinesPlasticWeight.empty.error = Enter an amount to continue
+returns.humanMedicinesPlasticWeight.empty.error = Enter the weight, in kilograms
 returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
 returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
@@ -167,7 +167,7 @@ returns.exportedPlasticWeight.details.reveal = What does directly exported mean?
 returns.exportedPlasticWeight.details.content = If you export your plastic packaging yourself, rather than through a third party, it is classed as directly exported.
 returns.exportedPlasticWeight.para.2.bold = Do not include your finished plastic components which you told us were used for the immediate packaging of licensed human medicine.
 returns.exportedPlasticWeight.hint = Enter 0, if none of your plastic packaging components were used for the immediate packaging of licensed human medicine.
-returns.exportedPlasticWeight.totalKg.empty.error = Enter an amount to continue
+returns.exportedPlasticWeight.totalKg.empty.error = Enter the weight, in kilograms
 returns.exportedPlasticWeight.totalKg.format.error = Amount must be entered as numbers only
 returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 
@@ -181,7 +181,7 @@ returns.recycledPlasticWeight.paragraph.line2 = you directly exported
 returns.recycledPlasticWeight.total.weight = Plastic packaging that contains 30% or more recycled plastic is not liable for the tax. This will be deducted from your tax liability.
 returns.recycledPlasticWeight.details.link = What do we mean by recycled plastic packaging?
 returns.recycledPlasticWeight.details.line1 = Recycled plastic has been reprocessed from recovered plastic through a chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
-returns.recycledPlasticWeight.empty.error = Enter an amount to continue
+returns.recycledPlasticWeight.empty.error = Enter the weight, in kilograms
 returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
 returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
 

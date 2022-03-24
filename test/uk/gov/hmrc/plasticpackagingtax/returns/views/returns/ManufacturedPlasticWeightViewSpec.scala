@@ -124,7 +124,9 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers with 
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg",
+                                    messages("returns.manufacturedPlasticWeight.empty.error")
+      )
     }
   }
 }
