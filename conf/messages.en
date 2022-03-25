@@ -10,8 +10,6 @@ site.button.continue = Continue
 site.button.saveAndContinue = Save and continue
 site.error.summary.title = There is a problem
 
-common.fullStop = .
-
 general.true = Yes
 general.false = No
 
