@@ -1,20 +1,21 @@
 # microservice specific routes
 
-->         /hmrc-frontend                               hmrcfrontend.Routes
+->          /hmrc-frontend                               hmrcfrontend.Routes
 
-->         /submit-return-for-plastic-packaging-tax     returns.Routes
+GET         /                                            controllers.IndexController.onPageLoad
 
-->         /account                                     home.Routes
+GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
-# BTA entry points
-GET        /submit-return                               uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta.BtaEntryPointController.startReturn()
-GET        /submitted-returns                           uk.gov.hmrc.plasticpackagingtax.returns.controllers.bta.BtaEntryPointController.submittedReturns()
+GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-#Welsh Translation
-GET        /lang/enGb                                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.LanguageController.enGb()
-GET        /lang/cyGb                                   uk.gov.hmrc.plasticpackagingtax.returns.controllers.LanguageController.cyGb()
+GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET        /agents                                      uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.AgentsController.displayPage()
-POST       /agents                                      uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.AgentsController.submit()
+GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
+
+GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
+GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
+GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
+
+GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
