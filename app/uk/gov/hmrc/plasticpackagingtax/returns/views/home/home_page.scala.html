@@ -64,51 +64,54 @@
 }
 
 @singleEntityManagement = {
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-        <div id="core-management" class="govuk-grid-column-one-third">
-        @cardSection(
-            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-            body = messages("account.homePage.card.registration.details.1.body")
-        )
-        </div>
+    <div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
     </div>
 }
 
 @groupManagement = {
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-        <div id="core-management" class="govuk-grid-column-one-third">
-        @cardSection(
-            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-            body = messages("account.homePage.card.registration.details.1.body")
-        )
-        </div>
-        <div id="additional-management" class="govuk-grid-column-one-third">
-        @cardSection(
-            link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
-            body = messages("account.homePage.card.registration.details.2.body.group")
-        )
-        </div>
+    <div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
+    </div>
+    <div id="additional-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
+        body = messages("account.homePage.card.registration.details.2.body.group")
+    )
     </div>
 }
 
 @partnershipManagement = {
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-        <div id="core-management" class="govuk-grid-column-one-third">
-        @cardSection(
-            link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
-            body = messages("account.homePage.card.registration.details.1.body")
-        )
-        </div>
-        <div id="additional-management" class="govuk-grid-column-one-third">
-        @cardSection(
-            link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
-            body = messages("account.homePage.card.registration.details.2.body.partnership")
-        )
-        </div>
+    <div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
+    </div>
+    <div id="additional-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
+        body = messages("account.homePage.card.registration.details.2.body.partnership")
+    )
     </div>
 }
 
-@managementCards = @{
+@deregister = {
+    <div id="deregister" class="govuk-grid-column-one-third">
+        @cardSection(
+        link = link(text = messages("account.homePage.card.deregister.link"), call = Call("GET", appConfig.pptRegistrationDeregisterUrl)),
+        body = messages("account.homePage.card.deregister.body")
+        )
+    </div>
+}
+
+@entityManagementCards = @{
     if(subscription.isGroup) {
         groupManagement
     } else if(subscription.isPartnership) {
@@ -116,6 +119,11 @@
     } else {
         singleEntityManagement
     }
+}
+
+@managementCards = {
+    @entityManagementCards
+    @deregister
 }
 
 @returnsLine1 = @{
@@ -171,7 +179,7 @@
         @organisationName
     }
 
-    <div class="govuk-grid-row govuk-!-margin-top-6">
+    <div class="govuk-grid-row govuk-!-margin-top-6 ">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
             lines = Seq[Option[String]](
@@ -196,6 +204,8 @@
 
     <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
 
-    @managementCards
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        @managementCards
+    </div>
 }
 

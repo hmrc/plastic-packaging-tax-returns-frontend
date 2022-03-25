@@ -263,6 +263,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                 "display account management sections" in {
                   val coreManagement       = view.getElementById("core-management")
                   val additionalManagement = view.getElementById("additional-management")
+                  val deregister           = view.getElementById("deregister")
 
                   subscriptionType match {
                     case SingleEntity =>
@@ -275,6 +276,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                       coreManagement.select("a").first() must haveHref(
                         appConfig.pptRegistrationAmendUrl
                       )
+                      checkDeregisterCard(deregister)
                     case Group =>
                       coreManagement.select("h3").text() must include(
                         messages("account.homePage.card.registration.details.1.link.group")
@@ -294,6 +296,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                       additionalManagement.select("a").first() must haveHref(
                         appConfig.pptRegistrationManageGroupUrl
                       )
+                      checkDeregisterCard(deregister)
                     case Partnership =>
                       coreManagement.select("h3").text() must include(
                         messages("account.homePage.card.registration.details.1.link.partnership")
@@ -313,6 +316,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                       additionalManagement.select("a").first() must haveHref(
                         appConfig.pptRegistrationManagePartnersUrl
                       )
+                      checkDeregisterCard(deregister)
                   }
 
                 }
@@ -320,6 +324,18 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             }
         }
     }
+  }
+
+  private def checkDeregisterCard(deregister: Element) = {
+    deregister.select("h3").text() must include(
+      messages("account.homePage.card.deregister.link")
+    )
+    deregister.select("p").text() mustBe messages(
+      "account.homePage.card.deregister.body"
+    )
+    deregister.select("a").first() must haveHref(
+      appConfig.pptRegistrationDeregisterUrl
+    )
   }
 
   "get obligations fails" should {

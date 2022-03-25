@@ -91,6 +91,9 @@ account.homePage.card.registration.details.2.link.partnership = Partner details
 account.homePage.card.registration.details.2.body.group = View and change contact details, and add or remove group members.
 account.homePage.card.registration.details.2.body.partnership = View and change contact details, and add or remove partners.
 
+account.homePage.card.deregister.link = Deregister from Plastic Packaging Tax
+account.homePage.card.deregister.body = Cancel your Plastic Packaging Tax registration.
+
 returns.startPage.title = Submit a return
 returns.startPage.title.sectionHeader = Plastic Packaging Tax return
 returns.startPage.informationYouNeed.header = Information you need
