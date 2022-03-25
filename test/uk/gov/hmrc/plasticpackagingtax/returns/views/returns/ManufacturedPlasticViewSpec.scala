@@ -76,7 +76,11 @@ class ManufacturedPlasticViewSpec extends UnitViewSpec with Matchers with TaxRet
       view.select("div#answer-hint").text() must (
         include(messages("returns.manufacturedPlastic.details.link")) and
           include(messages("returns.manufacturedPlastic.details.line1")) and
-          include(messages("returns.manufacturedPlastic.details.line2.link"))
+          include(
+            messages("returns.manufacturedPlastic.details.line2",
+                     messages("returns.manufacturedPlastic.details.line2.link")
+            )
+          )
       )
     }
 

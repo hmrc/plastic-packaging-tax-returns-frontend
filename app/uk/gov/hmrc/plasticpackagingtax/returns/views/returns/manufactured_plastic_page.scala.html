@@ -43,7 +43,9 @@
 
 @formattedDetailsContent = {
 @paragraph(content = Html(messages("returns.manufacturedPlastic.details.line1")))
-@paragraph(content = link(text = messages("returns.manufacturedPlastic.details.line2.link"), call = guidanceLink))
+@paragraph(content = Html(messages("returns.manufacturedPlastic.details.line2",
+            link(text = messages("returns.manufacturedPlastic.details.line2.link"), call = guidanceLink)))
+    )
 }
 
 @hintContent = {

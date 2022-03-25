@@ -83,8 +83,11 @@ class ManufacturedPlasticWeightViewSpec extends UnitViewSpec with Matchers with 
           include(messages("returns.manufacturedPlasticWeight.hint.1")) and
           include(messages("returns.manufacturedPlasticWeight.hint.2")) and
           include(messages("returns.manufacturedPlasticWeight.hint.3")) and
-          include(messages("returns.manufacturedPlasticWeight.hint.4")) and
-          include(messages("returns.manufacturedPlasticWeight.hint.4.link"))
+          include(
+            messages("returns.manufacturedPlasticWeight.hint.4",
+                     messages("returns.manufacturedPlasticWeight.hint.4.link")
+            )
+          )
       )
     }
 
