@@ -23,8 +23,4 @@
   id: Option[String] = None,
   classes: String = "govuk-link govuk-link--no-visited-state")
 
-@hasHint = @{textHidden.exists(_.nonEmpty)}
-
-<a class="@classes" href="@call" @if(newTab) { target="_blank" rel="noopener noreferrer" } @id.map{id => id="@id" }>
- <span @if(hasHint){aria-hidden="true"}>@text</span>@if(hasHint){<span class="govuk-visually-hidden">@{textHidden.getOrElse("")}</span>}
-</a>
+<a class="@classes" href="@call" @if(newTab) { target="_blank" rel="noopener noreferrer" } @id.map { id => id="@id"}>@text</a>

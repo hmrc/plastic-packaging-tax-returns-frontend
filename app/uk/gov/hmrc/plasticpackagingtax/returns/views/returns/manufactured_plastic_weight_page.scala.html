@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.{errorSummary, link, returnsSectionHeading, saveAndContinue}
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.{BackButton, Title}
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraph
 
 @this(
         govukLayout: main_template,
@@ -32,7 +32,7 @@
         govukDetails: GovukDetails,
         formHelper: FormWithCSRF,
         link: link,
-        paragraphBody: paragraphBody
+        paragraph: paragraph
 )
 
 @(form: Form[ManufacturedPlasticWeight], guidanceLink: Call, obligation: Obligation)(implicit request: Request[_], messages: Messages)
@@ -48,8 +48,8 @@
         <li>@messages("returns.manufacturedPlasticWeight.hint.2")</li>
         <li>@messages("returns.manufacturedPlasticWeight.hint.3")</li>
     </ul>
-    @paragraphBody(message = messages("returns.manufacturedPlasticWeight.hint.4",
-        link(text = messages("returns.manufacturedPlasticWeight.hint.4.link"), call = guidanceLink))
+    @paragraph(content = Html(messages("returns.manufacturedPlasticWeight.hint.4",
+    link(text = messages("returns.manufacturedPlasticWeight.hint.4.link"), call = guidanceLink)))
     )
 }
 
