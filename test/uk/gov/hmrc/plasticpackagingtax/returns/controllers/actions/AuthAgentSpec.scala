@@ -46,10 +46,10 @@ class AuthAgentSpec extends ControllerSpec with MetricsMocks {
   "Auth Agent Action" should {
 
     "time calls to authorisation" in {
-      val user = PptTestData.newAgent("123")
+      val user = PptTestData.newAgent()
       authorizedUser(user,
                      requiredPredicate =
-                       AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+                       AffinityGroup.Agent.and(expectedAcceptableCredentialsPredicate)
       )
 
       val result =
@@ -58,10 +58,10 @@ class AuthAgentSpec extends ControllerSpec with MetricsMocks {
     }
 
     "process request when signed in user has agent affinity" in {
-      val user = PptTestData.newAgent("123")
+      val user = PptTestData.newAgent()
       authorizedUser(user,
                      requiredPredicate =
-                       AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong))
+                       AffinityGroup.Agent.and(expectedAcceptableCredentialsPredicate)
       )
 
       await(

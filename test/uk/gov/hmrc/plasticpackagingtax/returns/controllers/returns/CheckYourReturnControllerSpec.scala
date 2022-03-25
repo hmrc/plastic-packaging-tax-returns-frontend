@@ -115,7 +115,7 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+    forAll(Seq(saveAndContinueFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits tax return" in {
           val taxReturn = aTaxReturn()
@@ -132,7 +132,6 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
           formAction match {
             case ("SaveAndContinue", "") =>
               submittedTaxReturn.id mustBe taxReturn.id
-              updatedTaxReturn.metaData.returnCompleted mustBe true
 
               flash(result).apply(FlashKeys.referenceId) must (not be null and startWith("PPTR"))
               redirectLocation(result) mustBe Some(
@@ -171,16 +170,16 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
     "return an error" when {
 
-      "user submits the tax return and update fails" in {
+      "tax return submission fails" in {
         val taxReturn = aTaxReturn()
         authorizedUser()
         mockTaxReturnFind(taxReturn)
-        mockTaxReturnSubmission(taxReturn)
-        mockTaxReturnFailure()
+        mockTaxReturnSubmissionFailure(taxReturn, new RuntimeException("BANG!"))
+
         val result =
           controller.submit()(postRequestEncoded(JsObject.empty, saveAndContinueFormAction))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[RuntimeException](status(result))
         verify(submissionFailedCounter).inc()
       }
 
@@ -199,12 +198,6 @@ class CheckYourReturnControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
-    }
-
-    def updatedTaxReturn: TaxReturn = {
-      val captor = ArgumentCaptor.forClass(classOf[TaxReturn])
-      verify(mockTaxReturnsConnector).update(captor.capture())(any())
-      captor.getValue
     }
 
     def submittedTaxReturn: TaxReturn = {

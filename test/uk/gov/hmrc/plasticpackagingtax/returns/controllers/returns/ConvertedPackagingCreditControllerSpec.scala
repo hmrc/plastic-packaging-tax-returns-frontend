@@ -131,7 +131,7 @@ class ConvertedPackagingCreditControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+    forAll(Seq(saveAndContinueFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits the amount of credit" in {
           authorizedUser()

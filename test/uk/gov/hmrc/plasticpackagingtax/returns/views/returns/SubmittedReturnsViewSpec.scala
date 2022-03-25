@@ -51,6 +51,7 @@ class SubmittedReturnsViewSpec extends UnitViewSpec with Matchers with TaxReturn
 
     "display title" in {
       view.select("title").text() must include(messages("returns.submitted.title"))
+      view.select("title").text() must include(messages("service.section"))
     }
 
     "display main page heading" in {

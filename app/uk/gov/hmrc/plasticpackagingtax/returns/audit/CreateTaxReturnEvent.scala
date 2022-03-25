@@ -29,7 +29,6 @@ case class CreateTaxReturnEvent(
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
-  metaData: MetaData = MetaData(),
   returnType: Option[ReturnType]
 )
 
@@ -45,7 +44,6 @@ object CreateTaxReturnEvent {
                          humanMedicinesPlasticWeight = taxReturn.humanMedicinesPlasticWeight,
                          exportedPlasticWeight = taxReturn.exportedPlasticWeight,
                          convertedPackagingCredit = taxReturn.convertedPackagingCredit,
-                         metaData = taxReturn.metaData,
                          returnType = taxReturn.returnType
     )
 

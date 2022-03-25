@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.builders.TaxReturnBuilder
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.HumanMedicinesPlasticWeight.form
@@ -27,18 +28,18 @@ import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.human_medicine
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 
 @ViewTest
-class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
+class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers with TaxReturnBuilder {
 
   private val page = instanceOf[human_medicines_plastic_weight_page]
 
   private def createView(
     form: Form[HumanMedicinesPlasticWeight] = HumanMedicinesPlasticWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form, defaultObligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), defaultObligation)(request, messages)
+    page.render(form(), defaultObligation, request, messages)
   }
 
   "Human Medicines Plastic Weight View" should {
@@ -70,8 +71,8 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
 
       view.getElementById("section-header").text() must include(
-        messages("returns.humanMedicinesPlasticWeight.sectionHeader")
-      )
+        "April to June 2022"
+      ) // from defaultObligation
     }
 
     "display hint" in {
@@ -96,7 +97,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and Continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe messages("site.button.continue")
+      view.getElementById("submit").text() mustBe messages("site.button.saveAndContinue")
     }
 
   }
@@ -125,7 +126,7 @@ class HumanMedicinesPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg", "Enter the weight, in kilograms")
     }
   }
 }

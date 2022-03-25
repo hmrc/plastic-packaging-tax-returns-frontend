@@ -20,38 +20,44 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnsRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.ExportedPlasticWeight
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.returnsSectionHeading
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.paragraphBody
 
 @this(
   govukLayout: main_template,
   saveAndContinue: saveAndContinue,
   govukInput: GovukInput,
-  sectionHeader: sectionHeader,
+  sectionHeader: returnsSectionHeading,
   errorSummary: errorSummary,
   govukDetails : GovukDetails,
+  paragraphBody: paragraphBody,
   formHelper: FormWithCSRF
 )
 
-@(form: Form[ExportedPlasticWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[ExportedPlasticWeight], obligation: Obligation)(implicit request: Request[_], messages: Messages)
 
 @totalKg = @{form("totalKg")}
 
 @hintContent = {
-    <p class="govuk-label govuk-label--s">@messages("returns.exportedPlasticWeight.total.weight.label")</p>
+    @paragraphBody(message = messages("returns.exportedPlasticWeight.para.1"), classes = "govuk-body govuk-!-margin-bottom-3")
+
+    @govukDetails(Details(
+    summary = Text(messages("returns.exportedPlasticWeight.details.reveal")),
+    content = HtmlContent(
+        paragraphBody(message = messages("returns.exportedPlasticWeight.details.content"), "govuk-!-margin-bottom-3")
+        )
+    ))
+
+    @paragraphBody(message = messages("returns.exportedPlasticWeight.para.2.bold"), classes = "govuk-label govuk-label--s")
+
+    @paragraphBody(message = messages("returns.exportedPlasticWeight.hint"), classes = "govuk-hint govuk-!-margin-bottom-2")
+
 }
 
-@formattedDetailsContent = {
-    <ul class="govuk-list">
-        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line1")</li>
-        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line2")</li>
-        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line3")</li>
-        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line4")</li>
-        <li class="govuk-!-margin-bottom-5">@messages("returns.exportedPlasticWeight.details.line5")</li>
-    </ul>
-}
 
 @govukLayout(
     title = Title("returns.exportedPlasticWeight.title"),
@@ -59,7 +65,7 @@
 
         @errorSummary(form.errors)
 
-        @sectionHeader(messages("returns.exportedPlasticWeight.sectionHeader"))
+        @sectionHeader(obligation)
 
         @formHelper(action = returnsRoutes.ExportedPlasticWeightController.submit(), 'autoComplete -> "off") {
 
@@ -70,6 +76,7 @@
                 value = totalKg.value,
                 hint = Some(Hint(content = HtmlContent(hintContent))),
                 errorMessage = totalKg.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                classes = "govuk-input--width-10",
                 label = Label(
                     isPageHeading = true,
                     classes = s"govuk-label--l",
@@ -81,11 +88,6 @@
                 )
             )
         )
-
-        @govukDetails(Details(
-            summary = Text(messages("returns.exportedPlasticWeight.details.link")),
-            content = HtmlContent(formattedDetailsContent)
-        ))
 
         @saveAndContinue()
         }

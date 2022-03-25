@@ -25,11 +25,12 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.returns.StartDateReturnForm.{FieldKey, YES}
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.start_date_returns_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 
 import scala.concurrent.Future
 
@@ -85,8 +86,7 @@ class StartDateReturnControllerTest extends ControllerSpec {
 
         val result: Future[Result] = controller.submit()(req)
 
-        //todo: update when redirect pages are created
-        redirectLocation(result) mustBe Some(routes.StartDateReturnController.displayPage().url)
+        redirectLocation(result) mustBe Some(homeRoutes.HomeController.displayPage().url)
       }
     }
 

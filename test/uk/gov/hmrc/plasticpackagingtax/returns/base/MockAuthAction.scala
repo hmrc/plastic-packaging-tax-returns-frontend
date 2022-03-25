@@ -77,7 +77,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   // format: off
   def authorizedUser(user: SignedInUser = exampleUser, requiredPredicate: Predicate = Enrolment("HMRC-PPT-ORG").
-    and(CredentialStrength(CredentialStrength.strong))): Unit = {
+    and(AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong)))): Unit = {
     when(
       mockAuthConnector.authorise(
         ArgumentMatchers.eq(requiredPredicate),

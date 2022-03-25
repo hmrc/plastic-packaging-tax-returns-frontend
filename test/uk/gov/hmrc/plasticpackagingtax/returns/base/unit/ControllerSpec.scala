@@ -22,19 +22,16 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContentAsEmpty, Request, Result, _}
+import play.api.mvc._
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.{MetricsMocks, MockAuthAction, PptTestData}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
-  AuthAction,
-  SaveAndComeBackLater,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{AuthAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.AuthenticatedRequest
 
@@ -51,9 +48,6 @@ trait ControllerSpec
   implicit val config: AppConfig = mock[AppConfig]
 
   protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
-
-  protected val saveAndComeBackLaterFormAction: (String, String) =
-    (SaveAndComeBackLater.toString, "")
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session)
@@ -118,6 +112,9 @@ trait ControllerSpec
       f.setAccessible(true)
       a + (f.getName -> getValue(f, cc))
     }.toList
+
+  protected val expectedAcceptableCredentialsPredicate =
+    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
 
   private def getValue(field: Field, cc: AnyRef): String =
     field.get(cc) match {

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.plasticpackagingtax.returns.models.domain
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.Continue
 
-import play.api.libs.json.{Json, OFormat}
+@this(govukButton: GovukButton)
 
-case class MetaData(returnCompleted: Boolean = false)
+@(messageKey: String = "site.button.continue")(implicit messages: Messages)
 
-object MetaData {
-  implicit val format: OFormat[MetaData] = Json.format[MetaData]
-}
+@govukButton(Button(
+    content = Text(messages(messageKey)),
+    classes = "govuk-!-margin-right-1",
+    attributes = Map("id" -> "submit", "name" -> Continue.toString)))

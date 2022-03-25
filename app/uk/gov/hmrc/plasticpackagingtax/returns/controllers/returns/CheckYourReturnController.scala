@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.{routes => homeRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
-import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, MetaData, TaxReturn}
+import uk.gov.hmrc.plasticpackagingtax.returns.models.domain.{Cacheable, TaxReturn}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.check_your_return_page
@@ -70,9 +70,9 @@ class CheckYourReturnController @Inject() (
       FormAction.bindFromRequest match {
         case SaveAndContinue =>
           val refId = s"PPTR12345678${Random.nextInt(1000000)}" // TODO Will be obtained from NRS
-          submitReturnAndMarkAsCompleted().map {
-            case Right(taxReturn) =>
-              auditor.auditTaxReturn(taxReturn)
+          submit(request.taxReturn).map {
+            case Right(_) =>
+              auditor.auditTaxReturn(request.taxReturn)
               successSubmissionCounter.inc()
               Redirect(returnRoutes.ConfirmationController.displayPage()).flashing(
                 Flash(Map(FlashKeys.referenceId -> refId))
@@ -84,15 +84,6 @@ class CheckYourReturnController @Inject() (
           }
         case _ =>
           Future.successful(Redirect(homeRoutes.HomeController.displayPage()))
-      }
-    }
-
-  private def submitReturnAndMarkAsCompleted()(implicit
-    req: JourneyRequest[_]
-  ): Future[Either[ServiceError, TaxReturn]] =
-    submit(req.taxReturn).flatMap { _ =>
-      update { taxReturn =>
-        taxReturn.copy(metaData = MetaData(returnCompleted = true))
       }
     }
 

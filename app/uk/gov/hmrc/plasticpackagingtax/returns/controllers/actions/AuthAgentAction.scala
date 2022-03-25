@@ -50,7 +50,7 @@ class AuthAgentActionImpl @Inject() (
 
     val authorisation = authTimer.time()
 
-    authorised(AffinityGroup.Agent.and(CredentialStrength(CredentialStrength.strong)))
+    authorised(AffinityGroup.Agent.and(acceptableCredentialStrength))
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -82,7 +82,7 @@ class AuthAgentActionImpl @Inject() (
 
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        redirectToSignin
 
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength

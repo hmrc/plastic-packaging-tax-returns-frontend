@@ -23,22 +23,31 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.routes
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.ImportedPlasticWeight.form
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.imported_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[imported_plastic_weight_page]
 
+  private val obligation = Obligation(LocalDate.of(2022, 4, 1),
+                                      LocalDate.of(2022, 6, 30),
+                                      LocalDate.of(2022, 7, 29),
+                                      "key"
+  )
+
   private def createView(
     form: Form[ImportedPlasticWeight] = ImportedPlasticWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form, obligation)(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), obligation)(request, messages)
+    page.render(form(), obligation, request, messages)
   }
 
   "Imported Plastic Weight View" should {
@@ -68,35 +77,16 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display header" in {
-
-      view.getElementById("section-header").text() must include(
-        messages("returns.importedPlasticWeight.sectionHeader")
-      )
-    }
-
-    "display hint" in {
-
-      view.getElementsByClass("govuk-body-m").text() must include(
-        messages("returns.importedPlasticWeight.hint")
-      )
-    }
-
-    "display total weight label" in {
-
-      view.getElementsByClass("govuk-label--s").text() must include(
-        messages("returns.importedPlasticWeight.total.weight")
-      )
+      view.getElementById("section-header").text() must be("April to June 2022")
     }
 
     "display total weight input box" in {
-
       view must containElementWithID("totalKg")
     }
 
     "display 'Save and Continue' button" in {
-
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe messages("site.button.continue")
+      view.getElementById("submit").text() mustBe messages("site.button.saveAndContinue")
     }
 
   }
@@ -125,7 +115,7 @@ class ImportedPlasticWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg", "Enter the weight, in kilograms")
     }
   }
 }

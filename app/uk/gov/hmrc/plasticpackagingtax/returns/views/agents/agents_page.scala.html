@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import play.api.data.Form
 @import uk.gov.hmrc.plasticpackagingtax.returns.forms.agents.ClientIdentifier
-@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.saveAndContinue
+@import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components.continue
 @import uk.gov.hmrc.plasticpackagingtax.returns.controllers.agents.{routes => agentRoutes}
 
 @this(
@@ -34,14 +34,13 @@
  cardSection: cardSection,
  formHelper: FormWithCSRF,
  govukInput: GovukInput,
- saveAndContinue: saveAndContinue
+ continue: continue
 )
 
 @(form: Form[ClientIdentifier])(implicit request: Request[_], messages: Messages)
 @totalWeightField = @{form("identifier")}
 @hintContent = {
  <p class="govuk-body-m">@messages("account.agents.selectClient.hint.body")</p>
- <p class="govuk-label govuk-label--s">@messages("account.agents.selectClient.hint.label")</p>
 }
 
 @govukLayout(title = Title("account.agents.selectClient.header")) {
@@ -60,7 +59,7 @@
       spellcheck = Some(false)
     )
   )
-  @saveAndContinue()
+  @continue()
  }
 
 }
