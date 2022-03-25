@@ -128,4 +128,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptRegistrationManagePartnersUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/manage-partners"
 
+  lazy val pptRegistrationDeregisterUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
+
 }
