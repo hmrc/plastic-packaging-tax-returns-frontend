@@ -47,10 +47,5 @@ class LinkPartialViewSpec extends UnitViewSpec with Matchers {
     "validate visible text" in {
       partial.getElementsByClass("govuk-link").text() mustBe "visible text"
     }
-
-    "validate visible and invisible text" in {
-      val partial: Html = createPartial(hiddenText = Some(" plus invisible text"))
-      partial.getElementsByClass("govuk-link").text() mustBe "visible text plus invisible text"
-    }
   }
 }
