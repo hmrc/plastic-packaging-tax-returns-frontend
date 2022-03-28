@@ -32,25 +32,29 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends IntFieldBehaviou
 
     val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validDataGenerator
+    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
+
+    behave like intField(form,
+                         fieldName,
+                         nonNumericError =
+                           FormError(fieldName,
+                                     "amendDirectExportPlasticPackaging.error.nonNumeric"
+                           ),
+                         wholeNumberError =
+                           FormError(fieldName,
+                                     "amendDirectExportPlasticPackaging.error.wholeNumber"
+                           )
     )
 
-    behave like intField(
-      form,
-      fieldName,
-      nonNumericError  = FormError(fieldName, "amendDirectExportPlasticPackaging.error.nonNumeric"),
-      wholeNumberError = FormError(fieldName, "amendDirectExportPlasticPackaging.error.wholeNumber")
-    )
-
-    behave like intFieldWithRange(
-      form,
-      fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
-      expectedError = FormError(fieldName, "amendDirectExportPlasticPackaging.error.outOfRange", Seq(minimum, maximum))
+    behave like intFieldWithRange(form,
+                                  fieldName,
+                                  minimum = minimum,
+                                  maximum = maximum,
+                                  expectedError =
+                                    FormError(fieldName,
+                                              "amendDirectExportPlasticPackaging.error.outOfRange",
+                                              Seq(minimum, maximum)
+                                    )
     )
 
     behave like mandatoryField(

@@ -29,6 +29,7 @@ trait FieldsetFluency {
 
     def apply(legend: Legend): Fieldset =
       Fieldset(legend = Some(legend))
+
   }
 
   implicit class FluentFieldset(fieldset: Fieldset) {
@@ -47,12 +48,14 @@ trait FieldsetFluency {
 
     def withHtml(html: Html): Fieldset =
       fieldset copy (html = html)
+
   }
 
   object LegendViewModel {
 
     def apply(content: Content): Legend =
       Legend(content = content)
+
   }
 
   implicit class FluentLegend(legend: Legend) {
@@ -64,5 +67,7 @@ trait FieldsetFluency {
 
     def withCssClass(newClass: String): Legend =
       legend copy (classes = s"${legend.classes} $newClass")
+
   }
+
 }

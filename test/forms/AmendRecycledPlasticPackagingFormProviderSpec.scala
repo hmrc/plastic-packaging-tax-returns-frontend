@@ -32,25 +32,25 @@ class AmendRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
 
     val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validDataGenerator
+    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
+
+    behave like intField(form,
+                         fieldName,
+                         nonNumericError =
+                           FormError(fieldName, "amendRecycledPlasticPackaging.error.nonNumeric"),
+                         wholeNumberError =
+                           FormError(fieldName, "amendRecycledPlasticPackaging.error.wholeNumber")
     )
 
-    behave like intField(
-      form,
-      fieldName,
-      nonNumericError  = FormError(fieldName, "amendRecycledPlasticPackaging.error.nonNumeric"),
-      wholeNumberError = FormError(fieldName, "amendRecycledPlasticPackaging.error.wholeNumber")
-    )
-
-    behave like intFieldWithRange(
-      form,
-      fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
-      expectedError = FormError(fieldName, "amendRecycledPlasticPackaging.error.outOfRange", Seq(minimum, maximum))
+    behave like intFieldWithRange(form,
+                                  fieldName,
+                                  minimum = minimum,
+                                  maximum = maximum,
+                                  expectedError =
+                                    FormError(fieldName,
+                                              "amendRecycledPlasticPackaging.error.outOfRange",
+                                              Seq(minimum, maximum)
+                                    )
     )
 
     behave like mandatoryField(

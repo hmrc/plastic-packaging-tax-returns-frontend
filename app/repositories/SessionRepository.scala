@@ -31,24 +31,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.format,
-    indexes        = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock
+)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.format,
+      indexes = Seq(
+        IndexModel(Indexes.ascending("lastUpdated"),
+                   IndexOptions()
+                     .name("lastUpdatedIdx")
+                     .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
@@ -56,10 +55,7 @@ class SessionRepository @Inject()(
 
   def keepAlive(id: String): Future[Boolean] =
     collection
-      .updateOne(
-        filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock)),
-      )
+      .updateOne(filter = byId(id), update = Updates.set("lastUpdated", Instant.now(clock)))
       .toFuture
       .map(_ => true)
 
@@ -76,10 +72,9 @@ class SessionRepository @Inject()(
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
     collection
-      .replaceOne(
-        filter      = byId(updatedAnswers.id),
-        replacement = updatedAnswers,
-        options     = ReplaceOptions().upsert(true)
+      .replaceOne(filter = byId(updatedAnswers.id),
+                  replacement = updatedAnswers,
+                  options = ReplaceOptions().upsert(true)
       )
       .toFuture
       .map(_ => true)
@@ -90,4 +85,5 @@ class SessionRepository @Inject()(
       .deleteOne(byId(id))
       .toFuture
       .map(_ => true)
+
 }

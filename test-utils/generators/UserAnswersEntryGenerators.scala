@@ -24,7 +24,8 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryAmendRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendRecycledPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendRecycledPlasticPackagingPage.type]
@@ -32,7 +33,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendManufacturedPlasticPackagingUserAnswersEntry: Arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendManufacturedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendManufacturedPlasticPackagingPage.type]
@@ -40,7 +42,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendImportedPlasticPackagingUserAnswersEntry: Arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendImportedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendImportedPlasticPackagingPage.type]
@@ -48,7 +51,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendHumanMedicinePlasticPackagingUserAnswersEntry: Arbitrary[(AmendHumanMedicinePlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendHumanMedicinePlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendHumanMedicinePlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendHumanMedicinePlasticPackagingPage.type]
@@ -56,11 +60,13 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendDirectExportPlasticPackagingUserAnswersEntry: Arbitrary[(AmendDirectExportPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendDirectExportPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendDirectExportPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendDirectExportPlasticPackagingPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
+
 }

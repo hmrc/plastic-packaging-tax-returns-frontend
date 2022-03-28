@@ -36,13 +36,14 @@ import scala.concurrent.Future
 class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendDirectExportPlasticPackagingFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0
 
-  lazy val amendDirectExportPlasticPackagingRoute = routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode).url
+  lazy val amendDirectExportPlasticPackagingRoute =
+    routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode).url
 
   "AmendDirectExportPlasticPackaging Controller" - {
 
@@ -58,13 +59,17 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request,
+                                                                 messages(application)
+        ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendDirectExportPlasticPackagingPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(AmendDirectExportPlasticPackagingPage,
+                                                       validAnswer
+      ).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -76,7 +81,10 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -88,9 +96,8 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+                     bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -122,7 +129,9 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
+                                                                      messages(application)
+        ).toString
       }
     }
 

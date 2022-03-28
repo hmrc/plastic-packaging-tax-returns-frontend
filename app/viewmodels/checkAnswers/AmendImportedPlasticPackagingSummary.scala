@@ -24,19 +24,25 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AmendImportedPlasticPackagingSummary  {
+object AmendImportedPlasticPackagingSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AmendImportedPlasticPackagingPage).map {
       answer =>
-
-        SummaryListRowViewModel(
-          key     = "amendImportedPlasticPackaging.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.AmendImportedPlasticPackagingController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("amendImportedPlasticPackaging.change.hidden"))
-          )
+        SummaryListRowViewModel(key = "amendImportedPlasticPackaging.checkYourAnswersLabel",
+                                value = ValueViewModel(answer.toString),
+                                actions = Seq(
+                                  ActionItemViewModel(
+                                    "site.change",
+                                    routes.AmendImportedPlasticPackagingController.onPageLoad(
+                                      CheckMode
+                                    ).url
+                                  )
+                                    .withVisuallyHiddenText(
+                                      messages("amendImportedPlasticPackaging.change.hidden")
+                                    )
+                                )
         )
     }
+
 }

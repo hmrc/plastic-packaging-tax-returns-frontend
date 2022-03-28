@@ -31,43 +31,43 @@ trait Constraints {
           .getOrElse(Valid)
     }
 
-  protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def minimumValue[A](minimum: A, errorKey: String)(implicit
+    ev: Ordering[A]
+  ): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
-        if (input >= minimum) {
+        if (input >= minimum)
           Valid
-        } else {
+        else
           Invalid(errorKey, minimum)
-        }
     }
 
-  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def maximumValue[A](maximum: A, errorKey: String)(implicit
+    ev: Ordering[A]
+  ): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
-        if (input <= maximum) {
+        if (input <= maximum)
           Valid
-        } else {
+        else
           Invalid(errorKey, maximum)
-        }
     }
 
-  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit
+    ev: Ordering[A]
+  ): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
-        if (input >= minimum && input <= maximum) {
+        if (input >= minimum && input <= maximum)
           Valid
-        } else {
+        else
           Invalid(errorKey, minimum, maximum)
-        }
     }
 
   protected def regexp(regex: String, errorKey: String): Constraint[String] =
@@ -109,4 +109,5 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
 }

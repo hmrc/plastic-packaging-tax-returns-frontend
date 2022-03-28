@@ -27,6 +27,7 @@ trait HintFluency {
 
     def apply(content: Content): Hint =
       Hint(content = content)
+
   }
 
   implicit class FluentHint(hint: Hint) {
@@ -39,5 +40,7 @@ trait HintFluency {
 
     def withAttribute(attribute: (String, String)): Hint =
       hint copy (attributes = hint.attributes + attribute)
+
   }
+
 }

@@ -30,62 +30,38 @@ trait RadiosFluency {
 
   object RadiosViewModel extends ErrorMessageAwareness with FieldsetFluency {
 
-    def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               legend: Legend
-             )(implicit messages: Messages): Radios =
-      apply(
-        field    = field,
-        items    = items,
-        fieldset = FieldsetViewModel(legend)
+    def apply(field: Field, items: Seq[RadioItem], legend: Legend)(implicit
+      messages: Messages
+    ): Radios =
+      apply(field = field, items = items, fieldset = FieldsetViewModel(legend))
+
+    def apply(field: Field, items: Seq[RadioItem], fieldset: Fieldset)(implicit
+      messages: Messages
+    ): Radios =
+      Radios(fieldset = Some(fieldset),
+             name = field.name,
+             items = items map (
+               item => item copy (checked = field.value.isDefined && field.value == item.value)
+             ),
+             errorMessage = errorMessage(field)
       )
 
-    def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               fieldset: Fieldset
-             )(implicit messages: Messages): Radios =
-      Radios(
-        fieldset     = Some(fieldset),
-        name         = field.name,
-        items        = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
-        errorMessage = errorMessage(field)
-      )
+    def yesNo(field: Field, legend: Legend)(implicit messages: Messages): Radios =
+      yesNo(field = field, fieldset = FieldsetViewModel(legend))
 
-    def yesNo(
-               field: Field,
-               legend: Legend
-             )(implicit messages: Messages): Radios =
-      yesNo(
-        field    = field,
-        fieldset = FieldsetViewModel(legend)
-      )
-
-    def yesNo(
-               field: Field,
-               fieldset: Fieldset
-             )(implicit messages: Messages): Radios = {
+    def yesNo(field: Field, fieldset: Fieldset)(implicit messages: Messages): Radios = {
 
       val items = Seq(
-        RadioItem(
-          id      = Some(field.id),
-          value   = Some("true"),
-          content = Text(messages("site.yes"))
-        ),
-        RadioItem(
-          id      = Some(s"${field.id}-no"),
-          value   = Some("false"),
-          content = Text(messages("site.no"))
+        RadioItem(id = Some(field.id), value = Some("true"), content = Text(messages("site.yes"))),
+        RadioItem(id = Some(s"${field.id}-no"),
+                  value = Some("false"),
+                  content = Text(messages("site.no"))
         )
       )
 
-      apply(
-        field    = field,
-        fieldset = fieldset,
-        items    = items
-      ).inline()
+      apply(field = field, fieldset = fieldset, items = items).inline()
     }
+
   }
 
   implicit class FluentRadios(radios: Radios) {
@@ -107,5 +83,7 @@ trait RadiosFluency {
 
     def inline(): Radios =
       radios.withCssClass("govuk-radios--inline")
+
   }
+
 }

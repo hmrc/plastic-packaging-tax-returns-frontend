@@ -36,13 +36,14 @@ import scala.concurrent.Future
 class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendRecycledPlasticPackagingFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0
 
-  lazy val amendRecycledPlasticPackagingRoute = routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode).url
+  lazy val amendRecycledPlasticPackagingRoute =
+    routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
   "AmendRecycledPlasticPackaging Controller" - {
 
@@ -58,13 +59,16 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[AmendRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request,
+                                                                 messages(application)
+        ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendRecycledPlasticPackagingPage, validAnswer).success.value
+      val userAnswers =
+        UserAnswers(userAnswersId).set(AmendRecycledPlasticPackagingPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -76,7 +80,10 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -88,9 +95,8 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+                     bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -122,7 +128,9 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
+                                                                      messages(application)
+        ).toString
       }
     }
 

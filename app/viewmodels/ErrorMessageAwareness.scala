@@ -29,4 +29,5 @@ trait ErrorMessageAwareness {
         err =>
           ErrorMessage(content = Text(messages(err.message, err.args: _*)))
       }
+
 }
