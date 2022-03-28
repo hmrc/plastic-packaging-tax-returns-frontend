@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO - Move cache into back end!!
+
 @Singleton
 class SessionRepository @Inject() (
   mongoComponent: MongoComponent,
