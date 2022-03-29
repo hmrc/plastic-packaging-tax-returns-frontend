@@ -24,16 +24,21 @@ import play.api.data.format.Formatter
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-                                            invalidKey: String,
-                                            allRequiredKey: String,
-                                            twoRequiredKey: String,
-                                            requiredKey: String,
-                                            args: Seq[String] = Seq.empty
-                                          ) extends Formatter[LocalDate] with Formatters {
+  invalidKey: String,
+  allRequiredKey: String,
+  twoRequiredKey: String,
+  requiredKey: String,
+  args: Seq[String] = Seq.empty
+) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
-  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
+  private def toDate(
+    key: String,
+    day: Int,
+    month: Int,
+    year: Int
+  ): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
         Right(date)
@@ -41,13 +46,15 @@ private[mappings] class LocalDateFormatter(
         Left(Seq(FormError(key, invalidKey, args)))
     }
 
-  private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+  private def formatDate(
+    key: String,
+    data: Map[String, String]
+  ): Either[Seq[FormError], LocalDate] = {
 
-    val int = intFormatter(
-      requiredKey = invalidKey,
-      wholeNumberKey = invalidKey,
-      nonNumericKey = invalidKey,
-      args
+    val int = intFormatter(requiredKey = invalidKey,
+                           wholeNumberKey = invalidKey,
+                           nonNumericKey = invalidKey,
+                           args
     )
 
     for {
@@ -85,9 +92,9 @@ private[mappings] class LocalDateFormatter(
   }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
-    Map(
-      s"$key.day" -> value.getDayOfMonth.toString,
-      s"$key.month" -> value.getMonthValue.toString,
-      s"$key.year" -> value.getYear.toString
+    Map(s"$key.day"   -> value.getDayOfMonth.toString,
+        s"$key.month" -> value.getMonthValue.toString,
+        s"$key.year"  -> value.getYear.toString
     )
+
 }

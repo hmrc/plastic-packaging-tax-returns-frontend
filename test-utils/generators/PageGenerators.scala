@@ -21,6 +21,29 @@ import pages._
 
 trait PageGenerators {
 
+<<<<<<< HEAD
   implicit lazy val arbitraryConfirmAmendReturnPage: Arbitrary[ConfirmAmendReturnPage.type] =
     Arbitrary(ConfirmAmendReturnPage)
+=======
+  implicit lazy val arbitraryAmendRecycledPlasticPackagingPage
+    : Arbitrary[AmendRecycledPlasticPackagingPage.type] =
+    Arbitrary(AmendRecycledPlasticPackagingPage)
+
+  implicit lazy val arbitraryAmendManufacturedPlasticPackagingPage
+    : Arbitrary[AmendManufacturedPlasticPackagingPage.type] =
+    Arbitrary(AmendManufacturedPlasticPackagingPage)
+
+  implicit lazy val arbitraryAmendImportedPlasticPackagingPage
+    : Arbitrary[AmendImportedPlasticPackagingPage.type] =
+    Arbitrary(AmendImportedPlasticPackagingPage)
+
+  implicit lazy val arbitraryAmendHumanMedicinePlasticPackagingPage
+    : Arbitrary[AmendHumanMedicinePlasticPackagingPage.type] =
+    Arbitrary(AmendHumanMedicinePlasticPackagingPage)
+
+  implicit lazy val arbitraryAmendDirectExportPlasticPackagingPage
+    : Arbitrary[AmendDirectExportPlasticPackagingPage.type] =
+    Arbitrary(AmendDirectExportPlasticPackagingPage)
+
+>>>>>>> 569a4a8dc0d1124e220da4fe0f1b7b05acc77be7
 }

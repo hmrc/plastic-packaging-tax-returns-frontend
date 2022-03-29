@@ -56,8 +56,55 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+<<<<<<< HEAD
 confirmAmendReturn.title = confirmAmendReturn
 confirmAmendReturn.heading = confirmAmendReturn
 confirmAmendReturn.checkYourAnswersLabel = confirmAmendReturn
 confirmAmendReturn.error.required = Select yes if confirmAmendReturn
 confirmAmendReturn.change.hidden = ConfirmAmendReturn
+=======
+amendDirectExportPlasticPackaging.title = AmendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.heading = AmendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = AmendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.error.nonNumeric = Enter your amendDirectExportPlasticPackaging using numbers
+amendDirectExportPlasticPackaging.error.required = Enter your amendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.error.wholeNumber = Enter your amendDirectExportPlasticPackaging using whole numbers
+amendDirectExportPlasticPackaging.error.outOfRange = AmendDirectExportPlasticPackaging must be between {0} and {1}
+amendDirectExportPlasticPackaging.change.hidden = AmendDirectExportPlasticPackaging
+
+amendHumanMedicinePlasticPackaging.title = AmendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.heading = AmendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = AmendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.error.nonNumeric = Enter your amendHumanMedicinePlasticPackaging using numbers
+amendHumanMedicinePlasticPackaging.error.required = Enter your amendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter your amendHumanMedicinePlasticPackaging using whole numbers
+amendHumanMedicinePlasticPackaging.error.outOfRange = AmendHumanMedicinePlasticPackaging must be between {0} and {1}
+amendHumanMedicinePlasticPackaging.change.hidden = AmendHumanMedicinePlasticPackaging
+
+amendImportedPlasticPackaging.title = AmendImportedPlasticPackaging
+amendImportedPlasticPackaging.heading = AmendImportedPlasticPackaging
+amendImportedPlasticPackaging.checkYourAnswersLabel = AmendImportedPlasticPackaging
+amendImportedPlasticPackaging.error.nonNumeric = Enter your amendImportedPlasticPackaging using numbers
+amendImportedPlasticPackaging.error.required = Enter your amendImportedPlasticPackaging
+amendImportedPlasticPackaging.error.wholeNumber = Enter your amendImportedPlasticPackaging using whole numbers
+amendImportedPlasticPackaging.error.outOfRange = AmendImportedPlasticPackaging must be between {0} and {1}
+amendImportedPlasticPackaging.change.hidden = AmendImportedPlasticPackaging
+
+amendManufacturedPlasticPackaging.title = AmendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.heading = AmendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.checkYourAnswersLabel = AmendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.error.nonNumeric = Enter your amendManufacturedPlasticPackaging using numbers
+amendManufacturedPlasticPackaging.error.required = Enter your amendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.error.wholeNumber = Enter your amendManufacturedPlasticPackaging using whole numbers
+amendManufacturedPlasticPackaging.error.outOfRange = AmendManufacturedPlasticPackaging must be between {0} and {1}
+amendManufacturedPlasticPackaging.change.hidden = AmendManufacturedPlasticPackaging
+
+amendRecycledPlasticPackaging.title = AmendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.heading = AmendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.checkYourAnswersLabel = AmendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.error.nonNumeric = Enter your amendRecycledPlasticPackaging using numbers
+amendRecycledPlasticPackaging.error.required = Enter your amendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.error.wholeNumber = Enter your amendRecycledPlasticPackaging using whole numbers
+amendRecycledPlasticPackaging.error.outOfRange = AmendRecycledPlasticPackaging must be between {0} and {1}
+amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
+>>>>>>> 569a4a8dc0d1124e220da4fe0f1b7b05acc77be7

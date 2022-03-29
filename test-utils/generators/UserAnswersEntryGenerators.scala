@@ -24,6 +24,7 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+<<<<<<< HEAD
   implicit lazy val arbitraryConfirmAmendReturnUserAnswersEntry: Arbitrary[(ConfirmAmendReturnPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -31,4 +32,51 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
+=======
+  implicit lazy val arbitraryAmendRecycledPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendRecycledPlasticPackagingPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAmendManufacturedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendManufacturedPlasticPackagingPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAmendImportedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendImportedPlasticPackagingPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAmendHumanMedicinePlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendHumanMedicinePlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendHumanMedicinePlasticPackagingPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAmendDirectExportPlasticPackagingUserAnswersEntry
+    : Arbitrary[(AmendDirectExportPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendDirectExportPlasticPackagingPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+>>>>>>> 569a4a8dc0d1124e220da4fe0f1b7b05acc77be7
 }
