@@ -16,19 +16,23 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.ArgumentMatchers.{eq => mockitoEq}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{await, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   createSubscriptionDisplayResponse,
   ukLimitedCompanySubscription
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.config.Features
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.FinancialsConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -54,12 +58,17 @@ class HomeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(
-      page.apply(any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
+      page.apply(any(), any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
     ).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(page,
+          mockFinancialsConnector,
+          mockObligationsConnector,
+          config,
+          mockSubscriptionConnector
+    )
     super.afterEach()
   }
 
@@ -82,6 +91,62 @@ class HomeControllerSpec extends ControllerSpec {
       }
     }
 
+    "avoid calling Obligation Api" when {
+      "return is not enabled" in {
+        authorizedUser()
+        setUpMocks()
+        when(config.isFeatureEnabled(mockitoEq(Features.returnsEnabled))).thenReturn(false)
+
+        await(controller.displayPage()(getRequest()))
+
+        verifyNoInteractions(mockObligationsConnector)
+        verifyResults(PPTObligations(None, None, 0, false, false))
+      }
+    }
+
+    "call Obligation API" when {
+      "return feature flag is enabled" in {
+        val expectedObligation = PPTObligations(None, None, 1, true, true)
+        authorizedUser()
+        setUpMocks(expectedObligation)
+        when(config.isFeatureEnabled(mockitoEq(Features.returnsEnabled))).thenReturn(true)
+
+        await(controller.displayPage()(getRequest()))
+
+        verify(mockObligationsConnector).get(any[String])(any())
+        verifyResults(expectedObligation)
+      }
+    }
+
+    "avoid to call the financial API" when {
+      "return feature flag is not enabled" in {
+        authorizedUser()
+        setUpMocks()
+        when(config.isFeatureEnabled(mockitoEq(Features.paymentsEnabled))).thenReturn(false)
+
+        await(controller.displayPage()(getRequest()))
+
+        verifyNoInteractions(mockFinancialsConnector)
+        val captor: ArgumentCaptor[Option[String]] =
+          ArgumentCaptor.forClass(classOf[Option[String]])
+        verify(page).apply(any(), any(), any(), captor.capture(), any(), any())(any(), any())
+
+        captor.getValue.get mustBe "account.homePage.card.payments.nothingOutstanding"
+      }
+    }
+
+    "call Financial API" when {
+      "return feature is enabled" in {
+        authorizedUser()
+        setUpMocks()
+        when(config.isFeatureEnabled(mockitoEq(Features.paymentsEnabled))).thenReturn(true)
+
+        await(controller.displayPage()(getRequest()))
+
+        verify(mockFinancialsConnector).getPaymentStatement(any[String])(any())
+      }
+    }
+
     "return an error" when {
 
       "user is not authorised" in {
@@ -92,4 +157,26 @@ class HomeControllerSpec extends ControllerSpec {
       }
     }
   }
+
+  private def setUpMocks(obligation: PPTObligations = createDefaultPPTObligation) = {
+    val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
+    mockGetSubscription(subscription)
+
+    when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
+      Future.successful(PPTFinancials(None, None, None))
+    )
+    when(mockObligationsConnector.get(any[String])(any())).thenReturn(Future.successful(obligation))
+  }
+
+  private def verifyResults(obligation: PPTObligations) = {
+    val captor: ArgumentCaptor[Option[PPTObligations]] =
+      ArgumentCaptor.forClass(classOf[Option[PPTObligations]])
+    verify(page).apply(any(), any(), captor.capture(), any(), any(), any())(any(), any())
+
+    captor.getValue.get mustBe obligation
+  }
+
+  private def createDefaultPPTObligation: PPTObligations =
+    PPTObligations(None, None, 1, true, true)
+
 }
