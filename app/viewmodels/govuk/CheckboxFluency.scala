@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package viewmodels.govuk
 
 import play.api.data.Form
@@ -16,56 +32,41 @@ trait CheckboxFluency {
 
   object CheckboxesViewModel extends ErrorMessageAwareness with FieldsetFluency {
 
-    def apply(
-               form: Form[_],
-               name: String,
-               items: Seq[CheckboxItem],
-               legend: Legend
-             )(implicit messages: Messages): Checkboxes =
-      apply(
-        form = form,
-        name = name,
-        items = items,
-        fieldset = FieldsetViewModel(legend)
+    def apply(form: Form[_], name: String, items: Seq[CheckboxItem], legend: Legend)(implicit
+      messages: Messages
+    ): Checkboxes =
+      apply(form = form, name = name, items = items, fieldset = FieldsetViewModel(legend))
+
+    def apply(form: Form[_], name: String, items: Seq[CheckboxItem], fieldset: Fieldset)(implicit
+      messages: Messages
+    ): Checkboxes =
+      Checkboxes(fieldset = Some(fieldset),
+                 name = name,
+                 errorMessage = errorMessage(form(name)),
+                 items = items.map {
+                   item =>
+                     item copy (checked = form.data.exists(data => data._2 == item.value))
+                 }
       )
 
-    def apply(
-               form: Form[_],
-               name: String,
-               items: Seq[CheckboxItem],
-               fieldset: Fieldset
-             )(implicit messages: Messages): Checkboxes =
-      Checkboxes(
-        fieldset     = Some(fieldset),
-        name         = name,
-        errorMessage = errorMessage(form(name)),
-        items        = items.map {
-          item =>
-            item copy (checked = form.data.exists(data => data._2 == item.value))
-        }
-      )
   }
 
   implicit class FluentCheckboxes(checkboxes: Checkboxes) {
 
     def describedBy(value: String): Checkboxes =
       checkboxes copy (describedBy = Some(value))
+
   }
 
   object CheckboxItemViewModel {
 
-    def apply(
-               content: Content,
-               fieldId: String,
-               index: Int,
-               value: String
-             ): CheckboxItem =
-      CheckboxItem(
-        content = content,
-        id      = Some(s"${fieldId}_$index"),
-        name    = Some(s"$fieldId[$index]"),
-        value   = value
+    def apply(content: Content, fieldId: String, index: Int, value: String): CheckboxItem =
+      CheckboxItem(content = content,
+                   id = Some(s"${fieldId}_$index"),
+                   name = Some(s"$fieldId[$index]"),
+                   value = value
       )
+
   }
 
   implicit class FluentCheckboxItem(item: CheckboxItem) {
@@ -84,5 +85,7 @@ trait CheckboxFluency {
 
     def withAttribute(attribute: (String, String)): CheckboxItem =
       item copy (attributes = item.attributes + attribute)
+
   }
+
 }

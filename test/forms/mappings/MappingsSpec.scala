@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package forms.mappings
 
 import org.scalatest.OptionValues
@@ -18,7 +34,9 @@ object MappingsSpec {
 
     implicit val fooEnumerable: Enumerable[Foo] =
       Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+
   }
+
 }
 
 class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings {
@@ -28,9 +46,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
   "text" - {
 
     val testForm: Form[String] =
-      Form(
-        "value" -> text()
-      )
+      Form("value" -> text())
 
     "must bind a valid string" in {
       val result = testForm.bind(Map("value" -> "foobar"))
@@ -44,7 +60,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
     "must not bind a string of whitespace only" in {
       val result = testForm.bind(Map("value" -> " \t"))
-      result.errors must contain (FormError("value", "error.required"))
+      result.errors must contain(FormError("value", "error.required"))
     }
 
     "must not bind an empty map" in {
@@ -53,7 +69,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     }
 
     "must return a custom error message" in {
-      val form = Form("value" -> text("custom.error"))
+      val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> ""))
       result.errors must contain(FormError("value", "custom.error"))
     }
@@ -67,9 +83,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
   "boolean" - {
 
     val testForm: Form[Boolean] =
-      Form(
-        "value" -> boolean()
-      )
+      Form("value" -> boolean())
 
     "must bind true" in {
       val result = testForm.bind(Map("value" -> "true"))
@@ -105,9 +119,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
   "int" - {
 
     val testForm: Form[Int] =
-      Form(
-        "value" -> int()
-      )
+      Form("value" -> int())
 
     "must bind a valid integer" in {
       val result = testForm.bind(Map("value" -> "1"))
@@ -132,9 +144,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
   "enumerable" - {
 
-    val testForm = Form(
-      "value" -> enumerable[Foo]()
-    )
+    val testForm = Form("value" -> enumerable[Foo]())
 
     "must bind a valid option" in {
       val result = testForm.bind(Map("value" -> "Bar"))

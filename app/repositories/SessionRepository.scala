@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package repositories
 
 import config.FrontendAppConfig
@@ -14,25 +30,26 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO - Move cache into back end!!
+
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.format,
-    indexes        = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock
+)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.format,
+      indexes = Seq(
+        IndexModel(Indexes.ascending("lastUpdated"),
+                   IndexOptions()
+                     .name("lastUpdatedIdx")
+                     .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
@@ -40,10 +57,7 @@ class SessionRepository @Inject()(
 
   def keepAlive(id: String): Future[Boolean] =
     collection
-      .updateOne(
-        filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock)),
-      )
+      .updateOne(filter = byId(id), update = Updates.set("lastUpdated", Instant.now(clock)))
       .toFuture
       .map(_ => true)
 
@@ -60,10 +74,9 @@ class SessionRepository @Inject()(
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
     collection
-      .replaceOne(
-        filter      = byId(updatedAnswers.id),
-        replacement = updatedAnswers,
-        options     = ReplaceOptions().upsert(true)
+      .replaceOne(filter = byId(updatedAnswers.id),
+                  replacement = updatedAnswers,
+                  options = ReplaceOptions().upsert(true)
       )
       .toFuture
       .map(_ => true)
@@ -74,4 +87,5 @@ class SessionRepository @Inject()(
       .deleteOne(byId(id))
       .toFuture
       .map(_ => true)
+
 }
