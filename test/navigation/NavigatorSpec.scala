@@ -29,13 +29,58 @@ class NavigatorSpec extends SpecBase {
 
     "in Normal mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "must go from AmendAreYouSurePage to AmendManufacturedPlasticPackagingController" in {
 
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage,
+        navigator.nextPage(AmendAreYouSurePage,
                            NormalMode,
                            UserAnswers("id")
-        ) mustBe routes.IndexController.onPageLoad
+        ) mustBe routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+
+      }
+
+      "must go from AmendManufacturedPlasticPackagingPage to AmendImportedPlasticPackagingController" in {
+
+        navigator.nextPage(AmendManufacturedPlasticPackagingPage,
+                           NormalMode,
+                           UserAnswers("id")
+        ) mustBe routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
+
+      }
+
+      "must go from AmendImportedPlasticPackagingPage to AmendHumanMedicinePlasticPackagingController" in {
+
+        navigator.nextPage(AmendImportedPlasticPackagingPage,
+                           NormalMode,
+                           UserAnswers("id")
+        ) mustBe routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
+
+      }
+
+      "must go from AmendHumanMedicinePlasticPackagingPage to AmendDirectExportPlasticPackagingController" in {
+
+        navigator.nextPage(AmendHumanMedicinePlasticPackagingPage,
+                           NormalMode,
+                           UserAnswers("id")
+        ) mustBe routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
+
+      }
+
+      "must go from AmendDirectExportPlasticPackagingPage to AmendRecycledPlasticPackagingController" in {
+
+        navigator.nextPage(AmendDirectExportPlasticPackagingPage,
+                           NormalMode,
+                           UserAnswers("id")
+        ) mustBe routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
+
+      }
+
+      "must go from AmendRecycledPlasticPackagingPage to CheckYourAnswersController" in {
+
+        navigator.nextPage(AmendRecycledPlasticPackagingPage,
+                           NormalMode,
+                           UserAnswers("id")
+        ) mustBe routes.CheckYourAnswersController.onPageLoad
+
       }
     }
 
@@ -48,6 +93,7 @@ class NavigatorSpec extends SpecBase {
                            CheckMode,
                            UserAnswers("id")
         ) mustBe routes.CheckYourAnswersController.onPageLoad
+
       }
     }
   }

@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.AmendImportedPlasticPackagingFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,9 @@ class AmendImportedPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendImportedPlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.userId)).get(
+          AmendImportedPlasticPackagingPage
+        ) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +67,10 @@ class AmendImportedPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendImportedPlasticPackagingPage, value)
+                request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
+                  AmendImportedPlasticPackagingPage,
+                  value
+                )
               )
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
