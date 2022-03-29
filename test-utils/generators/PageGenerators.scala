@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryendAreYouSurePage: Arbitrary[endAreYouSurePage.type] =
+    Arbitrary(endAreYouSurePage)
+
   implicit lazy val arbitraryAmendRecycledPlasticPackagingPage
     : Arbitrary[AmendRecycledPlasticPackagingPage.type] =
     Arbitrary(AmendRecycledPlasticPackagingPage)

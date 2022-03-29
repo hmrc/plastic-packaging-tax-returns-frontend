@@ -44,3 +44,8 @@ GET        /amendRecycledPlasticPackaging                  controllers.AmendRecy
 POST       /amendRecycledPlasticPackaging                  controllers.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAmendRecycledPlasticPackaging                        controllers.AmendRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAmendRecycledPlasticPackaging                        controllers.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /endAreYouSure                        controllers.endAreYouSureController.onPageLoad(mode: Mode = NormalMode)
+POST       /endAreYouSure                        controllers.endAreYouSureController.onSubmit(mode: Mode = NormalMode)
+GET        /changeendAreYouSure                  controllers.endAreYouSureController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeendAreYouSure                  controllers.endAreYouSureController.onSubmit(mode: Mode = CheckMode)

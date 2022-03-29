@@ -100,3 +100,9 @@ amendRecycledPlasticPackaging.error.required = Enter your amendRecycledPlasticPa
 amendRecycledPlasticPackaging.error.wholeNumber = Enter your amendRecycledPlasticPackaging using whole numbers
 amendRecycledPlasticPackaging.error.outOfRange = AmendRecycledPlasticPackaging must be between {0} and {1}
 amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
+
+endAreYouSure.title = endAreYouSure
+endAreYouSure.heading = endAreYouSure
+endAreYouSure.checkYourAnswersLabel = endAreYouSure
+endAreYouSure.error.required = Select yes if endAreYouSure
+endAreYouSure.change.hidden = endAreYouSure
