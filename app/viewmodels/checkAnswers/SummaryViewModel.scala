@@ -14,32 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package viewmodels.checkAnswers
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import models.UserAnswers
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
-class AmendAreYouSureFormProviderSpec extends BooleanFieldBehaviours {
+trait SummaryViewModel {
 
-  val requiredKey = "amendAreYouSure.error.required"
-  val invalidKey = "error.boolean"
-
-  val form = new AmendAreYouSureFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow]
 }

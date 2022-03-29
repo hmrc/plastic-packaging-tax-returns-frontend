@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.AmendDirectExportPlasticPackagingFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,9 @@ class AmendDirectExportPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.get(
+          AmendDirectExportPlasticPackagingPage
+        ) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +67,10 @@ class AmendDirectExportPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendDirectExportPlasticPackagingPage, value)
+                request.userAnswers.set(
+                  AmendDirectExportPlasticPackagingPage,
+                  value
+                )
               )
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(

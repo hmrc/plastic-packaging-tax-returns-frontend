@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,9 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendHumanMedicinePlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.get(
+          AmendHumanMedicinePlasticPackagingPage
+        ) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +67,10 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendHumanMedicinePlasticPackagingPage, value)
+                request.userAnswers.set(
+                  AmendHumanMedicinePlasticPackagingPage,
+                  value
+                )
               )
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(

@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.AmendRecycledPlasticPackagingFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,9 @@ class AmendRecycledPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendRecycledPlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.get(
+          AmendRecycledPlasticPackagingPage
+        ) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -64,7 +67,10 @@ class AmendRecycledPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendRecycledPlasticPackagingPage, value)
+                request.userAnswers.set(
+                  AmendRecycledPlasticPackagingPage,
+                  value
+                )
               )
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
