@@ -49,7 +49,7 @@ class AmendRecycledPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.userId)).get(
+        val preparedForm = request.userAnswers.get(
           AmendRecycledPlasticPackagingPage
         ) match {
           case None        => form
@@ -67,7 +67,7 @@ class AmendRecycledPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
+                request.userAnswers.set(
                   AmendRecycledPlasticPackagingPage,
                   value
                 )

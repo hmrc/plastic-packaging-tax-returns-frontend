@@ -24,9 +24,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AmendImportedPlasticPackagingSummary {
+object AmendImportedPlasticPackagingSummary extends SummaryViewModel{
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AmendImportedPlasticPackagingPage).map {
       answer =>
         SummaryListRowViewModel(key = "amendImportedPlasticPackaging.checkYourAnswersLabel",

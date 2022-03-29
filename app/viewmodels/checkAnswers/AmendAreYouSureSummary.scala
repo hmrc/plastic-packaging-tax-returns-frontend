@@ -26,7 +26,8 @@ import viewmodels.implicits._
 
 object AmendAreYouSureSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+
     answers.get(AmendAreYouSurePage).map {
       answer =>
 
@@ -41,4 +42,5 @@ object AmendAreYouSureSummary  {
           )
         )
     }
+  }
 }

@@ -25,24 +25,35 @@ class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
 
+
   "Navigator" - {
 
     "in Normal mode" - {
+      "for the AmendAreYouSurePage" - {
+        "navigate to AmendManufacturedPlasticPackagingController when answer is Yes" in {
+          val answers = UserAnswers("id").set(AmendAreYouSurePage, true)
 
-      "must go from AmendAreYouSurePage to AmendManufacturedPlasticPackagingController" in {
+          navigator.nextPage(AmendAreYouSurePage,
+            NormalMode,
+            answers.get
+          ) mustBe routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
-        navigator.nextPage(AmendAreYouSurePage,
-                           NormalMode,
-                           UserAnswers("id")
-        ) mustBe routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+        }
+        "navigate to Homepage when answer is No" in {
+
+          val answers = UserAnswers("id").set(AmendAreYouSurePage, false)
+
+          navigator.nextPage(AmendAreYouSurePage, NormalMode, answers.get
+          ) mustBe (routes.IndexController.onPageLoad)
+        }
 
       }
 
       "must go from AmendManufacturedPlasticPackagingPage to AmendImportedPlasticPackagingController" in {
 
         navigator.nextPage(AmendManufacturedPlasticPackagingPage,
-                           NormalMode,
-                           UserAnswers("id")
+          NormalMode,
+          UserAnswers("id")
         ) mustBe routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
 
       }
@@ -50,8 +61,8 @@ class NavigatorSpec extends SpecBase {
       "must go from AmendImportedPlasticPackagingPage to AmendHumanMedicinePlasticPackagingController" in {
 
         navigator.nextPage(AmendImportedPlasticPackagingPage,
-                           NormalMode,
-                           UserAnswers("id")
+          NormalMode,
+          UserAnswers("id")
         ) mustBe routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
 
       }
@@ -59,8 +70,8 @@ class NavigatorSpec extends SpecBase {
       "must go from AmendHumanMedicinePlasticPackagingPage to AmendDirectExportPlasticPackagingController" in {
 
         navigator.nextPage(AmendHumanMedicinePlasticPackagingPage,
-                           NormalMode,
-                           UserAnswers("id")
+          NormalMode,
+          UserAnswers("id")
         ) mustBe routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
 
       }
@@ -68,8 +79,8 @@ class NavigatorSpec extends SpecBase {
       "must go from AmendDirectExportPlasticPackagingPage to AmendRecycledPlasticPackagingController" in {
 
         navigator.nextPage(AmendDirectExportPlasticPackagingPage,
-                           NormalMode,
-                           UserAnswers("id")
+          NormalMode,
+          UserAnswers("id")
         ) mustBe routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
 
       }
@@ -77,8 +88,8 @@ class NavigatorSpec extends SpecBase {
       "must go from AmendRecycledPlasticPackagingPage to CheckYourAnswersController" in {
 
         navigator.nextPage(AmendRecycledPlasticPackagingPage,
-                           NormalMode,
-                           UserAnswers("id")
+          NormalMode,
+          UserAnswers("id")
         ) mustBe routes.CheckYourAnswersController.onPageLoad
 
       }
@@ -90,8 +101,8 @@ class NavigatorSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage,
-                           CheckMode,
-                           UserAnswers("id")
+          CheckMode,
+          UserAnswers("id")
         ) mustBe routes.CheckYourAnswersController.onPageLoad
 
       }

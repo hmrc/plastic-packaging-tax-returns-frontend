@@ -24,11 +24,10 @@ import pages._
 import models._
 
 @Singleton
-class Navigator @Inject() () {
+class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case AmendAreYouSurePage =>
-      _ => routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    case AmendAreYouSurePage => amendAreYouSureRoute
     case AmendManufacturedPlasticPackagingPage =>
       _ => routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
     case AmendImportedPlasticPackagingPage =>
@@ -43,6 +42,12 @@ class Navigator @Inject() () {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad
+  }
+
+  private def amendAreYouSureRoute(answers: UserAnswers): Call = answers.get(AmendAreYouSurePage) match {
+    case Some(true) => routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    case Some(false) => routes.IndexController.onPageLoad
+    case None => throw new Exception("Unable to navigate to page")
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
