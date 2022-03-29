@@ -285,3 +285,4 @@ returns.submitted.none = You have not submitted any returns yet.
 returns.submitted.link = Return to your Plastic Packaging Tax account
 
 returns.deregistered.title = You deregistered this account from Plastic Packaging Tax
+returns.deregistered.bta.link = Go to your Business tax account

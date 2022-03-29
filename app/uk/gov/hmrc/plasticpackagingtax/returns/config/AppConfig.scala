@@ -131,4 +131,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptRegistrationDeregisterUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
 
+  lazy val businessAccountUrl: String = config.get[String]("urls.businessAccount")
+
 }

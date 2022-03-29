@@ -21,6 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.deregistration.deregistered_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
@@ -29,7 +30,9 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 class DeregisteredViewSpec extends UnitViewSpec with Matchers {
   override implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  private val page                   = instanceOf[deregistered_page]
+  private val appConfig = instanceOf[AppConfig]
+  private val page      = instanceOf[deregistered_page]
+
   private def createView(): Document = page()(request, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
@@ -51,6 +54,12 @@ class DeregisteredViewSpec extends UnitViewSpec with Matchers {
 
     "display page heading" in {
       view.select("h1").get(0) must containMessage("returns.deregistered.title")
+    }
+
+    "display bta link" in {
+      val link = view.select("main a").get(0)
+      link must containMessage("returns.deregistered.bta.link")
+      link must haveHref(appConfig.businessAccountUrl)
     }
 
   }

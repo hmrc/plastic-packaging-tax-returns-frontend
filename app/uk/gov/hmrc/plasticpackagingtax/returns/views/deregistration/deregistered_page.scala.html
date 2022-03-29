@@ -17,10 +17,14 @@
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.returns.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 
 @this(
         govukLayout: main_template,
         pageTitle: pageTitle,
+        paragraph: paragraph,
+        link: link,
+        appConfig: AppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -28,5 +32,5 @@
 @govukLayout(title = Title("returns.deregistered.title")) {
 
     @pageTitle(messages("returns.deregistered.title"))
-
+    @paragraph(content = link(text = messages("returns.deregistered.bta.link"), call = Call("GET", appConfig.businessAccountUrl)))
 }
