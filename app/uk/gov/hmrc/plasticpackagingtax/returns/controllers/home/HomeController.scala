@@ -69,11 +69,12 @@ class HomeController @Inject() (
             )
           )
       ).recover {
-        case httpEx: UpstreamErrorResponse if httpEx.statusCode == 404 =>
+        case httpEx: UpstreamErrorResponse if isDeregistered(httpEx) =>
           Redirect(deregistrationRoutes.DeregisteredController.displayPage())
         case ex: Throwable => throw ex
       }
 
     }
 
+  private def isDeregistered(ex: UpstreamErrorResponse) = ex.statusCode == NOT_FOUND
 }
