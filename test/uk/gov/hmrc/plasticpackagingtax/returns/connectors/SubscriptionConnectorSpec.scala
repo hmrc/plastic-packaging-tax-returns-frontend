@@ -71,13 +71,13 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
       }
     }
 
-    "throws exception" when {
+    "throw exception" when {
 
       "service returns non success status code" in {
         val pptReference = UUID.randomUUID().toString
         givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
 
-        intercept[DownstreamServiceError] {
+        intercept[Exception] {
           await(connector.get(pptReference))
         }
       }
@@ -86,7 +86,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
         val pptReference = UUID.randomUUID().toString
         givenGetSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
 
-        intercept[DownstreamServiceError] {
+        intercept[Exception] {
           await(connector.get(pptReference))
         }
       }

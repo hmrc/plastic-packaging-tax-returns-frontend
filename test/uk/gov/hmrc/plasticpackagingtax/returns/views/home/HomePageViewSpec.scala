@@ -327,15 +327,9 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   }
 
   private def checkDeregisterCard(deregister: Element) = {
-    deregister.select("h3").text() must include(
-      messages("account.homePage.card.deregister.link")
-    )
-    deregister.select("p").text() mustBe messages(
-      "account.homePage.card.deregister.body"
-    )
-    deregister.select("a").first() must haveHref(
-      appConfig.pptRegistrationDeregisterUrl
-    )
+    deregister.select("h3").text() must include(messages("account.homePage.card.deregister.link"))
+    deregister.select("p").text() mustBe messages("account.homePage.card.deregister.body")
+    deregister.select("a").first() must haveHref(appConfig.pptRegistrationDeregisterUrl)
   }
 
   "get obligations fails" should {

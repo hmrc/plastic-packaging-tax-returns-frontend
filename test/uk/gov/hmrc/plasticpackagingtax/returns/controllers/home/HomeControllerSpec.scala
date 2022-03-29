@@ -20,14 +20,18 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.{Upstream5xxResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
   createSubscriptionDisplayResponse,
   ukLimitedCompanySubscription
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.FinancialsConnector
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
+  routes => deregistrationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
@@ -48,7 +52,7 @@ class HomeControllerSpec extends ControllerSpec {
                                               obligationsConnector = mockObligationsConnector,
                                               appConfig = config,
                                               mcc = mcc,
-                                              page = page
+                                              homePage = page
   )
 
   override protected def beforeEach(): Unit = {
@@ -56,6 +60,9 @@ class HomeControllerSpec extends ControllerSpec {
     when(
       page.apply(any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
     ).thenReturn(HtmlFormat.empty)
+    when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
+      Future.successful(PPTFinancials(None, None, None))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -72,13 +79,23 @@ class HomeControllerSpec extends ControllerSpec {
 
         val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         mockGetSubscription(subscription)
-        when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
-          Future.successful(PPTFinancials(None, None, None))
-        )
 
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "redirect to the deregistered page" when {
+      "get subscription returns a 404 (NOT_FOUND)" in {
+        authorizedUser()
+        mockGetSubscriptionFailure(UpstreamErrorResponse("Subscription not found", 404))
+
+        val result = controller.displayPage()(getRequest())
+
+        redirectLocation(result) mustBe Some(
+          deregistrationRoutes.DeregisteredController.displayPage().url
+        )
       }
     }
 
@@ -90,6 +107,16 @@ class HomeControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
+
+      "get subscription returns a failure other than 404 (NOT_FOUND)" in {
+        authorizedUser()
+        mockGetSubscriptionFailure(UpstreamErrorResponse("BANG!", 500))
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[UpstreamErrorResponse](status(result))
+      }
+
     }
   }
 }
