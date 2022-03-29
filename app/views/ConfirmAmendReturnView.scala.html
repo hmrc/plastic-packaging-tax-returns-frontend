@@ -1,0 +1,30 @@
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("confirmAmendReturn.title"))) {
+
+    @formHelper(action = routes.ConfirmAmendReturnController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("confirmAmendReturn.heading")).asPageHeading()
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}
