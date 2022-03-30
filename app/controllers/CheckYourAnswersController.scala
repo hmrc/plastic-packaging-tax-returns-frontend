@@ -18,43 +18,47 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{Mode, UserAnswers}
 import pages.AmendImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{
-  AmendAreYouSureSummary,
-  AmendDirectExportPlasticPackagingSummary,
-  AmendHumanMedicinePlasticPackagingSummary,
-  AmendImportedPlasticPackagingSummary,
-  AmendManufacturedPlasticPackagingSummary,
-  AmendRecycledPlasticPackagingSummary
-}
+import viewmodels.checkAnswers.{AmendAreYouSureSummary, AmendDirectExportPlasticPackagingSummary, AmendHumanMedicinePlasticPackagingSummary, AmendImportedPlasticPackagingSummary, AmendManufacturedPlasticPackagingSummary, AmendRecycledPlasticPackagingSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: CheckYourAnswersView
-) extends FrontendBaseController with I18nSupport {
+import scala.concurrent.Future
+
+class CheckYourAnswersController @Inject()(
+                                            override val messagesApi: MessagesApi,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: CheckYourAnswersView
+                                          ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(AmendManufacturedPlasticPackagingSummary,
-              AmendImportedPlasticPackagingSummary,
-              AmendHumanMedicinePlasticPackagingSummary,
-              AmendDirectExportPlasticPackagingSummary,
-              AmendRecycledPlasticPackagingSummary
+            AmendImportedPlasticPackagingSummary,
+            AmendHumanMedicinePlasticPackagingSummary,
+            AmendDirectExportPlasticPackagingSummary,
+            AmendRecycledPlasticPackagingSummary
           ).flatMap(_.row(request.userAnswers))
         )
 
         Ok(view(list))
+    }
+
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        Future.successful(Redirect(routes.AmendConfirmationController.onPageLoad())
+        )
     }
 
 }

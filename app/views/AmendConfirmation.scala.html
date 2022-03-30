@@ -15,26 +15,17 @@
  *@
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    formHelper: FormWithCSRF
-
+layout: templates.Layout
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(
+pageTitle    = titleNoForm(messages("confirmation.title")),
+showBackLink = false
+) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+<h1 class="govuk-heading-xl">@messages("confirmation.submitted")</h1>
 
-
-    @govukSummaryList(list)
-
-    @formHelper(action = routes.AmendConfirmationController.onPageLoad(), 'autoComplete -> "off") {
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
-    }
+<p class="govuk-body">@messages("confirmation.next")</p>
 }

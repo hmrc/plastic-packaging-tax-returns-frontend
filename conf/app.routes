@@ -20,6 +20,8 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
+GET        /amendConfirmation                            controllers.AmendConfirmationController.onPageLoad()
+
 GET        /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAmendDirectExportPlasticPackaging                        controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
