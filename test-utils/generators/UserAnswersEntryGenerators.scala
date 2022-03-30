@@ -24,7 +24,71 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryAmendAreYouSureUserAnswersEntry: Arbitrary[(AmendAreYouSurePage.type, JsValue)] =
+  implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[RecycledPlasticPackagingWeightPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryManufacturedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ManufacturedPlasticPackagingWeightPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryManufacturedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ManufacturedPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryImportedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ImportedPlasticPackagingWeightPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryImportedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ImportedPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HumanMedicinesPlasticPackagingWeightPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryExportedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedPlasticPackagingWeightPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAmendAreYouSureUserAnswersEntry
+    : Arbitrary[(AmendAreYouSurePage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendAreYouSurePage.type]
