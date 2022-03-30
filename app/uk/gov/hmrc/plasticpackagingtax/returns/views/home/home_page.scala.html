@@ -122,7 +122,9 @@
 
 @managementCards = {
     @entityManagementCards
-    @deregister
+    @if(appConfig.isDeRegistrationFeatureEnabled) {
+        @deregister
+    }
 }
 
 @returnsLine1 = @{
@@ -203,10 +205,8 @@
 
     <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
 
-    @if(appConfig.isDeRegistrationFeatureEnabled) {
-        <div class="govuk-grid-row govuk-!-margin-top-4">
-            @managementCards
-        </div>
-    }
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        @managementCards
+    </div>
 }
 
