@@ -49,3 +49,8 @@ GET        /amendAreYouSure                        controllers.AmendAreYouSureCo
 POST       /amendAreYouSure                        controllers.AmendAreYouSureController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onSubmit(mode: Mode = CheckMode)
+
+GET        /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
+POST       /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)
+GET        /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = CheckMode)
