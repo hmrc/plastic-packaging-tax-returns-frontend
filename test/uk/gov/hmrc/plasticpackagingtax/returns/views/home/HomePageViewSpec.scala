@@ -89,22 +89,28 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
   val pptFinancials = Some("You owe £100")
 
   private def createView(
+    appConfig: AppConfig,
     subscription: SubscriptionDisplayResponse,
     obligations: Option[PPTObligations]
   ): Html =
-    homePage(subscription, obligations, pptFinancials, completeReturnUrl, "XMPPT0000000001")(
-      authenticatedRequest,
-      messages
-    )
+    homePage(appConfig,
+             subscription,
+             obligations,
+             pptFinancials,
+             completeReturnUrl,
+             "XMPPT0000000001"
+    )(authenticatedRequest, messages)
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(singleEntitySubscription,
+    homePage.f(appConfig,
+               singleEntitySubscription,
                Some(noneDueUpToDate),
                pptFinancials,
                "url",
                "XMPPT0000000001"
     )(authenticatedRequest, messages)
-    homePage.render(singleEntitySubscription,
+    homePage.render(appConfig,
+                    singleEntitySubscription,
                     Some(noneDueUpToDate),
                     pptFinancials,
                     "url",
@@ -127,7 +133,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             (Partnership, partnershipSubscription)
         ).foreach {
           case (subscriptionType, subscription) =>
-            val view: Html = createView(subscription, Some(obligations))
+            val view: Html = createView(appConfig, subscription, Some(obligations))
 
             s"displaying $subscriptionType subscription" when {
               s"$obligationType obligations" should {
@@ -284,6 +290,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                       coreManagement.select("p").text() mustBe messages(
                         "account.homePage.card.registration.details.1.body"
                       )
+
                       coreManagement.select("a").first() must haveHref(
                         appConfig.pptRegistrationAmendUrl
                       )
@@ -324,6 +331,28 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             }
         }
     }
+
+    "not render the de-registration link" when {
+      "deregistration enabled feature flag is false" in {
+        val mockAppConfig = mock[AppConfig]
+        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(false)
+
+        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
+
+        view.getElementById("deregister") mustBe null
+      }
+    }
+
+    "render the de-registration link" when {
+      "deregistration enabled feature flag is true" in {
+        val mockAppConfig = mock[AppConfig]
+        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
+
+        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
+
+        view.getElementById("deregister") must not be null
+      }
+    }
   }
 
   private def checkDeregisterCard(deregister: Element) = {
@@ -334,7 +363,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
   "get obligations fails" should {
     "inform the user" in {
-      val viewWithoutObligations: Html = createView(singleEntitySubscription, None)
+      val viewWithoutObligations: Html = createView(appConfig, singleEntitySubscription, None)
       val card                         = viewWithoutObligations.select(".card .card-body").get(0)
 
       card.select(".govuk-body").first() must containMessage(
