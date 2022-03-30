@@ -52,8 +52,8 @@ class HomeController @Inject() (
 
       for {
         subscription     <- subscriptionConnector.get(pptReference)
-        paymentStatement <- callFinancialApi(pptReference)
-        obligations      <- callObligationApi(pptReference)
+        paymentStatement <- getPaymentsStatement(pptReference)
+        obligations      <- getObligationsDetail(pptReference)
       } yield Ok(
         page(appConfig,
              subscription,
@@ -66,7 +66,7 @@ class HomeController @Inject() (
 
     }
 
-  private def callFinancialApi(
+  private def getPaymentsStatement(
     pptReference: String
   )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
     if (appConfig.isFeatureEnabled(Features.paymentsEnabled))
@@ -75,7 +75,7 @@ class HomeController @Inject() (
       ).recoverWith { case _: Exception => Future(None) }
     else Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
 
-  private def callObligationApi(
+  private def getObligationsDetail(
     pptReference: String
   )(implicit hc: HeaderCarrier): Future[Option[PPTObligations]] =
     if (appConfig.isFeatureEnabled(Features.returnsEnabled))
