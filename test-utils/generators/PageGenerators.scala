@@ -21,7 +21,6 @@ import pages._
 
 trait PageGenerators {
 
-
   implicit lazy val arbitraryConvertedPackagingCreditPage
     : Arbitrary[ConvertedPackagingCreditPage.type] =
     Arbitrary(ConvertedPackagingCreditPage)
