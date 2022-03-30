@@ -34,6 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.FinancialsConnector
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
   routes => deregistrationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.{EisError, EisFailure}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
@@ -95,9 +96,19 @@ class HomeControllerSpec extends ControllerSpec {
     }
 
     "redirect to the deregistered page" when {
-      "get subscription returns a 404 (NOT_FOUND)" in {
+      "get subscription returns a 404 (NOT_FOUND) and EisFailure body confirming this" in {
         authorizedUser()
-        mockGetSubscriptionFailure(UpstreamErrorResponse("Subscription not found", 404))
+        mockGetSubscriptionFailure(
+          EisFailure(
+            Seq(
+              EisError(
+                "NO_DATA_FOUND",
+                "The remote endpoint has indicated that the requested resource could not be found."
+              )
+            ),
+            404
+          )
+        )
 
         val result = controller.displayPage()(getRequest())
 
@@ -172,13 +183,26 @@ class HomeControllerSpec extends ControllerSpec {
         intercept[RuntimeException](status(result))
       }
 
-      "get subscription returns a failure other than 404 (NOT_FOUND)" in {
+      "get subscription returns a 404 (NOT_FOUND) but no confirming EisFailure in the body" in {
         authorizedUser()
-        mockGetSubscriptionFailure(UpstreamErrorResponse("BANG!", 500))
+        mockGetSubscriptionFailure(
+          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 404)
+        )
 
         val result = controller.displayPage()(getRequest())
 
-        intercept[UpstreamErrorResponse](status(result))
+        intercept[RuntimeException](status(result))
+      }
+
+      "get subscription returns a failure other than 404 (NOT_FOUND)" in {
+        authorizedUser()
+        mockGetSubscriptionFailure(
+          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 500)
+        )
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
       }
 
     }
