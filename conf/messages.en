@@ -115,3 +115,61 @@ convertedPackagingCredit.error.required = Enter your convertedPackagingCredit
 convertedPackagingCredit.error.wholeNumber = Enter your convertedPackagingCredit using whole numbers
 convertedPackagingCredit.error.outOfRange = ConvertedPackagingCredit must be between {0} and {1}
 convertedPackagingCredit.change.hidden = ConvertedPackagingCredit
+
+exportedPlasticPackagingWeight.title = ExportedPlasticPackagingWeight
+exportedPlasticPackagingWeight.heading = ExportedPlasticPackagingWeight
+exportedPlasticPackagingWeight.checkYourAnswersLabel = ExportedPlasticPackagingWeight
+exportedPlasticPackagingWeight.error.nonNumeric = Enter your exportedPlasticPackagingWeight using numbers
+exportedPlasticPackagingWeight.error.required = Enter your exportedPlasticPackagingWeight
+exportedPlasticPackagingWeight.error.wholeNumber = Enter your exportedPlasticPackagingWeight using whole numbers
+exportedPlasticPackagingWeight.error.outOfRange = ExportedPlasticPackagingWeight must be between {0} and {1}
+exportedPlasticPackagingWeight.change.hidden = ExportedPlasticPackagingWeight
+
+humanMedicinesPlasticPackagingWeight.title = HumanMedicinesPlasticPackagingWeight
+humanMedicinesPlasticPackagingWeight.heading = HumanMedicinesPlasticPackagingWeight
+humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = HumanMedicinesPlasticPackagingWeight
+humanMedicinesPlasticPackagingWeight.error.nonNumeric = Enter your humanMedicinesPlasticPackagingWeight using numbers
+humanMedicinesPlasticPackagingWeight.error.required = Enter your humanMedicinesPlasticPackagingWeight
+humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter your humanMedicinesPlasticPackagingWeight using whole numbers
+humanMedicinesPlasticPackagingWeight.error.outOfRange = HumanMedicinesPlasticPackagingWeight must be between {0} and {1}
+humanMedicinesPlasticPackagingWeight.change.hidden = HumanMedicinesPlasticPackagingWeight
+
+importedPlasticPackaging.title = importedPlasticPackaging
+importedPlasticPackaging.heading = importedPlasticPackaging
+importedPlasticPackaging.checkYourAnswersLabel = importedPlasticPackaging
+importedPlasticPackaging.error.required = Select yes if importedPlasticPackaging
+importedPlasticPackaging.change.hidden = ImportedPlasticPackaging
+
+importedPlasticPackagingWeight.title = ImportedPlasticPackagingWeight
+importedPlasticPackagingWeight.heading = ImportedPlasticPackagingWeight
+importedPlasticPackagingWeight.checkYourAnswersLabel = ImportedPlasticPackagingWeight
+importedPlasticPackagingWeight.error.nonNumeric = Enter your importedPlasticPackagingWeight using numbers
+importedPlasticPackagingWeight.error.required = Enter your importedPlasticPackagingWeight
+importedPlasticPackagingWeight.error.wholeNumber = Enter your importedPlasticPackagingWeight using whole numbers
+importedPlasticPackagingWeight.error.outOfRange = ImportedPlasticPackagingWeight must be between {0} and {1}
+importedPlasticPackagingWeight.change.hidden = ImportedPlasticPackagingWeight
+
+manufacturedPlasticPackaging.title = manufacturedPlasticPackaging
+manufacturedPlasticPackaging.heading = manufacturedPlasticPackaging
+manufacturedPlasticPackaging.checkYourAnswersLabel = manufacturedPlasticPackaging
+manufacturedPlasticPackaging.error.required = Select yes if manufacturedPlasticPackaging
+manufacturedPlasticPackaging.change.hidden = ManufacturedPlasticPackaging
+
+manufacturedPlasticPackagingWeight.title = ManufacturedPlasticPackagingWeight
+manufacturedPlasticPackagingWeight.heading = ManufacturedPlasticPackagingWeight
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = ManufacturedPlasticPackagingWeight
+manufacturedPlasticPackagingWeight.error.nonNumeric = Enter your manufacturedPlasticPackagingWeight using numbers
+manufacturedPlasticPackagingWeight.error.required = Enter your manufacturedPlasticPackagingWeight
+manufacturedPlasticPackagingWeight.error.wholeNumber = Enter your manufacturedPlasticPackagingWeight using whole numbers
+manufacturedPlasticPackagingWeight.error.outOfRange = ManufacturedPlasticPackagingWeight must be between {0} and {1}
+manufacturedPlasticPackagingWeight.change.hidden = ManufacturedPlasticPackagingWeight
+
+recycledPlasticPackagingWeight.title = RecycledPlasticPackagingWeight
+recycledPlasticPackagingWeight.heading = RecycledPlasticPackagingWeight
+recycledPlasticPackagingWeight.checkYourAnswersLabel = RecycledPlasticPackagingWeight
+recycledPlasticPackagingWeight.error.nonNumeric = Enter your recycledPlasticPackagingWeight using numbers
+recycledPlasticPackagingWeight.error.required = Enter your recycledPlasticPackagingWeight
+recycledPlasticPackagingWeight.error.wholeNumber = Enter your recycledPlasticPackagingWeight using whole numbers
+recycledPlasticPackagingWeight.error.outOfRange = RecycledPlasticPackagingWeight must be between {0} and {1}
+recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
+
