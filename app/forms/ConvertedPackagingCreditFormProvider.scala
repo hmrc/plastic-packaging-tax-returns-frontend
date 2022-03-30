@@ -24,10 +24,13 @@ class ConvertedPackagingCreditFormProvider @Inject() extends Mappings {
 
   def apply(): Form[BigDecimal] =
     Form(
-      "value" -> currency(
-        "convertedPackagingCredit.error.required",
-        "convertedPackagingCredit.error.wholeNumber",
-        "convertedPackagingCredit.error.nonNumeric")
-        .verifying(inRange[BigDecimal](0.01, 999999999.99, "convertedPackagingCredit.error.outOfRange"))
+      "value" -> currency("convertedPackagingCredit.error.required",
+                          "convertedPackagingCredit.error.wholeNumber",
+                          "convertedPackagingCredit.error.nonNumeric"
+      )
+        .verifying(
+          inRange[BigDecimal](0.01, 99999999.99, "convertedPackagingCredit.error.outOfRange")
+        )
     )
+
 }

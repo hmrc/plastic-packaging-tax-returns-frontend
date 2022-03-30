@@ -24,19 +24,25 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ConvertedPackagingCreditSummary  {
+object ConvertedPackagingCreditSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ConvertedPackagingCreditPage).map {
       answer =>
-
-        SummaryListRowViewModel(
-          key     = "convertedPackagingCredit.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ConvertedPackagingCreditController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("convertedPackagingCredit.change.hidden"))
-          )
+        SummaryListRowViewModel(key = "convertedPackagingCredit.checkYourAnswersLabel",
+                                value = ValueViewModel(answer.toString),
+                                actions = Seq(
+                                  ActionItemViewModel(
+                                    "site.change",
+                                    routes.ConvertedPackagingCreditController.onPageLoad(
+                                      CheckMode
+                                    ).url
+                                  )
+                                    .withVisuallyHiddenText(
+                                      messages("convertedPackagingCredit.change.hidden")
+                                    )
+                                )
         )
     }
+
 }

@@ -30,11 +30,13 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
 
-  protected def currency(requiredKey: String = "error.required",
-                         invalidNumeric: String = "error.invalidNumeric",
-                         nonNumericKey: String = "error.nonNumeric",
-                         decimalCount: Int = 2,
-                         args: Seq[String] = Seq.empty): FieldMapping[BigDecimal] =
+  protected def currency(
+    requiredKey: String = "error.required",
+    invalidNumeric: String = "error.invalidNumeric",
+    nonNumericKey: String = "error.nonNumeric",
+    decimalCount: Int = 2,
+    args: Seq[String] = Seq.empty
+  ): FieldMapping[BigDecimal] =
     of(currencyFormatter(requiredKey, invalidNumeric, nonNumericKey, decimalCount, args))
 
   protected def int(

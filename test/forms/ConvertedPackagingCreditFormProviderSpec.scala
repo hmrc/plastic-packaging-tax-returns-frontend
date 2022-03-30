@@ -46,15 +46,9 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
       behave like decimalField(form,
                                fieldName,
                                nonNumericError =
-                                 FormError(fieldName,
-                                           "convertedPackagingCredit.error.nonNumeric",
-                                           Seq(packagingCredit)
-                                 ),
+                                 FormError(fieldName, "convertedPackagingCredit.error.nonNumeric"),
                                invalidNumericError =
-                                 FormError(fieldName,
-                                           "convertedPackagingCredit.error.wholeNumber",
-                                           Seq(packagingCredit)
-                                 )
+                                 FormError(fieldName, "convertedPackagingCredit.error.wholeNumber")
       )
 
       behave like decimalFieldWithRange(form,
@@ -71,10 +65,7 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
       behave like mandatoryField(form,
                                  fieldName,
                                  requiredError =
-                                   FormError(fieldName,
-                                             "convertedPackagingCredit.error.required",
-                                             Seq(packagingCredit)
-                                   )
+                                   FormError(fieldName, "convertedPackagingCredit.error.required")
       )
     }
   }

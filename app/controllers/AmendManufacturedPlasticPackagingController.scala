@@ -50,9 +50,7 @@ class AmendManufacturedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm =
-          request.userAnswers.get(
-            AmendManufacturedPlasticPackagingPage
-          ) match {
+          request.userAnswers.get(AmendManufacturedPlasticPackagingPage) match {
             case None        => form
             case Some(value) => form.fill(value)
           }
@@ -68,10 +66,7 @@ class AmendManufacturedPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(
-                  AmendManufacturedPlasticPackagingPage,
-                  value
-                )
+                request.userAnswers.set(AmendManufacturedPlasticPackagingPage, value)
               )
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
