@@ -50,6 +50,11 @@ POST       /amendAreYouSure                        controllers.AmendAreYouSureCo
 GET        /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onSubmit(mode: Mode = CheckMode)
 
+GET        /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
+POST       /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)
+GET        /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = CheckMode)
+
 GET        /exportedPlasticPackagingWeight                  controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
 POST       /exportedPlasticPackagingWeight                  controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /changeExportedPlasticPackagingWeight                        controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
@@ -84,3 +89,4 @@ GET        /recycledPlasticPackagingWeight                  controllers.Recycled
 POST       /recycledPlasticPackagingWeight                  controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+

@@ -21,6 +21,10 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryConvertedPackagingCreditPage
+    : Arbitrary[ConvertedPackagingCreditPage.type] =
+    Arbitrary(ConvertedPackagingCreditPage)
+
   implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
     : Arbitrary[RecycledPlasticPackagingWeightPage.type] =
     Arbitrary(RecycledPlasticPackagingWeightPage)

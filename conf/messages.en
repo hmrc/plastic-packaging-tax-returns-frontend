@@ -107,6 +107,15 @@ amendAreYouSure.checkYourAnswersLabel = amendAreYouSure
 amendAreYouSure.error.required = Select yes if amendAreYouSure
 amendAreYouSure.change.hidden = AmendAreYouSure
 
+convertedPackagingCredit.title = ConvertedPackagingCredit
+convertedPackagingCredit.heading = ConvertedPackagingCredit
+convertedPackagingCredit.checkYourAnswersLabel = ConvertedPackagingCredit
+convertedPackagingCredit.error.nonNumeric = Enter your convertedPackagingCredit using numbers
+convertedPackagingCredit.error.required = Enter your convertedPackagingCredit
+convertedPackagingCredit.error.wholeNumber = Enter your convertedPackagingCredit using whole numbers
+convertedPackagingCredit.error.outOfRange = ConvertedPackagingCredit must be between {0} and {1}
+convertedPackagingCredit.change.hidden = ConvertedPackagingCredit
+
 exportedPlasticPackagingWeight.title = ExportedPlasticPackagingWeight
 exportedPlasticPackagingWeight.heading = ExportedPlasticPackagingWeight
 exportedPlasticPackagingWeight.checkYourAnswersLabel = ExportedPlasticPackagingWeight
@@ -163,3 +172,4 @@ recycledPlasticPackagingWeight.error.required = Enter your recycledPlasticPackag
 recycledPlasticPackagingWeight.error.wholeNumber = Enter your recycledPlasticPackagingWeight using whole numbers
 recycledPlasticPackagingWeight.error.outOfRange = RecycledPlasticPackagingWeight must be between {0} and {1}
 recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
+
