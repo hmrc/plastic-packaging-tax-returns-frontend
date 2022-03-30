@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.connectors
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.{
@@ -50,13 +50,6 @@ class SubscriptionConnector @Inject() (
           response
       }
       .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to retrieve subscription details for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
-      }
   }
 
   def update(pptReferenceNumber: String, updateRequest: SubscriptionUpdateRequest)(implicit

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   FinancialsConnector,
@@ -26,6 +26,9 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   SubscriptionConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
+  routes => deregistrationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
@@ -41,7 +44,7 @@ class HomeController @Inject() (
   obligationsConnector: ObligationsConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
-  page: home_page
+  homePage: home_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -50,19 +53,25 @@ class HomeController @Inject() (
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
-      for {
-        subscription     <- subscriptionConnector.get(pptReference)
-        paymentStatement <- getPaymentsStatement(pptReference)
-        obligations      <- getObligationsDetail(pptReference)
-      } yield Ok(
-        page(appConfig,
-             subscription,
-             obligations,
-             paymentStatement,
-             appConfig.pptCompleteReturnGuidanceUrl,
-             pptReference
-        )
-      )
+      subscriptionConnector.get(pptReference).flatMap(
+        subscription =>
+          for {
+            paymentStatement <- getPaymentsStatement(pptReference)
+            obligations      <- getObligationsDetail(pptReference)
+          } yield Ok(
+            homePage(appConfig,
+                     subscription,
+                     obligations,
+                     paymentStatement,
+                     appConfig.pptCompleteReturnGuidanceUrl,
+                     pptReference
+            )
+          )
+      ).recover {
+        case httpEx: UpstreamErrorResponse if isDeregistered(httpEx) =>
+          Redirect(deregistrationRoutes.DeregisteredController.displayPage())
+        case ex: Throwable => throw ex
+      }
 
     }
 
@@ -84,4 +93,5 @@ class HomeController @Inject() (
       }
     else Future.successful(Some(PPTObligations(None, None, 0, false, false)))
 
+  private def isDeregistered(ex: UpstreamErrorResponse) = ex.statusCode == NOT_FOUND
 }

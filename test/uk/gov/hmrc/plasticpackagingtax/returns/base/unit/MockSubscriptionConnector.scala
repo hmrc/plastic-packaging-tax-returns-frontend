@@ -49,6 +49,11 @@ trait MockSubscriptionConnector extends MockitoSugar with BeforeAndAfterEach {
     when(mockSubscriptionConnector.get(any[String])(any()))
       .thenThrow(DownstreamServiceError("some error", new Exception("some error")))
 
+  def mockGetSubscriptionFailure(
+    ex: Exception
+  ): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
+    when(mockSubscriptionConnector.get(any[String])(any())).thenReturn(Future.failed(ex))
+
   def mockUpdateSubscription(
     dataToReturn: SubscriptionUpdateResponse
   ): OngoingStubbing[Future[SubscriptionUpdateResponse]] =

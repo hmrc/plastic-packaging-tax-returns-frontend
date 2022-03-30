@@ -13,3 +13,5 @@ GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.returns.cont
 
 GET        /user-unauthorised       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.UnauthorisedController.unauthorised()
 GET        /not-enrolled       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.UnauthorisedController.notEnrolled()
+
+GET        /deregistered-account    uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.DeregisteredController.displayPage()
