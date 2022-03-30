@@ -21,25 +21,32 @@ import pages._
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryRecycledPlasticPackagingWeightPage: Arbitrary[RecycledPlasticPackagingWeightPage.type] =
+  implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
+    : Arbitrary[RecycledPlasticPackagingWeightPage.type] =
     Arbitrary(RecycledPlasticPackagingWeightPage)
 
-  implicit lazy val arbitraryManufacturedPlasticPackagingWeightPage: Arbitrary[ManufacturedPlasticPackagingWeightPage.type] =
+  implicit lazy val arbitraryManufacturedPlasticPackagingWeightPage
+    : Arbitrary[ManufacturedPlasticPackagingWeightPage.type] =
     Arbitrary(ManufacturedPlasticPackagingWeightPage)
 
-  implicit lazy val arbitraryManufacturedPlasticPackagingPage: Arbitrary[ManufacturedPlasticPackagingPage.type] =
+  implicit lazy val arbitraryManufacturedPlasticPackagingPage
+    : Arbitrary[ManufacturedPlasticPackagingPage.type] =
     Arbitrary(ManufacturedPlasticPackagingPage)
 
-  implicit lazy val arbitraryImportedPlasticPackagingWeightPage: Arbitrary[ImportedPlasticPackagingWeightPage.type] =
+  implicit lazy val arbitraryImportedPlasticPackagingWeightPage
+    : Arbitrary[ImportedPlasticPackagingWeightPage.type] =
     Arbitrary(ImportedPlasticPackagingWeightPage)
 
-  implicit lazy val arbitraryImportedPlasticPackagingPage: Arbitrary[ImportedPlasticPackagingPage.type] =
+  implicit lazy val arbitraryImportedPlasticPackagingPage
+    : Arbitrary[ImportedPlasticPackagingPage.type] =
     Arbitrary(ImportedPlasticPackagingPage)
 
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightPage: Arbitrary[HumanMedicinesPlasticPackagingWeightPage.type] =
+  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightPage
+    : Arbitrary[HumanMedicinesPlasticPackagingWeightPage.type] =
     Arbitrary(HumanMedicinesPlasticPackagingWeightPage)
 
-  implicit lazy val arbitraryExportedPlasticPackagingWeightPage: Arbitrary[ExportedPlasticPackagingWeightPage.type] =
+  implicit lazy val arbitraryExportedPlasticPackagingWeightPage
+    : Arbitrary[ExportedPlasticPackagingWeightPage.type] =
     Arbitrary(ExportedPlasticPackagingWeightPage)
 
   implicit lazy val arbitraryAmendAreYouSurePage: Arbitrary[AmendAreYouSurePage.type] =

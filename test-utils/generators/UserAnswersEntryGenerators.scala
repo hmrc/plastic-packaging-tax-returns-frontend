@@ -24,7 +24,8 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry: Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[RecycledPlasticPackagingWeightPage.type]
@@ -32,7 +33,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryManufacturedPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryManufacturedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ManufacturedPlasticPackagingWeightPage.type]
@@ -40,7 +42,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryManufacturedPlasticPackagingUserAnswersEntry: Arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryManufacturedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ManufacturedPlasticPackagingPage.type]
@@ -48,7 +51,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryImportedPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryImportedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ImportedPlasticPackagingWeightPage.type]
@@ -56,7 +60,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryImportedPlasticPackagingUserAnswersEntry: Arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryImportedPlasticPackagingUserAnswersEntry
+    : Arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ImportedPlasticPackagingPage.type]
@@ -64,7 +69,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightUserAnswersEntry: Arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[HumanMedicinesPlasticPackagingWeightPage.type]
@@ -72,7 +78,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryExportedPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryExportedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ExportedPlasticPackagingWeightPage.type]
@@ -80,7 +87,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendAreYouSureUserAnswersEntry: Arbitrary[(AmendAreYouSurePage.type, JsValue)] =
+  implicit lazy val arbitraryAmendAreYouSureUserAnswersEntry
+    : Arbitrary[(AmendAreYouSurePage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendAreYouSurePage.type]
