@@ -16,15 +16,18 @@
 
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.returns.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   FinancialsConnector,
   ObligationsConnector,
   SubscriptionConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
+import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -48,15 +51,12 @@ class HomeController @Inject() (
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
       for {
-        subscription <- subscriptionConnector.get(pptReference)
-        paymentStatement <- financialsConnector.getPaymentStatement(pptReference).map(
-          response => Some(response.paymentStatement())
-        ).recoverWith { case _: Exception => Future(None) }
-        obligations <- obligationsConnector.get(pptReference).map(
-          response => Some(response)
-        ).recoverWith { case _ => Future(None) }
+        subscription     <- subscriptionConnector.get(pptReference)
+        paymentStatement <- getPaymentsStatement(pptReference)
+        obligations      <- getObligationsDetail(pptReference)
       } yield Ok(
-        page(subscription,
+        page(appConfig,
+             subscription,
              obligations,
              paymentStatement,
              appConfig.pptCompleteReturnGuidanceUrl,
@@ -65,5 +65,23 @@ class HomeController @Inject() (
       )
 
     }
+
+  private def getPaymentsStatement(
+    pptReference: String
+  )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
+    if (appConfig.isFeatureEnabled(Features.paymentsEnabled))
+      financialsConnector.getPaymentStatement(pptReference)(hc).map(
+        response => Some(response.paymentStatement()(messages))
+      ).recoverWith { case _: Exception => Future(None) }
+    else Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
+
+  private def getObligationsDetail(
+    pptReference: String
+  )(implicit hc: HeaderCarrier): Future[Option[PPTObligations]] =
+    if (appConfig.isFeatureEnabled(Features.returnsEnabled))
+      obligationsConnector.get(pptReference).map(response => Some(response)).recoverWith {
+        case _ => Future(None)
+      }
+    else Future.successful(Some(PPTObligations(None, None, 0, false, false)))
 
 }

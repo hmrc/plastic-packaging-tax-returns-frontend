@@ -23,11 +23,8 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.returns.{routes => returnRoutes}
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight
 import uk.gov.hmrc.plasticpackagingtax.returns.forms.RecycledPlasticWeight.form
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.Obligation
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.returns.recycled_plastic_weight_page
 import uk.gov.hmrc.plasticpackagingtax.returns.views.tags.ViewTest
-
-import java.time.LocalDate
 
 @ViewTest
 class RecycledPlasticWeightViewSpec extends UnitViewSpec with Matchers {
