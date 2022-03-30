@@ -17,19 +17,23 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
-import org.mockito.ArgumentMatchers.{eq => mockitoEq}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.{await, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.{Upstream5xxResponse, UpstreamErrorResponse}
-import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{createSubscriptionDisplayResponse, ukLimitedCompanySubscription}
+import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.{
+  createSubscriptionDisplayResponse,
+  ukLimitedCompanySubscription
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.config.Features
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.FinancialsConnector
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{routes => deregistrationRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
+  routes => deregistrationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse

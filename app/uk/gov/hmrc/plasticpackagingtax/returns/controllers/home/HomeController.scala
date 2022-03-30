@@ -19,10 +19,16 @@ package uk.gov.hmrc.plasticpackagingtax.returns.controllers.home
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
-import uk.gov.hmrc.plasticpackagingtax.returns.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
+import uk.gov.hmrc.plasticpackagingtax.returns.config.{AppConfig, Features}
+import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  FinancialsConnector,
+  ObligationsConnector,
+  SubscriptionConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{routes => deregistrationRoutes}
+import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
+  routes => deregistrationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
