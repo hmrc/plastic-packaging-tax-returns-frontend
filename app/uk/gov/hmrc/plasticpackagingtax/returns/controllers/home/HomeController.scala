@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.plasticpackagingtax.returns.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
+  DownstreamServiceError,
   FinancialsConnector,
   ObligationsConnector,
   SubscriptionConnector
@@ -29,8 +30,10 @@ import uk.gov.hmrc.plasticpackagingtax.returns.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.{
   routes => deregistrationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.EisFailure
 import uk.gov.hmrc.plasticpackagingtax.returns.models.financials.PPTFinancials
 import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.PPTObligations
+import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.views.html.home.home_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -53,8 +56,8 @@ class HomeController @Inject() (
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
-      subscriptionConnector.get(pptReference).flatMap(
-        subscription =>
+      subscriptionConnector.get(pptReference).flatMap {
+        case Right(subscription) =>
           for {
             paymentStatement <- getPaymentsStatement(pptReference)
             obligations      <- getObligationsDetail(pptReference)
@@ -67,12 +70,15 @@ class HomeController @Inject() (
                      pptReference
             )
           )
-      ).recover {
-        case httpEx: UpstreamErrorResponse if isDeregistered(httpEx) =>
-          Redirect(deregistrationRoutes.DeregisteredController.displayPage())
-        case ex: Throwable => throw ex
+        case Left(eisFailure) =>
+          if (isDeregistered(eisFailure))
+            Future.successful(Redirect(deregistrationRoutes.DeregisteredController.displayPage()))
+          else
+            throw new RuntimeException(
+              s"Failed to get subscription - ${eisFailure.failures.headOption.map(_.reason)
+                .getOrElse("no underlying reason supplied")}"
+            )
       }
-
     }
 
   private def getPaymentsStatement(
@@ -93,5 +99,7 @@ class HomeController @Inject() (
       }
     else Future.successful(Some(PPTObligations(None, None, 0, false, false)))
 
-  private def isDeregistered(ex: UpstreamErrorResponse) = ex.statusCode == NOT_FOUND
+  private def isDeregistered(eisFailure: EisFailure) =
+    eisFailure.failures.exists(_.code == "NO_DATA_FOUND")
+
 }

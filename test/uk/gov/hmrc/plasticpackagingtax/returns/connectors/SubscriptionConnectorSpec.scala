@@ -66,7 +66,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
 
         val res = await(connector.get(pptReference))
 
-        res mustBe expectedRegDetails
+        res mustBe Right(expectedRegDetails)
         getTimer("ppt.subscription.get.timer").getCount mustBe 1
       }
     }

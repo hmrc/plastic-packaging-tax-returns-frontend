@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.connectors.{
   DownstreamServiceError,
   SubscriptionConnector
 }
+import uk.gov.hmrc.plasticpackagingtax.returns.models.EisFailure
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import uk.gov.hmrc.plasticpackagingtax.returns.models.subscription.subscriptionUpdate.{
   SubscriptionUpdateRequest,
@@ -41,18 +42,21 @@ trait MockSubscriptionConnector extends MockitoSugar with BeforeAndAfterEach {
 
   def mockGetSubscription(
     dataToReturn: SubscriptionDisplayResponse
-  ): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
+  ): OngoingStubbing[Future[Either[EisFailure, SubscriptionDisplayResponse]]] =
     when(mockSubscriptionConnector.get(any[String])(any()))
-      .thenReturn(Future.successful(dataToReturn))
+      .thenReturn(Future.successful(Right(dataToReturn)))
 
-  def mockGetSubscriptionFailure(): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
+  def mockGetSubscriptionFailure()
+    : OngoingStubbing[Future[Either[EisFailure, SubscriptionDisplayResponse]]] =
     when(mockSubscriptionConnector.get(any[String])(any()))
       .thenThrow(DownstreamServiceError("some error", new Exception("some error")))
 
   def mockGetSubscriptionFailure(
-    ex: Exception
-  ): OngoingStubbing[Future[SubscriptionDisplayResponse]] =
-    when(mockSubscriptionConnector.get(any[String])(any())).thenReturn(Future.failed(ex))
+    eisFailure: EisFailure
+  ): OngoingStubbing[Future[Either[EisFailure, SubscriptionDisplayResponse]]] =
+    when(mockSubscriptionConnector.get(any[String])(any())).thenReturn(
+      Future.successful(Left(eisFailure))
+    )
 
   def mockUpdateSubscription(
     dataToReturn: SubscriptionUpdateResponse
