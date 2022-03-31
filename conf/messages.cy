@@ -46,8 +46,6 @@ sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
 
-site.backToGovUk = Back to GOV.UK
-
 site.back  = Yn ôl
 site.back.hiddenText  = i’r dudalen flaenorol
 site.backToGovUk  = Yn ôl i GOV.UK
