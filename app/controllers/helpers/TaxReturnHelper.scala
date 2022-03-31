@@ -6,47 +6,27 @@ import pages._
 
 class TaxReturnHelper {
 
-  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn ={
-
-    val manufacturedPlasticWeight: Option[Int] = userAnswers.get(AmendManufacturedPlasticPackagingPage)
-    val importedPlasticWeight: Option[Int] = userAnswers.get(AmendImportedPlasticPackagingPage)
-    val humanMedicinesPlasticWeight: Option[Int] = userAnswers.get(AmendHumanMedicinePlasticPackagingPage)
-    val exportedPlasticWeight: Option[Int] = userAnswers.get(AmendDirectExportPlasticPackagingPage)
-    val recycledPlasticWeight:Option[Int] = userAnswers.get(AmendRecycledPlasticPackagingPage)
-
-    val mpw: Option[ManufacturedPlasticWeight] = manufacturedPlasticWeight match {
-      case Some(value) => Some(ManufacturedPlasticWeight(value))
-      case _ => None
-    }
-
-    val ipw: Option[ImportedPlasticWeight] = importedPlasticWeight match {
-      case Some(value) => Some(ImportedPlasticWeight(value))
-      case None => None
-    }
-
-    val hmpw: Option[HumanMedicinesPlasticWeight] = humanMedicinesPlasticWeight match {
-      case Some(value) => Some(HumanMedicinesPlasticWeight(value))
-      case None => None
-    }
-
-    val epw: Option[ExportedPlasticWeight] = exportedPlasticWeight match {
-      case Some(value) => Some(ExportedPlasticWeight(value))
-      case None => None
-    }
-
-    val rpw: Option[RecycledPlasticWeight] = recycledPlasticWeight match {
-      case Some(value) => Some(RecycledPlasticWeight(value))
-      case _ => None
-    }
-
+  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn =
     TaxReturn(id = pptReference,
-      manufacturedPlasticWeight = mpw,
-      importedPlasticWeight = ipw,
-      humanMedicinesPlasticWeight = hmpw,
-      exportedPlasticWeight = epw,
-      recycledPlasticWeight = rpw
+              manufacturedPlasticWeight =
+                userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
+                  value => ManufacturedPlasticWeight(value)
+                ),
+              importedPlasticWeight =
+                userAnswers.get(AmendImportedPlasticPackagingPage).map(
+                  value => ImportedPlasticWeight(value)
+                ),
+              humanMedicinesPlasticWeight =
+                userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
+                  value => HumanMedicinesPlasticWeight(value)
+                ),
+              exportedPlasticWeight =
+                userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
+                  value => ExportedPlasticWeight(value)
+                ),
+              recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
+                value => RecycledPlasticWeight(value)
+              )
     )
-
-  }
 
 }
