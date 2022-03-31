@@ -11,7 +11,7 @@ account.homePage.card.makeReturn.line1.singleOverdue = Your return for {0} is ov
 account.homePage.card.makeReturn.line1.none = You have no returns to submit.
 account.homePage.card.makeReturn.line2.due = You must submit your return for {0} between {1} and {2}.
 account.homePage.card.makeReturn.line3.createLink = Submit return
-account.homePage.card.makeReturn.guidance.link = Find out how to complete a return (opens in new tab)
+account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure = We cannot display tax return details.
 
