@@ -55,7 +55,6 @@ case class TaxReturn(
 
 object TaxReturn {
 
-
   import play.api.libs.json._
 
   implicit val dateFormatDefault: Format[DateTime] = new Format[DateTime] {

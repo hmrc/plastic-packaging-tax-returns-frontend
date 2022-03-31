@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
+import models.Mode
 import models.returns.TaxReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +32,7 @@ import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()
-(
+class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -43,26 +43,26 @@ class CheckYourAnswersController @Inject()
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(AmendManufacturedPlasticPackagingSummary,
-            AmendImportedPlasticPackagingSummary,
-            AmendHumanMedicinePlasticPackagingSummary,
-            AmendDirectExportPlasticPackagingSummary,
-            AmendRecycledPlasticPackagingSummary
+              AmendImportedPlasticPackagingSummary,
+              AmendHumanMedicinePlasticPackagingSummary,
+              AmendDirectExportPlasticPackagingSummary,
+              AmendRecycledPlasticPackagingSummary
           ).flatMap(_.row(request.userAnswers))
         )
 
-        Ok(view(list))
+        Ok(view(mode, list))
     }
 
-  def onSubmit()(implicit ec: ExecutionContext): Action[AnyContent] =
+  def onSubmit(mode:Mode)(implicit ec: ExecutionContext): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getTaxReturn("pptref", request.userAnswers)
-
+        val taxReturn = taxReturnHelper.getTaxReturn("CJT", request.userAnswers)
+        println(taxReturn)
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
@@ -71,11 +71,11 @@ class CheckYourAnswersController @Inject()
             throw error
         }
 
-
     }
 
   private def submit(
-                      taxReturn: TaxReturn
-                    )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+    taxReturn: TaxReturn
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
     returnsConnector.submit(taxReturn)
+
 }

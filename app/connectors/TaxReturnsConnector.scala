@@ -29,10 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxReturnsConnector @Inject() (
-                                      httpClient: HttpClient,
-                                      appConfig: FrontendAppConfig,
-                                      metrics: Metrics
-                                    )(implicit ec: ExecutionContext) {
+  httpClient: HttpClient,
+  appConfig: FrontendAppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
 

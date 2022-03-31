@@ -19,19 +19,17 @@
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF
-
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-
     @govukSummaryList(list)
 
-    @formHelper(action = routes.AmendConfirmationController.onPageLoad(), 'autoComplete -> "off") {
+    @formHelper(action = routes.AmendConfirmationController.onSubmit(), 'autoComplete -> "off") {
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
