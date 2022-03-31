@@ -44,7 +44,7 @@ case class TaxReturn(
   humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
   exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
   convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
-  RecycledPlasticWeight: Option[RecycledPlasticWeight] = None,
+  recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
   lastModifiedDateTime: Option[DateTime] = None
 ) {
 
@@ -54,9 +54,6 @@ case class TaxReturn(
 }
 
 object TaxReturn {
-
-
-
 
 
   import play.api.libs.json._

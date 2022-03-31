@@ -17,31 +17,28 @@
 package controllers
 
 import com.google.inject.Inject
+import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{Mode, UserAnswers}
-import pages.AmendImportedPlasticPackagingPage
+import controllers.helpers.TaxReturnHelper
+import models.returns.TaxReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{
-  AmendAreYouSureSummary,
-  AmendDirectExportPlasticPackagingSummary,
-  AmendHumanMedicinePlasticPackagingSummary,
-  AmendImportedPlasticPackagingSummary,
-  AmendManufacturedPlasticPackagingSummary,
-  AmendRecycledPlasticPackagingSummary
-}
+import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject() (
+class CheckYourAnswersController @Inject()
+(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  returnsConnector: TaxReturnsConnector,
+  taxReturnHelper: TaxReturnHelper,
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
@@ -51,20 +48,34 @@ class CheckYourAnswersController @Inject() (
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(AmendManufacturedPlasticPackagingSummary,
-              AmendImportedPlasticPackagingSummary,
-              AmendHumanMedicinePlasticPackagingSummary,
-              AmendDirectExportPlasticPackagingSummary,
-              AmendRecycledPlasticPackagingSummary
+            AmendImportedPlasticPackagingSummary,
+            AmendHumanMedicinePlasticPackagingSummary,
+            AmendDirectExportPlasticPackagingSummary,
+            AmendRecycledPlasticPackagingSummary
           ).flatMap(_.row(request.userAnswers))
         )
 
         Ok(view(list))
     }
 
-  def onSubmit(): Action[AnyContent] =
+  def onSubmit()(implicit ec: ExecutionContext): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        Future.successful(Redirect(routes.AmendConfirmationController.onPageLoad()))
+        val taxReturn = taxReturnHelper.getTaxReturn("pptref", request.userAnswers)
+
+        submit(taxReturn).map {
+          case Right(_) =>
+            Redirect(routes.AmendConfirmationController.onPageLoad())
+
+          case Left(error) =>
+            throw error
+        }
+
+
     }
 
+  private def submit(
+                      taxReturn: TaxReturn
+                    )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+    returnsConnector.submit(taxReturn)
 }
