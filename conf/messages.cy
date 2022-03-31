@@ -41,3 +41,23 @@ unauthorised.paragraph.1 = You need to {0} to use this service
 unauthorised.paragraph.1.link = register for Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
+
+sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
+sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
+sessionTimout.signin.button  = Mewngofnodi
+
+site.backToGovUk = Back to GOV.UK
+
+site.back  = Yn ôl
+site.back.hiddenText  = i’r dudalen flaenorol
+site.backToGovUk  = Yn ôl i GOV.UK
+site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.acceptAndSend  = Derbyn ac anfon
+site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
+site.error.summary.title  = Mae problem wedi codi
+site.link.change  = Newid
+site.link.change.hidden  = Newid {0}
+site.link.remove  = Tynnu
+site.link.remove.hidden  = Tynnu {0} o’r rhestr
+site.button.continue  = Yn eich blaen
+site.button.tryAgain  = Rhowch gynnig arall arni
