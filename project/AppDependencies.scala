@@ -1,4 +1,6 @@
+
 import sbt._
+
 
 object AppDependencies {
   import play.core.PlayVersion
@@ -9,7 +11,8 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-conditional-form-mapping"  % "1.9.0-play-28",
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"     % "5.18.0",
     "uk.gov.hmrc"       %% "play-language"                  % "5.1.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"             % "0.59.0"
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"             % "0.59.0",
+    "com.typesafe.play" %% "play-json-joda"                 % "2.6.14"
   )
 
   val test = Seq(
@@ -24,6 +27,7 @@ object AppDependencies {
     "org.scalacheck"          %% "scalacheck"              % "1.15.4",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-27" % "0.59.0",
     "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.2"
+
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test

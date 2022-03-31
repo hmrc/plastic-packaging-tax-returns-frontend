@@ -25,11 +25,10 @@ import views.html.AmendConfirmation
 import javax.inject.Inject
 
 class AmendConfirmationController @Inject() (
-                                  val controllerComponents: MessagesControllerComponents,
-                                  identify: IdentifierAction,
-                                  view: AmendConfirmation
-                                ) extends FrontendBaseController with I18nSupport {
-
+  val controllerComponents: MessagesControllerComponents,
+  identify: IdentifierAction,
+  view: AmendConfirmation
+) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     identify { implicit request =>

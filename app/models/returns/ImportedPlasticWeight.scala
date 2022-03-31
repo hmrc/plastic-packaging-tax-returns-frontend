@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models.returns
 
-import play.api.libs.json.{JsPath, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
-  override def path: JsPath = JsPath \ toString
+case class ImportedPlasticWeight(totalKg: Long)
 
-  override def toString: String = "convertedPackagingCredit"
+object ImportedPlasticWeight {
+  implicit val format: OFormat[ImportedPlasticWeight] = Json.format[ImportedPlasticWeight]
 }
