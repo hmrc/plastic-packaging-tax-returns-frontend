@@ -54,7 +54,8 @@ class TaxReturnsConnector @Inject() (
   def amend(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
-    httpClient.PUT[String, JsValue](appConfig.pptReturnAmendUrl(pptReference), payload.id)
+
+    httpClient.PUT[TaxReturn, JsValue](appConfig.pptReturnAmendUrl(pptReference), payload)
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax return amendment for id [$pptReference]")

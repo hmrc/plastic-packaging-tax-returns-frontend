@@ -64,9 +64,6 @@ class CheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
-
-        println("ACHI: " + taxReturn)
-
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
