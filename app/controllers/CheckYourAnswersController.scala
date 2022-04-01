@@ -30,7 +30,9 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -58,11 +60,10 @@ class CheckYourAnswersController @Inject() (
         Ok(view(mode, list))
     }
 
-  def onSubmit(mode:Mode)(implicit ec: ExecutionContext): Action[AnyContent] =
+  def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val taxReturn = taxReturnHelper.getTaxReturn("CJT", request.userAnswers)
-        println(taxReturn)
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
