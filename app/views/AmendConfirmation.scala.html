@@ -15,7 +15,8 @@
  *@
 
 @this(
-layout: templates.Layout
+layout: templates.Layout,
+govukPanel: GovukPanel
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -25,7 +26,17 @@ pageTitle    = titleNoForm(messages("confirmation.title")),
 showBackLink = false
 ) {
 
-<h1 class="govuk-heading-xl">@messages("confirmation.submitted")</h1>
+   @govukPanel(Panel(
+                    title = Text(messages("confirmation.submitted")),
+                    content = Text(messages("confirmation.panel"))
+                    )
+   )
+<p class="govuk-heading-m">What happens next</p>
+<p class="govuk-body">
+ This may take up to 24 hours to show on your Plastic Packaging Tax account</p>
 
-<p class="govuk-body">@messages("confirmation.next")</p>
+<p class="govuk-body">The amount of tax you owe may have changed.</p>
+
+<p class="govuk-body">
+ Check your PPT account when it’s been updated, to find out how much tax you need to pay and when it’s due.</p>
 }
