@@ -20,10 +20,20 @@ import models.UserAnswers
 import models.returns._
 import pages._
 
+import java.time.LocalDate
+
 class TaxReturnHelper {
+
+  val defaultObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
+                                              toDate = LocalDate.parse("2022-06-30"),
+                                              dueDate = LocalDate.parse("2022-09-30"),
+                                              periodKey = "22AC"
+  )
 
   def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn =
     TaxReturn(id = pptReference,
+              returnType = Some(ReturnType.AMEND),
+              obligation = Some(defaultObligation),
               manufacturedPlasticWeight =
                 userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
                   value => ManufacturedPlasticWeight(value)

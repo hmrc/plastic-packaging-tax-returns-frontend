@@ -63,7 +63,10 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getTaxReturn("CJT", request.userAnswers)
+        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
+
+        println("ACHI: " + taxReturn)
+
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
@@ -77,6 +80,6 @@ class CheckYourAnswersController @Inject() (
   private def submit(
     taxReturn: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
-    returnsConnector.submit(taxReturn)
+    returnsConnector.amend(taxReturn)
 
 }
