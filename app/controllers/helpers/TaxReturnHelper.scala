@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 class TaxReturnHelper {
 
-  // TODO - where do we get this obligatopn from? A GET on the return?
+  // TODO - where do we get this obligation from? A GET on the return?
   val defaultObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
                                               toDate = LocalDate.parse("2022-06-30"),
                                               dueDate = LocalDate.parse("2022-09-30"),
