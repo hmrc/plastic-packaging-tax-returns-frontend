@@ -37,8 +37,8 @@ class ViewReturnSummaryController @Inject()(
                                              identify: IdentifierAction,
                                              val controllerComponents: MessagesControllerComponents,
                                              view: ViewReturnSummaryView,
-                                           returnsConnector: TaxReturnsConnector
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                             returnsConnector: TaxReturnsConnector
+                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   // TODO stubs totally ignore this right now
   private val hardcoded_period_key = "yet-more-cheese-biscuits"
@@ -46,7 +46,7 @@ class ViewReturnSummaryController @Inject()(
   // TODO Need to get this from auth
   private val hardcoded_ppt_ref = "XMPPT0000000001"
 
-  def onPageLoad : Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     identify.async {
       implicit request =>
         val submittedReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
