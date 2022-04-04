@@ -28,6 +28,16 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@hintContent = {
+<p class="govuk-body">Do not include plastic packaging components which are (any of the following):</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>used in the long-term storage of goods</li>
+    <li>an integral part of the goods</li>
+    <li>reused for the presentation of goods</li>
+</ul>
+<p class="govuk-body">See [examples of things you should not include].</p>
+}
+
 @layout(pageTitle = title(form, messages("amendManufacturedPlasticPackaging.title"))) {
 
     @sectionHeader(messages("obligationPeriod.caption"))
@@ -45,6 +55,8 @@
             )
             .asNumeric()
             .withWidth(Fixed10)
+            .withHint(Hint(content = HtmlContent(hintContent)))
+            .describedBy("test described by part")
         )
 
         @govukButton(

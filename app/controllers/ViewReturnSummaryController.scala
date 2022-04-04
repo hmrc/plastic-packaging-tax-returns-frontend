@@ -32,12 +32,12 @@ import viewmodels.govuk.summarylist._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewReturnSummaryController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: ViewReturnSummaryView,
-  returnsConnector: TaxReturnsConnector
+class ViewReturnSummaryController @Inject()(
+                                             override val messagesApi: MessagesApi,
+                                             identify: IdentifierAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             view: ViewReturnSummaryView,
+                                           returnsConnector: TaxReturnsConnector
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   // TODO stubs totally ignore this right now

@@ -94,6 +94,7 @@ amendManufacturedPlasticPackaging.error.wholeNumber = Enter your amendManufactur
 amendManufacturedPlasticPackaging.error.outOfRange = AmendManufacturedPlasticPackaging must be between {0} and {1}
 amendManufacturedPlasticPackaging.change.hidden = AmendManufacturedPlasticPackaging
 
+
 amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
 amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported containing 30% or more recycled plastic
