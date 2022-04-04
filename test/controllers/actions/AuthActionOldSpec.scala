@@ -103,19 +103,16 @@ class AuthActionOldSpec
 
       val user = PptTestData.newUser("123", Some(pptEnrolment("")))
 
-      val t = AuthHelper.createCredentialForUser(user)
-
       running(application) {
 
         val authAction = createAuthAction(new FakeSuccessfulAuthConnectorCopy)
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(authRequest(Headers(), user))
-        println("-2-")
 
         status(result) mustBe SEE_OTHER
-        println(s"-3- =>  $result")
         redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled.url)
+
       }
     }
   }
@@ -163,7 +160,7 @@ class AuthActionOldSpec
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
+          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.notEnrolled.url
         }
       }
     }

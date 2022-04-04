@@ -29,8 +29,7 @@ class DataRetrievalActionImpl @Inject() (val sessionRepository: SessionRepositor
 
   override protected def transform[A](
     request: IdentifiedRequest[A]
-  ): Future[OptionalDataRequest[A]] = {
-    println("ACHI: " + request.user)
+  ): Future[OptionalDataRequest[A]] =
     sessionRepository.get(request.user.identityData.internalId.getOrElse("")).map {
       case None =>
         OptionalDataRequest(request.request,
@@ -43,7 +42,6 @@ class DataRetrievalActionImpl @Inject() (val sessionRepository: SessionRepositor
                             Some(userAnswers)
         )
     }
-  }
 
 }
 

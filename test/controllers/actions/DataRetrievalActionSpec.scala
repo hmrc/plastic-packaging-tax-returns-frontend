@@ -17,8 +17,8 @@
 package controllers.actions
 
 import base.SpecBase
-import models.{SignedInUser, UserAnswers}
-import models.requests.{IdentifiedRequest, IdentityData, OptionalDataRequest}
+import models.{UserAnswers}
+import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -26,7 +26,6 @@ import play.api.test.FakeRequest
 import repositories.SessionRepository
 import support.PptTestData
 import support.PptTestData.pptEnrolment
-import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

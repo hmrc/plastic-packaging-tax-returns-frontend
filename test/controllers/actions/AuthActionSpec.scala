@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase with FakeCutomRequest with MetricsMocks  {
+class AuthActionSpec extends SpecBase with FakeCutomRequest with MetricsMocks {
 
   val application = applicationBuilder(userAnswers = None).build()
   val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -86,7 +86,7 @@ class AuthActionSpec extends SpecBase with FakeCutomRequest with MetricsMocks  {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
+          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.notEnrolled.url
         }
       }
     }
@@ -149,19 +149,17 @@ class AuthActionSpec extends SpecBase with FakeCutomRequest with MetricsMocks  {
     }
   }
 
-  private def createAuthAction
-  (
+  private def createAuthAction(
     session: AuthorisationException,
     pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
-  ) = {
-    new AuthenticatedIdentifierAction(
-      new FakeFailingAuthConnectorCopy(session),
-      pptReferenceAllowedList,
-      appConfig,
-      metricsMock,
-      bodyParsers
+  ) =
+    new AuthenticatedIdentifierAction(new FakeFailingAuthConnectorCopy(session),
+                                      pptReferenceAllowedList,
+                                      appConfig,
+                                      metricsMock,
+                                      bodyParsers
     )
-  }
+
 }
 
 class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
