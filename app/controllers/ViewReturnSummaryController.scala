@@ -25,22 +25,23 @@ import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
 
-class ViewReturnSummaryController @Inject()(
-                                             override val messagesApi: MessagesApi,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             view: ViewReturnSummaryView
-                                           ) extends FrontendBaseController with I18nSupport {
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      Ok(view())
-  }
+class ViewReturnSummaryController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ViewReturnSummaryView
+) extends FrontendBaseController with I18nSupport {
+
+  def onPageLoad: Action[AnyContent] =
+    identify {
+      implicit request =>
+        Ok(view())
+    }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData) {
+    identify {
       implicit request =>
         Redirect(routes.AmendAreYouSureController.onPageLoad(NormalMode))
     }
+
 }
