@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+package connectors
 
-import play.api.libs.json.{JsPath, Json, OFormat}
+class ServiceError(private val message: String, private val cause: Throwable)
+    extends RuntimeException(message, cause) {}
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "convertedPackagingCredit"
-}
+case class DownstreamServiceError(private val message: String, private val cause: Throwable)
+    extends ServiceError(message, cause) {}

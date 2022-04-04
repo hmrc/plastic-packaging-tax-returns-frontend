@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import models.{Mode, NormalMode}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -37,9 +38,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         val view = application.injector.instanceOf[CheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
+        val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list)(request, messages(application)).toString
       }
     }
 

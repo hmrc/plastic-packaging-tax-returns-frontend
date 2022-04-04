@@ -14,25 +14,27 @@
  * limitations under the License.
  *@
 
+@import views.html.componants.{SectionHeader, Link}
+@import models.NormalMode
+
 @this(
     layout: templates.Layout,
+    formHelper: FormWithCSRF,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
-    formHelper: FormWithCSRF
+    sectionHeader: SectionHeader,
+    link: Link
 )
 
-@(mode: Mode, list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, list: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(returnPeriod)) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    @sectionHeader(messages("viewReturnSummary.sectionHeader"))
+    <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
+    @link("amend-return", messages("viewReturnSummary.amendLink"), routes.AmendAreYouSureController.onPageLoad(NormalMode))
+
+    <h2 class="govuk-heading-l">@messages("viewReturnSummary.summaryHeading")</h2>
     @govukSummaryList(list)
-
-    @formHelper(action = routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
-    }
 }

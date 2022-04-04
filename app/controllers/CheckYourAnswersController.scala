@@ -17,9 +17,14 @@
 package controllers
 
 import com.google.inject.Inject
+import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.helpers.TaxReturnHelper
+import models.Mode
+import models.returns.TaxReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -27,16 +32,20 @@ import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  returnsConnector: TaxReturnsConnector,
+  taxReturnHelper: TaxReturnHelper,
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val list = SummaryListViewModel(rows =
@@ -48,13 +57,26 @@ class CheckYourAnswersController @Inject() (
           ).flatMap(_.row(request.userAnswers))
         )
 
-        Ok(view(list))
+        Ok(view(mode, list))
     }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        Future.successful(Redirect(routes.AmendConfirmationController.onPageLoad()))
+        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
+        submit(taxReturn).map {
+          case Right(_) =>
+            Redirect(routes.AmendConfirmationController.onPageLoad())
+
+          case Left(error) =>
+            throw error
+        }
+
     }
+
+  private def submit(
+    taxReturn: TaxReturn
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+    returnsConnector.amend(taxReturn)
 
 }

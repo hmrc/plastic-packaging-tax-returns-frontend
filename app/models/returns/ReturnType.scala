@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package models.returns
 
-import play.api.libs.json.{JsPath, Json, OFormat}
+import play.api.libs.json.{Format, Reads, Writes}
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
-  override def path: JsPath = JsPath \ toString
+object ReturnType extends Enumeration {
+  type ReturnType = Value
 
-  override def toString: String = "convertedPackagingCredit"
+  val NEW: Value   = Value("New")
+  val AMEND: Value = Value("Amend")
+
+  implicit val format: Format[ReturnType] =
+    Format(Reads.enumNameReads(ReturnType), Writes.enumNameWrites)
+
 }

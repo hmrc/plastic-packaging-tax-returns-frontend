@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@this()
 
-import play.api.libs.json.{JsPath, Json, OFormat}
+@(id: String, text: String, call: Call, newTab: Boolean = false, classes: String = "govuk-link govuk-link--no-visited-state")
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "convertedPackagingCredit"
-}
+<a class="@classes" href="@call" @if(newTab) { target="_blank" rel="noopener noreferrer" } id="@id">@text</a>

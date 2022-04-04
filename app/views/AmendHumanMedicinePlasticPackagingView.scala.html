@@ -15,18 +15,22 @@
  *@
 
 @import viewmodels.InputWidth._
+@import componants.SectionHeader
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("amendHumanMedicinePlasticPackaging.title"))) {
+
+    @sectionHeader(messages("obligationPeriod.caption"))
 
     @formHelper(action = routes.AmendHumanMedicinePlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
