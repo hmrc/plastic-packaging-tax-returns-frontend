@@ -23,6 +23,9 @@ GET         /unauthorised                                controllers.Unauthorise
 
 GET        /amendConfirmation                            controllers.AmendConfirmationController.onPageLoad()
 
+GET        /viewReturnSummary                               controllers.ViewReturnSummaryController.onPageLoad()
+POST       /viewReturnSummary                               controllers.ViewReturnSummaryController.onSubmit()
+
 GET        /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAmendDirectExportPlasticPackaging                        controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
@@ -92,4 +95,5 @@ GET        /recycledPlasticPackagingWeight                  controllers.Recycled
 POST       /recycledPlasticPackagingWeight                  controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+
 

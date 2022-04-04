@@ -177,3 +177,9 @@ recycledPlasticPackagingWeight.error.wholeNumber = Enter your recycledPlasticPac
 recycledPlasticPackagingWeight.error.outOfRange = RecycledPlasticPackagingWeight must be between {0} and {1}
 recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
 
+
+iewReturnSummary.title = iewReturnSummary
+iewReturnSummary.heading = iewReturnSummary
+
+viewReturnSummary.title = viewReturnSummary
+viewReturnSummary.heading = viewReturnSummary
