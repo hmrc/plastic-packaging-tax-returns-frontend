@@ -18,7 +18,7 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import models.returns.TaxReturn
+import models.returns.{SubmittedReturn, TaxReturn}
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
@@ -35,6 +35,18 @@ class TaxReturnsConnector @Inject() (
 )(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
+
+  def get(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, SubmittedReturn]] = {
+    val url   = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
+    val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
+    httpClient.GET[SubmittedReturn](url)
+      .andThen { case _ => timer.stop() }
+      .map { taxReturn => Right(taxReturn) }
+      .recover {
+        case ex: Exception =>
+          Left(DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex))
+      }
+  }
 
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
