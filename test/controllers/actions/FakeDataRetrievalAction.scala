@@ -26,9 +26,26 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
   override protected def transform[A](
     request: IdentifiedRequest[A]
   ): Future[OptionalDataRequest[A]] =
-    Future(
-      OptionalDataRequest(request.request, request.user.identityData.internalId.get, dataToReturn)
-    )
+    dataToReturn match {
+      case None =>
+        Future(
+          OptionalDataRequest(request.request,
+                              request.user.identityData.internalId.getOrElse("id"),
+                              None
+          )
+        )
+      case Some(userAnswers) =>
+        Future(
+          OptionalDataRequest(request.request,
+                              request.user.identityData.internalId.getOrElse("id"),
+                              Some(userAnswers)
+          )
+        )
+    }
+
+  //    Future(
+//      OptionalDataRequest(request.request, request.user.identityData.internalId.get, dataToReturn)
+//    )
 
   override protected implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

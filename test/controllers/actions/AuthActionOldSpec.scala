@@ -29,12 +29,29 @@ import play.api.libs.json._
 import play.api.mvc.{BodyParsers, Headers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import support.AuthHelper.{nrsCredentialRole, nrsCredentialStrength, nrsDateOfBirth, nrsGroupIdentifierValue, nrsItmpAddress, nrsItmpName, nrsLoginTimes, nrsMdtpInformation}
+import support.AuthHelper.{
+  nrsCredentialRole,
+  nrsCredentialStrength,
+  nrsDateOfBirth,
+  nrsGroupIdentifierValue,
+  nrsItmpAddress,
+  nrsItmpName,
+  nrsLoginTimes,
+  nrsMdtpInformation
+}
 import support.PptTestData.pptEnrolment
 import support.{AuthHelper, FakeCutomRequest, PptTestData}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Retrieval, SimpleRetrieval, ~}
+import uk.gov.hmrc.auth.core.retrieve.{
+  ~,
+  ItmpAddress,
+  ItmpName,
+  LoginTimes,
+  MdtpInformation,
+  Retrieval,
+  SimpleRetrieval
+}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
@@ -48,25 +65,25 @@ class AuthActionOldSpec
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   private val okResponseGenerator = (_: IdentifiedRequest[_]) => Future(Results.Ok)
-  val application = applicationBuilder(userAnswers = None).build()
-  val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-  val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-
+  val application                 = applicationBuilder(userAnswers = None).build()
+  val bodyParsers                 = application.injector.instanceOf[BodyParsers.Default]
+  val appConfig                   = application.injector.instanceOf[FrontendAppConfig]
 
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
   val nrsCredentialRole       = Some(User)
   val nrsMdtpInformation      = MdtpInformation("deviceId", "sessionId")
   val nrsItmpName             = ItmpName(Some("givenName"), Some("middleName"), Some("familyName"))
-  val nrsDateOfBirth              = Some(LocalDate.now().minusYears(25))
+  val nrsDateOfBirth          = Some(LocalDate.now().minusYears(25))
+
   val nrsItmpAddress =
     ItmpAddress(Some("line1"),
-      Some("line2"),
-      Some("line3"),
-      Some("line4"),
-      Some("line5"),
-      Some("postCode"),
-      Some("countryName"),
-      Some("countryCode")
+                Some("line2"),
+                Some("line3"),
+                Some("line4"),
+                Some("line5"),
+                Some("postCode"),
+                Some("countryName"),
+                Some("countryCode")
     )
 
   val nrsCredentialStrength       = Some("STRONG")
@@ -75,10 +92,10 @@ class AuthActionOldSpec
   val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
 
   val data = SignedInUser.getClass.getDeclaredFields
+
   class Harness(authAction: IdentifierAction) {
     def onPageLoad() = authAction(_ => Results.Ok)
   }
-
 
   "Auth Action 1" - {
 
@@ -109,7 +126,8 @@ class AuthActionOldSpec
 
       "must redirect the user to log in " in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new MissingBearerToken))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new MissingBearerToken))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -124,8 +142,8 @@ class AuthActionOldSpec
       "must redirect the user to log in " in {
         running(application) {
 
-
-          val authAction =  createAuthAction(new FakeFailingAuthConnectorCopy(new BearerTokenExpired))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new BearerTokenExpired))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -139,7 +157,8 @@ class AuthActionOldSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new InsufficientEnrolments))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new InsufficientEnrolments))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -153,7 +172,8 @@ class AuthActionOldSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new InsufficientConfidenceLevel))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new InsufficientConfidenceLevel))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -167,7 +187,8 @@ class AuthActionOldSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedAuthProvider))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedAuthProvider))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -181,7 +202,8 @@ class AuthActionOldSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedAffinityGroup))
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedAffinityGroup))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -195,7 +217,8 @@ class AuthActionOldSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction = createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedCredentialRole) )
+          val authAction =
+            createAuthAction(new FakeFailingAuthConnectorCopy(new UnsupportedCredentialRole))
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -206,19 +229,17 @@ class AuthActionOldSpec
     }
   }
 
-  private def createAuthAction
-  (
+  private def createAuthAction(
     fakeAuth: AuthConnector,
     pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
-  ) = {
-    new AuthenticatedIdentifierAction(
-      fakeAuth,
-      pptReferenceAllowedList,
-      appConfig,
-      metricsMock,
-      bodyParsers
+  ) =
+    new AuthenticatedIdentifierAction(fakeAuth,
+                                      pptReferenceAllowedList,
+                                      appConfig,
+                                      metricsMock,
+                                      bodyParsers
     )
-  }
+
 }
 
 class FakeFailingAuthConnectorCopy @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
@@ -229,19 +250,17 @@ class FakeFailingAuthConnectorCopy @Inject() (exceptionToReturn: Throwable) exte
     ec: ExecutionContext
   ): Future[A] =
     Future.failed(exceptionToReturn)
+
 }
 
 class FakeSuccessfulAuthConnectorCopy extends AuthConnector {
 
-
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
-                                                                           hc: HeaderCarrier,
-                                                                           ec: ExecutionContext
+    hc: HeaderCarrier,
+    ec: ExecutionContext
   ): Future[A] = {
     val user = PptTestData.newUser("123", Some(pptEnrolment("")))
-    AuthHelper.createCredentialForUser(user)
+    AuthHelper.createCredentialForUser(user).asInstanceOf[Future[A]]
   }
 
 }
-
-

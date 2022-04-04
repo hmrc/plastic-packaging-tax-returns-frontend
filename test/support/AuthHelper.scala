@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package support
 
 import models.SignedInUser
@@ -12,10 +28,10 @@ import scala.concurrent.Future
 object AuthHelper {
 
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
-  val nrsCredentialRole       = Some(User)
-  val nrsMdtpInformation      = MdtpInformation("deviceId", "sessionId")
-  val nrsItmpName             = ItmpName(Some("givenName"), Some("middleName"), Some("familyName"))
-  val nrsDateOfBirth              = Some(LocalDate.now().minusYears(25))
+  val nrsCredentialRole = Some(User)
+  val nrsMdtpInformation = MdtpInformation("deviceId", "sessionId")
+  val nrsItmpName = ItmpName(Some("givenName"), Some("middleName"), Some("familyName"))
+  val nrsDateOfBirth = Some(LocalDate.now().minusYears(25))
 
   val nrsItmpAddress =
     ItmpAddress(Some("line1"),
@@ -28,10 +44,10 @@ object AuthHelper {
       Some("countryCode")
     )
 
-  val nrsCredentialStrength       = Some("STRONG")
-  val currentLoginTime: DateTime  = new DateTime(1530442800000L, UTC)
+  val nrsCredentialStrength = Some("STRONG")
+  val currentLoginTime: DateTime = new DateTime(1530442800000L, UTC)
   val previousLoginTime: DateTime = new DateTime(1530464400000L, UTC)
-  val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
+  val nrsLoginTimes = LoginTimes(currentLoginTime, Some(previousLoginTime))
 
   def createCredentialForUser(user: SignedInUser) = {
     Future.successful(
@@ -56,11 +72,12 @@ object AuthHelper {
                                           new ~(
                                             new ~(
                                               Some(Credentials(user.identityData.credentials.get.providerId, user.identityData.credentials.get.providerType),
+                                              ),
                                               Some(Name(user.identityData.name.get.name, user.identityData.name.get.lastName))
                                             ),
                                             Some(Email(user.identityData.email.get))
                                           ),
-                                          Some(externalId(user.identityData.externalId.get))
+                                          user.identityData.externalId
                                         ),
                                         user.identityData.internalId
                                       ),
@@ -97,7 +114,5 @@ object AuthHelper {
         nrsLoginTimes
       )
     )
-    )
-
   }
 }

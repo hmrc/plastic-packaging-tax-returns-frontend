@@ -29,10 +29,21 @@ class DataRetrievalActionImpl @Inject() (val sessionRepository: SessionRepositor
 
   override protected def transform[A](
     request: IdentifiedRequest[A]
-  ): Future[OptionalDataRequest[A]] =
+  ): Future[OptionalDataRequest[A]] = {
+    println("ACHI: " + request.user)
     sessionRepository.get(request.user.identityData.internalId.getOrElse("")).map {
-      OptionalDataRequest(request.request, request.user.identityData.internalId.getOrElse(""), _)
+      case None =>
+        OptionalDataRequest(request.request,
+                            request.user.identityData.internalId.getOrElse(""),
+                            None
+        )
+      case Some(userAnswers) =>
+        OptionalDataRequest(request.request,
+                            request.user.identityData.internalId.getOrElse(""),
+                            Some(userAnswers)
+        )
     }
+  }
 
 }
 

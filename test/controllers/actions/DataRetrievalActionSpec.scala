@@ -19,16 +19,21 @@ package controllers.actions
 import base.SpecBase
 import models.{SignedInUser, UserAnswers}
 import models.requests.{IdentifiedRequest, IdentityData, OptionalDataRequest}
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+import support.PptTestData
+import support.PptTestData.pptEnrolment
 import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
+
+  val testUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
 
   class Harness(sessionRepository: SessionRepository)
       extends DataRetrievalActionImpl(sessionRepository) {
@@ -45,14 +50,16 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId.get))) thenReturn Future(
+          None
+        )
         val action = new Harness(sessionRepository)
 
-        val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData())
         val result =
-          action.callTransform(IdentifiedRequest(FakeRequest(), pptLoggedInUser, None)).futureValue
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
 
         result.userAnswers must not be defined
+
       }
     }
 
@@ -61,13 +68,13 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId.get))) thenReturn Future(
+          Some(UserAnswers("id"))
+        )
         val action = new Harness(sessionRepository)
 
-        val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData())
-        val result = action.callTransform(
-          new IdentifiedRequest(FakeRequest(), pptLoggedInUser, None)
-        ).futureValue
+        val result =
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
 
         result.userAnswers mustBe defined
       }
