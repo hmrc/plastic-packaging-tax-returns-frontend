@@ -16,9 +16,12 @@
 
 package controllers.actions
 
+import models.SignedInUser
+
 import javax.inject.Inject
-import models.requests.IdentifierRequest
+import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,9 +29,11 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends Iden
 
   override def invokeBlock[A](
     request: Request[A],
-    block: IdentifierRequest[A] => Future[Result]
-  ): Future[Result] =
-    block(IdentifierRequest(request, "id"))
+    block: IdentifiedRequest[A] => Future[Result]
+  ): Future[Result] = {
+    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData())
+    block(IdentifiedRequest(request, pptLoggedInUser, None))
+  }
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

@@ -173,3 +173,12 @@ recycledPlasticPackagingWeight.error.wholeNumber = Enter your recycledPlasticPac
 recycledPlasticPackagingWeight.error.outOfRange = RecycledPlasticPackagingWeight must be between {0} and {1}
 recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
 
+
+agents.title = Agents
+agents.heading = Agents
+agents.checkYourAnswersLabel = Agents
+agents.error.nonNumeric = Enter your agents using numbers
+agents.error.required = Enter your agents
+agents.error.wholeNumber = Enter your agents using whole numbers
+agents.error.outOfRange = Agents must be between {0} and {1}
+agents.change.hidden = Agents

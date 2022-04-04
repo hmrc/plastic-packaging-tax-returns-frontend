@@ -23,10 +23,12 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  val host: String    = configuration.get[String]("host")
-  val appName: String = configuration.get[String]("appName")
+  val host: String           = configuration.get[String]("host")
+  val appName: String        = configuration.get[String]("appName")
+  lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
+  lazy val serviceIdentifier = "plastic-packaging-tax"
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend-scaffold"

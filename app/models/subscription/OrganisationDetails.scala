@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.subscription
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Json, OFormat}
 
-case class IdentifierRequest[A](request: Request[A], userId: String)
-    extends WrappedRequest[A](request)
+case class OrganisationDetails(
+  organisationType: Option[String] = None,
+  organisationName: Option[String]
+)
+
+object OrganisationDetails {
+  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+}

@@ -2,6 +2,8 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
+->         /account                                     home.Routes
+
 GET         /                                            controllers.IndexController.onPageLoad
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
@@ -14,11 +16,6 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
 
-GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
-GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
-GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
-
-GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /amendConfirmation                            controllers.AmendConfirmationController.onPageLoad()
 
@@ -89,6 +86,11 @@ POST       /changeManufacturedPlasticPackagingWeight                        cont
 
 GET        /recycledPlasticPackagingWeight                  controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
 POST       /recycledPlasticPackagingWeight                  controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeRecycledPlasticPackagingWeight                        controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /agents                                          controllers.agents.AgentsController.onPageLoad(mode: Mode = NormalMode)
+POST       /agents                                          controllers.agents.AgentsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAgents                                    controllers.agents.AgentsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAgents                                    controllers.agents.AgentsController.onSubmit(mode: Mode = CheckMode)

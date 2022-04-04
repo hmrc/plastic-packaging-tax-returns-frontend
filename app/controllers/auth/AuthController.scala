@@ -27,10 +27,10 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AuthController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  config: FrontendAppConfig,
-  sessionRepository: SessionRepository,
-  identify: IdentifierAction
+                                 val controllerComponents: MessagesControllerComponents,
+                                 config: FrontendAppConfig,
+                                 sessionRepository: SessionRepository,
+                                 identify: IdentifierAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -38,7 +38,7 @@ class AuthController @Inject() (
     identify.async {
       implicit request =>
         sessionRepository
-          .clear(request.userId)
+          .clear(request.user.identityData.internalId.getOrElse(""))
           .map {
             _ =>
               Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
@@ -49,7 +49,7 @@ class AuthController @Inject() (
     identify.async {
       implicit request =>
         sessionRepository
-          .clear(request.userId)
+          .clear(request.user.identityData.internalId.getOrElse(""))
           .map {
             _ =>
               Redirect(config.signOutUrl,
