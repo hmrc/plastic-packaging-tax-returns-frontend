@@ -16,27 +16,49 @@
 
 package controllers
 
+import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions._
 import models.NormalMode
+import models.returns.SubmittedReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view: ViewReturnSummaryView
-) extends FrontendBaseController with I18nSupport {
+  view: ViewReturnSummaryView,
+  returnsConnector: TaxReturnsConnector
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] =
-    identify {
+  // TODO stubs totally ignore this right now
+  private val hardcoded_period_key = "yet-more-cheese-biscuits"
+
+  // TODO Need to get this from auth
+  private val hardcoded_ppt_ref = "XMPPT0000000001"
+
+  def onPageLoad : Action[AnyContent] =
+    identify.async {
       implicit request =>
-        Ok(view())
+        val taxReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
+        taxReturn.map {
+          _ => Ok(view())
+        }
     }
+
+  private def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
+    val future: Future[Either[ServiceError, SubmittedReturn]] = returnsConnector.get(userId, periodKey)
+    future.map {
+      case Right(taxReturn) => taxReturn
+      case Left(error) => throw error
+    }
+  }
 
   def onSubmit(): Action[AnyContent] =
     identify {
