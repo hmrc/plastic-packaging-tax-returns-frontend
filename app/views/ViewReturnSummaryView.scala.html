@@ -14,21 +14,29 @@
  * limitations under the License.
  *@
 
+@import views.html.componants.sectionHeader
+
 @this(
-        layout: templates.Layout,
-        formHelper: FormWithCSRF,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, list: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("viewReturnSummary.title"))) {
+@layout(pageTitle = titleNoForm(pageTitle)) {
+
+    @sectionHeader(messages("viewReturnSummary.sectionHeader"))
+    <h1 class="govuk-heading-xl">@messages("April to June 2022")</h1>
 
     @formHelper(action = routes.ViewReturnSummaryController.onSubmit(), 'autoComplete -> "off") {
 
-            @govukButton(
-                ButtonViewModel(messages("site.continue"))
-            )
+        @govukButton(
+            ButtonViewModel(messages("viewReturnSummary.amendLink"))
+        )
     }
 
+    @govukSummaryList(list)
 }

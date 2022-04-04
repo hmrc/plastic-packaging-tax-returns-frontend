@@ -22,9 +22,11 @@ import models.NormalMode
 import models.returns.SubmittedReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ViewReturnSummaryView
+import viewmodels.govuk.summarylist._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +50,8 @@ class ViewReturnSummaryController @Inject() (
       implicit request =>
         val taxReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
         taxReturn.map {
-          _ => Ok(view())
+          val list = SummaryListViewModel(Seq(SummaryListRow(Key(Text("bert")), Value(Text("wibble")))))
+          _ => Ok(view("yoyo", list))
         }
     }
 

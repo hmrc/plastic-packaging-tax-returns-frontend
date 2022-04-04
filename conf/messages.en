@@ -183,5 +183,5 @@ recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
 iewReturnSummary.title = iewReturnSummary
 iewReturnSummary.heading = iewReturnSummary
 
-viewReturnSummary.title = viewReturnSummary
-viewReturnSummary.heading = viewReturnSummary
+viewReturnSummary.sectionHeader = Submitted return for
+viewReturnSummary.amendLink = Amend this return
