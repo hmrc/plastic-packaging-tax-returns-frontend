@@ -14,14 +14,16 @@
  * limitations under the License.
  *@
 
-@import views.html.componants.sectionHeader
+@import views.html.componants.{SectionHeader, Link}
+@import models.NormalMode
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
-    sectionHeader: sectionHeader,
+    sectionHeader: SectionHeader,
+    link: Link
 )
 
 @(returnPeriod: String, list: SummaryList)(implicit request: Request[_], messages: Messages)
@@ -31,12 +33,7 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    @formHelper(action = routes.ViewReturnSummaryController.onSubmit(), 'autoComplete -> "off") {
-
-        @govukButton(
-            ButtonViewModel(messages("viewReturnSummary.amendLink"))
-        )
-    }
+    @link("amend-return", messages("viewReturnSummary.amendLink"), routes.AmendAreYouSureController.onPageLoad(NormalMode))
 
     <h2 class="govuk-heading-l">@messages("viewReturnSummary.summaryHeading")</h2>
     @govukSummaryList(list)
