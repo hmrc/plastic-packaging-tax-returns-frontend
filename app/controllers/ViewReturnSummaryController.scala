@@ -25,12 +25,12 @@ import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
 
-class ViewReturnSummaryController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: ViewReturnSummaryView
-) extends FrontendBaseController with I18nSupport {
+class ViewReturnSummaryController @Inject()(
+                                             override val messagesApi: MessagesApi,
+                                             identify: IdentifierAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             view: ViewReturnSummaryView
+                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     identify {

@@ -14,17 +14,22 @@
  * limitations under the License.
  *@
 
+@import componants.sectionHeader
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("amendAreYouSure.title"))) {
+
+    @sectionHeader(messages("obligationPeriod.caption"))
 
     @formHelper(action = routes.AmendAreYouSureController.onSubmit(mode), 'autoComplete -> "off") {
 

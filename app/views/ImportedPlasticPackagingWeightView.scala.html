@@ -26,6 +26,11 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@hintContent = {
+<p class="govuk-body">This applies whether they are filled or unfilled.</p>
+<p class="govuk-body">Finished means you have made no further substantial modifications.</p>
+}
+
 @layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"))) {
 
     @formHelper(action = routes.ImportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
@@ -41,6 +46,7 @@
             )
             .asNumeric()
             .withWidth(Fixed10)
+            .withHint(Hint(content = HtmlContent(hintContent)))
         )
 
         @govukButton(
