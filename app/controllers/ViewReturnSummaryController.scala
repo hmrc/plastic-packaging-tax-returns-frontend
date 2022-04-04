@@ -22,6 +22,7 @@ import models.NormalMode
 import models.returns.SubmittedReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,12 +49,25 @@ class ViewReturnSummaryController @Inject() (
   def onPageLoad : Action[AnyContent] =
     identify.async {
       implicit request =>
-        val taxReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
-        taxReturn.map {
-          val list = SummaryListViewModel(Seq(SummaryListRow(Key(Text("bert")), Value(Text("wibble")))))
-          _ => Ok(view("yoyo", list))
+        val submittedReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
+        submittedReturn.map {
+          val list = createSummaryList
+          val returnPeriod = "April to June 2022" // TODO
+          _ => Ok(view(returnPeriod, list))
         }
     }
+
+  private def createSummaryList = {
+    SummaryListViewModel(Seq(
+      createSummaryListRow("Tax liability for this period", "£400"),
+      createSummaryListRow("Return submitted", "5 July 2022"),
+      createSummaryListRow("Payment due", "29 July 2022")
+    ))
+  }
+
+  private def createSummaryListRow(name: String, value: String): Aliases.SummaryListRow = {
+    SummaryListRow(Key(Text(name)), Value(Text(value)))
+  }
 
   private def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
     val future: Future[Either[ServiceError, SubmittedReturn]] = returnsConnector.get(userId, periodKey)

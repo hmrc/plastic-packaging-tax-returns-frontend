@@ -185,3 +185,4 @@ iewReturnSummary.heading = iewReturnSummary
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
+viewReturnSummary.summaryHeading = Summary
