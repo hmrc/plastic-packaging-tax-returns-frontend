@@ -16,6 +16,7 @@
 
 package views
 
+import models.returns.TaxReturnObligation
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -33,5 +34,15 @@ object ViewUtils {
 
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+
+  def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
+    messages(s"month.$monthNumber")
+
+  def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
+    messages("return.quarter",
+      getMonthName(obligation.fromDate.getMonthValue),
+      getMonthName(obligation.toDate.getMonthValue),
+      obligation.toDate.getYear.toString
+    )
 
 }

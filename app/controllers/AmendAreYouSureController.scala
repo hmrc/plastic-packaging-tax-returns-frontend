@@ -17,9 +17,8 @@
 package controllers
 
 import controllers.actions._
+import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
-
-import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendAreYouSurePage
@@ -29,6 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AmendAreYouSureView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AmendAreYouSureController @Inject() (
@@ -39,11 +39,14 @@ class AmendAreYouSureController @Inject() (
   getData: DataRetrievalAction,
   formProvider: AmendAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendAreYouSureView
+  view: AmendAreYouSureView,
+  taxReturnHelper: TaxReturnHelper
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+
+  val obligation = taxReturnHelper.defaultObligation
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData) {
@@ -55,14 +58,14 @@ class AmendAreYouSureController @Inject() (
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode))
+        Ok(view(preparedForm, mode, obligation))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(
