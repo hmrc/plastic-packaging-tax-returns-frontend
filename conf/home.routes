@@ -1,5 +1,7 @@
-GET         /account/sign-out                            controllers.auth.AuthController.signOut
-GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
+GET        /sign-out                            controllers.auth.AuthController.signOut
+GET        /signed-out                          controllers.auth.SignedOutController.onPageLoad
+
+GET        /sign-out-no-survey                     controllers.auth.AuthController.signOutNoSurvey
 
 GET        /user-unauthorised                           controllers.home.UnauthorisedController.unauthorised()
 GET        /not-enrolled                                controllers.home.UnauthorisedController.notEnrolled()

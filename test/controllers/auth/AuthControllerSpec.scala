@@ -17,25 +17,70 @@
 package controllers.auth
 
 import base.SpecBase
+import config.FrontendAppConfig
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status.SEE_OTHER
+import play.api.mvc.{Result, Session}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, route, running, status, GET}
+import play.api.test.Helpers._
+
+import java.net.URLEncoder
+import scala.concurrent.Future
 
 class AuthControllerSpec extends SpecBase with MockitoSugar {
 
   "signOut" - {
 
-    "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
+    "must redirect to sign out, specifying the exit survey as the continue URL" in {
 
-      // TODO - implement from main branch as sign out needs to behave the same way
+      val application =
+        applicationBuilder(None)
+          .build()
+
+      running(application) {
+
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val request =
+          FakeRequest(GET, routes.AuthController.signOut.url)
+
+        val result: Future[Result] = route(application, request).value
+
+        val encodedContinueUrl  = URLEncoder.encode(appConfig.exitSurveyUrl, "UTF-8")
+        val expectedRedirectUrl = s"${appConfig.signOutUrl}?continue=$encodedContinueUrl"
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+
+      }
 
     }
   }
 
   "signOutNoSurvey" - {
 
-    "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
+    "must redirect to sign out, specifying SignedOut as the continue URL" in {
 
-      // TODO - implement from main branch as sign out needs to behave the same way
+      val application =
+        applicationBuilder(None)
+          .build()
 
+      running(application) {
+
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val request =
+          FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+
+        val result = route(application, request).value
+
+        val encodedContinueUrl =
+          URLEncoder.encode(routes.SignedOutController.onPageLoad.url, "UTF-8")
+        val expectedRedirectUrl = s"${appConfig.signOutUrl}?continue=$encodedContinueUrl"
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedRedirectUrl
+
+      }
     }
   }
 }

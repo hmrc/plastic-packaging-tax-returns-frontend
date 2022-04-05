@@ -47,8 +47,7 @@ class FrontendAppConfig @Inject() (
   private val exitSurveyBaseUrl: String =
     configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
 
-  val exitSurveyUrl: String =
-    s"$exitSurveyBaseUrl/feedback/plastic-packaging-tax-returns-frontend-scaffold"
+  val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
 
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
