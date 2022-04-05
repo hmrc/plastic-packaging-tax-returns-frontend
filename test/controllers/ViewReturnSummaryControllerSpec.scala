@@ -17,19 +17,32 @@
 package controllers
 
 import base.SpecBase
+import connectors.TaxReturnsConnector
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.ViewReturnSummaryView
 
-class ViewReturnSummaryControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
+
+  val mockConnector = mock[TaxReturnsConnector]
 
   "ViewReturnSummary Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(inject.bind[TaxReturnsConnector].toInstance(mockConnector))
+        .build()
 
       running(application) {
+        when(mockConnector.get(any(), any())(any())).thenReturn(Future.successful(Right(null)))
+
         val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad().url)
 
         val result = route(application, request).value
