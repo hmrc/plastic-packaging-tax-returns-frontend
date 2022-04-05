@@ -18,12 +18,14 @@ package controllers
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
+import models.returns.{IdDetails, SubmittedReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
 
 import scala.concurrent.Future
@@ -41,7 +43,9 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         .build()
 
       running(application) {
-        when(mockConnector.get(any(), any())(any())).thenReturn(Future.successful(Right(null)))
+        val submittedReturn = SubmittedReturn("", IdDetails("", ""), None, None, None)
+        val viewModel = ViewReturnSummaryViewModel(submittedReturn)
+        when(mockConnector.get(any(), any())(any())).thenReturn(Future.successful(Right(submittedReturn)))
 
         val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad().url)
 
@@ -50,8 +54,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-//TODO: uncomment when parameters are fixed in view model (Pan)
-        // contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view("April to June 2022", viewModel)(request, messages(application)).toString
       }
     }
   }

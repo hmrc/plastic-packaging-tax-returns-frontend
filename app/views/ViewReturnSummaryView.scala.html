@@ -16,6 +16,7 @@
 
 @import views.html.componants.{SectionHeader, Link}
 @import models.NormalMode
+@import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 
 @this(
     layout: templates.Layout,
@@ -26,7 +27,7 @@
     link: Link
 )
 
-@(returnPeriod: String, list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(returnPeriod)) {
 
@@ -35,6 +36,7 @@
 
     @link("amend-return", messages("viewReturnSummary.amendLink"), routes.AmendAreYouSureController.onPageLoad(NormalMode))
 
-    <h2 class="govuk-heading-l">@messages("viewReturnSummary.summaryHeading")</h2>
-    @govukSummaryList(list)
+    <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>
+    @govukSummaryList(vm.summarySection.summaryList)
+
 }
