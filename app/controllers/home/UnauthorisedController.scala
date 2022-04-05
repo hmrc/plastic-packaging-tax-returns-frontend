@@ -32,7 +32,7 @@ class UnauthorisedController @Inject() (
   authenticate: AuthCheckAction,
   val controllerComponents: MessagesControllerComponents,
   view: UnauthorisedView
-) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier{
+) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
 
   def unauthorised: Action[AnyContent] =
     Action { implicit request =>

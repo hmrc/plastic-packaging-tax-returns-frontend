@@ -43,9 +43,10 @@ trait CommonAuth {
     Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
 
   protected def upliftCredentialStrength[A]: Result =
-    Results.Redirect(
-      appConfig.mfaUpliftUrl,
-      Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(appConfig.loginContinueUrl))
+    Results.Redirect(appConfig.mfaUpliftUrl,
+                     Map("origin"      -> Seq(appConfig.serviceIdentifier),
+                         "continueUrl" -> Seq(appConfig.loginContinueUrl)
+                     )
     )
 
 }

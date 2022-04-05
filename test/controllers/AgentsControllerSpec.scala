@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class AgentsControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AgentsFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -59,7 +59,9 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AgentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request,
+                                                                 messages(application)
+        ).toString
       }
     }
 
@@ -77,7 +79,10 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -89,9 +94,8 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+                     bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -123,7 +127,9 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
+                                                                      messages(application)
+        ).toString
       }
     }
 

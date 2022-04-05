@@ -49,9 +49,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get(eqTo(testUser.identityData.internalId.get))) thenReturn Future(
-          None
-        )
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(None)
         val action = new Harness(sessionRepository)
 
         val result =
@@ -67,7 +65,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get(eqTo(testUser.identityData.internalId.get))) thenReturn Future(
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(
           Some(UserAnswers("id"))
         )
         val action = new Harness(sessionRepository)

@@ -30,13 +30,13 @@ import uk.gov.hmrc.auth.core._
 import scala.concurrent.ExecutionContext
 
 class IdentifierActionSpec
-      extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
-  val application                 = applicationBuilder(userAnswers = None).build()
-  val bodyParsers                 = application.injector.instanceOf[BodyParsers.Default]
-  val appConfig                   = application.injector.instanceOf[FrontendAppConfig]
+  val application = applicationBuilder(userAnswers = None).build()
+  val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+  val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
   class Harness(authAction: IdentifierAction) {
     def onPageLoad() = authAction(_ => Results.Ok)
@@ -69,7 +69,9 @@ class IdentifierActionSpec
       "must redirect the user to log in " in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -85,7 +87,9 @@ class IdentifierActionSpec
         running(application) {
 
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new BearerTokenExpired))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new BearerTokenExpired)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -100,7 +104,9 @@ class IdentifierActionSpec
       "must redirect the user to the unauthorised page" in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new InsufficientEnrolments))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new InsufficientEnrolments)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -115,7 +121,9 @@ class IdentifierActionSpec
       "must redirect the user to the unauthorised page" in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new InsufficientConfidenceLevel))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new InsufficientConfidenceLevel)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -130,7 +138,9 @@ class IdentifierActionSpec
       "must redirect the user to the unauthorised page" in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new UnsupportedAuthProvider))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new UnsupportedAuthProvider)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -145,7 +155,9 @@ class IdentifierActionSpec
       "must redirect the user to the unauthorised page" in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new UnsupportedAffinityGroup))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new UnsupportedAffinityGroup)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -160,7 +172,9 @@ class IdentifierActionSpec
       "must redirect the user to the unauthorised page" in {
         running(application) {
           val authAction =
-            createIdentifierAction(FakeAuthConnector.createFailingAuthConnector(new UnsupportedCredentialRole))
+            createIdentifierAction(
+              FakeAuthConnector.createFailingAuthConnector(new UnsupportedCredentialRole)
+            )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -181,5 +195,5 @@ class IdentifierActionSpec
                                       metricsMock,
                                       bodyParsers
     )
-}
 
+}

@@ -24,10 +24,8 @@ class AgentsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Int] =
     Form(
-      "value" -> int(
-        "agents.error.required",
-        "agents.error.wholeNumber",
-        "agents.error.nonNumeric")
-          .verifying(inRange(0, Int.MaxValue, "agents.error.outOfRange"))
+      "value" -> int("agents.error.required", "agents.error.wholeNumber", "agents.error.nonNumeric")
+        .verifying(inRange(0, Int.MaxValue, "agents.error.outOfRange"))
     )
+
 }

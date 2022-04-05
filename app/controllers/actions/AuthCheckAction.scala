@@ -32,11 +32,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthCheckActionImpl @Inject() (
-                                      override val authConnector: AuthConnector,
-                                      override val appConfig: FrontendAppConfig,
-                                      metrics: Metrics,
-                                      mcc: MessagesControllerComponents
-                                    ) extends AuthCheckAction with AuthorisedFunctions with CommonAuth {
+  override val authConnector: AuthConnector,
+  override val appConfig: FrontendAppConfig,
+  metrics: Metrics,
+  mcc: MessagesControllerComponents
+) extends AuthCheckAction with AuthorisedFunctions with CommonAuth {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -44,9 +44,9 @@ class AuthCheckActionImpl @Inject() (
   private val authTimer                                    = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
   override def invokeBlock[A](
-                               request: Request[A],
-                               block: IdentifiedRequest[A] => Future[Result]
-                             ): Future[Result] = {
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result]
+  ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -55,33 +55,39 @@ class AuthCheckActionImpl @Inject() (
     authorised(acceptableCredentialStrength)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
-          confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
-          credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
+            confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
+            credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
           logger.info(
             "Authorised with affinity group " + affinityGroup + " and enrolments " + allEnrolments
           )
 
-          val identityData = IdentityData(internalId,
-            externalId,
-            agentCode,
-            credentials,
-            Some(confidenceLevel),
-            authNino,
-            saUtr,
-            name,
-            dateOfBirth,
-            email,
-            Some(agentInformation),
-            groupIdentifier,
-            credentialRole.map(res => res.toJson.toString()),
-            mdtpInformation,
-            itmpName,
-            itmpDateOfBirth,
-            itmpAddress,
-            affinityGroup,
-            credentialStrength,
-            Some(loginTimes)
+          val maybeInternalId = internalId.getOrElse(
+            throw new IllegalArgumentException(
+              s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
+            )
+          )
+
+          val identityData = IdentityData(maybeInternalId,
+                                          externalId,
+                                          agentCode,
+                                          credentials,
+                                          Some(confidenceLevel),
+                                          authNino,
+                                          saUtr,
+                                          name,
+                                          dateOfBirth,
+                                          email,
+                                          Some(agentInformation),
+                                          groupIdentifier,
+                                          credentialRole.map(res => res.toJson.toString()),
+                                          mdtpInformation,
+                                          itmpName,
+                                          itmpDateOfBirth,
+                                          itmpAddress,
+                                          affinityGroup,
+                                          credentialStrength,
+                                          Some(loginTimes)
           )
 
           executeRequest(request, block, identityData, allEnrolments)
@@ -99,11 +105,11 @@ class AuthCheckActionImpl @Inject() (
   }
 
   private def executeRequest[A](
-                                 request: Request[A],
-                                 block:IdentifiedRequest[A] => Future[Result],
-                                 identityData: IdentityData,
-                                 allEnrolments: Enrolments
-                               ) = {
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result],
+    identityData: IdentityData,
+    allEnrolments: Enrolments
+  ) = {
     val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
     block(new IdentifiedRequest(request, pptLoggedInUser, None))
   }
@@ -114,6 +120,5 @@ object AuthCheckAction {}
 
 @ImplementedBy(classOf[AuthCheckActionImpl])
 trait AuthCheckAction
-  extends ActionBuilder[IdentifiedRequest, AnyContent]
+    extends ActionBuilder[IdentifiedRequest, AnyContent]
     with ActionFunction[Request, IdentifiedRequest]
-

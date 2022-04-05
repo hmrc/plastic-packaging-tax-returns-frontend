@@ -19,12 +19,7 @@ package forms.agents
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.agents.ClientIdentifier.{
-  formatError,
-  identifier,
-  identifierEmptyError,
-  lengthError
-}
+import forms.agents.ClientIdentifier.{formatError, identifier, identifierEmptyError, lengthError}
 
 class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 
@@ -89,12 +84,11 @@ class ClientIdentifierSpec extends AnyWordSpec with Matchers {
   }
 
   def testFailedValidationErrors(
-                                  input: Map[String, String],
-                                  expectedErrors: Seq[FormError]
-                                ): Unit = {
+    input: Map[String, String],
+    expectedErrors: Seq[FormError]
+  ): Unit = {
     val form = ClientIdentifier.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }
 
 }
-

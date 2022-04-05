@@ -31,7 +31,7 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends Iden
     request: Request[A],
     block: IdentifiedRequest[A] => Future[Result]
   ): Future[Result] = {
-    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData())
+    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData(internalId = "SomeId"))
     block(IdentifiedRequest(request, pptLoggedInUser, None))
   }
 

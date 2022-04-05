@@ -71,4 +71,3 @@ trait CommonFormValidators {
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 
 }
-

@@ -32,31 +32,25 @@ class AgentsFormProviderSpec extends IntFieldBehaviours {
 
     val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validDataGenerator
-    )
+    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like intField(
-      form,
-      fieldName,
-      nonNumericError  = FormError(fieldName, "agents.error.nonNumeric"),
-      wholeNumberError = FormError(fieldName, "agents.error.wholeNumber")
+    behave like intField(form,
+                         fieldName,
+                         nonNumericError = FormError(fieldName, "agents.error.nonNumeric"),
+                         wholeNumberError = FormError(fieldName, "agents.error.wholeNumber")
     )
 
     behave like intFieldWithRange(
       form,
       fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
+      minimum = minimum,
+      maximum = maximum,
       expectedError = FormError(fieldName, "agents.error.outOfRange", Seq(minimum, maximum))
     )
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, "agents.error.required")
+    behave like mandatoryField(form,
+                               fieldName,
+                               requiredError = FormError(fieldName, "agents.error.required")
     )
   }
 }

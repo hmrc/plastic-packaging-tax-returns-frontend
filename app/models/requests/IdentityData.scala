@@ -23,7 +23,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
 import uk.gov.hmrc.http.controllers.RestFormats
 
 case class IdentityData(
-  internalId: Option[String] = None,
+  internalId: String,
   externalId: Option[String] = None,
   agentCode: Option[String] = None,
   credentials: Option[Credentials] = None,

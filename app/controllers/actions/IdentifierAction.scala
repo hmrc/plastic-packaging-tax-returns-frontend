@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
-import controllers.routes
 import models.requests.{IdentifiedRequest, IdentityData}
 import models.{NormalMode, SignedInUser}
 import play.api.Logger
@@ -46,16 +45,16 @@ trait IdentifierAction
     with ActionFunction[Request, IdentifiedRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
-                                                override val authConnector: AuthConnector,
-                                                pptReferenceAllowedList: PptReferenceAllowedList,
-                                                override val appConfig: FrontendAppConfig,
-                                                metrics: Metrics,
-                                                val parser: BodyParsers.Default
+  override val authConnector: AuthConnector,
+  pptReferenceAllowedList: PptReferenceAllowedList,
+  override val appConfig: FrontendAppConfig,
+  metrics: Metrics,
+  val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction with AuthorisedFunctions with CommonAuth {
 
   private val authTimer = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
-  private val logger = Logger(this.getClass)
+  private val logger    = Logger(this.getClass)
 
   override def invokeBlock[A](
     request: Request[A],
@@ -77,7 +76,13 @@ class AuthenticatedIdentifierAction @Inject() (
           credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
         authorisation.stop()
 
-        val identityData = IdentityData(internalId,
+        val maybeInternalId = internalId.getOrElse(
+          throw new IllegalArgumentException(
+            s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
+          )
+        )
+
+        val identityData = IdentityData(maybeInternalId,
                                         externalId,
                                         agentCode,
                                         credentials,
@@ -149,11 +154,11 @@ class AuthenticatedIdentifierAction @Inject() (
     }.and(acceptableCredentialStrength)
 
   private def executeRequest[A](
-                                 request: Request[A],
-                                 block: IdentifiedRequest[A] => Future[Result],
-                                 identityData: IdentityData,
-                                 pptEnrolmentIdentifier: String,
-                                 allEnrolments: Enrolments
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result],
+    identityData: IdentityData,
+    pptEnrolmentIdentifier: String,
+    allEnrolments: Enrolments
   ) =
     if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
@@ -187,28 +192,5 @@ class AuthenticatedIdentifierAction @Inject() (
       .filter(_.key == pptEnrolmentKey)
       .flatMap(_.identifiers)
       .find(_.key == identifier)
-
-}
-
-class SessionIdentifierAction @Inject() (val parser: BodyParsers.Default)(implicit
-  val executionContext: ExecutionContext
-) extends IdentifierAction {
-
-  override def invokeBlock[A](
-    request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
-  ): Future[Result] = {
-
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    hc.sessionId match {
-      case Some(session) =>
-        val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData())
-        block(IdentifiedRequest(request, pptLoggedInUser, None))
-      case None =>
-        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-    }
-  }
 
 }

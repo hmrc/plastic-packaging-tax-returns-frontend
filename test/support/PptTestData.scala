@@ -111,7 +111,7 @@ object PptTestData {
     affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
     SignedInUser(enrolments.getOrElse(Enrolments(Set())),
-                 IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
+                 IdentityData("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
                               Some(externalId),
                               None,
                               Some(nrsCredentials),

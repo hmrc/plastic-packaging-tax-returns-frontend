@@ -17,7 +17,6 @@
 package base
 
 import com.google.inject.Inject
-import controllers.actions.{AuthenticatedIdentifierAction, PptReferenceAllowedList}
 import support.{AuthHelper, PptTestData}
 import support.PptTestData.pptEnrolment
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -29,12 +28,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object FakeAuthConnector {
 
-  class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {
+  class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
     val serviceUrl: String = ""
 
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
-                                                                             hc: HeaderCarrier,
-                                                                             ec: ExecutionContext
+      hc: HeaderCarrier,
+      ec: ExecutionContext
     ): Future[A] =
       Future.failed(exceptionToReturn)
 
@@ -42,22 +41,20 @@ object FakeAuthConnector {
 
   class FakeSuccessfulAuthConnector extends AuthConnector {
 
-    override def authorise[A]
-    (
-      predicate: Predicate,
-      retrieval: Retrieval[A]
-    )
-    (implicit hc: HeaderCarrier, ec: ExecutionContext ): Future[A] = {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext
+    ): Future[A] = {
       val user = PptTestData.newUser("123", Some(pptEnrolment("")))
       AuthHelper.createCredentialForUser(user).asInstanceOf[Future[A]]
     }
+
   }
 
-  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector = {
+  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector =
     new FakeFailingAuthConnector(exceptionToReturn)
-  }
 
-  def createSuccessAuthConnector: FakeSuccessfulAuthConnector = {
+  def createSuccessAuthConnector: FakeSuccessfulAuthConnector =
     new FakeSuccessfulAuthConnector()
-  }
+
 }
