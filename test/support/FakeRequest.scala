@@ -23,7 +23,7 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import support.PptTestData.pptEnrolment
 
-trait FakeCutomRequest {
+trait FakeCustomRequest {
 
   def authRequest(
     headers: Headers = Headers(),
