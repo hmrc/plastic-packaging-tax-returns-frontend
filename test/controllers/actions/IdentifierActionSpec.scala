@@ -18,12 +18,15 @@ package controllers.actions
 
 import base.{FakeAuthConnector, MetricsMocks, SpecBase}
 import config.FrontendAppConfig
+import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.agents.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
+import models.{NormalMode, SignedInUser}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{BodyParsers, Headers, Results}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import support.PptTestData.pptEnrolment
+import support.AuthHelper.expectedAcceptableCredentialsPredicate
+import support.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
 import support.{FakeCustomRequest, PptTestData}
 import uk.gov.hmrc.auth.core._
 
@@ -42,38 +45,141 @@ class IdentifierActionSpec
     def onPageLoad() = authAction(_ => Results.Ok)
   }
 
-  "Auth Action 1" - {
+  "Identifier Action" - {
 
     "redirect to not enrolled page when enrolment id is missing" in {
-
       val user = PptTestData.newUser("123", Some(pptEnrolment("")))
 
       running(application) {
-
-        val authAction = createIdentifierAction(FakeAuthConnector.createSuccessAuthConnector)
-        val controller = new Harness(authAction)
-
-        val result = controller.onPageLoad()(authRequest(Headers(), user))
+        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled.url)
-
       }
     }
-  }
 
-  "Auth Action" - {
+    "redirect agents to client identification page if we can see client identifier on the agents session" in {
+      val agent = PptTestData.newAgent("456")
+
+      running(application) {
+        val result = runAuth(agent, FakeAuthConnector.createSuccessAuthConnector(agent))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(agentRoutes.AgentsController.onPageLoad(NormalMode).url)
+      }
+    }
+
+    "process request when enrolment id is present on a normal user's auth response" in {
+      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
+
+      running(application) {
+        status(runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))) mustBe OK
+      }
+    }
+
+    "process request when an authorised client identifier is seen on an agents session" in {
+      val agent = PptTestData.newAgent("456")
+      val fakeAuth = FakeAuthConnector.createSuccessAuthConnector(agent)
+      val agentDelegatedAuthPredicate =
+        Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
+          "XMPPT0000000123"
+        ).withDelegatedAuthRule("ppt-auth").and(expectedAcceptableCredentialsPredicate)
+
+      running(application) {
+        val result = runAuth(agent, fakeAuth, Some("XMPPT0000000123"))
+
+        status(result) mustBe OK
+        fakeAuth.predicate.get mustBe agentDelegatedAuthPredicate
+      }
+    }
+
+    "process request when enrolment id is present and multiple identifier exist for same key" in {
+      val user = PptTestData.newUser("123",
+        Option(
+          newEnrolments(newEnrolment(pptEnrolmentKey, pptEnrolmentIdentifierName, "555"),
+            newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
+          )
+        )
+      )
+
+      running(application) {
+        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+
+        status(result) mustBe OK
+      }
+    }
+
+    "redirect to not enrolled page when enrolment id is not present and multiple identifier exist for same key" in {
+      val user = PptTestData.newUser("123",
+        Some(
+          newEnrolments(newEnrolment(pptEnrolmentKey, "DEF-NAME", "555"),
+            newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
+          )
+        )
+      )
+
+      running(application) {
+        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
+      }
+    }
+
+    "redirect to not enrolled page when enrolment id is present but no ppt enrolment key found" in {
+      val user = PptTestData.newUser("123",
+        Some(
+          newEnrolments(
+            newEnrolment("SOME-OTHER-KEY",
+              pptEnrolmentIdentifierName,
+              "555"
+            ),
+            newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
+          )
+        )
+      )
+
+      running(application) {
+        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+
+        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
+      }
+    }
+
+    "time calls to authorisation" in {
+      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
+
+       running(application) {
+         runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+         metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount must be > 0L
+      }
+    }
+
+    "process request when enrolment id is present and allowed" in {
+      val enrolmentId = "555"
+      val user        = PptTestData.newUser("123", Some(pptEnrolment(enrolmentId)))
+
+      running(application) {
+        val result =  runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user), None, new PptReferenceAllowedList(Seq(enrolmentId)))
+
+        status(result) mustBe OK
+      }
+    }
+
+    "redirect to home when enrolment id is present but not allowed" in {
+      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
+
+      running(application) {
+        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user), None, new PptReferenceAllowedList(Seq("someOtherEnrolmentId")))
+        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
+      }
+    }
 
     "when the user hasn't logged in" - {
 
       "must redirect the user to log in " in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value must startWith(appConfig.loginUrl)
@@ -85,13 +191,7 @@ class IdentifierActionSpec
 
       "must redirect the user to log in " in {
         running(application) {
-
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new BearerTokenExpired)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new BearerTokenExpired))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value must startWith(appConfig.loginUrl)
@@ -103,12 +203,7 @@ class IdentifierActionSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new InsufficientEnrolments)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new InsufficientEnrolments))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.notEnrolled.url
@@ -120,12 +215,7 @@ class IdentifierActionSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new InsufficientConfidenceLevel)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new InsufficientConfidenceLevel))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
@@ -137,12 +227,7 @@ class IdentifierActionSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new UnsupportedAuthProvider)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new UnsupportedAuthProvider))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
@@ -154,12 +239,7 @@ class IdentifierActionSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new UnsupportedAffinityGroup)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new UnsupportedAffinityGroup))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised.url)
@@ -171,12 +251,7 @@ class IdentifierActionSpec
 
       "must redirect the user to the unauthorised page" in {
         running(application) {
-          val authAction =
-            createIdentifierAction(
-              FakeAuthConnector.createFailingAuthConnector(new UnsupportedCredentialRole)
-            )
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val result = runAuth(PptTestData.newUser(), FakeAuthConnector.createFailingAuthConnector(new UnsupportedCredentialRole))
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised.url)
@@ -185,6 +260,18 @@ class IdentifierActionSpec
     }
   }
 
+  private def runAuth
+  (
+    user: SignedInUser,
+    authConnector: AuthConnector,
+    pptClient: Option[String] = None,
+    pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
+  ) = {
+    val authAction = createIdentifierAction(authConnector, pptReferenceAllowedList)
+    val controller = new Harness(authAction)
+
+    controller.onPageLoad()(authRequest(Headers(), user, pptClient))
+  }
   private def createIdentifierAction(
     fakeAuth: AuthConnector,
     pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)

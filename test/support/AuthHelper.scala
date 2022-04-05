@@ -19,9 +19,8 @@ package support
 import models.SignedInUser
 import org.joda.time.DateTimeZone.UTC
 import org.joda.time.{DateTime, LocalDate}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments, User}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.externalId
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialStrength, Enrolments, User}
 
 import scala.concurrent.Future
 
@@ -118,6 +117,8 @@ object AuthHelper {
         nrsLoginTimes
       )
     )
-  }
-  // @formatter:on
+  } // @formatter:on
+
+  val expectedAcceptableCredentialsPredicate =
+    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
 }

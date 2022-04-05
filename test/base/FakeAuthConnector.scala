@@ -17,6 +17,7 @@
 package base
 
 import com.google.inject.Inject
+import models.SignedInUser
 import support.{AuthHelper, PptTestData}
 import support.PptTestData.pptEnrolment
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -39,22 +40,27 @@ object FakeAuthConnector {
 
   }
 
-  class FakeSuccessfulAuthConnector extends AuthConnector {
+  class FakeSuccessfulAuthConnector(user: SignedInUser) extends AuthConnector {
 
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext
-    ): Future[A] = {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("")))
+    var predicate: Option[Predicate] = None
+
+    override def authorise[A]
+    (
+      predicate: Predicate,
+      retrieval: Retrieval[A]
+    )
+    (implicit hc: HeaderCarrier, ec: ExecutionContext ): Future[A] = {
+      this.predicate = Some(predicate)
+
       AuthHelper.createCredentialForUser(user).asInstanceOf[Future[A]]
     }
-
   }
 
-  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector =
+  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector = {
     new FakeFailingAuthConnector(exceptionToReturn)
+  }
 
-  def createSuccessAuthConnector: FakeSuccessfulAuthConnector =
-    new FakeSuccessfulAuthConnector()
-
+  def createSuccessAuthConnector(user: SignedInUser): FakeSuccessfulAuthConnector = {
+    new FakeSuccessfulAuthConnector(user)
+  }
 }
