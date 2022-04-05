@@ -30,15 +30,26 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.AmendAreYouSureView
+import models.returns.TaxReturnObligation
+import play.api.data.Form
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new AmendAreYouSureFormProvider()
-  val form         = formProvider()
+  val formProvider        = new AmendAreYouSureFormProvider()
+  val form: Form[Boolean] = formProvider()
+
+  //TODO mock this?
+  val obligation: TaxReturnObligation = TaxReturnObligation(fromDate =
+                                                              LocalDate.parse("2022-04-01"),
+                                                            toDate = LocalDate.parse("2022-06-30"),
+                                                            dueDate = LocalDate.parse("2022-09-30"),
+                                                            periodKey = "22AC"
+  )
 
   lazy val amendAreYouSureRoute = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
@@ -56,8 +67,8 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AmendAreYouSureView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request,
-                                                                 messages(application)
+        contentAsString(result) mustEqual view(form, NormalMode, obligation)(request,
+                                                                             messages(application)
         ).toString
       }
     }
@@ -76,8 +87,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request,
-                                                                            messages(application)
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation)(
+          request,
+          messages(application)
         ).toString
       }
     }
@@ -123,40 +135,41 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
-                                                                      messages(application)
+        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation)(
+          request,
+          messages(application)
         ).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, amendAreYouSureRoute)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-//      }
+      //      val application = applicationBuilder(userAnswers = None).build()
+      //
+      //      running(application) {
+      //        val request = FakeRequest(GET, amendAreYouSureRoute)
+      //
+      //        val result = route(application, request).value
+      //
+      //        status(result) mustEqual SEE_OTHER
+      //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      //      }
     }
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, amendAreYouSureRoute)
-//            .withFormUrlEncodedBody(("value", "true"))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-//      }
+      //      val application = applicationBuilder(userAnswers = None).build()
+      //
+      //      running(application) {
+      //        val request =
+      //          FakeRequest(POST, amendAreYouSureRoute)
+      //            .withFormUrlEncodedBody(("value", "true"))
+      //
+      //        val result = route(application, request).value
+      //
+      //        status(result) mustEqual SEE_OTHER
+      //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      //      }
     }
   }
 }

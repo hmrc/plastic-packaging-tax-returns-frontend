@@ -40,9 +40,9 @@ object ViewUtils {
 
   def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
     messages("return.quarter",
-      getMonthName(obligation.fromDate.getMonthValue),
-      getMonthName(obligation.toDate.getMonthValue),
-      obligation.toDate.getYear.toString
+             getMonthName(obligation.fromDate.getMonthValue),
+             getMonthName(obligation.toDate.getMonthValue),
+             obligation.toDate.getYear.toString
     )
 
 }

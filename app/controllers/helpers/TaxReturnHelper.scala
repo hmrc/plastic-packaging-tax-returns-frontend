@@ -16,13 +16,25 @@
 
 package controllers.helpers
 
+import connectors.{ServiceError, TaxReturnsConnector}
 import models.UserAnswers
 import models.returns._
 import pages._
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import java.time.LocalDate
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnHelper {
+class TaxReturnHelper @Inject() (
+  override val messagesApi: MessagesApi,
+  val controllerComponents: MessagesControllerComponents,
+  returnsConnector: TaxReturnsConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   // TODO - where do we get this obligation from? A GET on the return?
   val defaultObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
@@ -30,6 +42,17 @@ class TaxReturnHelper {
                                               dueDate = LocalDate.parse("2022-09-30"),
                                               periodKey = "22AC"
   )
+
+  def fetchTaxReturn(userId: String, periodKey: String)(implicit
+    hc: HeaderCarrier
+  ): Future[SubmittedReturn] = {
+    val future: Future[Either[ServiceError, SubmittedReturn]] =
+      returnsConnector.get(userId, periodKey)
+    future.map {
+      case Right(taxReturn) => taxReturn
+      case Left(error)      => throw error
+    }
+  }
 
   def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn =
     TaxReturn(id = pptReference,

@@ -28,20 +28,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxReturnsConnector @Inject()(
-                                     httpClient: HttpClient,
-                                     appConfig: FrontendAppConfig,
-                                     metrics: Metrics
-                                   )(implicit ec: ExecutionContext) {
+class TaxReturnsConnector @Inject() (
+  httpClient: HttpClient,
+  appConfig: FrontendAppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
 
-  def get(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, SubmittedReturn]] = {
-    val url = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
+  def get(userId: String, periodKey: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[ServiceError, SubmittedReturn]] = {
+    val url   = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
     val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
     httpClient.GET[SubmittedReturn](url)
       .andThen { case _ => timer.stop() }
-      .map { taxReturn => Right(taxReturn) }
+      .map(taxReturn => Right(taxReturn))
       .recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex))
@@ -49,7 +51,7 @@ class TaxReturnsConnector @Inject()(
   }
 
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
     httpClient.POST[String, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
       .andThen { case _ => timer.stop() }
@@ -64,7 +66,7 @@ class TaxReturnsConnector @Inject()(
   }
 
   def amend(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
 
     httpClient.PUT[TaxReturn, JsValue](appConfig.pptReturnAmendUrl(pptReference), payload)
@@ -77,7 +79,7 @@ class TaxReturnsConnector @Inject()(
         case ex: Exception =>
           Left(
             DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}",
-              ex
+                                   ex
             )
           )
       }

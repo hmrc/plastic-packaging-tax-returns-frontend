@@ -29,6 +29,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
+obligationPeriod.caption = NOT POPULATING
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -70,8 +71,6 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
-
-obligationPeriod.caption = April to June 2022
 
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?

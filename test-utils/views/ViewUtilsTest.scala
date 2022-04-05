@@ -16,25 +16,24 @@
 
 package views
 
-import models.returns.Obligation
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import views.ViewUtils._
 
-
 class ViewUtilsTest extends PlaySpec with MockitoSugar {
-//TODO
+  //TODO
   "getMonthName" ignore {
     "give january when given number 1" in {
       val mockMessages = mock[Messages]
-      val x = getMonthName(1)(mockMessages)
+      val x            = getMonthName(1)(mockMessages)
       x mustBe "January"
     }
   }
   "displayReturnQuarter" ignore {
     "give breakfast" when {
-      "given any obligation" in {???
+      "given any obligation" in {
+        ???
       }
     }
   }
