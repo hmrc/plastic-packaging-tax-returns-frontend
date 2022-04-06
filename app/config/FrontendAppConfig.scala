@@ -32,7 +32,7 @@ class FrontendAppConfig @Inject() (
   val host: String           = configuration.get[String]("host")
   val appName: String        = configuration.get[String]("appName")
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
-  lazy val serviceIdentifier = "plastic-packaging-tax"
+  val serviceIdentifier = "plastic-packaging-tax"
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend-scaffold"
