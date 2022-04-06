@@ -57,13 +57,13 @@ class AuthAgentActionImpl @Inject() (
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
 
-          val maybeInternalId = internalId.getOrElse(
+          val id = internalId.getOrElse(
             throw new IllegalArgumentException(
               s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
             )
           )
 
-          val identityData = IdentityData(maybeInternalId,
+          val identityData = IdentityData(id,
                                           externalId,
                                           agentCode,
                                           credentials,
