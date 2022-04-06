@@ -121,4 +121,5 @@ object AuthHelper {
 
   val expectedAcceptableCredentialsPredicate =
     AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
+
 }

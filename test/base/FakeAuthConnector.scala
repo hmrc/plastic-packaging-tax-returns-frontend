@@ -44,23 +44,21 @@ object FakeAuthConnector {
 
     var predicate: Option[Predicate] = None
 
-    override def authorise[A]
-    (
-      predicate: Predicate,
-      retrieval: Retrieval[A]
-    )
-    (implicit hc: HeaderCarrier, ec: ExecutionContext ): Future[A] = {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext
+    ): Future[A] = {
       this.predicate = Some(predicate)
 
       AuthHelper.createCredentialForUser(user).asInstanceOf[Future[A]]
     }
+
   }
 
-  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector = {
+  def createFailingAuthConnector(exceptionToReturn: Throwable): FakeFailingAuthConnector =
     new FakeFailingAuthConnector(exceptionToReturn)
-  }
 
-  def createSuccessAuthConnector(user: SignedInUser): FakeSuccessfulAuthConnector = {
+  def createSuccessAuthConnector(user: SignedInUser): FakeSuccessfulAuthConnector =
     new FakeSuccessfulAuthConnector(user)
-  }
+
 }

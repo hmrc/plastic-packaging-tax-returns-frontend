@@ -24,18 +24,32 @@ import org.mockito.MockitoSugar.mock
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
-import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, running, status, stubMessagesControllerComponents}
+import play.api.test.Helpers.{
+  await,
+  defaultAwaitTimeout,
+  redirectLocation,
+  running,
+  status,
+  stubMessagesControllerComponents
+}
 import support.{FakeCustomRequest, PptTestData}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialStrength, IncorrectCredentialStrength, InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{
+  AffinityGroup,
+  AuthConnector,
+  CredentialStrength,
+  IncorrectCredentialStrength,
+  InternalError,
+  MissingBearerToken
+}
 
-class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+class AuthAgentActionSpec
+    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
 
   private val appConfig = mock[FrontendAppConfig]
-  val application = applicationBuilder(userAnswers = None).build()
+  val application       = applicationBuilder(userAnswers = None).build()
 
-  val expectedPredicate = AffinityGroup.Agent.and(
-    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
-  )
+  val expectedPredicate =
+    AffinityGroup.Agent.and(AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong)))
 
   private def createAuthAction(authConnector: AuthConnector): AuthAgentAction =
     new AuthAgentActionImpl(authConnector,
@@ -55,7 +69,7 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
 
       running(application) {
         val fakeAuthConnector = FakeAuthConnector.createSuccessAuthConnector(user)
-        val controller = new Harness(createAuthAction(fakeAuthConnector))
+        val controller        = new Harness(createAuthAction(fakeAuthConnector))
         await(controller.onPageLoad()(authRequest(Headers(), user)))
 
         fakeAuthConnector.predicate.get mustBe expectedPredicate
@@ -66,7 +80,8 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
       val agent = PptTestData.newAgent()
 
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
+        val controller =
+          new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
         controller.onPageLoad()(authRequest(Headers(), agent))
 
         metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount must be > 0L
@@ -77,7 +92,8 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
       val agent = PptTestData.newAgent()
 
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
+        val controller =
+          new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
         val result = controller.onPageLoad()(authRequest(Headers(), agent))
 
         status(result) mustBe 200
@@ -89,7 +105,9 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
         when(appConfig.loginUrl).thenReturn("login-url")
         when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
 
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken)))
+        val controller = new Harness(
+          createAuthAction(FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken))
+        )
         val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
 
         redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
@@ -102,7 +120,11 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
         when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
         when(appConfig.serviceIdentifier).thenReturn("PPT")
 
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new IncorrectCredentialStrength)))
+        val controller = new Harness(
+          createAuthAction(
+            FakeAuthConnector.createFailingAuthConnector(new IncorrectCredentialStrength)
+          )
+        )
         val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
 
         redirectLocation(result) mustBe Some(
@@ -113,7 +135,13 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
 
     "redirect to unauthorised page when authorisation fails" in {
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new InternalError("Some unexpected auth error"))))
+        val controller = new Harness(
+          createAuthAction(
+            FakeAuthConnector.createFailingAuthConnector(
+              new InternalError("Some unexpected auth error")
+            )
+          )
+        )
         val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
 
         status(result) mustBe SEE_OTHER
@@ -122,4 +150,3 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
     }
   }
 }
-
