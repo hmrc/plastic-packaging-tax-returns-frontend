@@ -21,34 +21,31 @@ import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
+import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, running, status, stubMessagesControllerComponents}
 import support.{FakeCustomRequest, PptTestData}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialStrength, IncorrectCredentialStrength, InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core._
 
-class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+class AuthCheckActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
 
   private val appConfig = mock[FrontendAppConfig]
   val application = applicationBuilder(userAnswers = None).build()
 
-  val expectedPredicate = AffinityGroup.Agent.and(
-    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
-  )
-
-  private def createAuthAction(authConnector: AuthConnector): AuthAgentAction =
-    new AuthAgentActionImpl(authConnector,
-                            appConfig,
-                            metricsMock,
-                            stubMessagesControllerComponents()
+  private def createAuthAction(authConnector: AuthConnector): AuthCheckAction =
+    new AuthCheckActionImpl(authConnector,
+      appConfig,
+      metricsMock,
+      stubMessagesControllerComponents()
     )
 
-  class Harness(authAction: AuthAgentAction) {
+  class Harness(authAction: AuthCheckAction) {
     def onPageLoad() = authAction(_ => Results.Ok)
   }
 
-  "Auth Agent Action" - {
+  "Auth Check Action" - {
 
     "should authorise with strong credential" in {
       val user = PptTestData.newUser()
@@ -58,27 +55,28 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
         val controller = new Harness(createAuthAction(fakeAuthConnector))
         await(controller.onPageLoad()(authRequest(Headers(), user)))
 
-        fakeAuthConnector.predicate.get mustBe expectedPredicate
+        fakeAuthConnector.predicate.get mustBe AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
       }
     }
 
     "time calls to authorisation" in {
-      val agent = PptTestData.newAgent()
+      val user = PptTestData.newUser()
 
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
-        controller.onPageLoad()(authRequest(Headers(), agent))
+        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(user)))
+        await(controller.onPageLoad()(authRequest(Headers(), user)))
 
         metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount must be > 0L
       }
     }
 
-    "process request when signed in user has agent affinity" in {
-      val agent = PptTestData.newAgent()
+    "process request when signed in user" in {
+      val user = PptTestData.newUser()
 
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(agent)))
-        val result = controller.onPageLoad()(authRequest(Headers(), agent))
+        val controller = new Harness(createAuthAction(FakeAuthConnector.createSuccessAuthConnector(user)))
+
+        val result = controller.onPageLoad()(authRequest(Headers(), user))
 
         status(result) mustBe 200
       }
@@ -88,9 +86,9 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
       running(application) {
         when(appConfig.loginUrl).thenReturn("login-url")
         when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
-
         val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken)))
-        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
+
+        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newUser()))
 
         redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
       }
@@ -101,9 +99,11 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
         when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
         when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
         when(appConfig.serviceIdentifier).thenReturn("PPT")
+        val controller = new Harness(createAuthAction(
+          FakeAuthConnector.createFailingAuthConnector(IncorrectCredentialStrength()))
+        )
 
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new IncorrectCredentialStrength)))
-        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
+        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newUser()))
 
         redirectLocation(result) mustBe Some(
           "mfa-uplift-url?origin=PPT&continueUrl=login-continue-url"
@@ -113,8 +113,10 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
 
     "redirect to unauthorised page when authorisation fails" in {
       running(application) {
-        val controller = new Harness(createAuthAction(FakeAuthConnector.createFailingAuthConnector(new InternalError("Some unexpected auth error"))))
-        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newAgent()))
+        val controller = new Harness(createAuthAction(
+          FakeAuthConnector.createFailingAuthConnector(InternalError("Some unexpected auth error"))))
+
+        val result = controller.onPageLoad()(authRequest(Headers(), PptTestData.newUser()))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
@@ -122,4 +124,3 @@ class AuthAgentActionSpec extends SpecBase with GuiceOneAppPerSuite with FakeCus
     }
   }
 }
-
