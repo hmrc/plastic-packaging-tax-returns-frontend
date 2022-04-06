@@ -45,7 +45,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendAreYouSurePage,
                              NormalMode,
                              answers.get
-          ) mustBe (routes.IndexController.onPageLoad)
+          ) mustBe (routes.ViewReturnSummaryController.onPageLoad)
         }
 
       }

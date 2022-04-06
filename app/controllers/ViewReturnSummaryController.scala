@@ -16,18 +16,17 @@
 
 package controllers
 
-import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions._
+import controllers.helpers.TaxReturnHelper
 import models.NormalMode
 import models.returns.SubmittedReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ViewReturnSummaryView
 import viewmodels.govuk.summarylist._
+import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +36,7 @@ class ViewReturnSummaryController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
-  returnsConnector: TaxReturnsConnector
+  taxReturnHelper: TaxReturnHelper
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -51,7 +50,7 @@ class ViewReturnSummaryController @Inject() (
     identify.async {
       implicit request =>
         val submittedReturn: Future[SubmittedReturn] =
-          fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
+          taxReturnHelper.fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
         submittedReturn.map {
           val list         = createSummaryList
           val returnPeriod = "April to June 2022" // TODO
@@ -69,17 +68,6 @@ class ViewReturnSummaryController @Inject() (
 
   private def createSummaryListRow(name: String, value: String): Aliases.SummaryListRow =
     SummaryListRow(Key(Text(name)), Value(Text(value)))
-
-  private def fetchTaxReturn(userId: String, periodKey: String)(implicit
-    hc: HeaderCarrier
-  ): Future[SubmittedReturn] = {
-    val future: Future[Either[ServiceError, SubmittedReturn]] =
-      returnsConnector.get(userId, periodKey)
-    future.map {
-      case Right(taxReturn) => taxReturn
-      case Left(error)      => throw error
-    }
-  }
 
   def onSubmit(): Action[AnyContent] =
     identify {
