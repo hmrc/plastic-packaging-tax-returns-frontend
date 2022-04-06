@@ -15,6 +15,22 @@ date.day = Day
 date.month = Month
 date.year = Year
 
+month.1 = January
+month.2 = February
+month.3 = March
+month.4 = April
+month.5 = May
+month.6 = June
+month.7 = July
+month.8 = August
+month.9 = September
+month.10 = October
+month.11 = November
+month.12 = December
+
+return.quarter = {0} to {1} {2}
+obligationPeriod.caption = April to June 2022
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -56,58 +72,56 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-obligationPeriod.caption = April to June 2022
-
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.checkYourAnswersLabel = Weight of directly exported plastic packaging
-amendDirectExportPlasticPackaging.error.nonNumeric = Enter your amendDirectExportPlasticPackaging using numbers
-amendDirectExportPlasticPackaging.error.required = Enter your amendDirectExportPlasticPackaging
-amendDirectExportPlasticPackaging.error.wholeNumber = Enter your amendDirectExportPlasticPackaging using whole numbers
-amendDirectExportPlasticPackaging.error.outOfRange = AmendDirectExportPlasticPackaging must be between {0} and {1}
+amendDirectExportPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendDirectExportPlasticPackaging.error.required = Enter the weight, in kilograms
+amendDirectExportPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendDirectExportPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
 amendDirectExportPlasticPackaging.change.hidden = AmendDirectExportPlasticPackaging
 
 amendHumanMedicinePlasticPackaging.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine? - Submit return - Plastic Packaging Tax - GOV.UK
 amendHumanMedicinePlasticPackaging.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
 amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported used for licenced human medicines
-amendHumanMedicinePlasticPackaging.error.nonNumeric = Enter your amendHumanMedicinePlasticPackaging using numbers
-amendHumanMedicinePlasticPackaging.error.required = Enter your amendHumanMedicinePlasticPackaging
-amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter your amendHumanMedicinePlasticPackaging using whole numbers
-amendHumanMedicinePlasticPackaging.error.outOfRange = AmendHumanMedicinePlasticPackaging must be between {0} and {1}
+amendHumanMedicinePlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendHumanMedicinePlasticPackaging.error.required = Enter the weight, in kilograms
+amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendHumanMedicinePlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
 amendHumanMedicinePlasticPackaging.change.hidden = AmendHumanMedicinePlasticPackaging
 
 amendImportedPlasticPackaging.title = How much did your finished imported plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendImportedPlasticPackaging.heading = How much did your finished imported plastic packaging components weigh?
 amendImportedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging imported
-amendImportedPlasticPackaging.error.nonNumeric = Enter your amendImportedPlasticPackaging using numbers
-amendImportedPlasticPackaging.error.required = Enter your amendImportedPlasticPackaging
-amendImportedPlasticPackaging.error.wholeNumber = Enter your amendImportedPlasticPackaging using whole numbers
-amendImportedPlasticPackaging.error.outOfRange = AmendImportedPlasticPackaging must be between {0} and {1}
+amendImportedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendImportedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendImportedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendImportedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
 amendImportedPlasticPackaging.change.hidden = AmendImportedPlasticPackaging
 
 amendManufacturedPlasticPackaging.title = How much did your finished manufactured plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendManufacturedPlasticPackaging.heading = How much did your finished manufactured plastic packaging components weigh?
 amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
-amendManufacturedPlasticPackaging.error.nonNumeric = Enter your amendManufacturedPlasticPackaging using numbers
-amendManufacturedPlasticPackaging.error.required = Enter your amendManufacturedPlasticPackaging
-amendManufacturedPlasticPackaging.error.wholeNumber = Enter your amendManufacturedPlasticPackaging using whole numbers
-amendManufacturedPlasticPackaging.error.outOfRange = AmendManufacturedPlasticPackaging must be between {0} and {1}
+amendManufacturedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendManufacturedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendManufacturedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendManufacturedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
 amendManufacturedPlasticPackaging.change.hidden = AmendManufacturedPlasticPackaging
 
 
 amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
 amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported containing 30% or more recycled plastic
-amendRecycledPlasticPackaging.error.nonNumeric = Enter your amendRecycledPlasticPackaging using numbers
-amendRecycledPlasticPackaging.error.required = Enter your amendRecycledPlasticPackaging
-amendRecycledPlasticPackaging.error.wholeNumber = Enter your amendRecycledPlasticPackaging using whole numbers
-amendRecycledPlasticPackaging.error.outOfRange = AmendRecycledPlasticPackaging must be between {0} and {1}
+amendRecycledPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendRecycledPlasticPackaging.error.required = Enter the weight, in kilograms
+amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
 amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
 
 amendAreYouSure.title = Would you like to amend this return?
 amendAreYouSure.heading = Would you like to amend this return?
 amendAreYouSure.checkYourAnswersLabel = amendAreYouSure
-amendAreYouSure.error.required = Select yes if amendAreYouSure
+amendAreYouSure.error.required = Select yes if you want to amend your return
 amendAreYouSure.change.hidden = AmendAreYouSure
 
 confirmation.title = Your return will be amended
@@ -179,10 +193,6 @@ recycledPlasticPackagingWeight.error.required = Enter your recycledPlasticPackag
 recycledPlasticPackagingWeight.error.wholeNumber = Enter your recycledPlasticPackagingWeight using whole numbers
 recycledPlasticPackagingWeight.error.outOfRange = RecycledPlasticPackagingWeight must be between {0} and {1}
 recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
-
-
-iewReturnSummary.title = iewReturnSummary
-iewReturnSummary.heading = iewReturnSummary
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
