@@ -58,24 +58,16 @@ class ViewReturnSummaryController @Inject() (
         }
     }
 
-  private def createSummaryList =
-    SummaryListViewModel(
-      Seq(createSummaryListRow("Tax liability for this period", "£400"),
-          createSummaryListRow("Return submitted", "5 July 2022"),
-          createSummaryListRow("Payment due", "29 July 2022")
-      )
-    )
+  private def createSummaryList = {
+    SummaryListViewModel(Seq(
+      createSummaryListRow("Tax liability for this period", "£400"),
+      createSummaryListRow("Return submitted", "5 July 2022"),
+      createSummaryListRow("Payment due", "29 July 2022")
+      ))
+  }
 
   private def createSummaryListRow(name: String, value: String): Aliases.SummaryListRow =
     SummaryListRow(Key(Text(name)), Value(Text(value)))
-
-  //  private def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
-  //    val future: Future[Either[ServiceError, SubmittedReturn]] = returnsConnector.get(userId, periodKey)
-  //    future.map {
-  //      case Right(taxReturn) => taxReturn
-  //      case Left(error) => throw error
-  //    }
-  //  }
 
   def onSubmit(): Action[AnyContent] =
     identify {
