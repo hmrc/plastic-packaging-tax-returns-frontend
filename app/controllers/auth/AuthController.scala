@@ -36,6 +36,7 @@ class AuthController @Inject() (
     identify.async {
       implicit request =>
         Future.successful(Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl))))
+
     }
 
   def signOutNoSurvey(): Action[AnyContent] =
