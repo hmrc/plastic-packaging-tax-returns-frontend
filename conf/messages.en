@@ -196,4 +196,8 @@ recycledPlasticPackagingWeight.change.hidden = RecycledPlasticPackagingWeight
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
-viewReturnSummary.summaryHeading = Summary
+viewReturnSummary.summary.heading = Summary
+viewReturnSummary.summary.field.1 = Tax liability for this period
+viewReturnSummary.summary.field.2 = Return submitted
+viewReturnSummary.summary.field.3 = Payment due
+viewReturnSummary.summary.field.4 = Return reference number

@@ -24,7 +24,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.ViewReturnSummaryViewModel
+import views.html.ViewReturnSummaryView
 import viewmodels.govuk.summarylist._
 import views.html.ViewReturnSummaryView
 
@@ -41,7 +45,7 @@ class ViewReturnSummaryController @Inject() (
     extends FrontendBaseController with I18nSupport {
 
   // TODO stubs totally ignore this right now
-  private val hardcoded_period_key = "yet-more-cheese-biscuits"
+  private val hardcoded_period_key = "AAAA"
 
   // TODO Need to get this from auth
   private val hardcoded_ppt_ref = "XMPPT0000000001"
@@ -52,22 +56,10 @@ class ViewReturnSummaryController @Inject() (
         val submittedReturn: Future[SubmittedReturn] =
           taxReturnHelper.fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
         submittedReturn.map {
-          val list         = createSummaryList
           val returnPeriod = "April to June 2022" // TODO
-          _ => Ok(view(returnPeriod, list))
+          subRet => Ok(view(returnPeriod, ViewReturnSummaryViewModel(subRet)))
         }
     }
-
-  private def createSummaryList =
-    SummaryListViewModel(
-      Seq(createSummaryListRow("Tax liability for this period", "£400"),
-          createSummaryListRow("Return submitted", "5 July 2022"),
-          createSummaryListRow("Payment due", "29 July 2022")
-      )
-    )
-
-  private def createSummaryListRow(name: String, value: String): Aliases.SummaryListRow =
-    SummaryListRow(Key(Text(name)), Value(Text(value)))
 
   def onSubmit(): Action[AnyContent] =
     identify {
