@@ -176,13 +176,22 @@ class AuthenticatedIdentifierAction @Inject() (
     // It appears Auth with never return a delegated enrolment in it's response to an agent auth request;
     // therefore we have to use the one the agent past in. This is safe because this identifier has just
     // past auth for this this agent.
-    selectedClientIdentifier.map(Some(_)).getOrElse {
-      getPptEnrolmentIdentifier(enrolments, identifier) match {
-        case Some(enrolmentIdentifier) =>
-          Option(enrolmentIdentifier).filter(_.value.trim.nonEmpty).map(_.value)
-        case None => Option.empty
-      }
-    }
+    maybeClientIdentifier(selectedClientIdentifier).getOrElse(
+      maybePptEnrolmentIdentifier(enrolments, identifier)
+    )
+
+  private def maybeClientIdentifier(
+    selectedClientIdentifier: Option[String]
+  ): Option[Some[String]] =
+    selectedClientIdentifier.map(Some(_))
+
+  private def maybePptEnrolmentIdentifier(
+    enrolments: Enrolments,
+    identifier: String
+  ): Option[String] =
+    getPptEnrolmentIdentifier(enrolments, identifier).filter(_.value.trim.nonEmpty).flatMap(
+      identifier => Some(identifier.value)
+    )
 
   private def getPptEnrolmentIdentifier(
     enrolmentsList: Enrolments,
