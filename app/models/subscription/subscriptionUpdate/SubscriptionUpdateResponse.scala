@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.subscription.subscriptionUpdate
 
-@(message: String, classes: String = "govuk-caption-l", id: Option[String] = Some("section-header"))
+import play.api.libs.json.{Json, OFormat}
 
-<span class="@classes" @id.map{id => id="@id"}>@message</span>
+import java.time.ZonedDateTime
+
+case class SubscriptionUpdateResponse(
+  pptReference: String,
+  processingDate: ZonedDateTime,
+  formBundleNumber: String
+)
+
+object SubscriptionUpdateResponse {
+
+  implicit val format: OFormat[SubscriptionUpdateResponse] =
+    Json.format[SubscriptionUpdateResponse]
+
+}
