@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package models.subscription
 
-import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.UnauthorisedView
+import play.api.libs.json.Json
+import returns.models.subscription.ContactDetails
 
-class UnauthorisedController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view: UnauthorisedView
-) extends FrontendBaseController with I18nSupport {
+case class PrincipalPlaceOfBusinessDetails(
+  addressDetails: AddressDetails,
+  contactDetails: ContactDetails
+)
 
-  def onPageLoad: Action[AnyContent] =
-    Action { implicit request =>
-      Ok(view())
-    }
+object PrincipalPlaceOfBusinessDetails {
+  implicit val format = Json.format[PrincipalPlaceOfBusinessDetails]
 
 }

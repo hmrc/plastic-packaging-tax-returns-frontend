@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package base
+
+import controllers.actions.IdentifierAction
+import models.SignedInUser
+import models.requests.{IdentifiedRequest, IdentityData}
+import play.api.mvc._
+import uk.gov.hmrc.auth.core.Enrolments
 
 import javax.inject.Inject
-import models.requests.IdentifierRequest
-import play.api.mvc._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
   override def invokeBlock[A](
     request: Request[A],
-    block: IdentifierRequest[A] => Future[Result]
-  ): Future[Result] =
-    block(IdentifierRequest(request, "id"))
+    block: IdentifiedRequest[A] => Future[Result]
+  ): Future[Result] = {
+    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData(internalId = "SomeId"))
+    block(IdentifiedRequest(request, pptLoggedInUser, None))
+  }
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

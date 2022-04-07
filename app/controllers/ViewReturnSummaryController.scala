@@ -16,8 +16,8 @@
 
 package controllers
 
-import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions._
+import controllers.helpers.TaxReturnHelper
 import models.NormalMode
 import models.returns.SubmittedReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,17 +30,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
 import viewmodels.govuk.summarylist._
+import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewReturnSummaryController @Inject()(
-                                             override val messagesApi: MessagesApi,
-                                             identify: IdentifierAction,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             view: ViewReturnSummaryView,
-                                             returnsConnector: TaxReturnsConnector
-                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class ViewReturnSummaryController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ViewReturnSummaryView,
+  taxReturnHelper: TaxReturnHelper
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   // TODO stubs totally ignore this right now
   private val hardcoded_period_key = "AAAA"
@@ -51,20 +53,13 @@ class ViewReturnSummaryController @Inject()(
   def onPageLoad: Action[AnyContent] =
     identify.async {
       implicit request =>
-        val submittedReturn: Future[SubmittedReturn] = fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
+        val submittedReturn: Future[SubmittedReturn] =
+          taxReturnHelper.fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
         submittedReturn.map {
           val returnPeriod = "April to June 2022" // TODO
           subRet => Ok(view(returnPeriod, ViewReturnSummaryViewModel(subRet)))
         }
     }
-
-  private def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
-    val future: Future[Either[ServiceError, SubmittedReturn]] = returnsConnector.get(userId, periodKey)
-    future.map {
-      case Right(taxReturn) => taxReturn
-      case Left(error) => throw error
-    }
-  }
 
   def onSubmit(): Action[AnyContent] =
     identify {

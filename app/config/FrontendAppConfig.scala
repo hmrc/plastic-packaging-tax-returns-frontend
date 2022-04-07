@@ -29,8 +29,10 @@ class FrontendAppConfig @Inject() (
   val servicesConfig: ServicesConfig
 ) {
 
-  val host: String    = configuration.get[String]("host")
-  val appName: String = configuration.get[String]("appName")
+  val host: String           = configuration.get[String]("host")
+  val appName: String        = configuration.get[String]("appName")
+  lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
+  lazy val serviceIdentifier = "plastic-packaging-tax"
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend-scaffold"
@@ -45,8 +47,8 @@ class FrontendAppConfig @Inject() (
   private val exitSurveyBaseUrl: String =
     configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
 
-  val exitSurveyUrl: String =
-    s"$exitSurveyBaseUrl/feedback/plastic-packaging-tax-returns-frontend-scaffold"
+  val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
+  val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")

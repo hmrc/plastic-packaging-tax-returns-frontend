@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.AmendRecycledPlasticPackagingFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.AmendRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AmendRecycledPlasticPackagingView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AmendRecycledPlasticPackagingController @Inject() (

@@ -17,22 +17,27 @@
 package controllers.actions
 
 import base.SpecBase
-import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.{UserAnswers}
+import models.requests.{IdentifiedRequest, OptionalDataRequest}
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+import support.PptTestData
+import support.PptTestData.pptEnrolment
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
+  val testUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
+
   class Harness(sessionRepository: SessionRepository)
       extends DataRetrievalActionImpl(sessionRepository) {
 
-    def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
+    def callTransform[A](request: IdentifiedRequest[A]): Future[OptionalDataRequest[A]] =
       transform(request)
 
   }
@@ -44,12 +49,14 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(None)
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id")).futureValue
+        val result =
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
 
         result.userAnswers must not be defined
+
       }
     }
 
@@ -58,10 +65,13 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
+        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(
+          Some(UserAnswers("id"))
+        )
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id")).futureValue
+        val result =
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
 
         result.userAnswers mustBe defined
       }
