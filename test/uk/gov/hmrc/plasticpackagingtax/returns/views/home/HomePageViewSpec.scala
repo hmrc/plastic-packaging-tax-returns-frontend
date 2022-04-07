@@ -331,28 +331,6 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
             }
         }
     }
-
-    "not render the de-registration link" when {
-      "deregistration enabled feature flag is false" in {
-        val mockAppConfig = mock[AppConfig]
-        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(false)
-
-        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
-
-        view.getElementById("deregister") mustBe null
-      }
-    }
-
-    "render the de-registration link" when {
-      "deregistration enabled feature flag is true" in {
-        val mockAppConfig = mock[AppConfig]
-        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
-
-        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
-
-        view.getElementById("deregister") must not be null
-      }
-    }
   }
 
   private def checkDeregisterCard(deregister: Element) = {

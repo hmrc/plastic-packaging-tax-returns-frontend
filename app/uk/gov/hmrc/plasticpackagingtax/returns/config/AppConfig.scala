@@ -47,9 +47,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def isFeatureEnabled(name: String): Boolean =
     config.getOptional[Boolean](s"features.$name").getOrElse(false)
 
-  def isDeRegistrationFeatureEnabled: Boolean =
-    isFeatureEnabled(Features.deRegistrationEnabled)
-
   def languageLinks: Seq[(Language, String)] =
     Seq((En, returnsRoutes.LanguageController.enGb().url),
         (Cy, returnsRoutes.LanguageController.cyGb().url)

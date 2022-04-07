@@ -29,9 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.returns.base.PptTestData.pptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.returns.base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.returns.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.returns.models.obligations.{Obligation, PPTObligations}
 
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyActionSpec extends ControllerSpec {

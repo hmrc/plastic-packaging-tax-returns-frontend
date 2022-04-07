@@ -17,8 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.returns.config
 
 object Features {
-  val returnsEnabled: String        = "returnsEnabled"
-  val paymentsEnabled: String       = "paymentsEnabled"
-  val deRegistrationEnabled: String = "deRegistrationEnabled"
-
+  val returnsEnabled: String  = "returnsEnabled"
+  val paymentsEnabled: String = "paymentsEnabled"
 }
