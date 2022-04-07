@@ -44,9 +44,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val welshEnabled: Boolean = config.get[Boolean]("lang.welsh.enabled")
 
-  def isFeatureEnabled(name: String): Boolean =
-    config.getOptional[Boolean](s"features.$name").getOrElse(false)
-
   def languageLinks: Seq[(Language, String)] =
     Seq((En, returnsRoutes.LanguageController.enGb().url),
         (Cy, returnsRoutes.LanguageController.cyGb().url)
