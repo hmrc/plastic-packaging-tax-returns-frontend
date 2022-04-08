@@ -14,18 +14,194 @@
  * limitations under the License.
  *@
 
+@import components.{card, cardSection, Link, paragraph, SectionHeader}
+@import config.FrontendAppConfig
+@import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import models.obligations.PPTObligations
+@import views.ViewUtils
+
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    sectionHeader: SectionHeader,
+    cardSection: cardSection,
+    link: Link,
+    paragraph: paragraph,
+    card: card
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, subscription: SubscriptionDisplayResponse, obligations: Option[PPTObligations], paymentStatement: Option[String], completeReturnUrl: String, pptReference: String)(implicit request: Request[_], messages: Messages)
+
+@organisationName = @{
+    if(subscription.isGroup)
+      messages("account.homePage.organisation.group", subscription.entityName)
+    else
+      subscription.entityName
+}
+
+@link1Text = @{
+    if(subscription.isGroup)
+        messages("account.homePage.card.registration.details.1.link.group")
+    else if(subscription.isPartnership)
+        messages("account.homePage.card.registration.details.1.link.partnership")
+    else
+        messages("account.homePage.card.registration.details.1.link.single")
+}
+
+@link2Text = @{
+    if(subscription.isGroup)
+        messages("account.homePage.card.registration.details.2.link.group")
+    else if(subscription.isPartnership)
+        messages("account.homePage.card.registration.details.2.link.partnership")
+    else
+        ""
+}
+
+@singleEntityManagement = {
+<div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-single", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
+</div>
+}
+
+@groupManagement = {
+<div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-group", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
+</div>
+<div id="additional-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
+        body = messages("account.homePage.card.registration.details.2.body.group")
+    )
+</div>
+}
+
+@partnershipManagement = {
+<div id="core-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-partner-core", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        body = messages("account.homePage.card.registration.details.1.body")
+    )
+</div>
+<div id="additional-management" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-partner-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
+        body = messages("account.homePage.card.registration.details.2.body.partnership")
+    )
+</div>
+}
+
+@deregister = {
+<div id="deregister" class="govuk-grid-column-one-third">
+    @cardSection(
+        link = link(id = "amend-deregister", text = messages("account.homePage.card.deregister.link"), call = Call("GET", appConfig.pptRegistrationDeregisterUrl)),
+        body = messages("account.homePage.card.deregister.body")
+    )
+</div>
+}
+
+@entityManagementCards = @{
+    if(subscription.isGroup) {
+        groupManagement
+    } else if(subscription.isPartnership) {
+        partnershipManagement
+    } else {
+        singleEntityManagement
+    }
+}
+
+@managementCards = {
+    @entityManagementCards
+    @if(appConfig.isDeRegistrationFeatureEnabled) {
+        @deregister
+    }
+}
+
+@returnsLine1 = @{
+    obligations.flatMap { obligations =>
+        obligations.overdueObligationCount match {
+            case 0 =>
+                if(obligations.isNextObligationDue) {
+                    None
+                } else {
+                    Some(messages("account.homePage.card.makeReturn.line1.none"))
+                }
+            case 1 => Some(messages("account.homePage.card.makeReturn.line1.singleOverdue", ViewUtils.displayReturnQuarter(obligations.oldestOverdueObligation.get)))
+            case _ => Some(messages("account.homePage.card.makeReturn.line1.multipleOverdue", obligations.overdueObligationCount))
+       }
+   }
+}
+
+@returnsLine2 = @{
+    obligations.flatMap { obligations =>
+        obligations.nextObligation.map { nextObligation =>
+            messages("account.homePage.card.makeReturn.line2.due",
+                ViewUtils.displayReturnQuarter(nextObligation),
+                ViewUtils.displayLocalDate(nextObligation.dueDate.minusDays(nextObligation.dueDate.getDayOfMonth - 1)),
+                ViewUtils.displayLocalDate(nextObligation.dueDate))
+            }
+       }
+}
+
+@returnsError = @{
+    if (obligations.isEmpty) {
+        Some(messages("account.homePage.card.makeReturn.failure"))
+    } else {
+        None
+    }
+}
+
+@returnsLink = @{
+    obligations.flatMap { obligations =>
+        if(obligations.displaySubmitReturnsLink) {
+            // TODO - change the target url when we have returns
+            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = routes.IndexController.onPageLoad))
+        } else {
+            None
+        }
+    }
+}
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")),
+    pageTitle    = titleNoForm(messages("account.homePage.title")),
     showBackLink = false
 ) {
+    @sectionHeader(messages("account.homePage.title"))
 
-    <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
+    @paragraph {
+        @messages("account.homePage.registrationNumber", pptReference) </br>
+        @organisationName
+    }
 
-    <p class="govuk-body">@messages("index.guidance")</p>
+    <div class="govuk-grid-row govuk-!-margin-top-6 ">
+
+        @card(header = messages("account.homePage.card.makeReturn.header"),
+            lines = Seq[Option[String]](
+                returnsLine1,
+                returnsLine2,
+                returnsError
+            ).filter(_.isDefined).flatten,
+            links = Seq[Option[Html]](
+                returnsLink,
+                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
+            ).filter(_.isDefined).flatten,
+        )
+
+        @card(header = messages("account.homePage.card.payments.header"),
+            lines = Seq(
+                paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))
+            ),
+            links = Seq.empty
+        )
+    </div>
+
+    <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
+
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        @managementCards
+    </div>
 }

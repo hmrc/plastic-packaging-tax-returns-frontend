@@ -20,6 +20,8 @@ import models.returns.TaxReturnObligation
 import play.api.data.Form
 import play.api.i18n.Messages
 
+import java.time.LocalDate
+
 object ViewUtils {
 
   def title(form: Form[_], title: String, section: Option[String] = None)(implicit
@@ -44,5 +46,8 @@ object ViewUtils {
              getMonthName(obligation.toDate.getMonthValue),
              obligation.toDate.getYear.toString
     )
+
+  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
 
 }
