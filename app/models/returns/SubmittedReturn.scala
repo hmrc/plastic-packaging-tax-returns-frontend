@@ -24,29 +24,20 @@ object IdDetails {
   implicit val format: OFormat[IdDetails] = Json.format[IdDetails]
 }
 
-case class ChargeDetails(
-  chargeType: String,
-  chargeReference: String,
-  amount: BigDecimal,
-  dueDate: String
-)
-
-object ChargeDetails {
-  implicit val format: OFormat[ChargeDetails] = Json.format[ChargeDetails]
-}
-
-case class ExportChargeDetails(
-  chargeType: String,
+case class ReturnDisplayChargeDetails(
+  periodKey: String,
   chargeReference: Option[String],
-  amount: BigDecimal,
-  dueDate: Option[String]
+  periodFrom: String,
+  periodTo: String,
+  receiptDate: String,
+  returnType: String
 )
 
-object ExportChargeDetails {
-  implicit val format: OFormat[ExportChargeDetails] = Json.format[ExportChargeDetails]
+object ReturnDisplayChargeDetails {
+  implicit val format: OFormat[ReturnDisplayChargeDetails] = Json.format[ReturnDisplayChargeDetails]
 }
 
-case class EisReturnDetails(
+case class ReturnDisplayDetails(
   manufacturedWeight: BigDecimal,
   importedWeight: BigDecimal,
   totalNotLiable: BigDecimal,
@@ -54,22 +45,22 @@ case class EisReturnDetails(
   directExports: BigDecimal,
   recycledPlastic: BigDecimal,
   creditForPeriod: BigDecimal,
+  debitForPeriod: BigDecimal,
   totalWeight: BigDecimal,
   taxDue: BigDecimal
 )
 
-object EisReturnDetails {
-  implicit val format: OFormat[EisReturnDetails] = Json.format[EisReturnDetails]
+object ReturnDisplayDetails {
+  implicit val format: OFormat[ReturnDisplayDetails] = Json.format[ReturnDisplayDetails]
 }
 
-case class SubmittedReturn(
+case class ReturnDisplayApi(
   processingDate: String,
   idDetails: IdDetails,
-  chargeDetails: Option[ChargeDetails],
-  exportChargeDetails: Option[ExportChargeDetails],
-  returnDetails: Option[EisReturnDetails]
+  chargeDetails: Option[ReturnDisplayChargeDetails],
+  returnDetails: ReturnDisplayDetails
 )
 
-object SubmittedReturn {
-  implicit val format: OFormat[SubmittedReturn] = Json.format[SubmittedReturn]
+object ReturnDisplayApi {
+  implicit val format: OFormat[ReturnDisplayApi] = Json.format[ReturnDisplayApi]
 }

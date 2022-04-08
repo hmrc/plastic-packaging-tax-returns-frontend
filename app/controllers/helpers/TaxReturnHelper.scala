@@ -37,7 +37,7 @@ class TaxReturnHelper @Inject() (
     extends FrontendBaseController with I18nSupport {
 
   // TODO - where do we get this obligation from? A GET on the return?
-  val defaultObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
+  val defaultObligation: TaxReturnObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
                                               toDate = LocalDate.parse("2022-06-30"),
                                               dueDate = LocalDate.parse("2022-09-30"),
                                               periodKey = "22AC"
@@ -45,8 +45,8 @@ class TaxReturnHelper @Inject() (
 
   def fetchTaxReturn(userId: String, periodKey: String)(implicit
     hc: HeaderCarrier
-  ): Future[SubmittedReturn] = {
-    val future: Future[Either[ServiceError, SubmittedReturn]] =
+  ): Future[ReturnDisplayApi] = {
+    val future: Future[Either[ServiceError, ReturnDisplayApi]] =
       returnsConnector.get(userId, periodKey)
     future.map {
       case Right(taxReturn) => taxReturn

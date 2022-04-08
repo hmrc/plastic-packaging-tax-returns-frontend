@@ -19,17 +19,11 @@ package controllers
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.NormalMode
-import models.returns.SubmittedReturn
+import models.returns.ReturnDisplayApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
-import views.html.ViewReturnSummaryView
-import viewmodels.govuk.summarylist._
 import views.html.ViewReturnSummaryView
 
 import javax.inject.Inject
@@ -53,7 +47,7 @@ class ViewReturnSummaryController @Inject() (
   def onPageLoad: Action[AnyContent] =
     identify.async {
       implicit request =>
-        val submittedReturn: Future[SubmittedReturn] =
+        val submittedReturn: Future[ReturnDisplayApi] =
           taxReturnHelper.fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
         submittedReturn.map {
           val returnPeriod = "April to June 2022" // TODO
