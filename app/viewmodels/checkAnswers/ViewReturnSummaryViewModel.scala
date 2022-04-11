@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.returns.SubmittedReturn
+import models.returns.ReturnDisplayApi
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import viewmodels.govuk.summarylist._
@@ -36,7 +36,7 @@ object Section {
   def apply(name: String, lastBold: Boolean = true)(fields: String*): Section =
     Section(s"viewReturnSummary.$name.heading",
       fields.zipWithIndex.map{ case (value, i) =>
-        val row = i+1
+        val row = i + 1
         Field(s"viewReturnSummary.$name.field.$row", value, row==fields.length && lastBold)
       }
     )
@@ -48,13 +48,13 @@ object ViewReturnSummaryViewModel {
 
   def asPounds(bigDecimal: BigDecimal): String = "£" + bigDecimal //there should be utils for this, and Kg
 
-  def apply(submittedReturn: SubmittedReturn): ViewReturnSummaryViewModel =
+  def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        asPounds(submittedReturn.chargeDetails.map(_.amount).getOrElse(0)),
+        asPounds(submittedReturn.returnDetails.taxDue),
         submittedReturn.processingDate,
-        submittedReturn.chargeDetails.map(_.dueDate).getOrElse("not found"),
-        submittedReturn.idDetails.pptReferenceNumber,
+        "TODO",
+        "TODO"
       )
     )
 

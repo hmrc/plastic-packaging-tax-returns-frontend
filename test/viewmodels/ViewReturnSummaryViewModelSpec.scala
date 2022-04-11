@@ -16,25 +16,38 @@
 
 package viewmodels
 
-import models.returns.{ChargeDetails, IdDetails, SubmittedReturn}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
+
   "apply" must {
     "build the Summary section" in {
-      val submittedReturn = SubmittedReturn("31 July 2022", IdDetails("pptRef", ""), Some(ChargeDetails("", "", 400, "5 July 2022")), None, None)
+      val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
+        "21C2", Some("charge-ref"), "2022-04-01", "2022-06-30", "2022-07-03", "New"
+      )
+      val returnDetails = ReturnDisplayDetails(
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+      )
+      val submittedReturn = ReturnDisplayApi(
+        "2019-08-28T09:30:47Z",
+        IdDetails("XMPPT0000000001", "00-11-submission-id"),
+        Some(returnDisplayChargeDetails),
+        returnDetails
+      )
 
       val section = ViewReturnSummaryViewModel(submittedReturn).summarySection
 
       section.titleKey mustBe "viewReturnSummary.summary.heading"
-      section.fields.zip(Seq(
-        Field("viewReturnSummary.summary.field.1", "£400"),
-        Field("viewReturnSummary.summary.field.2", "31 July 2022"),
-        Field("viewReturnSummary.summary.field.3", "5 July 2022"),
-        Field("viewReturnSummary.summary.field.4", "pptRef")
-      )).map {
+      section.fields.zip(
+        Seq(Field("viewReturnSummary.summary.field.1", "£10"),
+            Field("viewReturnSummary.summary.field.2", "2019-08-28T09:30:47Z"), // TODO
+            Field("viewReturnSummary.summary.field.3", "TODO"), // TODO
+            Field("viewReturnSummary.summary.field.4", "TODO") // TODO
+        )
+      ).map {
         case (actual, expected) => actual mustBe expected
       }
     }
