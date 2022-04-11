@@ -16,30 +16,96 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import config.{Features, FrontendAppConfig}
+import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
 import controllers.actions.IdentifierAction
-
+import models.EisFailure
+import models.financials.PPTFinancials
+import models.obligations.PPTObligations
 import javax.inject.Inject
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
   view: IndexView,
-  applicationConfig: FrontendAppConfig
-) extends FrontendBaseController with I18nSupport {
+  appConfig: FrontendAppConfig,
+  subscriptionConnector: SubscriptionConnector,
+  financialsConnector: FinancialsConnector,
+  obligationsConnector: ObligationsConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     identify { implicit request =>
-      // TODO - populate models
-
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
-      Ok(view(applicationConfig, ???, ???, ???, ???, ???))
+      subscriptionConnector.get(pptReference).map {
+        case Right(s) => Ok(view(???, ???, ???, ???, ???, ???))
+        case Left(e) =>
+          throw new RuntimeException(
+            s"Failed to get subscription - ${e.failures.headOption.map(_.reason)
+              .getOrElse("no underlying reason supplied")}"
+          )
+      }
     }
+
+  def onPageLoadFoo: Action[AnyContent] =
+    identify { implicit request =>
+      val pptReference =
+        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+
+      subscriptionConnector.get(pptReference).flatMap {
+        case Right(subscription) =>
+          for {
+            paymentStatement <- getPaymentsStatement(pptReference)
+            obligations      <- getObligationsDetail(pptReference)
+          } yield Ok(
+            view(appConfig,
+                 subscription,
+                 obligations,
+                 paymentStatement,
+                 appConfig.pptCompleteReturnGuidanceUrl,
+                 pptReference
+            )
+          )
+        case Left(eisFailure) =>
+          if (isDeregistered(eisFailure))
+            Future.successful(Redirect(routes.DeregisteredController.onPageLoad))
+          else
+            throw new RuntimeException(
+              s"Failed to get subscription - ${eisFailure.failures.headOption.map(_.reason)
+                .getOrElse("no underlying reason supplied")}"
+            )
+      }
+    }
+
+  private def getPaymentsStatement(
+    pptReference: String
+  )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
+    if (appConfig.isFeatureEnabled(Features.paymentsEnabled))
+      financialsConnector.getPaymentStatement(pptReference)(hc).map(
+        response => Some(response.paymentStatement()(messages))
+      ).recoverWith { case _: Exception => Future(None) }
+    else Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
+
+  private def getObligationsDetail(
+    pptReference: String
+  )(implicit hc: HeaderCarrier): Future[Option[PPTObligations]] =
+    if (appConfig.isFeatureEnabled(Features.returnsEnabled))
+      obligationsConnector.get(pptReference).map(response => Some(response)).recoverWith {
+        case _ => Future(None)
+      }
+    else Future.successful(Some(PPTObligations(None, None, 0, false, false)))
+
+  private def isDeregistered(eisFailure: EisFailure) =
+    eisFailure.failures.exists(_.code == "NO_DATA_FOUND")
 
 }

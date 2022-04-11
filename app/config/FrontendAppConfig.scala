@@ -98,4 +98,13 @@ class FrontendAppConfig @Inject() (
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"
 
+  lazy val pptCompleteReturnGuidanceUrl: String =
+    configuration.get[String]("urls.pptCompleteReturnGuidanceLink")
+
+  def pptObligationUrl(pptReference: String): String =
+    s"$pptServiceHost/obligations/open/$pptReference"
+
+  def pptFinancialsUrl(pptReference: String): String =
+    s"$pptServiceHost/financials/open/$pptReference"
+
 }
