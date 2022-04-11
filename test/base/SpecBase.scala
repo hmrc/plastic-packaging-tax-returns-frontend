@@ -18,19 +18,22 @@ package base
 
 import controllers.actions._
 import models.UserAnswers
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{OptionValues, TryValues}
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 
 trait SpecBase
-    extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
-    with IntegrationPatience {
+  extends AnyFreeSpec with Matchers with AnyWordSpecLike with MockitoSugar with TryValues with OptionValues with ScalaFutures
+    with IntegrationPatience with BeforeAndAfterEach with MockSubscriptionConnector with MockObligationsConnector with {
 
   val userAnswersId: String = "id"
 
@@ -40,12 +43,14 @@ trait SpecBase
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
-    userAnswers: Option[UserAnswers] = None
-  ): GuiceApplicationBuilder =
+                                    userAnswers: Option[UserAnswers] = None
+                                  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
-                 bind[IdentifierAction].to[FakeIdentifierAction],
-                 bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 
+  def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "").withSession(session)
 }
