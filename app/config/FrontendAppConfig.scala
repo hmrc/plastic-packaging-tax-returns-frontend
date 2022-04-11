@@ -95,4 +95,7 @@ class FrontendAppConfig @Inject() (
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
 
+  def pptSubscriptionUrl(pptReference: String): String =
+    s"$pptServiceHost/subscriptions/$pptReference"
+
 }

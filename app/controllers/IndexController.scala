@@ -35,6 +35,10 @@ class IndexController @Inject() (
   def onPageLoad: Action[AnyContent] =
     identify { implicit request =>
       // TODO - populate models
+
+      val pptReference =
+        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+
       Ok(view(applicationConfig, ???, ???, ???, ???, ???))
     }
 
