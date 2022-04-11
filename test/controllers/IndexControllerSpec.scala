@@ -16,17 +16,17 @@
 
 package controllers
 
-import base.{FakeIdentifierAction, MockSubscriptionConnector, SpecBase}
+import base.{FakeIdentifierAction, MockObligationsConnector, MockSubscriptionConnector, SpecBase}
 import config.{Features, FrontendAppConfig}
-import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
+import connectors.FinancialsConnector
 import models.{EisError, EisFailure}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verifyNoInteractions
-import org.scalacheck.Gen.const
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import support.PptTestData.{createSubscriptionDisplayResponse, ukLimitedCompanySubscription}
@@ -35,18 +35,22 @@ import views.html.IndexView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IndexControllerSpec extends SpecBase {
-  
-  private val mcc = stubMessagesControllerComponents()
-  private val page = mock[IndexView]
-  private val mockIdentifierAction = mock[FakeIdentifierAction]
-  private val mockFinancialsConnector = mock[FinancialsConnector]
-  private val appConfig = mock[FrontendAppConfig]
+class IndexControllerSpec
+    extends SpecBase with MockSubscriptionConnector with MockObligationsConnector {
 
-  private val controller = new IndexController(mcc, mockIdentifierAction, page,
-    appConfig, mockSubscriptionConnector ,
-    mockFinancialsConnector,
-    mockObligationsConnector
+  private val mcc                     = stubMessagesControllerComponents()
+  private val page                    = mock[IndexView]
+  private val mockIdentifierAction    = mock[FakeIdentifierAction]
+  private val mockFinancialsConnector = mock[FinancialsConnector]
+  private val appConfig               = mock[FrontendAppConfig]
+
+  private val controller = new IndexController(mcc,
+                                               mockIdentifierAction,
+                                               page,
+                                               appConfig,
+                                               mockSubscriptionConnector,
+                                               mockFinancialsConnector,
+                                               mockObligationsConnector
   )
 
   override protected def beforeEach(): Unit = {
@@ -54,6 +58,7 @@ class IndexControllerSpec extends SpecBase {
     when(
       page.apply(any(), any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
     ).thenReturn(HtmlFormat.empty)
+
     when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
       Future.successful(PPTFinancials(None, None, None))
     )
@@ -61,18 +66,19 @@ class IndexControllerSpec extends SpecBase {
 
   override protected def afterEach(): Unit = {
     reset(page,
-      mockFinancialsConnector,
-      mockObligationsConnector, appConfig,
-      mockSubscriptionConnector
+          mockFinancialsConnector,
+          mockObligationsConnector,
+          appConfig,
+          mockSubscriptionConnector
     )
     super.afterEach()
   }
 
-  "HomePage Controller" must {
+  "HomePage Controller" - {
 
-    "return 200" when {
+    "return 200" - {
 
-      "use is authorised and display page method is invoked" in {
+      "when use is authorised and display page method is invoked" in {
         val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
         mockGetSubscription(subscription)
 
@@ -82,8 +88,8 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to the deregistered page" when {
-      "get subscription returns a 404 (NOT_FOUND) and EisFailure body confirming this" in {
+    "redirect to the deregistered page" - {
+      "when get subscription returns a 404 (NOT_FOUND) and EisFailure body confirming this" in {
         mockGetSubscriptionFailure(
           EisFailure(
             Seq(
@@ -98,16 +104,14 @@ class IndexControllerSpec extends SpecBase {
 
         val result = controller.onPageLoad()(getRequest())
 
-        redirectLocation(result) mustBe Some(
-          deregistrationRoutes.DeregisteredController.onPageLoad().url
-        )
+        redirectLocation(result) mustBe Some(routes.DeregisteredController.onPageLoad().url)
       }
     }
 
-    "avoid calling Obligation Api" when {
-      "return is not enabled" in {
+    "avoid calling Obligation Api" - {
+      "when return is not enabled" in {
         setUpMocks()
-        when(config.isFeatureEnabled(mockitoEq(Features.returnsEnabled))).thenReturn(false)
+        when(appConfig.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(false)
 
         await(controller.onPageLoad()(getRequest()))
 
@@ -116,12 +120,12 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "call Obligation API" when {
-      "return feature flag is enabled" in {
+    "call Obligation API" - {
+      "when return feature flag is enabled" in {
         val expectedObligation = PPTObligations(None, None, 1, true, true)
 
         setUpMocks(expectedObligation)
-        when(config.isFeatureEnabled(mockitoEq(Features.returnsEnabled))).thenReturn(true)
+        when(appConfig.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(true)
 
         await(controller.onPageLoad()(getRequest()))
 
@@ -130,10 +134,10 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "avoid to call the financial API" when {
-      "return feature flag is not enabled" in {
+    "avoid to call the financial API" - {
+      "when return feature flag is not enabled" in {
         setUpMocks()
-        when(config.isFeatureEnabled(mockitoEq(Features.paymentsEnabled))).thenReturn(false)
+        when(appConfig.isFeatureEnabled(eqTo(Features.paymentsEnabled))).thenReturn(false)
 
         await(controller.onPageLoad()(getRequest()))
 
@@ -146,10 +150,10 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "call Financial API" when {
-      "return feature is enabled" in {
+    "call Financial API" - {
+      "when return feature is enabled" in {
         setUpMocks()
-        when(config.isFeatureEnabled(mockitoEq(Features.paymentsEnabled))).thenReturn(true)
+        when(appConfig.isFeatureEnabled(eqTo(Features.paymentsEnabled))).thenReturn(true)
 
         await(controller.onPageLoad()(getRequest()))
 
@@ -157,17 +161,17 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "return an error" when {
+    "return an error" - {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
+      "when user is not authorised" in {
+        // TODO unAuthorizedUser()
         val result = controller.onPageLoad()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "get subscription returns a 404 (NOT_FOUND) but no confirming EisFailure in the body" in {
-        authorizedUser()
+
         mockGetSubscriptionFailure(
           EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 404)
         )
@@ -178,7 +182,6 @@ class IndexControllerSpec extends SpecBase {
       }
 
       "get subscription returns a failure other than 404 (NOT_FOUND)" in {
-        authorizedUser()
         mockGetSubscriptionFailure(
           EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 500)
         )
@@ -211,6 +214,5 @@ class IndexControllerSpec extends SpecBase {
 
   private def createDefaultPPTObligation: PPTObligations =
     PPTObligations(None, None, 1, true, true)
-
 
 }
