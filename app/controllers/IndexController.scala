@@ -43,22 +43,7 @@ class IndexController @Inject() (
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    identify { implicit request =>
-      val pptReference =
-        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
-
-      subscriptionConnector.get(pptReference).map {
-        case Right(s) => Ok(view(???, ???, ???, ???, ???, ???))
-        case Left(e) =>
-          throw new RuntimeException(
-            s"Failed to get subscription - ${e.failures.headOption.map(_.reason)
-              .getOrElse("no underlying reason supplied")}"
-          )
-      }
-    }
-
-  def onPageLoadFoo: Action[AnyContent] =
-    identify { implicit request =>
+    identify.async { implicit request =>
       val pptReference =
         request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
@@ -78,7 +63,7 @@ class IndexController @Inject() (
           )
         case Left(eisFailure) =>
           if (isDeregistered(eisFailure))
-            Future.successful(Redirect(routes.DeregisteredController.onPageLoad))
+            Future.successful(Redirect(routes.DeregisteredController.onPageLoad()))
           else
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.headOption.map(_.reason)
