@@ -12,6 +12,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
+import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -42,13 +43,13 @@ class SessionRepositorySpec
 
     "must set the last updated time on the supplied user answers to `now`, and save them" in {
 
-      val expectedResult = userAnswers copy (lastUpdated = instant)
+      val expectedResult = userAnswers copy (lastUpdated = instant.truncatedTo(ChronoUnit.MILLIS))
 
       val setResult     = repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
       setResult mustEqual true
-      updatedRecord mustEqual expectedResult
+      verifyUserAnswerResult(updatedRecord, expectedResult)
     }
   }
 
@@ -63,7 +64,7 @@ class SessionRepositorySpec
         val result         = repository.get(userAnswers.id).futureValue
         val expectedResult = userAnswers copy (lastUpdated = instant)
 
-        result.value mustEqual expectedResult
+        verifyUserAnswerResult(result.value, expectedResult)
       }
     }
 
@@ -109,7 +110,8 @@ class SessionRepositorySpec
 
         result mustEqual true
         val updatedAnswers = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
-        updatedAnswers mustEqual expectedUpdatedAnswers
+
+        verifyUserAnswerResult(updatedAnswers, expectedUpdatedAnswers)
       }
     }
 
@@ -120,5 +122,11 @@ class SessionRepositorySpec
         repository.keepAlive("id that does not exist").futureValue mustEqual true
       }
     }
+  }
+
+  def verifyUserAnswerResult(actual: UserAnswers, expected: UserAnswers) = {
+    actual.id mustEqual expected.id
+    actual.data mustEqual expected.data
+    actual.lastUpdated.truncatedTo(ChronoUnit.MILLIS) mustEqual expected.lastUpdated.truncatedTo(ChronoUnit.MILLIS)
   }
 }

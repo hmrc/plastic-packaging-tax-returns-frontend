@@ -30,15 +30,6 @@ trait CommonAuth {
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
       credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
 
-  protected def acceptableCredentialStrength: Predicate = {
-    val strongCredentials = CredentialStrength(CredentialStrength.strong)
-    // Agents are allowed to use weak credentials
-    // The order of this clause is important if we wish to preserve the MFA uplift of non agents.
-    // If an auth OR clause evaluates to false, the auth AlternateAuthPredicate will response with an exception
-    // matching the last clause it evaluated. Strong credentials needs to be the last clause if we want to catch it
-    AffinityGroup.Agent.or(strongCredentials)
-  }
-
   protected def redirectToSignin[A]: Result =
     Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
 

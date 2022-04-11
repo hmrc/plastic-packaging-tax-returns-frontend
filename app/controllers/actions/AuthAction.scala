@@ -16,28 +16,10 @@
 
 package controllers.actions
 
-import com.google.inject.Inject
 import models.requests.IdentifiedRequest
-import play.api.mvc._
+import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, Request}
 
-import scala.concurrent.{ExecutionContext, Future}
-
-class AuthCheckActionImpl @Inject() (
-  authorisedFun: AuthFunction,
-  mcc: MessagesControllerComponents
-) extends AuthCheckAction {
-
-  implicit override val executionContext: ExecutionContext = mcc.executionContext
-  override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
-
-  override def invokeBlock[A](
-    request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
-  ): Future[Result] = {
-    authorisedFun.authorised(AuthPredicate.acceptableCredentialStrength, request, block)
-  }
-}
-
-trait AuthCheckAction
-    extends ActionBuilder[IdentifiedRequest, AnyContent]
+trait AuthAction
+  extends ActionBuilder[IdentifiedRequest, AnyContent]
     with ActionFunction[Request, IdentifiedRequest]
+

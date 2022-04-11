@@ -34,7 +34,7 @@ class AgentsController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
-  identify: IdentifierAction,
+  identify: AuthAgentAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: AgentsFormProvider,

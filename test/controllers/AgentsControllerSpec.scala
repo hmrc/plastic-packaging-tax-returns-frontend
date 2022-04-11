@@ -16,7 +16,9 @@
 
 package controllers
 
-import base.SpecBase
+import base.{FakeAuthAction, SpecBase}
+import controllers.actions._
+import controllers.agents.{routes => agentRoutes}
 import forms.AgentsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,12 +27,12 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AgentsPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.AgentsView
-import controllers.agents.{routes => agentRoutes}
 
 import scala.concurrent.Future
 
@@ -44,6 +46,16 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
   val validAnswer = 0
 
   lazy val agentsRoute = agentRoutes.AgentsController.onPageLoad(NormalMode).url
+
+  override def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder = {
+    new GuiceApplicationBuilder()
+      .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[AuthAgentAction].to[FakeAuthAction],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      )
+  }
 
   "Agents Controller" - {
 

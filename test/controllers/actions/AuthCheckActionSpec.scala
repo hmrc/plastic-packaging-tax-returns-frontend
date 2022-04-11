@@ -21,33 +21,26 @@ import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
-import play.api.test.Helpers.{
-  await,
-  defaultAwaitTimeout,
-  redirectLocation,
-  running,
-  status,
-  stubMessagesControllerComponents
-}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, running, status, stubMessagesControllerComponents}
 import support.{FakeCustomRequest, PptTestData}
 import uk.gov.hmrc.auth.core._
 
-class AuthCheckActionSpec
-    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AuthCheckActionSpec extends SpecBase with FakeCustomRequest with MetricsMocks {
 
   private val appConfig = mock[FrontendAppConfig]
   val application       = applicationBuilder(userAnswers = None).build()
 
-  private def createAuthAction(authConnector: AuthConnector): AuthCheckAction =
-    new AuthCheckActionImpl(authConnector,
-                            appConfig,
-                            metricsMock,
-                            stubMessagesControllerComponents()
+
+  private def createAuthAction(authConnector: AuthConnector): AuthCheckAction = {
+    new AuthCheckActionImpl(
+      new AuthFunction(authConnector, appConfig, metricsMock),
+      stubMessagesControllerComponents()
     )
+  }
 
   class Harness(authAction: AuthCheckAction) {
     def onPageLoad() = authAction(_ => Results.Ok)
