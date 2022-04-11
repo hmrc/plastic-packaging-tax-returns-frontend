@@ -42,7 +42,9 @@ object Section {
     )
 }
 
-final case class ViewReturnSummaryViewModel(summarySection : Section)
+final case class DetailsSection(liable: Section, exempt: Section, calculation: Section)
+
+final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
 
 object ViewReturnSummaryViewModel {
 
@@ -54,7 +56,19 @@ object ViewReturnSummaryViewModel {
         asPounds(submittedReturn.returnDetails.taxDue),
         submittedReturn.processingDate,
         "TODO",
+        "TODO",
         "TODO"
+      ),
+      DetailsSection(
+        Section("liable")(
+
+        ),
+        Section("exempt")(
+
+        ),
+        Section("calculation")(
+
+        )
       )
     )
 
