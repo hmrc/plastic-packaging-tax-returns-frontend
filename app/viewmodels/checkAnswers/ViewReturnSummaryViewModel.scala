@@ -55,9 +55,7 @@ object ViewReturnSummaryViewModel {
       Section("summary", lastBold = false)(
         asPounds(submittedReturn.returnDetails.taxDue),
         submittedReturn.processingDate,
-        "TODO",
-        "TODO",
-        "TODO"
+        submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(
         Section("liable")(

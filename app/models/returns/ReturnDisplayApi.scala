@@ -19,46 +19,60 @@ package models.returns
 import play.api.libs.json.{Json, OFormat}
 
 case class IdDetails(pptReferenceNumber: String, submissionId: String)
+
 object IdDetails {
   implicit val format: OFormat[IdDetails] = Json.format[IdDetails]
 }
 
 case class ReturnDisplayChargeDetails(
-                                       periodKey: String,
-                                       chargeReference: Option[String],
-                                       periodFrom: String,
-                                       periodTo: String,
-                                       receiptDate: String,
-                                       returnType: String
-                                     )
+  periodKey: String,
+  chargeReference: Option[String],
+  periodFrom: String,
+  periodTo: String,
+  receiptDate: String,
+  returnType: String
+)
 
 object ReturnDisplayChargeDetails {
   implicit val format: OFormat[ReturnDisplayChargeDetails] = Json.format[ReturnDisplayChargeDetails]
 }
 
 case class ReturnDisplayDetails(
-                                 manufacturedWeight: BigDecimal,
-                                 importedWeight: BigDecimal,
-                                 totalNotLiable: BigDecimal,
-                                 humanMedicines: BigDecimal,
-                                 directExports: BigDecimal,
-                                 recycledPlastic: BigDecimal,
-                                 creditForPeriod: BigDecimal,
-                                 debitForPeriod: BigDecimal,
-                                 totalWeight: BigDecimal,
-                                 taxDue: BigDecimal
-                               )
+  manufacturedWeight: BigDecimal,
+  importedWeight: BigDecimal,
+  totalNotLiable: BigDecimal,
+  humanMedicines: BigDecimal,
+  directExports: BigDecimal,
+  recycledPlastic: BigDecimal,
+  creditForPeriod: BigDecimal,
+  debitForPeriod: BigDecimal,
+  totalWeight: BigDecimal,
+  taxDue: BigDecimal
+)
 
 object ReturnDisplayDetails {
   implicit val format: OFormat[ReturnDisplayDetails] = Json.format[ReturnDisplayDetails]
 }
 
 case class ReturnDisplayApi(
-                             processingDate: String,
-                             idDetails: IdDetails,
-                             chargeDetails: Option[ReturnDisplayChargeDetails],
-                             returnDetails: ReturnDisplayDetails
-                           )
+  processingDate: String,
+  idDetails: IdDetails,
+  chargeDetails: Option[ReturnDisplayChargeDetails],
+  returnDetails: ReturnDisplayDetails
+) {
+
+  def changeChargeReferenceTo(newChangeReference: Option[String]): ReturnDisplayApi = {
+    this.copy(chargeDetails = chargeDetails.map(
+      o => o.copy(chargeReference = newChangeReference))
+    )
+  }
+
+  def chargeReferenceAsString: String = {
+    val maybeMaybeString: Option[String] = chargeDetails.flatMap(o => o.chargeReference)
+    maybeMaybeString.getOrElse("n/a")
+  }
+
+}
 
 object ReturnDisplayApi {
   implicit val format: OFormat[ReturnDisplayApi] = Json.format[ReturnDisplayApi]
