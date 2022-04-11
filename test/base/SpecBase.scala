@@ -48,7 +48,7 @@ trait SpecBase
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
-                 bind[IdentifierAction].to[FakeIdentifierAction],
+                 bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
                  bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 
