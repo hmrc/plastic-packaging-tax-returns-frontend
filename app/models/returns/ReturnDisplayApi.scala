@@ -48,7 +48,9 @@ case class ReturnDisplayDetails(
   debitForPeriod: BigDecimal,
   totalWeight: BigDecimal,
   taxDue: BigDecimal
-)
+){
+  def liableWeight: BigDecimal = totalWeight - totalNotLiable
+}
 
 object ReturnDisplayDetails {
   implicit val format: OFormat[ReturnDisplayDetails] = Json.format[ReturnDisplayDetails]
@@ -61,16 +63,8 @@ case class ReturnDisplayApi(
   returnDetails: ReturnDisplayDetails
 ) {
 
-  def changeChargeReferenceTo(newChangeReference: Option[String]): ReturnDisplayApi = {
-    this.copy(chargeDetails = chargeDetails.map(
-      o => o.copy(chargeReference = newChangeReference))
-    )
-  }
-
-  def chargeReferenceAsString: String = {
-    val maybeMaybeString: Option[String] = chargeDetails.flatMap(o => o.chargeReference)
-    maybeMaybeString.getOrElse("n/a")
-  }
+  def chargeReferenceAsString: String =
+    chargeDetails.flatMap(_.chargeReference).getOrElse("n/a")
 
 }
 
