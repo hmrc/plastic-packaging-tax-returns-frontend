@@ -201,3 +201,8 @@ viewReturnSummary.summary.field.1 = Tax liability for this period
 viewReturnSummary.summary.field.2 = Return submitted
 viewReturnSummary.summary.field.3 = Payment due
 viewReturnSummary.summary.field.4 = Return reference number
+
+submittedReturns.title = View submitted returns
+submittedReturns.heading = View submitted returns
+submittedReturns.nothingsubmitted = You have not submitted any returns yet.
+submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
