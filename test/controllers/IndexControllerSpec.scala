@@ -16,234 +16,285 @@
 
 package controllers
 
-import base.{
-  FakeIdentifierAction,
-  FakeIdentifierActionWithEnrolment,
-  MockObligationsConnector,
-  MockSubscriptionConnector,
-  SpecBase
-}
+import base.{MockObligationsConnector, MockSubscriptionConnector, SpecBase}
 import config.{Features, FrontendAppConfig}
-import connectors.{FinancialsConnector, SubscriptionConnector}
-import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
+import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
 import models.{EisError, EisFailure}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
-import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, when}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import support.PptTestData.{createSubscriptionDisplayResponse, ukLimitedCompanySubscription}
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import views.html.IndexView
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IndexControllerSpec
     extends SpecBase with MockSubscriptionConnector with MockObligationsConnector {
 
+  private val mockFinancialsConnector = mock[FinancialsConnector]
+  private val page                    = mock[IndexView]
+
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "return 200" - {
 
-      val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
-      mockGetSubscription(subscription)
+      "when user is authorised and display page method is invoked" in {
 
-      val application = applicationBuilder(userAnswers = None).overrides(
-        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-      ).build()
+        val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
+        mockGetSubscription(subscription)
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        ).build()
 
-        val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
-        status(result) mustEqual OK
+          val result = route(application, request).value
 
+          status(result) mustEqual OK
+
+        }
+      }
+    }
+
+    "redirect to the de-registered page" - {
+
+      "when get subscription returns a 404 (NOT_FOUND) and EisFailure body confirming this" in {
+
+        mockGetSubscriptionFailure(
+          EisFailure(
+            Seq(
+              EisError(
+                "NO_DATA_FOUND",
+                "The remote endpoint has indicated that the requested resource could not be found."
+              )
+            ),
+            404
+          )
+        )
+
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        ).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+
+          val result = route(application, request).value
+
+          redirectLocation(result) mustBe Some(routes.DeregisteredController.onPageLoad().url)
+
+        }
+      }
+    }
+
+    "avoid calling Obligation Api" - {
+
+      "when return is not enabled" in {
+
+        setUpMocks()
+        when(config.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(false)
+
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[FrontendAppConfig].toInstance(config),
+          bind[SessionRepository].toInstance(sessionRepository),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FinancialsConnector].toInstance(mockFinancialsConnector),
+          bind[ObligationsConnector].toInstance(mockObligationsConnector),
+          bind[IndexView].toInstance(page)
+        ).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          route(application, request).value
+
+        }
+
+        verifyNoInteractions(mockObligationsConnector)
+        verifyResults(PPTObligations(None, None, 0, false, false))
+
+      }
+    }
+
+    "calls Obligation Api" - {
+
+      "when return is enabled" in {
+
+        val expectedObligation = PPTObligations(None, None, 1, true, true)
+        setUpMocks(expectedObligation)
+
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FinancialsConnector].toInstance(mockFinancialsConnector),
+          bind[ObligationsConnector].toInstance(mockObligationsConnector),
+          bind[IndexView].toInstance(page)
+        ).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          route(application, request).value
+
+        }
+
+        verify(mockObligationsConnector).get(any[String])(any())
+        verifyResults(expectedObligation)
+
+      }
+    }
+
+    "avoid calling Financials Api" - {
+
+      "when payments are not enabled" in {
+
+        setUpMocks()
+        when(config.isFeatureEnabled(eqTo(Features.paymentsEnabled))).thenReturn(false)
+
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[FrontendAppConfig].toInstance(config),
+          bind[SessionRepository].toInstance(sessionRepository),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FinancialsConnector].toInstance(mockFinancialsConnector),
+          bind[ObligationsConnector].toInstance(mockObligationsConnector),
+          bind[IndexView].toInstance(page)
+        ).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          route(application, request).value
+
+        }
+
+        verifyNoInteractions(mockFinancialsConnector)
+        val captor: ArgumentCaptor[Option[String]] =
+          ArgumentCaptor.forClass(classOf[Option[String]])
+        verify(page, atLeastOnce()).apply(any(), any(), any(), captor.capture(), any(), any())(
+          any(),
+          any()
+        )
+
+        captor.getValue.get mustBe "account.homePage.card.payments.nothingOutstanding"
+
+      }
+    }
+
+    "calls Financials Api" - {
+
+      "when payments are enabled" in {
+
+        setUpMocks()
+
+        val application = applicationBuilder(userAnswers = None).overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FinancialsConnector].toInstance(mockFinancialsConnector),
+          bind[ObligationsConnector].toInstance(mockObligationsConnector),
+          bind[IndexView].toInstance(page)
+        ).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          route(application, request).value
+
+        }
+
+        verify(mockFinancialsConnector).getPaymentStatement(any[String])(any())
+
+      }
+    }
+
+    "raise an error" - {
+
+      "when not authorised" in {
+
+        val application = applicationBuilderFailedAuth(userAnswers = None).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          intercept[InsufficientEnrolments](status(result))
+
+        }
+
+      }
+
+      "get subscription returns a 404 (NOT_FOUND) but no confirming EisFailure in the body" in {
+
+        mockGetSubscriptionFailure(
+          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 404)
+        )
+
+        val application = applicationBuilderFailedAuth(userAnswers = None).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          intercept[RuntimeException](status(result))
+
+        }
+
+      }
+
+      "get subscription returns a failure other than 404 (NOT_FOUND)" in {
+
+        mockGetSubscriptionFailure(
+          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 500)
+        )
+
+        val application = applicationBuilderFailedAuth(userAnswers = None).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          intercept[RuntimeException](status(result))
+
+        }
       }
     }
   }
 
-//  private val mcc                     = stubMessagesControllerComponents()
-//  private val page                    = mock[IndexView]
-//  private val mockIdentifierAction    = mock[FakeIdentifierActionWithEnrolment]
-//  private val mockFinancialsConnector = mock[FinancialsConnector]
-//  private val appConfig               = mock[FrontendAppConfig]
-//
-//  private val controller = new IndexController(mcc,
-//                                               mockIdentifierAction,
-//                                               page,
-//                                               appConfig,
-//                                               mockSubscriptionConnector,
-//                                               mockFinancialsConnector,
-//                                               mockObligationsConnector
-//  )
-//
-//  override protected def beforeEach(): Unit = {
-//    super.beforeEach()
-//    when(
-//      page.apply(any(), any[SubscriptionDisplayResponse], any(), any(), any(), any())(any(), any())
-//    ).thenReturn(HtmlFormat.empty)
-//
-//    when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
-//      Future.successful(PPTFinancials(None, None, None))
-//    )
-//  }
-//
-//  override protected def afterEach(): Unit = {
-//    reset(page,
-//          mockFinancialsConnector,
-//          mockObligationsConnector,
-//          appConfig,
-//          mockSubscriptionConnector
-//    )
-//    super.afterEach()
-//  }
-//
-//  "HomePage Controller" - {
-//
-//    "return 200" - {
-//
-//      "when use is authorised and display page method is invoked" in {
-//        val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
-//        mockGetSubscription(subscription)
-//
-//        val result = controller.onPageLoad()(getRequest())
-//
-//        status(result) mustBe OK
-//      }
-//    }
-//
-//    "redirect to the deregistered page" - {
-//      "when get subscription returns a 404 (NOT_FOUND) and EisFailure body confirming this" in {
-//        mockGetSubscriptionFailure(
-//          EisFailure(
-//            Seq(
-//              EisError(
-//                "NO_DATA_FOUND",
-//                "The remote endpoint has indicated that the requested resource could not be found."
-//              )
-//            ),
-//            404
-//          )
-//        )
-//
-//        val result = controller.onPageLoad()(getRequest())
-//
-//        redirectLocation(result) mustBe Some(routes.DeregisteredController.onPageLoad().url)
-//      }
-//    }
-//
-//    "avoid calling Obligation Api" - {
-//      "when return is not enabled" in {
-//        setUpMocks()
-//        when(appConfig.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(false)
-//
-//        await(controller.onPageLoad()(getRequest()))
-//
-//        verifyNoInteractions(mockObligationsConnector)
-//        verifyResults(PPTObligations(None, None, 0, false, false))
-//      }
-//    }
-//
-//    "call Obligation API" - {
-//      "when return feature flag is enabled" in {
-//        val expectedObligation = PPTObligations(None, None, 1, true, true)
-//
-//        setUpMocks(expectedObligation)
-//        when(appConfig.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(true)
-//
-//        await(controller.onPageLoad()(getRequest()))
-//
-//        verify(mockObligationsConnector).get(any[String])(any())
-//        verifyResults(expectedObligation)
-//      }
-//    }
-//
-//    "avoid to call the financial API" - {
-//      "when return feature flag is not enabled" in {
-//        setUpMocks()
-//        when(appConfig.isFeatureEnabled(eqTo(Features.paymentsEnabled))).thenReturn(false)
-//
-//        await(controller.onPageLoad()(getRequest()))
-//
-//        verifyNoInteractions(mockFinancialsConnector)
-//        val captor: ArgumentCaptor[Option[String]] =
-//          ArgumentCaptor.forClass(classOf[Option[String]])
-//        verify(page).apply(any(), any(), any(), captor.capture(), any(), any())(any(), any())
-//
-//        captor.getValue.get mustBe "account.homePage.card.payments.nothingOutstanding"
-//      }
-//    }
-//
-//    "call Financial API" - {
-//      "when return feature is enabled" in {
-//        setUpMocks()
-//        when(appConfig.isFeatureEnabled(eqTo(Features.paymentsEnabled))).thenReturn(true)
-//
-//        await(controller.onPageLoad()(getRequest()))
-//
-//        verify(mockFinancialsConnector).getPaymentStatement(any[String])(any())
-//      }
-//    }
-//
-//    "return an error" - {
-//
-//      "when user is not authorised" in {
-//        // TODO unAuthorizedUser()
-//        val result = controller.onPageLoad()(getRequest())
-//
-//        intercept[RuntimeException](status(result))
-//      }
-//
-//      "get subscription returns a 404 (NOT_FOUND) but no confirming EisFailure in the body" in {
-//
-//        mockGetSubscriptionFailure(
-//          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 404)
-//        )
-//
-//        val result = controller.onPageLoad()(getRequest())
-//
-//        intercept[RuntimeException](status(result))
-//      }
-//
-//      "get subscription returns a failure other than 404 (NOT_FOUND)" in {
-//        mockGetSubscriptionFailure(
-//          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")), 500)
-//        )
-//
-//        val result = controller.onPageLoad()(getRequest())
-//
-//        intercept[RuntimeException](status(result))
-//      }
-//
-//    }
-//  }
-//
-//  private def setUpMocks(obligation: PPTObligations = createDefaultPPTObligation) = {
-//    val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
-//    mockGetSubscription(subscription)
-//
-//    when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
-//      Future.successful(PPTFinancials(None, None, None))
-//    )
-//    when(mockObligationsConnector.get(any[String])(any())).thenReturn(Future.successful(obligation))
-//  }
-//
-//  private def verifyResults(obligation: PPTObligations) = {
-//    val captor: ArgumentCaptor[Option[PPTObligations]] =
-//      ArgumentCaptor.forClass(classOf[Option[PPTObligations]])
-//    verify(page).apply(any(), any(), captor.capture(), any(), any(), any())(any(), any())
-//
-//    captor.getValue.get mustBe obligation
-//  }
-//
-//  private def createDefaultPPTObligation: PPTObligations =
-//    PPTObligations(None, None, 1, true, true)
+  private def setUpMocks(obligation: PPTObligations = createDefaultPPTObligation) = {
+    reset(mockFinancialsConnector)
+    reset(mockSubscriptionConnector)
+    reset(mockObligationsConnector)
+
+    val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
+    mockGetSubscription(subscription)
+
+    when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
+      Future.successful(PPTFinancials(None, None, None))
+    )
+    when(mockObligationsConnector.get(any[String])(any())).thenReturn(Future.successful(obligation))
+  }
+
+  private def verifyResults(obligation: PPTObligations) = {
+    val captor: ArgumentCaptor[Option[PPTObligations]] =
+      ArgumentCaptor.forClass(classOf[Option[PPTObligations]])
+    verify(page, atLeastOnce()).apply(any(), any(), captor.capture(), any(), any(), any())(any(),
+                                                                                           any()
+    )
+
+    captor.getValue.get mustBe obligation
+  }
+
+  private def createDefaultPPTObligation: PPTObligations =
+    PPTObligations(None, None, 1, true, true)
 
 }

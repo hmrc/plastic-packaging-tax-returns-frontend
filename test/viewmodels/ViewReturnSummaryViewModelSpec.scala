@@ -24,17 +24,23 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
   "apply" must {
     "build the Summary section" in {
-      val submittedReturn = SubmittedReturn("31 July 2022", IdDetails("pptRef", ""), Some(ChargeDetails("", "", 400, "5 July 2022")), None, None)
+      val submittedReturn = SubmittedReturn("31 July 2022",
+                                            IdDetails("pptRef", ""),
+                                            Some(ChargeDetails("", "", 400, "5 July 2022")),
+                                            None,
+                                            None
+      )
 
       val section = ViewReturnSummaryViewModel(submittedReturn).summarySection
 
       section.titleKey mustBe "viewReturnSummary.summary.heading"
-      section.fields.zip(Seq(
-        Field("viewReturnSummary.summary.field.1", "£400"),
-        Field("viewReturnSummary.summary.field.2", "31 July 2022"),
-        Field("viewReturnSummary.summary.field.3", "5 July 2022"),
-        Field("viewReturnSummary.summary.field.4", "pptRef")
-      )).map {
+      section.fields.zip(
+        Seq(Field("viewReturnSummary.summary.field.1", "£400"),
+            Field("viewReturnSummary.summary.field.2", "31 July 2022"),
+            Field("viewReturnSummary.summary.field.3", "5 July 2022"),
+            Field("viewReturnSummary.summary.field.4", "pptRef")
+        )
+      ).map {
         case (actual, expected) => actual mustBe expected
       }
     }

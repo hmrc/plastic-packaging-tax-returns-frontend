@@ -44,8 +44,10 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val submittedReturn = SubmittedReturn("", IdDetails("", ""), None, None, None)
-        val viewModel = ViewReturnSummaryViewModel(submittedReturn)
-        when(mockConnector.get(any(), any())(any())).thenReturn(Future.successful(Right(submittedReturn)))
+        val viewModel       = ViewReturnSummaryViewModel(submittedReturn)
+        when(mockConnector.get(any(), any())(any())).thenReturn(
+          Future.successful(Right(submittedReturn))
+        )
 
         val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad().url)
 
@@ -54,7 +56,10 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel)(request, messages(application)).toString
+        contentAsString(result) mustEqual view("April to June 2022", viewModel)(
+          request,
+          messages(application)
+        ).toString
       }
     }
   }
