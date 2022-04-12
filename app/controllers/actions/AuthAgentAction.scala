@@ -23,11 +23,11 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthAgentActionImpl @Inject()(
+class AuthAgentActionImpl @Inject() (
   authorisedFun: AuthFunction,
   mcc: MessagesControllerComponents
-) (implicit ec: ExecutionContext)
-  extends AuthAgentAction {
+)(implicit ec: ExecutionContext)
+    extends AuthAgentAction {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -35,9 +35,12 @@ class AuthAgentActionImpl @Inject()(
   override def invokeBlock[A](
     request: Request[A],
     block: IdentifiedRequest[A] => Future[Result]
-  ): Future[Result] = {
-    authorisedFun.authorised(AffinityGroup.Agent.and(AuthPredicate.acceptableCredentialStrength), request, block)
-  }
+  ): Future[Result] =
+    authorisedFun.authorised(AffinityGroup.Agent.and(AuthPredicate.acceptableCredentialStrength),
+                             request,
+                             block
+    )
+
 }
 
 trait AuthAgentAction

@@ -49,13 +49,12 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
 
   override def applicationBuilder(
     userAnswers: Option[UserAnswers] = None
-  ): GuiceApplicationBuilder = {
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[AuthAgentAction].to[FakeAuthAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+                 bind[AuthAgentAction].to[FakeAuthAction],
+                 bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
-  }
 
   "Agents Controller" - {
 

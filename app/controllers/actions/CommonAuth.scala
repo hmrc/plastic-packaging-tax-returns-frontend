@@ -18,8 +18,6 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import play.api.mvc.{Result, Results}
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength}
-import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 
 trait CommonAuth {

@@ -24,37 +24,47 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 final case class Field(key: String, value: String, bold: Boolean = false)
 
-final case class Section(titleKey: String, fields : Seq[Field]) {
-  def summaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(fields.map{ row =>
-    SummaryListRow(
-      Key(Text(messages(row.key)), if (row.bold) "" else "govuk-!-font-weight-regular"),
-      Value(Text(row.value)))
-  })
+final case class Section(titleKey: String, fields: Seq[Field]) {
+
+  def summaryList(implicit messages: Messages): SummaryList =
+    SummaryListViewModel(fields.map { row =>
+      SummaryListRow(
+        Key(Text(messages(row.key)), if (row.bold) "" else "govuk-!-font-weight-regular"),
+        Value(Text(row.value))
+      )
+    })
+
 }
 
 object Section {
+
   def apply(name: String, lastBold: Boolean = true)(fields: String*): Section =
     Section(s"viewReturnSummary.$name.heading",
-      fields.zipWithIndex.map{ case (value, i) =>
-        val row = i + 1
-        Field(s"viewReturnSummary.$name.field.$row", value, row==fields.length && lastBold)
-      }
+            fields.zipWithIndex.map {
+              case (value, i) =>
+                val row = i + 1
+                Field(s"viewReturnSummary.$name.field.$row",
+                      value,
+                      row == fields.length && lastBold
+                )
+            }
     )
+
 }
 
-final case class ViewReturnSummaryViewModel(summarySection : Section)
+final case class ViewReturnSummaryViewModel(summarySection: Section)
 
 object ViewReturnSummaryViewModel {
 
-  def asPounds(bigDecimal: BigDecimal): String = "£" + bigDecimal //there should be utils for this, and Kg
+  def asPounds(bigDecimal: BigDecimal): String =
+    "£" + bigDecimal //there should be utils for this, and Kg
 
   def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
-      Section("summary", lastBold = false)(
-        asPounds(submittedReturn.returnDetails.taxDue),
-        submittedReturn.processingDate,
-        "TODO",
-        "TODO"
+      Section("summary", lastBold = false)(asPounds(submittedReturn.returnDetails.taxDue),
+                                           submittedReturn.processingDate,
+                                           "TODO",
+                                           "TODO"
       )
     )
 

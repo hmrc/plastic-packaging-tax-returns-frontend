@@ -27,7 +27,7 @@ object AuthPredicate {
       // If this request is decorated with a selected client identifier this indicates
       // an agent at work; we need to request the delegated authority
       Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
-        clientIdentifier
+                                                clientIdentifier
       ).withDelegatedAuthRule("ppt-auth")
     }.getOrElse {
       Enrolment(pptEnrolmentKey)

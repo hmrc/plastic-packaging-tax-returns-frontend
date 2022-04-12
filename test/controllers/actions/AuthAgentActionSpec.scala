@@ -23,9 +23,23 @@ import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
-import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, running, status, stubMessagesControllerComponents}
+import play.api.test.Helpers.{
+  await,
+  defaultAwaitTimeout,
+  redirectLocation,
+  running,
+  status,
+  stubMessagesControllerComponents
+}
 import support.{FakeCustomRequest, PptTestData}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialStrength, IncorrectCredentialStrength, InternalError, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{
+  AffinityGroup,
+  AuthConnector,
+  CredentialStrength,
+  IncorrectCredentialStrength,
+  InternalError,
+  MissingBearerToken
+}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -34,15 +48,13 @@ class AuthAgentActionSpec extends SpecBase with FakeCustomRequest with MetricsMo
   private val appConfig = mock[FrontendAppConfig]
   val application       = applicationBuilder(userAnswers = None).build()
 
-  val expectedPredicate = AffinityGroup.Agent.and(
-    AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
-  )
+  val expectedPredicate =
+    AffinityGroup.Agent.and(AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong)))
 
-  private def createAuthAction(authConnector: AuthConnector): AuthAgentAction = {
-    new AuthAgentActionImpl(
-      new AuthFunction(authConnector, appConfig, metricsMock),
-      stubMessagesControllerComponents())
-  }
+  private def createAuthAction(authConnector: AuthConnector): AuthAgentAction =
+    new AuthAgentActionImpl(new AuthFunction(authConnector, appConfig, metricsMock),
+                            stubMessagesControllerComponents()
+    )
 
   class Harness(authAction: AuthAgentAction) {
     def onPageLoad() = authAction(_ => Results.Ok)

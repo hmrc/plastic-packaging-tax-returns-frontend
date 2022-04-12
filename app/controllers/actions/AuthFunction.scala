@@ -32,18 +32,21 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthFunction @Inject()(
+class AuthFunction @Inject() (
   override val authConnector: AuthConnector,
   override val appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-  extends AuthorisedFunctions with CommonAuth {
+    extends AuthorisedFunctions with CommonAuth {
 
-  private val logger = Logger(this.getClass)
+  private val logger    = Logger(this.getClass)
   private val authTimer = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
 
-  def authorised[A](predicate: Predicate, request: Request[A],
-                 block: IdentifiedRequest[A] => Future[Result]): Future[Result] = {
+  def authorised[A](
+    predicate: Predicate,
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result]
+  ): Future[Result] = {
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -52,8 +55,8 @@ class AuthFunction @Inject()(
     authorised(predicate)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
-          confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
-          credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
+            confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
+            credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
           logger.info(
             "Authorised with affinity group " + affinityGroup + " and enrolments " + allEnrolments
@@ -66,25 +69,25 @@ class AuthFunction @Inject()(
           )
 
           val identityData = IdentityData(maybeInternalId,
-            externalId,
-            agentCode,
-            credentials,
-            Some(confidenceLevel),
-            authNino,
-            saUtr,
-            name,
-            dateOfBirth,
-            email,
-            Some(agentInformation),
-            groupIdentifier,
-            credentialRole.map(res => res.toJson.toString()),
-            mdtpInformation,
-            itmpName,
-            itmpDateOfBirth,
-            itmpAddress,
-            affinityGroup,
-            credentialStrength,
-            Some(loginTimes)
+                                          externalId,
+                                          agentCode,
+                                          credentials,
+                                          Some(confidenceLevel),
+                                          authNino,
+                                          saUtr,
+                                          name,
+                                          dateOfBirth,
+                                          email,
+                                          Some(agentInformation),
+                                          groupIdentifier,
+                                          credentialRole.map(res => res.toJson.toString()),
+                                          mdtpInformation,
+                                          itmpName,
+                                          itmpDateOfBirth,
+                                          itmpAddress,
+                                          affinityGroup,
+                                          credentialStrength,
+                                          Some(loginTimes)
           )
 
           executeRequest(request, block, identityData, allEnrolments)
@@ -102,12 +105,13 @@ class AuthFunction @Inject()(
   }
 
   private def executeRequest[A](
-                                 request: Request[A],
-                                 block: IdentifiedRequest[A] => Future[Result],
-                                 identityData: IdentityData,
-                                 allEnrolments: Enrolments
-                               ) = {
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result],
+    identityData: IdentityData,
+    allEnrolments: Enrolments
+  ) = {
     val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
     block(IdentifiedRequest(request, pptLoggedInUser, None))
   }
+
 }
