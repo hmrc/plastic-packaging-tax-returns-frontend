@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.returns.TaxReturnObligation
-@import componants.SectionHeader
-@import views.ViewUtils.displayReturnQuarter
+package models
 
-@this(
-        sectionHeader: SectionHeader
-)
+import play.api.libs.json.{Json, OFormat}
 
-@(obligation: TaxReturnObligation)(implicit messages: Messages)
+case class EisError(code: String, reason: String)
 
-@sectionHeader(message = displayReturnQuarter(obligation))
+object EisError {
+  implicit val format: OFormat[EisError] = Json.format[EisError]
+}
 
+case class EisFailure(failures: Seq[EisError], httpCode: Int)
+
+object EisFailure {
+  implicit val format: OFormat[EisFailure] = Json.format[EisFailure]
+}
