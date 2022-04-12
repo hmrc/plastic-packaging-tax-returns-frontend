@@ -21,40 +21,67 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import viewmodels.govuk.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.PrintBigDecimal
 
-final case class Field(key: String, value: String, bold: Boolean = false)
+final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
+  def classes: String =
+    Seq(
+      if (big) "govuk-body-l" else "govuk-body-m",
+      if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular",
+    ).mkString(" ")
+}
 
 final case class Section(titleKey: String, fields : Seq[Field]) {
   def summaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(fields.map{ row =>
     SummaryListRow(
-      Key(Text(messages(row.key)), if (row.bold) "" else "govuk-!-font-weight-regular"),
-      Value(Text(row.value)))
+      Key(Text(messages(row.key)), row.classes),
+      Value(Text(row.value), row.classes))
   })
 }
 
 object Section {
-  def apply(name: String, lastBold: Boolean = true)(fields: String*): Section =
+  def apply(name: String, lastBold: Boolean = true, lastBig: Boolean = false)(fields: (String, String)*): Section =
     Section(s"viewReturnSummary.$name.heading",
-      fields.zipWithIndex.map{ case (value, i) =>
-        val row = i + 1
-        Field(s"viewReturnSummary.$name.field.$row", value, row==fields.length && lastBold)
+      fields.zipWithIndex.map{ case ((row, value), i) =>
+        val isLast = i+1==fields.length
+        Field(s"viewReturnSummary.$name.field.$row", value, isLast && lastBold, isLast && lastBig)
       }
     )
 }
 
-final case class ViewReturnSummaryViewModel(summarySection : Section)
+final case class DetailsSection(liable: Section, exempt: Section, calculation: Section)
+
+final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
 
 object ViewReturnSummaryViewModel {
-
-  def asPounds(bigDecimal: BigDecimal): String = "£" + bigDecimal //there should be utils for this, and Kg
 
   def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        asPounds(submittedReturn.returnDetails.taxDue),
-        submittedReturn.processingDate,
-        "TODO",
-        "TODO"
+        "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
+        "processed" -> submittedReturn.processingDate,
+        "reference" -> submittedReturn.chargeReferenceAsString,
+      ),
+      DetailsSection(
+        Section("liable")(
+          "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKgs,
+          "imported" -> submittedReturn.returnDetails.importedWeight.asKgs,
+          "total" -> submittedReturn.returnDetails.totalWeight.asKgs
+        ),
+        Section("exempt")(
+          "exported" -> submittedReturn.returnDetails.directExports.asKgs,
+          "medicine" -> submittedReturn.returnDetails.humanMedicines.asKgs,
+          "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKgs,
+          "total" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
+        ),
+        Section("calculation", lastBig = true)(
+          "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
+          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
+          "liable" -> submittedReturn.returnDetails.liableWeight.asKgs,
+          "tax" -> "how do we know this? :/",
+          "credit" -> submittedReturn.returnDetails.creditForPeriod.asPounds,
+          "liability" -> "tax - credit = ?"
+        )
       )
     )
 

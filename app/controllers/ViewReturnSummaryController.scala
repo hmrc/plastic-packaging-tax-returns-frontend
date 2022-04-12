@@ -57,7 +57,7 @@ class ViewReturnSummaryController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     identify {
-      implicit request =>
+      _ =>
         Redirect(routes.AmendAreYouSureController.onPageLoad(NormalMode))
     }
 

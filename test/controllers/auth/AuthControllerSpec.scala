@@ -20,9 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{Result, Session}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, route, running, status, GET}
 import play.api.test.Helpers._
 
 import java.net.URLEncoder

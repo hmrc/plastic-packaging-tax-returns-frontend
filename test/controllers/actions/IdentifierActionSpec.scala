@@ -302,7 +302,7 @@ class IdentifierActionSpec
 
   private def createIdentifierAction(
     fakeAuth: AuthConnector,
-    pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
+    pptReferenceAllowedList: PptReferenceAllowedList
   ) =
     new AuthenticatedIdentifierAction(fakeAuth,
                                       pptReferenceAllowedList,

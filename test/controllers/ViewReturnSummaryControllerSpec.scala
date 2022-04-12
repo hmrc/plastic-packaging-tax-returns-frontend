@@ -43,10 +43,10 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         .build()
 
       val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-      val submittedReturn = ReturnDisplayApi("", IdDetails("", ""), None, returnDisplayDetails)
+      val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), None, returnDisplayDetails)
 
       running(application) {
-        val viewModel       = ViewReturnSummaryViewModel(submittedReturn)
+        val viewModel = ViewReturnSummaryViewModel(submittedReturn)
         when(mockConnector.get(any(), any())(any())).thenReturn(
           Future.successful(Right(submittedReturn))
         )

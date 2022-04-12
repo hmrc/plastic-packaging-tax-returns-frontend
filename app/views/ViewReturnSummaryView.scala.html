@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.componants.{SectionHeader, Link}
+@import views.html.components.{SectionHeader, Link}
 @import models.NormalMode
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 
@@ -39,4 +39,14 @@
     <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>
     @govukSummaryList(vm.summarySection.summaryList)
 
+    <h2 class="govuk-heading-l">@messages("viewReturnSummary.details.heading")</h2>
+
+    <h3 class="govuk-heading-m">@messages(vm.detailsSection.liable.titleKey)</h3>
+    @govukSummaryList(vm.detailsSection.liable.summaryList)
+
+    <h3 class="govuk-heading-m">@messages(vm.detailsSection.exempt.titleKey)</h3>
+    @govukSummaryList(vm.detailsSection.exempt.summaryList)
+
+    <h3 class="govuk-heading-m">@messages(vm.detailsSection.calculation.titleKey)</h3>
+    @govukSummaryList(vm.detailsSection.calculation.summaryList)
 }
