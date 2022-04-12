@@ -50,7 +50,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the liability field" in {
-      summarySection.fields.head mustBe Field("viewReturnSummary.summary.field.liability", "£10") // TODO commas etc?
+      summarySection.fields.head mustBe Field("viewReturnSummary.summary.field.liability", "£10.00")
     }
 
     "have the processed field" in {
@@ -149,7 +149,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the credit total" in  {
-      calculationSection.fields(4) mustBe Field("viewReturnSummary.calculation.field.credit", "£7")
+      calculationSection.fields(4) mustBe Field("viewReturnSummary.calculation.field.credit", "£7.00")
     }
 
     "have the liability total" in  {

@@ -21,6 +21,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import viewmodels.govuk.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.PrintBigDecimal
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
@@ -54,35 +55,31 @@ final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSec
 
 object ViewReturnSummaryViewModel {
 
-  //implict class on bigDecimal?
-  def asPounds(bigDecimal: BigDecimal): String = "£" + bigDecimal //there should be utils for this, and Kg
-  def asKgs(bigDecimal: BigDecimal): String = bigDecimal + "kg" //there should be utils for this, and Kg
-
   def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        "liability" -> asPounds(submittedReturn.returnDetails.taxDue),
+        "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
         "processed" -> submittedReturn.processingDate,
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(
         Section("liable")(
-          "manufactured" -> asKgs(submittedReturn.returnDetails.manufacturedWeight),
-          "imported" -> asKgs(submittedReturn.returnDetails.importedWeight),
-          "total" -> asKgs(submittedReturn.returnDetails.totalWeight)
+          "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKgs,
+          "imported" -> submittedReturn.returnDetails.importedWeight.asKgs,
+          "total" -> submittedReturn.returnDetails.totalWeight.asKgs
         ),
         Section("exempt")(
-          "exported" -> asKgs(submittedReturn.returnDetails.directExports),
-          "medicine" -> asKgs(submittedReturn.returnDetails.humanMedicines),
-          "recycled" -> asKgs(submittedReturn.returnDetails.recycledPlastic),
-          "total" -> asKgs(submittedReturn.returnDetails.totalNotLiable),
+          "exported" -> submittedReturn.returnDetails.directExports.asKgs,
+          "medicine" -> submittedReturn.returnDetails.humanMedicines.asKgs,
+          "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKgs,
+          "total" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
         ),
         Section("calculation", lastBig = true)(
-          "total" -> asKgs(submittedReturn.returnDetails.totalWeight),
-          "exempt" -> asKgs(submittedReturn.returnDetails.totalNotLiable),
-          "liable" -> asKgs(submittedReturn.returnDetails.liableWeight),
+          "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
+          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
+          "liable" -> submittedReturn.returnDetails.liableWeight.asKgs,
           "tax" -> "how do we know this? :/",
-          "credit" -> asPounds(submittedReturn.returnDetails.creditForPeriod),
+          "credit" -> submittedReturn.returnDetails.creditForPeriod.asPounds,
           "liability" -> "tax - credit = ?"
         )
       )
