@@ -48,7 +48,9 @@ case class ReturnDisplayDetails(
   debitForPeriod: BigDecimal,
   totalWeight: BigDecimal,
   taxDue: BigDecimal
-)
+){
+  def liableWeight: BigDecimal = totalWeight - totalNotLiable
+}
 
 object ReturnDisplayDetails {
   implicit val format: OFormat[ReturnDisplayDetails] = Json.format[ReturnDisplayDetails]
@@ -59,7 +61,12 @@ case class ReturnDisplayApi(
   idDetails: IdDetails,
   chargeDetails: Option[ReturnDisplayChargeDetails],
   returnDetails: ReturnDisplayDetails
-)
+) {
+
+  def chargeReferenceAsString: String =
+    chargeDetails.flatMap(_.chargeReference).getOrElse("n/a")
+
+}
 
 object ReturnDisplayApi {
   implicit val format: OFormat[ReturnDisplayApi] = Json.format[ReturnDisplayApi]

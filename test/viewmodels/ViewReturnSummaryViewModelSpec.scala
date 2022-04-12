@@ -16,46 +16,144 @@
 
 package viewmodels
 
-import models.returns.{
-  IdDetails,
-  ReturnDisplayApi,
-  ReturnDisplayChargeDetails,
-  ReturnDisplayDetails
-}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
-  "apply" must {
-    "build the Summary section" in {
-      val returnDisplayChargeDetails = ReturnDisplayChargeDetails("21C2",
-                                                                  Some("charge-ref"),
-                                                                  "2022-04-01",
-                                                                  "2022-06-30",
-                                                                  "2022-07-03",
-                                                                  "New"
-      )
-      val returnDetails = ReturnDisplayDetails(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-      val submittedReturn = ReturnDisplayApi("2019-08-28T09:30:47Z",
-                                             IdDetails("XMPPT0000000001", "00-11-submission-id"),
-                                             Some(returnDisplayChargeDetails),
-                                             returnDetails
-      )
+  private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
+    "21C2", Some("charge-ref-no"), "2022-04-01", "2022-06-30", "2022-07-03", "New"
+  )
 
-      val section = ViewReturnSummaryViewModel(submittedReturn).summarySection
+  private val manufacturedWeight = 100
+  private val returnDetails = ReturnDisplayDetails(
+    manufacturedWeight, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  )
 
-      section.titleKey mustBe "viewReturnSummary.summary.heading"
-      section.fields.zip(
-        Seq(Field("viewReturnSummary.summary.field.1", "£10"),
-            Field("viewReturnSummary.summary.field.2", "2019-08-28T09:30:47Z"), // TODO
-            Field("viewReturnSummary.summary.field.3", "TODO"),                 // TODO
-            Field("viewReturnSummary.summary.field.4", "TODO")                  // TODO
-        )
-      ).map {
-        case (actual, expected) => actual mustBe expected
-      }
+  private val submittedReturn = ReturnDisplayApi(
+    "2019-08-28T09:30:47Z",
+    IdDetails("XMPPT0000000001", "00-11-submission-id"),
+    Some(returnDisplayChargeDetails),
+    returnDetails
+  )
+
+
+  "The Summary section" must {
+    val summarySection = ViewReturnSummaryViewModel(submittedReturn).summarySection
+    "have the title Key" in {
+      summarySection.titleKey mustBe "viewReturnSummary.summary.heading"
+    }
+
+    "have 3 entries" in {
+      summarySection.fields must have size 3
+    }
+
+    "have the liability field" in {
+      summarySection.fields.head mustBe Field("viewReturnSummary.summary.field.liability", "£10.00")
+    }
+
+    "have the processed field" in {
+      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "2019-08-28T09:30:47Z") // TODO parse and welsh-ify
+    }
+
+    "have the reference field" in {
+      summarySection.fields(2) mustBe Field("viewReturnSummary.summary.field.reference", "charge-ref-no")
+    }
+
+    "say 'n/a' when the charge reference number is not available" in {
+      val anotherReturn = submittedReturn.copy(chargeDetails = Some(returnDisplayChargeDetails.copy(chargeReference = None)))
+      val section = ViewReturnSummaryViewModel(anotherReturn).summarySection
+      section.fields(2) mustBe Field("viewReturnSummary.summary.field.reference", "n/a")
+    }
+
+  }
+
+  "The Liable plastic packaging section" must {
+    val liableSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.liable
+
+    "have the title Key" in {
+      liableSection.titleKey mustBe "viewReturnSummary.liable.heading"
+    }
+
+    "have 4 entries" in {
+      liableSection.fields must have(size(3))
+    }
+
+    "have the manufactured field" in  {
+      liableSection.fields(0) mustBe Field("viewReturnSummary.liable.field.manufactured", "100kg")
+    }
+
+    "have the imported field" in  {
+      liableSection.fields(1) mustBe Field("viewReturnSummary.liable.field.imported", "2kg")
+    }
+
+    "have the total field" in  {
+      liableSection.fields(2) mustBe Field("viewReturnSummary.liable.field.total", "9kg", bold = true)
     }
   }
 
+  "Exempt section" must {
+    val exemptSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.exempt
+
+    "have the title Key" in {
+      exemptSection.titleKey mustBe "viewReturnSummary.exempt.heading"
+    }
+
+    "have 4 entries" in {
+      exemptSection.fields must have(size(4))
+    }
+
+    "have the exported field" in  {
+      exemptSection.fields(0) mustBe Field("viewReturnSummary.exempt.field.exported", "5kg")
+    }
+
+    "have the medicine field" in  {
+      exemptSection.fields(1) mustBe Field("viewReturnSummary.exempt.field.medicine", "4kg")
+    }
+
+    "have the recycled field" in  {
+      exemptSection.fields(2) mustBe Field("viewReturnSummary.exempt.field.recycled", "6kg")
+    }
+
+    "have the recycled total" in  {
+      exemptSection.fields(3) mustBe Field("viewReturnSummary.exempt.field.total", "3kg", bold = true)
+    }
+  }
+
+  "Calculation section" must {
+    val calculationSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.calculation
+
+    "have the title Key" in {
+      calculationSection.titleKey mustBe "viewReturnSummary.calculation.heading"
+    }
+
+    "have 4 entries" in {
+      calculationSection.fields must have(size(6))
+    }
+
+    "have the total field" in  {
+      calculationSection.fields(0) mustBe Field("viewReturnSummary.calculation.field.total", "9kg")
+    }
+
+    "have the exempt field" in  {
+      calculationSection.fields(1) mustBe Field("viewReturnSummary.calculation.field.exempt", "3kg")
+    }
+
+    "have the liable field" in  {
+      calculationSection.fields(2) mustBe Field("viewReturnSummary.calculation.field.liable", "6kg")
+    }
+
+    "have the tax total" in  {
+      calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "how do we know this? :/") //todo how do we know this? surely recalculating it is asking for issues
+    }
+
+    "have the credit total" in  {
+      calculationSection.fields(4) mustBe Field("viewReturnSummary.calculation.field.credit", "£7.00")
+    }
+
+    "have the liability total" in  {
+      calculationSection.fields(5) mustBe Field("viewReturnSummary.calculation.field.liability", "tax - credit = ?", bold = true, big = true) //todo same as above
+    }
+  }
 }
