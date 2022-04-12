@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
-import models.returns.{IdDetails, SubmittedReturn}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
-  val mockConnector = mock[TaxReturnsConnector]
+  private val mockConnector = mock[TaxReturnsConnector]
 
   "ViewReturnSummary Controller" - {
 
@@ -42,9 +42,11 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         .overrides(inject.bind[TaxReturnsConnector].toInstance(mockConnector))
         .build()
 
+      val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+      val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), None, returnDisplayDetails)
+
       running(application) {
-        val submittedReturn = SubmittedReturn("", IdDetails("", ""), None, None, None)
-        val viewModel       = ViewReturnSummaryViewModel(submittedReturn)
+        val viewModel = ViewReturnSummaryViewModel(submittedReturn)
         when(mockConnector.get(any(), any())(any())).thenReturn(
           Future.successful(Right(submittedReturn))
         )

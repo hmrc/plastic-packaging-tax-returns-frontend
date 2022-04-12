@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.returns.SubmittedReturn
+import models.returns.ReturnDisplayApi
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import viewmodels.govuk.summarylist._
@@ -59,13 +59,12 @@ object ViewReturnSummaryViewModel {
   def asPounds(bigDecimal: BigDecimal): String =
     "£" + bigDecimal //there should be utils for this, and Kg
 
-  def apply(submittedReturn: SubmittedReturn): ViewReturnSummaryViewModel =
+  def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
-      Section("summary", lastBold = false)(
-        asPounds(submittedReturn.chargeDetails.map(_.amount).getOrElse(0)),
-        submittedReturn.processingDate,
-        submittedReturn.chargeDetails.map(_.dueDate).getOrElse("not found"),
-        submittedReturn.idDetails.pptReferenceNumber
+      Section("summary", lastBold = false)(asPounds(submittedReturn.returnDetails.taxDue),
+                                           submittedReturn.processingDate,
+                                           "TODO",
+                                           "TODO"
       )
     )
 
