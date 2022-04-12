@@ -17,7 +17,6 @@
 package connectors
 
 import base.utils.ConnectorISpec
-import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import models.financials.PPTFinancials
@@ -60,7 +59,7 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         val res = await(connector.getPaymentStatement(pptReference))
 
         res mustBe expectedFinancials
-        // TODO - getTimer("ppt.financials.open.get.timer").getCount mustBe 1
+
       }
     }
 
@@ -99,11 +98,5 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
             .withBody(body)
         )
     )
-
-  private def getTimer(name: String): Timer =
-    SharedMetricRegistries
-      .getOrCreate("plastic-packaging-tax-returns-frontend")
-      .getTimers(MetricFilter.startsWith(name))
-      .get(name)
 
 }

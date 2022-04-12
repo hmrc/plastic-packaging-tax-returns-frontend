@@ -57,7 +57,7 @@
 }
 
 @singleEntityManagement = {
-<div id="core-management" class="govuk-grid-column-one-third">
+<div id="core-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-single", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
@@ -66,13 +66,13 @@
 }
 
 @groupManagement = {
-<div id="core-management" class="govuk-grid-column-one-third">
+<div id="core-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-group", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
-<div id="additional-management" class="govuk-grid-column-one-third">
+<div id="additional-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
         body = messages("account.homePage.card.registration.details.2.body.group")
@@ -81,13 +81,13 @@
 }
 
 @partnershipManagement = {
-<div id="core-management" class="govuk-grid-column-one-third">
+<div id="core-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-partner-core", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
-<div id="additional-management" class="govuk-grid-column-one-third">
+<div id="additional-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-partner-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
         body = messages("account.homePage.card.registration.details.2.body.partnership")
@@ -96,7 +96,7 @@
 }
 
 @deregister = {
-<div id="deregister" class="govuk-grid-column-one-third">
+<div id="deregister" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-deregister", text = messages("account.homePage.card.deregister.link"), call = Call("GET", appConfig.pptRegistrationDeregisterUrl)),
         body = messages("account.homePage.card.deregister.body")
@@ -170,7 +170,7 @@
     pageTitle    = titleNoForm(messages("account.homePage.title")),
     showBackLink = false
 ) {
-    @sectionHeader(messages("account.homePage.title"))
+    <h2 class="govuk-heading-l">@messages("account.homePage.title")</h2>
 
     @paragraph {
         @messages("account.homePage.registrationNumber", pptReference) </br>

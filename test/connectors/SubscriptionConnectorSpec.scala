@@ -17,7 +17,6 @@
 package connectors
 
 import base.utils.ConnectorISpec
-import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
@@ -63,7 +62,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
         val res = await(connector.get(pptReference))
 
         res mustBe Right(expectedRegDetails)
-        // TODO - getTimer("ppt.subscription.get.timer").getCount mustBe 1
+
       }
     }
 
@@ -115,7 +114,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
         )
 
         res mustBe expectedUpdateResponse
-        //TODO - getTimer("ppt.subscription.update.timer").getCount mustBe 1
+
       }
     }
 
@@ -182,11 +181,5 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
             .withBody(body)
         )
     )
-
-  private def getTimer(name: String): Timer =
-    SharedMetricRegistries
-      .getOrCreate("plastic-packaging-tax-returns-frontend")
-      .getTimers(MetricFilter.startsWith(name))
-      .get(name)
 
 }

@@ -184,7 +184,7 @@ class IndexControllerSpec
           any()
         )
 
-        captor.getValue.get mustBe "account.homePage.card.payments.nothingOutstanding"
+        captor.getValue.get mustBe "You have no payments due."
 
       }
     }

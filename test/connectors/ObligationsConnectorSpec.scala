@@ -17,7 +17,6 @@
 package connectors
 
 import base.utils.ConnectorISpec
-import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import models.obligations.PPTObligations
@@ -60,7 +59,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
         val res = await(connector.get(pptReference))
 
         res mustBe expectedObligations
-        // TODO - getTimer("ppt.obligations.open.get.timer").getCount mustBe 1
+
       }
     }
 
@@ -99,11 +98,5 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
             .withBody(body)
         )
     )
-
-  private def getTimer(name: String): Timer =
-    SharedMetricRegistries
-      .getOrCreate("plastic-packaging-tax-returns-frontend")
-      .getTimers(MetricFilter.startsWith(name))
-      .get(name)
 
 }
