@@ -201,3 +201,7 @@ viewReturnSummary.summary.field.1 = Tax liability for this period
 viewReturnSummary.summary.field.2 = Return processed
 viewReturnSummary.summary.field.3 = Charge reference number for this return
 viewReturnSummary.details.heading = Details
+viewReturnSummary.liable.heading = Liable plastic packaging
+viewReturnSummary.liable.field.1 = Plastic packaging manufactured
+viewReturnSummary.liable.field.2 = Plastic packaging imported
+viewReturnSummary.liable.field.3 = Liable plastic packaging total

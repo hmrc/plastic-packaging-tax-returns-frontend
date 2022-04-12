@@ -59,7 +59,7 @@ object ViewReturnSummaryViewModel {
       ),
       DetailsSection(
         Section("liable")(
-
+          "", "", ""
         ),
         Section("exempt")(
 
