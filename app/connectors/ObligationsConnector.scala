@@ -19,6 +19,7 @@ package connectors
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.obligations.PPTObligations
+import models.returns.TaxReturnObligations
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -45,6 +46,24 @@ class ObligationsConnector @Inject() (
         case exception: Exception =>
           throw DownstreamServiceError(
             s"Failed to retrieve open obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+            exception
+          )
+      }
+  }
+
+  def getFulfilled(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligations] = {
+    val timer = metrics.defaultRegistry.timer("ppt.obligations.fulfilled.get.timer").time()
+    httpClient.GET[TaxReturnObligations](appConfig.pptFulfilledObligationUrl(pptReferenceNumber))
+      .map {
+        response =>
+          logger.info(s"Retrieved fulfilled obligations for ppt reference number [$pptReferenceNumber]")
+          response
+      }
+      .andThen { case _ => timer.stop() }
+      .recover {
+        case exception: Exception =>
+          throw DownstreamServiceError(
+            s"Failed to retrieve fulfilled obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
             exception
           )
       }

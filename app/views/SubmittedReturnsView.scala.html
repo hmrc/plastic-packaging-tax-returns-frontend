@@ -50,7 +50,7 @@ if (obligations.get.isEmpty) {
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
     <p class="govuk-body">@returnsLine</p>
-    @link("view-return", "view return", routes.ViewReturnSummaryController.onPageLoad().url)
+    @link("view-return", "view return", routes.ViewReturnSummaryController.onPageLoad("todo"))
 
     @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
 

@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.ObligationsConnector
 import controllers.actions._
 import models.returns.TaxReturnObligation
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -25,41 +26,52 @@ import views.html.SubmittedReturnsView
 
 import java.time.LocalDate
 import javax.inject.Inject
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SubmittedReturnsController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: SubmittedReturnsView
+                                            view: SubmittedReturnsView,
+                                            obligationsConnector: ObligationsConnector
                                           ) extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad: Action[AnyContent] = identify {
+  def onPageLoad: Action[AnyContent] = identify.async {
 
     implicit request =>
 
-      val obligations0: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq.empty)
+      val pptReference =
+        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+
+      obligationsConnector.getFulfilled(pptReference).flatMap { taxReturnObligations =>
+        Future.successful(Ok(view(taxReturnObligations.obligations)))
       }
 
-      val obligations1: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq(TaxReturnObligation(LocalDate.now(),
-          LocalDate.now(),
-          LocalDate.now(),
-          "PK1")))
-      }
-      val obligations2: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq(TaxReturnObligation(LocalDate.now(),
-          LocalDate.now().plusMonths(3),
-          LocalDate.now().plusMonths(3),
-          "PK1"),
-          TaxReturnObligation(LocalDate.now().plusMonths(3),
-            LocalDate.now().plusMonths(6),
-            LocalDate.now().plusMonths(6),
-            "PK2")
-        ))
-      }
 
-      Ok(view(obligations2))
+//      val obligations0: Option[Seq[TaxReturnObligation]] = {
+//        Some(Seq.empty)
+//      }
+//
+//      val obligations1: Option[Seq[TaxReturnObligation]] = {
+//        Some(Seq(TaxReturnObligation(LocalDate.now(),
+//          LocalDate.now(),
+//          LocalDate.now(),
+//          "PK1")))
+//      }
+//      val obligations2: Option[Seq[TaxReturnObligation]] = {
+//        Some(Seq(TaxReturnObligation(LocalDate.now(),
+//          LocalDate.now().plusMonths(3),
+//          LocalDate.now().plusMonths(3),
+//          "PK1"),
+//          TaxReturnObligation(LocalDate.now().plusMonths(3),
+//            LocalDate.now().plusMonths(6),
+//            LocalDate.now().plusMonths(6),
+//            "PK2")
+//        ))
+//      }
+//
+//      Ok(view(obligations2))
   }
 }
