@@ -22,8 +22,8 @@ import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AmendAreYouSurePage
 import play.api.inject.bind
@@ -32,8 +32,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.AmendAreYouSureView
-import models.returns.TaxReturnObligation
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
+import org.mockito.ArgumentMatchers
 import play.api.data.Form
+import play.twirl.api.HtmlFormat
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -56,30 +58,37 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   val mockService = mock[TaxReturnHelper]
 
+  //todo delete this it shouldnt have an obligation....
+  when(mockService.defaultObligation).thenReturn(obligation)
+
+  val retDisApi = ReturnDisplayApi("", IdDetails("", ""), None, ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
+  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))//todo this isnt being used yet
+
+
   //todo all this duped application code is gross.
 
   "AmendAreYouSure Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val mockView = mock[AmendAreYouSureView]
+      when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST").get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[TaxReturnHelper].toInstance(mockService))
-        .build()
+        .overrides(
+          bind[TaxReturnHelper].toInstance(mockService),
+          bind[AmendAreYouSureView].toInstance(mockView)
+        ).build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
-        when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(null))//todo this isnt being used yet
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AmendAreYouSureView]
-
+        
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, obligation)(request,
-                                                                             messages(application)
-        ).toString
+        verify(mockView).apply(any(), any(), refEq(obligation))(any(), any())
       }
     }
 
@@ -89,7 +98,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         .set(AmendAreYouSurePage, true).get
         .set(AmendSelectedPeriodKey, "TEST").get
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[TaxReturnHelper].toInstance(mockService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
@@ -123,11 +134,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(ReturnDes))//todo this isnt being used yet
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST").get
