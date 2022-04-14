@@ -16,7 +16,12 @@
 
 package viewmodels
 
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
+import models.returns.{
+  IdDetails,
+  ReturnDisplayApi,
+  ReturnDisplayChargeDetails,
+  ReturnDisplayDetails
+}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 

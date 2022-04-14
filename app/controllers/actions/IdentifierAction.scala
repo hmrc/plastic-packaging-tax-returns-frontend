@@ -20,18 +20,17 @@ import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.agents.{routes => agentRoutes}
+import controllers.home.{routes => homeRoutes}
 import models.requests.{IdentifiedRequest, IdentityData}
 import models.{NormalMode, SignedInUser}
 import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import controllers.home.{routes => homeRoutes}
-import controllers.agents.{routes => agentRoutes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,7 +69,7 @@ class AuthenticatedIdentifierAction @Inject() (
     val authorisation            = authTimer.time()
     val selectedClientIdentifier = getSelectedClientIdentifier()
 
-    authorised(authPredicate(selectedClientIdentifier)).retrieve(authData) {
+    authorised(AuthPredicate.createWithEnrolment(selectedClientIdentifier)).retrieve(authData) {
       case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
           confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
           credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
@@ -141,17 +140,6 @@ class AuthenticatedIdentifierAction @Inject() (
         Redirect(homeRoutes.UnauthorisedController.unauthorised())
     }
   }
-
-  private def authPredicate(selectedClientIdentifier: Option[String] = None): Predicate =
-    selectedClientIdentifier.map { clientIdentifier =>
-      // If this request is decorated with a selected client identifier this indicates
-      // an agent at work; we need to request the delegated authority
-      Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
-                                                clientIdentifier
-      ).withDelegatedAuthRule("ppt-auth")
-    }.getOrElse {
-      Enrolment(pptEnrolmentKey)
-    }.and(acceptableCredentialStrength)
 
   private def executeRequest[A](
     request: Request[A],
