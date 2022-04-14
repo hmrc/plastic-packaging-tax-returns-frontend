@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers.{
@@ -42,8 +41,9 @@ import uk.gov.hmrc.auth.core.{
   MissingBearerToken
 }
 
-class AuthAgentActionSpec
-    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AuthAgentActionSpec extends SpecBase with FakeCustomRequest with MetricsMocks {
 
   private val appConfig = mock[FrontendAppConfig]
   val application       = applicationBuilder(userAnswers = None).build()
@@ -52,9 +52,7 @@ class AuthAgentActionSpec
     AffinityGroup.Agent.and(AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong)))
 
   private def createAuthAction(authConnector: AuthConnector): AuthAgentAction =
-    new AuthAgentActionImpl(authConnector,
-                            appConfig,
-                            metricsMock,
+    new AuthAgentActionImpl(new AuthFunction(authConnector, appConfig, metricsMock),
                             stubMessagesControllerComponents()
     )
 

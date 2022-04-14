@@ -18,8 +18,7 @@ package base
 
 import com.google.inject.Inject
 import models.SignedInUser
-import support.{AuthHelper, PptTestData}
-import support.PptTestData.pptEnrolment
+import support.AuthHelper
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval

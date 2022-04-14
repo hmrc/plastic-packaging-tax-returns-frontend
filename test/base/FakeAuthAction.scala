@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package base
 
-import com.google.inject.Inject
-import models.requests.IdentifiedRequest
+import controllers.actions.AuthAgentAction
+import models.SignedInUser
+import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.Enrolments
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthCheckActionImpl @Inject() (authorisedFun: AuthFunction, mcc: MessagesControllerComponents)
-    extends AuthCheckAction {
-
-  implicit override val executionContext: ExecutionContext = mcc.executionContext
-  override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
+class FakeAuthAction @Inject() (bodyParsers: PlayBodyParsers) extends AuthAgentAction {
 
   override def invokeBlock[A](
     request: Request[A],
     block: IdentifiedRequest[A] => Future[Result]
-  ): Future[Result] =
-    authorisedFun.authorised(AuthPredicate.acceptableCredentialStrength, request, block)
+  ): Future[Result] = {
+    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData(internalId = "SomeId"))
+    block(IdentifiedRequest(request, pptLoggedInUser, None))
+  }
+
+  override def parser: BodyParser[AnyContent] =
+    bodyParsers.default
+
+  override protected def executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
 
 }
-
-trait AuthCheckAction
-    extends ActionBuilder[IdentifiedRequest, AnyContent]
-    with ActionFunction[Request, IdentifiedRequest]
