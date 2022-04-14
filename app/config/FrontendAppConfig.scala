@@ -63,10 +63,45 @@ class FrontendAppConfig @Inject() (
   private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
   private lazy val pptReturnsAmendUrl: String      = s"$pptServiceHost/returns-amend"
 
+  lazy val pptRegistrationFrontEnd =
+    configuration.getOptional[String]("platform.frontend.host").getOrElse(
+      servicesConfig.baseUrl("ppt-registration-frontend")
+    )
+
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
 
   def pptReturnAmendUrl(pptReference: String): String =
     s"$pptReturnsAmendUrl/$pptReference"
+
+  lazy val pptRegistrationAmendUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/amend-registration"
+
+  lazy val pptRegistrationManageGroupUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/manage-group-members"
+
+  lazy val pptRegistrationManagePartnersUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/manage-partners"
+
+  lazy val pptRegistrationDeregisterUrl =
+    s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
+
+  def isDeRegistrationFeatureEnabled: Boolean =
+    isFeatureEnabled(Features.deRegistrationEnabled)
+
+  def isFeatureEnabled(name: String): Boolean =
+    configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
+
+  def pptSubscriptionUrl(pptReference: String): String =
+    s"$pptServiceHost/subscriptions/$pptReference"
+
+  lazy val pptCompleteReturnGuidanceUrl: String =
+    configuration.get[String]("urls.pptCompleteReturnGuidanceLink")
+
+  def pptObligationUrl(pptReference: String): String =
+    s"$pptServiceHost/obligations/open/$pptReference"
+
+  def pptFinancialsUrl(pptReference: String): String =
+    s"$pptServiceHost/financials/open/$pptReference"
 
 }

@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
-import models.NormalMode
 import models.returns.ReturnDisplayApi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,27 +37,16 @@ class ViewReturnSummaryController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  // TODO stubs totally ignore this right now
-  private val hardcoded_period_key = "AAAA"
-
-  // TODO Need to get this from auth
-  private val hardcoded_ppt_ref = "XMPPT0000000001"
-
-  def onPageLoad: Action[AnyContent] =
+  def onPageLoad(periodKey: String): Action[AnyContent] =
     identify.async {
       implicit request =>
+        val enrolmentId = request.enrolmentId.getOrElse(throw new IllegalArgumentException("Make this not optional?")) // TODO
         val submittedReturn: Future[ReturnDisplayApi] =
-          taxReturnHelper.fetchTaxReturn(hardcoded_ppt_ref, hardcoded_period_key)
+          taxReturnHelper.fetchTaxReturn(enrolmentId, periodKey.toUpperCase())
         submittedReturn.map {
           val returnPeriod = "April to June 2022" // TODO
           subRet => Ok(view(returnPeriod, ViewReturnSummaryViewModel(subRet)))
         }
-    }
-
-  def onSubmit(): Action[AnyContent] =
-    identify {
-      implicit request =>
-        Redirect(routes.AmendAreYouSureController.onPageLoad(NormalMode))
     }
 
 }
