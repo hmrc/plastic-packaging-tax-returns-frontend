@@ -20,7 +20,7 @@ import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import models.obligations.PPTObligations
-import models.returns.{TaxReturnObligation, TaxReturnObligations}
+import models.returns.TaxReturnObligation
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
@@ -95,31 +95,28 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
 
       "retrieving existing obligation details" in {
 
-        val obligations = TaxReturnObligations(
-          Some(
-            Seq(
-              TaxReturnObligation(
-                LocalDate.now(),
-                LocalDate.now().plusMonths(3),
-                LocalDate.now().plusMonths(3),
-                "PK1"
-              ),
-              TaxReturnObligation(
-                LocalDate.now().plusMonths(3),
-                LocalDate.now().plusMonths(6),
-                LocalDate.now().plusMonths(6),
-                "PK2"
-              )
+        val obligations =
+          Seq(
+            TaxReturnObligation(
+              LocalDate.now(),
+              LocalDate.now().plusMonths(3),
+              LocalDate.now().plusMonths(3),
+              "PK1"
+            ),
+            TaxReturnObligation(
+              LocalDate.now().plusMonths(3),
+              LocalDate.now().plusMonths(6),
+              LocalDate.now().plusMonths(6),
+              "PK2"
             )
           )
-        )
 
         val pptReference        = UUID.randomUUID().toString
         val expectedObligations = obligations
         givenGetSubscriptionEndpointReturns(
           Status.OK,
           pptReference,
-          Json.toJsObject(expectedObligations).toString,
+          Json.toJson(expectedObligations).toString,
           "fulfilled"
         )
 

@@ -39,8 +39,8 @@ class SubmittedReturnsControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[SubmittedReturnsView]
 
-        val ob: Option[Seq[TaxReturnObligation]] = {
-          Some(Seq.empty)
+        val ob: Seq[TaxReturnObligation] = {
+          Seq.empty
         }
 
         status(result) mustEqual OK
