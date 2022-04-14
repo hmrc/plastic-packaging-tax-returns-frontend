@@ -21,9 +21,9 @@
 
 @(message: String, taxReturn:TaxReturnObligation)
 
-@periodKey = @{taxReturn.periodKey}
+@call = @{routes.ViewReturnSummaryController.onPageLoad(taxReturn.periodKey)}
 
 <ul class="govuk-list">
  <p class="govuk-heading-m">@message</p>
- <a href="">View return</a>
+ <a href="@call">View return</a>
 </ul>

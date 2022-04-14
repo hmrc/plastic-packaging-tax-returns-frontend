@@ -46,17 +46,17 @@ class SubmittedReturnsController @Inject()(
         Some(Seq(TaxReturnObligation(LocalDate.now(),
           LocalDate.now(),
           LocalDate.now(),
-          "PK1")))
+          "00xx")))
       }
       val obligations2: Option[Seq[TaxReturnObligation]] = {
         Some(Seq(TaxReturnObligation(LocalDate.now(),
           LocalDate.now().plusMonths(3),
           LocalDate.now().plusMonths(3),
-          "PK1"),
+          "00xx"),
           TaxReturnObligation(LocalDate.now().plusMonths(3),
             LocalDate.now().plusMonths(6),
             LocalDate.now().plusMonths(6),
-            "PK2")
+            "00xx")
         ))
       }
 obligations1.get.head.periodKey
