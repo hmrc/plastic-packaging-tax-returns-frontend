@@ -28,16 +28,15 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, runn
 import support.{FakeCustomRequest, PptTestData}
 import uk.gov.hmrc.auth.core._
 
-class AuthCheckActionSpec
-    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AuthCheckActionSpec extends SpecBase with FakeCustomRequest with MetricsMocks {
 
   private val appConfig = mock[FrontendAppConfig]
   private val application       = applicationBuilder(userAnswers = None).build()
 
   private def createAuthAction(authConnector: AuthConnector): AuthCheckAction =
-    new AuthCheckActionImpl(authConnector,
-                            appConfig,
-                            metricsMock,
+    new AuthCheckActionImpl(new AuthFunction(authConnector, appConfig, metricsMock),
                             stubMessagesControllerComponents()
     )
 

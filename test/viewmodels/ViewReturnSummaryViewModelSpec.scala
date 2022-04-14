@@ -16,7 +16,12 @@
 
 package viewmodels
 
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
+import models.returns.{
+  IdDetails,
+  ReturnDisplayApi,
+  ReturnDisplayChargeDetails,
+  ReturnDisplayDetails
+}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 
@@ -128,32 +133,41 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
       calculationSection.titleKey mustBe "viewReturnSummary.calculation.heading"
     }
 
-    "have 4 entries" in {
-      calculationSection.fields must have(size(6))
+    "have the right number of entries" in {
+      calculationSection.fields must have(size(4))
     }
 
-    "have the total field" in  {
+    "have the total field" in {
       calculationSection.fields(0) mustBe Field("viewReturnSummary.calculation.field.total", "9kg")
     }
 
-    "have the exempt field" in  {
+    "have the exempt field" in {
       calculationSection.fields(1) mustBe Field("viewReturnSummary.calculation.field.exempt", "3kg")
     }
 
-    "have the liable field" in  {
+    "have the liable field" in {
       calculationSection.fields(2) mustBe Field("viewReturnSummary.calculation.field.liable", "6kg")
     }
 
-    "have the tax total" in  {
-      calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "how do we know this? :/") //todo how do we know this? surely recalculating it is asking for issues
+    "have the tax total" in {
+      calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "£10.00",
+        bold = true, big = true)
+    }
+  }
+
+  "Tax Credit section" must {
+    val taxCreditSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.taxCredit
+
+    "have the right number of entries" in {
+      taxCreditSection.fields must have(size(2))
     }
 
     "have the credit total" in  {
-      calculationSection.fields(4) mustBe Field("viewReturnSummary.calculation.field.credit", "£7.00")
+      taxCreditSection.fields(0) mustBe Field("viewReturnSummary.credits.field.credit", "£7.00")
     }
 
-    "have the liability total" in  {
-      calculationSection.fields(5) mustBe Field("viewReturnSummary.calculation.field.liability", "tax - credit = ?", bold = true, big = true) //todo same as above
+    "have the debit total" in  {
+      taxCreditSection.fields(1) mustBe Field("viewReturnSummary.credits.field.debit", "£8.00")
     }
   }
 }
