@@ -59,7 +59,7 @@ class SubmittedReturnsController @Inject()(
             "PK2")
         ))
       }
-
+obligations1.get.head.periodKey
       Ok(view(obligations2))
   }
 }
