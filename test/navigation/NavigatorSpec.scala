@@ -45,7 +45,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendAreYouSurePage,
                              NormalMode,
                              answers.get
-          ) mustBe (routes.ViewReturnSummaryController.onPageLoad)
+          ) mustBe (routes.ViewReturnSummaryController.onPageLoad("00XX")) // TODO should be the period-key of the current return
         }
 
       }

@@ -19,8 +19,9 @@ package controllers
 import base.SpecBase
 import connectors.TaxReturnsConnector
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
 import play.api.test.FakeRequest
@@ -51,7 +52,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Right(submittedReturn))
         )
 
-        val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad("00xx").url)
 
         val result = route(application, request).value
 
@@ -62,7 +63,11 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
           request,
           messages(application)
         ).toString
+
+        // Check it capitalised the period key
+        verify(mockConnector).get(any(), ArgumentMatchers.eq("00XX"))(any())
       }
     }
+
   }
 }
