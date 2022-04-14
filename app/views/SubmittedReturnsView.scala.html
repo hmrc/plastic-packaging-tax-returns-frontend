@@ -28,20 +28,19 @@
 )
 
 
-@(obligations:Option[Seq[TaxReturnObligation]])(implicit request: Request[_], messages: Messages)
+@(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
 
 
 @returnsLine = @{
 
-if (obligations.get.isEmpty) {
+if (obligations.isEmpty) {
     Some(messages("submittedReturns.nothingsubmitted"))
 } else {
     obligations.map {
         o =>
-            o.map { taxReturn =>
-              Some(taxReturnLink(displayReturnQuarter(taxReturn),taxReturn))
-            }
+              Some(taxReturnLink(displayReturnQuarter(o),o))
+
         }
     }
 }
@@ -52,8 +51,6 @@ if (obligations.get.isEmpty) {
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
     <p class="govuk-body">@returnsLine</p>
-
-    @link("view-return", "view return", routes.ViewReturnSummaryController.onPageLoad("todo"))
 
     <br>@link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
 

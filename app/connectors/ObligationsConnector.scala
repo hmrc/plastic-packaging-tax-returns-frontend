@@ -19,7 +19,7 @@ package connectors
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.obligations.PPTObligations
-import models.returns.TaxReturnObligations
+import models.returns.TaxReturnObligation
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -51,9 +51,9 @@ class ObligationsConnector @Inject() (
       }
   }
 
-  def getFulfilled(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligations] = {
+  def getFulfilled(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.fulfilled.get.timer").time()
-    httpClient.GET[TaxReturnObligations](appConfig.pptFulfilledObligationUrl(pptReferenceNumber))
+    httpClient.GET[Seq[TaxReturnObligation]](appConfig.pptFulfilledObligationUrl(pptReferenceNumber))
       .map {
         response =>
           logger.info(s"Retrieved fulfilled obligations for ppt reference number [$pptReferenceNumber]")
