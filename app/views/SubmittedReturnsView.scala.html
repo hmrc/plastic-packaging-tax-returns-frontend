@@ -38,7 +38,7 @@ if (obligations.get.isEmpty) {
     obligations.map {
         o =>
             o.map { taxReturn =>
-              Some(taxReturnLink(displayReturnQuarter(taxReturn)))
+              Some(taxReturnLink(displayReturnQuarter(taxReturn),taxReturn))
             }
         }
     }
@@ -50,8 +50,8 @@ if (obligations.get.isEmpty) {
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
     <p class="govuk-body">@returnsLine</p>
-    @link("view-return", "view return", routes.ViewReturnSummaryController.onPageLoad)
 
-    @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
+
+<br>@link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
 
 }
