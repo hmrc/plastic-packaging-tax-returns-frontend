@@ -51,25 +51,25 @@ class SubmittedReturnsControllerSpec extends SpecBase {
 //TODO: id these using indexing and test rendered view for no. id's
   "returnsLine" - {
     "should handle empty sequence of obligations" in {
-      val obligations0: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq.empty)
+      val obligations0: Seq[TaxReturnObligation] = {
+        Seq.empty
       }
 
 
     }
     "should handle 1 obligation" in {
-      val obligations1: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq(TaxReturnObligation(LocalDate.now(),
+      val obligations1: Seq[TaxReturnObligation] = {
+        Seq(TaxReturnObligation(LocalDate.now(),
           LocalDate.now(),
           LocalDate.now(),
-          "PK1")))
+          "PK1"))
       }
 
 
     }
     "should handle multiple obligations" in {
-      val obligations2: Option[Seq[TaxReturnObligation]] = {
-        Some(Seq(TaxReturnObligation(LocalDate.now(),
+      val obligations2: Seq[TaxReturnObligation] = {
+        Seq(TaxReturnObligation(LocalDate.now(),
           LocalDate.now(),
           LocalDate.now().plusWeeks(4),
           "PK1"),
@@ -77,7 +77,7 @@ class SubmittedReturnsControllerSpec extends SpecBase {
             LocalDate.now().plusWeeks(4),
             LocalDate.now().plusWeeks(8),
             "PK2")
-        ))
+        )
       }
 
 
