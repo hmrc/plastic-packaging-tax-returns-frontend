@@ -16,21 +16,33 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockObligationsConnector, SpecBase}
+import connectors.ObligationsConnector
 import models.returns.TaxReturnObligation
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SubmittedReturnsView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class SubmittedReturnsControllerSpec extends SpecBase {
+class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnector {
 
   "SubmittedReturns Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET with no obligations" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val ob: Seq[TaxReturnObligation] =
+        Seq.empty
+
+      setUpMocks(ob)
+
+      val application = applicationBuilder(userAnswers = None).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.SubmittedReturnsController.onPageLoad().url)
@@ -45,43 +57,52 @@ class SubmittedReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(ob)(request, messages(application)).toString
+
       }
     }
-  }
-//TODO: id these using indexing and test rendered view for no. id's
-  "returnsLine" - {
-    "should handle empty sequence of obligations" in {
-      val obligations0: Seq[TaxReturnObligation] = {
-        Seq.empty
-      }
 
+    "must return OK and the correct view for a GET with obligations" in {
 
-    }
-    "should handle 1 obligation" in {
-      val obligations1: Seq[TaxReturnObligation] = {
-        Seq(TaxReturnObligation(LocalDate.now(),
-          LocalDate.now(),
-          LocalDate.now(),
-          "PK1"))
-      }
-
-
-    }
-    "should handle multiple obligations" in {
-      val obligations2: Seq[TaxReturnObligation] = {
-        Seq(TaxReturnObligation(LocalDate.now(),
-          LocalDate.now(),
-          LocalDate.now().plusWeeks(4),
-          "PK1"),
-          TaxReturnObligation(LocalDate.now(),
+      val ob: Seq[TaxReturnObligation] =
+        Seq(
+          TaxReturnObligation(
+            LocalDate.now(),
+            LocalDate.now(),
+            LocalDate.now().plusWeeks(4),
+            "PK1"
+          ),
+          TaxReturnObligation(
+            LocalDate.now(),
             LocalDate.now().plusWeeks(4),
             LocalDate.now().plusWeeks(8),
-            "PK2")
+            "PK2"
+          )
         )
+
+      setUpMocks(ob)
+
+      val application = applicationBuilder(userAnswers = None).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.SubmittedReturnsController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SubmittedReturnsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(ob)(request, messages(application)).toString
+
       }
-
-
     }
   }
 
+  private def setUpMocks(obligation: Seq[TaxReturnObligation]) = {
+    reset(mockObligationsConnector)
+
+    when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(obligation))
+
+  }
 }
