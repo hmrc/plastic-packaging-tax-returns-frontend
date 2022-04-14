@@ -29,49 +29,45 @@ import javax.inject.Inject
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SubmittedReturnsController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: SubmittedReturnsView,
-                                            obligationsConnector: ObligationsConnector
-                                          ) extends FrontendBaseController with I18nSupport {
+class SubmittedReturnsController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: SubmittedReturnsView,
+  obligationsConnector: ObligationsConnector
+) extends FrontendBaseController with I18nSupport {
 
+  def onPageLoad: Action[AnyContent] =
+    identify.async {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+      implicit request =>
+        val pptReference =
+          request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
-    implicit request =>
+        obligationsConnector.getFulfilled(pptReference).flatMap { taxReturnObligations =>
+          Future.successful(Ok(view(taxReturnObligations.obligations)))
+        }
 
-      val pptReference =
-        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
-
-      obligationsConnector.getFulfilled(pptReference).flatMap { taxReturnObligations =>
-        Future.successful(Ok(view(taxReturnObligations.obligations)))
-      }
-
-
-//      val obligations0: Option[Seq[TaxReturnObligation]] = {
-//        Some(Seq.empty)
-//      }
-//
-//      val obligations1: Option[Seq[TaxReturnObligation]] = {
-//        Some(Seq(TaxReturnObligation(LocalDate.now(),
-//          LocalDate.now(),
-//          LocalDate.now(),
-//          "PK1")))
-//      }
-//      val obligations2: Option[Seq[TaxReturnObligation]] = {
-//        Some(Seq(TaxReturnObligation(LocalDate.now(),
-//          LocalDate.now().plusMonths(3),
-//          LocalDate.now().plusMonths(3),
-//          "PK1"),
-//          TaxReturnObligation(LocalDate.now().plusMonths(3),
-//            LocalDate.now().plusMonths(6),
-//            LocalDate.now().plusMonths(6),
-//            "PK2")
-//        ))
-//      }
-//
-//      Ok(view(obligations2))
-  }
+//        val obligations1: Option[Seq[TaxReturnObligation]] =
+//          Some(Seq(TaxReturnObligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "00xx")))
+//        val obligations2: Option[Seq[TaxReturnObligation]] =
+//          Some(
+//            Seq(
+//              TaxReturnObligation(
+//                LocalDate.now(),
+//                LocalDate.now().plusMonths(3),
+//                LocalDate.now().plusMonths(3),
+//                "00xx"
+//              ),
+//              TaxReturnObligation(
+//                LocalDate.now().plusMonths(3),
+//                LocalDate.now().plusMonths(6),
+//                LocalDate.now().plusMonths(6),
+//                "00xx"
+//              )
+//            )
+//          )
+//        obligations1.get.head.periodKey
+//        Ok(view(obligations2))
+    }
 }
