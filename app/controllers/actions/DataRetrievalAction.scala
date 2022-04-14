@@ -31,7 +31,7 @@ class DataRetrievalActionImpl @Inject() (val sessionRepository: SessionRepositor
     request: IdentifiedRequest[A]
   ): Future[OptionalDataRequest[A]] =
     sessionRepository.get(request.user.identityData.internalId).map {
-      OptionalDataRequest(request.request, request.user.identityData.internalId, _)
+      OptionalDataRequest(request, request.user.identityData.internalId, _)
     }
 
 }

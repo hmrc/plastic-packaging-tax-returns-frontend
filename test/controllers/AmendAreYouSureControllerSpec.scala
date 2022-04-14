@@ -17,6 +17,8 @@
 package controllers
 
 import base.SpecBase
+import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
+import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -43,7 +45,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val formProvider        = new AmendAreYouSureFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  //TODO mock this?
   val obligation: TaxReturnObligation = TaxReturnObligation(fromDate =
                                                               LocalDate.parse("2022-04-01"),
                                                             toDate = LocalDate.parse("2022-06-30"),
@@ -53,14 +54,23 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val amendAreYouSureRoute = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
+  val mockService = mock[TaxReturnHelper]
+
+  //todo all this duped application code is gross.
+
   "AmendAreYouSure Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendSelectedPeriodKey, "TEST").get
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[TaxReturnHelper].toInstance(mockService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
+        when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(null))//todo this isnt being used yet
 
         val result = route(application, request).value
 
@@ -75,7 +85,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendAreYouSurePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendAreYouSurePage, true).get
+        .set(AmendSelectedPeriodKey, "TEST").get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -94,15 +106,37 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect when periodKey is not in user answers" in {
+      val userAnswers = UserAnswers(userAnswersId)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[TaxReturnHelper].toInstance(mockService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, amendAreYouSureRoute)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some("/go-and-select-a-year")
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(ReturnDes))//todo this isnt being used yet
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendSelectedPeriodKey, "TEST").get
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[TaxReturnHelper].toInstance(mockService),
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
                      bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()

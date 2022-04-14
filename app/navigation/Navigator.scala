@@ -16,8 +16,9 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
+import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
 import pages._
@@ -45,10 +46,10 @@ class Navigator @Inject() () {
   }
 
   private def amendAreYouSureRoute(answers: UserAnswers): Call =
-    answers.get(AmendAreYouSurePage) match {
-      case Some(true)  => routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-      case Some(false) => routes.ViewReturnSummaryController.onPageLoad("00XX") // TODO need to pass on period-key of clicked return
-      case None        => throw new Exception("Unable to navigate to page")
+    (answers.get(AmendAreYouSurePage), answers.get(AmendSelectedPeriodKey)) match {
+      case (Some(true), _)  => routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      case (Some(false), Some(key)) => routes.ViewReturnSummaryController.onPageLoad(key)
+      case _        => throw new Exception("Unable to navigate to page")
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =

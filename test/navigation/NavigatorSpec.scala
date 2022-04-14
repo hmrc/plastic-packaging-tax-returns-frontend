@@ -17,6 +17,7 @@
 package navigation
 
 import base.SpecBase
+import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, AmendSelectedPeriodKey}
 import controllers.routes
 import pages._
 import models._
@@ -40,12 +41,12 @@ class NavigatorSpec extends SpecBase {
         }
         "navigate to Homepage when answer is No" in {
 
-          val answers = UserAnswers("id").set(AmendAreYouSurePage, false)
+          val answers = UserAnswers("id").set(AmendAreYouSurePage, false).get.set(AmendSelectedPeriodKey, "TEST")
 
           navigator.nextPage(AmendAreYouSurePage,
                              NormalMode,
                              answers.get
-          ) mustBe (routes.ViewReturnSummaryController.onPageLoad("00XX")) // TODO should be the period-key of the current return
+          ) mustBe (routes.ViewReturnSummaryController.onPageLoad("TEST"))
         }
 
       }
