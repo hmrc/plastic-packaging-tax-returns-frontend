@@ -98,3 +98,6 @@ POST       /agents                                          controllers.agents.A
 GET        /changeAgents                                    controllers.agents.AgentsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAgents                                    controllers.agents.AgentsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
+
+GET        /submittedReturns                       controllers.SubmittedReturnsController.onPageLoad()

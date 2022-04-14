@@ -14,21 +14,43 @@
  * limitations under the License.
  *@
 
-@import views.html.componants.Link
+@import models.returns.TaxReturnObligation
+@import models.obligations.PPTObligations
+@import views.html.components.{TaxReturnLink, Link}
+@import components.ReturnsSectionHeading
+@import views.ViewUtils.displayReturnQuarter
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        link: Link
+        link: Link,
+        taxReturnLink:TaxReturnLink
 )
 
-@()(implicit request: Request[_], messages: Messages)
+
+@(obligations:Option[Seq[TaxReturnObligation]])(implicit request: Request[_], messages: Messages)
+
+@returnsLine = @{
+
+if (obligations.get.isEmpty) {
+    Some(messages("submittedReturns.nothingsubmitted"))
+} else {
+    obligations.map {
+        o =>
+            o.map { taxReturn =>
+              Some(taxReturnLink(displayReturnQuarter(taxReturn)))
+            }
+        }
+    }
+}
+
 
 @layout(pageTitle = titleNoForm(messages("submittedReturns.title"))) {
 
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
-    <p class="govuk-body">@messages("submittedReturns.nothingsubmitted")</p>
+    <p class="govuk-body">@returnsLine</p>
+    @link("view-return", "view return", routes.ViewReturnSummaryController.onPageLoad)
 
     @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
 

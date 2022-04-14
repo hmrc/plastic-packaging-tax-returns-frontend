@@ -17,9 +17,12 @@
 package controllers
 
 import base.SpecBase
+import models.returns.TaxReturnObligation
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SubmittedReturnsView
+
+import java.time.LocalDate
 
 class SubmittedReturnsControllerSpec extends SpecBase {
 
@@ -36,9 +39,49 @@ class SubmittedReturnsControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[SubmittedReturnsView]
 
+        val ob: Option[Seq[TaxReturnObligation]] = {
+          Some(Seq.empty)
+        }
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view(ob)(request, messages(application)).toString
       }
     }
   }
+
+  "returnsLine" - {
+    "should handle empty sequence of obligations" in {
+      val obligations0: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq.empty)
+      }
+
+
+    }
+    "should handle 1 obligation" in {
+      val obligations1: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq(TaxReturnObligation(LocalDate.now(),
+          LocalDate.now(),
+          LocalDate.now(),
+          "PK1")))
+      }
+
+
+    }
+    "should handle multiple obligations" in {
+      val obligations2: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq(TaxReturnObligation(LocalDate.now(),
+          LocalDate.now(),
+          LocalDate.now().plusWeeks(4),
+          "PK1"),
+          TaxReturnObligation(LocalDate.now(),
+            LocalDate.now().plusWeeks(4),
+            LocalDate.now().plusWeeks(8),
+            "PK2")
+        ))
+      }
+
+
+    }
+  }
+
 }

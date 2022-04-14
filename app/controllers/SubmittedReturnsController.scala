@@ -17,22 +17,49 @@
 package controllers
 
 import controllers.actions._
+import models.returns.TaxReturnObligation
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SubmittedReturnsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 
 class SubmittedReturnsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SubmittedReturnsView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                            override val messagesApi: MessagesApi,
+                                            identify: IdentifierAction,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: SubmittedReturnsView
+                                          ) extends FrontendBaseController with I18nSupport {
+
 
   def onPageLoad: Action[AnyContent] = identify {
+
     implicit request =>
-      Ok(view())
+
+      val obligations0: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq.empty)
+      }
+
+      val obligations1: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq(TaxReturnObligation(LocalDate.now(),
+          LocalDate.now(),
+          LocalDate.now(),
+          "PK1")))
+      }
+      val obligations2: Option[Seq[TaxReturnObligation]] = {
+        Some(Seq(TaxReturnObligation(LocalDate.now(),
+          LocalDate.now().plusMonths(3),
+          LocalDate.now().plusMonths(3),
+          "PK1"),
+          TaxReturnObligation(LocalDate.now().plusMonths(3),
+            LocalDate.now().plusMonths(6),
+            LocalDate.now().plusMonths(6),
+            "PK2")
+        ))
+      }
+
+      Ok(view(obligations2))
   }
 }
