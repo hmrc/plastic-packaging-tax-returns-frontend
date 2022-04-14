@@ -49,7 +49,7 @@ object Section {
     )
 }
 
-final case class DetailsSection(liable: Section, exempt: Section, calculation: Section)
+final case class DetailsSection(liable: Section, exempt: Section, calculation: Section, taxCredit: Section)
 
 final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
 
@@ -78,9 +78,11 @@ object ViewReturnSummaryViewModel {
           "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
           "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
           "liable" -> submittedReturn.returnDetails.liableWeight.asKgs,
-          "tax" -> "how do we know this? :/",
+          "tax" -> submittedReturn.returnDetails.taxDue.asPounds,
+        ),
+        Section("credits", lastBold = false)(
           "credit" -> submittedReturn.returnDetails.creditForPeriod.asPounds,
-          "liability" -> "tax - credit = ?"
+          "debit" -> submittedReturn.returnDetails.debitForPeriod.asPounds,
         )
       )
     )

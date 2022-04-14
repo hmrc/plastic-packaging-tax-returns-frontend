@@ -46,7 +46,7 @@ class TaxReturnsConnector @Inject() (
       .map(taxReturn => Right(taxReturn))
       .recover {
         case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex))
+          Left(DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex))
       }
   }
 
@@ -57,7 +57,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax returns for id [$pptReference]")
-        Right()
+        Right(())
       }
       .recover {
         case ex: Exception =>
@@ -73,7 +73,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax return amendment for id [$pptReference]")
-        Right()
+        Right(())
       }
       .recover {
         case ex: Exception =>
