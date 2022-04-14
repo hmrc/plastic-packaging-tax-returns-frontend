@@ -147,7 +147,7 @@ class IndexControllerSpec
 
         }
 
-        verify(mockObligationsConnector).get(any[String])(any())
+        verify(mockObligationsConnector).getOpen(any[String])(any())
         verifyResults(expectedObligation)
 
       }
@@ -281,7 +281,7 @@ class IndexControllerSpec
     when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(
       Future.successful(PPTFinancials(None, None, None))
     )
-    when(mockObligationsConnector.get(any[String])(any())).thenReturn(Future.successful(obligation))
+    when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(obligation))
   }
 
   private def verifyResults(obligation: PPTObligations) = {

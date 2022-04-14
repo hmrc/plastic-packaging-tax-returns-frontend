@@ -43,7 +43,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
     super.afterAll()
   }
 
-  "get obligation details" should {
+  "get open obligation details" should {
 
     "return success response" when {
 
@@ -56,7 +56,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
                                             Json.toJsObject(expectedObligations).toString
         )
 
-        val res = await(connector.get(pptReference))
+        val res = await(connector.getOpen(pptReference))
 
         res mustBe expectedObligations
 
@@ -70,7 +70,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
         givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
 
         intercept[DownstreamServiceError] {
-          await(connector.get(pptReference))
+          await(connector.getOpen(pptReference))
         }
       }
 
@@ -79,7 +79,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
         givenGetSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
 
         intercept[DownstreamServiceError] {
-          await(connector.get(pptReference))
+          await(connector.getOpen(pptReference))
         }
       }
     }

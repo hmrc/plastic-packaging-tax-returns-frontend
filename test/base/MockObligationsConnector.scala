@@ -34,6 +34,6 @@ trait MockObligationsConnector extends MockitoSugar {
   protected def mockGetObligations(
     obligations: PPTObligations
   ): OngoingStubbing[Future[PPTObligations]] =
-    when(mockObligationsConnector.get(any())(any())).thenReturn(Future.successful(obligations))
+    when(mockObligationsConnector.getOpen(any())(any())).thenReturn(Future.successful(obligations))
 
 }

@@ -32,9 +32,9 @@ class ObligationsConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
+  def getOpen(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.open.get.timer").time()
-    httpClient.GET[PPTObligations](appConfig.pptObligationUrl(pptReferenceNumber))
+    httpClient.GET[PPTObligations](appConfig.pptOpenObligationUrl(pptReferenceNumber))
       .map {
         response =>
           logger.info(s"Retrieved open obligations for ppt reference number [$pptReferenceNumber]")
