@@ -214,12 +214,12 @@ viewReturnSummary.calculation.heading = Your tax calculation
 viewReturnSummary.calculation.field.total = Plastic packaging total
 viewReturnSummary.calculation.field.exempt = Exempt plastic packaging total
 viewReturnSummary.calculation.field.liable = Liable plastic packaging total
-viewReturnSummary.calculation.field.tax = Tax on liable plastic
+viewReturnSummary.calculation.field.tax = Tax
 viewReturnSummary.calculation.field.credit = Credit claimed
 viewReturnSummary.calculation.field.debit = Debit??
 viewReturnSummary.calculation.field.liability = Your tax liability
-viewReturnSummary.credits.heading = Tax credits
-viewReturnSummary.credits.field.credit = Tax credits claimed
+viewReturnSummary.credits.heading = Credits
+viewReturnSummary.credits.field.credit = Credit claimed
 viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
 deregistered.title = deregistered

@@ -59,7 +59,7 @@ class ViewReturnSummaryController @Inject() (
           _ <- sessionRepository.set(updatedAnswers)
           submittedReturn <- submittedReturnF
         } yield {
-          val returnPeriod = "April to June 2022" // TODO
+          val returnPeriod = submittedReturn.calculatePeriodString()
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
         }
     }
