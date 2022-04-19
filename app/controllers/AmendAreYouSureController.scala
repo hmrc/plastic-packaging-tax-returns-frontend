@@ -80,8 +80,9 @@ class AmendAreYouSureController @Inject() (
             amend => {
                 for {
                 updatedAnswers <- Future.fromTry(
-                  userAnswers.set(AmendAreYouSurePage, amend)
-                    .flatMap(_.set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites))
+                  userAnswers
+                    .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
+                    .flatMap(_.set(AmendAreYouSurePage, amend))
                 )
                 _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
