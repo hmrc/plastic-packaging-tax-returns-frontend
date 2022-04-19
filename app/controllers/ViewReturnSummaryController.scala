@@ -16,11 +16,16 @@
 
 package controllers
 
+import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
+import models.UserAnswers
 import models.returns.ReturnDisplayApi
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.{Gettable, Settable}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
@@ -31,6 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
+  sessionRepository: SessionRepository,
+  getData: DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
   taxReturnHelper: TaxReturnHelper
@@ -38,15 +45,38 @@ class ViewReturnSummaryController @Inject() (
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(periodKey: String): Action[AnyContent] =
-    identify.async {
+    (identify andThen getData).async {
       implicit request =>
-        val enrolmentId = request.enrolmentId.getOrElse(throw new IllegalArgumentException("Make this not optional?")) // TODO
-        val submittedReturn: Future[ReturnDisplayApi] =
-          taxReturnHelper.fetchTaxReturn(enrolmentId, periodKey.toUpperCase())
-        submittedReturn.map {
-          val returnPeriod = "April to June 2022" // TODO
-          subRet => Ok(view(returnPeriod, ViewReturnSummaryViewModel(subRet)))
+        val enrolmentId = request.request.enrolmentId.getOrElse(throw new IllegalArgumentException("no enrolmentId, all users at this point should have one")) // TODO Make this not optional?
+        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(enrolmentId, periodKey.toUpperCase())
+
+        for {
+          updatedAnswers <- Future.fromTry(
+            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(AmendSelectedPeriodKey, periodKey)
+          )
+          _ <- sessionRepository.set(updatedAnswers)
+          submittedReturn <- submittedReturnF
+        } yield {
+          val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)
+          Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
         }
     }
 
+}
+
+object ViewReturnSummaryController {
+
+//Cacheables?
+  //todo move this to pages? or models? what is it :thinking:
+  case object AmendSelectedPeriodKey extends Gettable[String] with Settable[String] {
+    override def path: JsPath = JsPath \ toString
+
+    override def toString: String = "amendSelectedPeriodKey"
+  }
+
+  case object AmendReturnPreviousReturn extends Gettable[ReturnDisplayApi] with Settable[ReturnDisplayApi] {
+    override def path: JsPath = JsPath \ toString
+
+    override def toString: String = "amendReturnPreviousReturn"
+  }
 }

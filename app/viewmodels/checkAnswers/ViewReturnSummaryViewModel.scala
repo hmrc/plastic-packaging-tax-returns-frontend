@@ -66,7 +66,7 @@ object ViewReturnSummaryViewModel {
         Section("liable")(
           "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKgs,
           "imported" -> submittedReturn.returnDetails.importedWeight.asKgs,
-          "total" -> submittedReturn.returnDetails.totalWeight.asKgs
+          "total" -> submittedReturn.returnDetails.liableWeight.asKgs
         ),
         Section("exempt")(
           "exported" -> submittedReturn.returnDetails.directExports.asKgs,
@@ -75,14 +75,14 @@ object ViewReturnSummaryViewModel {
           "total" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
         ),
         Section("calculation", lastBig = true)(
-          "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
-          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
           "liable" -> submittedReturn.returnDetails.liableWeight.asKgs,
+          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
+          "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
           "tax" -> submittedReturn.returnDetails.taxDue.asPounds,
         ),
         Section("credits", lastBold = false)(
           "credit" -> submittedReturn.returnDetails.creditForPeriod.asPounds,
-          "debit" -> submittedReturn.returnDetails.debitForPeriod.asPounds,
+//          "debit" -> submittedReturn.returnDetails.debitForPeriod.asPounds,
         )
       )
     )

@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -43,8 +43,9 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
         .overrides(inject.bind[TaxReturnsConnector].toInstance(mockConnector))
         .build()
 
+      val charge = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
       val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-      val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), None, returnDisplayDetails)
+      val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
 
       running(application) {
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)
