@@ -21,8 +21,6 @@ import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
 import models.returns.ReturnDisplayApi
-import navigation.Navigator
-import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

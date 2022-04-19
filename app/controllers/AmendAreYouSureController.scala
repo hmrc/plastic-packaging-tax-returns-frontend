@@ -20,7 +20,7 @@ import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, Amend
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.AmendAreYouSurePage
 import play.api.data.Form
@@ -61,7 +61,7 @@ class AmendAreYouSureController @Inject() (
         periodKey.fold {
           Future.successful(Redirect("/go-and-select-a-year")) //todo carls page
         }{ period =>
-          taxReturnHelper.fetchTaxReturn(pptId, period).map{ submittedReturn => //todo use the return not an obligation ? or get an obligation?
+          taxReturnHelper.fetchTaxReturn(pptId, period).map{ submittedReturn =>
             Ok(view(preparedForm, mode, submittedReturn))
           }
         }
