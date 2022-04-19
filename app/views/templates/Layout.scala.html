@@ -76,8 +76,12 @@
     }
 }
 
-@content = {
-    @contentBlock
+@fullSizeContent(contentBlock: Html) = {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-thirds">
+            @contentBlock
+        </div>
+    </div>
 
     <div class="govuk-!-margin-top-8">
         @hmrcReportTechnicalIssueHelper()
@@ -97,5 +101,6 @@
     scriptsBlock       = Some(hmrcScripts(
         nonce        = CSPNonce.get,
         scriptsBlock = Some(additionalScripts)
-    ))
-)(content)
+    )),
+    mainContentLayout = Some(fullSizeContent)
+)(contentBlock)
