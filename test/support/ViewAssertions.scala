@@ -19,22 +19,14 @@ package support
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
-
 trait ViewAssertions extends ViewMatchers {
 
   def containTimeoutDialogFunction(view: Element) =
-    view.getElementById("timeout-dialog") != null &&
-      view.getElementsByTag("script")
-        .map(
-          s =>
-            s.getElementsByAttributeValueContaining("src", "/assets/javascripts/timeoutDialog.js")
-        )
-        .nonEmpty
+    view.getElementsByAttributeValue("name", "hmrc-timeout-dialog") != null
 
   def displaySignOutLink(view: Element) = {
     view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
-    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("TODO")
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("/account/sign-out")
   }
 
 }

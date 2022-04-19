@@ -19,19 +19,32 @@ package views
 import config.FrontendAppConfig
 import controllers.routes
 import models.obligations.PPTObligations
-import models.requests.IdentifiedRequest
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatest.matchers.must.Matchers
-import play.api.test.FakeRequest
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.play.PlaySpec
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
-import support.PptTestData
+import support.{ViewAssertions, ViewMatchers}
 import views.html.IndexView
-import support.ObligationsTestData.{noneDueUpToDate, oneDueOneOverdue, oneDueTwoOverdue, oneDueUpToDate}
-import views.ObligationScenarioTypes.{NoneDueUpToDate, OneDueOneOverdue, OneDueTwoOverdue, OneDueUpToDate}
+import support.ObligationsTestData.{
+  noneDueUpToDate,
+  oneDueOneOverdue,
+  oneDueTwoOverdue,
+  oneDueUpToDate
+}
+import views.ObligationScenarioTypes.{
+  NoneDueUpToDate,
+  OneDueOneOverdue,
+  OneDueTwoOverdue,
+  OneDueUpToDate
+}
 import views.SubscriptionTypes.{Group, Partnership, SingleEntity}
+import play.api.test.CSRFTokenHelper.CSRFRequest
 
 object ObligationScenarioTypes extends Enumeration {
   type ObligationScenarioTyp = Value
@@ -45,10 +58,11 @@ object SubscriptionTypes extends Enumeration {
   val SingleEntity, Group, Partnership = Value
 }
 
-class HomePageViewSpec extends UnitViewSpec with Matchers {
+class IndexPageViewSpec
+    extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewAssertions with ViewMatchers {
 
-  private val homePage  = instanceOf[IndexView]
-  private val appConfig = instanceOf[FrontendAppConfig]
+  private val homePage  = inject[IndexView]
+  private val appConfig = inject[FrontendAppConfig]
 
   private val singleEntitySubscription = mock[SubscriptionDisplayResponse]
   when(singleEntitySubscription.entityName).thenReturn("Single entity subscription")
@@ -63,53 +77,63 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
 
   val completeReturnUrl = "/complete-return-url"
 
-  val authenticatedRequest = new IdentifiedRequest(FakeRequest(), PptTestData.newUser(), Some("XMPPT0000000001"))
+  val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   val pptFinancials = Some("You owe £100")
+
+  private val realMessagesApi: MessagesApi = inject[MessagesApi]
+
+  implicit def messages: Messages =
+    realMessagesApi.preferred(request)
 
   private def createView(
     appConfig: FrontendAppConfig,
     subscription: SubscriptionDisplayResponse,
     obligations: Option[PPTObligations]
   ): Html =
-    homePage(appConfig,
-             subscription,
-             obligations,
-             pptFinancials,
-             completeReturnUrl,
-             "XMPPT0000000001"
-    )(authenticatedRequest, messages)
+    homePage(
+      appConfig,
+      subscription,
+      obligations,
+      pptFinancials,
+      completeReturnUrl,
+      "XMPPT0000000001"
+    )(request, messages)
 
-  override def exerciseGeneratedRenderingMethods(): Unit = {
-    homePage.f(appConfig,
-               singleEntitySubscription,
-               Some(noneDueUpToDate),
-               pptFinancials,
-               "url",
-               "XMPPT0000000001"
-    )(authenticatedRequest, messages)
-    homePage.render(appConfig,
-                    singleEntitySubscription,
-                    Some(noneDueUpToDate),
-                    pptFinancials,
-                    "url",
-                    "XMPPT0000000001",
-                    authenticatedRequest,
-                    messages
+  def exerciseGeneratedRenderingMethods(): Unit = {
+    homePage.f(
+      appConfig,
+      singleEntitySubscription,
+      Some(noneDueUpToDate),
+      pptFinancials,
+      "url",
+      "XMPPT0000000001"
+    )(request, messages)
+    homePage.render(
+      appConfig,
+      singleEntitySubscription,
+      Some(noneDueUpToDate),
+      pptFinancials,
+      "url",
+      "XMPPT0000000001",
+      request,
+      messages
     )
   }
 
   "Home Page view" when {
 
-    Seq((NoneDueUpToDate, noneDueUpToDate),
-        (OneDueUpToDate, oneDueUpToDate),
-        (OneDueOneOverdue, oneDueOneOverdue),
-        (OneDueTwoOverdue, oneDueTwoOverdue)
+    Seq(
+      (NoneDueUpToDate, noneDueUpToDate),
+      (OneDueUpToDate, oneDueUpToDate),
+      (OneDueOneOverdue, oneDueOneOverdue),
+      (OneDueTwoOverdue, oneDueTwoOverdue)
     ).foreach {
       case (obligationType, obligations) =>
-        Seq((SingleEntity, singleEntitySubscription),
-            (Group, groupSubscription),
-            (Partnership, partnershipSubscription)
+        Seq(
+          (SingleEntity, singleEntitySubscription),
+          (Group, groupSubscription),
+          (Partnership, partnershipSubscription)
         ).foreach {
           case (subscriptionType, subscription) =>
             val view: Html = createView(appConfig, subscription, Some(obligations))
@@ -130,7 +154,7 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                 }
 
                 "display header" in {
-                  view.getElementById("title").text() mustBe messages("account.homePage.title")
+                  view.getElementsByClass("govuk-heading-l").text() mustBe messages("account.homePage.title")
                 }
 
                 "display PPT reference number" in {
@@ -159,7 +183,8 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                   )
 
                   // TODO - change when we have the ability to make a return
-                  val createLink = (messages("account.homePage.card.makeReturn.line3.createLink"),
+                  val createLink = (
+                    messages("account.homePage.card.makeReturn.line3.createLink"),
                     routes.IndexController.onPageLoad.url
                   )
                   val returnsCreationGuidanceLink =
@@ -174,16 +199,15 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                     case OneDueUpToDate =>
                       val returnDetails =
                         Seq(
-                          messages("account.homePage.card.makeReturn.line2.due",
-                                   ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                                   ViewUtils.displayLocalDate(
-                                     obligations.nextObligation.get.dueDate.minusDays(
-                                       obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                                     )
-                                   ),
-                                   ViewUtils.displayLocalDate(
-                                     obligations.nextObligation.get.dueDate
-                                   )
+                          messages(
+                            "account.homePage.card.makeReturn.line2.due",
+                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                            ViewUtils.displayLocalDate(
+                              obligations.nextObligation.get.dueDate.minusDays(
+                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                              )
+                            ),
+                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
                           )
                         )
                       val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
@@ -195,36 +219,36 @@ class HomePageViewSpec extends UnitViewSpec with Matchers {
                             "account.homePage.card.makeReturn.line1.singleOverdue",
                             ViewUtils.displayReturnQuarter(obligations.oldestOverdueObligation.get)
                           ),
-                          messages("account.homePage.card.makeReturn.line2.due",
-                                   ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                                   ViewUtils.displayLocalDate(
-                                     obligations.nextObligation.get.dueDate.minusDays(
-                                       obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                                     )
-                                   ),
-                                   ViewUtils.displayLocalDate(
-                                     obligations.nextObligation.get.dueDate
-                                   )
+                          messages(
+                            "account.homePage.card.makeReturn.line2.due",
+                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                            ViewUtils.displayLocalDate(
+                              obligations.nextObligation.get.dueDate.minusDays(
+                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                              )
+                            ),
+                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
                           )
                         )
                       val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
                       assertReturnsCardDetail(card, returnDetails, returnLinks)
                     case OneDueTwoOverdue =>
                       val returnDetails =
-                        Seq(messages("account.homePage.card.makeReturn.line1.multipleOverdue",
-                                     obligations.overdueObligationCount
+                        Seq(
+                          messages(
+                            "account.homePage.card.makeReturn.line1.multipleOverdue",
+                            obligations.overdueObligationCount
+                          ),
+                          messages(
+                            "account.homePage.card.makeReturn.line2.due",
+                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                            ViewUtils.displayLocalDate(
+                              obligations.nextObligation.get.dueDate.minusDays(
+                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
+                              )
                             ),
-                            messages("account.homePage.card.makeReturn.line2.due",
-                                     ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                                     ViewUtils.displayLocalDate(
-                                       obligations.nextObligation.get.dueDate.minusDays(
-                                         obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                                       )
-                                     ),
-                                     ViewUtils.displayLocalDate(
-                                       obligations.nextObligation.get.dueDate
-                                     )
-                            )
+                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                          )
                         )
                       val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
                       assertReturnsCardDetail(card, returnDetails, returnLinks)
