@@ -29,8 +29,8 @@
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
-<p class="govuk-body">Tax is not charged on plastic packaging that comes into immediate contact with licensed human medicines. This will be deducted from your tax liability.</p>
-}
+    <p class="govuk-body">messages("amendHumanMedicinePlasticPackaging.hint")</p>
+    }
 
 @layout(pageTitle = title(form, messages("amendHumanMedicinePlasticPackaging.title"))) {
 
