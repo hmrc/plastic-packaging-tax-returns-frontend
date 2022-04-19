@@ -41,8 +41,8 @@ class SubmittedReturnsController @Inject()(
         val pptReference =
           request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
-        obligationsConnector.getFulfilled(pptReference).flatMap { taxReturnObligations =>
-          Future.successful(Ok(view(taxReturnObligations)))
+        obligationsConnector.getFulfilled(pptReference).map { taxReturnObligations =>
+          Ok(view(taxReturnObligations))
         }
     }
 }
