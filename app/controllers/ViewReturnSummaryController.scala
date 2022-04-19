@@ -22,7 +22,7 @@ import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
 import models.returns.ReturnDisplayApi
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsObject, JsPath, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import queries.{Gettable, Settable}
 import repositories.SessionRepository
@@ -75,8 +75,19 @@ object ViewReturnSummaryController {
   }
 
   case object AmendReturnPreviousReturn extends Gettable[ReturnDisplayApi] with Settable[ReturnDisplayApi] {
-    override def path: JsPath = JsPath \ toString
+    override def path: JsPath = JsPath
 
     override def toString: String = "amendReturnPreviousReturn"
+
+    val returnDisplayApiWrites: Writes[ReturnDisplayApi] = new Writes[ReturnDisplayApi] {
+      def writes(display: ReturnDisplayApi): JsObject = Json.obj(
+        "amendManufacturedPlasticPackaging" -> display.returnDetails.manufacturedWeight,
+        "amendImportedPlasticPackaging" -> display.returnDetails.importedWeight,
+        "amendHumanMedicinePlasticPackaging" -> display.returnDetails.humanMedicines,
+        "amendDirectExportPlasticPackaging" -> display.returnDetails.directExports,
+        "amendRecycledPlasticPackaging" -> display.returnDetails.recycledPlastic
+      )
+    }
+
   }
 }
