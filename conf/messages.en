@@ -5,7 +5,8 @@ site.remove = Remove
 site.change = Change
 site.no = No
 site.yes = Yes
-site.continue = Continue
+site.continue = Save and continue
+site.continue.confirm = Confirm and continue
 site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
@@ -127,6 +128,7 @@ amendAreYouSure.change.hidden = AmendAreYouSure
 confirmation.title = Your return will be amended
 confirmation.submitted = Your return will be amended
 confirmation.panel = Your reference number for this amendment is PPT12345654321
+confirmation.check.your.ppt = Check your PPT account
 
 convertedPackagingCredit.title = ConvertedPackagingCredit
 convertedPackagingCredit.heading = ConvertedPackagingCredit
@@ -276,3 +278,8 @@ submittedReturns.title = View submitted returns
 submittedReturns.heading = View submitted returns
 submittedReturns.nothingsubmitted = You have not submitted any returns yet.
 submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
+
+help.not.include = examples of things you should not include
+
+
+

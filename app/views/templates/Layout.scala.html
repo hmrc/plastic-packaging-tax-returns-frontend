@@ -33,7 +33,7 @@
     alphaBanner: StandardAlphaBanner
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, large: Boolean = false)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
 
@@ -76,9 +76,13 @@
     }
 }
 
+@mainTemplateCass = {
+  @if(large) { "govuk-main-wrapper govuk-main-wrapper--auto-spacing" } else { "govuk-grid-column-two-thirds" }
+}
+
 @fullSizeContent(contentBlock: Html) = {
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-thirds">
+        <div class=@mainTemplateCass>
             @contentBlock
         </div>
     </div>
