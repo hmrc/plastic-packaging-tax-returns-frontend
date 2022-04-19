@@ -16,7 +16,7 @@
 
 package views
 
-import models.returns.TaxReturnObligation
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -40,12 +40,20 @@ object ViewUtils {
   def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
     messages(s"month.$monthNumber")
 
-  def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
+  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
     messages("return.quarter",
-             getMonthName(obligation.fromDate.getMonthValue),
-             getMonthName(obligation.toDate.getMonthValue),
-             obligation.toDate.getYear.toString
+      getMonthName(from.getMonthValue),
+      getMonthName(to.getMonthValue),
+      to.getYear.toString
     )
+
+  def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
+    displayReturnQuarter(obligation.fromDate, obligation.toDate)
+
+  def displayReturnQuarter(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): String = {
+    val charge = returnDisplay.chargeDetails.getOrElse(throw new IllegalStateException("A return must have a charge details sub-container"))
+    displayReturnQuarter(LocalDate.parse(charge.periodFrom), LocalDate.parse(charge.periodTo))
+  }
 
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"

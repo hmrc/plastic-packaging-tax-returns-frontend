@@ -59,7 +59,7 @@ class ViewReturnSummaryController @Inject() (
           _ <- sessionRepository.set(updatedAnswers)
           submittedReturn <- submittedReturnF
         } yield {
-          val returnPeriod = submittedReturn.calculatePeriodString()
+          val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
         }
     }

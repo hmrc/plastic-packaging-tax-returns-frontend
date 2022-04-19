@@ -66,15 +66,6 @@ case class ReturnDisplayApi(
   returnDetails: ReturnDisplayDetails
 ){
 
-  def calculatePeriodString()(implicit messages: Messages): String = {
-    val chargeDetails1 = chargeDetails.getOrElse(throw new IllegalStateException("A return must have a charge details sub-container"))
-    val fromData = LocalDate.parse(chargeDetails1.periodFrom)
-    val toDate = chargeDetails1.periodTo
-    val fromMonth = messages("month." + fromData.getMonthValue)
-    val toMonth = messages("month." + LocalDate.parse(toDate).getMonthValue)
-    fromMonth + " to " + toMonth + " " + LocalDate.parse(toDate).getYear
-  }
-
   def chargeReferenceAsString: String =
     chargeDetails.flatMap(_.chargeReference).getOrElse("n/a")
 

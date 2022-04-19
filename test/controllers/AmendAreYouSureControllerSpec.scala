@@ -22,7 +22,7 @@ import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.{any, contains, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AmendAreYouSurePage
@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.AmendAreYouSureView
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails, TaxReturnObligation}
 import org.mockito.ArgumentMatchers
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -58,12 +58,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   val mockService = mock[TaxReturnHelper]
 
-  //todo delete this it shouldnt have an obligation....
-  when(mockService.defaultObligation).thenReturn(obligation)
-
-  val retDisApi = ReturnDisplayApi("", IdDetails("", ""), None, ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
-  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))//todo this isnt being used yet
-
+  val charge = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
+  val retDisApi = ReturnDisplayApi("", IdDetails("", ""), Some(charge), ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
+  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))
 
   //todo all this duped application code is gross.
 
@@ -86,9 +83,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val request = FakeRequest(GET, amendAreYouSureRoute)
 
         val result = route(application, request).value
-        
+
         status(result) mustEqual OK
-        verify(mockView).apply(any(), any(), refEq(obligation))(any(), any())
+        verify(mockView).apply(any(), any(), refEq(retDisApi))(any(), any())
       }
     }
 
@@ -110,7 +107,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation)(
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, retDisApi)(
           request,
           messages(application)
         ).toString
@@ -164,7 +161,12 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendSelectedPeriodKey, "TEST").get
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[TaxReturnHelper].toInstance(mockService))
+        .build()
 
       running(application) {
         val request =
@@ -178,7 +180,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(
           request,
           messages(application)
         ).toString

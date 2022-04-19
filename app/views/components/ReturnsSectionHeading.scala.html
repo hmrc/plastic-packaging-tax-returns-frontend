@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
+@import models.returns.ReturnDisplayApi
 @import components.SectionHeader
 @import views.ViewUtils.displayReturnQuarter
 
@@ -22,7 +22,7 @@
         sectionHeader: SectionHeader
 )
 
-@(obligation: TaxReturnObligation)(implicit messages: Messages)
+@(returnDisplay: ReturnDisplayApi)(implicit messages: Messages)
 
-@sectionHeader(message = displayReturnQuarter(obligation))
+@sectionHeader(message = displayReturnQuarter(returnDisplay))
 

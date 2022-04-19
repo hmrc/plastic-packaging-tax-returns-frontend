@@ -23,6 +23,7 @@ import forms.AmendAreYouSureFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendAreYouSurePage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -46,9 +47,7 @@ class AmendAreYouSureController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
-  val obligation = taxReturnHelper.defaultObligation
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -62,8 +61,8 @@ class AmendAreYouSureController @Inject() (
         periodKey.fold {
           Future.successful(Redirect("/go-and-select-a-year")) //todo carls page
         }{ period =>
-          taxReturnHelper.fetchTaxReturn(pptId, period).map{ _ => //todo use the return not an obligation ? or get an obligation?
-            Ok(view(preparedForm, mode, obligation))
+          taxReturnHelper.fetchTaxReturn(pptId, period).map{ submittedReturn => //todo use the return not an obligation ? or get an obligation?
+            Ok(view(preparedForm, mode, submittedReturn))
           }
         }
     }
@@ -73,21 +72,22 @@ class AmendAreYouSureController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("HOW?"))
         val userAnswers = request.userAnswers
+        val periodKey = userAnswers.get(AmendSelectedPeriodKey).getOrElse(throw new IllegalStateException("no period key to amend with"))
 
-        form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          amend => {
-            val periodKey = userAnswers.get(AmendSelectedPeriodKey).getOrElse(throw new IllegalStateException("no period key to amend with"))
-            for {
-              _return <- taxReturnHelper.fetchTaxReturn(pptId, periodKey)
-              updatedAnswers <- Future.fromTry(
-                userAnswers.set(AmendAreYouSurePage, amend)
-                  .flatMap(_.set(AmendReturnPreviousReturn, _return))
-              )
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
-          }
-        )
+        taxReturnHelper.fetchTaxReturn(pptId, periodKey).flatMap{submittedReturn =>
+          form.bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
+            amend => {
+                for {
+                updatedAnswers <- Future.fromTry(
+                  userAnswers.set(AmendAreYouSurePage, amend)
+                    .flatMap(_.set(AmendReturnPreviousReturn, submittedReturn))
+                )
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            }
+          )
+      }
     }
 
 }
