@@ -23,7 +23,7 @@
 
 @call = @{routes.ViewReturnSummaryController.onPageLoad(taxReturn.periodKey)}
 
-<ul class="govuk-list">
- <p class="govuk-heading-m">@message</p>
- <a href="@call">View return</a>
-</ul>
+<li id="return-item" class="govuk-list">
+ <p class="govuk-heading-m">@message
+ <br><a class="govuk-body" href="@call">View return</a></p>
+</li>

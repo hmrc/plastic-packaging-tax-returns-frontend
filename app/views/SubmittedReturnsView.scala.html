@@ -31,15 +31,16 @@
 @(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
 
+@*TODO: order the Seq by obligation dates before operating on*@
 
 @returnsLine = @{
 
 if (obligations.isEmpty) {
-    Some(messages("submittedReturns.nothingsubmitted"))
+    messages("submittedReturns.nothingsubmitted")
 } else {
     obligations.map {
         o =>
-              Some(taxReturnLink(displayReturnQuarter(o),o))
+              taxReturnLink(displayReturnQuarter(o),o)
 
         }
     }
@@ -50,7 +51,7 @@ if (obligations.isEmpty) {
 
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
-    <p class="govuk-body">@returnsLine</p>
+    <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
 
     <br>@link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
 
