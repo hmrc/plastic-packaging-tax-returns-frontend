@@ -52,7 +52,7 @@ class AmendAreYouSureController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("HOW?"))
+        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
         val userAnswers = request.userAnswers
 
         val preparedForm = userAnswers.fill(AmendAreYouSurePage, form)
@@ -70,7 +70,7 @@ class AmendAreYouSureController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("HOW?"))
+        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
         val userAnswers = request.userAnswers
         val periodKey = userAnswers.get(AmendSelectedPeriodKey).getOrElse(throw new IllegalStateException("no period key to amend with"))
 
