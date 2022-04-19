@@ -26,15 +26,8 @@ class ViewUtilsTest extends PlaySpec with MockitoSugar {
   "getMonthName" ignore {
     "give january when given number 1" in {
       val mockMessages = mock[Messages]
-      val x            = getMonthName(1)(mockMessages)
+      val x = getMonthName(1)(mockMessages)
       x mustBe "January"
-    }
-  }
-  "displayReturnQuarter" ignore {
-    "give breakfast" when {
-      "given any obligation" in {
-        ???
-      }
     }
   }
 }
