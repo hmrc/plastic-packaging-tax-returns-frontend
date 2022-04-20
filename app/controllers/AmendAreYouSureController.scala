@@ -22,7 +22,7 @@ import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.AmendAreYouSurePage
+import pages.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -80,8 +80,9 @@ class AmendAreYouSureController @Inject() (
             amend => {
                 for {
                 updatedAnswers <- Future.fromTry(
-                  userAnswers.set(AmendAreYouSurePage, amend)
-                    .flatMap(_.set(AmendReturnPreviousReturn, submittedReturn))
+                  userAnswers
+                    .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
+                    .flatMap(_.set(AmendAreYouSurePage, amend))
                 )
                 _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))

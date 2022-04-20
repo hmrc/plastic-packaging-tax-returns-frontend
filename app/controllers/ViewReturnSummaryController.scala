@@ -21,8 +21,9 @@ import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
 import models.returns.ReturnDisplayApi
+import pages.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage, Page}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsObject, JsPath, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import queries.{Gettable, Settable}
 import repositories.SessionRepository
@@ -75,8 +76,19 @@ object ViewReturnSummaryController {
   }
 
   case object AmendReturnPreviousReturn extends Gettable[ReturnDisplayApi] with Settable[ReturnDisplayApi] {
-    override def path: JsPath = JsPath \ toString
+    override def path: JsPath = JsPath \ "amend"
 
     override def toString: String = "amendReturnPreviousReturn"
+
+    val returnDisplayApiWrites: Writes[ReturnDisplayApi] = new Writes[ReturnDisplayApi] {
+      def writes(display: ReturnDisplayApi): JsObject = Json.obj(
+        AmendManufacturedPlasticPackagingPage.toString -> display.returnDetails.manufacturedWeight,
+        AmendImportedPlasticPackagingPage.toString -> display.returnDetails.importedWeight,
+        AmendHumanMedicinePlasticPackagingPage.toString -> display.returnDetails.humanMedicines,
+        AmendDirectExportPlasticPackagingPage.toString -> display.returnDetails.directExports,
+        AmendRecycledPlasticPackagingPage.toString -> display.returnDetails.recycledPlastic
+      )
+    }
+
   }
 }

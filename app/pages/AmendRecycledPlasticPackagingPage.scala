@@ -22,7 +22,7 @@ trait AmendJourney
 
 case object AmendRecycledPlasticPackagingPage extends AmendJourney with QuestionPage[Int] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "amend" \ toString
 
   override def toString: String = "amendRecycledPlasticPackaging"
 }
