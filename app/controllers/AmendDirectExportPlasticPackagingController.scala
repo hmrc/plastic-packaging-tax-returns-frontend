@@ -61,6 +61,8 @@ class AmendDirectExportPlasticPackagingController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
@@ -68,7 +70,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
               updatedAnswers <- Future.fromTry(
                 request.userAnswers.set(AmendDirectExportPlasticPackagingPage, value)
               )
-              _ <- cacheConnector.set(request.userId, updatedAnswers)
+              _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
               navigator.nextPage(AmendDirectExportPlasticPackagingPage, mode, updatedAnswers)
             )

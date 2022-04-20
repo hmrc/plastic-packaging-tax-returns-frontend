@@ -42,10 +42,13 @@ class DataRetrievalActionImpl @Inject() (
 
   protected def transform[A](
     request: IdentifiedRequest[A]
-  )(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
-    cacheConnector.get(request.user.identityData.internalId).map {
+  )(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+    val pptId: String = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+
+    cacheConnector.get(request.user.identityData.internalId, pptId).map {
       OptionalDataRequest(request, request.user.identityData.internalId, _)
     }
+  }
 
 }
 

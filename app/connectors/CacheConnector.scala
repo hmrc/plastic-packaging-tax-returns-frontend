@@ -29,15 +29,15 @@ class CacheConnector @Inject()(config: FrontendAppConfig,
                               (implicit ec: ExecutionContext) {
 
 
-  def get(id: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+  def get(id: String, pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
 
-    httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(id))
+    httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(id, pptReference))
 
   }
 
-  def set(id: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def set(pptReference: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
-    httpClient.PUT(config.pptCacheSetUrl(id), userAnswers)(
+    httpClient.PUT(config.pptCacheSetUrl(pptReference), userAnswers)(
       implicitly[Writes[UserAnswers]],
       implicitly[HttpReads[HttpResponse]],
       hc.withExtraHeaders("Csrf-Token" -> "nocheck"),

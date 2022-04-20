@@ -86,7 +86,7 @@ class AmendAreYouSureController @Inject() (
                     .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
                     .flatMap(_.set(AmendAreYouSurePage, amend))
                 )
-                _ <- cacheConnector.set(request.userId, updatedAnswers)
+                _ <- cacheConnector.set(pptId, updatedAnswers)
               } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
             }
           )
