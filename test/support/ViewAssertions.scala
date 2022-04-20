@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package views
+package support
 
-import org.mockito.{Mockito, MockitoSugar}
-import org.scalatestplus.play.PlaySpec
-import play.api.i18n.Messages
-import views.ViewUtils._
+import org.jsoup.nodes.Element
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 
-class ViewUtilsTest extends PlaySpec with MockitoSugar {
-  //TODO
-  "getMonthName" ignore {
-    "give january when given number 1" in {
-      val mockMessages = mock[Messages]
-      val x = getMonthName(1)(mockMessages)
-      x mustBe "January"
-    }
+trait ViewAssertions extends ViewMatchers {
+
+  def containTimeoutDialogFunction(view: Element) =
+    view.getElementsByAttributeValue("name", "hmrc-timeout-dialog") != null
+
+  def displaySignOutLink(view: Element) = {
+    view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("/account/sign-out")
   }
+
 }

@@ -166,9 +166,14 @@
     }
 }
 
+@viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = routes.SubmittedReturnsController.onPageLoad)}
+
+@paymentsHistoryLink = @{link(id = "payment-history-link", text = messages("account.homePage.card.history.viewpaymentslink"), call = routes.IndexController.onPageLoad)}
+
 @layout(
     pageTitle    = titleNoForm(messages("account.homePage.title")),
-    showBackLink = false
+    showBackLink = false,
+    large = true
 ) {
     <h2 class="govuk-heading-l">@messages("account.homePage.title")</h2>
 
@@ -177,7 +182,7 @@
         @organisationName
     }
 
-    <div class="govuk-grid-row govuk-!-margin-top-6 ">
+    <div class="govuk-grid-row govuk-!-grid-column-full govuk-!-margin-top-6 ">
 
         @card(header = messages("account.homePage.card.makeReturn.header"),
             lines = Seq[Option[String]](
@@ -197,6 +202,13 @@
             ),
             links = Seq.empty
         )
+
+        @card(header = messages("account.homePage.card.history.header"),
+          lines = Seq.empty,
+        links = Seq(
+        paymentsHistoryLink,viewOrAmendReturnsLink
+        ))
+
     </div>
 
     <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>

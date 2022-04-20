@@ -20,12 +20,14 @@ import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import models.obligations.PPTObligations
+import models.returns.TaxReturnObligation
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
+import java.time.LocalDate
 import java.util.UUID
 
 class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues {
@@ -43,7 +45,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
     super.afterAll()
   }
 
-  "get obligation details" should {
+  "get open obligation details" should {
 
     "return success response" when {
 
@@ -51,12 +53,14 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
 
         val pptReference        = UUID.randomUUID().toString
         val expectedObligations = PPTObligations(None, None, 0, true, false)
-        givenGetSubscriptionEndpointReturns(Status.OK,
-                                            pptReference,
-                                            Json.toJsObject(expectedObligations).toString
+        givenGetSubscriptionEndpointReturns(
+          Status.OK,
+          pptReference,
+          Json.toJsObject(expectedObligations).toString,
+          "open"
         )
 
-        val res = await(connector.get(pptReference))
+        val res = await(connector.getOpen(pptReference))
 
         res mustBe expectedObligations
 
@@ -67,19 +71,84 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
 
       "service returns non success status code" in {
         val pptReference = UUID.randomUUID().toString
-        givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
+        givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference, "", "open")
 
         intercept[DownstreamServiceError] {
-          await(connector.get(pptReference))
+          await(connector.getOpen(pptReference))
         }
       }
 
       "service returns invalid response" in {
         val pptReference = UUID.randomUUID().toString
-        givenGetSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
+        givenGetSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish", "open")
 
         intercept[DownstreamServiceError] {
-          await(connector.get(pptReference))
+          await(connector.getOpen(pptReference))
+        }
+      }
+    }
+  }
+
+  "get fulfilled obligation details" should {
+
+    "return success response" when {
+
+      "retrieving existing obligation details" in {
+
+        val obligations =
+          Seq(
+            TaxReturnObligation(
+              LocalDate.now(),
+              LocalDate.now().plusMonths(3),
+              LocalDate.now().plusMonths(3),
+              "PK1"
+            ),
+            TaxReturnObligation(
+              LocalDate.now().plusMonths(3),
+              LocalDate.now().plusMonths(6),
+              LocalDate.now().plusMonths(6),
+              "PK2"
+            )
+          )
+
+        val pptReference        = UUID.randomUUID().toString
+        val expectedObligations = obligations
+        givenGetSubscriptionEndpointReturns(
+          Status.OK,
+          pptReference,
+          Json.toJson(expectedObligations).toString,
+          "fulfilled"
+        )
+
+        val res = await(connector.getFulfilled(pptReference))
+
+        res mustBe expectedObligations
+
+      }
+    }
+
+    "throws exception" when {
+
+      "service returns non success status code" in {
+        val pptReference = UUID.randomUUID().toString
+        givenGetSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference, "", "fulfilled")
+
+        intercept[DownstreamServiceError] {
+          await(connector.getFulfilled(pptReference))
+        }
+      }
+
+      "service returns invalid response" in {
+        val pptReference = UUID.randomUUID().toString
+        givenGetSubscriptionEndpointReturns(
+          Status.CREATED,
+          pptReference,
+          "someRubbish",
+          "fulfilled"
+        )
+
+        intercept[DownstreamServiceError] {
+          await(connector.getFulfilled(pptReference))
         }
       }
     }
@@ -88,10 +157,11 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
   private def givenGetSubscriptionEndpointReturns(
     status: Int,
     pptReference: String,
-    body: String = ""
+    body: String = "",
+    obligationStatus: String
   ) =
     stubFor(
-      WireMock.get(s"/obligations/open/$pptReference")
+      WireMock.get(s"/obligations/$obligationStatus/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)

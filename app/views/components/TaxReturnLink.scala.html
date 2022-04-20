@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views
+@import models.returns.TaxReturnObligation
 
-import org.mockito.{Mockito, MockitoSugar}
-import org.scalatestplus.play.PlaySpec
-import play.api.i18n.Messages
-import views.ViewUtils._
+@this(
+)
 
-class ViewUtilsTest extends PlaySpec with MockitoSugar {
-  //TODO
-  "getMonthName" ignore {
-    "give january when given number 1" in {
-      val mockMessages = mock[Messages]
-      val x = getMonthName(1)(mockMessages)
-      x mustBe "January"
-    }
-  }
-}
+@(message: String, taxReturn:TaxReturnObligation)
+
+@call = @{routes.ViewReturnSummaryController.onPageLoad(taxReturn.periodKey)}
+
+<li id="return-item" class="govuk-list">
+ <p class="govuk-heading-m">@message
+ <br><a class="govuk-body" href="@call">View return</a></p>
+</li>

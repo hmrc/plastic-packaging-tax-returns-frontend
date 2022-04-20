@@ -30,13 +30,13 @@
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
-<p class="govuk-body">Do not include plastic packaging components which are (any of the following):</p>
+<p class="govuk-body">@messages("amendImportedPlasticPackaging.hint")</p>
 <ul class="govuk-list govuk-list--bullet">
-    <li>used in the long-term storage of goods</li>
-    <li>an integral part of the goods</li>
-    <li>reused for the presentation of goods</li>
+    <li>@messages("amendImportedPlasticPackaging.hint.list.1")</li>
+    <li>@messages("amendImportedPlasticPackaging.hint.list.2")</li>
+    <li>@messages("amendImportedPlasticPackaging.hint.list.3")</li>
 </ul>
-<p class="govuk-body">See [examples of things you should not include].</p>
+<p class="govuk-body">See <a href="https://google.co.uk" class="govuk-link">@messages("help.not.include")</a>.</p>
 }
 
 @layout(pageTitle = title(form, messages("amendImportedPlasticPackaging.title"))) {

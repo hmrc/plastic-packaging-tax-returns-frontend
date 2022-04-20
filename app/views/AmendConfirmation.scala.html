@@ -31,12 +31,15 @@ showBackLink = false
                     content = Text(messages("confirmation.panel"))
                     )
    )
-<p class="govuk-heading-m">What happens next</p>
-<p class="govuk-body">
- This may take up to 24 hours to show on your Plastic Packaging Tax account</p>
-
-<p class="govuk-body">The amount of tax you owe may have changed.</p>
+<p class="govuk-heading-m">@messages("confirmation.subheading")</p>
+<p class="govuk-body">@messages("confirmation.paragraph.1")</p>
+<p class="govuk-body">@messages("confirmation.paragraph.2")</p>
 
 <p class="govuk-body">
- Check your PPT account when it’s been updated, to find out how much tax you need to pay and when it’s due.</p>
+    <a href="/plastic-packaging-tax" class="govuk-link">@messages("confirmation.check.account")</a>
+    @messages("confirmation.paragraph.3")
+</p>
+
 }
+
+

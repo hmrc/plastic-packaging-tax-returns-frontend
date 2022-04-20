@@ -1,0 +1,58 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.returns.TaxReturnObligation
+@import models.obligations.PPTObligations
+@import views.html.components.{TaxReturnLink, Link}
+@import components.ReturnsSectionHeading
+@import views.ViewUtils.displayReturnQuarter
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        link: Link,
+        taxReturnLink:TaxReturnLink
+)
+
+
+@(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
+
+
+@*TODO: order the Seq by obligation dates before operating on*@
+
+@returnsLine = @{
+
+if (obligations.isEmpty) {
+    messages("submittedReturns.nothingsubmitted")
+} else {
+    obligations.map {
+        o =>
+              taxReturnLink(displayReturnQuarter(o),o)
+
+        }
+    }
+}
+
+
+@layout(pageTitle = titleNoForm(messages("submittedReturns.title"))) {
+
+    <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
+
+    <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
+
+    <br>@link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
+
+}
