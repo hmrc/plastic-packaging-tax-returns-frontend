@@ -21,13 +21,11 @@ import connectors.CacheConnector
 import javax.inject.Inject
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject() (
-                                          val sessionRepository: SessionRepository,
                                           val cacheConnector: CacheConnector
                                         )(implicit
   val executionContext: ExecutionContext

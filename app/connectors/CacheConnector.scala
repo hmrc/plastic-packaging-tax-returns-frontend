@@ -37,7 +37,7 @@ class CacheConnector @Inject()(config: FrontendAppConfig,
 
   def set(pptReference: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
-    httpClient.PUT(config.pptCacheSetUrl(pptReference), userAnswers)(
+    httpClient.POST(config.pptCacheSetUrl(pptReference), userAnswers)(
       implicitly[Writes[UserAnswers]],
       implicitly[HttpReads[HttpResponse]],
       hc.withExtraHeaders("Csrf-Token" -> "nocheck"),

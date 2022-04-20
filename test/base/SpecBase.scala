@@ -17,6 +17,7 @@
 package base
 
 import config.FrontendAppConfig
+import connectors.CacheConnector
 import controllers.actions._
 import models.UserAnswers
 import org.mockito.MockitoSugar.mock
@@ -30,7 +31,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import uk.gov.hmrc.http.HttpResponse
 
 trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
@@ -38,8 +39,10 @@ trait SpecBase
 
   val userAnswersId: String = "id"
 
-  implicit val config: FrontendAppConfig            = mock[FrontendAppConfig]
-  implicit val sessionRepository: SessionRepository = mock[SessionRepository]
+  implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
+  implicit val cacheConnector: CacheConnector = mock[CacheConnector]
+
+  val mockResponse = mock[HttpResponse]
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session)

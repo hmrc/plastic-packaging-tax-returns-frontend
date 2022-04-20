@@ -16,6 +16,7 @@
 
 package controllers.agents
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.AgentsFormProvider
 import models.Mode
@@ -23,7 +24,6 @@ import navigation.Navigator
 import pages.AgentsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AgentsView
 
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AgentsController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: AuthAgentAction,
   getData: DataRetrievalAction,
@@ -45,6 +45,7 @@ class AgentsController @Inject() (
 
   private val form = formProvider()
 
+  // TODO - this should be a string page and not an int page
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
@@ -59,13 +60,10 @@ class AgentsController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentsPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AgentsPage, mode, updatedAnswers))
+          value => throw new NotImplementedError("TODO - implement me!")
         )
     }
 

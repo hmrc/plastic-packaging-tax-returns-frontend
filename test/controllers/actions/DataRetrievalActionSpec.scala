@@ -17,13 +17,17 @@
 package controllers.actions
 
 import base.SpecBase
-import models.{UserAnswers}
+import connectors.CacheConnector
+import controllers.routes
+import models.{NormalMode, SignedInUser, UserAnswers}
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import play.api.test.Helpers.POST
 import support.PptTestData
 import support.PptTestData.pptEnrolment
 
@@ -32,10 +36,11 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  val testUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
+  val testUser: SignedInUser    = PptTestData.newUser("123", Some(pptEnrolment("333")))
+  lazy val amendAreYouSureRoute = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
-  class Harness(sessionRepository: SessionRepository)
-      extends DataRetrievalActionImpl(sessionRepository) {
+  class Harness(cacheConnector: CacheConnector)
+      extends DataRetrievalActionImpl(cacheConnector) {
 
     def callTransform[A](request: IdentifiedRequest[A]): Future[OptionalDataRequest[A]] =
       transform(request)
@@ -48,12 +53,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must set userAnswers to 'None' in the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(None)
-        val action = new Harness(sessionRepository)
+        val cacheConnector = mock[CacheConnector]
+        when(cacheConnector.get(eqTo(testUser.identityData.internalId), any())(any())) thenReturn Future(None)
+        val action = new Harness(cacheConnector)
 
         val result =
-          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
 
         result.userAnswers must not be defined
 
@@ -64,16 +69,17 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must build a userAnswers object and add it to the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get(eqTo(testUser.identityData.internalId))) thenReturn Future(
+        val cacheConnector = mock[CacheConnector]
+        when(cacheConnector.get(eqTo(testUser.identityData.internalId), any())(any())) thenReturn Future(
           Some(UserAnswers("id"))
         )
-        val action = new Harness(sessionRepository)
+        val action = new Harness(cacheConnector)
 
         val result =
-          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, None)).futureValue
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
 
         result.userAnswers mustBe defined
+
       }
     }
   }
