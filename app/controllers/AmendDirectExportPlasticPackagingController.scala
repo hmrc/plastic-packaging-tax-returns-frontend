@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
@@ -32,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendDirectExportPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
+  //sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -66,7 +68,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
               updatedAnswers <- Future.fromTry(
                 request.userAnswers.set(AmendDirectExportPlasticPackagingPage, value)
               )
-              _ <- sessionRepository.set(updatedAnswers)
+              _ <- cacheConnector.set(request.userId, updatedAnswers)
             } yield Redirect(
               navigator.nextPage(AmendDirectExportPlasticPackagingPage, mode, updatedAnswers)
             )

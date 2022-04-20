@@ -16,21 +16,34 @@
 
 package controllers.actions
 
+import connectors.CacheConnector
+
 import javax.inject.Inject
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val sessionRepository: SessionRepository)(implicit
+class DataRetrievalActionImpl @Inject() (
+                                          val sessionRepository: SessionRepository,
+                                          val cacheConnector: CacheConnector
+                                        )(implicit
   val executionContext: ExecutionContext
 ) extends DataRetrievalAction {
 
   override protected def transform[A](
-    request: IdentifiedRequest[A]
-  ): Future[OptionalDataRequest[A]] =
+                                       request: IdentifiedRequest[A]
+                                     ): Future[OptionalDataRequest[A]] =
     sessionRepository.get(request.user.identityData.internalId).map {
+      OptionalDataRequest(request, request.user.identityData.internalId, _)
+    }
+
+  protected def transform[A](
+    request: IdentifiedRequest[A]
+  )(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
+    cacheConnector.get(request.user.identityData.internalId).map {
       OptionalDataRequest(request, request.user.identityData.internalId, _)
     }
 

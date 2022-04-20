@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, AmendSelectedPeriodKey}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -35,7 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendAreYouSureController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
+  //sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -84,7 +86,7 @@ class AmendAreYouSureController @Inject() (
                     .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
                     .flatMap(_.set(AmendAreYouSurePage, amend))
                 )
-                _ <- sessionRepository.set(updatedAnswers)
+                _ <- cacheConnector.set(request.userId, updatedAnswers)
               } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
             }
           )
