@@ -18,7 +18,7 @@ package controllers
 
 import base.{MockObligationsConnector, MockSubscriptionConnector, SpecBase}
 import config.{Features, FrontendAppConfig}
-import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
+import connectors.{CacheConnector, FinancialsConnector, ObligationsConnector, SubscriptionConnector}
 import models.{EisError, EisFailure}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
@@ -29,7 +29,6 @@ import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, wh
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import support.PptTestData.{createSubscriptionDisplayResponse, ukLimitedCompanySubscription}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import views.html.IndexView
@@ -106,7 +105,7 @@ class IndexControllerSpec
 
         val application = applicationBuilder(userAnswers = None).overrides(
           bind[FrontendAppConfig].toInstance(config),
-          bind[SessionRepository].toInstance(sessionRepository),
+          bind[CacheConnector].toInstance(cacheConnector),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[FinancialsConnector].toInstance(mockFinancialsConnector),
           bind[ObligationsConnector].toInstance(mockObligationsConnector),
@@ -162,7 +161,7 @@ class IndexControllerSpec
 
         val application = applicationBuilder(userAnswers = None).overrides(
           bind[FrontendAppConfig].toInstance(config),
-          bind[SessionRepository].toInstance(sessionRepository),
+          bind[CacheConnector].toInstance(cacheConnector),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[FinancialsConnector].toInstance(mockFinancialsConnector),
           bind[ObligationsConnector].toInstance(mockObligationsConnector),

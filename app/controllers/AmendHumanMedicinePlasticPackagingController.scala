@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
 import models.Mode
@@ -23,7 +24,6 @@ import navigation.Navigator
 import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AmendHumanMedicinePlasticPackagingView
 
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendHumanMedicinePlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -56,6 +56,8 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
@@ -63,7 +65,7 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
               updatedAnswers <- Future.fromTry(
                 request.userAnswers.set(AmendHumanMedicinePlasticPackagingPage, value)
               )
-              _ <- sessionRepository.set(updatedAnswers)
+              _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
               navigator.nextPage(AmendHumanMedicinePlasticPackagingPage, mode, updatedAnswers)
             )

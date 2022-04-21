@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.TaxReturnsConnector
+import connectors.{CacheConnector, TaxReturnsConnector}
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -40,18 +40,32 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[TaxReturnsConnector].toInstance(mockConnector))
+        .overrides(
+          inject.bind[TaxReturnsConnector].toInstance(mockConnector),
+          inject.bind[CacheConnector].toInstance(cacheConnector)
+        )
         .build()
 
-      val charge = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
+      val charge = ReturnDisplayChargeDetails(
+        periodFrom = "2022-04-01",
+        periodTo ="2022-06-30",
+        periodKey = "22AC",
+        chargeReference = Some("pan"),
+        receiptDate = "2022-06-31",
+        returnType = "TYPE"
+      )
+
       val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
       val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
 
       running(application) {
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)
+
         when(mockConnector.get(any(), any())(any())).thenReturn(
           Future.successful(Right(submittedReturn))
         )
+
+        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
 
         val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad("00xx").url)
 

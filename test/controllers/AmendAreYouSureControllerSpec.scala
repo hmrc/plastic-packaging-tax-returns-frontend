@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
@@ -30,10 +31,8 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.AmendAreYouSureView
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails, TaxReturnObligation}
-import org.mockito.ArgumentMatchers
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 
@@ -131,9 +130,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val mockSessionRepository = mock[SessionRepository]
+      val mockCacheConnector = mock[CacheConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST").get
@@ -143,7 +142,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[TaxReturnHelper].toInstance(mockService),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[SessionRepository].toInstance(mockSessionRepository)
+                     bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()
 

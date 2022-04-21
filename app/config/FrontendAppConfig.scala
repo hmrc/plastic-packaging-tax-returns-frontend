@@ -107,4 +107,10 @@ class FrontendAppConfig @Inject() (
   def pptFinancialsUrl(pptReference: String): String =
     s"$pptServiceHost/financials/open/$pptReference"
 
+  def pptCacheGetUrl(id: String, pptReference: String): String =
+    s"$pptServiceHost/cache/get/$id/$pptReference"
+
+  def pptCacheSetUrl(pptReference: String): String =
+    s"$pptServiceHost/cache/set/$pptReference"
+
 }
