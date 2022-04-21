@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -26,7 +27,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import queries.{Gettable, Settable}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   getData: DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
@@ -48,14 +48,14 @@ class ViewReturnSummaryController @Inject() (
   def onPageLoad(periodKey: String): Action[AnyContent] =
     (identify andThen getData).async {
       implicit request =>
-        val enrolmentId = request.request.enrolmentId.getOrElse(throw new IllegalArgumentException("no enrolmentId, all users at this point should have one")) // TODO Make this not optional?
-        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(enrolmentId, periodKey.toUpperCase())
+        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one")) // TODO Make this not optional?
+        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey.toUpperCase())
 
         for {
           updatedAnswers <- Future.fromTry(
             request.userAnswers.getOrElse(UserAnswers(request.userId)).set(AmendSelectedPeriodKey, periodKey)
           )
-          _ <- sessionRepository.set(updatedAnswers)
+          _ <- cacheConnector.set(pptId, updatedAnswers)
           submittedReturn <- submittedReturnF
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)

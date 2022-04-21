@@ -16,17 +16,17 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, AmendSelectedPeriodKey}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage}
+import pages.AmendAreYouSurePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AmendAreYouSureView
 
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendAreYouSureController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
+  cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -84,7 +84,7 @@ class AmendAreYouSureController @Inject() (
                     .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
                     .flatMap(_.set(AmendAreYouSurePage, amend))
                 )
-                _ <- sessionRepository.set(updatedAnswers)
+                _ <- cacheConnector.set(pptId, updatedAnswers)
               } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
             }
           )
