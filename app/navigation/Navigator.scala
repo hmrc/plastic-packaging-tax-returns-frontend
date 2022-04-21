@@ -24,6 +24,23 @@ import controllers.routes
 import pages._
 import models._
 
+/*************************************************************
+Returns journey (v1)
+**************************************************************
+start-date
+  Yes: continue to manufactured-components (y/n)
+    Yes: continue to manufactured-weight
+    No: imported-components (y/n)
+      Yes: imported-weight
+      No: human-medicines-packaging-weight
+  No: account
+  human-medicines-packaging-weight
+  exported-plastic-packaging-weight
+  recycled-plastic-packaging-weight
+  how-much-credit
+  check-your-return
+*************************************************************/
+
 @Singleton
 class Navigator @Inject() () {
 
