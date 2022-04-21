@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryStartYourReturnPage: Arbitrary[StartYourReturnPage.type] =
+    Arbitrary(StartYourReturnPage)
+
   implicit lazy val arbitraryAgentsPage: Arbitrary[AgentsPage.type] =
     Arbitrary(AgentsPage)
 

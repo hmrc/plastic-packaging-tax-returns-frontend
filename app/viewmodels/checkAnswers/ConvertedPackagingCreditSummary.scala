@@ -24,9 +24,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ConvertedPackagingCreditSummary {
+object ConvertedPackagingCreditSummary extends SummaryViewModel {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ConvertedPackagingCreditPage).map {
       answer =>
         SummaryListRowViewModel(key = "convertedPackagingCredit.checkYourAnswersLabel",

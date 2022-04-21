@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import scala.util.Try
+class StartYourReturnFormProviderSpec extends BooleanFieldBehaviours {
 
-case object ImportedPlasticPackagingPage extends QuestionPage[Boolean] {
+  val requiredKey = "startYourReturn.error.required"
+  val invalidKey = "error.boolean"
 
-  override def path: JsPath = JsPath \ toString
+  val form = new StartYourReturnFormProvider()()
 
-  override def toString: String = "importedPlasticPackaging"
+  ".value" - {
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.remove(ImportedPlasticPackagingWeightPage)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

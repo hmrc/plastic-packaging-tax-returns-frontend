@@ -18,31 +18,27 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.RecycledPlasticPackagingWeightPage
+import pages.StartYourReturnPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RecycledPlasticPackagingWeightSummary extends SummaryViewModel {
+object StartYourReturnSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RecycledPlasticPackagingWeightPage).map {
+    answers.get(StartYourReturnPage).map {
       answer =>
-        SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.RecycledPlasticPackagingWeightController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("recycledPlasticPackagingWeight.change.hidden")
-                                    )
-                                )
+
+        val value = if (answer) "site.yes" else "site.no"
+
+        SummaryListRowViewModel(
+          key     = "startYourReturn.checkYourAnswersLabel",
+          value   = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.StartYourReturnController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("startYourReturn.change.hidden"))
+          )
         )
     }
-
 }

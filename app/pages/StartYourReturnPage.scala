@@ -16,21 +16,11 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object ImportedPlasticPackagingPage extends QuestionPage[Boolean] {
+case object StartYourReturnPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "importedPlasticPackaging"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.remove(ImportedPlasticPackagingWeightPage)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+  override def toString: String = "startYourReturn"
 }

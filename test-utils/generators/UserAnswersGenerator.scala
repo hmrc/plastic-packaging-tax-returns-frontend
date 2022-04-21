@@ -27,6 +27,7 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(StartYourReturnPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
       arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] ::
       arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] ::

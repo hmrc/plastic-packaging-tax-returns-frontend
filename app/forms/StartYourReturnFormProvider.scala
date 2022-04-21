@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-import scala.util.Try
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object ImportedPlasticPackagingPage extends QuestionPage[Boolean] {
+class StartYourReturnFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "importedPlasticPackaging"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.remove(ImportedPlasticPackagingWeightPage)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("startYourReturn.error.required")
+    )
 }
