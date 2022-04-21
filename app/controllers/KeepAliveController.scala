@@ -31,14 +31,9 @@ class KeepAliveController @Inject() (
     extends FrontendBaseController {
 
   def keepAlive: Action[AnyContent] =
-    (identify andThen getData).async {
+    (identify andThen getData) {
       implicit request =>
-        request.userAnswers
-          .map {
-            answers =>
-              Future.successful(Ok)
-          }
-          .getOrElse(Future.successful(Ok))
+        Ok
     }
 
 }
