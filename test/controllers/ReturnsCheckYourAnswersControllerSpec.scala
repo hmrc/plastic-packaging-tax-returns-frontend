@@ -14,9 +14,52 @@
  * limitations under the License.
  */
 
-//
-//package controllers
-//
-//class ReturnsCheckYourAnswersControllerSpec extends org.scalatest.FunSuite {
-//
-//}
+package controllers
+
+import base.SpecBase
+import models.NormalMode
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import viewmodels.govuk.SummaryListFluency
+import views.html.ReturnsCheckYourAnswersView
+
+class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+
+  "Returns Check Your Answers Controller" - {
+
+    "return OK and the correct view for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ReturnsCheckYourAnswersView]
+        val list = SummaryListViewModel(Seq.empty)
+        val mode = NormalMode
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(mode, list)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+  }
+
+
+
+}
