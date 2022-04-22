@@ -21,7 +21,7 @@ import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.TaxReturn
+import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,7 +66,7 @@ class ReturnsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
+        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers, ReturnType.NEW)
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.ReturnConfirmationController.onPageLoad())
@@ -80,6 +80,6 @@ class ReturnsCheckYourAnswersController @Inject() (
   private def submit(
     taxReturn: TaxReturn
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
-    returnsConnector.amend(taxReturn)
+    returnsConnector.submit(taxReturn)
 
 }

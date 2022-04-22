@@ -21,7 +21,7 @@ import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.TaxReturn
+import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,7 +31,6 @@ import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckYourAnswersController @Inject() (
@@ -63,7 +62,7 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getAmendment("XMPPT0000000001", request.userAnswers)
+        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers,ReturnType.AMEND)
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())

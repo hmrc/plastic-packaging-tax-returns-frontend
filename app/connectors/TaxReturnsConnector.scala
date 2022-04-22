@@ -54,7 +54,7 @@ class TaxReturnsConnector @Inject() (
     val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
 
-    httpClient.POST[String, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
+    httpClient.POST[TaxReturn, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload)
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax returns for id [$pptReference]")

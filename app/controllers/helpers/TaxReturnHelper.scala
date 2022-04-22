@@ -57,46 +57,68 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def getAmendment(pptReference: String, userAnswers: UserAnswers): TaxReturn =
-    taxReturnBase(pptReference, userAnswers, ReturnType.AMEND)
 
-  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn = {
-    val returnBase = taxReturnBase(pptReference, userAnswers, ReturnType.NEW)
-    // TODO add additional data items (return) to the base object
-    returnBase
-  }
 
-  private def taxReturnBase(pptReference: String, userAnswers: UserAnswers, returnType: ReturnType): TaxReturn = {
+   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, returnType: ReturnType): TaxReturn = {
+    returnType match {
+      case NEW =>
+        TaxReturn(id = pptReference,
+          returnType = Some(returnType),
+          obligation = Some(defaultObligation),
+                    manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
+          manufacturedPlasticWeight =
+            userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
+              value => ManufacturedPlasticWeight(value)
+            ),
+              importedPlastic = userAnswers.get (ImportedPlasticPackagingPage),
+          importedPlasticWeight =
+            userAnswers.get(ImportedPlasticPackagingWeightPage).map(
+              value => ImportedPlasticWeight(value)
+            ),
+          humanMedicinesPlasticWeight =
+            userAnswers.get(HumanMedicinesPlasticPackagingWeightPage).map(
+              value => HumanMedicinesPlasticWeight(value)
+            ),
+          exportedPlasticWeight =
+            userAnswers.get(ExportedPlasticPackagingWeightPage).map(
+              value => ExportedPlasticWeight(value)
+            ),
+          convertedPackagingCredit =
+            userAnswers.get(ConvertedPackagingCreditPage).map(
+              value => ConvertedPackagingCredit(value)
+            ),
+          recycledPlasticWeight = userAnswers.get(RecycledPlasticPackagingWeightPage).map(
+            value => RecycledPlasticWeight(value)
+          )
+        )
 
-    TaxReturn(id = pptReference,
-      returnType = Some(returnType),
-      obligation = Some(defaultObligation),
-      manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
-      manufacturedPlasticWeight =
-        userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
-          value => ManufacturedPlasticWeight(value)
-        ),
-      importedPlastic = userAnswers.get(ImportedPlasticPackagingPage),
-      importedPlasticWeight =
-        userAnswers.get(ImportedPlasticPackagingWeightPage).map(
-          value => ImportedPlasticWeight(value)
-        ),
-      humanMedicinesPlasticWeight =
-        userAnswers.get(HumanMedicinesPlasticPackagingWeightPage).map(
-          value => HumanMedicinesPlasticWeight(value)
-        ),
-      exportedPlasticWeight =
-        userAnswers.get(ExportedPlasticPackagingWeightPage).map(
-          value => ExportedPlasticWeight(value)
-        ),
-      convertedPackagingCredit =
-        userAnswers.get(ConvertedPackagingCreditPage).map(
-          value => ConvertedPackagingCredit(value)
-        ),
-      recycledPlasticWeight = userAnswers.get(RecycledPlasticPackagingWeightPage).map(
-        value => RecycledPlasticWeight(value)
-      )
-    )
+
+      case AMEND =>
+        TaxReturn(id = pptReference,
+          returnType = Some(returnType),
+          obligation = Some(defaultObligation),
+          manufacturedPlasticWeight =
+            userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
+              value => ManufacturedPlasticWeight(value)
+            ),
+          importedPlasticWeight =
+            userAnswers.get(AmendImportedPlasticPackagingPage).map(
+              value => ImportedPlasticWeight(value)
+            ),
+          humanMedicinesPlasticWeight =
+            userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
+              value => HumanMedicinesPlasticWeight(value)
+            ),
+          exportedPlasticWeight =
+            userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
+              value => ExportedPlasticWeight(value)
+            ),
+          recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
+            value => RecycledPlasticWeight(value)
+          )
+        )
+    }
+
 
   }
 
