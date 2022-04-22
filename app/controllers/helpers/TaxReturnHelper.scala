@@ -18,6 +18,7 @@ package controllers.helpers
 
 import connectors.{ServiceError, TaxReturnsConnector}
 import models.UserAnswers
+import models.returns.ReturnType.ReturnType
 import models.returns._
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -56,29 +57,39 @@ class TaxReturnHelper @Inject() (
     }
   }
 
-  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn =
+  def getAmendment(pptReference: String, userAnswers: UserAnswers): TaxReturn =
+    taxReturnBase(pptReference, userAnswers, ReturnType.AMEND)
+
+  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn = {
+    val returnBase = taxReturnBase(pptReference, userAnswers, ReturnType.NEW)
+    // TODO add additional data items (return) to the base object
+    returnBase
+  }
+
+  private def taxReturnBase(pptReference: String, userAnswers: UserAnswers, returnType: ReturnType): TaxReturn = {
     TaxReturn(id = pptReference,
-              returnType = Some(ReturnType.AMEND),
-              obligation = Some(defaultObligation),
-              manufacturedPlasticWeight =
-                userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
-                  value => ManufacturedPlasticWeight(value)
-                ),
-              importedPlasticWeight =
-                userAnswers.get(AmendImportedPlasticPackagingPage).map(
-                  value => ImportedPlasticWeight(value)
-                ),
-              humanMedicinesPlasticWeight =
-                userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
-                  value => HumanMedicinesPlasticWeight(value)
-                ),
-              exportedPlasticWeight =
-                userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
-                  value => ExportedPlasticWeight(value)
-                ),
-              recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
-                value => RecycledPlasticWeight(value)
-              )
+      returnType = Some(returnType),
+      obligation = Some(defaultObligation),
+      manufacturedPlasticWeight =
+        userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
+          value => ManufacturedPlasticWeight(value)
+        ),
+      importedPlasticWeight =
+        userAnswers.get(AmendImportedPlasticPackagingPage).map(
+          value => ImportedPlasticWeight(value)
+        ),
+      humanMedicinesPlasticWeight =
+        userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
+          value => HumanMedicinesPlasticWeight(value)
+        ),
+      exportedPlasticWeight =
+        userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
+          value => ExportedPlasticWeight(value)
+        ),
+      recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
+        value => RecycledPlasticWeight(value)
+      )
     )
+  }
 
 }

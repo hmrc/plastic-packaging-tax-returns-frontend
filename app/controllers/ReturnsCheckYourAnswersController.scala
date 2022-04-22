@@ -33,7 +33,7 @@ import views.html.ReturnsCheckYourAnswersView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReturnsCheckYourAnswersController @Inject()(
+class ReturnsCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -48,7 +48,8 @@ class ReturnsCheckYourAnswersController @Inject()(
     (identify andThen getData andThen requireData) {
       implicit request =>
         val list = SummaryListViewModel(rows =
-          Seq(ManufacturedPlasticPackagingSummary,
+          Seq(
+            ManufacturedPlasticPackagingSummary,
             ManufacturedPlasticPackagingWeightSummary,
             ImportedPlasticPackagingSummary,
             ImportedPlasticPackagingWeightSummary,
@@ -63,10 +64,23 @@ class ReturnsCheckYourAnswersController @Inject()(
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
-        // TODO submit tax return
-        Redirect(routes.IndexController.onPageLoad)
+        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
+        submit(taxReturn).map {
+          case Right(_) =>
+            // TODO - Add new return confirmation controller
+            Redirect(routes.AmendConfirmationController.onPageLoad())
+
+          case Left(error) =>
+            throw error
+        }
+
     }
+
+  private def submit(
+    taxReturn: TaxReturn
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+    returnsConnector.amend(taxReturn)
 
 }
