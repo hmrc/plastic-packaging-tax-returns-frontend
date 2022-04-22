@@ -30,7 +30,7 @@ final case class PPTFinancials(
   overdueAmount: Option[BigDecimal]
 ) {
 
-  def amountToPayInPence: Int = //todo check this is right! https://hmrcdigital.slack.com/archives/G0148HWBU79/p1650554943166619
+  def amountToPayInPence: Int =
     Seq(overdueAmount, debitAmount.map(_._1)).flatten.sum.toInt * 100
 
   private def getMonth(date: LocalDate)(implicit messages: Messages) =

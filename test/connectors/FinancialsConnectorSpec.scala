@@ -23,7 +23,7 @@ import models.financials.PPTFinancials
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import play.api.test.Helpers.await
 
 import java.util.UUID
@@ -41,6 +41,41 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
   override protected def afterAll(): Unit = {
     wireMockServer.stop()
     super.afterAll()
+  }
+
+  "getPaymentLink" should {
+    "return success response" when {
+      "retrieving existing financial details" in {
+        val pptReference       = UUID.randomUUID().toString
+
+        givenPostPaymentsUrl(Status.CREATED, Json.obj("journeyId" -> "id", "nextUrl" -> "/expected").toString())
+
+        val res = await(connector.getPaymentLink(pptReference, 0, "/"))
+
+        res mustBe "/expected"
+      }
+    }
+
+    "throws exception" when {
+
+      "service returns non success status code" in {
+        val pptReference = UUID.randomUUID().toString
+        givenPostPaymentsUrl(Status.BAD_REQUEST, pptReference)
+
+        intercept[DownstreamServiceError] {
+          await(connector.getPaymentStatement(pptReference))
+        }
+      }
+
+      "service returns invalid response" in {
+        val pptReference = UUID.randomUUID().toString
+        givenPostPaymentsUrl(Status.CREATED, "someRubbish")
+
+        intercept[DownstreamServiceError] {
+          await(connector.getPaymentStatement(pptReference))
+        }
+      }
+    }
   }
 
   "get financials details" should {
@@ -84,6 +119,16 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
       }
     }
   }
+
+  private def givenPostPaymentsUrl(status: Int, body: String = "") =
+    stubFor(
+      WireMock.post("/pay-api/plastic-packaging-tax/journey/start")
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(body)
+        )
+    )
 
   private def givenGetSubscriptionEndpointReturns(
     status: Int,
