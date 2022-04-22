@@ -30,6 +30,9 @@ final case class PPTFinancials(
   overdueAmount: Option[BigDecimal]
 ) {
 
+  def amountToPayInPence: Int = //todo check this is right! https://hmrcdigital.slack.com/archives/G0148HWBU79/p1650554943166619
+    Seq(overdueAmount, debitAmount.map(_._1)).flatten.sum.toInt * 100
+
   private def getMonth(date: LocalDate)(implicit messages: Messages) =
     messages(s"month.${date.getMonthValue}")
 
@@ -47,7 +50,7 @@ final case class PPTFinancials(
         messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount))
       case (None, Some((debit, _)), Some(overdue)) =>
         messages("account.homePage.card.payments.debitAndOverDue",
-                 formatCurrencyAmount(debit),
+                 formatCurrencyAmount(debit), //todo is this right? should this not be debit + overdue "You owe {0}. This includes {1} which is overdue." does not include
                  formatCurrencyAmount(overdue)
         )
       case _ => messages("account.homePage.card.payments.error")
