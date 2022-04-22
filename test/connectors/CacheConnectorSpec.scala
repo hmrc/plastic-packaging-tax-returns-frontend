@@ -44,7 +44,7 @@ class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
         connector.httpClient.GET[Option[UserAnswers]](any(), any(), any())(any(), any(), any())
       } thenReturn Future.successful(Some(answers))
 
-      whenReady(connector.get("someid", "someref")) {
+      whenReady(connector.get("someref")) {
         _ mustBe Some(answers)
       }
     }

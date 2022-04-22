@@ -29,9 +29,9 @@ class CacheConnector @Inject()(config: FrontendAppConfig,
                               (implicit ec: ExecutionContext) {
 
 
-  def get(id: String, pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+  def get(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
 
-    httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(id, pptReference))
+    httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(pptReference))
 
   }
 
