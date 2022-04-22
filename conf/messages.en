@@ -239,6 +239,10 @@ viewReturnSummary.credits.heading = Credits
 viewReturnSummary.credits.field.credit = Credit claimed
 viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
+return.confirmation.title = Return submitted
+return.confirmation.submitted = Return submitted
+return.confirmation.panel = Your reference number for this return is PPT12345654321
+
 deregistered.title = deregistered
 deregistered.heading = deregistered
 
@@ -296,3 +300,6 @@ startYourReturn.heading = Do you want to start your return for {0}?
 startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0}?
 startYourReturn.error.required = Select yes if you want to start your return
 startYourReturn.change.hidden = Do you want to start your return for {0}?
+
+returnConfirmation.title = returnConfirmation
+returnConfirmation.heading = returnConfirmation

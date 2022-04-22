@@ -58,7 +58,7 @@
 }
 
 @singleEntityManagement = {
-<div id="core-management" class="account-grid-column">
+<div id="core-entity-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-single", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
@@ -67,13 +67,13 @@
 }
 
 @groupManagement = {
-<div id="core-management" class="account-grid-column">
+<div id="group-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-group", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
-<div id="additional-management" class="account-grid-column">
+<div id="additional-management-1" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
         body = messages("account.homePage.card.registration.details.2.body.group")
@@ -82,13 +82,13 @@
 }
 
 @partnershipManagement = {
-<div id="core-management" class="account-grid-column">
+<div id="partnership-management" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-partner-core", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
-<div id="additional-management" class="account-grid-column">
+<div id="additional-management-2" class="account-grid-column">
     @cardSection(
         link = link(id = "amend-partner-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
         body = messages("account.homePage.card.registration.details.2.body.partnership")

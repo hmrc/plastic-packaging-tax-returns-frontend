@@ -18,7 +18,7 @@ package controllers.helpers
 
 import connectors.{ServiceError, TaxReturnsConnector}
 import models.UserAnswers
-import models.returns.ReturnType.ReturnType
+import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,12 +30,12 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnHelper @Inject() (
-  override val messagesApi: MessagesApi,
-  val controllerComponents: MessagesControllerComponents,
-  returnsConnector: TaxReturnsConnector
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class TaxReturnHelper @Inject()(
+                                 override val messagesApi: MessagesApi,
+                                 val controllerComponents: MessagesControllerComponents,
+                                 returnsConnector: TaxReturnsConnector
+                               )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   // TODO - where do we get this obligation from? A GET on the return?
   private val defaultObligation: TaxReturnObligation = TaxReturnObligation(
@@ -47,13 +47,13 @@ class TaxReturnHelper @Inject() (
 
   //todo why is this here?
   def fetchTaxReturn(userId: String, periodKey: String)(implicit
-    hc: HeaderCarrier
+                                                        hc: HeaderCarrier
   ): Future[ReturnDisplayApi] = {
     val future: Future[Either[ServiceError, ReturnDisplayApi]] =
       returnsConnector.get(userId, periodKey)
     future.map {
       case Right(taxReturn) => taxReturn
-      case Left(error)      => throw error
+      case Left(error) => throw error
     }
   }
 
@@ -67,29 +67,37 @@ class TaxReturnHelper @Inject() (
   }
 
   private def taxReturnBase(pptReference: String, userAnswers: UserAnswers, returnType: ReturnType): TaxReturn = {
+
     TaxReturn(id = pptReference,
       returnType = Some(returnType),
       obligation = Some(defaultObligation),
+      manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
       manufacturedPlasticWeight =
-        userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
+        userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
           value => ManufacturedPlasticWeight(value)
         ),
+      importedPlastic = userAnswers.get(ImportedPlasticPackagingPage),
       importedPlasticWeight =
-        userAnswers.get(AmendImportedPlasticPackagingPage).map(
+        userAnswers.get(ImportedPlasticPackagingWeightPage).map(
           value => ImportedPlasticWeight(value)
         ),
       humanMedicinesPlasticWeight =
-        userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
+        userAnswers.get(HumanMedicinesPlasticPackagingWeightPage).map(
           value => HumanMedicinesPlasticWeight(value)
         ),
       exportedPlasticWeight =
-        userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
+        userAnswers.get(ExportedPlasticPackagingWeightPage).map(
           value => ExportedPlasticWeight(value)
         ),
-      recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
+      convertedPackagingCredit =
+        userAnswers.get(ConvertedPackagingCreditPage).map(
+          value => ConvertedPackagingCredit(value)
+        ),
+      recycledPlasticWeight = userAnswers.get(RecycledPlasticPackagingWeightPage).map(
         value => RecycledPlasticWeight(value)
       )
     )
+
   }
 
 }

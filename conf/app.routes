@@ -107,3 +107,5 @@ GET        /startYourReturn                        controllers.StartYourReturnCo
 POST       /startYourReturn                        controllers.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
 GET        /changeStartYourReturn                  controllers.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeStartYourReturn                  controllers.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
+
+GET        /returnConfirmation                       controllers.ReturnConfirmationController.onPageLoad()

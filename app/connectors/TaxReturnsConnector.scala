@@ -53,6 +53,7 @@ class TaxReturnsConnector @Inject() (
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
+
     httpClient.POST[String, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload.id)
       .andThen { case _ => timer.stop() }
       .map { _ =>
@@ -78,8 +79,7 @@ class TaxReturnsConnector @Inject() (
       .recover {
         case ex: Exception =>
           Left(
-            DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}",
-                                   ex
+            DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}", ex
             )
           )
       }

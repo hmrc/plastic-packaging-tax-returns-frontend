@@ -69,8 +69,7 @@ class ReturnsCheckYourAnswersController @Inject() (
         val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
         submit(taxReturn).map {
           case Right(_) =>
-            // TODO - Add new return confirmation controller
-            Redirect(routes.AmendConfirmationController.onPageLoad())
+            Redirect(routes.ReturnConfirmationController.onPageLoad())
 
           case Left(error) =>
             throw error
