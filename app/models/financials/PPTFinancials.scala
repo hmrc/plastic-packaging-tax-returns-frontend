@@ -30,10 +30,9 @@ final case class PPTFinancials(
   overdueAmount: Option[BigDecimal]
 ) {
 
-  def amountToPayInPence: Int =
-    Seq(overdueAmount, debitAmount.map(_._1)).flatten.sum.toInt * 100
+  def amountToPayInPence: Int = debitAmount.map(a => (100 * a._1).toInt).getOrElse(0)
 
-  private def getMonth(date: LocalDate)(implicit messages: Messages) =
+  private def getMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"month.${date.getMonthValue}")
 
   def paymentStatement()(implicit messages: Messages): String =
@@ -50,7 +49,7 @@ final case class PPTFinancials(
         messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount))
       case (None, Some((debit, _)), Some(overdue)) =>
         messages("account.homePage.card.payments.debitAndOverDue",
-                 formatCurrencyAmount(debit), //todo is this right? should this not be debit + overdue "You owe {0}. This includes {1} which is overdue." does not include
+                 formatCurrencyAmount(debit),
                  formatCurrencyAmount(overdue)
         )
       case _ => messages("account.homePage.card.payments.error")

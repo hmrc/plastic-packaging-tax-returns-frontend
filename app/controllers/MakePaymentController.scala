@@ -37,8 +37,8 @@ class MakePaymentController  @Inject() (
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
     for {
-      financials <- financialsConnector.getPaymentStatement(pptRef) //todo is this where we get this from?
-      amountInPence = financials.amountToPayInPence //todo what if this is 0? 0 is fine. it cant however be negative, we should not include credit for this reason
+      financials <- financialsConnector.getPaymentStatement(pptRef)
+      amountInPence = financials.amountToPayInPence
       link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = controllers.routes.IndexController.onPageLoad.absoluteURL())
     } yield {
       Redirect(Call("GET", link))
