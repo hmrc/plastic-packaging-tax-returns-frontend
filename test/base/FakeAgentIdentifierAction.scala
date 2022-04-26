@@ -16,7 +16,7 @@
 
 package base
 
-import controllers.actions.IdentifierAction
+import controllers.actions.{AuthAgentAction, IdentifierAction}
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._
@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolments}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAgentIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
+class FakeAgentIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends AuthAgentAction {
 
   override def invokeBlock[A](
     request: Request[A],

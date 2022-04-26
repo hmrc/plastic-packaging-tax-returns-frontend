@@ -64,7 +64,7 @@ trait SpecBase
 
   protected def applicationBuilderAgent(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
-      .overrides(bind[IdentifierAction].to[FakeAgentIdentifierAction])
+      .overrides(bind[AuthAgentAction].to[FakeAgentIdentifierAction])
 
   protected def applicationBuilderFailedAuth(
     userAnswers: Option[UserAnswers] = None
