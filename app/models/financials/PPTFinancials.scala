@@ -30,7 +30,7 @@ final case class PPTFinancials(
   overdueAmount: Option[BigDecimal]
 ) {
 
-  def amountToPayInPence: Int = debitAmount.map(a => (100 * a._1).toInt).getOrElse(0)
+  def amountToPayInPence: Int = debitAmount.map(_._1).orElse(overdueAmount).map(a => (100 * a).toInt).getOrElse(0)
 
   private def getMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"month.${date.getMonthValue}")
