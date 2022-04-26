@@ -53,6 +53,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
 
         val pptReference        = UUID.randomUUID().toString
         val expectedObligations = PPTObligations(None, None, 0, true, false)
+
         givenGetSubscriptionEndpointReturns(
           Status.OK,
           pptReference,

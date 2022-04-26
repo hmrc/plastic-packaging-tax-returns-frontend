@@ -28,18 +28,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxReturnsConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: FrontendAppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class TaxReturnsConnector @Inject()(
+                                     httpClient: HttpClient,
+                                     appConfig: FrontendAppConfig,
+                                     metrics: Metrics
+                                   )(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
 
   def get(userId: String, periodKey: String)(implicit
-    hc: HeaderCarrier
+                                             hc: HeaderCarrier
   ): Future[Either[ServiceError, ReturnDisplayApi]] = {
-    val url   = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
+    val url = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
     val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
     httpClient.GET[ReturnDisplayApi](url)
       .andThen { case _ => timer.stop() }
@@ -51,7 +51,7 @@ class TaxReturnsConnector @Inject() (
   }
 
   def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
 
     httpClient.POST[TaxReturn, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload)
@@ -66,8 +66,9 @@ class TaxReturnsConnector @Inject() (
       }
   }
 
+
   def amend(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val timer        = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
 
     httpClient.PUT[TaxReturn, JsValue](appConfig.pptReturnAmendUrl(pptReference), payload)

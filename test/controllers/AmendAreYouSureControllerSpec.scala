@@ -53,12 +53,12 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
                                                             periodKey = "22AC"
   )
 
-  lazy val amendAreYouSureRoute = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
+  lazy val amendAreYouSureRoute: String = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
-  val mockService = mock[TaxReturnHelper]
+  val mockService: TaxReturnHelper = mock[TaxReturnHelper]
 
-  val charge = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
-  val retDisApi = ReturnDisplayApi("", IdDetails("", ""), Some(charge), ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
+  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
+  val retDisApi: ReturnDisplayApi = ReturnDisplayApi("", IdDetails("", ""), Some(charge), ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
   when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))
 
   //todo all this duped application code is gross.
@@ -188,32 +188,32 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-      //      val application = applicationBuilder(userAnswers = None).build()
-      //
-      //      running(application) {
-      //        val request = FakeRequest(GET, amendAreYouSureRoute)
-      //
-      //        val result = route(application, request).value
-      //
-      //        status(result) mustEqual SEE_OTHER
-      //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      //      }
+            val application = applicationBuilder(userAnswers = None).build()
+
+            running(application) {
+              val request = FakeRequest(GET, amendAreYouSureRoute)
+
+              val result = route(application, request).value
+
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+            }
     }
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-      //      val application = applicationBuilder(userAnswers = None).build()
-      //
-      //      running(application) {
-      //        val request =
-      //          FakeRequest(POST, amendAreYouSureRoute)
-      //            .withFormUrlEncodedBody(("value", "true"))
-      //
-      //        val result = route(application, request).value
-      //
-      //        status(result) mustEqual SEE_OTHER
-      //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      //      }
+            val application = applicationBuilder(userAnswers = None).build()
+
+            running(application) {
+              val request =
+                FakeRequest(POST, amendAreYouSureRoute)
+                  .withFormUrlEncodedBody(("value", "true"))
+
+              val result = route(application, request).value
+
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+            }
     }
   }
 }
