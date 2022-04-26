@@ -18,13 +18,14 @@ package connectors
 
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, status}
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.helpers.TaxReturnBuilder
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturn}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
 import java.util.UUID
@@ -45,62 +46,83 @@ class TaxReturnsConnectorSpec
     super.afterAll()
   }
 
-  // TODO - we need to look at adding specs here.
-  //  - What do we expect back from this endpoint?
-  //  - What do we want to do with it?
-  //
-  //  # Return Display API
-  //  GET         /returns-submission/:pptReference/:periodKey      uk.gov.hmrc.plasticpackagingtaxreturns.controllers.ReturnsSubmissionController.get(pptReference: String, periodKey: String)
-  //
-  //  # EIS Return Amend
-  //  PUT        /returns-amend/:pptReference                      uk.gov.hmrc.plasticpackagingtaxreturns.controllers.ReturnsSubmissionController.amend(pptReference: String)
   val pptReference = UUID.randomUUID().toString
 
-  "create tax return" should {
-    "return success response" when {
-      "getting a return" in {
-        val x: BigDecimal = 0.1
-        val expectedResult: ReturnDisplayApi = ReturnDisplayApi("", IdDetails(pptReference, "subId"), None, (ReturnDisplayDetails(x, x, x, x, x, x, x, x, x, x)))
+  "Tax Returns Connector" should {
 
-        givenGetReturnsEndpointReturns(Status.OK, pptReference, body = "{}")
+    "get correctly" in {
+
+      val x: BigDecimal = 0.1
+      val expectedResult: ReturnDisplayApi =
+        ReturnDisplayApi(
+          "", IdDetails(pptReference, "subId"), None, ReturnDisplayDetails(x, x, x, x, x, x, x, x, x, x)
+        )
+
+      givenGetReturnsEndpointReturns(
+        Status.OK, pptReference, "00xx", body = Json.toJson(expectedResult).toString
+      )
+
+      val res: Either[ServiceError, ReturnDisplayApi] = await(connector.get(pptReference, "00xx"))
+
+      res.right.get mustBe expectedResult
+
+    }
+
+    "submit correctly" in {
+
+      givenReturnsSubmissionEndpointReturns(Status.OK,
+        pptReference,
+        body = "{}"
+      )
+
+      val res: Either[ServiceError, Unit] = await(connector.submit(aTaxReturn(withId(pptReference))))
+
+      res.isRight mustBe true
+
+    }
+
+    "Amend correctly" in {
+
+      givenReturnsAmendmentEndpointReturns(Status.OK,
+        pptReference,
+        body = "{}"
+      )
+
+      val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference))))
+
+      res.isRight mustBe true
+
+    }
+
+    "return a left (error)" when {
+
+      "get response is impassible" in {
+
+        givenGetReturnsEndpointReturns(
+          Status.OK, pptReference, "00xx", body = "{"
+        )
+
         val res: Either[ServiceError, ReturnDisplayApi] = await(connector.get(pptReference, "00xx"))
 
-        res.right.get mustBe expectedResult
+        assert(res.left.get.isInstanceOf[DownstreamServiceError])
+
       }
-      "a return is submitted" in {
+
+      "submit response is impassible" in {
+
         givenReturnsSubmissionEndpointReturns(Status.OK,
           pptReference,
-          body = "{}"
+          body = "{"
         )
 
         val res: Either[ServiceError, Unit] = await(connector.submit(aTaxReturn(withId(pptReference))))
 
-        res.isRight mustBe true
-      }
-      "a return is amended" in {
-        givenReturnsAmendmentEndpointReturns(Status.OK,
-          pptReference,
-          body = "{}"
-        )
+        assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
-        val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference))))
-
-        res.isRight mustBe true
       }
 
-      "return a left" when {
-        "submit response is impassible" in {
-          givenReturnsSubmissionEndpointReturns(Status.OK,
-            pptReference,
-            body = "{"
-          )
-
-          val res: Either[ServiceError, Unit] = await(connector.submit(aTaxReturn(withId(pptReference))))
-
-          assert(res.left.get.isInstanceOf[DownstreamServiceError])
-        }
-      }
       "amend response is impassible" in {
+
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
           body = "{"
@@ -109,16 +131,18 @@ class TaxReturnsConnectorSpec
         val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference))))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
+
       }
     }
   }
 
   private def givenGetReturnsEndpointReturns(status: Int,
                                              pptReference: String,
+                                             periodKey: String,
                                              body: String = ""
                                             ): StubMapping =
     stubFor(
-      WireMock.get(s"/returns/$pptReference")
+      WireMock.get(s"/returns-submission/$pptReference/$periodKey")
         .willReturn(
           aResponse()
             .withStatus(status)
