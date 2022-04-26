@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import controllers.agents.{routes => agentRoutes}
+import controllers.{routes => agentRoutes}
 import models.{CheckMode, UserAnswers}
 import pages.AgentsPage
 import play.api.i18n.Messages
@@ -30,7 +30,7 @@ object AgentsSummary {
     answers.get(AgentsPage).map {
       answer =>
         SummaryListRowViewModel(key = "agents.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
+                                value = ValueViewModel(answer),
                                 actions = Seq(
                                   ActionItemViewModel(
                                     "site.change",

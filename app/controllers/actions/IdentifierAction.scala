@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
-import controllers.agents.{routes => agentRoutes}
+import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
 import models.requests.{IdentifiedRequest, IdentityData}
 import models.{NormalMode, SignedInUser}

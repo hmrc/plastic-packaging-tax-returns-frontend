@@ -303,3 +303,10 @@ startYourReturn.change.hidden = Do you want to start your return for {0}?
 
 returnConfirmation.title = returnConfirmation
 returnConfirmation.heading = returnConfirmation
+
+agents.title = agents
+agents.heading = agents
+agents.checkYourAnswersLabel = agents
+agents.error.required = Enter agents
+agents.error.length = Agents must be 15 characters or less
+agents.change.hidden = Agents

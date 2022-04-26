@@ -18,14 +18,15 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
+
 class AgentsPageSpec extends PageBehaviours {
 
   "AgentsPage" - {
 
-    beRetrievable[Int](AgentsPage)
+    beRetrievable[String](AgentsPage)
 
-    beSettable[Int](AgentsPage)
+    beSettable[String](AgentsPage)
 
-    beRemovable[Int](AgentsPage)
+    beRemovable[String](AgentsPage)
   }
 }

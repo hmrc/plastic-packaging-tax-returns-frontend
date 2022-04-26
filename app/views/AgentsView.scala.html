@@ -15,7 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
-@import controllers.agents.{routes => agentRoutes}
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("agents.title"))) {
 
-    @formHelper(action = agentRoutes.AgentsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.AgentsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -39,8 +39,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("agents.heading")).asPageHeading()
             )
-            .asNumeric()
-            .withWidth(Fixed10)
+            .withWidth(Full)
         )
 
         @govukButton(

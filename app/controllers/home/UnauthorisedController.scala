@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.UnauthorisedView
-import controllers.agents.{routes => agentRoutes}
+import controllers.{routes => agentRoutes}
 
 import javax.inject.Inject
 

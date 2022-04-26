@@ -94,11 +94,6 @@ POST       /recycledPlasticPackagingWeight                  controllers.Recycled
 GET        /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /agents                                          controllers.agents.AgentsController.onPageLoad(mode: Mode = NormalMode)
-POST       /agents                                          controllers.agents.AgentsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAgents                                    controllers.agents.AgentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAgents                                    controllers.agents.AgentsController.onSubmit(mode: Mode = CheckMode)
-
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
 
 GET        /submittedReturns                       controllers.SubmittedReturnsController.onPageLoad()
@@ -109,3 +104,8 @@ GET        /changeStartYourReturn                  controllers.StartYourReturnCo
 POST       /changeStartYourReturn                  controllers.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
 GET        /returnConfirmation                       controllers.ReturnConfirmationController.onPageLoad()
+
+GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
+POST       /agents                        controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAgents                  controllers.AgentsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAgents                  controllers.AgentsController.onSubmit(mode: Mode = CheckMode)

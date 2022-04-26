@@ -16,10 +16,14 @@
 
 package forms
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class AgentsFormProviderSpec extends IntFieldBehaviours {
+class AgentsFormProviderSpec extends StringFieldBehaviours {
+
+  val requiredKey = "agents.error.required"
+  val lengthKey = "agents.error.length"
+  val maxLength = 15
 
   val form = new AgentsFormProvider()()
 
@@ -27,30 +31,23 @@ class AgentsFormProviderSpec extends IntFieldBehaviours {
 
     val fieldName = "value"
 
-    val minimum = 0
-    val maximum = Int.MaxValue
-
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
-
-    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
-
-    behave like intField(form,
-                         fieldName,
-                         nonNumericError = FormError(fieldName, "agents.error.nonNumeric"),
-                         wholeNumberError = FormError(fieldName, "agents.error.wholeNumber")
-    )
-
-    behave like intFieldWithRange(
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      minimum = minimum,
-      maximum = maximum,
-      expectedError = FormError(fieldName, "agents.error.outOfRange", Seq(minimum, maximum))
+      stringsWithMaxLength(maxLength)
     )
 
-    behave like mandatoryField(form,
-                               fieldName,
-                               requiredError = FormError(fieldName, "agents.error.required")
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
   }
 }
