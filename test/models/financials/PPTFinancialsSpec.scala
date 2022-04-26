@@ -23,7 +23,7 @@ import java.time.LocalDate
 class PPTFinancialsSpec extends PlaySpec {
 
   "amountToPayInPence" must {
-    def financials(debit: Option[BigDecimal]) = PPTFinancials(None, debit.map(_ -> LocalDate.now()), None)
+    def financials(debit: Option[BigDecimal] = None, overdue: Option[BigDecimal] = None) = PPTFinancials(None, debit.map(_ -> LocalDate.now()), overdue)
     "return 0" when {
       "there is no amounts" in {
         financials(debit = None).amountToPayInPence mustBe 0
@@ -32,6 +32,14 @@ class PPTFinancialsSpec extends PlaySpec {
     "return a value" when {
       "there is a debit" in {
         financials(debit = Some(10)).amountToPayInPence mustBe 1000
+      }
+
+      "there is an overdue" in {
+        financials(overdue = Some(8)).amountToPayInPence mustBe 800
+      }
+
+      "there is both debit and overdue" in {
+        financials(debit = Some(90), overdue = Some(20)).amountToPayInPence mustBe 9000
       }
     }
   }
