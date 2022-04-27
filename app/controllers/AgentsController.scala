@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class AgentsController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        identify: IdentifierAction,
+                                        identify: AuthAgentAction,
                                         formProvider: AgentsFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AgentsView
