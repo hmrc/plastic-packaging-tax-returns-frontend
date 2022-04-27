@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.TaxReturnHelper
+import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
 import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,16 +33,16 @@ import views.html.ReturnsCheckYourAnswersView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReturnsCheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
-  val controllerComponents: MessagesControllerComponents,
-  view: ReturnsCheckYourAnswersView
-) extends FrontendBaseController with I18nSupport {
+class ReturnsCheckYourAnswersController @Inject()(
+                                                   override val messagesApi: MessagesApi,
+                                                   identify: IdentifierAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   returnsConnector: TaxReturnsConnector,
+                                                   taxReturnHelper: TaxReturnHelper,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   view: ReturnsCheckYourAnswersView
+                                                 ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
@@ -59,8 +59,9 @@ class ReturnsCheckYourAnswersController @Inject() (
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))
         )
+        val liability: TaxLiability = TaxLiabilityFactory.create(1000, 200, 300, 400, 2, 200)
 
-        Ok(view(mode, list))
+        Ok(view(mode, list, liability))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -78,8 +79,8 @@ class ReturnsCheckYourAnswersController @Inject() (
     }
 
   private def submit(
-    taxReturn: TaxReturn
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
+                      taxReturn: TaxReturn
+                    )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
     returnsConnector.submit(taxReturn)
 
 }

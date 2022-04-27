@@ -14,20 +14,105 @@
  * limitations under the License.
  *@
 
+@import controllers.helpers.TaxLiability
+@import views.ViewUtils.displayMonetaryValue
+@import components.paragraphBody
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    govukTable: GovukTable,
+    paragraphBody: paragraphBody
 )
 
-@(mode: Mode, list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, taxLiability: TaxLiability)(implicit request: Request[_], messages: Messages)
+
+@taxCalculationRow(key: String, value: String, postFixMetric: String = "", classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
+    Seq(
+        TableRow(
+        content = Text(messages(key)),
+        classes = classes,
+        attributes = attributes
+        ),
+        TableRow(
+        content = Text(s"$value$postFixMetric"),
+        classes = classes,
+        format = Some("numeric"),
+        attributes = attributes
+        ),
+        TableRow(
+        classes = classes,
+        attributes = attributes
+        )
+    )
+}
+
+@hiddenText(key: String) = @{
+    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
+}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
+
+    @govukTable(Table(
+        rows = Seq(
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.exemptPackaging.label", taxLiability.totalKgExempt.toString, " kg"),
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.liablePackaging.label", taxLiability.totalKgLiable.toString, " kg","row-border"),
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.label", displayMonetaryValue(taxLiability.taxDue), "" ,"row-border")
+            ),
+        head = Some(Seq(
+            HeadCell(
+                content = hiddenText("returns.checkYourReturnPage.header.item"),
+                classes = "govuk-!-width-one-half"
+            ),
+        HeadCell(
+            content = hiddenText("returns.checkYourReturnPage.header.amount"),
+            classes = "govuk-!-width-one-quarter",
+            format = Some("numeric")
+            ),
+        HeadCell(
+            content = hiddenText("returns.checkYourReturnPage.header.empty"),
+            classes = "govuk-!-width-one-quarter"
+        ))),
+        caption = Some(messages("returnsCheckYourAnswers.taxLiability.subheading")),
+        captionClasses = "govuk-table__caption--m",
+        firstCellIsHeader = true,
+        classes = "row-header--no-border cell--no-border "
+    ))
+
+    @paragraphBody(messages("returns.checkYourReturnPage.taxLiability.description"), classes = "govuk-body-m")
+
+    @govukTable(Table(
+        rows = Seq(
+            taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", displayMonetaryValue(taxLiability.totalCredit), "", "row-border"),
+            ),
+            head = Some(Seq(
+                HeadCell(
+                    classes = "govuk-!-width-one-half",
+                    content = hiddenText("returns.checkYourReturnPage.header.amount")
+            ),
+            HeadCell(
+                content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                classes = "govuk-!-width-one-quarter",
+                format = Some("numeric")
+                ),
+            HeadCell(
+                content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                classes = "govuk-!-width-one-quarter"
+                ))),
+            caption = Some(messages("returns.checkYourReturnPage.totalCredits.label")),
+            captionClasses = "govuk-table__caption--m",
+            firstCellIsHeader = true,
+            classes = "row-header--no-border cell--no-border"
+            )
+    )
+
+    @paragraphBody(messages("returns.checkYourReturnPage.totalCredits.description"), classes = "govuk-body-m")
 
     @formHelper(action = routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
