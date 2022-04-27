@@ -100,3 +100,5 @@ POST       /changeAgents                                    controllers.agents.A
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
 
 GET        /submittedReturns                       controllers.SubmittedReturnsController.onPageLoad()
+
+GET        /make-a-payment                                  controllers.MakePaymentController.redirectLink()

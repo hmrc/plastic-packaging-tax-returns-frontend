@@ -31,7 +31,9 @@ class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with De
 
   def overrideConfig: Map[String, Any] =
     Map("microservice.services.plastic-packaging-tax-returns.host" -> wireHost,
-        "microservice.services.plastic-packaging-tax-returns.port" -> wirePort
+        "microservice.services.plastic-packaging-tax-returns.port" -> wirePort,
+        "microservice.services.pay-api.host" -> wireHost,
+        "microservice.services.pay-api.port" -> wirePort
     )
 
   override def fakeApplication(): Application = {

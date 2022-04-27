@@ -53,12 +53,13 @@ class IndexController @Inject() (
             paymentStatement <- getPaymentsStatement(pptReference)
             obligations      <- getObligationsDetail(pptReference)
           } yield Ok(
-            view(appConfig,
-                 subscription,
-                 obligations,
-                 paymentStatement,
-                 appConfig.pptCompleteReturnGuidanceUrl,
-                 pptReference
+            view(
+              appConfig,
+              subscription,
+              obligations,
+              paymentStatement,
+              appConfig.pptCompleteReturnGuidanceUrl,
+              pptReference
             )
           )
         case Left(eisFailure) =>
@@ -76,9 +77,9 @@ class IndexController @Inject() (
     pptReference: String
   )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
     if (appConfig.isFeatureEnabled(Features.paymentsEnabled))
-      financialsConnector.getPaymentStatement(pptReference)(hc).map(
+      financialsConnector.getPaymentStatement(pptReference).map(
         response => Some(response.paymentStatement()(messages))
-      ).recoverWith { case _: Exception => Future(None) }
+      ).recover { case _ => None}
     else Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
 
   private def getObligationsDetail(
