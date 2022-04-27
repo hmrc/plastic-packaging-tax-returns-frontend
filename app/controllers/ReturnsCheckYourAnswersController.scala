@@ -23,6 +23,7 @@ import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
 import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -59,8 +60,15 @@ class ReturnsCheckYourAnswersController @Inject()(
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))
         )
-        val liability: TaxLiability = TaxLiabilityFactory.create(1000, 200, 300, 400, 2, 200)
-
+        val answers = request.userAnswers.data.value.toMap
+        val liability: TaxLiability = TaxLiabilityFactory.create(
+          answers("manufacturedPlasticPackagingWeight").toString.toLong,
+          answers("importedPlasticPackagingWeight").toString.toLong,
+          answers("humanMedicinesPlasticPackagingWeight").toString.toLong,
+          answers("exportedPlasticPackagingWeight").toString.toLong,
+          answers("convertedPackagingCredit").toString.toLong,
+          answers("recycledPlasticPackagingWeight").toString.toLong,
+        )
         Ok(view(mode, list, liability))
     }
 
