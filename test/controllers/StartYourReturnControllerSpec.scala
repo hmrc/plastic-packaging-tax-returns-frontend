@@ -17,14 +17,16 @@
 package controllers
 
 import base.{MockObligationsConnector, SpecBase}
+import cacheables.ObligationCacheable
 import connectors.{CacheConnector, ObligationsConnector}
 import forms.StartYourReturnFormProvider
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito
+import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import pages.StartYourReturnPage
@@ -37,7 +39,7 @@ import views.html.StartYourReturnView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
+class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector  {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -55,14 +57,20 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
   val pptObligation: PPTObligations = PPTObligations(Some(obligation), Some(obligation), 1, true, true)
 
+  val mockCacheConnector = mock[CacheConnector]
+
   "StartYourReturn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       setUpMocks
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      val pptId = "123"
+      val userAnswers = UserAnswers(pptId).set(ObligationCacheable, obligation).get
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector),
+          bind[CacheConnector].toInstance(mockCacheConnector)
       ).build()
 
       running(application) {
@@ -74,6 +82,8 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, obligation)(request, messages(application)).toString
+
+        verify(mockCacheConnector, atLeastOnce).set(refEq(pptId), refEq(userAnswers))(any())
       }
     }
 

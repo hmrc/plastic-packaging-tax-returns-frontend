@@ -14,10 +14,14 @@
  * limitations under the License.
  *@
 
+@import components.{paragraphBody,Link}
+
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        govukPanel: GovukPanel
+        govukPanel: GovukPanel,
+        paragraphBody: paragraphBody,
+        link: Link
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -25,12 +29,27 @@
 @layout(
     pageTitle    = titleNoForm(messages("return.confirmation.title")),
     showBackLink = false
-) {
+    ) {
 
+@* this panel content will contain the submission ID *@
     @govukPanel(Panel(
         title = Text(messages("return.confirmation.submitted")),
+
         content = Text(messages("return.confirmation.panel"))
         )
     )
 
+
+@*  TODO: uncomment when we are providing the submission ID
+*   @paragraphBody(message = messages("return.confirmation.body.2"), classes = "govuk-body clear-float")
+*@
+    @paragraphBody(message = messages("return.confirmation.body.3"), classes = "govuk-body clear-float")
+
+    <p class="govuk-body">
+        @link(id = "account-link", messages("return.confirmation.return.link"), call = routes.IndexController.onPageLoad)
+    </p>
+
+    @paragraphBody(message = messages("return.confirmation.exitSurvey.text",
+    link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", "www.google.com")))
+    )
 }

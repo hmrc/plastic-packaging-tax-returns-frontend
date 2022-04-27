@@ -242,9 +242,11 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
 return.confirmation.panel =
-
-deregistered.title = deregistered
-deregistered.heading = deregistered
+return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
+return.confirmation.body.3 = We will not email you a confirmation.
+return.confirmation.return.link = Return to your Plastic Packaging Tax account
+return.confirmation.exitSurvey.text = {0} (Takes 30 seconds)
+return.confirmation.exitSurvey.text.link = What did you think of this service?
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
@@ -311,9 +313,6 @@ returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculate
 returnsCheckYourAnswers.totalCredits.label = Total Credits
 returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
 returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
-
-returnConfirmation.title = returnConfirmation
-returnConfirmation.heading = returnConfirmation
 
 agents.title = agents
 agents.heading = agents

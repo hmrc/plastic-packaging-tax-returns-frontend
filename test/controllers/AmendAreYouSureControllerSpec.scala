@@ -17,14 +17,15 @@
 package controllers
 
 import base.SpecBase
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, contains, refEq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AmendAreYouSurePage
 import play.api.inject.bind
@@ -46,22 +47,41 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val formProvider        = new AmendAreYouSureFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  val obligation: TaxReturnObligation = TaxReturnObligation(fromDate =
-                                                              LocalDate.parse("2022-04-01"),
-                                                            toDate = LocalDate.parse("2022-06-30"),
-                                                            dueDate = LocalDate.parse("2022-09-30"),
-                                                            periodKey = "22AC"
+  val obligation: TaxReturnObligation = TaxReturnObligation(
+    fromDate =
+      LocalDate.parse("2022-04-01"),
+    toDate = LocalDate.parse("2022-06-30"),
+    dueDate = LocalDate.parse("2022-09-30"),
+    periodKey = "22AC"
   )
 
-  lazy val amendAreYouSureRoute: String = routes.AmendAreYouSureController.onPageLoad(NormalMode).url
+  lazy val amendAreYouSureRoute: String =
+    routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
   val mockService: TaxReturnHelper = mock[TaxReturnHelper]
 
-  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(periodFrom = "2022-04-01", periodTo ="2022-06-30", periodKey = "22AC", chargeReference = Some("pan"), receiptDate = "2022-06-31", returnType = "TYPE")
-  val retDisApi: ReturnDisplayApi = ReturnDisplayApi("", IdDetails("", ""), Some(charge), ReturnDisplayDetails(0,1,2,3,4,5,6,7,8,9))
-  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))
+  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
+    periodFrom = "2022-04-01",
+    periodTo = "2022-06-30",
+    periodKey = "22AC",
+    chargeReference = Some("pan"),
+    receiptDate = "2022-06-31",
+    returnType = "TYPE"
+  )
 
-  //todo all this duped application code is gross.
+  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
+    "",
+    IdDetails("", ""),
+    Some(charge),
+    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+  )
+
+  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))
+  when(mockService.getObligation(any(), any())(any())).thenReturn(
+    Future.successful(Seq(obligation))
+  )
+
+  val mockCacheConnector = mock[CacheConnector]
 
   "AmendAreYouSure Controller" - {
 
@@ -70,12 +90,14 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendSelectedPeriodKey, "TEST").get
+        .set(AmendSelectedPeriodKey, "TEST")
+        .get.set(ObligationCacheable, obligation).get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[TaxReturnHelper].toInstance(mockService),
-          bind[AmendAreYouSureView].toInstance(mockView)
+          bind[AmendAreYouSureView].toInstance(mockView),
+          bind[CacheConnector].toInstance(mockCacheConnector)
         ).build()
 
       running(application) {
@@ -84,7 +106,10 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
+
         verify(mockView).apply(any(), any(), refEq(retDisApi))(any(), any())
+        verify(mockCacheConnector, atLeastOnce).set(refEq(userAnswersId), refEq(userAnswers))(any())
+
       }
     }
 
@@ -117,8 +142,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers = UserAnswers(userAnswersId)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[TaxReturnHelper].toInstance(mockService))
-        .build()
+        .overrides(bind[TaxReturnHelper].toInstance(mockService)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
@@ -142,7 +166,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[TaxReturnHelper].toInstance(mockService),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[CacheConnector].toInstance(mockCacheConnector)
+            bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()
 
@@ -188,32 +212,32 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-            val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
-            running(application) {
-              val request = FakeRequest(GET, amendAreYouSureRoute)
+      running(application) {
+        val request = FakeRequest(GET, amendAreYouSureRoute)
 
-              val result = route(application, request).value
+        val result = route(application, request).value
 
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-            }
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-            val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
-            running(application) {
-              val request =
-                FakeRequest(POST, amendAreYouSureRoute)
-                  .withFormUrlEncodedBody(("value", "true"))
+      running(application) {
+        val request =
+          FakeRequest(POST, amendAreYouSureRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
-              val result = route(application, request).value
+        val result = route(application, request).value
 
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-            }
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
   }
 }

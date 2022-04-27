@@ -60,8 +60,15 @@ class ReturnsCheckYourAnswersController @Inject()(
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))
         )
-        val liability: TaxLiability = TaxLiabilityFactory.create(1000, 200, 300, 400, 2, 200)
-
+        val answers = request.userAnswers.data.value.toMap
+        val liability: TaxLiability = TaxLiabilityFactory.create(
+          answers.getOrElse("manufacturedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("humanMedicinesPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("exportedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("convertedPackagingCredit", 0).toString.toLong,
+          answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
+        )
         Ok(view(mode, list, liability))
     }
 

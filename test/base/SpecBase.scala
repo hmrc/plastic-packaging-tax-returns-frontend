@@ -37,7 +37,7 @@ trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
     with IntegrationPatience {
 
-  val userAnswersId: String = "id"
+  val userAnswersId: String = "123"
 
   implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector = mock[CacheConnector]
