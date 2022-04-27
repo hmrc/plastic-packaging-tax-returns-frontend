@@ -16,7 +16,7 @@
 
 package navigation
 
-import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
+import cacheables.AmendSelectedPeriodKey
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call

@@ -17,9 +17,8 @@
 package controllers
 
 import base.SpecBase
-import cacheables.ObligationCacheable
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
 import connectors.CacheConnector
-import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}

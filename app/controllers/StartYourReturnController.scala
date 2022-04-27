@@ -18,7 +18,6 @@ package controllers
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
-import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.StartYourReturnFormProvider
@@ -83,14 +82,12 @@ class StartYourReturnController @Inject()(
             Future.successful(BadRequest(view(formWithErrors, mode, taxReturnObligation))),
 
           value =>
-            taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
-              for {
-                updatedAnswers <- Future.fromTry(
-                  request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
-                )
-                _ <- cacheConnector.set(pptId, updatedAnswers)
-              } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
-            }
+            for {
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
+              )
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
         )
       }
   }

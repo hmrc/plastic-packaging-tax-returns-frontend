@@ -17,7 +17,7 @@
 package navigation
 
 import base.SpecBase
-import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, AmendSelectedPeriodKey}
+import cacheables.AmendSelectedPeriodKey
 import controllers.routes
 import pages._
 import models._
@@ -52,6 +52,7 @@ class NavigatorSpec extends SpecBase {
         "for the StartYourReturnPage" - {
 
           "navigate to ManufacturedPlasticPackagingController when answer is Yes" in {
+
             val answers = UserAnswers("id").set(StartYourReturnPage, true)
 
             navigator.nextPage(StartYourReturnPage,
