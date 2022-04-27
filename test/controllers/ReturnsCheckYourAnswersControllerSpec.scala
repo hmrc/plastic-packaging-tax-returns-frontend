@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import controllers.helpers.TaxLiability
 import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,10 +39,11 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
         val view = application.injector.instanceOf[ReturnsCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
+        val liability = TaxLiability()
         val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list, liability)(request, messages(application)).toString
       }
     }
 

@@ -23,7 +23,6 @@ import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
 import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -62,12 +61,12 @@ class ReturnsCheckYourAnswersController @Inject()(
         )
         val answers = request.userAnswers.data.value.toMap
         val liability: TaxLiability = TaxLiabilityFactory.create(
-          answers("manufacturedPlasticPackagingWeight").toString.toLong,
-          answers("importedPlasticPackagingWeight").toString.toLong,
-          answers("humanMedicinesPlasticPackagingWeight").toString.toLong,
-          answers("exportedPlasticPackagingWeight").toString.toLong,
-          answers("convertedPackagingCredit").toString.toLong,
-          answers("recycledPlasticPackagingWeight").toString.toLong,
+          answers.getOrElse("manufacturedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("humanMedicinesPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("exportedPlasticPackagingWeight", 0).toString.toLong,
+          answers.getOrElse("convertedPackagingCredit", 0).toString.toLong,
+          answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
         Ok(view(mode, list, liability))
     }
