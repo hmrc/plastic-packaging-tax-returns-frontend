@@ -46,6 +46,12 @@ class TaxReturnHelper @Inject()(
     }
   }
 
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier) = {
+    obligationsConnector.getFulfilled(pptId) map {obligations =>
+      obligations.filter(o => o.periodKey == periodKey)
+    }
+  }
+
   def fetchTaxReturn(userId: String, periodKey: String)(implicit
                                                         hc: HeaderCarrier
   ): Future[ReturnDisplayApi] = {

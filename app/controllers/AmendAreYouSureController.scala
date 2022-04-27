@@ -16,12 +16,13 @@
 
 package controllers
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.ViewReturnSummaryController.{AmendReturnPreviousReturn, AmendSelectedPeriodKey}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.AmendAreYouSurePage
 import play.api.data.Form
@@ -60,10 +61,21 @@ class AmendAreYouSureController @Inject() (
         val periodKey = userAnswers.get(AmendSelectedPeriodKey)
         periodKey.fold {
           Future.successful(Redirect("/go-and-select-a-year")) //todo carls page
-        }{ period =>
-          taxReturnHelper.fetchTaxReturn(pptId, period).map{ submittedReturn =>
+        } { period =>
+
+          taxReturnHelper.getObligation(pptId, period).map { obligations =>
+
+            if(obligations.isEmpty) { throw new IllegalStateException("There must be an obligation to amend") }
+
+            Future.fromTry(request.userAnswers.set(ObligationCacheable, obligations.head)).map {
+              ans => cacheConnector.set(pptId, ans)
+            }
+          }
+
+          taxReturnHelper.fetchTaxReturn(pptId, period).map { submittedReturn =>
             Ok(view(preparedForm, mode, submittedReturn))
           }
+
         }
     }
 

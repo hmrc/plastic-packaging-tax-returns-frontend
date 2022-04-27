@@ -16,12 +16,15 @@
 
 package controllers
 
+import cacheables.ObligationCacheable
 import config.{Features, FrontendAppConfig}
 import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
-import controllers.actions.IdentifierAction
-import models.EisFailure
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.{EisFailure, UserAnswers}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
+import models.returns.TaxReturnObligation
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,29 +41,32 @@ class IndexController @Inject() (
   appConfig: FrontendAppConfig,
   subscriptionConnector: SubscriptionConnector,
   financialsConnector: FinancialsConnector,
-  obligationsConnector: ObligationsConnector
+  obligationsConnector: ObligationsConnector,
+  getData: DataRetrievalAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    identify.async { implicit request =>
+    (identify andThen getData).async { implicit request =>
       val pptReference =
-        request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+        request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
 
       subscriptionConnector.get(pptReference).flatMap {
         case Right(subscription) =>
           for {
             paymentStatement <- getPaymentsStatement(pptReference)
             obligations      <- getObligationsDetail(pptReference)
-          } yield Ok(
-            view(appConfig,
-                 subscription,
-                 obligations,
-                 paymentStatement,
-                 appConfig.pptCompleteReturnGuidanceUrl,
-                 pptReference
+          } yield {
+            Ok(
+              view(appConfig,
+                subscription,
+                obligations,
+                paymentStatement,
+                appConfig.pptCompleteReturnGuidanceUrl,
+                pptReference
+              )
             )
-          )
+          }
         case Left(eisFailure) =>
           if (isDeregistered(eisFailure))
             Future.successful(Redirect(routes.DeregisteredController.onPageLoad()))

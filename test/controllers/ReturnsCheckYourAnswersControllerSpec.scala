@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import controllers.helpers.TaxLiabilityFactory
 import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -24,6 +25,10 @@ import viewmodels.govuk.SummaryListFluency
 import views.html.ReturnsCheckYourAnswersView
 
 class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+
+  val liability = TaxLiabilityFactory.create(
+    1000, 200, 300, 400, 2, 200
+  )
 
   "Returns Check Your Answers Controller" - {
 
@@ -41,7 +46,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list, liability)(request, messages(application)).toString
       }
     }
 

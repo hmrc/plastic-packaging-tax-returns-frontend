@@ -48,7 +48,11 @@ class ViewReturnSummaryController @Inject() (
   def onPageLoad(periodKey: String): Action[AnyContent] =
     (identify andThen getData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one")) // TODO Make this not optional?
+
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        ) // TODO Make this not optional?
+
         val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey.toUpperCase())
 
         for {
