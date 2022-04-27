@@ -63,12 +63,12 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, obligation: TaxReturnObligation, returnType: ReturnType): TaxReturn = {
+   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, periodKey: String, returnType: ReturnType): TaxReturn = {
     returnType match {
       case NEW =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
-          obligation = Some(obligation),
+          periodKey = periodKey,
                     manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
           manufacturedPlasticWeight =
             userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
@@ -98,7 +98,7 @@ class TaxReturnHelper @Inject()(
       case AMEND =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
-          obligation = Some(obligation),
+          periodKey = periodKey,
           manufacturedPlasticWeight =
             userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
               value => ManufacturedPlasticWeight(value)

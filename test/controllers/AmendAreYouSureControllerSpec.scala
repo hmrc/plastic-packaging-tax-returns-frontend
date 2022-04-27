@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
+import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
@@ -32,11 +32,10 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.AmendAreYouSureView
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails, TaxReturnObligation}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
@@ -46,18 +45,8 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val formProvider        = new AmendAreYouSureFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  val obligation: TaxReturnObligation = TaxReturnObligation(
-    fromDate =
-      LocalDate.parse("2022-04-01"),
-    toDate = LocalDate.parse("2022-06-30"),
-    dueDate = LocalDate.parse("2022-09-30"),
-    periodKey = "22AC"
-  )
-
   lazy val amendAreYouSureRoute: String =
     routes.AmendAreYouSureController.onPageLoad(NormalMode).url
-
-  val mockService: TaxReturnHelper = mock[TaxReturnHelper]
 
   val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
     periodFrom = "2022-04-01",
@@ -75,11 +64,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
   )
 
-  when(mockService.fetchTaxReturn(any(), any())(any())).thenReturn(Future.successful(retDisApi))
-  when(mockService.getObligation(any(), any())(any())).thenReturn(
-    Future.successful(Seq(obligation))
-  )
-
   val mockCacheConnector = mock[CacheConnector]
 
   "AmendAreYouSure Controller" - {
@@ -90,11 +74,10 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST")
-        .get.set(ObligationCacheable, obligation).get
+        .get.set(ReturnDisplayApiCacheable, retDisApi).get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
-          bind[TaxReturnHelper].toInstance(mockService),
           bind[AmendAreYouSureView].toInstance(mockView),
           bind[CacheConnector].toInstance(mockCacheConnector)
         ).build()
@@ -107,7 +90,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         verify(mockView).apply(any(), any(), refEq(retDisApi))(any(), any())
-        verify(mockCacheConnector, atLeastOnce).set(refEq(userAnswersId), refEq(userAnswers))(any())
 
       }
     }
@@ -116,10 +98,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendAreYouSurePage, true).get
-        .set(AmendSelectedPeriodKey, "TEST").get
+        .set(ReturnDisplayApiCacheable, retDisApi).get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[TaxReturnHelper].toInstance(mockService))
         .build()
 
       running(application) {
@@ -140,15 +121,14 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     "must redirect when periodKey is not in user answers" in {
       val userAnswers = UserAnswers(userAnswersId)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[TaxReturnHelper].toInstance(mockService)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
 
         val result = route(application, request).value
 
-        redirectLocation(result) mustBe Some("/go-and-select-a-year")
+        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
       }
     }
 
@@ -159,11 +139,11 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST").get
+        .set(ReturnDisplayApiCacheable, retDisApi).get
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[TaxReturnHelper].toInstance(mockService),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector)
           )
@@ -185,10 +165,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AmendSelectedPeriodKey, "TEST").get
+        .set(ReturnDisplayApiCacheable, retDisApi).get
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[TaxReturnHelper].toInstance(mockService))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =

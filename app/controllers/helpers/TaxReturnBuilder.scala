@@ -44,13 +44,7 @@ trait TaxReturnBuilder {
     modifiers.foldLeft(modelWithDefaults)((current, modifier) => modifier(current))
 
   private def modelWithDefaults: TaxReturn =
-    TaxReturn(id = UUID.randomUUID().toString, obligation = Some(defaultObligation))
-
-  val defaultObligation = TaxReturnObligation(fromDate = LocalDate.parse("2022-04-01"),
-    toDate = LocalDate.parse("2022-06-30"),
-    dueDate = LocalDate.parse("2022-09-30"),
-    periodKey = "22AC"
-  )
+    TaxReturn(id = UUID.randomUUID().toString, periodKey = "22AC")
 
   def withId(id: String): TaxReturnModifier = _.copy(id = id)
 

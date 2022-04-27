@@ -16,7 +16,7 @@
 
 package controllers
 
-import cacheables.ObligationCacheable
+import cacheables.AmendSelectedPeriodKey
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -68,7 +68,7 @@ class CheckYourAnswersController @Inject() (
           throw new IllegalStateException("no enrolmentId, all users at this point should have one")
         )
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+        val obligation = request.userAnswers.get[String](AmendSelectedPeriodKey).getOrElse(
           throw new IllegalStateException("Obligation not found!")
         )
 

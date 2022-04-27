@@ -16,7 +16,7 @@
 
 package controllers
 
-import cacheables.ObligationCacheable
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -84,7 +84,7 @@ class ReturnsCheckYourAnswersController @Inject()(
           throw new IllegalStateException("Obligation not found!")
         )
 
-        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation, ReturnType.NEW)
+        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
 
         submit(taxReturn).map {
           case Right(_) =>

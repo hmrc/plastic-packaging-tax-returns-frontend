@@ -16,12 +16,13 @@
 
 package controllers
 
-import cacheables.{AmendReturnPreviousReturn, AmendSelectedPeriodKey, ObligationCacheable}
+import cacheables.{AmendReturnPreviousReturn, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.Mode
+import models.returns.ReturnDisplayApi
 import navigation.Navigator
 import pages.AmendAreYouSurePage
 import play.api.data.Form
@@ -42,8 +43,7 @@ class AmendAreYouSureController @Inject() (
   requireData: DataRequiredAction,
   formProvider: AmendAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendAreYouSureView,
-  taxReturnHelper: TaxReturnHelper
+  view: AmendAreYouSureView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -52,30 +52,15 @@ class AmendAreYouSureController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
         val userAnswers = request.userAnswers
 
         val preparedForm = userAnswers.fill(AmendAreYouSurePage, form)
 
-        val periodKey = userAnswers.get(AmendSelectedPeriodKey)
-        periodKey.fold {
-          Future.successful(Redirect("/go-and-select-a-year")) //todo carls page
-        } { period =>
-
-          taxReturnHelper.getObligation(pptId, period).map { obligations =>
-
-            if(obligations.isEmpty) { throw new IllegalStateException("There must be an obligation to amend") }
-
-            Future.fromTry(request.userAnswers.set(ObligationCacheable, obligations.head)).map {
-              ans => cacheConnector.set(pptId, ans)
-            }
-          }
-
-          taxReturnHelper.fetchTaxReturn(pptId, period).map { submittedReturn =>
-            Ok(view(preparedForm, mode, submittedReturn))
-          }
-
+        userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
+          case Some(displayApi) => Future.successful(Ok(view(preparedForm, mode, displayApi)))
+          case None             => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
         }
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -83,23 +68,24 @@ class AmendAreYouSureController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
         val userAnswers = request.userAnswers
-        val periodKey = userAnswers.get(AmendSelectedPeriodKey).getOrElse(throw new IllegalStateException("no period key to amend with"))
 
-        taxReturnHelper.fetchTaxReturn(pptId, periodKey).flatMap{submittedReturn =>
-          form.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
-            amend => {
-                for {
-                updatedAnswers <- Future.fromTry(
-                  userAnswers
-                    .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
-                    .flatMap(_.set(AmendAreYouSurePage, amend))
-                )
-                _ <- cacheConnector.set(pptId, updatedAnswers)
-              } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
-            }
-          )
-      }
+        val submittedReturn = userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
+          throw new IllegalStateException("Must have a tax return against which to amend")
+        )
+
+        form.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
+          amend => {
+            for {
+              updatedAnswers <- Future.fromTry(
+                userAnswers
+                  .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
+                  .flatMap(_.set(AmendAreYouSurePage, amend))
+              )
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+          }
+        )
     }
 
 }

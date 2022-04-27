@@ -16,7 +16,7 @@
 
 package controllers
 
-import cacheables.AmendSelectedPeriodKey
+import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -48,16 +48,20 @@ class ViewReturnSummaryController @Inject() (
 
         val pptId: String = request.request.enrolmentId.getOrElse(
           throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-        ) // TODO Make this not optional?
+        )
 
         val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey.toUpperCase())
 
         for {
+          submittedReturn <- submittedReturnF
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(AmendSelectedPeriodKey, periodKey)
+            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
+              AmendSelectedPeriodKey, periodKey
+            ).getOrElse(UserAnswers(request.userId)).set(
+              ReturnDisplayApiCacheable, submittedReturn
+            )
           )
           _ <- cacheConnector.set(pptId, updatedAnswers)
-          submittedReturn <- submittedReturnF
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
