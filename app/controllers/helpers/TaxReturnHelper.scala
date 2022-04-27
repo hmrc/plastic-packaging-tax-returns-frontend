@@ -46,7 +46,7 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier) = {
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
     obligationsConnector.getFulfilled(pptId) map {obligations =>
       obligations.filter(o => o.periodKey == periodKey)
     }
@@ -95,8 +95,6 @@ class TaxReturnHelper @Inject()(
             value => RecycledPlasticWeight(value)
           )
         )
-
-
       case AMEND =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
