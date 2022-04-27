@@ -241,7 +241,7 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
-return.confirmation.panel = Your reference number for this return is {0}
+return.confirmation.panel =
 
 deregistered.title = deregistered
 deregistered.heading = deregistered
