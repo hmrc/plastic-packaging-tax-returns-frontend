@@ -85,24 +85,24 @@
         classes = "row-header--no-border cell--no-border "
     ))
 
-    @paragraphBody(messages("returns.checkYourReturnPage.taxLiability.description"), classes = "govuk-body-m")
+    @paragraphBody(messages("returnsCheckYourAnswers.taxLiability.description"), classes = "govuk-body-m")
 
     @govukTable(Table(
         rows = Seq(
-            taxCalculationRow("returns.checkYourReturnPage.totalCredits.creditsRequested.label", displayMonetaryValue(taxLiability.totalCredit), "", "row-border"),
+            taxCalculationRow("returnsCheckYourAnswers.totalCredits.creditsRequested.label", displayMonetaryValue(taxLiability.totalCredit), "", "row-border"),
             ),
             head = Some(Seq(
                 HeadCell(
                     classes = "govuk-!-width-one-half",
-                    content = hiddenText("returns.checkYourReturnPage.header.amount")
+                    content = hiddenText("returnsCheckYourAnswers.header.amount")
             ),
             HeadCell(
-                content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                content = hiddenText("returnsCheckYourAnswers.header.amount"),
                 classes = "govuk-!-width-one-quarter",
                 format = Some("numeric")
                 ),
             HeadCell(
-                content = hiddenText("returns.checkYourReturnPage.header.amount"),
+                content = hiddenText("returnsCheckYourAnswers.header.amount"),
                 classes = "govuk-!-width-one-quarter"
                 ))),
             caption = Some(messages("returns.checkYourReturnPage.totalCredits.label")),
@@ -112,7 +112,7 @@
             )
     )
 
-    @paragraphBody(messages("returns.checkYourReturnPage.totalCredits.description"), classes = "govuk-body-m")
+    @paragraphBody(messages("returnsCheckYourAnswers.totalCredits.description"), classes = "govuk-body-m")
 
     @formHelper(action = routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 

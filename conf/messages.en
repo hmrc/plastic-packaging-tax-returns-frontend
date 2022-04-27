@@ -307,10 +307,10 @@ returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
 returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
 returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
 returnsCheckYourAnswers.taxLiability.label = Tax Liability
-returns.checkYourReturnPage.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
-returns.checkYourReturnPage.totalCredits.label = Total Credits
-returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Requested
-returns.checkYourReturnPage.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
+returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
+returnsCheckYourAnswers.totalCredits.label = Total Credits
+returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
+returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
 
 returnConfirmation.title = returnConfirmation
 returnConfirmation.heading = returnConfirmation
