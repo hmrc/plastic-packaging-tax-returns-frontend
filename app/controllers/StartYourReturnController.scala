@@ -16,9 +16,12 @@
 
 package controllers
 
-import connectors.CacheConnector
+import connectors.{CacheConnector, ObligationsConnector}
 import controllers.actions._
+import controllers.helpers.TaxReturnHelper
 import forms.StartYourReturnFormProvider
+import models.obligations.PPTObligations
+import models.returns.TaxReturnObligation
 
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
@@ -39,37 +42,50 @@ class StartYourReturnController @Inject()(
                                          getData: DataRetrievalAction,
                                          formProvider: StartYourReturnFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: StartYourReturnView
+                                         view: StartYourReturnView,
+                                         taxReturnHelper: TaxReturnHelper
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
+      val pptId: String = request.request.enrolmentId.getOrElse(
+        throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+      )
 
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).get(StartYourReturnPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
+        Future.successful(Ok(view(preparedForm, mode, taxReturnObligation)))
+      }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(
-              request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
-            )
-            _              <- cacheConnector.set(pptId, updatedAnswers)
-          } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+      val pptId: String = request.request.enrolmentId.getOrElse(
+        throw new IllegalStateException("no enrolmentId, all users at this point should have one")
       )
+
+      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode, taxReturnObligation))),
+
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
+              )
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+        )
+      }
   }
 }

@@ -16,13 +16,16 @@
 
 package controllers
 
-import base.SpecBase
-import connectors.CacheConnector
+import base.{MockObligationsConnector, SpecBase}
+import connectors.{CacheConnector, ObligationsConnector}
 import forms.StartYourReturnFormProvider
+import models.obligations.PPTObligations
+import models.returns.TaxReturnObligation
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import pages.StartYourReturnPage
 import play.api.inject.bind
@@ -31,9 +34,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.StartYourReturnView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
+class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -42,11 +46,24 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val startYourReturnRoute = routes.StartYourReturnController.onPageLoad(NormalMode).url
 
+  val obligation: TaxReturnObligation = TaxReturnObligation(
+    fromDate = LocalDate.parse("2022-04-01"),
+    toDate = LocalDate.parse("2022-06-30"),
+    dueDate = LocalDate.parse("2022-09-30"),
+    periodKey = "22AC"
+  )
+
+  val pptObligation: PPTObligations = PPTObligations(Some(obligation), Some(obligation), 1, true, true)
+
   "StartYourReturn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setUpMocks
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).build()
 
       running(application) {
         val request = FakeRequest(GET, startYourReturnRoute)
@@ -56,15 +73,19 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[StartYourReturnView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, obligation)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      setUpMocks
+
       val userAnswers = UserAnswers(userAnswersId).set(StartYourReturnPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).build()
 
       running(application) {
         val request = FakeRequest(GET, startYourReturnRoute)
@@ -74,11 +95,13 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
+
+      setUpMocks
 
       val mockCacheConnector = mock[CacheConnector]
 
@@ -88,7 +111,8 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
+            bind[CacheConnector].toInstance(mockCacheConnector),
+            bind[ObligationsConnector].toInstance(mockObligationsConnector)
           )
           .build()
 
@@ -106,7 +130,11 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      setUpMocks
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).build()
 
       running(application) {
         val request =
@@ -120,9 +148,18 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation)(request, messages(application)).toString
 
       }
     }
+  }
+
+  private def setUpMocks: OngoingStubbing[Future[PPTObligations]] = {
+    reset(mockObligationsConnector)
+
+    when(mockObligationsConnector.getOpen(any())(any())).thenReturn(
+      Future.successful(pptObligation)
+    )
+
   }
 }

@@ -16,7 +16,7 @@
 
 package controllers.helpers
 
-import connectors.{ServiceError, TaxReturnsConnector}
+import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
 import models.UserAnswers
 import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
@@ -25,27 +25,27 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxReturnHelper @Inject()(
                                  override val messagesApi: MessagesApi,
                                  val controllerComponents: MessagesControllerComponents,
-                                 returnsConnector: TaxReturnsConnector
+                                 returnsConnector: TaxReturnsConnector,
+                                 obligationsConnector: ObligationsConnector
                                )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-  // TODO - where do we get this obligation from? A GET on the return?
-  private val defaultObligation: TaxReturnObligation = TaxReturnObligation(
-    fromDate = LocalDate.parse("2022-04-01"),
-    toDate = LocalDate.parse("2022-06-30"),
-    dueDate = LocalDate.parse("2022-09-30"),
-    periodKey = "22AC"
-  )
+  def nextObligation(pptId: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
+    obligationsConnector.getOpen(pptId) map { obligations =>
+      val nextObligation: TaxReturnObligation = obligations.nextObligation.getOrElse(
+        throw new IllegalStateException("Next open obligation can't be found")
+      )
 
-  //todo why is this here?
+      nextObligation
+    }
+  }
+
   def fetchTaxReturn(userId: String, periodKey: String)(implicit
                                                         hc: HeaderCarrier
   ): Future[ReturnDisplayApi] = {
@@ -57,14 +57,12 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-
-
-   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, returnType: ReturnType): TaxReturn = {
+   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, obligation: TaxReturnObligation, returnType: ReturnType): TaxReturn = {
     returnType match {
       case NEW =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
-          obligation = Some(defaultObligation),
+          obligation = Some(obligation),
                     manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
           manufacturedPlasticWeight =
             userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
@@ -96,7 +94,7 @@ class TaxReturnHelper @Inject()(
       case AMEND =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
-          obligation = Some(defaultObligation),
+          obligation = Some(obligation),
           manufacturedPlasticWeight =
             userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
               value => ManufacturedPlasticWeight(value)
@@ -118,8 +116,6 @@ class TaxReturnHelper @Inject()(
           )
         )
     }
-
-
   }
 
 }
