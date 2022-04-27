@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -22,9 +24,13 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("startYourReturn.title"))) {
+@layout(pageTitle = title(form,
+    messages("startYourReturn.title",
+        messages(s"month.${obligation.fromDate.getMonthValue}"),
+        messages(s"month.${obligation.toDate.getMonthValue}"),
+        obligation.toDate.getYear.toString))) {
 
     @formHelper(action = routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -35,7 +41,11 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("startYourReturn.heading")).asPageHeading()
+                legend = LegendViewModel(
+                    messages("startYourReturn.heading",
+                        messages(s"month.${obligation.fromDate.getMonthValue}"),
+                        messages(s"month.${obligation.toDate.getMonthValue}"),
+                        obligation.toDate.getYear.toString)).asPageHeading()
             )
         )
 

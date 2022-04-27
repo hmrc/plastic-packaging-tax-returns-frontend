@@ -62,15 +62,22 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers,ReturnType.AMEND)
-        submit(taxReturn).map {
-          case Right(_) =>
-            Redirect(routes.AmendConfirmationController.onPageLoad())
 
-          case Left(error) =>
-            throw error
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        )
+
+        taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
+          val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers, taxReturnObligation, ReturnType.AMEND)
+          submit(taxReturn).map {
+            case Right(_) =>
+              Redirect(routes.AmendConfirmationController.onPageLoad())
+
+            case Left(error) =>
+              throw error
+
+          }
         }
-
     }
 
   private def submit(
