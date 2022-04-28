@@ -315,9 +315,10 @@ returnsCheckYourAnswers.totalCredits.label = Total Credits
 returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
 returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
 
-agents.title = agents
-agents.heading = agents
-agents.checkYourAnswersLabel = agents
-agents.error.required = Enter agents
-agents.error.length = Agents must be 15 characters or less
-agents.change.hidden = Agents
+agents.title = What is your client’s Plastic Packaging Tax registration number?
+agents.heading = What is your client’s Plastic Packaging Tax registration number?
+agents.checkYourAnswersLabel = What is your client’s Plastic Packaging Tax registration number?
+agents.error.required = Enter your client’s Plastic Packaging Tax registration number
+agents.error.length = Registration number must be 15 characters
+agents.change.hidden = What is your client’s Plastic Packaging Tax registration number?
+agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
