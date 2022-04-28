@@ -1,11 +1,7 @@
-# microservice specific routes
+GET        /sign-out                            controllers.auth.AuthController.signOut
+GET        /signed-out                          controllers.auth.SignedOutController.onPageLoad
 
-GET        /                        uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.HomeController.displayPage()
+GET        /sign-out-no-survey                     controllers.auth.AuthController.signOutNoSurvey
 
-GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.returns.views.model.SignOutReason)
-GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.SignOutController.sessionTimeoutSignedOut()
-
-GET        /user-unauthorised       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.UnauthorisedController.unauthorised()
-GET        /not-enrolled       uk.gov.hmrc.plasticpackagingtax.returns.controllers.home.UnauthorisedController.notEnrolled()
-
-GET        /deregistered-account    uk.gov.hmrc.plasticpackagingtax.returns.controllers.deregistration.DeregisteredController.displayPage()
+GET        /user-unauthorised                           controllers.home.UnauthorisedController.unauthorised()
+GET        /not-enrolled                                controllers.home.UnauthorisedController.notEnrolled()

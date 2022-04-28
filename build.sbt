@@ -1,66 +1,91 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+import play.sbt.routes.RoutesKeys
+import sbt.Def
+import scoverage.ScoverageKeys
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
-val appName = "plastic-packaging-tax-returns-frontend"
+lazy val appName: String = "plastic-packaging-tax-returns-frontend-scaffold"
+val silencerVersion      = "1.6.0"
 
-PlayKeys.devSettings := Seq("play.server.http.port" -> "8505")
-
-val silencerVersion = "1.7.1"
-
-lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, SbtWeb)
-  .disablePlugins(JUnitXmlReportPlugin)
-  .settings(majorVersion := 0,
-            scalaVersion := "2.12.11",
-            libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-            TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.hmrcfrontend.views.html.components._",
-                                              "uk.gov.hmrc.govukfrontend.views.html.components._"
-            ),
-            // auto format code following .scalafmt.conf
-            scalafmtOnCompile in Compile := true,
-            scalafmtOnCompile in Test := true,
-            // ***************
-            // Use the silencer plugin to suppress warnings
-            // You may turn it on for `views` too to suppress warnings from unused imports in compiled twirl templates, but this will hide other warnings.
-            scalacOptions += "-P:silencer:pathFilters=routes",
-            libraryDependencies ++= Seq(
-              compilerPlugin(
-                "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full
-              ),
-              "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-            )
-  )
-  .settings(publishingSettings: _*)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
+  .disablePlugins(
+    JUnitXmlReportPlugin
+  ) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .settings(DefaultBuildSettings.scalaSettings: _*)
+  .settings(DefaultBuildSettings.defaultSettings(): _*)
+  .settings(SbtDistributablesPlugin.publishingSettings: _*)
+  .settings(inConfig(Test)(testSettings): _*)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
-  .settings(scoverageSettings)
-  .settings(silencerSettings)
-
-lazy val scoverageSettings: Seq[Setting[_]] = Seq(
-  coverageExcludedPackages := List("<empty>",
-                                   "Reverse.*",
-                                   "metrics\\..*",
-                                   "features\\..*",
-                                   "test\\..*",
-                                   ".*(BuildInfo|Routes|Options).*",
-                                   "logger.*\\(.*\\)"
-  ).mkString(";"),
-  coverageMinimum := 94.0,
-  coverageFailOnMinimum := true,
-  coverageHighlighting := true,
-  parallelExecution in Test := false
-)
-
-lazy val silencerSettings: Seq[Setting[_]] =
-  Seq(
-    libraryDependencies ++= Seq(
-      compilerPlugin(
-        "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full
-      )
-    ),
+  .settings(inConfig(IntegrationTest)(itSettings): _*)
+  .settings(majorVersion := 0)
+  .settings(useSuperShell in ThisBuild := false)
+  .settings(scalaVersion := "2.12.10",
+            name := appName,
+            RoutesKeys.routesImport ++= Seq("models._",
+                                            "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
+            ),
+            TwirlKeys.templateImports ++= Seq("play.twirl.api.HtmlFormat",
+                                              "play.twirl.api.HtmlFormat._",
+                                              "uk.gov.hmrc.govukfrontend.views.html.components._",
+                                              "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+                                              "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
+                                              "views.ViewUtils._",
+                                              "models.Mode",
+                                              "controllers.routes._",
+                                              "viewmodels.govuk.all._"
+            ),
+            PlayKeys.playDefaultPort := 8505,
+            ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
+              ".*Routes.*;.*viewmodels.govuk.*;metrics\\\\..*;features\\\\..*;test\\\\..*;.*(BuildInfo|Routes|Options).*;logger.*\\\\(.*\\\\);",
+            // TODO - Need to bump this
+            ScoverageKeys.coverageMinimumStmtTotal := 50.0,
+            ScoverageKeys.coverageFailOnMinimum := true,
+            ScoverageKeys.coverageHighlighting := true,
+            scalacOptions ++= Seq("-feature"),
+            libraryDependencies ++= AppDependencies(),
+            retrieveManaged := true,
+            evictionWarningOptions in update :=
+              EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+            resolvers ++= Seq(Resolver.jcenterRepo),
+            // concatenate js
+            Concat.groups := Seq(
+              "javascripts/application.js" ->
+                group(Seq("javascripts/app.js"))
+            ),
+            // prevent removal of unused code which generates warning errors due to use of third-party libs
+            uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+            pipelineStages := Seq(digest),
+            // below line required to force asset pipeline to operate in dev rather than only prod
+            pipelineStages in Assets := Seq(concat, uglify),
+            // only compress files generated by concat
+            includeFilter in uglify := GlobFilter("application.js")
+  )
+  .settings(
     // silence all warnings on autogenerated files
     scalacOptions += "-P:silencer:pathFilters=target/.*",
     // Make sure you only exclude warnings for the project directories, i.e. make builds reproducible
-    scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}"
+    scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
+    // Suppress warnings due to mongo dates using $date in their Json representation
+    scalacOptions += "-P:silencer:globalFilters=possible missing interpolator: detected interpolated identifier `\\$date`",
+    libraryDependencies ++= Seq(
+      compilerPlugin(
+        "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full
+      ),
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    )
   )
+
+lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+  fork := true,
+  javaOptions ++= Seq("-Dconfig.resource=test.application.conf"),
+  unmanagedSourceDirectories += baseDirectory.value / "test-utils"
+)
+
+lazy val itSettings = Defaults.itSettings ++ Seq(
+  unmanagedSourceDirectories := Seq(baseDirectory.value / "it", baseDirectory.value / "test-utils"),
+  unmanagedResourceDirectories := Seq(baseDirectory.value / "it" / "resources"),
+  parallelExecution := false,
+  fork := true,
+  javaOptions ++= Seq("-Dconfig.resource=it.application.conf")
+)

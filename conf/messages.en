@@ -1,17 +1,20 @@
-service.name=Plastic Packaging Tax
-service.section=Submit return
+service.name = Plastic Packaging Tax
 
-site.link.change = Change
-site.back.hiddenText = to previous page
 site.back = Back
-site.backToGovUk = Back to GOV.UK
-site.button.save = Save
-site.button.continue = Continue
-site.button.saveAndContinue = Save and continue
-site.error.summary.title = There is a problem
+site.remove = Remove
+site.change = Change
+site.no = No
+site.yes = Yes
+site.continue = Save and continue
+site.continue.confirm = Confirm and continue
+site.start = Start now
+site.startAgain = Start again
+site.signIn = Sign in
+site.govuk = GOV.UK
 
-general.true = Yes
-general.false = No
+date.day = Day
+date.month = Month
+date.year = Year
 
 month.1 = January
 month.2 = February
@@ -27,34 +30,223 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
+obligationPeriod.caption = April to June 2022
 
-feedback=This is a new service - your {0} will help us to improve it.
-feedback.link=feedback
+timeout.title = You’re about to be signed out
+timeout.message = For security reasons, you will be signed out of this service in
+timeout.keepAlive = Stay signed in
+timeout.signOut = Sign out
 
-sessionTimeout.title = For your security, we signed you out
-sessionTimeout.paragraph.saved = We saved your answers.
-sessionTimeout.signin.button = Sign in
+error.browser.title.prefix = Error:
+error.boolean = Please give an answer
+error.invalid_date = Give a correct date
+error.date.day_blank = Enter a day
+error.date.day_invalid = Give a correct day using numbers 1 to 31
+error.date.month_blank = Enter a month
+error.date.month_invalid = Give a correct month using numbers 1 to 12
+error.date.year_blank = Enter a year
+error.date.year_invalid = Give a correct year
+error.integer = Give an answer in whole numbers
+error.non_numeric = Give a value using only numbers
+error.number = Please enter a valid number
+error.required = Please enter a value
+error.summary.title = There is a problem
 
-unauthorised.heading = You must be registered to use this service
-unauthorised.paragraph.1 = You need to {0} to use this service
-unauthorised.paragraph.1.link = register for Plastic Packaging Tax
-unauthorised.paragraph.2 = Visit the {0} for more information.
-unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
+index.title = plastic-packaging-tax-returns-frontend-scaffold
+index.heading = plastic-packaging-tax-returns-frontend-scaffold
+index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-timeoutDialog.title = Your session will timeout soon
-timeoutDialog.message = For your security, we will sign you out in
-timeoutDialog.keepAlive.text = Stay signed in
-timeoutDialog.signout.text= Sign out
+checkYourAnswers.title = Check Your Answers
+checkYourAnswers.heading = Check Your Answers
 
-title.format={0} - {1} - GOV.UK
-title.withSection.format={0} - {1} - {2} - GOV.UK
+journeyRecovery.continue.title = Sorry, there is a problem with the service
+journeyRecovery.continue.heading = Sorry, there is a problem with the service
+journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
+journeyRecovery.startAgain.title = Sorry, there is a problem with the service
+journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
+journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
 
-account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
-account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
-agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax registration number
-agents.client.identifier.length.error=Registration number must be 15 characters
-agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
-agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+signedOut.title = For your security, we signed you out
+signedOut.heading = For your security, we signed you out
+signedOut.guidance = We have saved your answers.
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account
+
+amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
+amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = Weight of directly exported plastic packaging
+amendDirectExportPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendDirectExportPlasticPackaging.error.required = Enter the weight, in kilograms
+amendDirectExportPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendDirectExportPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendDirectExportPlasticPackaging.change.hidden = AmendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.hint = Tax is not charged on plastic packaging that you directly. This will be deducted from your tax liability.
+
+amendHumanMedicinePlasticPackaging.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine? - Submit return - Plastic Packaging Tax - GOV.UK
+amendHumanMedicinePlasticPackaging.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported used for licenced human medicines
+amendHumanMedicinePlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendHumanMedicinePlasticPackaging.error.required = Enter the weight, in kilograms
+amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendHumanMedicinePlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendHumanMedicinePlasticPackaging.change.hidden = AmendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.hint = Tax is not charged on plastic packaging that comes into immediate contact with licensed human medicines. This will be deducted from your tax liability.
+
+amendImportedPlasticPackaging.title = How much did your finished imported plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
+amendImportedPlasticPackaging.heading = How much did your finished imported plastic packaging components weigh?
+amendImportedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging imported
+amendImportedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendImportedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendImportedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendImportedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendImportedPlasticPackaging.change.hidden = AmendImportedPlasticPackaging
+amendImportedPlasticPackaging.hint = Do not include plastic packaging components which are (any of the following):
+amendImportedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
+amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
+amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
+
+
+amendManufacturedPlasticPackaging.title = How much did your finished manufactured plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
+amendManufacturedPlasticPackaging.heading = How much did your finished manufactured plastic packaging components weigh?
+amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
+amendManufacturedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendManufacturedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendManufacturedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendManufacturedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendManufacturedPlasticPackaging.change.hidden = AmendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.hint = Do not include plastic packaging components which are (any of the following):
+amendManufacturedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
+amendManufacturedPlasticPackaging.hint.list.2 = an integral part of the goods
+amendManufacturedPlasticPackaging.hint.list.3 = reused for the presentation of goods
+
+amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
+amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported containing 30% or more recycled plastic
+amendRecycledPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendRecycledPlasticPackaging.error.required = Enter the weight, in kilograms
+amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.hint = Tax is not charged on plastic packaging that contains 30% or more recycled plastic. This will be deducted from your tax liability.
+
+amendAreYouSure.title = Would you like to amend this return?
+amendAreYouSure.heading = Would you like to amend this return?
+amendAreYouSure.checkYourAnswersLabel = amendAreYouSure
+amendAreYouSure.error.required = Select yes if you want to amend your return
+amendAreYouSure.change.hidden = AmendAreYouSure
+
+amend.confirmation.title = Your return will be amended
+amend.confirmation.submitted = Your return will be amended
+amend.confirmation.panel = Your reference number for this amendment is PPT12345654321
+amend.confirmation.check.account = Check your PPT account
+amend.confirmation.subheading  = What happens next
+amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Plastic Packaging Tax account
+amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
+amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
+
+convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+convertedPackagingCredit.heading = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+convertedPackagingCredit.checkYourAnswersLabel = Conversion credit
+convertedPackagingCredit.error.nonNumeric = Enter a value using numbers
+convertedPackagingCredit.error.required = Enter a value
+convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
+convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
+convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+
+exportedPlasticPackagingWeight.title = How much of your finished plastic packaging components did you directly export?
+exportedPlasticPackagingWeight.heading = How much of your finished plastic packaging components did you directly export?
+exportedPlasticPackagingWeight.checkYourAnswersLabel = Direct exports
+exportedPlasticPackagingWeight.error.nonNumeric = Enter a weight using numbers
+exportedPlasticPackagingWeight.error.required = Enter a weight
+exportedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+exportedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+exportedPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components did you directly export?
+
+humanMedicinesPlasticPackagingWeight.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+humanMedicinesPlasticPackagingWeight.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Humans medicines packaging
+humanMedicinesPlasticPackagingWeight.error.nonNumeric = Enter a weight using numbers
+humanMedicinesPlasticPackagingWeight.error.required = Enter a weight
+humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+humanMedicinesPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+
+importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period?
+importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
+
+importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.error.nonNumeric =  Imported packaging total
+importedPlasticPackagingWeight.error.required = Enter a weight
+importedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+importedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+importedPlasticPackagingWeight.change.hidden = How much did your finished imported plastic packaging components weigh?
+
+manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.error.required = Select yes if you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
+
+manufacturedPlasticPackagingWeight.title = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.heading = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
+manufacturedPlasticPackagingWeight.error.nonNumeric = Enter a weight using numbers
+manufacturedPlasticPackagingWeight.error.required = Enter a weight
+manufacturedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+manufacturedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+manufacturedPlasticPackagingWeight.change.hidden = How much did your finished manufactured plastic packaging components weigh?
+
+recycledPlasticPackagingWeight.title = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+recycledPlasticPackagingWeight.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+recycledPlasticPackagingWeight.checkYourAnswersLabel = Recycled packaging total
+recycledPlasticPackagingWeight.error.nonNumeric = Enter a weight using numbers
+recycledPlasticPackagingWeight.error.required = Enter a weight
+recycledPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+recycledPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+recycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+
+viewReturnSummary.sectionHeader = Submitted return for
+viewReturnSummary.amendLink = Amend this return
+viewReturnSummary.summary.heading = Summary
+viewReturnSummary.summary.field.liability = Tax liability for this period
+viewReturnSummary.summary.field.processed = Return processed
+viewReturnSummary.summary.field.reference = Charge reference number for this return
+viewReturnSummary.details.heading = Details
+viewReturnSummary.liable.heading = Liable plastic packaging
+viewReturnSummary.liable.field.manufactured = Plastic packaging manufactured
+viewReturnSummary.liable.field.imported = Plastic packaging imported
+viewReturnSummary.liable.field.total = Liable plastic packaging total
+viewReturnSummary.exempt.heading = Exempt plastic packaging
+viewReturnSummary.exempt.field.exported = Plastic packaging exported
+viewReturnSummary.exempt.field.medicine = Plastic packaging used for licenced human medicines
+viewReturnSummary.exempt.field.recycled = Plastic packaging containing 30% or more recycled
+viewReturnSummary.exempt.field.total = Exempt plastic packaging total
+viewReturnSummary.calculation.heading = Your tax calculation
+viewReturnSummary.calculation.field.total = Plastic packaging total
+viewReturnSummary.calculation.field.exempt = Exempt plastic packaging total
+viewReturnSummary.calculation.field.liable = Liable plastic packaging total
+viewReturnSummary.calculation.field.tax = Tax
+viewReturnSummary.calculation.field.credit = Credit claimed
+viewReturnSummary.calculation.field.debit = Debit??
+viewReturnSummary.calculation.field.liability = Your tax liability
+viewReturnSummary.credits.heading = Credits
+viewReturnSummary.credits.field.credit = Credit claimed
+viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
+
+return.confirmation.title = Return submitted
+return.confirmation.submitted = Return submitted
+return.confirmation.panel =
+return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
+return.confirmation.body.3 = We will not email you a confirmation.
+return.confirmation.return.link = Return to your Plastic Packaging Tax account
+return.confirmation.exitSurvey.text = {0} (Takes 30 seconds)
+return.confirmation.exitSurvey.text.link = What did you think of this service?
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
@@ -80,6 +272,11 @@ account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
 account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
+account.homePage.card.payments.payment.link = Make a PPT payment
+
+account.homePage.card.history.header = History
+account.homePage.card.history.viewreturnslink = View or amend submitted returns
+account.homePage.card.history.viewpaymentslink = View payment history
 
 account.homePage.manage.ppt.account.header = Manage your account
 account.homePage.card.registration.details.1.link.single = Your registration details
@@ -94,195 +291,34 @@ account.homePage.card.registration.details.2.body.partnership = View and change 
 account.homePage.card.deregister.link = Deregister from Plastic Packaging Tax
 account.homePage.card.deregister.body = Cancel your Plastic Packaging Tax registration.
 
-returns.startPage.title = Submit a return
-returns.startPage.title.sectionHeader = Plastic Packaging Tax return
-returns.startPage.informationYouNeed.header = Information you need
-returns.startPage.informationYouNeed.body = To submit a return through this service, you will need to enter details of the plastic packaging that the business has manufactured, converted or imported in this reporting quarter.
-returns.startPage.informationYouNeed.listItems.header = This includes the total weight of:
-returns.startPage.informationYouNeed.listItem.1 = all plastic packaging processed by the business
-returns.startPage.informationYouNeed.listItem.2 = any plastic packaging that is liable for the tax
-returns.startPage.informationYouNeed.listItem.3 = plastic packaging used for human medicines purposes (if applicable)
-returns.startPage.informationYouNeed.listItem.4 = all plastic packaging that has been directly exported
-returns.startPage.informationYouNeed.listItem.5 = any non-direct plastic packaging exports for credit
-returns.startPage.whatIsLiable.header = What is liable?
-returns.startPage.whatIsLiable.body.1 = The Plastic Packaging Tax has been introduced into UK law. It applies to liable UK companies and partnerships from 1st April 2022.
-returns.startPage.whatIsLiable.body.2 = Companies are liable if they import or manufacture at least 10 tonnes of plastic packaging a year. Exemptions may apply.
-returns.startPage.whatIsLiable.body.3 = You can also read the {0} for more details on liability criteria and exemptions.
-returns.startPage.whatIsLiable.body.3.link = Plastic Packaging Tax guidance
-returns.startPage.whatIsLiable.listItems.header = The tax applies to plastic packaging that:
-returns.startPage.whatIsLiable.listItem.1 = is produced in or imported into the UK
-returns.startPage.whatIsLiable.listItem.2 = does not contain at least 30% recycled plastic
-returns.startPage.whatIsLiable.listItem.3 = is mostly composed of plastic by weight
-returns.startPage.buttonName = Start now
+submittedReturns.title = View submitted returns
+submittedReturns.heading = View submitted returns
+submittedReturns.nothingsubmitted = You have not submitted any returns yet.
+submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
 
-returns.manufacturedPlastic.title = Have you manufactured finished plastic packaging components in this period?
-returns.manufacturedPlastic.details.link = What do we mean by components?
-returns.manufacturedPlastic.details.line1 = Individual packaging components are generally manufactured separately before being assembled into a packaging unit.
-returns.manufacturedPlastic.details.line2 = See {0}.
-returns.manufacturedPlastic.details.line2.link = examples of components
-returns.manufacturedPlastic.details.empty.error = Select yes if you have manufactured finished plastic packaging components in this period
+help.not.include = examples of things you should not include
 
-returns.sectionHeader = {0} to {1} {2}
+startYourReturn.title = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.heading = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.error.required = Select yes if you want to start your return
+startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
 
-returns.manufacturedPlasticWeight.title = How much did your finished manufactured plastic packaging components weigh?
-returns.manufacturedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
-returns.manufacturedPlasticWeight.hint = Do not include plastic packaging components which are (any of the following):
-returns.manufacturedPlasticWeight.hint.1 = used in the long-term storage of goods
-returns.manufacturedPlasticWeight.hint.2 = an integral part of the goods
-returns.manufacturedPlasticWeight.hint.3 = reused for the presentation of goods
-returns.manufacturedPlasticWeight.hint.4 = See {0}.
-returns.manufacturedPlasticWeight.hint.4.link = examples of things you should not include
-returns.manufacturedPlasticWeight.empty.error = Enter the weight, in kilograms
-returns.manufacturedPlasticWeight.format.error = Amount must be entered as numbers only
-returns.manufacturedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
+returnsCheckYourAnswers.heading = Check your return
+returnsCheckYourAnswers.answers.subheading = Plastic Packaging Tax Return
+returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
+returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
+returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
+returnsCheckYourAnswers.taxLiability.label = Tax Liability
+returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
+returnsCheckYourAnswers.totalCredits.label = Total Credits
+returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
+returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
 
-returns.importedPlasticWeight.component.title = Have you imported finished plastic packaging components in this period?
-returns.importedPlasticWeight.component.details.line1 = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
-returns.importedPlasticWeight.component.details.empty.error = Select yes if you have imported finished plastic packaging components in this period
-
-returns.importedPlasticWeight.meta.title = How much did your finished imported plastic packaging components weigh? - Submit return
-returns.importedPlasticWeight.title = How much did your finished imported plastic packaging components weigh?
-returns.importedPlasticWeight.hint = This applies whether they are filled or unfilled. Finished means you have made no further substantial modifications.
-returns.importedPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
-returns.importedPlasticWeight.details.link = How are plastic packaging and components defined?
-returns.importedPlasticWeight.details.line1 = Do not include plastic packaging components which are (any of the following):
-returns.importedPlasticWeight.details.line2 = used in the long-term storage of goods
-returns.importedPlasticWeight.details.line3 = an integral part of the goods
-returns.importedPlasticWeight.details.line4 = reused for the presentation of goods
-returns.importedPlasticWeight.details.line5 =
-returns.importedPlasticWeight.empty.error = Enter the weight, in kilograms
-returns.importedPlasticWeight.format.error = Amount must be entered as numbers only
-returns.importedPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-
-returns.humanMedicinesPlasticWeight.meta.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
-returns.humanMedicinesPlasticWeight.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
-returns.humanMedicinesPlasticWeight.hint = Plastic packaging that comes into immediate contact with licensed human medicines is not liable for the tax. This will be deducted from your tax liability.
-returns.humanMedicinesPlasticWeight.total.weight = Enter 0, if none of your plastic packaging components were used for the immediate packaging of licensed human medicine.
-returns.humanMedicinesPlasticWeight.details.link = What do you mean by immediate packaging?
-returns.humanMedicinesPlasticWeight.details.line = The packaging is ‘immediate’ if it comes into direct contact with a medicinal product.
-returns.humanMedicinesPlasticWeight.empty.error = Enter the weight, in kilograms
-returns.humanMedicinesPlasticWeight.format.error = Amount must be entered as numbers only
-returns.humanMedicinesPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-
-returns.exportedPlasticWeight.title = How much of your finished plastic packaging components did you directly export?
-returns.exportedPlasticWeight.para.1 = Plastic packaging that you directly export is not liable for the tax. This will be deducted from your tax liability.
-returns.exportedPlasticWeight.details.reveal = What does directly exported mean?
-returns.exportedPlasticWeight.details.content = If you export your plastic packaging yourself, rather than through a third party, it is classed as directly exported.
-returns.exportedPlasticWeight.para.2.bold = Do not include your finished plastic components which you told us were used for the immediate packaging of licensed human medicine.
-returns.exportedPlasticWeight.hint = Enter 0, if none of your plastic packaging components were used for the immediate packaging of licensed human medicine.
-returns.exportedPlasticWeight.totalKg.empty.error = Enter the weight, in kilograms
-returns.exportedPlasticWeight.totalKg.format.error = Amount must be entered as numbers only
-returns.exportedPlasticWeight.weight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-
-returns.recycledPlasticWeight.meta.title = How much of your finished plastic packaging components contained 30% or more xled plastic?
-returns.recycledPlasticWeight.title = How much of your finished plastic packaging components contained 30% or more recycled plastic?
-returns.recycledPlasticWeight.sectionHeader = Plastic Packaging Tax quarterly return
-returns.recycledPlasticWeight.hint = Enter 0, if none of your plastic packaging components contained 30% or more recycled plastic.
-returns.recycledPlasticWeight.paragraph = Do not include your finished plastic components which you told us:
-returns.recycledPlasticWeight.paragraph.line1 = were used for the immediate packaging of licensed human medicine
-returns.recycledPlasticWeight.paragraph.line2 = you directly exported
-returns.recycledPlasticWeight.total.weight = Plastic packaging that contains 30% or more recycled plastic is not liable for the tax. This will be deducted from your tax liability.
-returns.recycledPlasticWeight.details.link = What do we mean by recycled plastic packaging?
-returns.recycledPlasticWeight.details.line1 = Recycled plastic has been reprocessed from recovered plastic through a chemical or manufacturing process, so it can be used either for its original purpose or for other purposes.
-returns.recycledPlasticWeight.empty.error = Enter the weight, in kilograms
-returns.recycledPlasticWeight.format.error = Amount must be entered as numbers only
-returns.recycledPlasticWeight.aboveMax.error = Amount cannot exceed 99,999,999 kgs
-
-returns.convertedPackagingCredit.meta.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-returns.convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-returns.convertedPackagingCredit.sectionHeader = Plastic Packaging Tax Return
-returns.convertedPackagingCredit.total.weight = Total value of packaging for credit
-returns.convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
-returns.convertedPackagingCredit.balanceUnavailable = Credit balance unavailable.
-returns.convertedPackagingCredit.empty.error = Enter £0.00 or higher to continue
-returns.convertedPackagingCredit.format.error = Enter an amount in pounds. For example, £123.00
-returns.convertedPackagingCredit.aboveMax.error = Amount cannot exceed £99,999,999.99
-returns.convertedPackagingCredit.hint = Enter 0, if you do not want to claim credit.
-returns.convertedPackagingCredit.details.link = When you can claim credit
-returns.convertedPackagingCredit.details.line1 = You can claim credit if you`ve paid Plastic Packaging Tax for packaging you have manufactured or imported which is then (either of the following):
-returns.convertedPackagingCredit.details.bullet1 = exported (and you have records to show this)
-returns.convertedPackagingCredit.details.bullet2 = converted into a different packaging component
-returns.convertedPackagingCredit.details.readMore = Read more about claiming a credit or deferring payment
-returns.convertedPackagingCredit.details.href =  https://www.gov.uk/guidance/claim-a-credit-or-defer-paying-plastic-packaging-tax
-
-returns.checkYourReturnPage.title = Check your return
-returns.checkYourReturnPage.label = Plastic Packaging Tax Return
-returns.checkYourReturnPage.header.item = Item
-returns.checkYourReturnPage.header.amount = Amount
-returns.checkYourReturnPage.header.empty = Empty
-returns.checkYourReturnPage.header.changeLink = Change link
-returns.checkYourReturnPage.manufacturedPackaging.total = Manufactured packaging total
-returns.checkYourReturnPage.manufacturedPackaging.liable = Manufactured packaging liable
-returns.checkYourReturnPage.importedPackaging.total = Imported packaging total
-returns.checkYourReturnPage.importedPackaging.liable = Imported packaging liable
-returns.checkYourReturnPage.humansMedicinesPackaging = Humans medicines packaging
-returns.checkYourReturnPage.directExports = Direct exports
-returns.checkYourReturnPage.exportsCredit = Exports credit
-returns.checkYourReturnPage.conversionCredit = Conversion credit
-returns.checkYourReturnPage.sendReturn.paragraph = Now send your return
-returns.checkYourReturnPage.sendReturn.description = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
-returns.checkYourReturnPage.taxLiability.label = Tax Liability
-returns.checkYourReturnPage.taxLiability.exemptPackaging.label = Total Exempt Packaging
-returns.checkYourReturnPage.taxLiability.liablePackaging.label = Total Liable Packaging
-returns.checkYourReturnPage.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG).
-returns.checkYourReturnPage.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
-returns.checkYourReturnPage.totalCredits.label = Total Credits
-returns.checkYourReturnPage.totalCredits.creditsRequested.label = Credit Requested
-returns.checkYourReturnPage.recycledPackaging.total = Recycled packaging total
-
-returns.confirmationPage.title = Return submitted
-returns.confirmationPage.panel.body = Your reference number is {0}
-returns.confirmationPage.panel.body.default = Your return has already been submitted
-returns.confirmationPage.body.1 = {0} for your own records.
-returns.confirmationPage.body.1.link = Download and save this return
-returns.confirmationPage.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
-returns.confirmationPage.body.3 = We will not email you a confirmation.
-returns.confirmationPage.payTaxOwed.title = Pay tax owed
-returns.confirmationPage.payTaxOwed.text = You will need to pay £{0} by {1}.
-returns.confirmationPage.payNow = Pay now
-returns.confirmationPage.return.link = Return to your Plastic Packaging Tax account
-
-returns.confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
-returns.confirmationPage.exitSurvey.text.link = What did you think of this service?
-
-returns.startDateReturns.title = Do you want to start your return for {0} to {1} {2}?
-returns.startDateReturns.heading = Do you want to start your return for {0} to {1} {2}?
-returns.startDateReturns.button = Continue
-returns.startDateReturns.error.required = Select yes if you want to start your return for this period
-
-account.viewSubscription.organisationDetails.title = Your business details
-account.viewSubscription.organisationDetails.label = Registered organisation details
-account.viewSubscription.organisationDetails.registeredBusinessAddress = Business address
-account.viewSubscription.organisationDetails.organisationType = Organisation type
-account.viewSubscription.organisationDetails.businessName = Business name
-
-account.viewSubscription.organisationDetails.soleTrader.firstName = First name
-account.viewSubscription.organisationDetails.soleTrader.lastName = Last name
-
-account.viewSubscription.primaryContactDetails.meta.title = Primary contact details
-account.viewSubscription.primaryContactDetails.label = Primary contact details
-account.viewSubscription.primaryContactDetails.fullName = Name
-account.viewSubscription.primaryContactDetails.jobTitle = Job title
-account.viewSubscription.primaryContactDetails.address = Address
-account.viewSubscription.primaryContactDetails.phoneNumber = Phone number
-account.viewSubscription.primaryContactDetails.email = Email address
-
-account.viewSubscription.businessDetails.title = Business contact details
-account.viewSubscription.businessDetails.phoneNumber = Business Phone Number
-account.viewSubscription.businessDetails.name = Business name
-account.viewSubscription.businessDetails.email = Business Email Address
-
-subscription.primaryContactDetails.title = Contact details
-subscription.primaryContactDetails.name.title = Who is the main contact?
-subscription.primaryContactDetails.name.hint = This is the name of the person who will manage the company’s Plastic Packaging Tax account, receive updates about the account and submit returns.
-subscription.primaryContactDetails.name.label = Name
-subscription.primaryContactDetails.name.error.length = Name cannot be more than 160 characters long
-subscription.primaryContactDetails.name.error.empty = Name is required
-subscription.primaryContactDetails.name.error.format = Name format is not supported
-
-returns.submitted.title = View submitted returns
-returns.submitted.none = You have not submitted any returns yet.
-returns.submitted.link = Return to your Plastic Packaging Tax account
-
-returns.deregistered.title = You deregistered this account from Plastic Packaging Tax
-returns.deregistered.bta.link = Go to your business tax account
+agents.title = What is your client’s Plastic Packaging Tax registration number?
+agents.heading = What is your client’s Plastic Packaging Tax registration number?
+agents.checkYourAnswersLabel = What is your client’s Plastic Packaging Tax registration number?
+agents.error.required = Enter your client’s Plastic Packaging Tax registration number
+agents.error.length = Registration number must be 15 characters
+agents.change.hidden = What is your client’s Plastic Packaging Tax registration number?
+agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you

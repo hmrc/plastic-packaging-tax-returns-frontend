@@ -1,6 +1,15 @@
 /***************************************
  ********** Default Styling  ***********
  ***************************************/
+
+.account-grid-column {
+    text-size-adjust: 100%;
+    box-sizing: border-box;
+    padding: 0 15px;
+    width: 33.3333%;
+    float: left;
+}
+
 .card .card-body {
   padding: 10px;
 }

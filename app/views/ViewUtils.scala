@@ -1,0 +1,63 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package views
+
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import play.api.data.Form
+import play.api.i18n.Messages
+
+import java.time.LocalDate
+import scala.math.BigDecimal.RoundingMode
+
+object ViewUtils {
+
+  def title(form: Form[_], title: String, section: Option[String] = None)(implicit
+    messages: Messages
+  ): String =
+    titleNoForm(title = s"${errorPrefix(form)} ${messages(title)}", section = section)
+
+  def titleNoForm(title: String, section: Option[String] = None)(implicit
+    messages: Messages
+  ): String =
+    s"${messages(title)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} - ${messages("site.govuk")}"
+
+  def errorPrefix(form: Form[_])(implicit messages: Messages): String =
+    if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+
+  def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
+    messages(s"month.$monthNumber")
+
+  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
+    messages("return.quarter",
+      getMonthName(from.getMonthValue),
+      getMonthName(to.getMonthValue),
+      to.getYear.toString
+    )
+
+  def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
+    displayReturnQuarter(obligation.fromDate, obligation.toDate)
+
+  def displayReturnQuarter(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): String = {
+    val charge = returnDisplay.chargeDetails.getOrElse(throw new IllegalStateException("A return must have a charge details sub-container"))
+    displayReturnQuarter(LocalDate.parse(charge.periodFrom), LocalDate.parse(charge.periodTo))
+  }
+
+  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
+
+  def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
+}

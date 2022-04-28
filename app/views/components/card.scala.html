@@ -1,0 +1,45 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.paragraphBody
+
+@this(paragraphBody: paragraphBody)
+
+@(header: String, lines: Seq[String], links: Seq[Html])(implicit messages: Messages)
+
+<div class="account-grid-column">
+    <div class="card">
+        <div class="card-body">
+
+            <h2 class="govuk-heading-m">@header</h2>
+
+            @for(line <- lines) {
+                <p class="govuk-body">@line</p>
+            }
+
+            <ul class="govuk-list">
+            @for(link <- links) {
+                    <li>
+                        <p class="govuk-body">
+                            @link
+                        </p>
+                    </li>
+            }
+            </ul>
+
+        </div>
+    </div>
+</div>
