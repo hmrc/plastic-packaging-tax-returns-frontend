@@ -66,7 +66,7 @@ class ReturnsCheckYourAnswersController @Inject()(
           answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,
           answers.getOrElse("humanMedicinesPlasticPackagingWeight", 0).toString.toLong,
           answers.getOrElse("exportedPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("convertedPackagingCredit", 0).toString.toLong,
+          BigDecimal(answers.getOrElse("convertedPackagingCredit", 0).toString),
           answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
         Ok(view(mode, list, liability))

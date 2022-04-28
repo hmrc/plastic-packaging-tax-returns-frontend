@@ -322,3 +322,5 @@ agents.error.required = Enter your client’s Plastic Packaging Tax registration
 agents.error.length = Registration number must be 15 characters
 agents.change.hidden = What is your client’s Plastic Packaging Tax registration number?
 agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+
+deregistered.heading = You deregistered this account from Plastic Packaging Tax
