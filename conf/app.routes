@@ -17,6 +17,8 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /check-your-answers                          controllers.CheckYourAnswersController.onSubmit()
 
+GET         /returns-check-your-answers                          controllers.ReturnsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST        /returns-check-your-answers                          controllers.ReturnsCheckYourAnswersController.onSubmit()
 
 GET        /amendConfirmation                            controllers.AmendConfirmationController.onPageLoad()
 
@@ -92,13 +94,21 @@ POST       /recycledPlasticPackagingWeight                  controllers.Recycled
 GET        /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeRecycledPlasticPackagingWeight            controllers.RecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /agents                                          controllers.agents.AgentsController.onPageLoad(mode: Mode = NormalMode)
-POST       /agents                                          controllers.agents.AgentsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAgents                                    controllers.agents.AgentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAgents                                    controllers.agents.AgentsController.onSubmit(mode: Mode = CheckMode)
-
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
 
 GET        /submittedReturns                       controllers.SubmittedReturnsController.onPageLoad()
 
+GET        /startYourReturn                        controllers.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
+POST       /startYourReturn                        controllers.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
+GET        /changeStartYourReturn                  controllers.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeStartYourReturn                  controllers.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
+
+GET        /returnConfirmation                       controllers.ReturnConfirmationController.onPageLoad()
+
+GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
+POST       /agents                        controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAgents                  controllers.AgentsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAgents                  controllers.AgentsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /make-a-payment                                  controllers.MakePaymentController.redirectLink()
+

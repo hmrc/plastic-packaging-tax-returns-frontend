@@ -38,7 +38,7 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
       "must keep the answers alive and return OK" in {
 
         val mockCacheConnector = mock[CacheConnector]
-        when(mockCacheConnector.get(any(), any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockCacheConnector.get(any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
 
         val application = new GuiceApplicationBuilder().overrides(
             bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
@@ -52,7 +52,7 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockCacheConnector, atLeastOnce()).get(any(), any())(any())
+          verify(mockCacheConnector, atLeastOnce()).get(any())(any())
 
         }
       }
@@ -76,7 +76,7 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockCacheConnector, never()).get(any(), any())(any())
+          verify(mockCacheConnector, never()).get(any())(any())
         }
       }
     }

@@ -16,12 +16,13 @@
 
 package controllers
 
+import cacheables.AmendSelectedPeriodKey
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.TaxReturn
+import models.returns.{ReturnType, TaxReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,7 +32,6 @@ import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckYourAnswersController @Inject() (
@@ -63,15 +63,24 @@ class CheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val taxReturn = taxReturnHelper.getTaxReturn("XMPPT0000000001", request.userAnswers)
+
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        )
+
+        val obligation = request.userAnswers.get[String](AmendSelectedPeriodKey).getOrElse(
+          throw new IllegalStateException("Obligation not found!")
+        )
+
+        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation, ReturnType.AMEND)
         submit(taxReturn).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
 
           case Left(error) =>
             throw error
-        }
 
+        }
     }
 
   private def submit(

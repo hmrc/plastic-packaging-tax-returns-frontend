@@ -38,7 +38,7 @@ class DataRetrievalActionImpl @Inject() (
     implicit val hc   = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val pptId: String = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-    cacheConnector.get(request.user.identityData.internalId, pptId).map {
+    cacheConnector.get(pptId).map {
       OptionalDataRequest(request, request.user.identityData.internalId, _)
     }
   }

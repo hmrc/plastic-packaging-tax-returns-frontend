@@ -26,11 +26,11 @@ trait SelectedClientIdentifier {
   def getSelectedClientIdentifierFrom(request: Request[AnyContent]): Option[String] =
     request.session.get(clientIdentifierSessionKey)
 
-  def appendSelectedClientIdentifierToResult(clientIdentifier: ClientIdentifier, result: Result)(
+  def appendSelectedClientIdentifierToResult(clientIdentifier: String, result: Result)(
     implicit request: Request[AnyContent]
   ): Result = {
     val sessionValues: Seq[(String, String)] =
-      Seq(clientIdentifierSessionKey -> clientIdentifier.identifier)
+      Seq(clientIdentifierSessionKey -> clientIdentifier)
     result.addingToSession(sessionValues: _*)
   }
 

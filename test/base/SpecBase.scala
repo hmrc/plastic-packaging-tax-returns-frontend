@@ -37,7 +37,7 @@ trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
     with IntegrationPatience {
 
-  val userAnswersId: String = "id"
+  val userAnswersId: String = "123"
 
   implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector = mock[CacheConnector]
@@ -56,18 +56,24 @@ trait SpecBase
     userAnswers: Option[UserAnswers] = None
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
-      .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
-                 bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
-                 bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  protected def applicationBuilderAgent(): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(bind[AuthAgentAction].to[FakeAgentIdentifierAction])
 
   protected def applicationBuilderFailedAuth(
     userAnswers: Option[UserAnswers] = None
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
-      .overrides(bind[DataRequiredAction].to[DataRequiredActionImpl],
-                 bind[IdentifierAction].to[FakeIdentifierActionFailed],
-                 bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[FakeIdentifierActionFailed],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 
 }

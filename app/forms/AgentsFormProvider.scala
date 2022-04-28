@@ -16,16 +16,16 @@
 
 package forms
 
-import forms.mappings.Mappings
 import javax.inject.Inject
+
+import forms.mappings.Mappings
 import play.api.data.Form
 
 class AgentsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Int] =
+  def apply(): Form[String] =
     Form(
-      "value" -> int("agents.error.required", "agents.error.wholeNumber", "agents.error.nonNumeric")
-        .verifying(inRange(0, Int.MaxValue, "agents.error.outOfRange"))
+      "value" -> text("agents.error.required")
+        .verifying(maxLength(15, "agents.error.length"))
     )
-
 }

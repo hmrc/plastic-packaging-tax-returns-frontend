@@ -25,7 +25,7 @@ import views.html.CheckYourAnswersView
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  "Check Your Answers Controller" - {
+  "(Amend journey) Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

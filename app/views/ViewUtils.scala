@@ -21,6 +21,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 
 import java.time.LocalDate
+import scala.math.BigDecimal.RoundingMode
 
 object ViewUtils {
 
@@ -58,4 +59,5 @@ object ViewUtils {
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
 
+  def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
 }

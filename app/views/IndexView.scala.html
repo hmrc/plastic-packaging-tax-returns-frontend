@@ -19,6 +19,7 @@
 @import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 @import models.obligations.PPTObligations
 @import views.ViewUtils
+@import models.NormalMode
 
 @this(
     layout: templates.Layout,
@@ -165,8 +166,7 @@
 @returnsLink = @{
     obligations.flatMap { obligations =>
         if(obligations.displaySubmitReturnsLink) {
-            // TODO - change the target url when we have returns
-            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = routes.IndexController.onPageLoad))
+            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = routes.StartYourReturnController.onPageLoad(NormalMode)))
         } else {
             None
         }

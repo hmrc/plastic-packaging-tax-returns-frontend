@@ -16,69 +16,110 @@
 
 package controllers.helpers
 
-import connectors.{ServiceError, TaxReturnsConnector}
+import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
 import models.UserAnswers
+import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnHelper @Inject() (
-  override val messagesApi: MessagesApi,
-  val controllerComponents: MessagesControllerComponents,
-  returnsConnector: TaxReturnsConnector
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class TaxReturnHelper @Inject()(
+                                 override val messagesApi: MessagesApi,
+                                 val controllerComponents: MessagesControllerComponents,
+                                 returnsConnector: TaxReturnsConnector,
+                                 obligationsConnector: ObligationsConnector
+                               )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
-  // TODO - where do we get this obligation from? A GET on the return?
-  private val defaultObligation: TaxReturnObligation = TaxReturnObligation(
-    fromDate = LocalDate.parse("2022-04-01"),
-    toDate = LocalDate.parse("2022-06-30"),
-    dueDate = LocalDate.parse("2022-09-30"),
-    periodKey = "22AC"
-  )
+  def nextObligation(pptId: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
+    obligationsConnector.getOpen(pptId) map { obligations =>
+      val nextObligation: TaxReturnObligation = obligations.nextObligation.getOrElse(
+        throw new IllegalStateException("Next open obligation can't be found")
+      )
 
-  //todo why is this here?
+      nextObligation
+    }
+  }
+
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
+    obligationsConnector.getFulfilled(pptId) map {obligations =>
+      obligations.filter(o => o.periodKey == periodKey)
+    }
+  }
+
   def fetchTaxReturn(userId: String, periodKey: String)(implicit
-    hc: HeaderCarrier
+                                                        hc: HeaderCarrier
   ): Future[ReturnDisplayApi] = {
     val future: Future[Either[ServiceError, ReturnDisplayApi]] =
       returnsConnector.get(userId, periodKey)
     future.map {
       case Right(taxReturn) => taxReturn
-      case Left(error)      => throw error
+      case Left(error) => throw error
     }
   }
 
-  def getTaxReturn(pptReference: String, userAnswers: UserAnswers): TaxReturn =
-    TaxReturn(id = pptReference,
-              returnType = Some(ReturnType.AMEND),
-              obligation = Some(defaultObligation),
-              manufacturedPlasticWeight =
-                userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
-                  value => ManufacturedPlasticWeight(value)
-                ),
-              importedPlasticWeight =
-                userAnswers.get(AmendImportedPlasticPackagingPage).map(
-                  value => ImportedPlasticWeight(value)
-                ),
-              humanMedicinesPlasticWeight =
-                userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
-                  value => HumanMedicinesPlasticWeight(value)
-                ),
-              exportedPlasticWeight =
-                userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
-                  value => ExportedPlasticWeight(value)
-                ),
-              recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
-                value => RecycledPlasticWeight(value)
-              )
-    )
+   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, periodKey: String, returnType: ReturnType): TaxReturn = {
+    returnType match {
+      case NEW =>
+        TaxReturn(id = pptReference,
+          returnType = Some(returnType),
+          periodKey = periodKey,
+                    manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
+          manufacturedPlasticWeight =
+            userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
+              value => ManufacturedPlasticWeight(value)
+            ),
+              importedPlastic = userAnswers.get (ImportedPlasticPackagingPage),
+          importedPlasticWeight =
+            userAnswers.get(ImportedPlasticPackagingWeightPage).map(
+              value => ImportedPlasticWeight(value)
+            ),
+          humanMedicinesPlasticWeight =
+            userAnswers.get(HumanMedicinesPlasticPackagingWeightPage).map(
+              value => HumanMedicinesPlasticWeight(value)
+            ),
+          exportedPlasticWeight =
+            userAnswers.get(ExportedPlasticPackagingWeightPage).map(
+              value => ExportedPlasticWeight(value)
+            ),
+          convertedPackagingCredit =
+            userAnswers.get(ConvertedPackagingCreditPage).map(
+              value => ConvertedPackagingCredit(value)
+            ),
+          recycledPlasticWeight = userAnswers.get(RecycledPlasticPackagingWeightPage).map(
+            value => RecycledPlasticWeight(value)
+          )
+        )
+      case AMEND =>
+        TaxReturn(id = pptReference,
+          returnType = Some(returnType),
+          periodKey = periodKey,
+          manufacturedPlasticWeight =
+            userAnswers.get(AmendManufacturedPlasticPackagingPage).map(
+              value => ManufacturedPlasticWeight(value)
+            ),
+          importedPlasticWeight =
+            userAnswers.get(AmendImportedPlasticPackagingPage).map(
+              value => ImportedPlasticWeight(value)
+            ),
+          humanMedicinesPlasticWeight =
+            userAnswers.get(AmendHumanMedicinePlasticPackagingPage).map(
+              value => HumanMedicinesPlasticWeight(value)
+            ),
+          exportedPlasticWeight =
+            userAnswers.get(AmendDirectExportPlasticPackagingPage).map(
+              value => ExportedPlasticWeight(value)
+            ),
+          recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
+            value => RecycledPlasticWeight(value)
+          )
+        )
+    }
+  }
 
 }

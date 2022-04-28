@@ -16,17 +16,14 @@
 
 package controllers
 
+import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
-import controllers.ViewReturnSummaryController.AmendSelectedPeriodKey
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
 import models.returns.ReturnDisplayApi
-import pages.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage, Page}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, JsPath, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import queries.{Gettable, Settable}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
@@ -48,15 +45,23 @@ class ViewReturnSummaryController @Inject() (
   def onPageLoad(periodKey: String): Action[AnyContent] =
     (identify andThen getData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one")) // TODO Make this not optional?
+
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        )
+
         val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey.toUpperCase())
 
         for {
+          submittedReturn <- submittedReturnF
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(AmendSelectedPeriodKey, periodKey)
+            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
+              AmendSelectedPeriodKey, periodKey
+            ).getOrElse(UserAnswers(request.userId)).set(
+              ReturnDisplayApiCacheable, submittedReturn
+            )
           )
           _ <- cacheConnector.set(pptId, updatedAnswers)
-          submittedReturn <- submittedReturnF
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
@@ -65,30 +70,4 @@ class ViewReturnSummaryController @Inject() (
 
 }
 
-object ViewReturnSummaryController {
-
-//Cacheables?
-  //todo move this to pages? or models? what is it :thinking:
-  case object AmendSelectedPeriodKey extends Gettable[String] with Settable[String] {
-    override def path: JsPath = JsPath \ toString
-
-    override def toString: String = "amendSelectedPeriodKey"
-  }
-
-  case object AmendReturnPreviousReturn extends Gettable[ReturnDisplayApi] with Settable[ReturnDisplayApi] {
-    override def path: JsPath = JsPath \ "amend"
-
-    override def toString: String = "amendReturnPreviousReturn"
-
-    val returnDisplayApiWrites: Writes[ReturnDisplayApi] = new Writes[ReturnDisplayApi] {
-      def writes(display: ReturnDisplayApi): JsObject = Json.obj(
-        AmendManufacturedPlasticPackagingPage.toString -> display.returnDetails.manufacturedWeight,
-        AmendImportedPlasticPackagingPage.toString -> display.returnDetails.importedWeight,
-        AmendHumanMedicinePlasticPackagingPage.toString -> display.returnDetails.humanMedicines,
-        AmendDirectExportPlasticPackagingPage.toString -> display.returnDetails.directExports,
-        AmendRecycledPlasticPackagingPage.toString -> display.returnDetails.recycledPlastic
-      )
-    }
-
-  }
-}
+object ViewReturnSummaryController {}

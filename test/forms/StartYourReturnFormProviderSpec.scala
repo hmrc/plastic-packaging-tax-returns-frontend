@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-package views
+package forms
 
-import org.mockito.{Mockito, MockitoSugar}
-import org.scalatestplus.play.PlaySpec
-import play.api.i18n.Messages
-import views.ViewUtils._
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class ViewUtilsTest extends PlaySpec with MockitoSugar {
-  //TODO
-  "getMonthName" ignore {
-    "give january when given number 1" in {
-      val mockMessages = mock[Messages]
-      val x = getMonthName(1)(mockMessages)
-      x mustBe "January"
-    }
+class StartYourReturnFormProviderSpec extends BooleanFieldBehaviours {
+
+  val requiredKey = "startYourReturn.error.required"
+  val invalidKey = "error.boolean"
+
+  val form = new StartYourReturnFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

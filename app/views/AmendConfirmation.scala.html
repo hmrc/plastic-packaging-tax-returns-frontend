@@ -22,22 +22,22 @@ govukPanel: GovukPanel
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("confirmation.title")),
+pageTitle    = titleNoForm(messages("amend.confirmation.title")),
 showBackLink = false
 ) {
 
    @govukPanel(Panel(
-                    title = Text(messages("confirmation.submitted")),
-                    content = Text(messages("confirmation.panel"))
+                    title = Text(messages("amend.confirmation.submitted")),
+                    content = Text(messages("amend.confirmation.panel"))
                     )
    )
-<p class="govuk-heading-m">@messages("confirmation.subheading")</p>
-<p class="govuk-body">@messages("confirmation.paragraph.1")</p>
-<p class="govuk-body">@messages("confirmation.paragraph.2")</p>
+<p class="govuk-heading-m">@messages("amend.confirmation.subheading")</p>
+<p class="govuk-body">@messages("amend.confirmation.paragraph.1")</p>
+<p class="govuk-body">@messages("amend.confirmation.paragraph.2")</p>
 
 <p class="govuk-body">
-    <a href="/plastic-packaging-tax" class="govuk-link">@messages("confirmation.check.account")</a>
-    @messages("confirmation.paragraph.3")
+    <a href="/plastic-packaging-tax" class="govuk-link">@messages("amend.confirmation.check.account")</a>
+    @messages("amend.confirmation.paragraph.3")
 </p>
 
 }

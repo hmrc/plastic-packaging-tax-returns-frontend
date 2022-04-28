@@ -18,6 +18,7 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
+import models.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element
@@ -31,18 +32,8 @@ import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.IndexView
-import support.ObligationsTestData.{
-  noneDueUpToDate,
-  oneDueOneOverdue,
-  oneDueTwoOverdue,
-  oneDueUpToDate
-}
-import views.ObligationScenarioTypes.{
-  NoneDueUpToDate,
-  OneDueOneOverdue,
-  OneDueTwoOverdue,
-  OneDueUpToDate
-}
+import support.ObligationsTestData.{noneDueUpToDate, oneDueOneOverdue, oneDueTwoOverdue, oneDueUpToDate}
+import views.ObligationScenarioTypes.{NoneDueUpToDate, OneDueOneOverdue, OneDueTwoOverdue, OneDueUpToDate}
 import views.SubscriptionTypes.{Group, Partnership, SingleEntity}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 
@@ -171,10 +162,9 @@ class IndexPageViewSpec
                     "account.homePage.card.makeReturn.header"
                   )
 
-                  // TODO - change when we have the ability to make a return
                   val createLink = (
                     messages("account.homePage.card.makeReturn.line3.createLink"),
-                    routes.IndexController.onPageLoad.url
+                    routes.StartYourReturnController.onPageLoad(NormalMode).url
                   )
 
                   val returnsCreationGuidanceLink =

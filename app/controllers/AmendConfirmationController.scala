@@ -34,5 +34,4 @@ class AmendConfirmationController @Inject() (
     identify { implicit request =>
       Ok(view())
     }
-
 }

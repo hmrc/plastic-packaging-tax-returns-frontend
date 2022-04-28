@@ -36,7 +36,7 @@ object TaxReturnObligation {
 case class TaxReturn(
   id: String,
   returnType: Option[ReturnType] = Some(ReturnType.NEW),
-  obligation: Option[TaxReturnObligation] = None,
+  periodKey: String,
   manufacturedPlastic: Option[Boolean] = None,
   manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
   importedPlastic: Option[Boolean] = None,

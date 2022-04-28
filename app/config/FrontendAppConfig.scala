@@ -109,8 +109,8 @@ class FrontendAppConfig @Inject() (
 
   def makePaymentUrl: String = servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
 
-  def pptCacheGetUrl(id: String, pptReference: String): String =
-    s"$pptServiceHost/cache/get/$id/$pptReference"
+  def pptCacheGetUrl(pptReference: String): String =
+    s"$pptServiceHost/cache/get/$pptReference"
 
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"

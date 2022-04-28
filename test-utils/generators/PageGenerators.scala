@@ -24,6 +24,9 @@ trait PageGenerators {
   implicit lazy val arbitraryAgentsPage: Arbitrary[AgentsPage.type] =
     Arbitrary(AgentsPage)
 
+  implicit lazy val arbitraryStartYourReturnPage: Arbitrary[StartYourReturnPage.type] =
+    Arbitrary(StartYourReturnPage)
+
   implicit lazy val arbitraryConvertedPackagingCreditPage
     : Arbitrary[ConvertedPackagingCreditPage.type] =
     Arbitrary(ConvertedPackagingCreditPage)

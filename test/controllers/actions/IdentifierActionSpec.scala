@@ -19,7 +19,7 @@ package controllers.actions
 import base.{FakeAuthConnector, MetricsMocks, SpecBase}
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
-import controllers.agents.{routes => agentRoutes}
+import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
 import models.{NormalMode, SignedInUser}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
