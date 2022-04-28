@@ -115,4 +115,5 @@ class FrontendAppConfig @Inject() (
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"
 
+  lazy val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
 }

@@ -324,3 +324,4 @@ agents.change.hidden = What is your client’s Plastic Packaging Tax registratio
 agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
 
 deregistered.heading = You deregistered this account from Plastic Packaging Tax
+deregistered.bta.link = Go to your business tax account
