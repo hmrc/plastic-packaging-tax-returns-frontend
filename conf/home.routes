@@ -1,3 +1,6 @@
+
+GET        /                                     controllers.IndexController.onPageLoad
+
 GET        /sign-out                            controllers.auth.AuthController.signOut
 GET        /signed-out                          controllers.auth.SignedOutController.onPageLoad
 
