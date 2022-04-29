@@ -26,7 +26,7 @@ trait ViewAssertions extends ViewMatchers {
 
   def displaySignOutLink(view: Element) = {
     view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
-    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("/account/sign-out")
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("/plastic-packaging-tax/account/sign-out")
   }
 
 }
