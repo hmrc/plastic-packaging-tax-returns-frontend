@@ -15,13 +15,15 @@
  *@
 
 @import components.{paragraphBody,Link}
+@import config.FrontendAppConfig
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         govukPanel: GovukPanel,
         paragraphBody: paragraphBody,
-        link: Link
+        link: Link,
+        appConfig: FrontendAppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -50,6 +52,6 @@
     </p>
 
     @paragraphBody(message = messages("return.confirmation.exitSurvey.text",
-    link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", "www.google.com")))
+    link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl)))
     )
 }
