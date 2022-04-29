@@ -16,6 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import components.SectionHeader
+@import models.returns.ReturnDisplayApi
 
 @this(
     layout: templates.Layout,
@@ -27,7 +28,7 @@
 )
 
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
 <p class="govuk-body">@messages("amendImportedPlasticPackaging.hint")</p>

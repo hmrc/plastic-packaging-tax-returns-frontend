@@ -17,8 +17,10 @@
 package controllers
 
 import base.SpecBase
+import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.AmendDirectExportPlasticPackagingFormProvider
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -42,6 +44,22 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
   val validAnswer = 0
 
+  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
+    periodFrom = "2022-04-01",
+    periodTo = "2022-06-30",
+    periodKey = "22AC",
+    chargeReference = Some("pan"),
+    receiptDate = "2022-06-31",
+    returnType = "TYPE"
+  )
+
+  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
+    "",
+    IdDetails("", ""),
+    Some(charge),
+    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+  )
+
   lazy val amendDirectExportPlasticPackagingRoute =
     routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode).url
 
@@ -49,7 +67,10 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ReturnDisplayApiCacheable, retDisApi).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
@@ -59,7 +80,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request,
+        contentAsString(result) mustEqual view(form, NormalMode, retDisApi)(request,
                                                                  messages(application)
         ).toString
       }
@@ -67,9 +88,9 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendDirectExportPlasticPackagingPage,
-                                                       validAnswer
-      ).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendDirectExportPlasticPackagingPage, validAnswer).get
+        .set(ReturnDisplayApiCacheable, retDisApi).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -81,7 +102,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, retDisApi)(
           request,
           messages(application)
         ).toString
@@ -92,10 +113,14 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
       val mockCacheConnector = mock[CacheConnector]
 
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AmendDirectExportPlasticPackagingPage, validAnswer).get
+        .set(ReturnDisplayApiCacheable, retDisApi).success.value
+
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
                      bind[CacheConnector].toInstance(mockCacheConnector)
           )
@@ -115,7 +140,10 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ReturnDisplayApiCacheable, retDisApi).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -129,7 +157,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(request,
                                                                       messages(application)
         ).toString
       }
