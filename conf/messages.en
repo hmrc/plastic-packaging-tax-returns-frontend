@@ -30,7 +30,6 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-obligationPeriod.caption = April to June 2022
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in

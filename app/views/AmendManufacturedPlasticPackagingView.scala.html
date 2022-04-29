@@ -17,6 +17,7 @@
 @import viewmodels.InputWidth._
 @import components._
 @import models.returns.ReturnDisplayApi
+@import components.ReturnsSectionHeading
 
 @this(
     layout: templates.Layout,
@@ -24,7 +25,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader,
+    sectionHeader: ReturnsSectionHeading,
     link: Link
 )
 
@@ -42,7 +43,7 @@
 
 @layout(pageTitle = title(form, messages("amendManufacturedPlasticPackaging.title"))) {
 
-    @sectionHeader(messages("obligationPeriod.caption"))
+    @sectionHeader(taxReturn)
 
     @formHelper(action = routes.AmendManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 

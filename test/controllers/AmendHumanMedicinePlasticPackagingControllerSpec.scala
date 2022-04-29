@@ -44,22 +44,6 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
   val validAnswer = 0
 
-  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
-    periodFrom = "2022-04-01",
-    periodTo = "2022-06-30",
-    periodKey = "22AC",
-    chargeReference = Some("pan"),
-    receiptDate = "2022-06-31",
-    returnType = "TYPE"
-  )
-
-  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
-    "",
-    IdDetails("", ""),
-    Some(charge),
-    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-  )
-
 
   lazy val amendHumanMedicinePlasticPackagingRoute =
     routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode).url
@@ -67,9 +51,6 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
   "AmendHumanMedicinePlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(ReturnDisplayApiCacheable, retDisApi).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -81,20 +62,18 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[AmendHumanMedicinePlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request,
-          messages(application),
-          retDisApi
+        contentAsString(result) mustEqual view(form, NormalMode, retDisApi)(request,
+          messages(application)
         ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).
-        set(AmendHumanMedicinePlasticPackagingPage, validAnswer).get.
-        set(ReturnDisplayApiCacheable, retDisApi).success.value
+      val ans = userAnswers.
+        set(AmendHumanMedicinePlasticPackagingPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendHumanMedicinePlasticPackagingRoute)
@@ -114,9 +93,6 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
     "must redirect to the next page when valid data is submitted" in {
 
       val mockCacheConnector = mock[CacheConnector]
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(ReturnDisplayApiCacheable, retDisApi).success.value
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
@@ -141,9 +117,6 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(ReturnDisplayApiCacheable, retDisApi).success.value
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -158,9 +131,8 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
-          messages(application),
-          retDisApi
+        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(request,
+          messages(application)
         ).toString
       }
     }

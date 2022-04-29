@@ -15,7 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
-@import components.SectionHeader
+@import components.ReturnsSectionHeading
 @import models.returns.ReturnDisplayApi
 
 @this(
@@ -24,18 +24,18 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    sectionHeader: ReturnsSectionHeading
 )
 
 @(form: Form[_], mode: Mode, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
 
-@hintContent = {
+@hintContent = {AmendHumanMedicinePlasticPackagingPageSpec
 <p class="govuk-body">@messages("amendDirectExportPlasticPackaging.hint")</p>
 }
 
 @layout(pageTitle = title(form, messages("amendDirectExportPlasticPackaging.title"))) {
 
-    @sectionHeader(messages("obligationPeriod.caption"))
+    @sectionHeader(taxReturn)
 
     @formHelper(action = routes.AmendDirectExportPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 

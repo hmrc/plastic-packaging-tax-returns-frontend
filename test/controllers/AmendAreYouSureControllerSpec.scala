@@ -48,22 +48,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   lazy val amendAreYouSureRoute: String =
     routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
-  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
-    periodFrom = "2022-04-01",
-    periodTo = "2022-06-30",
-    periodKey = "22AC",
-    chargeReference = Some("pan"),
-    receiptDate = "2022-06-31",
-    returnType = "TYPE"
-  )
-
-  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
-    "",
-    IdDetails("", ""),
-    Some(charge),
-    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-  )
-
   val mockCacheConnector = mock[CacheConnector]
 
   "AmendAreYouSure Controller" - {
@@ -72,11 +56,10 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       val mockView = mock[AmendAreYouSureView]
       when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendSelectedPeriodKey, "TEST")
-        .get.set(ReturnDisplayApiCacheable, retDisApi).get
+      val ans = userAnswers
+        .set(AmendSelectedPeriodKey, "TEST").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application = applicationBuilder(userAnswers = Some(ans))
         .overrides(
           bind[AmendAreYouSureView].toInstance(mockView),
           bind[CacheConnector].toInstance(mockCacheConnector)
@@ -96,11 +79,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendAreYouSurePage, true).get
-        .set(ReturnDisplayApiCacheable, retDisApi).get
+      val ans = userAnswers.set(AmendAreYouSurePage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application = applicationBuilder(userAnswers = Some(ans))
         .build()
 
       running(application) {
@@ -119,9 +100,8 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect when periodKey is not in user answers" in {
-      val userAnswers = UserAnswers(userAnswersId)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendAreYouSureRoute)
@@ -163,11 +143,9 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendSelectedPeriodKey, "TEST").get
-        .set(ReturnDisplayApiCacheable, retDisApi).get
+      val ans = userAnswers.set(AmendSelectedPeriodKey, "TEST").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request =

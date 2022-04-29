@@ -16,10 +16,12 @@
 
 package base
 
+import cacheables.ReturnDisplayApiCacheable
 import config.FrontendAppConfig
 import connectors.CacheConnector
 import controllers.actions._
 import models.UserAnswers
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -42,7 +44,26 @@ trait SpecBase
   implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector = mock[CacheConnector]
 
+  def userAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+
   val mockResponse = mock[HttpResponse]
+
+  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
+    periodFrom = "2022-04-01",
+    periodTo = "2022-06-30",
+    periodKey = "22AC",
+    chargeReference = Some("pan"),
+    receiptDate = "2022-06-31",
+    returnType = "TYPE"
+  )
+
+  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
+    "",
+    IdDetails("", ""),
+    Some(charge),
+    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+  )
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session)
