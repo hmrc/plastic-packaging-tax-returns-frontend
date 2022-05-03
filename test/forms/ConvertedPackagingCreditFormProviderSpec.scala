@@ -18,18 +18,19 @@ package forms
 
 import forms.behaviours.DecimalFieldBehaviours
 import org.scalacheck.Gen
-import play.api.data.FormError
+import play.api.data.{Form, FormError}
 
 import scala.math.BigDecimal.RoundingMode
 
 class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
 
   val packagingCredit = 1.25
-  val form            = new ConvertedPackagingCreditFormProvider()()
+  val formProvider            = new ConvertedPackagingCreditFormProvider
+  val form: Form[BigDecimal] = formProvider(BigDecimal(99999999.99))
 
-  ".value" - {
+  "apply" - {
 
-    ".value" - {
+    "must behave like a normal big decimal form" - {
 
       val fieldName = "value"
 
@@ -67,6 +68,13 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
                                  requiredError =
                                    FormError(fieldName, "convertedPackagingCredit.error.required")
       )
+    }
+
+    "must reject greater than the allowed amount" in {
+      val bound = formProvider(BigDecimal(10)).bind(Map("value" -> "10.01"))
+      val error = bound.errors.head
+
+      error mustBe FormError("value", "convertedPackagingCredit.error.outOfRange", Seq(BigDecimal(0.01), BigDecimal(10)))
     }
   }
 }
