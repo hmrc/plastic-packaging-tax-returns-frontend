@@ -16,10 +16,12 @@
 
 package controllers
 
+import cacheables.ReturnDisplayApiCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
 import models.Mode
+import models.returns.ReturnDisplayApi
 import navigation.Navigator
 import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,7 +52,11 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
       implicit request =>
         val preparedForm = request.userAnswers.fill(AmendHumanMedicinePlasticPackagingPage, form)
 
-        Ok(view(preparedForm, mode))
+        request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
+          case Some(displayApi) => Ok(view(preparedForm, mode, displayApi))
+          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
+        }
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -58,8 +64,12 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
+        val submittedReturn = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
+          throw new IllegalStateException("Must have a tax return against which to amend")
+        )
+
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

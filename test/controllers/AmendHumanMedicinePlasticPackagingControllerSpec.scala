@@ -17,8 +17,10 @@
 package controllers
 
 import base.SpecBase
+import cacheables.ReturnDisplayApiCacheable
 import connectors.CacheConnector
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -42,6 +44,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
   val validAnswer = 0
 
+
   lazy val amendHumanMedicinePlasticPackagingRoute =
     routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode).url
 
@@ -49,7 +52,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendHumanMedicinePlasticPackagingRoute)
@@ -59,19 +62,18 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[AmendHumanMedicinePlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request,
-                                                                 messages(application)
+        contentAsString(result) mustEqual view(form, NormalMode, retDisApi)(request,
+          messages(application)
         ).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendHumanMedicinePlasticPackagingPage,
-                                                       validAnswer
-      ).success.value
+      val ans = userAnswers.
+        set(AmendHumanMedicinePlasticPackagingPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendHumanMedicinePlasticPackagingRoute)
@@ -81,7 +83,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, retDisApi)(
           request,
           messages(application)
         ).toString
@@ -95,7 +97,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
                      bind[CacheConnector].toInstance(mockCacheConnector)
           )
@@ -115,7 +117,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -129,8 +131,8 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
-                                                                      messages(application)
+        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(request,
+          messages(application)
         ).toString
       }
     }
