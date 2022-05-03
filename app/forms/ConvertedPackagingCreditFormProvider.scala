@@ -28,7 +28,7 @@ class ConvertedPackagingCreditFormProvider extends Mappings {
                           "convertedPackagingCredit.error.wholeNumber",
                           "convertedPackagingCredit.error.nonNumeric"
       ).verifying(
-        inRange[BigDecimal](0.01, maximumAllowed, "convertedPackagingCredit.error.outOfRange")
+        inRange[BigDecimal](0, maximumAllowed, "convertedPackagingCredit.error.outOfRange")
       )
     )
 
