@@ -23,6 +23,8 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
+
 @Singleton
 class FrontendAppConfig @Inject() (
   configuration: Configuration,
@@ -85,6 +87,9 @@ class FrontendAppConfig @Inject() (
 
   lazy val pptRegistrationDeregisterUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
+
+  def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
+    s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
 
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)

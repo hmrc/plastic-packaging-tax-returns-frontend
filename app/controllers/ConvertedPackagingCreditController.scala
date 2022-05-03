@@ -16,24 +16,29 @@
 
 package controllers
 
-import connectors.CacheConnector
+import cacheables.ObligationCacheable
+import connectors.{CacheConnector, ExportCreditsConnector}
 import controllers.actions._
 import forms.ConvertedPackagingCreditFormProvider
-
-import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
+import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.ConvertedPackagingCreditPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ConvertedPackagingCreditView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 
 class ConvertedPackagingCreditController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
+  exportCreditsConnector: ExportCreditsConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -44,34 +49,60 @@ class ConvertedPackagingCreditController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ConvertedPackagingCreditPage) match {
-          case None        => form
+          case None => form
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode))
+        val futureCreditBalanceAvailable: Future[Option[String]] = exportCreditBalanceAvailable(request)
+        futureCreditBalanceAvailable.map {
+          possibleCreditBalanceAvailable => Ok(view(preparedForm, mode, possibleCreditBalanceAvailable))
+        }
+
     }
+  }
+
+  private def exportCreditBalanceAvailable(request: DataRequest[AnyContent])(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+      throw new IllegalStateException("Obligation not found in user-answers")
+    )
+
+    exportCreditsConnector.get(request.request.pptReference,
+      obligation.fromDate.minusYears(2),
+      obligation.fromDate.minusDays(1)
+    )
+  }.map {
+    case Right(balance) => Some(displayMonetaryValue(balance.totalExportCreditAvailable))
+    case Left(_) => None
+  }
+
+  def displayMonetaryValue(money: BigDecimal): String = s"£${money.setScale(2, RoundingMode.HALF_EVEN)}"
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-        form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ConvertedPackagingCreditPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(ConvertedPackagingCreditPage, mode, updatedAnswers))
-        )
+        val futureCreditBalanceAvailable: Future[Option[String]] = exportCreditBalanceAvailable(request)
+
+          form.bindFromRequest().fold(
+            formWithErrors => {
+              futureCreditBalanceAvailable.map { possibleCreditBalanceAvailable =>
+                BadRequest(view(formWithErrors, mode, possibleCreditBalanceAvailable))
+            }},
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(
+                  request.userAnswers.set(ConvertedPackagingCreditPage, value)
+                )
+                _ <- cacheConnector.set(pptId, updatedAnswers)
+              } yield Redirect(navigator.nextPage(ConvertedPackagingCreditPage, mode, updatedAnswers))
+          )
     }
 
 }

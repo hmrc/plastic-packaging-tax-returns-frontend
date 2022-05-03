@@ -22,7 +22,7 @@ import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnType, TaxReturn, TaxReturnObligation}
+import models.returns.{ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,8 +31,8 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
