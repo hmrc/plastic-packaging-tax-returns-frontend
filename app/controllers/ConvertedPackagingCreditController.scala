@@ -48,7 +48,7 @@ class ConvertedPackagingCreditController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
 
-        val userCredit = 100 //todo this amount will come from PPTP-2015
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
 
         val preparedForm = request.userAnswers.get(ConvertedPackagingCreditPage) match {
           case None        => form(userCredit)
@@ -63,7 +63,7 @@ class ConvertedPackagingCreditController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-        val userCredit = 100 //todo this amount will come from PPTP-2015
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
 
         form(userCredit).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
