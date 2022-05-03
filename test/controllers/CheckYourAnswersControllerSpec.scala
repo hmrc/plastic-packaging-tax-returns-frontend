@@ -58,5 +58,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "must redirect when previous tax return is not in user answers" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET,  routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
+      }
+    }
   }
 }
