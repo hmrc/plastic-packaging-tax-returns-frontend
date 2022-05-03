@@ -38,20 +38,21 @@ class ConvertedPackagingCreditController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ConvertedPackagingCreditFormProvider,
+  form: ConvertedPackagingCreditFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedPackagingCreditView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
+
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
         val preparedForm = request.userAnswers.get(ConvertedPackagingCreditPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => form(userCredit)
+          case Some(value) => form(userCredit).fill(value)
         }
 
         Ok(view(preparedForm, mode))
@@ -62,7 +63,9 @@ class ConvertedPackagingCreditController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-        form.bindFromRequest().fold(
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
+        form(userCredit).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
