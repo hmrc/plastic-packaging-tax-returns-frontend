@@ -50,7 +50,9 @@ class ViewReturnSummaryController @Inject() (
           throw new IllegalStateException("no enrolmentId, all users at this point should have one")
         )
 
-        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey.toUpperCase())
+        if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
+
+        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey)
 
         for {
           submittedReturn <- submittedReturnF
@@ -69,5 +71,3 @@ class ViewReturnSummaryController @Inject() (
     }
 
 }
-
-object ViewReturnSummaryController {}

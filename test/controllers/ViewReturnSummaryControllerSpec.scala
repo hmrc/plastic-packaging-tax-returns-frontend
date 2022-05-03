@@ -35,28 +35,26 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
   private val mockConnector = mock[TaxReturnsConnector]
 
-  "ViewReturnSummary Controller" - {
+  val charge = ReturnDisplayChargeDetails(
+    periodFrom = "2022-04-01",
+    periodTo = "2022-06-30",
+    periodKey = "22AC",
+    chargeReference = Some("pan"),
+    receiptDate = "2022-06-31",
+    returnType = "TYPE"
+  )
 
-    "must return OK and the correct view for a GET" in {
+  val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  val submittedReturn = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
 
+  "onPageLoad" - {
+    "must return OK and the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[TaxReturnsConnector].toInstance(mockConnector),
           inject.bind[CacheConnector].toInstance(cacheConnector)
         )
         .build()
-
-      val charge = ReturnDisplayChargeDetails(
-        periodFrom = "2022-04-01",
-        periodTo ="2022-06-30",
-        periodKey = "22AC",
-        chargeReference = Some("pan"),
-        receiptDate = "2022-06-31",
-        returnType = "TYPE"
-      )
-
-      val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-      val submittedReturn      = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
 
       running(application) {
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)
@@ -67,7 +65,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
         when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
 
-        val request = FakeRequest(GET, routes.ViewReturnSummaryController.onPageLoad("00xx").url)
+        val request = FakeRequest(routes.ViewReturnSummaryController.onPageLoad("00XX"))
 
         val result = route(application, request).value
 
@@ -79,10 +77,22 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
           messages(application)
         ).toString
 
-        // Check it capitalised the period key
         verify(mockConnector).get(any(), ArgumentMatchers.eq("00XX"))(any())
       }
     }
 
+    "must throw an error" - {
+      "when the period key is malformed" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(routes.ViewReturnSummaryController.onPageLoad("MALFORMED"))
+
+          val ex = intercept[Exception](await(route(application, request).value))
+          ex.getMessage mustBe "Period key 'MALFORMED' is not allowed."
+        }
+      }
+    }
   }
 }
