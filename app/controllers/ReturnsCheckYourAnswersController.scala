@@ -16,7 +16,7 @@
 
 package controllers
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
+import cacheables.ObligationCacheable
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}

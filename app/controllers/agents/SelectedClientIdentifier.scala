@@ -16,7 +16,6 @@
 
 package controllers.agents
 
-import forms.agents.ClientIdentifier
 import play.api.mvc.{AnyContent, Request, Result}
 
 trait SelectedClientIdentifier {

@@ -23,7 +23,7 @@ import models.financials.PPTFinancials
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
 import java.util.UUID

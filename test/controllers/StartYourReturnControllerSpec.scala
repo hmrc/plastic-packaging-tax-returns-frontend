@@ -25,7 +25,6 @@ import models.returns.TaxReturnObligation
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito
 import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar

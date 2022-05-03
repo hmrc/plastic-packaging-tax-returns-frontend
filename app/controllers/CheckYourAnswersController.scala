@@ -22,7 +22,7 @@ import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn, TaxReturnObligation}
+import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier

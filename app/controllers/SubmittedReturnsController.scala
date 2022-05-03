@@ -23,7 +23,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SubmittedReturnsView
 import javax.inject.Inject
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SubmittedReturnsController @Inject()(

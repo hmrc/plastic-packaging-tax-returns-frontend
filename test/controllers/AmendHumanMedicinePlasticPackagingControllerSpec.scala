@@ -17,11 +17,9 @@
 package controllers
 
 import base.SpecBase
-import cacheables.ReturnDisplayApiCacheable
 import connectors.CacheConnector
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
