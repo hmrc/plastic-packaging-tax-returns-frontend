@@ -16,12 +16,14 @@
 
 package controllers
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.HumanMedicinesPlasticPackagingWeightFormProvider
 
 import javax.inject.Inject
 import models.Mode
+import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.HumanMedicinesPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,38 +33,45 @@ import views.html.HumanMedicinesPlasticPackagingWeightView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HumanMedicinesPlasticPackagingWeightController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: HumanMedicinesPlasticPackagingWeightFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: HumanMedicinesPlasticPackagingWeightView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class HumanMedicinesPlasticPackagingWeightController @Inject()(
+                                                                override val messagesApi: MessagesApi,
+                                                                cacheConnector: CacheConnector,
+                                                                navigator: Navigator,
+                                                                identify: IdentifierAction,
+                                                                getData: DataRetrievalAction,
+                                                                requireData: DataRequiredAction,
+                                                                formProvider: HumanMedicinesPlasticPackagingWeightFormProvider,
+                                                                val controllerComponents: MessagesControllerComponents,
+                                                                view: HumanMedicinesPlasticPackagingWeightView
+                                                              )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(HumanMedicinesPlasticPackagingWeightPage) match {
-          case None        => form
+          case None => form
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
+          case None => Future.successful(Redirect(routes.IndexController.onPageLoad))
+        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+          throw new IllegalStateException("Must have an obligation to Submit against")
+        )
+
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

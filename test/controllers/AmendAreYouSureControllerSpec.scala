@@ -112,6 +112,20 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect when previous tax return is not in user answers" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, amendAreYouSureRoute)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
+      }
+    }
+
+
     "must redirect to the next page when valid data is submitted" in {
       val mockCacheConnector = mock[CacheConnector]
 
