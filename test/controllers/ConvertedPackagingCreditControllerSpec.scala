@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import cacheables.ObligationCacheable
-import connectors.{CacheConnector, ExportCreditsConnector}
+import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
 import forms.ConvertedPackagingCreditFormProvider
 import models.returns.TaxReturnObligation
 import models.{ExportCreditBalance, NormalMode, UserAnswers}
@@ -92,6 +92,22 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
       }
 
       verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some("£123.45")))(any(), any())
+    }
+
+    "must handle the credit balance being unavailable" in {
+      when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Left(
+        DownstreamServiceError("error", new Exception)
+      )))
+      val application = buildApplication
+
+      running(application) {
+        val request = FakeRequest(GET, convertedPackagingCreditRoute)
+        val controller = application.injector.instanceOf[ConvertedPackagingCreditController]
+        val result = controller.onPageLoad(NormalMode)(request)
+        status(result) mustEqual OK
+      }
+
+      verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(None))(any(), any())
     }
 
     // TODO reword tests below...
