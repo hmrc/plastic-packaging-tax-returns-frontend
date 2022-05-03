@@ -47,6 +47,8 @@ class FrontendAppConfig @Inject() (
   val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
   val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
+  val returnUrl: String = configuration.get[String]("urls.returnUrl")
+
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
 

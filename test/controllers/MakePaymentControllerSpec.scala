@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FinancialsConnector
 import models.financials.PPTFinancials
 import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import org.mockito.MockitoSugar.mock
 import play.api.Application
@@ -41,6 +42,9 @@ class MakePaymentControllerSpec extends SpecBase {
     "redirect" - {
       "must redirect" - {
         "when financials connector returns a link" in {
+
+          val returnUrl = "http://localhost:8505/plastic-packaging-tax/account"
+
           val app: Application = applicationBuilder()
             .overrides(
               bind[FinancialsConnector].toInstance(mockFinancialsConnector)
@@ -50,6 +54,7 @@ class MakePaymentControllerSpec extends SpecBase {
           running(app) {
             when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
             when(mockFinancialsConnector.getPaymentLink(any(), any(), any())(any())).thenReturn(Future.successful("/blah"))
+            when(config.returnUrl).thenReturn(returnUrl)
 
             val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)
 
@@ -57,7 +62,7 @@ class MakePaymentControllerSpec extends SpecBase {
 
             redirectLocation(result) mustBe Some("/blah")
             verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
-            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), refEq(controllers.routes.IndexController.onPageLoad.absoluteURL()(request)))(any())
+            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(returnUrl))(any())
         }
       }
     }

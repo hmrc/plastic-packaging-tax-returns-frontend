@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import connectors.FinancialsConnector
 import controllers.actions.IdentifierAction
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,7 +30,8 @@ class MakePaymentController  @Inject() (
                                          override val messagesApi: MessagesApi,
                                          identify: IdentifierAction,
                                          val controllerComponents: MessagesControllerComponents,
-                                         financialsConnector: FinancialsConnector
+                                         financialsConnector: FinancialsConnector,
+                                         appConfig: FrontendAppConfig
                                        )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
@@ -39,7 +41,7 @@ class MakePaymentController  @Inject() (
     for {
       financials <- financialsConnector.getPaymentStatement(pptRef)
       amountInPence = financials.amountToPayInPence
-      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = controllers.routes.IndexController.onPageLoad.absoluteURL())
+      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = appConfig.returnUrl)
     } yield {
       Redirect(Call("GET", link))
     }
