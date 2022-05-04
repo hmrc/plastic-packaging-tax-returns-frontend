@@ -25,9 +25,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class FrontendAppConfig @Inject() (
-                                    configuration: Configuration,
-                                    val servicesConfig: ServicesConfig
-                                  ) {
+  configuration: Configuration,
+  val servicesConfig: ServicesConfig
+) {
 
   val host: String           = configuration.get[String]("host")
   val appName: String        = configuration.get[String]("appName")
@@ -109,7 +109,8 @@ class FrontendAppConfig @Inject() (
   def pptFinancialsUrl(pptReference: String): String =
     s"$pptServiceHost/financials/open/$pptReference"
 
-  def makePaymentUrl: String = servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
+  def makePaymentUrl: String =
+    servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
 
   def pptCacheGetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/get/$pptReference"
