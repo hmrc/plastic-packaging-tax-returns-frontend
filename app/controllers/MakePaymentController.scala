@@ -41,7 +41,7 @@ class MakePaymentController  @Inject() (
     for {
       financials <- financialsConnector.getPaymentStatement(pptRef)
       amountInPence = financials.amountToPayInPence
-      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = appConfig.returnUrl)
+      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = s"${appConfig.selfServiceHost}${routes.IndexController.onPageLoad.url}")
     } yield {
       Redirect(Call("GET", link))
     }

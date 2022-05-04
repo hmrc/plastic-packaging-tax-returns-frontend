@@ -47,8 +47,6 @@ class FrontendAppConfig @Inject() (
   val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
   val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
-  val returnUrl: String = configuration.get[String]("urls.returnUrl")
-
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
 
@@ -61,6 +59,9 @@ class FrontendAppConfig @Inject() (
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
+
+  val selfServiceHost: String =
+    servicesConfig.baseUrl("plastic-packaging-tax-returns-frontend")
 
   private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
   private lazy val pptReturnsAmendUrl: String      = s"$pptServiceHost/returns-amend"
