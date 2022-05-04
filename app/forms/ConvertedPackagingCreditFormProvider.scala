@@ -22,13 +22,15 @@ import play.api.data.Form
 
 class ConvertedPackagingCreditFormProvider extends Mappings {
 
-  def apply(maximumAllowed: BigDecimal): Form[BigDecimal] =
+  private val defaultMaximum = BigDecimal(99999999.99)
+
+  def apply(maximumAllowed: Option[BigDecimal]): Form[BigDecimal] =
     Form(
       "value" -> currency("convertedPackagingCredit.error.required",
                           "convertedPackagingCredit.error.wholeNumber",
                           "convertedPackagingCredit.error.nonNumeric"
       ).verifying(
-        inRange[BigDecimal](0, maximumAllowed, "convertedPackagingCredit.error.outOfRange")
+        inRange[BigDecimal](0, maximumAllowed.getOrElse(defaultMaximum), "convertedPackagingCredit.error.outOfRange")
       )
     )
 

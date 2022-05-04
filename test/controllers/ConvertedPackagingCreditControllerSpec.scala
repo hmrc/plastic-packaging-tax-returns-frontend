@@ -42,8 +42,8 @@ import scala.concurrent.Future
 
 class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  val formProvider = new ConvertedPackagingCreditFormProvider()
-  val form         = formProvider(BigDecimal(10))
+  private val formProvider = new ConvertedPackagingCreditFormProvider()
+  private val form         = formProvider(Some(BigDecimal(10)))
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -67,7 +67,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
     when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Right(ExportCreditBalance(
       totalPPTCharges = 0.0, totalExportCreditClaimed = 0.0, totalExportCreditAvailable = 123.45))))
 
-    when(view.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(view.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   private def buildApplication = {
@@ -108,7 +108,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
         status(result) mustEqual OK
       }
 
-      verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(None))(any(), any())
+      verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), any(), ArgumentMatchers.eq(None))(any(), any())
     }
 
     // TODO reword tests below...
@@ -128,7 +128,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb, Some(""))(
           request,
           messages(application)
         ).toString

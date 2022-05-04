@@ -26,7 +26,7 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
 
   val packagingCredit = 1.25
   val formProvider            = new ConvertedPackagingCreditFormProvider
-  val form: Form[BigDecimal] = formProvider(BigDecimal(99999999.99))
+  val form: Form[BigDecimal] = formProvider(Some(BigDecimal(99999999.99)))
 
   "apply" - {
 
@@ -71,7 +71,7 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
     }
 
     "must reject greater than the allowed amount" in {
-      val bound = formProvider(BigDecimal(10)).bind(Map("value" -> "10.01"))
+      val bound = formProvider(Some(BigDecimal(10))).bind(Map("value" -> "10.01"))
       val error = bound.errors.head
 
       error mustBe FormError("value", "convertedPackagingCredit.error.outOfRange", Seq(BigDecimal(0), BigDecimal(10)))
