@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import models.SignedInUser
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Json, OFormat}
 
-case class IdentifiedRequest[+A](
-  request: Request[A],
-  user: SignedInUser,
-  enrolmentId: Option[String]
-) extends WrappedRequest[A](request) {
+case class ExportCreditBalance(
+  totalPPTCharges: BigDecimal,
+  totalExportCreditClaimed: BigDecimal,
+  totalExportCreditAvailable: BigDecimal
+)
 
-  def pptReference: String = enrolmentId.getOrElse(throw new IllegalStateException("enrolmentId is missing from request"))
+object ExportCreditBalance {
+
+  implicit val format: OFormat[ExportCreditBalance] =
+    Json.format[ExportCreditBalance]
 
 }

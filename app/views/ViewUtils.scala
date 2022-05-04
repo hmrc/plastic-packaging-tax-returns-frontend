@@ -59,5 +59,6 @@ object ViewUtils {
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
 
+  // TODO replace with PrintBigDecimal.asPounds
   def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
 }
