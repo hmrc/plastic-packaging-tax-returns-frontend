@@ -35,7 +35,7 @@ class FrontendAppConfig @Inject() (
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend-scaffold"
+  private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
