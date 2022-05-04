@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, running, status, stubMessagesControllerComponents}

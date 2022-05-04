@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
 
 @this(
@@ -21,10 +23,11 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
 <p class="govuk-body">This applies whether they are filled or unfilled.</p>
@@ -32,6 +35,8 @@
 }
 
 @layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"))) {
+
+    @sectionHeader(taxReturn)
 
     @formHelper(action = routes.ImportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 

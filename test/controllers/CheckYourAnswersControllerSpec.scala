@@ -29,7 +29,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list, retDisApi)(request, messages(application)).toString
       }
     }
 
@@ -56,6 +56,19 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect when previous tax return is not in user answers" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET,  routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
       }
     }
   }

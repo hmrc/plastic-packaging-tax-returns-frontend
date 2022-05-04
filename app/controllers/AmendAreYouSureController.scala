@@ -19,7 +19,6 @@ package controllers
 import cacheables.{AmendReturnPreviousReturn, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.TaxReturnHelper
 import forms.AmendAreYouSureFormProvider
 import models.Mode
 import models.returns.ReturnDisplayApi

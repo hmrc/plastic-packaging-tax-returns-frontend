@@ -31,9 +31,16 @@
  */
 package controllers.helpers
 
-import models.returns.{ConvertedPackagingCredit, ExportedPlasticWeight, HumanMedicinesPlasticWeight, ImportedPlasticWeight, ManufacturedPlasticWeight, RecycledPlasticWeight, TaxReturn, TaxReturnObligation}
+import models.returns.{
+  ConvertedPackagingCredit,
+  ExportedPlasticWeight,
+  HumanMedicinesPlasticWeight,
+  ImportedPlasticWeight,
+  ManufacturedPlasticWeight,
+  RecycledPlasticWeight,
+  TaxReturn
+}
 
-import java.time.LocalDate
 import java.util.UUID
 
 trait TaxReturnBuilder {

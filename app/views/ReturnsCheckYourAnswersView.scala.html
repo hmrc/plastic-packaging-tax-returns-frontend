@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 @import controllers.helpers.TaxLiability
 @import views.ViewUtils.displayMonetaryValue
 @import components.paragraphBody
@@ -24,10 +26,11 @@
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
     govukTable: GovukTable,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    sectionHeader: ReturnQuarterHeading
 )
 
-@(mode: Mode, list: SummaryList, taxLiability: TaxLiability)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, postFixMetric: String = "", classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
@@ -54,6 +57,8 @@
 }
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
+    @sectionHeader(taxReturn)
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
