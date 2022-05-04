@@ -62,7 +62,7 @@ class MakePaymentControllerSpec extends SpecBase {
 
             redirectLocation(result) mustBe Some("/blah")
             verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
-            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(selfHost))(any())
+            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(s"$selfHost/plastic-packaging-tax/account"))(any())
         }
       }
     }
