@@ -26,7 +26,7 @@ class ConvertedPackagingCreditFormProviderSpec extends DecimalFieldBehaviours {
 
   val packagingCredit = 1.25
   val formProvider            = new ConvertedPackagingCreditFormProvider
-  val form: Form[BigDecimal] = formProvider(Some(BigDecimal(99999999.99)))
+  val form: Form[BigDecimal] = formProvider(None)
 
   "apply" - {
 
