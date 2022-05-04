@@ -60,6 +60,9 @@ class FrontendAppConfig @Inject() (
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
 
+  val selfServiceHost: String =
+    servicesConfig.baseUrl("plastic-packaging-tax-returns-frontend")
+
   private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
   private lazy val pptReturnsAmendUrl: String      = s"$pptServiceHost/returns-amend"
 
