@@ -35,7 +35,7 @@ obligationPeriod.caption = April to June 2022
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
-timeout.signOut = Sign out\\
+timeout.signOut = Sign out
 
 error.browser.title.prefix = Error:
 error.boolean = Please give an answer

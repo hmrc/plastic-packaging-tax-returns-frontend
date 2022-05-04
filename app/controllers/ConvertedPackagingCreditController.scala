@@ -29,11 +29,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.PrintBigDecimal
 import views.html.ConvertedPackagingCreditView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode
 
 class ConvertedPackagingCreditController @Inject() (
   override val messagesApi: MessagesApi,
@@ -68,20 +68,19 @@ class ConvertedPackagingCreditController @Inject() (
   }
 
   private def exportCreditBalanceAvailable(request: DataRequest[AnyContent])(implicit hc: HeaderCarrier): Future[Option[String]] = {
+
     val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
       throw new IllegalStateException("Obligation not found in user-answers")
     )
-
-    exportCreditsConnector.get(request.request.pptReference,
+    val futureExportCredits = exportCreditsConnector.get(request.request.pptReference,
       obligation.fromDate.minusYears(2),
       obligation.fromDate.minusDays(1)
     )
-  }.map {
-    case Right(balance) => Some(displayMonetaryValue(balance.totalExportCreditAvailable))
-    case Left(_) => None
+    futureExportCredits.map {
+      case Right(balance) => Some(balance.totalExportCreditAvailable.asPounds)
+      case Left(_) => None
+    }
   }
-
-  def displayMonetaryValue(money: BigDecimal): String = s"£${money.setScale(2, RoundingMode.HALF_EVEN)}"
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -90,19 +89,20 @@ class ConvertedPackagingCreditController @Inject() (
 
         val futureCreditBalanceAvailable: Future[Option[String]] = exportCreditBalanceAvailable(request)
 
-          form.bindFromRequest().fold(
-            formWithErrors => {
-              futureCreditBalanceAvailable.map { possibleCreditBalanceAvailable =>
-                BadRequest(view(formWithErrors, mode, possibleCreditBalanceAvailable))
-            }},
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(
-                  request.userAnswers.set(ConvertedPackagingCreditPage, value)
-                )
-                _ <- cacheConnector.set(pptId, updatedAnswers)
-              } yield Redirect(navigator.nextPage(ConvertedPackagingCreditPage, mode, updatedAnswers))
-          )
+        form.bindFromRequest().fold(
+          formWithErrors => {
+            futureCreditBalanceAvailable.map { possibleCreditBalanceAvailable =>
+              BadRequest(view(formWithErrors, mode, possibleCreditBalanceAvailable))
+            }
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers.set(ConvertedPackagingCreditPage, value)
+              )
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(navigator.nextPage(ConvertedPackagingCreditPage, mode, updatedAnswers))
+        )
     }
 
-}
+  }

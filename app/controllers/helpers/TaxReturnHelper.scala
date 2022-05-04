@@ -38,7 +38,7 @@ class TaxReturnHelper @Inject()(
 
   def nextObligation(pptId: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
     obligationsConnector.getOpen(pptId) map { obligations =>
-      val nextObligation: TaxReturnObligation = obligations.nextObligation.getOrElse(
+      val nextObligation: TaxReturnObligation = obligations.nextObligationToReturn.getOrElse(
         throw new IllegalStateException("Next open obligation can't be found")
       )
 
