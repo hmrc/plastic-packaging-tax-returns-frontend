@@ -40,20 +40,21 @@ class ConvertedPackagingCreditController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ConvertedPackagingCreditFormProvider,
+  form: ConvertedPackagingCreditFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedPackagingCreditView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
         val preparedForm = request.userAnswers.get(ConvertedPackagingCreditPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => form(userCredit)
+          case Some(value) => form(userCredit).fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
@@ -64,11 +65,17 @@ class ConvertedPackagingCreditController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        )
+
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
-        form.bindFromRequest().fold(
+
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
+        form(userCredit).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {

@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ConvertedPackagingCreditFormProvider()
-  val form = formProvider()
+  val form         = formProvider(BigDecimal(10))
 
   def onwardRoute = Call("GET", "/foo")
 
