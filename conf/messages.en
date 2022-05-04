@@ -214,6 +214,7 @@ recycledPlasticPackagingWeight.change.hidden = How much of your finished plastic
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
+viewReturnSummary.viewReturnsLink = View submitted returns
 viewReturnSummary.summary.heading = Summary
 viewReturnSummary.summary.field.liability = Tax liability for this period
 viewReturnSummary.summary.field.processed = Return processed

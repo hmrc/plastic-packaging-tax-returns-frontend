@@ -29,12 +29,13 @@
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(returnPeriod)) {
+@layout(pageTitle = titleNoForm(returnPeriod), showBackLink = false) {
 
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    @link("amend-return", messages("viewReturnSummary.amendLink"), routes.AmendAreYouSureController.onPageLoad(NormalMode))
+    <p>@link("amend-return", messages("viewReturnSummary.amendLink"), routes.AmendAreYouSureController.onPageLoad(NormalMode))</p>
+    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), routes.SubmittedReturnsController.onPageLoad())</p>
 
     <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>
     @govukSummaryList(vm.summarySection.summaryList)
