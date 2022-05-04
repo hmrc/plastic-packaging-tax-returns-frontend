@@ -29,15 +29,16 @@ class FrontendAppConfig @Inject() (
   val servicesConfig: ServicesConfig
 ) {
 
+  val host: String           = configuration.get[String]("host")
   val appName: String        = configuration.get[String]("appName")
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  private val contactHost                  = servicesConfig.baseUrl("contact-frontend")
+  private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(selfServiceHost + request.uri).encodedUrl}"
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
   val loginUrl: String         = configuration.get[String]("urls.login")
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
@@ -59,8 +60,7 @@ class FrontendAppConfig @Inject() (
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
 
-  val selfServiceHost: String =
-    servicesConfig.baseUrl("plastic-packaging-tax-returns-frontend")
+  def returnUrl(relative: String) = s"$host$relative"
 
   private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
   private lazy val pptReturnsAmendUrl: String      = s"$pptServiceHost/returns-amend"
@@ -109,7 +109,8 @@ class FrontendAppConfig @Inject() (
   def pptFinancialsUrl(pptReference: String): String =
     s"$pptServiceHost/financials/open/$pptReference"
 
-  def makePaymentUrl: String = servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
+  def makePaymentUrl: String =
+    servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
 
   def pptCacheGetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/get/$pptReference"
