@@ -43,7 +43,7 @@ class MakePaymentControllerSpec extends SpecBase {
       "must redirect" - {
         "when financials connector returns a link" in {
 
-          val selfHost = "http://localhost:8505/"
+          val selfHost = "http://localhost:8505/plastic-packaging-tax/account"
 
           val app: Application = applicationBuilder()
             .overrides(
@@ -54,7 +54,7 @@ class MakePaymentControllerSpec extends SpecBase {
           running(app) {
             when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
             when(mockFinancialsConnector.getPaymentLink(any(), any(), any())(any())).thenReturn(Future.successful("/blah"))
-            when(config.selfServiceHost).thenReturn(selfHost)
+            when(config.returnUrl(any())).thenReturn(selfHost)
 
             val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)
 
@@ -62,7 +62,7 @@ class MakePaymentControllerSpec extends SpecBase {
 
             redirectLocation(result) mustBe Some("/blah")
             verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
-            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(s"${selfHost}plastic-packaging-tax/account"))(any())
+            verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(selfHost))(any())
         }
       }
     }
