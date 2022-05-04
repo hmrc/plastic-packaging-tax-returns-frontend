@@ -288,7 +288,8 @@ account.homePage.card.registration.details.2.body.partnership = View and change 
 
 account.homePage.card.deregister.link = Deregister from Plastic Packaging Tax
 account.homePage.card.deregister.body = Cancel your Plastic Packaging Tax registration.
-returns.deregistered.title = You deregistered this account from Plastic Packaging Tax
+
+deregistered.title = You deregistered this account from Plastic Packaging Tax
 
 submittedReturns.title = View submitted returns
 submittedReturns.heading = View submitted returns
