@@ -43,7 +43,7 @@ import scala.concurrent.Future
 class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val formProvider = new ConvertedPackagingCreditFormProvider()
-  val form         = formProvider()
+  val form         = formProvider(BigDecimal(10))
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -71,7 +71,8 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
   }
 
   private def buildApplication = {
-    applicationBuilder(userAnswers = Some(test)).overrides(
+    val ans = test.set(ConvertedPackagingCreditPage, validAnswer).success.value
+    applicationBuilder(userAnswers = Some(ans)).overrides(
       bind[ExportCreditsConnector].toInstance(exportCreditConnector),
       bind[ConvertedPackagingCreditView].toInstance(view),
       bind[CacheConnector].toInstance(cacheConnector),
@@ -91,7 +92,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
         status(result) mustEqual OK
       }
 
-      verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some("£123.45")))(any(), any())
+      verify(view).apply(any(), ArgumentMatchers.eq(NormalMode), any(), ArgumentMatchers.eq(Some("£123.45")))(any(), any())
     }
 
     "must handle the credit balance being unavailable" in {
@@ -114,10 +115,10 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" ignore {
 
-      val userAnswers =
-        UserAnswers(userAnswersId).set(ConvertedPackagingCreditPage, validAnswer).success.value
+      val ans =
+        userAnswers.set(ConvertedPackagingCreditPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, convertedPackagingCreditRoute)
@@ -127,7 +128,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, Some("balance"))(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -141,9 +142,9 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[CacheConnector].toInstance(mockCacheConnector)
+            bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()
 
@@ -161,7 +162,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
 
     "must return a Bad Request and errors when invalid data is submitted" ignore {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -175,7 +176,9 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, Some("balance"))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb, Some("balance"))(request,
+          messages(application)
+        ).toString
       }
     }
 

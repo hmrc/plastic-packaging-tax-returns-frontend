@@ -16,13 +16,13 @@
 
 package controllers
 
-import cacheables.AmendSelectedPeriodKey
+import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnType, TaxReturn}
+import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -57,7 +57,10 @@ class CheckYourAnswersController @Inject() (
           ).flatMap(_.row(request.userAnswers))
         )
 
-        Ok(view(mode, list))
+        request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
+          case Some(displayApi) => Ok(view(mode, list, displayApi))
+          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
+        }
     }
 
   def onSubmit(): Action[AnyContent] =

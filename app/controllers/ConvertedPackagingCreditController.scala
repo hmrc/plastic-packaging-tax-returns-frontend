@@ -43,29 +43,42 @@ class ConvertedPackagingCreditController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ConvertedPackagingCreditFormProvider,
+  form: ConvertedPackagingCreditFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedPackagingCreditView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = {
+
     (identify andThen getData andThen requireData).async {
       implicit request =>
+
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
         val preparedForm = request.userAnswers.get(ConvertedPackagingCreditPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
+          case None => form(userCredit)
+          case Some(value) => form(userCredit).fill(value)
         }
+
+        //        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+        //          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
+        //          case None => Future.successful(Redirect(routes.IndexController.onPageLoad))
+        //        }
 
         val futureCreditBalanceAvailable: Future[Option[String]] = exportCreditBalanceAvailable(request)
         futureCreditBalanceAvailable.map {
-          possibleCreditBalanceAvailable => Ok(view(preparedForm, mode, possibleCreditBalanceAvailable))
+          possibleCreditBalanceAvailable => {
+            //Ok(view(preparedForm, mode, possibleCreditBalanceAvailable))
+            request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+              case Some(obligation) => Ok(view(preparedForm, mode, obligation, possibleCreditBalanceAvailable))
+              case None => Redirect(routes.IndexController.onPageLoad)
+            }
+          }
         }
-
     }
   }
+
 
   private def exportCreditBalanceAvailable(request: DataRequest[AnyContent])(implicit hc: HeaderCarrier): Future[Option[String]] = {
 
@@ -85,11 +98,19 @@ class ConvertedPackagingCreditController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val pptId: String = request.request.enrolmentId.getOrElse(
+          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
+        )
+
+        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+          throw new IllegalStateException("Must have an obligation to Submit against")
+        )
 
         val futureCreditBalanceAvailable: Future[Option[String]] = exportCreditBalanceAvailable(request)
 
-        form.bindFromRequest().fold(
+        val userCredit = 10000 //todo this amount will come from PPTP-2015
+
+        form(userCredit).bindFromRequest().fold(
           formWithErrors => {
             futureCreditBalanceAvailable.map { possibleCreditBalanceAvailable =>
               BadRequest(view(formWithErrors, mode, possibleCreditBalanceAvailable))

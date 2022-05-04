@@ -23,14 +23,14 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    returnsSectionHeader: ReturnsSectionHeading
+    sectionHeader: ReturnsSectionHeading
 )
 
 @(form: Form[_], mode: Mode, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("amendAreYouSure.title"))) {
 
-    @returnsSectionHeader(taxReturn)
+    @sectionHeader(taxReturn)
 
     @formHelper(action = routes.AmendAreYouSureController.onSubmit(mode), 'autoComplete -> "off") {
 

@@ -176,8 +176,6 @@
 
 @viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = routes.SubmittedReturnsController.onPageLoad)}
 
-@paymentsHistoryLink = @{link(id = "payment-history-link", text = messages("account.homePage.card.history.viewpaymentslink"), call = routes.IndexController.onPageLoad)}
-
 @layout(
     pageTitle    = titleNoForm(messages("account.homePage.title")),
     showBackLink = false,
@@ -214,11 +212,11 @@
             ) else Seq()
         )
 
-        @card(header = messages("account.homePage.card.history.header"),
-          lines = Seq.empty,
-        links = Seq(
-        paymentsHistoryLink,viewOrAmendReturnsLink
-        ))
+        @card(header = messages(
+            "account.homePage.card.history.header"),
+            lines = Seq.empty,
+            links = Seq(viewOrAmendReturnsLink)
+        )
 
     </div>
 

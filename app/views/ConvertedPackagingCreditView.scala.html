@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
 
 @this(
@@ -21,10 +23,11 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode, possibleCreditBalanceAvailable: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation, possibleCreditBalanceAvailable: Option[String])(implicit request: Request[_], messages: Messages)
 
 @creditBalance = @{
     possibleCreditBalanceAvailable match {
@@ -34,6 +37,8 @@
 }
 
 @layout(pageTitle = title(form, messages("convertedPackagingCredit.title"))) {
+
+    @sectionHeader(taxReturn)
 
     @formHelper(action = routes.ConvertedPackagingCreditController.onSubmit(mode), 'autoComplete -> "off") {
 

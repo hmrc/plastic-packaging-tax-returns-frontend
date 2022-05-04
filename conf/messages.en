@@ -30,7 +30,6 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-obligationPeriod.caption = April to June 2022
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -278,7 +277,6 @@ account.homePage.card.payments.payment.link = Make a PPT payment
 
 account.homePage.card.history.header = History
 account.homePage.card.history.viewreturnslink = View or amend submitted returns
-account.homePage.card.history.viewpaymentslink = View payment history
 
 account.homePage.manage.ppt.account.header = Manage your account
 account.homePage.card.registration.details.1.link.single = Your registration details
@@ -324,3 +322,5 @@ agents.error.required = Enter your client’s Plastic Packaging Tax registration
 agents.error.length = Registration number must be 15 characters
 agents.change.hidden = What is your client’s Plastic Packaging Tax registration number?
 agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+
+deregistered.heading = You deregistered this account from Plastic Packaging Tax

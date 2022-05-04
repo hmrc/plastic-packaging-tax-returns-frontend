@@ -20,17 +20,16 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 
-class ConvertedPackagingCreditFormProvider @Inject() extends Mappings {
+class ConvertedPackagingCreditFormProvider extends Mappings {
 
-  def apply(): Form[BigDecimal] =
+  def apply(maximumAllowed: BigDecimal): Form[BigDecimal] =
     Form(
       "value" -> currency("convertedPackagingCredit.error.required",
                           "convertedPackagingCredit.error.wholeNumber",
                           "convertedPackagingCredit.error.nonNumeric"
+      ).verifying(
+        inRange[BigDecimal](0, maximumAllowed, "convertedPackagingCredit.error.outOfRange")
       )
-        .verifying(
-          inRange[BigDecimal](0.01, 99999999.99, "convertedPackagingCredit.error.outOfRange")
-        )
     )
 
 }
