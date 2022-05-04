@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.requests
+@import models.returns.TaxReturnObligation
+@import components.SectionHeader
+@import views.ViewUtils.displayReturnQuarter
 
-import play.api.mvc.WrappedRequest
-import models.UserAnswers
+@this(
+        sectionHeader: SectionHeader
+)
 
-case class OptionalDataRequest[A](
-    request: IdentifiedRequest[A],
-    userId: String,
-    userAnswers: Option[UserAnswers]
-  ) extends WrappedRequest[A](request)
+@(obligation: TaxReturnObligation)(implicit messages: Messages)
 
-case class DataRequest[A](
-   request: IdentifiedRequest[A],
-   userId: String,
-   userAnswers: UserAnswers
-  ) extends WrappedRequest[A](request)
+@sectionHeader(message = displayReturnQuarter(obligation))
+

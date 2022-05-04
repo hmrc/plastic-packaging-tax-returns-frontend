@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.UserAnswers
-import play.api.libs.json.{JsObject, Writes}
+import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject

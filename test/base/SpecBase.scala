@@ -16,10 +16,15 @@
 
 package base
 
+import cacheables.ReturnDisplayApiCacheable
+import cacheables.ObligationCacheable
 import config.FrontendAppConfig
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.TaxLiabilityFactory
 import models.UserAnswers
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
+import models.returns.TaxReturnObligation
 import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -33,6 +38,8 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HttpResponse
 
+import java.time.LocalDate
+
 trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
     with IntegrationPatience {
@@ -42,7 +49,37 @@ trait SpecBase
   implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector = mock[CacheConnector]
 
+  def userAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+    .set(ObligationCacheable, taxReturnOb).get
+
+  val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.now(),
+    LocalDate.now().plusWeeks(4),
+    LocalDate.now().plusWeeks(8),
+    "XX00")
+
+  val liability = TaxLiabilityFactory.create(
+    1000, 200, 300, 400, 2, 200
+  )
+
   val mockResponse = mock[HttpResponse]
+
+  val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
+    periodFrom = "2022-04-01",
+    periodTo = "2022-06-30",
+    periodKey = "22AC",
+    chargeReference = Some("pan"),
+    receiptDate = "2022-06-31",
+    returnType = "TYPE"
+  )
+
+  val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
+    "",
+    IdDetails("", ""),
+    Some(charge),
+    ReturnDisplayDetails(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+  )
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session)

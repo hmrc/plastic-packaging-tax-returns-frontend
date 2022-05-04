@@ -16,12 +16,14 @@
 
 package controllers
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.ManufacturedPlasticPackagingFormProvider
 
 import javax.inject.Inject
 import models.Mode
+import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.ManufacturedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,14 +49,17 @@ class ManufacturedPlasticPackagingController @Inject() (
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, mode))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
+          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
+        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -62,8 +67,12 @@ class ManufacturedPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
+        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+          throw new IllegalStateException("Must have an obligation to Submit against")
+        )
+
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

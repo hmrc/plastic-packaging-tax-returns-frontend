@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import controllers.helpers.TaxLiabilityFactory
 import controllers.helpers.TaxLiability
 import models.NormalMode
 import play.api.test.FakeRequest
@@ -27,15 +26,12 @@ import views.html.ReturnsCheckYourAnswersView
 
 class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  val liability = TaxLiabilityFactory.create(
-    1000, 200, 300, 400, 2, 200
-  )
 
   "Returns Check Your Answers Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
@@ -48,7 +44,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list, liability)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list, liability, taxReturnOb)(request, messages(application)).toString
       }
     }
 

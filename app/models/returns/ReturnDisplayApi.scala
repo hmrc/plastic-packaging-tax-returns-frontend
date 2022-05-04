@@ -17,9 +17,6 @@
 package models.returns
 
 import play.api.libs.json.{Json, OFormat}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-
-import java.time.LocalDate
 
 case class IdDetails(pptReferenceNumber: String, submissionId: String)
 

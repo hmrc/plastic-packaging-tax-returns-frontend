@@ -27,7 +27,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 class MakePaymentControllerSpec extends SpecBase {
 

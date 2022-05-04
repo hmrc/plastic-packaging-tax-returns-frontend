@@ -16,7 +16,7 @@
 
 package controllers
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
+import cacheables.ObligationCacheable
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -46,7 +46,7 @@ class ReturnsCheckYourAnswersController @Inject()(
                                                  ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(
@@ -69,7 +69,11 @@ class ReturnsCheckYourAnswersController @Inject()(
           BigDecimal(answers.getOrElse("convertedPackagingCredit", 0).toString),
           answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
-        Ok(view(mode, list, liability))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation)))
+          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
+        }
+
     }
 
   def onSubmit(): Action[AnyContent] =
