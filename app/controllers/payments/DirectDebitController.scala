@@ -18,7 +18,7 @@ package controllers.payments
 
 import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -29,10 +29,10 @@ class DirectDebitController @Inject()
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
   val appConf: FrontendAppConfig
-) (implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport{
+)(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
-  def redirectLink() = Action  {  implicit request =>
+  def redirectLink: Action[AnyContent] = Action { implicit request =>
     Redirect(Call("GET", appConf.directDebitEnterEmailAddressUrl))
   }
 

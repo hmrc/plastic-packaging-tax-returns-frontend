@@ -20,6 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.DirectDebitConnector
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.verify
 import org.mockito.MockitoSugar.mock
 import play.api.Application
@@ -31,12 +32,13 @@ import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, route,
 
 class DirectDebitControllerSpec extends SpecBase {
 
-  val direcDebitConnector = mock[DirectDebitConnector]
+  val mockDirectDebitConnector = mock[DirectDebitConnector]
+
   "DirectDebitController" - {
     "redirectLink" - {
       "redirect to enter email address page" in {
         val app: Application = applicationBuilder()
-          .overrides( bind[DirectDebitConnector].toInstance(direcDebitConnector))
+          .overrides( bind[DirectDebitConnector].toInstance(mockDirectDebitConnector))
           .build()
         val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -59,7 +61,7 @@ class DirectDebitControllerSpec extends SpecBase {
           val result = route(app, request).value
 
           status(result) mustBe SEE_OTHER
-          verify(direcDebitConnector).getDirectDebitMandate(ArgumentMatchers.eq(pptRefNumber))
+          verify(mockDirectDebitConnector).getDirectDebitMandate(refEq("123"))(any())
         }
       }
     }

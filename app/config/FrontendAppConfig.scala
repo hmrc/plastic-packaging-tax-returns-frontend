@@ -121,5 +121,6 @@ class FrontendAppConfig @Inject() (
   def directDebitEnterEmailAddressUrl: String = {
     s"${servicesConfig.baseUrl("feedback-frontend")}/direct-debit/enter-email-address"
   }
-
+  def pptDirectDebitUrl(pptReference: String): String =
+    s"$pptServiceHost/direct-debit/$pptReference"
 }

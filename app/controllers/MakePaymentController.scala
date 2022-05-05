@@ -35,7 +35,7 @@ class MakePaymentController  @Inject() (
                                        )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-  def redirectLink(): Action[AnyContent] = identify.async {implicit request =>
+  def redirectLink: Action[AnyContent] = identify.async {implicit request =>
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
     for {
