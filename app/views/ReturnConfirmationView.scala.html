@@ -37,7 +37,7 @@
     @govukPanel(Panel(
         title = Text(messages("return.confirmation.submitted")),
 
-        content = Text(chargeReference.fold(messages("return.confirmation.panel.empty")(ref => messages("return.confirmation.panel", ref))
+        content = Text(chargeReference.fold(messages("return.confirmation.panel.empty"))(ref => messages("return.confirmation.panel", ref)))
         )
     )
 
