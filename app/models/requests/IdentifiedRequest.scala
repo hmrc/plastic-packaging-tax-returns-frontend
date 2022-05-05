@@ -25,6 +25,8 @@ case class IdentifiedRequest[+A](
   enrolmentId: Option[String]
 ) extends WrappedRequest[A](request) {
 
+  def internalId: String = user.identityData.internalId
+
   def pptReference: String = enrolmentId.getOrElse(throw new IllegalStateException("enrolmentId is missing from request"))
 
 }
