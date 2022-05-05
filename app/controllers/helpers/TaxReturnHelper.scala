@@ -52,11 +52,8 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def fetchTaxReturn(userId: String, periodKey: String)(implicit
-                                                        hc: HeaderCarrier
-  ): Future[ReturnDisplayApi] = {
-    val future: Future[Either[ServiceError, ReturnDisplayApi]] =
-      returnsConnector.get(userId, periodKey)
+  def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[ReturnDisplayApi] = {
+    val future: Future[Either[ServiceError, ReturnDisplayApi]] = returnsConnector.get(userId, periodKey)
     future.map {
       case Right(taxReturn) => taxReturn
       case Left(error) => throw error

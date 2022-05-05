@@ -18,20 +18,18 @@ package connectors
 
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.helpers.TaxReturnBuilder
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
-import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{BeforeAndAfterEach, EitherValues}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
-import java.util.UUID
-
 class TaxReturnsConnectorSpec
-  extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder {
+  extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder with BeforeAndAfterEach {
 
   lazy val connector: TaxReturnsConnector = app.injector.instanceOf[TaxReturnsConnector]
 
@@ -46,7 +44,12 @@ class TaxReturnsConnectorSpec
     super.afterAll()
   }
 
-  val pptReference = UUID.randomUUID().toString
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    wireMockServer.resetAll()
+  }
+
+  private val pptReference = "XMPPT001"
 
   "Tax Returns Connector" should {
 
@@ -82,16 +85,10 @@ class TaxReturnsConnectorSpec
     }
 
     "Amend correctly" in {
-
-      givenReturnsAmendmentEndpointReturns(Status.OK,
-        pptReference,
-        body = "{}"
-      )
-
-      val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference))))
-
-      res.isRight mustBe true
-
+      wireMockServer.stubFor(put(anyUrl()).willReturn(ok().withBody("{}")))
+      val result: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId("id-ref-10")), "submission-214"))
+      result mustBe Right(())
+      wireMockServer.verify(putRequestedFor(urlEqualTo(s"/returns-amend/id-ref-10/submission-214")))
     }
 
     "return a left (error)" when {
@@ -128,7 +125,7 @@ class TaxReturnsConnectorSpec
           body = "{"
         )
 
-        val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
