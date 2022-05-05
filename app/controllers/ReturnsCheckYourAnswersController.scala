@@ -25,6 +25,7 @@ import models.Mode
 import models.returns.{ReturnType, TaxReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
@@ -41,6 +42,7 @@ class ReturnsCheckYourAnswersController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    returnsConnector: TaxReturnsConnector,
                                                    taxReturnHelper: TaxReturnHelper,
+                                                   sessionRepository: SessionRepository,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    view: ReturnsCheckYourAnswersView
                                                  ) extends FrontendBaseController with I18nSupport {
@@ -90,16 +92,12 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
 
-        returnsConnector.submit(taxReturn).map {
+        returnsConnector.submit(taxReturn).flatMap {
           case Right(optChargeRef) =>
-
-            //cache.save(optChargeRef).map{
-
-            Redirect(routes.ReturnConfirmationController.onPageLoad())
-            //}
-          case Left(error) =>
-            throw error
-
+            sessionRepository.set(Entry(request.userId, optChargeRef)).map{
+              _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
+            }
+          case Left(error) => throw error
         }
     }
 

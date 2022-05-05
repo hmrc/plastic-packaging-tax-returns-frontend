@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-case class Entry(id: String, data: Option[String], lastUpdated: Instant)
+final case class Entry(id: String, data: Option[String], lastUpdated: Instant = Instant.now())
 
 object Entry {
   implicit val format: Format[Entry] = Format(
