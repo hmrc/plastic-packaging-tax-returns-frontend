@@ -119,4 +119,5 @@ GET        /changeAgents                  controllers.AgentsController.onPageLoa
 POST       /changeAgents                  controllers.AgentsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /make-a-payment                                  controllers.MakePaymentController.redirectLink()
+GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
 

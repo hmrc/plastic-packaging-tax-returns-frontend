@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package controllers.payments
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, Call, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-class ConvertedPackagingCreditFormProvider extends Mappings {
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-  def apply(maximumAllowed: BigDecimal): Form[BigDecimal] =
-    Form(
-      "value" -> currency("convertedPackagingCredit.error.required",
-                          "convertedPackagingCredit.error.wholeNumber",
-                          "convertedPackagingCredit.error.nonNumeric"
-      ).verifying(
-        inRange[BigDecimal](0, maximumAllowed, "convertedPackagingCredit.error.outOfRange")
-      )
-    )
+class DirectDebitController @Inject
+(
+  override val messagesApi: MessagesApi,
+  val controllerComponents: MessagesControllerComponents
+) (implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport{
+
+  def redirectLink() = Action  {  implicit request =>
+    Redirect(Call("GET", "/blah"))
+  }
 
 }
