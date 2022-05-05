@@ -208,7 +208,7 @@
             ),
             links = if (appConfig.isFeatureEnabled(Features.paymentsEnabled)) Seq(
                 link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), call = controllers.routes.MakePaymentController.redirectLink()),
-                link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), call = controllers.routes.MakePaymentController.redirectLink())
+                link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), call = controllers.payments.routes.DirectDebitController.redirectLink())
             ) else Seq()
         )
 

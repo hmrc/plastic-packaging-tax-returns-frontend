@@ -18,6 +18,7 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
+import controllers.payments.{routes => paymentRoute }
 import models.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
@@ -117,7 +118,7 @@ class IndexPageViewSpec
 
       view.getElementById("direct-debit-link").text() mustBe "Set up or manage a Direct Debit"
       view.getElementById("direct-debit-link") must haveHref(
-        routes.DirectDebitController.redirectLink.url
+        paymentRoute.DirectDebitController.redirectLink
       )
     }
 
@@ -321,7 +322,7 @@ class IndexPageViewSpec
                       )
 
                       additionalManagement.select("a").first() must haveHref(
-                        routes.DirectDebitController.redirectLink()
+                        appConfig.pptRegistrationManagePartnersUrl
                       )
 
                       checkDeregisterCard(deregister)
