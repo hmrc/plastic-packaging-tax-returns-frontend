@@ -17,25 +17,50 @@
 package controllers.payments
 
 import base.SpecBase
+import config.FrontendAppConfig
+import connectors.DirectDebitConnector
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.mock
 import play.api.Application
+import play.api.http.Status.SEE_OTHER
+import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, route, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, route, running, status, writeableOf_AnyContentAsEmpty}
 
 
 class DirectDebitControllerSpec extends SpecBase {
 
-
+  val direcDebitConnector = mock[DirectDebitConnector]
   "DirectDebitController" - {
     "redirectLink" - {
       "redirect to enter email address page" in {
+        val app: Application = applicationBuilder()
+          .overrides( bind[DirectDebitConnector].toInstance(direcDebitConnector))
+          .build()
+        val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
+        running(app) {
+          val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
+
+          val result = route(app, request).value
+
+          redirectLocation(result) mustBe Some(appConfig.directDebitEnterEmailAddressUrl)
+        }
+      }
+
+      "call the direct debit connector" in {
         val app: Application = applicationBuilder().build()
+        val pptRefNumber = "123"
 
-        val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
+        running(app) {
+          val request = FakeRequest(GET, s"${routes.DirectDebitController.redirectLink().url}/$pptRefNumber")
 
-        val result = route(app, request).value
+          val result = route(app, request).value
 
-        redirectLocation(result) mustBe Some("/bleach")
+          status(result) mustBe SEE_OTHER
+          verify(direcDebitConnector).getDirectDebitMandate(ArgumentMatchers.eq(pptRefNumber))
+        }
       }
     }
   }
