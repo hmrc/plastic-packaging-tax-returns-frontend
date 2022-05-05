@@ -27,27 +27,39 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
 
   lazy val connector: DirectDebitConnector = app.injector.instanceOf[DirectDebitConnector]
 
-    override protected def beforeAll(): Unit = {
-      super.beforeAll()
-      WireMock.configureFor(wireHost, wirePort)
-      wireMockServer.start()
-    }
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    WireMock.configureFor(wireHost, wirePort)
+    wireMockServer.start()
+  }
 
-    override protected def afterAll(): Unit = {
-      wireMockServer.stop()
-      super.afterAll()
-    }
+  override protected def afterAll(): Unit = {
+    wireMockServer.stop()
+    super.afterAll()
+  }
 
   "getDirectDebitMandate" should {
     "return 200" in {
 
 
-      stubEndPointForDirectDebit(200, "123",  "blah")
+      stubEndPointForDirectDebit(200, "123", "blah")
 
       val res = await(connector.getDirectDebitMandate("123"))
 
-      res mustBe "blah"
+      res.status mustBe OK
+      res.body mustBe "blah"
     }
+    "handle an invalid response" in {
+
+      stubEndPointForDirectDebit(404, pptReference = "234", "blegh")
+
+      intercept[DownstreamServiceError] {
+        await(connector.getDirectDebitMandate("234"))
+      }
+
+
+    }
+
   }
 
   private def stubEndPointForDirectDebit

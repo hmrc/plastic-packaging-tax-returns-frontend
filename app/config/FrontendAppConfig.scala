@@ -118,8 +118,8 @@ class FrontendAppConfig @Inject() (
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"
 
-  def directDebitEnterEmailAddressUrl: String = {
-    s"${servicesConfig.baseUrl("feedback-frontend")}/direct-debit/enter-email-address"
+  def directDebitEnterEmailAddressUrl(urlSuffix:String): String = {
+    s"${servicesConfig.baseUrl("feedback-frontend")}/direct-debit/$urlSuffix"
   }
   def pptDirectDebitUrl(pptReference: String): String =
     s"$pptServiceHost/direct-debit/$pptReference"

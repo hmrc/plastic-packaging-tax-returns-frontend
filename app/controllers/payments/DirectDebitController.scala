@@ -17,23 +17,35 @@
 package controllers.payments
 
 import config.FrontendAppConfig
+import connectors.DirectDebitConnector
+import controllers.actions.IdentifierAction
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitController @Inject()
 (
   override val messagesApi: MessagesApi,
+  connector: DirectDebitConnector,
+  identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  val appConf: FrontendAppConfig
+  appConf: FrontendAppConfig
 )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-  def redirectLink: Action[AnyContent] = Action { implicit request =>
-    Redirect(Call("GET", appConf.directDebitEnterEmailAddressUrl))
+  def redirectLink: Action[AnyContent] = identify.async { implicit request =>
+    val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+
+    connector.getDirectDebitMandate(pptRef).map(res => {
+      val urlSuffix = res.body
+      Redirect(Call("GET", appConf.directDebitEnterEmailAddressUrl(urlSuffix)))
+
+    }
+
+    )
   }
 
 }

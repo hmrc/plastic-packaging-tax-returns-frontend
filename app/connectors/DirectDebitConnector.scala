@@ -19,7 +19,7 @@ package connectors
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,16 +33,21 @@ class DirectDebitConnector @Inject()
   extends Logging {
   def getDirectDebitMandate(
                              pptReferenceNumber: String)
-                           (implicit hc: HeaderCarrier): Future[String] = {
+                           (implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
 
-    httpClient.GET[String](appConfig.pptDirectDebitUrl(pptReferenceNumber))
+    httpClient.GET[HttpResponse](appConfig.pptDirectDebitUrl(pptReferenceNumber))
       .map {
         response =>
           logger.info(s"Retrieved direct debit mandate for ppt reference number [$pptReferenceNumber]")
           response
       }
       .andThen { case _ => timer.stop() }
+      .recover {
+        case exception: Exception =>
+          throw DownstreamServiceError("SOME ERROR",
+            exception)
+      }
   }
 }
 
