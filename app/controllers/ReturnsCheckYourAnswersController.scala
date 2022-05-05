@@ -90,19 +90,17 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
 
-        submit(taxReturn).map {
-          case Right(_) =>
-            Redirect(routes.ReturnConfirmationController.onPageLoad())
+        returnsConnector.submit(taxReturn).map {
+          case Right(optChargeRef) =>
 
+            //cache.save(optChargeRef).map{
+
+            Redirect(routes.ReturnConfirmationController.onPageLoad())
+            //}
           case Left(error) =>
             throw error
 
         }
     }
-
-  private def submit(
-                      taxReturn: TaxReturn
-                    )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
-    returnsConnector.submit(taxReturn)
 
 }
