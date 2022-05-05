@@ -71,17 +71,32 @@ class TaxReturnsConnectorSpec
 
     }
 
-    "submit correctly" in {
+    "submit correctly" when {
+      "there is a charge reference" in {
 
-      givenReturnsSubmissionEndpointReturns(Status.OK,
-        pptReference,
-        body = "{}"
-      )
+        givenReturnsSubmissionEndpointReturns(Status.OK,
+          pptReference,
+          body = """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}"""
+        )
 
-      val res: Either[ServiceError, Unit] = await(connector.submit(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
 
-      res.isRight mustBe true
+        res.isRight mustBe true
+        res.value mustBe Some("PANTESTPAN")
 
+      }
+      "there is no charge reference" in {
+
+        givenReturnsSubmissionEndpointReturns(Status.OK,
+          pptReference,
+          body = """{"chargeDetails": null}"""
+        )
+
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
+
+        res.isRight mustBe true
+        res.value mustBe None
+      }
     }
 
     "Amend correctly" in {
@@ -112,7 +127,7 @@ class TaxReturnsConnectorSpec
           body = "{"
         )
 
-        val res: Either[ServiceError, Unit] = await(connector.submit(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
