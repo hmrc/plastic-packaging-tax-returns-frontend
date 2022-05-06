@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.DirectDebitConnector._
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

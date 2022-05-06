@@ -122,7 +122,5 @@ class FrontendAppConfig @Inject() (
     s"$pptServiceHost/direct-debit/$pptReference"
 
   def pptStartDirectDebit : String =
-    s"${servicesConfig.baseUrl("direct-debit-backend")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
+    s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
 }
-
-//
