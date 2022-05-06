@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.payments
 
 import config.FrontendAppConfig
-import connectors.FinancialsConnector
+import connectors.DirectDebitConnector
 import controllers.actions.IdentifierAction
+import controllers.{routes => payRoute}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,25 +27,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class MakePaymentController  @Inject() (
-                                         override val messagesApi: MessagesApi,
-                                         identify: IdentifierAction,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         financialsConnector: FinancialsConnector,
-                                         appConfig: FrontendAppConfig
-                                       )(implicit ec: ExecutionContext)
+class DirectDebitController @Inject()
+(
+  override val messagesApi: MessagesApi,
+  connector: DirectDebitConnector,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  appConf: FrontendAppConfig
+)(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-  def redirectLink: Action[AnyContent] = identify.async {implicit request =>
+  def redirectLink: Action[AnyContent] = identify.async { implicit request =>
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
-
-    for {
-      financials <- financialsConnector.getPaymentStatement(pptRef)
-      amountInPence = financials.amountToPayInPence
-      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = appConfig.returnUrl(routes.IndexController.onPageLoad.url))
-    } yield {
-      Redirect(Call("GET", link))
-    }
+    val futureLink = connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
+    futureLink.map { link => Redirect(Call("GET", link)) }
   }
-
 }
