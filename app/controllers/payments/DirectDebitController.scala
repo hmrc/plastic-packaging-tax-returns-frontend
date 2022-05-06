@@ -19,6 +19,7 @@ package controllers.payments
 import config.FrontendAppConfig
 import connectors.DirectDebitConnector
 import controllers.actions.IdentifierAction
+import controllers.{routes => payRoute}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,13 +40,13 @@ class DirectDebitController @Inject()
   def redirectLink: Action[AnyContent] = identify.async { implicit request =>
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-    connector.getDirectDebitMandate(pptRef).map(res => {
-      val urlSuffix = res.body
-      Redirect(Call("GET", appConf.directDebitEnterEmailAddressUrl(urlSuffix)))
+    for {
+      link <- connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
+    } yield {
+      Redirect(Call("GET", link))
+
 
     }
 
-    )
   }
-
 }

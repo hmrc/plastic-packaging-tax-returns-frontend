@@ -37,30 +37,7 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
     wireMockServer.stop()
     super.afterAll()
   }
-
-  "getDirectDebitMandate" should {
-    "return 200" in {
-
-
-      stubEndPointForDirectDebit(200, "123", "blah")
-
-      val res = await(connector.getDirectDebitMandate("123"))
-
-      res.status mustBe OK
-      res.body mustBe "blah"
-    }
-    "handle an invalid response" in {
-
-      stubEndPointForDirectDebit(404, pptReference = "234", "blegh")
-
-      intercept[DownstreamServiceError] {
-        await(connector.getDirectDebitMandate("234"))
-      }
-
-
-    }
-
-  }
+//TODO: Reimpliment unit tests for DD
 
   private def stubEndPointForDirectDebit
   (
