@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.DirectDebitConnector._
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -60,6 +61,6 @@ object DirectDebitConnector {
   private final case class DDLinkResponse(journeyId: String, nextUrl: String)
 
   private object DDLinkResponse {
-    implicit val writes: Reads[DDLinkResponse] = Json.reads[DDLinkResponse]
+    implicit val reads: Reads[DDLinkResponse] = Json.reads[DDLinkResponse]
   }
 }

@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.{ReturnDisplayApi, TaxReturn}
 import play.api.Logger
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsLookupResult, JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -50,15 +50,16 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-  def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
 
     httpClient.POST[TaxReturn, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload)
       .andThen { case _ => timer.stop() }
-      .map { _ =>
-        logger.info(s"Submitted ppt tax returns for id [$pptReference]")
-        Right(())
+      .map { returnJson =>
+        val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
+        logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
+        Right(chargeReference)
       }
       .recover {
         case ex: Exception =>
@@ -67,11 +68,12 @@ class TaxReturnsConnector @Inject()(
   }
 
 
-  def amend(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def amend(payload: TaxReturn, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
+    val url = appConfig.pptReturnAmendUrl(pptReference, submissionId)
 
-    httpClient.PUT[TaxReturn, JsValue](appConfig.pptReturnAmendUrl(pptReference), payload)
+    httpClient.PUT[TaxReturn, JsValue](url, payload)
       .andThen { case _ => timer.stop() }
       .map { _ =>
         logger.info(s"Submitted ppt tax return amendment for id [$pptReference]")

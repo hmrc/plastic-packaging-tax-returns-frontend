@@ -148,6 +148,7 @@
     obligations.flatMap { obligations =>
         obligations.nextObligation.map { nextObligation =>
             messages("account.homePage.card.makeReturn.line2.due",
+              // TODO move to methods on the model?
                 ViewUtils.displayReturnQuarter(nextObligation),
                 ViewUtils.displayLocalDate(nextObligation.dueDate.minusDays(nextObligation.dueDate.getDayOfMonth - 1)),
                 ViewUtils.displayLocalDate(nextObligation.dueDate))

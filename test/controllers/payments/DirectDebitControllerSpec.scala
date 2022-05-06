@@ -28,6 +28,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, route, running, status, writeableOf_AnyContentAsEmpty}
 import controllers.{routes => payRoute}
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 

@@ -31,8 +31,8 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -76,19 +76,18 @@ class CheckYourAnswersController @Inject() (
         )
 
         val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation, ReturnType.AMEND)
-        submit(taxReturn).map {
+        val submissionId: String = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable)
+          .getOrElse(throw new IllegalStateException("must have a submission id to amend a return"))
+          .idDetails
+          .submissionId
+
+        returnsConnector.amend(taxReturn, submissionId).map {
           case Right(_) =>
             Redirect(routes.AmendConfirmationController.onPageLoad())
 
           case Left(error) =>
             throw error
-
         }
     }
-
-  private def submit(
-    taxReturn: TaxReturn
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] =
-    returnsConnector.amend(taxReturn)
-
+8
 }

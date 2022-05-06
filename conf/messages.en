@@ -137,7 +137,7 @@ amendAreYouSure.change.hidden = AmendAreYouSure
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
-amend.confirmation.panel = Your reference number for this amendment is PPT12345654321
+amend.confirmation.panel =
 amend.confirmation.check.account = Check your PPT account
 amend.confirmation.subheading  = What happens next
 amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Plastic Packaging Tax account
@@ -152,6 +152,8 @@ convertedPackagingCredit.error.required = Enter a value
 convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
 convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
 convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
+convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
 
 exportedPlasticPackagingWeight.title = How much of your finished plastic packaging components did you directly export?
 exportedPlasticPackagingWeight.heading = How much of your finished plastic packaging components did you directly export?
@@ -212,6 +214,7 @@ recycledPlasticPackagingWeight.change.hidden = How much of your finished plastic
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
+viewReturnSummary.viewReturnsLink = View submitted returns
 viewReturnSummary.summary.heading = Summary
 viewReturnSummary.summary.field.liability = Tax liability for this period
 viewReturnSummary.summary.field.processed = Return processed
@@ -240,7 +243,8 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
-return.confirmation.panel =
+return.confirmation.panel = Your reference number is {0}
+return.confirmation.panel.empty = Nothing to pay
 return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = We will not email you a confirmation.
 return.confirmation.return.link = Return to your Plastic Packaging Tax account

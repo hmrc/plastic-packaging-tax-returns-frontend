@@ -32,22 +32,18 @@
 
 
 @*TODO: order the Seq by obligation dates before operating on*@
-
 @returnsLine = @{
-
-if (obligations.isEmpty) {
-    messages("submittedReturns.nothingsubmitted")
-} else {
-    obligations.map {
-        o =>
-              taxReturnLink(displayReturnQuarter(o),o)
-
+    if(obligations.isEmpty) {
+        messages("submittedReturns.nothingsubmitted")
+    } else {
+        obligations.map {
+            o => taxReturnLink(displayReturnQuarter(o), o)
         }
     }
 }
 
 
-@layout(pageTitle = titleNoForm(messages("submittedReturns.title"))) {
+@layout(pageTitle = titleNoForm(messages("submittedReturns.title")), showBackLink = false) {
 
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 
