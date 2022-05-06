@@ -64,7 +64,7 @@ class AuthFunction @Inject() (
 
           val maybeInternalId = internalId.getOrElse(
             throw new IllegalArgumentException(
-              s"AuthenticatedIdentifierAction::invokeBlock -  id is required"
+              s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
             )
           )
 
