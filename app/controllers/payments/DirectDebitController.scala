@@ -39,14 +39,7 @@ class DirectDebitController @Inject()
 
   def redirectLink: Action[AnyContent] = identify.async { implicit request =>
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
-
-    for {
-      link <- connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
-    } yield {
-      Redirect(Call("GET", link))
-
-
-    }
-
+    val futureLink = connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
+    futureLink.map { link => Redirect(Call("GET", link)) }
   }
 }

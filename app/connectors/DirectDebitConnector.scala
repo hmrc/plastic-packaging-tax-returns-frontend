@@ -60,6 +60,6 @@ object DirectDebitConnector {
   private final case class DDLinkResponse(journeyId: String, nextUrl: String)
 
   private object DDLinkResponse {
-    implicit val writes: Reads[DDLinkResponse] = Json.reads[DDLinkResponse]
+    implicit val reads: Reads[DDLinkResponse] = Json.reads[DDLinkResponse]
   }
 }
