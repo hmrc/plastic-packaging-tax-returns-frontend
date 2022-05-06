@@ -14,22 +14,22 @@
  * limitations under the License.
  *@
 
-@import models.returns.ReturnDisplayApi
-@import components.ReturnsSectionHeading
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
-    sectionHeader: ReturnsSectionHeading
+    sectionHeader: ReturnQuarterHeading
 )
 
-@(mode: Mode, list: SummaryList, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(obligation)
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 

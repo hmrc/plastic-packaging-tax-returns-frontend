@@ -16,12 +16,12 @@
 
 package controllers
 
-import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
-import models.returns.ReturnDisplayApi
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -52,20 +52,24 @@ class ViewReturnSummaryController @Inject() (
 
         if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
 
-        val submittedReturnF: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptId, periodKey)
+        val submittedReturnF: Future[ReturnDisplayApi]             = taxReturnHelper.fetchTaxReturn(pptId, periodKey)
+        val fulfilledObligationF: Future[Seq[TaxReturnObligation]] = taxReturnHelper.getObligation(pptId, periodKey)
 
         for {
           submittedReturn <- submittedReturnF
+          obligation <- fulfilledObligationF
           updatedAnswers <- Future.fromTry(
             request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
               AmendSelectedPeriodKey, periodKey
+            ).getOrElse(UserAnswers(request.userId)).set(
+              ObligationCacheable, obligation.head
             ).getOrElse(UserAnswers(request.userId)).set(
               ReturnDisplayApiCacheable, submittedReturn
             )
           )
           _ <- cacheConnector.set(pptId, updatedAnswers)
         } yield {
-          val returnPeriod = views.ViewUtils.displayReturnQuarter(submittedReturn)
+          val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation.head)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
         }
     }
