@@ -16,12 +16,12 @@
 
 package controllers
 
-import cacheables.ReturnDisplayApiCacheable
+import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
-import models.returns.ReturnDisplayApi
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator
 import pages.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,8 +55,8 @@ class AmendDirectExportPlasticPackagingController @Inject() (
           case Some(value) => form.fill(value)
         }
 
-        request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
-          case Some(displayApi) => Ok(view(preparedForm, mode, displayApi))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
           case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
     }
@@ -66,12 +66,12 @@ class AmendDirectExportPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
-        val submittedReturn = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
+        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

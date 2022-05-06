@@ -16,13 +16,13 @@
 
 package controllers
 
-import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn}
+import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -57,8 +57,8 @@ class CheckYourAnswersController @Inject() (
           ).flatMap(_.row(request.userAnswers))
         )
 
-        request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
-          case Some(displayApi) => Ok(view(mode, list, displayApi))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Ok(view(mode, list, obligation))
           case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
     }
