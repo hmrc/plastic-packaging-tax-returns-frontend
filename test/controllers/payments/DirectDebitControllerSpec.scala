@@ -27,58 +27,55 @@ import play.api.http.Status.SEE_OTHER
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, route, running, status, writeableOf_AnyContentAsEmpty}
-import uk.gov.hmrc.http.HttpResponse
+import controllers.{routes => payRoute}
 
 import scala.concurrent.Future
 
 
 class DirectDebitControllerSpec extends SpecBase {
 
-  ////TODO: Reimpliment unit tests for DD
+  "DirectDebitController" - {
+    "redirectLink" - {
+      "redirect to DD" in {
 
-//  "DirectDebitController" - {
-//    "redirectLink" - {
-//      "redirect to enter email address page" in {
-//
-//        val mockDirectDebitConnector: DirectDebitConnector = mock[DirectDebitConnector]
-//
-//        val app: Application = applicationBuilder()
-//          .overrides(bind[DirectDebitConnector].toInstance(mockDirectDebitConnector))
-//          .build()
-//
-//
-//        val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-//        running(app) {
-//          when(mockDirectDebitConnector.getDirectDebitMandate(any())(any()))
-//            .thenReturn(Future.successful(HttpResponse(200, "something")))
-//
-//          val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
-//
-//          val result = route(app, request).value
-//
-//          redirectLocation(result) mustBe Some(appConfig.directDebitEnterEmailAddressUrl("something"))
-//        }
-//      }
-//
-//      "call the direct debit connector" in {
-//        val mockDirectDebitConnector: DirectDebitConnector = mock[DirectDebitConnector]
-//
-//        val app: Application = applicationBuilder()
-//          .overrides(bind[DirectDebitConnector].toInstance(mockDirectDebitConnector))
-//          .build()
-//
-//        running(app) {
-//          when(mockDirectDebitConnector.getDirectDebitMandate(any())(any()))
-//            .thenReturn(Future.successful(HttpResponse(200, "something")))
-//
-//          val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
-//
-//          val result = route(app, request).value
-//
-//          status(result) mustBe SEE_OTHER
-//        verify(mockDirectDebitConnector).getDirectDebitMandate(refEq("123"))(any())
-//        }
-//      }
-//    }
-//  }
+        val mockDirectDebitConnector: DirectDebitConnector = mock[DirectDebitConnector]
+
+        val app: Application = applicationBuilder()
+          .overrides(bind[DirectDebitConnector].toInstance(mockDirectDebitConnector))
+          .build()
+
+        running(app) {
+          when(mockDirectDebitConnector.getDirectDebitLink(any(), any())(any()))
+            .thenReturn(Future.successful("something"))
+
+          val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
+
+          val result = route(app, request).value
+
+          redirectLocation(result) mustBe Some("something")
+        }
+      }
+      "call the direct debit connector" in {
+        val mockDirectDebitConnector: DirectDebitConnector = mock[DirectDebitConnector]
+
+        val app: Application = applicationBuilder()
+          .overrides(bind[DirectDebitConnector].toInstance(mockDirectDebitConnector))
+          .build()
+        val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+        running(app) {
+          when(mockDirectDebitConnector.getDirectDebitLink(any(), any())(any()))
+            .thenReturn(Future.successful("something"))
+
+          val request = FakeRequest(GET, routes.DirectDebitController.redirectLink().url)
+
+          val result = route(app, request).value
+
+          status(result) mustBe SEE_OTHER
+          verify(mockDirectDebitConnector).getDirectDebitLink(refEq("123"), refEq(appConfig.returnUrl(payRoute.IndexController.onPageLoad.url)))(any())
+        }
+      }
+    }
+  }
 }
+

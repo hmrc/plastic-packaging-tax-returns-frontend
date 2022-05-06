@@ -33,20 +33,13 @@ class DirectDebitController @Inject()
   connector: DirectDebitConnector,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  appConf: FrontendAppConfig
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
   def redirectLink: Action[AnyContent] = identify.async { implicit request =>
     val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
-
-    for {
-      link <- connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
-    } yield {
-      Redirect(Call("GET", link))
-
-
-    }
-
+    val futureLink = connector.getDirectDebitLink(pptRef, homeUrl = appConfig.returnUrl(payRoute.IndexController.onPageLoad.url))
+    futureLink.map { link => Redirect(Call("GET", link)) }
   }
 }
