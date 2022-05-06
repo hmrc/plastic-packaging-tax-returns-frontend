@@ -23,6 +23,7 @@ account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
 account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
+account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru

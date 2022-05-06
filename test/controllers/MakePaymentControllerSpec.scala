@@ -54,7 +54,6 @@ class MakePaymentControllerSpec extends SpecBase {
           running(app) {
             when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
             when(mockFinancialsConnector.getPaymentLink(any(), any(), any())(any())).thenReturn(Future.successful("/blah"))
-            when(config.returnUrl(any())).thenReturn(pptRegAccount)
 
             val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)
 

@@ -18,6 +18,7 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
+import controllers.payments.{routes => paymentRoute }
 import models.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
@@ -84,7 +85,43 @@ class IndexPageViewSpec
       "XMPPT0000000001"
     )(request, messages)
 
-  "Home Page view" when {
+  "Home Page view" should {
+
+    val view: Html = createView(appConfig, singleEntitySubscription, Some(noneDueUpToDate))
+
+    "contain timeout dialog function" in {
+      containTimeoutDialogFunction(view) mustBe true
+    }
+
+    "display sign out link" in {
+      displaySignOutLink(view)
+    }
+
+    "display title" in {
+      view.select("title").text() must include(messages("account.homePage.title"))
+    }
+
+    "display header" in {
+      view.getElementsByClass("govuk-heading-l").text() mustBe messages(
+        "account.homePage.title"
+      )
+    }
+
+    "contain ppt Reference number" in {
+      val pptReference = view.getElementById("id-ppt-reference")
+
+      pptReference.text() must include(messages("account.homePage.registrationNumber", "XMPPT0000000001"))
+      pptReference.text() must include(singleEntitySubscription.entityName)
+    }
+
+    "display 'Set up or manage a Direct Debit link'" in {
+
+      view.getElementById("direct-debit-link").text() mustBe "Set up or manage a Direct Debit"
+      view.getElementById("direct-debit-link") must haveHref(
+        paymentRoute.DirectDebitController.redirectLink
+      )
+    }
+
 
     Seq(
       (NoneDueUpToDate, noneDueUpToDate),
@@ -107,52 +144,6 @@ class IndexPageViewSpec
 
               s"$obligationType obligations" should {
 
-                "contain timeout dialog function" in {
-
-                  containTimeoutDialogFunction(view) mustBe true
-
-                }
-
-                "display sign out link" in {
-
-                  displaySignOutLink(view)
-
-                }
-
-                "display title" in {
-
-                  view.select("title").text() must include(messages("account.homePage.title"))
-
-                }
-
-                "display header" in {
-
-                  view.getElementsByClass("govuk-heading-l").text() mustBe messages(
-                    "account.homePage.title"
-                  )
-
-                }
-
-                "display PPT reference number" in {
-
-                  val mainText = view.select("main").text()
-
-                  mainText must include(
-                    messages("account.homePage.registrationNumber", "XMPPT0000000001")
-                  )
-
-                  subscriptionType match {
-                    case SingleEntity =>
-                      mainText must include(subscription.entityName)
-                    case Group =>
-                      mainText must include(
-                        messages("account.homePage.organisation.group", subscription.entityName)
-                      )
-                    case Partnership =>
-                      mainText must include(subscription.entityName)
-                  }
-
-                }
 
                 "display 'returns' card" in {
 

@@ -276,6 +276,7 @@ account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
 account.homePage.card.payments.payment.link = Make a PPT payment
+account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
 
 account.homePage.card.history.header = History
 account.homePage.card.history.viewreturnslink = View or amend submitted returns
