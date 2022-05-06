@@ -137,7 +137,7 @@ amendAreYouSure.change.hidden = AmendAreYouSure
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
-amend.confirmation.panel = Your reference number for this amendment is PPT12345654321
+amend.confirmation.panel =
 amend.confirmation.check.account = Check your PPT account
 amend.confirmation.subheading  = What happens next
 amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Plastic Packaging Tax account
