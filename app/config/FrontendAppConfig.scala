@@ -75,8 +75,8 @@ class FrontendAppConfig @Inject() (
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
 
-  def pptReturnAmendUrl(pptReference: String): String =
-    s"$pptReturnsAmendUrl/$pptReference"
+  def pptReturnAmendUrl(pptReference: String, submissionId:String): String =
+    s"$pptReturnsAmendUrl/$pptReference/$submissionId"
 
   lazy val pptRegistrationAmendUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/amend-registration"
