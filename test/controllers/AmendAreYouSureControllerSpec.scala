@@ -70,7 +70,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
 
-        verify(mockView).apply(any(), any(), refEq(retDisApi))(any(), any())
+        verify(mockView).apply(any(), any(), refEq(taxReturnOb))(any(), any())
 
       }
     }
@@ -90,7 +90,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, retDisApi)(
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -171,7 +171,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
