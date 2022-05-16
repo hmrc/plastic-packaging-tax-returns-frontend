@@ -35,15 +35,6 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
   private val mockConnector = mock[TaxReturnsConnector]
 
-//  val charge = ReturnDisplayChargeDetails(
-//    periodFrom = "2022-04-01",
-//    periodTo = "2022-06-30",
-//    periodKey = "22AC",
-//    chargeReference = Some("pan"),
-//    receiptDate = "2022-06-31",
-//    returnType = "TYPE"
-//  )
-
   val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
   val submittedReturn = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
 

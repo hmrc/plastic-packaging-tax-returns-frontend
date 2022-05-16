@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val mode = NormalMode
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list, retDisApi)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(mode, list, taxReturnOb)(request, messages(application)).toString
       }
     }
 
