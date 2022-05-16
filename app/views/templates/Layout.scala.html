@@ -33,7 +33,7 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcScripts: HmrcScripts,
-    alphaBanner: StandardBetaBanner,
+    stdBanner: StandardBetaBanner,
     hmrcUserResearchBanner: HmrcUserResearchBanner,
     utils: LanguageUtils
 )
@@ -103,7 +103,7 @@
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(routes.IndexController.onPageLoad.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-        phaseBanner = Some(alphaBanner(appConfig.feedbackUrl)),
+        phaseBanner = Some(stdBanner(appConfig.feedbackUrl)),
         userResearchBanner = Some(UserResearchBanner(
             utils.getCurrentLang(request).code.take(2) match {
                 case "cy" => Cy
