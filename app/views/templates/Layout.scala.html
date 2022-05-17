@@ -15,8 +15,11 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.config.StandardAlphaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.play.language.LanguageUtils
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 
 @this(
     appConfig: FrontendAppConfig,
@@ -30,7 +33,9 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcScripts: HmrcScripts,
-    alphaBanner: StandardAlphaBanner
+    stdBanner: StandardBetaBanner,
+    hmrcUserResearchBanner: HmrcUserResearchBanner,
+    utils: LanguageUtils
 )
 
 @(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, large: Boolean = false)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
@@ -98,7 +103,14 @@
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(routes.IndexController.onPageLoad.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-        phaseBanner = Some(alphaBanner(appConfig.feedbackUrl))
+        phaseBanner = Some(stdBanner(appConfig.feedbackUrl)),
+        userResearchBanner = Some(UserResearchBanner(
+            utils.getCurrentLang(request).code.take(2) match {
+                case "cy" => Cy
+                case "en" => En
+                case _ => En
+            }, appConfig.userResearchUrl)
+        )
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
