@@ -74,6 +74,11 @@ class FrontendAppConfig @Inject() (
       servicesConfig.baseUrl("ppt-registration-frontend")
     )
 
+  
+  lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
+  lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
+  
+
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
 

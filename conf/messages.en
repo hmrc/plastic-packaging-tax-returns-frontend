@@ -69,8 +69,13 @@ signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We have saved your answers.
 
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
+unauthorised.title = You must be registered to use this service
+unauthorised.heading = You must be registered to use this service
+unauthorised.paragraph.1 = You need to {0} to use this service
+unauthorised.paragraph.1.link = register for Plastic Packaging Tax
+unauthorised.paragraph.2 = Visit the {0} for more information.
+unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
+
 
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
