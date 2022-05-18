@@ -102,6 +102,16 @@ trait SpecBase
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 
+  protected def applicationBuilderNotEnrolled(
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[AuthCheckAction].to[FakeAuthActionNotEnrolled],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      )
+
   protected def applicationBuilderAgent(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(bind[AuthAgentAction].to[FakeAgentIdentifierAction])

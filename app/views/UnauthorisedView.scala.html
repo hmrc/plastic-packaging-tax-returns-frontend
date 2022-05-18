@@ -14,18 +14,39 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+@import components.{paragraph, Link}
+
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    paragraph: paragraph,
+    link: Link,
+    config: FrontendAppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleNoForm(messages("unauthorised.title")),
-    timeout   = false
-) {
+@registerLink = {
+@link(
+        id = "register_for_ppt_link",
+        text = messages("unauthorised.paragraph.1.link"),
+        call = Call("GET", config.pptRegistrationUrl)
+    )
+}
 
-    <h1 class="govuk-heading-xl">@messages("unauthorised.heading")</h1>
+@findOutLink = {
+@link(
+        id = "find_out_about_ppt_link",
+        text = messages("unauthorised.paragraph.2.link"),
+        call = Call("GET", config.pptRegistrationInfoUrl)
+    )
+}
 
-    <p class="govuk-body">@messages("unauthorised.guidance")</p>
+@layout(pageTitle = titleNoForm(messages("unauthorised.title")), timeout = false, showBackLink = false) {
+
+    <h1 class="govuk-heading-l">@messages("unauthorised.heading")</h1>
+
+    @paragraph(content = Html(messages("unauthorised.paragraph.1", registerLink)))
+
+    @paragraph(content = Html(messages("unauthorised.paragraph.2", findOutLink)))
 }
