@@ -14,9 +14,16 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+@import components.paragraph
+@import components.Link
+
 @this(
+        appConfig: FrontendAppConfig,
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        paragraph: paragraph,
+        link: Link
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -24,4 +31,6 @@
 @layout(pageTitle = titleNoForm(messages("deregistered.title"))) {
 
     <h1 class="govuk-heading-xl">@messages("deregistered.heading")</h1>
+
+    @paragraph(content = link(id = "bta-link", text = messages("deregistered.bta.link"), call = Call("GET", appConfig.businessAccountUrl)))
 }
