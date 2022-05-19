@@ -27,7 +27,14 @@
     sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation, possibleCreditBalanceAvailable: Option[String])(implicit request: Request[_], messages: Messages)
+
+@creditBalance = @{
+    possibleCreditBalanceAvailable match {
+        case Some(creditBalanceAvailable) => messages("convertedPackagingCredit.balanceAvailable", creditBalanceAvailable)
+        case None => messages("convertedPackagingCredit.balanceUnavailable")
+    }
+}
 
 @layout(pageTitle = title(form, messages("convertedPackagingCredit.title"))) {
 
@@ -46,6 +53,7 @@
             )
             .asNumeric()
             .withWidth(Fixed10)
+            .withHint(Hint(content = Text(creditBalance)))
         )
 
         @govukButton(

@@ -19,7 +19,7 @@ package base
 import cacheables.ReturnDisplayApiCacheable
 import cacheables.ObligationCacheable
 import config.FrontendAppConfig
-import connectors.CacheConnector
+import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.helpers.TaxLiabilityFactory
 import models.UserAnswers
@@ -36,6 +36,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
@@ -46,8 +47,10 @@ trait SpecBase
 
   val userAnswersId: String = "123"
 
-  implicit val config: FrontendAppConfig      = mock[FrontendAppConfig]
-  implicit val cacheConnector: CacheConnector = mock[CacheConnector]
+  implicit val config: FrontendAppConfig          = mock[FrontendAppConfig]
+  implicit val cacheConnector: CacheConnector     = mock[CacheConnector]
+  implicit val mockSessionRepo: SessionRepository = mock[SessionRepository]
+  implicit val mockTaxReturnConnector             = mock[TaxReturnsConnector]
 
   def userAnswers = UserAnswers(userAnswersId)
     .set(ReturnDisplayApiCacheable, retDisApi).get
@@ -96,6 +99,16 @@ trait SpecBase
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      )
+
+  protected def applicationBuilderNotEnrolled(
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[AuthCheckAction].to[FakeAuthActionNotEnrolled],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 

@@ -23,6 +23,8 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
+
 @Singleton
 class FrontendAppConfig @Inject() (
   configuration: Configuration,
@@ -36,6 +38,8 @@ class FrontendAppConfig @Inject() (
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
+
+  lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
 
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
@@ -70,11 +74,16 @@ class FrontendAppConfig @Inject() (
       servicesConfig.baseUrl("ppt-registration-frontend")
     )
 
+  
+  lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
+  lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
+  
+
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
 
-  def pptReturnAmendUrl(pptReference: String): String =
-    s"$pptReturnsAmendUrl/$pptReference"
+  def pptReturnAmendUrl(pptReference: String, submissionId:String): String =
+    s"$pptReturnsAmendUrl/$pptReference/$submissionId"
 
   lazy val pptRegistrationAmendUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/amend-registration"
@@ -87,6 +96,9 @@ class FrontendAppConfig @Inject() (
 
   lazy val pptRegistrationDeregisterUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
+
+  def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
+    s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
 
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)
@@ -119,4 +131,7 @@ class FrontendAppConfig @Inject() (
     s"$pptServiceHost/cache/set/$pptReference"
 
   val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
+
+  def pptStartDirectDebit : String =
+    s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
 }

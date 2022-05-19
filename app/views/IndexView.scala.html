@@ -148,6 +148,7 @@
     obligations.flatMap { obligations =>
         obligations.nextObligation.map { nextObligation =>
             messages("account.homePage.card.makeReturn.line2.due",
+              // TODO move to methods on the model?
                 ViewUtils.displayReturnQuarter(nextObligation),
                 ViewUtils.displayLocalDate(nextObligation.dueDate.minusDays(nextObligation.dueDate.getDayOfMonth - 1)),
                 ViewUtils.displayLocalDate(nextObligation.dueDate))
@@ -182,10 +183,10 @@
 ) {
     <h2 class="govuk-heading-l">@messages("account.homePage.title")</h2>
 
-    @paragraph {
-        @messages("account.homePage.registrationNumber", pptReference) </br>
-        @organisationName
-    }
+    @paragraph(
+        content = Html(s"${messages("account.homePage.registrationNumber", pptReference)} </br> $organisationName"),
+        id = Some("id-ppt-reference")
+    )
 
     <div class="govuk-grid-row govuk-!-grid-column-full govuk-!-margin-top-6 ">
 
@@ -207,7 +208,8 @@
                 paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))
             ),
             links = if (appConfig.isFeatureEnabled(Features.paymentsEnabled)) Seq(
-                link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), call = controllers.routes.MakePaymentController.redirectLink())
+                link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), call = controllers.routes.MakePaymentController.redirectLink()),
+                link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), call = controllers.payments.routes.DirectDebitController.redirectLink())
             ) else Seq()
         )
 

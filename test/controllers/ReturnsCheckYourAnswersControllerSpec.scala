@@ -17,15 +17,32 @@
 package controllers
 
 import base.SpecBase
+import connectors.{ServiceError, TaxReturnsConnector}
 import controllers.helpers.TaxLiability
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.stubbing.OngoingStubbing
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 import views.html.ReturnsCheckYourAnswersView
 
+import scala.concurrent.Future
+
 class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
+  def setupMock: OngoingStubbing[Future[Either[ServiceError, Option[String]]]] = {
+
+    reset(mockSessionRepo, mockTaxReturnConnector)
+
+    when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
+
+    when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
+
+  }
 
   "Returns Check Your Answers Controller" - {
 
@@ -34,9 +51,9 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
 
-        val result = route(application, request).value
+        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
 
         val view = application.injector.instanceOf[ReturnsCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
@@ -45,6 +62,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(mode, list, liability, taxReturnOb)(request, messages(application)).toString
+
       }
     }
 
@@ -53,12 +71,36 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
 
-        val result = route(application, request).value
+        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+    }
+
+    "must cache payment ref and redirect for a POST" in {
+
+      setupMock
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepo),
+        bind[TaxReturnsConnector].toInstance(mockTaxReturnConnector)
+      ).build()
+
+      running(application) {
+
+        val request = FakeRequest(POST, routes.ReturnsCheckYourAnswersController.onSubmit().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual routes.ReturnConfirmationController.onPageLoad().url
+
+        verify(mockSessionRepo).set(any())
+
       }
     }
   }
