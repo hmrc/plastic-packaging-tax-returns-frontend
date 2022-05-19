@@ -110,7 +110,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect when previous tax return is not in user answers" in {
+    "must redirect when previous obligation is not in user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -128,10 +128,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       val mockCacheConnector = mock[CacheConnector]
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendSelectedPeriodKey, "TEST").get
-        .set(ObligationCacheable, taxReturnOb).get
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))

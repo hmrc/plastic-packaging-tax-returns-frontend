@@ -21,7 +21,7 @@ import connectors.{CacheConnector, TaxReturnsConnector}
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{verify, when, reset}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
 import play.api.test.FakeRequest
@@ -30,8 +30,11 @@ import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.ViewReturnSummaryView
 
 import scala.concurrent.Future
+import connectors.ObligationsConnector
+import models.returns.TaxReturnObligation
+import base.MockObligationsConnector
 
-class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
+class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
 
   private val mockConnector = mock[TaxReturnsConnector]
 
@@ -40,21 +43,25 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar {
 
   "onPageLoad" - {
     "must return OK and the correct view" in {
+
+      mockGetFulfilledObligations(Seq(taxReturnOb))
+
+      when(mockConnector.get(any(), any())(any())).thenReturn(
+        Future.successful(Right(submittedReturn))
+      )
+
+      when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[TaxReturnsConnector].toInstance(mockConnector),
+          inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
           inject.bind[CacheConnector].toInstance(cacheConnector)
-        )
-        .build()
+        ).build()
 
       running(application) {
+
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)
-
-        when(mockConnector.get(any(), any())(any())).thenReturn(
-          Future.successful(Right(submittedReturn))
-        )
-
-        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
 
         val request = FakeRequest(routes.ViewReturnSummaryController.onPageLoad("00XX"))
 

@@ -62,7 +62,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must return OK and the correct view for a GET" in {
 
-      setUpMocks
+      mockGetObligations(pptObligation)
 
       val pptId = "123"
       val userAnswers = UserAnswers(pptId).set(ObligationCacheable, obligation).get
@@ -88,7 +88,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      setUpMocks
+      mockGetObligations(pptObligation)
 
       val userAnswers = UserAnswers(userAnswersId).set(StartYourReturnPage, true).success.value
 
@@ -110,7 +110,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must redirect to the next page when valid data is submitted" in {
 
-      setUpMocks
+      mockGetObligations(pptObligation)
 
       val mockCacheConnector = mock[CacheConnector]
 
@@ -139,7 +139,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      setUpMocks
+      mockGetObligations(pptObligation)
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[ObligationsConnector].toInstance(mockObligationsConnector)
@@ -161,14 +161,5 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
       }
     }
-  }
-
-  private def setUpMocks: OngoingStubbing[Future[PPTObligations]] = {
-    reset(mockObligationsConnector)
-
-    when(mockObligationsConnector.getOpen(any())(any())).thenReturn(
-      Future.successful(pptObligation)
-    )
-
   }
 }

@@ -38,7 +38,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
       val ob: Seq[TaxReturnObligation] =
         Seq.empty
 
-      setUpMocks(ob)
+      mockGetFulfilledObligations(ob)
 
       val application = applicationBuilder(userAnswers = None).overrides(
         bind[ObligationsConnector].toInstance(mockObligationsConnector)
@@ -79,7 +79,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
           )
         )
 
-      setUpMocks(ob)
+      mockGetFulfilledObligations(ob)
 
       val application = applicationBuilder(userAnswers = None).overrides(
         bind[ObligationsConnector].toInstance(mockObligationsConnector)
@@ -97,12 +97,5 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
 
       }
     }
-  }
-
-  private def setUpMocks(obligation: Seq[TaxReturnObligation]) = {
-    reset(mockObligationsConnector)
-
-    when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(obligation))
-
   }
 }
