@@ -24,7 +24,6 @@ import views.html.AmendConfirmation
 import repositories.SessionRepository
 
 import scala.concurrent.ExecutionContext
-
 import javax.inject.Inject
 
 class AmendConfirmationController @Inject() (

@@ -76,7 +76,7 @@ class TaxReturnsConnector @Inject()(
     httpClient.PUT[TaxReturn, JsValue](url, payload)
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
-         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
+        val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
         logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
         Right(chargeReference)
       }

@@ -60,7 +60,7 @@ trait SpecBase
   val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
     LocalDate.parse("2022-04-01"),
     LocalDate.parse("2022-06-30"),
-    LocalDate.now().plusWeeks(8),
+    LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
 
   val liability = TaxLiabilityFactory.create(
