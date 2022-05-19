@@ -68,16 +68,17 @@ class TaxReturnsConnector @Inject()(
   }
 
 
-  def amend(payload: TaxReturn, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def amend(payload: TaxReturn, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     val pptReference = payload.id
     val url = appConfig.pptReturnAmendUrl(pptReference, submissionId)
 
     httpClient.PUT[TaxReturn, JsValue](url, payload)
       .andThen { case _ => timer.stop() }
-      .map { _ =>
-        logger.info(s"Submitted ppt tax return amendment for id [$pptReference]")
-        Right(())
+      .map { returnJson =>
+         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
+        logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
+        Right(chargeReference)
       }
       .recover {
         case ex: Exception =>

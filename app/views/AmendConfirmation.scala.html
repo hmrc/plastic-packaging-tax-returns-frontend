@@ -19,7 +19,7 @@ layout: templates.Layout,
 govukPanel: GovukPanel
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(
 pageTitle    = titleNoForm(messages("amend.confirmation.title")),
@@ -28,7 +28,7 @@ showBackLink = false
 
    @govukPanel(Panel(
                     title = Text(messages("amend.confirmation.submitted")),
-                    content = Text(messages("amend.confirmation.panel"))
+                    content = Text(chargeReference.fold(messages("amend.confirmation.panel.empty"))(ref => messages("amend.confirmation.panel", ref)))
                     )
    )
 <p class="govuk-heading-m">@messages("amend.confirmation.subheading")</p>

@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
+import repositories.{ SessionRepository, Entry}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,6 +43,7 @@ class CheckYourAnswersController @Inject() (
   returnsConnector: TaxReturnsConnector,
   taxReturnHelper: TaxReturnHelper,
   val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
@@ -81,13 +83,14 @@ class CheckYourAnswersController @Inject() (
           .idDetails
           .submissionId
 
-        returnsConnector.amend(taxReturn, submissionId).map {
-          case Right(_) =>
-            Redirect(routes.AmendConfirmationController.onPageLoad())
+        returnsConnector.amend(taxReturn, submissionId).flatMap {
+          case Right(optChargeRef) =>
+            sessionRepository.set(Entry(request.userId, optChargeRef)).map{
+              _ => Redirect(routes.AmendConfirmationController.onPageLoad())
+            }
 
           case Left(error) =>
             throw error
         }
     }
-8
 }
