@@ -30,6 +30,10 @@
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
+@hintContent = {
+    <p class="govuk-body">@messages("manufacturedPlasticPackagingWeight.hint")</p>
+}
+
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"))) {
 
     @sectionHeader(taxReturn)
@@ -47,6 +51,7 @@
             )
             .asNumeric()
             .withWidth(Fixed10)
+            .withHint(Hint(content = HtmlContent(hintContent)))
         )
 
         @govukButton(

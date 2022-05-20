@@ -207,6 +207,7 @@ manufacturedPlasticPackagingWeight.error.required = Enter a weight
 manufacturedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
 manufacturedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
 manufacturedPlasticPackagingWeight.change.hidden = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 recycledPlasticPackagingWeight.title = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 recycledPlasticPackagingWeight.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
