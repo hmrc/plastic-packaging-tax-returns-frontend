@@ -3,6 +3,7 @@
 !.github
 !.gitignore
 !.scalafmt.conf
+!.g8
 .cache
 /.classpath
 db
