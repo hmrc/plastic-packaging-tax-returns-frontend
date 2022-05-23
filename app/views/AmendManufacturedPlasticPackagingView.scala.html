@@ -16,8 +16,8 @@
 
 @import viewmodels.InputWidth._
 @import components._
-@import models.returns.ReturnDisplayApi
-@import components.ReturnsSectionHeading
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 
 @this(
     layout: templates.Layout,
@@ -25,11 +25,11 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: ReturnsSectionHeading,
+    sectionHeader: ReturnQuarterHeading,
     link: Link
 )
 
-@(form: Form[_], mode: Mode, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
 <p class="govuk-body">@messages("amendManufacturedPlasticPackaging.hint")</p>
@@ -43,7 +43,7 @@
 
 @layout(pageTitle = title(form, messages("amendManufacturedPlasticPackaging.title"))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(obligation)
 
     @formHelper(action = routes.AmendManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 

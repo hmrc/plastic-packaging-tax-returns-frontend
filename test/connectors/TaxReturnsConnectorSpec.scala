@@ -96,14 +96,42 @@ class TaxReturnsConnectorSpec
 
         res.isRight mustBe true
         res.value mustBe None
+
       }
     }
 
-    "Amend correctly" in {
-      wireMockServer.stubFor(put(anyUrl()).willReturn(ok().withBody("{}")))
-      val result: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId("id-ref-10")), "submission-214"))
-      result mustBe Right(())
-      wireMockServer.verify(putRequestedFor(urlEqualTo(s"/returns-amend/id-ref-10/submission-214")))
+    "Amend correctly" when {
+
+      "there is a charge reference" in {
+
+        givenReturnsAmendmentEndpointReturns(Status.OK,
+          pptReference,
+          body = """{"chargeDetails": {"chargeReference": "SOMEREF"}}""",
+          subId = "submission-214"
+        )
+
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+
+        res.isRight mustBe true
+        res.value mustBe Some("SOMEREF")
+
+      }
+
+      "there is no charge reference" in {
+
+        givenReturnsAmendmentEndpointReturns(Status.OK,
+          pptReference,
+          body = """{"chargeDetails": null}""",
+          subId = "submission-214"
+        )
+
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+
+        res.isRight mustBe true
+        res.value mustBe None
+
+      }
+
     }
 
     "return a left (error)" when {
@@ -137,10 +165,11 @@ class TaxReturnsConnectorSpec
 
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
-          body = "{"
+          body = "{",
+          subId = "submission-214"
         )
 
-        val res: Either[ServiceError, Unit] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
@@ -179,10 +208,11 @@ class TaxReturnsConnectorSpec
   private def givenReturnsAmendmentEndpointReturns(
                                                     status: Int,
                                                     pptReference: String,
-                                                    body: String = ""
+                                                    body: String = "",
+                                                    subId: String
                                                   ): StubMapping =
     stubFor(
-      WireMock.put(s"/returns-amend/$pptReference")
+      WireMock.put(s"/returns-amend/$pptReference/$subId")
         .willReturn(
           aResponse()
             .withStatus(status)

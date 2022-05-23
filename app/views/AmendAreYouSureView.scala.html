@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import models.returns.ReturnDisplayApi
-@import components.ReturnsSectionHeading
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 
 @this(
     layout: templates.Layout,
@@ -23,14 +23,14 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: ReturnsSectionHeading
+    sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode, taxReturn: ReturnDisplayApi)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("amendAreYouSure.title")), showBackLink = false) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(obligation)
 
     @formHelper(action = routes.AmendAreYouSureController.onSubmit(mode), 'autoComplete -> "off") {
 

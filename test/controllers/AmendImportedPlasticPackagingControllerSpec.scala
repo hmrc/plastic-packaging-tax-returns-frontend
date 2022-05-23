@@ -59,7 +59,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[AmendImportedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, retDisApi)(request,
+        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -79,7 +79,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, retDisApi)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -140,7 +140,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
                                                                       messages(application)
         ).toString
       }
