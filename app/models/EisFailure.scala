@@ -24,7 +24,7 @@ object EisError {
   implicit val format: OFormat[EisError] = Json.format[EisError]
 }
 
-case class EisFailure(failures: Seq[EisError], httpCode: Int)
+case class EisFailure(failures: Seq[EisError])
 
 object EisFailure {
   implicit val format: OFormat[EisFailure] = Json.format[EisFailure]
