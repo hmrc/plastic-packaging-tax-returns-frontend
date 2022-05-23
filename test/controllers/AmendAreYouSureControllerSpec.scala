@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import cacheables.{AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.AmendAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
@@ -70,7 +70,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
 
-        verify(mockView).apply(any(), any(), refEq(retDisApi))(any(), any())
+        verify(mockView).apply(any(), any(), refEq(taxReturnOb))(any(), any())
 
       }
     }
@@ -90,7 +90,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, retDisApi)(
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -110,7 +110,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect when previous tax return is not in user answers" in {
+    "must redirect when previous obligation is not in user answers" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -128,10 +128,6 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       val mockCacheConnector = mock[CacheConnector]
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AmendSelectedPeriodKey, "TEST").get
-        .set(ReturnDisplayApiCacheable, retDisApi).get
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -171,7 +167,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, retDisApi)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString

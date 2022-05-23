@@ -16,12 +16,12 @@
 
 package controllers
 
-import cacheables.{AmendReturnPreviousReturn, ReturnDisplayApiCacheable}
+import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendAreYouSureFormProvider
 import models.Mode
-import models.returns.ReturnDisplayApi
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator
 import pages.AmendAreYouSurePage
 import play.api.data.Form
@@ -55,8 +55,8 @@ class AmendAreYouSureController @Inject() (
 
         val preparedForm = userAnswers.fill(AmendAreYouSurePage, form)
 
-        userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable) match {
-          case Some(displayApi) => Future.successful(Ok(view(preparedForm, mode, displayApi)))
+        userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
           case None             => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
         }
 
@@ -66,15 +66,20 @@ class AmendAreYouSureController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
-        val userAnswers = request.userAnswers
+        val userAnswers   = request.userAnswers
 
-        val submittedReturn = userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
+        val submittedReturn =
+          userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
+            throw new IllegalStateException("Must have a tax return against which to amend")
+          )
+
+        val obligation = userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, submittedReturn))),
-          amend => {
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          amend =>
             for {
               updatedAnswers <- Future.fromTry(
                 userAnswers
@@ -83,7 +88,6 @@ class AmendAreYouSureController @Inject() (
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
-          }
         )
     }
 

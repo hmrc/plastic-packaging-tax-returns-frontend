@@ -44,6 +44,79 @@ unauthorised.paragraph.1.link = register for Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
+amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
+amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = Weight of directly exported plastic packaging
+amendDirectExportPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendDirectExportPlasticPackaging.error.required = Enter the weight, in kilograms
+amendDirectExportPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendDirectExportPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendDirectExportPlasticPackaging.change.hidden = AmendDirectExportPlasticPackaging
+amendDirectExportPlasticPackaging.hint = Tax is not charged on plastic packaging that you directly. This will be deducted from your tax liability.
+
+amendHumanMedicinePlasticPackaging.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine? - Submit return - Plastic Packaging Tax - GOV.UK
+amendHumanMedicinePlasticPackaging.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported used for licenced human medicines
+amendHumanMedicinePlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendHumanMedicinePlasticPackaging.error.required = Enter the weight, in kilograms
+amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendHumanMedicinePlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendHumanMedicinePlasticPackaging.change.hidden = AmendHumanMedicinePlasticPackaging
+amendHumanMedicinePlasticPackaging.hint = Tax is not charged on plastic packaging that comes into immediate contact with licensed human medicines. This will be deducted from your tax liability.
+
+amendImportedPlasticPackaging.title = How much did your finished imported plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
+amendImportedPlasticPackaging.heading = How much did your finished imported plastic packaging components weigh?
+amendImportedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging imported
+amendImportedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendImportedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendImportedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendImportedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendImportedPlasticPackaging.change.hidden = AmendImportedPlasticPackaging
+amendImportedPlasticPackaging.hint = Do not include plastic packaging components which are (any of the following):
+amendImportedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
+amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
+amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
+
+
+amendManufacturedPlasticPackaging.title = How much did your finished manufactured plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
+amendManufacturedPlasticPackaging.heading = How much did your finished manufactured plastic packaging components weigh?
+amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
+amendManufacturedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendManufacturedPlasticPackaging.error.required = Enter the weight, in kilograms
+amendManufacturedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendManufacturedPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendManufacturedPlasticPackaging.change.hidden = AmendManufacturedPlasticPackaging
+amendManufacturedPlasticPackaging.hint = Do not include plastic packaging components which are (any of the following):
+amendManufacturedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
+amendManufacturedPlasticPackaging.hint.list.2 = an integral part of the goods
+amendManufacturedPlasticPackaging.hint.list.3 = reused for the presentation of goods
+
+amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
+amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported containing 30% or more recycled plastic
+amendRecycledPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
+amendRecycledPlasticPackaging.error.required = Enter the weight, in kilograms
+amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
+amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999 kgs
+amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
+amendRecycledPlasticPackaging.hint = Tax is not charged on plastic packaging that contains 30% or more recycled plastic. This will be deducted from your tax liability.
+
+amendAreYouSure.title = Would you like to amend this return?
+amendAreYouSure.heading = Would you like to amend this return?
+amendAreYouSure.checkYourAnswersLabel = amendAreYouSure
+amendAreYouSure.error.required = Select yes if you want to amend your return
+amendAreYouSure.change.hidden = AmendAreYouSure
+
+amend.confirmation.title = Your return will be amended
+amend.confirmation.submitted = Your return will be amended
+amend.confirmation.panel = Your reference number is {0}
+amend.confirmation.panel.empty = Nothing to pay
+amend.confirmation.check.account = Check your PPT account
+amend.confirmation.subheading  = What happens next
+amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Plastic Packaging Tax account
+amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
+amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
+
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi

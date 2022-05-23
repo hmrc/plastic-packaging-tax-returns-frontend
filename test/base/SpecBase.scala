@@ -40,6 +40,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
+import connectors.ObligationsConnector
 
 trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
@@ -57,10 +58,10 @@ trait SpecBase
     .set(ObligationCacheable, taxReturnOb).get
 
   val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(4),
-    LocalDate.now().plusWeeks(8),
-    "XX00")
+    LocalDate.parse("2022-04-01"),
+    LocalDate.parse("2022-06-30"),
+    LocalDate.parse("2022-06-30").plusWeeks(8),
+    "00XX")
 
   val liability = TaxLiabilityFactory.create(
     1000, 200, 300, 400, 2, 200

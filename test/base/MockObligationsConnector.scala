@@ -19,12 +19,13 @@ package base
 import connectors.ObligationsConnector
 import models.obligations.PPTObligations
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{when, reset}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
+import models.returns.TaxReturnObligation
 
 trait MockObligationsConnector extends MockitoSugar {
   self: Suite =>
@@ -33,7 +34,15 @@ trait MockObligationsConnector extends MockitoSugar {
 
   protected def mockGetObligations(
     obligations: PPTObligations
-  ): OngoingStubbing[Future[PPTObligations]] =
+  ): OngoingStubbing[Future[PPTObligations]] = {
+    reset(mockObligationsConnector)
     when(mockObligationsConnector.getOpen(any())(any())).thenReturn(Future.successful(obligations))
+  }
 
+  protected def mockGetFulfilledObligations(
+    obligations: Seq[TaxReturnObligation]
+  ): OngoingStubbing[Future[Seq[TaxReturnObligation]]] = {
+    reset(mockObligationsConnector)
+    when(mockObligationsConnector.getFulfilled(any())(any())).thenReturn(Future.successful(obligations))
+  }
 }
