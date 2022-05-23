@@ -122,3 +122,7 @@ POST       /changeAgents                  controllers.AgentsController.onSubmit(
 
 GET        /make-a-payment                controllers.MakePaymentController.redirectLink()
 GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
+
+
+GET        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.onPageLoad
+POST        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.redirectLink()

@@ -16,12 +16,12 @@
 
 package controllers
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}

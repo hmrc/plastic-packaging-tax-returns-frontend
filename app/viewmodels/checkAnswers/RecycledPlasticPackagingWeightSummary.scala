@@ -30,18 +30,18 @@ object RecycledPlasticPackagingWeightSummary extends SummaryViewModel {
     answers.get(RecycledPlasticPackagingWeightPage).map {
       answer =>
         SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.RecycledPlasticPackagingWeightController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("recycledPlasticPackagingWeight.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(answer.toString),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              routes.RecycledPlasticPackagingWeightController.onPageLoad(
+                CheckMode
+              ).url
+            )
+              .withVisuallyHiddenText(
+                messages("recycledPlasticPackagingWeight.change.hidden")
+              )
+          )
         )
     }
 

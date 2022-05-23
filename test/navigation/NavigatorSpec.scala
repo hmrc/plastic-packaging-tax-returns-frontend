@@ -110,14 +110,14 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is No" in {
+          "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
 
             val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, false)
 
             navigator.nextPage(ImportedPlasticPackagingPage,
               NormalMode,
               answers.get
-            ) mustBe routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
         }
@@ -138,13 +138,13 @@ class NavigatorSpec extends SpecBase {
 
         "for the ImportedPlasticPackagingWeightPage" - {
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage" in {
+          "navigate to ConfirmPlasticPackagingTotalController" in {
             val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ImportedPlasticPackagingWeightPage,
               NormalMode,
               answers.get
-            ) mustBe routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
 
@@ -296,14 +296,14 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-          "navigate to ImportedPlasticPackagingPage when answer is No" in {
+          "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
 
             val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, false)
 
             navigator.nextPage(ManufacturedPlasticPackagingPage,
               CheckMode,
               answers.get
-            ) mustBe routes.ReturnsCheckYourAnswersController.onPageLoad
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
         }
@@ -327,20 +327,20 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(ImportedPlasticPackagingPage,
               CheckMode,
               answers.get
-            ) mustBe routes.ReturnsCheckYourAnswersController.onPageLoad
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
         }
 
         "for the ManufacturedPlasticPackagingWeightPage" - {
 
-          "navigate to ImportedPlasticPackagingPage" in {
+          "navigate to ConfirmPlasticPackagingTotal Page" in {
             val answers = UserAnswers("id").set(ManufacturedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ManufacturedPlasticPackagingWeightPage,
               CheckMode,
               answers.get
-            ) mustBe routes.ReturnsCheckYourAnswersController.onPageLoad
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
 
@@ -348,13 +348,13 @@ class NavigatorSpec extends SpecBase {
 
         "for the ImportedPlasticPackagingWeightPage" - {
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage" in {
+          "navigate to ConfirmPlasticPackagingTotal Page" in {
             val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ImportedPlasticPackagingWeightPage,
               CheckMode,
               answers.get
-            ) mustBe routes.ReturnsCheckYourAnswersController.onPageLoad
+            ) mustBe routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
 
