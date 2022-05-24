@@ -45,7 +45,6 @@ class SubscriptionConnector @Inject() (
       .map {
         response =>
           if (Status.isSuccessful(response.status)) {
-            logger.info(s"Retrieved subscription for ppt reference number [$pptReferenceNumber]") // todo do we need this log?
             Right(response.json.as[SubscriptionDisplayResponse])
           }
           else {
