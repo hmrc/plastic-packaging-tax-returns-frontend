@@ -54,7 +54,7 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
       val view          = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("value-hint").text mustBe messages("manufacturedPlasticPackagingWeight.hint")
+      doc.getElementById("value-hint").text contains messages("manufacturedPlasticPackagingWeight.hint")
     }
 
     "display error" when {

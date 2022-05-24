@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.CacheConnector
 import forms.ManufacturedPlasticPackagingWeightFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -40,7 +41,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer: Long = 0
+  val validAnswer: Long = 1
 
   lazy val ManufacturedPlasticPackagingWeightRoute = routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
@@ -48,25 +49,26 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
+
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(ManufacturedPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = userAnswers.set(ManufacturedPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
@@ -82,13 +84,13 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockCacheConnector = mock[CacheConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector))
           .build()
 
       running(application) {
@@ -105,7 +107,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
