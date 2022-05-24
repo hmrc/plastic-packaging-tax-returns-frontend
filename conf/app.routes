@@ -120,4 +120,3 @@ POST       /changeAgents                  controllers.AgentsController.onSubmit(
 
 GET        /make-a-payment                controllers.MakePaymentController.redirectLink()
 GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
-

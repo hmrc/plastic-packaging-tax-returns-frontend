@@ -59,18 +59,16 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
 
     "display error" when {
       "negative number submitted" in {
-        val view          = createView(form.fillAndValidate(-1))
+        val view = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include("Weight must be between 0 and 999,999,999")
+        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange", 0,99999999999L))
       }
 
-
-      //todo: field needs to take type Long
       "number submitted is greater than maximum"in{
         val view = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
-        doc.text() must include("Weight must be between 0 and 999,999,999")
+        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange", 0,99999999999L))
 
       }
     }

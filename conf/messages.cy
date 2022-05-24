@@ -117,6 +117,31 @@ amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Pla
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
+manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.error.required = Select yes if you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
+manufacturedPlasticPackaging.paragraph.2 = Plastic packaging is finished if you've made the last substantial modification in the manufacturing process.
+manufacturedPlasticPackaging.paragraph.3 = If you're still not sure, {0} .
+manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
+
+manufacturedPlasticPackagingWeight.title = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.heading = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
+manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+manufacturedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+manufacturedPlasticPackagingWeight.change.hidden = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
+manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
+manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
+manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
+manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi

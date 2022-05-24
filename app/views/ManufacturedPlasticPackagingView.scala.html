@@ -15,7 +15,8 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components.{ReturnQuarterHeading, paragraphBody}
+@import viewmodels.LegendSize
 
 @this(
     layout: templates.Layout,
@@ -23,10 +24,20 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: ReturnQuarterHeading,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+
+@guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
+
+@paragraphContent ={
+    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.1"))
+    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.2"))
+    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.3", guidanceLink))
+    <p>@guidanceLink</p>
+}
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"))) {
 
@@ -41,8 +52,9 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("manufacturedPlasticPackaging.heading")).asPageHeading()
+                legend = LegendViewModel(messages("manufacturedPlasticPackaging.heading")).asPageHeading(size = LegendSize.Large)
             )
+            .withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(

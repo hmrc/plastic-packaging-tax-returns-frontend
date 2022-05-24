@@ -60,6 +60,12 @@ trait Generators
   def intsSmallerThanMinValue: Gen[BigInt] =
     arbitrary[BigInt] suchThat (x => x < Int.MinValue)
 
+  def longsLargerThanMaxValue: Gen[BigInt] =
+    arbitrary[BigInt] suchThat (x => x > Long.MaxValue)
+
+  def longsSmallerThanMinValue: Gen[BigInt] =
+    arbitrary[BigInt] suchThat (x => x < Long.MinValue)
+
   def nonNumerics: Gen[String] =
     alphaStr suchThat (_.size > 0)
 
@@ -68,6 +74,20 @@ trait Generators
       .suchThat(_.abs < Int.MaxValue)
       .suchThat(!_.isValidInt)
       .map(_.formatted("%f"))
+
+  def intsInRangeWithCommas(min: Long, max: Long): Gen[String] = {
+    val numberGen = choose[Long](min, max).map(_.toString)
+    genIntersperseString(numberGen, ",")
+  }
+
+  def longsBelowValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat (_ < value)
+
+  def longsAboveValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat (_ > value)
+
+  def longsOutsideRange(min: Long, max: Long): Gen[Long] =
+    arbitrary[Long] suchThat (x => x < min || x > max)
 
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat (_ < value)
