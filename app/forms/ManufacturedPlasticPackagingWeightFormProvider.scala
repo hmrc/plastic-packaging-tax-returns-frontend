@@ -17,23 +17,11 @@
 package forms
 
 import forms.mappings.Mappings
+import play.api.data.Form
 
 import javax.inject.Inject
-import play.api.data.Form
-import play.api.data.validation.{Constraint, Invalid, Valid}
 
 class ManufacturedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
-
-  def withinRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
-        import ev._
-
-        if (input >= minimum && input <= maximum)
-          Valid
-        else
-          Invalid(errorKey, minimum, maximum)
-    }
 
   def apply(): Form[Long] =
     Form(
@@ -42,17 +30,7 @@ class ManufacturedPlasticPackagingWeightFormProvider @Inject() extends Mappings 
         "manufacturedPlasticPackagingWeight.error.wholeNumber",
         "manufacturedPlasticPackagingWeight.error.nonNumeric"
       )
-        .verifying(withinRange(0, 99999999999L, "manufacturedPlasticPackagingWeight.error.outOfRange"))
+        .verifying(inRange(0, 99999999999L, "manufacturedPlasticPackagingWeight.error.outOfRange"))
     )
-
-  //todo this would need to be be big decimal for max 99999999999Kg
-//  def apply(): Form[Int] = {
-//    Form(
-//      "value" -> int("manufacturedPlasticPackagingWeight.error.required",
-//                     "manufacturedPlasticPackagingWeight.error.wholeNumber",
-//                     "manufacturedPlasticPackagingWeight.error.nonNumeric")
-//        .verifying(inRange(0, 999999999, "manufacturedPlasticPackagingWeight.error.outOfRange"))
-//    )
-//  }
 
 }
