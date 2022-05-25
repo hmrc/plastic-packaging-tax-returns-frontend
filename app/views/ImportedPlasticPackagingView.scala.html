@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components._
 
 @this(
     layout: templates.Layout,
@@ -23,14 +23,27 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("importedPlasticPackaging.title"))) {
+@guidanceLink = {
+   <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link" target="_blank">
+       @messages("importedPlasticPackaging.paragraph.link")
+   </a>
+}
 
-    @sectionHeader(taxReturn)
+@paragraphContent ={
+    @paragraphBody(messages("importedPlasticPackaging.paragraph.1"))
+    @paragraphBody(messages("importedPlasticPackaging.paragraph.2"))
+    @paragraphBody(messages("importedPlasticPackaging.paragraph.3", guidanceLink))
+}
+
+@layout(pageTitle = title(form, messages("importedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("importedPlasticPackaging.caption"))
 
     @formHelper(action = routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -42,7 +55,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading()
-            )
+            ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(
