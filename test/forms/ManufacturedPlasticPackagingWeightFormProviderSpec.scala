@@ -28,7 +28,7 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
     val fieldName = "value"
 
     val minimum = 0
-    val maximum = 99999999999L
+    val maximum = 999999999L
 
     val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
 
@@ -43,14 +43,6 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
       fieldName,
       nonNumericError  = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.wholeNumber")
-    )
-
-    behave like longFieldWithRange(
-      form,
-      fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
-      expectedError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.outOfRange", Seq(minimum, maximum))
     )
 
     behave like mandatoryField(

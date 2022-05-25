@@ -30,7 +30,10 @@ class ManufacturedPlasticPackagingWeightFormProvider @Inject() extends Mappings 
         "manufacturedPlasticPackagingWeight.error.wholeNumber",
         "manufacturedPlasticPackagingWeight.error.nonNumeric"
       )
-        .verifying(inRange(0, 99999999999L, "manufacturedPlasticPackagingWeight.error.outOfRange"))
+        .verifying(minimumValue(0L, "manufacturedPlasticPackagingWeight.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L,"manufacturedPlasticPackagingWeight.error.outOfRange.high" ))
+
+
     )
 
 }

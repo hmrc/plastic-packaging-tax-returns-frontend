@@ -31,6 +31,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import support.ViewMatchers
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Empty
 
 import java.time.LocalDate
 
@@ -39,7 +40,7 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
   val page: ManufacturedPlasticPackagingWeightView = inject[ManufacturedPlasticPackagingWeightView]
   val request: Request[AnyContent]                 = FakeRequest().withCSRFToken
   val aTaxObligation: TaxReturnObligation          = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-  val form: Form[Long]                              = new ManufacturedPlasticPackagingWeightFormProvider()()
+  val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()
   private val realMessagesApi: MessagesApi         = inject[MessagesApi]
 
   implicit def messages: Messages =
@@ -51,7 +52,7 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
   "Manufactured packaging weight page" should {
 
     "have a hint" in {
-      val view          = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("value-hint").text contains messages("manufacturedPlasticPackagingWeight.hint")
@@ -59,17 +60,17 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
 
     "display error" when {
       "negative number submitted" in {
-        val view = createView(form.fillAndValidate(-1))
+        val view: Html    = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange", 0,99999999999L))
+        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange.low"))
       }
 
-      "number submitted is greater than maximum"in{
-        val view = createView(form.fillAndValidate(999999999999L))
+      "number submitted is greater than maximum" in {
+        val view: Html    = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
-        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange", 0,99999999999L))
 
+        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange.high"))
       }
     }
   }
