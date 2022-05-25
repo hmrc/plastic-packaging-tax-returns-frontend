@@ -29,6 +29,13 @@ case object ImportedPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map( amount =>
-      userAnswers.set(ImportedPlasticPackagingPage, amount > 0, cleanup = false)
+      if(amount > 0 )
+      {
+        userAnswers.set(ImportedPlasticPackagingPage, true, cleanup = false)
+      }
+      else
+      {
+        super.cleanup(value, userAnswers)
+      }
     ).getOrElse(super.cleanup(value, userAnswers))
 }
