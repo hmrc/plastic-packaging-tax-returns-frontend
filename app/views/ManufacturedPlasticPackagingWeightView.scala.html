@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components.SectionHeader
 
 @import viewmodels.LabelSize
 @import viewmodels.InputWidth._
@@ -26,7 +26,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: SectionHeader
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
@@ -47,9 +47,9 @@
     @messages("manufacturedPlasticPackagingWeight.hint")
 }
 
-@layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 

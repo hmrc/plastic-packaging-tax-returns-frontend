@@ -11,6 +11,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+return.title.tail = Submit return
 
 date.day = Day
 date.month = Month
@@ -30,6 +31,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
+caption.total.plastic = Total Plastic Packaging
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in

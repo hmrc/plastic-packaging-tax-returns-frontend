@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.{ReturnQuarterHeading, paragraphBody}
+@import components.{SectionHeader, paragraphBody}
 @import viewmodels.LegendSize
 
 @this(
@@ -24,13 +24,13 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading,
+    sectionHeader: SectionHeader,
     paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
+@guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
 
 @paragraphContent ={
     @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.1"))
@@ -38,9 +38,9 @@
     @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.3", guidanceLink))
 }
 
-@layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"))) {
+@layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
