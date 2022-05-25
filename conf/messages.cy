@@ -147,3 +147,7 @@ agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax
 agents.client.identifier.length.error=Registration number must be 15 characters
 agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
 agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+
+notStartOtherReturns.heading = You cannot start returns for other periods yet
+notStartOtherReturns.detail = You can only start returns for periods that have ended.
+notStartOtherReturns.button = Back to your account

@@ -313,6 +313,10 @@ startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0}
 startYourReturn.error.required = Select yes if you want to start your return
 startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
 
+notStartOtherReturns.heading = You cannot start returns for other periods yet
+notStartOtherReturns.detail = You can only start returns for periods that have ended.
+notStartOtherReturns.button = Back to your account
+
 returnsCheckYourAnswers.heading = Check your return
 returnsCheckYourAnswers.answers.subheading = Plastic Packaging Tax Return
 returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
