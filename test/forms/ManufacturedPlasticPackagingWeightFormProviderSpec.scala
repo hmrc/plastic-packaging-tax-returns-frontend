@@ -30,7 +30,7 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
     val minimum = 0
     val maximum = 999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(
       form,

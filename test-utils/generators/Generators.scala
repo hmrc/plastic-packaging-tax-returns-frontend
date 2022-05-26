@@ -80,11 +80,6 @@ trait Generators
       .suchThat(!_.isValidInt)
       .map(_.formatted("%f"))
 
-  def intsInRangeWithCommas(min: Long, max: Long): Gen[String] = {
-    val numberGen = choose[Long](min, max).map(_.toString)
-    genIntersperseString(numberGen, ",")
-  }
-
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat (_ < value)
 

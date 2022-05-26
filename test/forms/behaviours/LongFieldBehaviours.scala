@@ -45,7 +45,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
       }
     }
 
-    "not bind integers larger than Long.MaxValue" in {
+    "not bind longs larger than Long.MaxValue" in {
 
       forAll(longsLargerThanMaxValue -> "massiveLong") {
         num: BigInt =>
@@ -54,7 +54,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
       }
     }
 
-    "not bind integers smaller than Long.MinValue" in {
+    "not bind longs smaller than Long.MinValue" in {
 
       forAll(longsSmallerThanMinValue -> "massivelySmallLong") {
         num: BigInt =>
@@ -101,7 +101,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
     maximum: Long,
     expectedError: FormError
   ): Unit =
-    s"not bind LONG integers outside the range $minimum to $maximum" in {
+    s"not bind longs outside the range $minimum to $maximum" in {
 
       forAll(longsOutsideRange(minimum, maximum) -> "longOutsideRange") {
         number =>
