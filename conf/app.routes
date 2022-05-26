@@ -111,6 +111,8 @@ POST       /startYourReturn                        controllers.StartYourReturnCo
 GET        /changeStartYourReturn                  controllers.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeStartYourReturn                  controllers.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
+GET        /start-date-not-recognised                       controllers.NotStartOtherReturnsController.onPageLoad()
+
 GET        /returnConfirmation                       controllers.ReturnConfirmationController.onPageLoad()
 
 GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)

@@ -69,7 +69,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(StartYourReturnPage,
               NormalMode,
               answers.get
-            ) mustBe routes.IndexController.onPageLoad
+            ) mustBe routes.NotStartOtherReturnsController.onPageLoad
 
           }
         }
