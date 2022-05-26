@@ -28,7 +28,8 @@ class ManufacturedPlasticPackagingWeightFormProvider @Inject() extends Mappings 
       "value" -> long(
         "manufacturedPlasticPackagingWeight.error.required",
         "manufacturedPlasticPackagingWeight.error.wholeNumber",
-        "manufacturedPlasticPackagingWeight.error.nonNumeric"
+        "manufacturedPlasticPackagingWeight.error.nonNumeric",
+        "manufacturedPlasticPackagingWeight.error.spaces"
       )
         .verifying(minimumValue(0L, "manufacturedPlasticPackagingWeight.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L,"manufacturedPlasticPackagingWeight.error.outOfRange.high" ))

@@ -18,14 +18,18 @@ import java.text.DecimalFormat
 
 package object viewmodels {
 
-  private val poundsFormat = new DecimalFormat("#,##0.00")
-  private val kgsFormat = new DecimalFormat("#,###")
+  private val poundsFormat = new DecimalFormat("£#,##0.00")
+  private val kgsFormat = new DecimalFormat("#,### kg")
 
   implicit class PrintBigDecimal(val amount: BigDecimal) extends AnyVal {
-    def asPounds: String = "£" + poundsFormat.format(amount)
+    def asPounds: String = poundsFormat.format(amount)
 
-    def asKgs: String =
-      kgsFormat.format(amount) + "kg"
+    def asKgs: String = kgsFormat.format(amount)
   }
 
+  implicit class PrintLong(val amount: Long) extends AnyVal {
+    def asPounds: String = poundsFormat.format(amount)
+
+    def asKgs: String = kgsFormat.format(amount)
+  }
 }

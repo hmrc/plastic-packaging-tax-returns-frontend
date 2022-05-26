@@ -54,6 +54,11 @@ trait Generators
     genIntersperseString(numberGen, ",")
   }
 
+  def longsInRangeWithCommas(min: Long, max: Long): Gen[String] = {
+    val numberGen = choose[Long](min, max).map(_.toString)
+    genIntersperseString(numberGen, ",")
+  }
+
   def intsLargerThanMaxValue: Gen[BigInt] =
     arbitrary[BigInt] suchThat (x => x > Int.MaxValue)
 
@@ -80,23 +85,23 @@ trait Generators
     genIntersperseString(numberGen, ",")
   }
 
-  def longsBelowValue(value: Long): Gen[Long] =
-    arbitrary[Long] suchThat (_ < value)
-
-  def longsAboveValue(value: Long): Gen[Long] =
-    arbitrary[Long] suchThat (_ > value)
-
-  def longsOutsideRange(min: Long, max: Long): Gen[Long] =
-    arbitrary[Long] suchThat (x => x < min || x > max)
-
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat (_ < value)
+
+  def longsBelowValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat (_ < value)
 
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat (_ > value)
 
+  def longsAboveValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat (_ > value)
+
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat (x => x < min || x > max)
+
+  def longsOutsideRange(min: Long, max: Long): Gen[Long] =
+    arbitrary[Long] suchThat (x => x < min || x > max)
 
   def nonBooleans: Gen[String] =
     arbitrary[String]

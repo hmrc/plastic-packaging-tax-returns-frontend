@@ -33,6 +33,8 @@ month.12 = December
 return.quarter = {0} to {1} {2}
 caption.total.plastic = Total Plastic Packaging
 
+return.title.tail = Submit return
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -183,18 +185,34 @@ humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished p
 
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.caption = Total plastic packaging
 importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
-importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period?
+importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
+
+importedPlasticPackaging.paragraph.1 = Tax is chargeable on finished plastic packaging components you import.
+importedPlasticPackaging.paragraph.2 = Finished means you've made no further substantial modifications.
+importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
 importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.caption = Total plastic packaging
 importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
-importedPlasticPackagingWeight.error.nonNumeric =  Imported packaging total
-importedPlasticPackagingWeight.error.required = Enter a weight
-importedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
-importedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
+importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+importedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+importedPlasticPackagingWeight.error.outOfRange = Weight must be between {0}kg and {1}kg
+importedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 importedPlasticPackagingWeight.change.hidden = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.paragraph.1 = Do not include plastic packaging which is (any of the following):
+importedPlasticPackagingWeight.li.1 = transport packaging used to secure goods on import
+importedPlasticPackagingWeight.li.2 = manufactured to be rail, aircraft and ship goods stores
+importedPlasticPackagingWeight.li.3 = permanently set aside for a non-packaging use
+importedPlasticPackagingWeight.li.4 = used in the long-term storage of goods
+importedPlasticPackagingWeight.li.5 = an integral part of the goods
+importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
+importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
@@ -214,6 +232,7 @@ manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilogra
 manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 manufacturedPlasticPackagingWeight.change.hidden = How much did your finished manufactured plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):

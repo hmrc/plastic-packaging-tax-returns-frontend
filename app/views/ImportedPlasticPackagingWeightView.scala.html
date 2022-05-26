@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components._
 @import viewmodels.InputWidth._
 
 @this(
@@ -24,19 +24,30 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@hintContent = {
-<p class="govuk-body">This applies whether they are filled or unfilled.</p>
-<p class="govuk-body">Finished means you have made no further substantial modifications.</p>
+@paragraphContent ={
+    @paragraphBody(messages("importedPlasticPackagingWeight.paragraph.1"))
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("importedPlasticPackagingWeight.li.1")</li>
+        <li>@messages("importedPlasticPackagingWeight.li.2")</li>
+        <li>@messages("importedPlasticPackagingWeight.li.3")</li>
+        <li>@messages("importedPlasticPackagingWeight.li.4")</li>
+        <li>@messages("importedPlasticPackagingWeight.li.5")</li>
+        <li>@messages("importedPlasticPackagingWeight.li.6")</li>
+    </ul>
+
+   <hint>@messages("importedPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(messages("importedPlasticPackagingWeight.caption"))
 
     @formHelper(action = routes.ImportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -49,10 +60,11 @@
                 field = form("value"),
                 label = LabelViewModel(messages("importedPlasticPackagingWeight.heading")).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
+            .withHint(Hint(content = HtmlContent(paragraphContent)))
         )
+
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

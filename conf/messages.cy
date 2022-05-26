@@ -2,6 +2,9 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+site.no = No
+site.yes = Yes
+
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
 account.homePage.organisation.group = {0} (representative organisation for group)
@@ -116,6 +119,36 @@ amend.confirmation.subheading  = What happens next
 amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Plastic Packaging Tax account
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
+
+importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.caption = Total plastic packaging
+importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
+importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
+
+importedPlasticPackaging.paragraph.1 = Tax is chargeable on finished plastic packaging components you import.
+importedPlasticPackaging.paragraph.2 = Finished means you've made no further substantial modifications.
+importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
+
+importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
+importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+importedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+importedPlasticPackagingWeight.error.outOfRange = Weight must be between {0}kg and {1}kg
+importedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+importedPlasticPackagingWeight.change.hidden = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.paragraph.1 = Do not include plastic packaging which is (any of the following):
+importedPlasticPackagingWeight.li.1 = transport packaging used to secure goods on import
+importedPlasticPackagingWeight.li.2 = manufactured to be rail, aircraft and ship goods stores
+importedPlasticPackagingWeight.li.3 = permanently set aside for a non-packaging use
+importedPlasticPackagingWeight.li.4 = used in the long-term storage of goods
+importedPlasticPackagingWeight.li.5 = an integral part of the goods
+importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
+importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?

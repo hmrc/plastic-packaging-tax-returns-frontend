@@ -77,15 +77,15 @@ POST       /humanMedicinesPlasticPackagingWeight                  controllers.Hu
 GET        /changeHumanMedicinesPlasticPackagingWeight                        controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeHumanMedicinesPlasticPackagingWeight                        controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /importedPlasticPackaging                        controllers.ImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /importedPlasticPackaging                        controllers.ImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeImportedPlasticPackaging                  controllers.ImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeImportedPlasticPackaging                  controllers.ImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /imported-components                        controllers.ImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /imported-components                        controllers.ImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-imported-components                  controllers.ImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-imported-components                  controllers.ImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /importedPlasticPackagingWeight                  controllers.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /importedPlasticPackagingWeight                  controllers.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /changeImportedPlasticPackagingWeight                        controllers.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeImportedPlasticPackagingWeight                        controllers.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /imported-weight                  controllers.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /imported-weight                  controllers.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-imported-weight                        controllers.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-imported-weight                        controllers.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET        /manufactured-components                        controllers.ManufacturedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /manufactured-components                        controllers.ManufacturedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)

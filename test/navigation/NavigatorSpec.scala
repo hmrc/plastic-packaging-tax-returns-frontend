@@ -139,7 +139,7 @@ class NavigatorSpec extends SpecBase {
         "for the ImportedPlasticPackagingWeightPage" - {
 
           "navigate to HumanMedicinesPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ImportedPlasticPackagingWeightPage,
               NormalMode,
@@ -349,7 +349,7 @@ class NavigatorSpec extends SpecBase {
         "for the ImportedPlasticPackagingWeightPage" - {
 
           "navigate to HumanMedicinesPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ImportedPlasticPackagingWeightPage,
               CheckMode,
