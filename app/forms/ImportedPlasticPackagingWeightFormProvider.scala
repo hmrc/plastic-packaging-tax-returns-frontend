@@ -25,8 +25,9 @@ class ImportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
   def apply(): Form[Long] =
     Form(
       "value" -> long("importedPlasticPackagingWeight.error.required",
-                     "importedPlasticPackagingWeight.error.wholeNumber",
-                     "importedPlasticPackagingWeight.error.nonNumeric"
+        "importedPlasticPackagingWeight.error.wholeNumber",
+        "importedPlasticPackagingWeight.error.nonNumeric",
+        "importedPlasticPackagingWeight.error.spaces"
       ).verifying(inRange(0, 99999999999L, "importedPlasticPackagingWeight.error.outOfRange"))
     )
 
