@@ -19,6 +19,9 @@ package views
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.data.Form
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.{PrefixOrSuffix, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+import viewmodels.govuk.all.FluentInput
 
 import java.time.LocalDate
 import scala.math.BigDecimal.RoundingMode
@@ -59,6 +62,10 @@ object ViewUtils {
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getMonthName(date.getMonthValue)} ${date.getYear}"
 
-  // TODO replace with PrintBigDecimal.asPounds
-  def displayMonetaryValue(v: BigDecimal): String = s"£${v.setScale(2, RoundingMode.HALF_EVEN)}"
+  implicit class FluentInputSuffixes(val input: Input) extends AnyVal {
+    def asKg(): Input =
+      input
+        .asNumeric()
+        .withSuffix(PrefixOrSuffix(content = Text("kg")))
+  }
 }
