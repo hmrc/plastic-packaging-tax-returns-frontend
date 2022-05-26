@@ -97,11 +97,13 @@ trait Formatters {
                                       requiredKey: String,
                                       wholeNumberKey: String,
                                       nonNumericKey: String,
+                                      spacesKey: String,
                                       args: Seq[String] = Seq.empty
                                     ): Formatter[Long] =
     new Formatter[Long] {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
+      val spaceRegex    = ".*\\s.*"
 
       private val baseFormatter = stringFormatter(requiredKey, args)
 
@@ -112,6 +114,8 @@ trait Formatters {
           .right.flatMap {
           case s if s.matches(decimalRegexp) =>
             Left(Seq(FormError(key, wholeNumberKey, args)))
+          case s if s.matches(spaceRegex) =>
+            Left(Seq(FormError(key, spacesKey, args)))
           case s =>
             nonFatalCatch
               .either(s.toLong)
