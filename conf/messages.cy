@@ -133,8 +133,8 @@ importedPlasticPackaging.paragraph.2 = Finished means you've made no further sub
 importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
 importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
-importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
-importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
+importedPlasticPackagingWeight.heading = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
 importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
