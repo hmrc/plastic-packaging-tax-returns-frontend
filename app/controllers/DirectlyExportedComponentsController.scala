@@ -16,12 +16,14 @@
 
 package controllers
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.DirectlyExportedComponentsFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.DirectlyExportedComponentsPage
+import pages.{DirectlyExportedComponentsPage, ManufacturedPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DirectlyExportedComponentsController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
+                                         cacheConnector: CacheConnector,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
@@ -58,14 +60,19 @@ class DirectlyExportedComponentsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(DirectlyExportedComponentsPage, value)
+            )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+
           } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
       )
   }
