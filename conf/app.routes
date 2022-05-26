@@ -124,5 +124,5 @@ GET        /direct-debit                  controllers.payments.DirectDebitContro
 
 GET        /directly-exported-components                        controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
 POST       /directly-exported-components                        controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeDirectlyExportedComponents                  controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeDirectlyExportedComponents                  controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
+GET        /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
