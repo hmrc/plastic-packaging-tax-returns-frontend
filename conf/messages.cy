@@ -2,8 +2,8 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-site.no = No
-site.yes = Yes
+caption.total.plastic = Total Plastic Packaging
+return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
@@ -81,8 +81,8 @@ amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
 amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
 
 
-amendManufacturedPlasticPackaging.title = How much did your finished manufactured plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
-amendManufacturedPlasticPackaging.heading = How much did your finished manufactured plastic packaging components weigh?
+amendManufacturedPlasticPackaging.title = How much did your manufactured finished plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
+amendManufacturedPlasticPackaging.heading = How much did your manufactured finished plastic packaging components weigh?
 amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
 amendManufacturedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendManufacturedPlasticPackaging.error.required = Enter the weight, in kilograms
@@ -160,15 +160,16 @@ manufacturedPlasticPackaging.paragraph.2 = Plastic packaging is finished if you�
 manufacturedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
 manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
-manufacturedPlasticPackagingWeight.title = How much did your finished manufactured plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.heading = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
 manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
-manufacturedPlasticPackagingWeight.change.hidden = How much did your finished manufactured plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished  plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
 manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
@@ -199,6 +200,8 @@ site.link.remove  = Tynnu
 site.link.remove.hidden  = Tynnu {0} o’r rhestr
 site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
+site.no = No
+site.yes = Yes
 
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
