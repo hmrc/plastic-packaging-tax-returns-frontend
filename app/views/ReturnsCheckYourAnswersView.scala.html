@@ -17,8 +17,8 @@
 @import models.returns.TaxReturnObligation
 @import components.ReturnQuarterHeading
 @import controllers.helpers.TaxLiability
-@import views.ViewUtils.displayMonetaryValue
 @import components.paragraphBody
+@import viewmodels.{PrintBigDecimal, PrintLong}
 
 @this(
     layout: templates.Layout,
@@ -32,7 +32,7 @@
 
 @(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@taxCalculationRow(key: String, value: String, postFixMetric: String = "", classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
+@taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
         TableRow(
         content = Text(messages(key)),
@@ -40,7 +40,7 @@
         attributes = attributes
         ),
         TableRow(
-        content = Text(s"$value$postFixMetric"),
+        content = Text(value),
         classes = classes,
         format = Some("numeric"),
         attributes = attributes
@@ -66,9 +66,9 @@
 
     @govukTable(Table(
         rows = Seq(
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.exemptPackaging.label", taxLiability.totalKgExempt.toString, " kg"),
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.liablePackaging.label", taxLiability.totalKgLiable.toString, " kg","row-border"),
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.label", displayMonetaryValue(taxLiability.taxDue), "" ,"row-border")
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.exemptPackaging.label", taxLiability.totalKgExempt.asKgs),
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.liablePackaging.label", taxLiability.totalKgLiable.asKgs, "row-border"),
+            taxCalculationRow("returnsCheckYourAnswers.taxLiability.label", taxLiability.taxDue.asPounds, "row-border")
             ),
         head = Some(Seq(
             HeadCell(
@@ -94,7 +94,7 @@
 
     @govukTable(Table(
         rows = Seq(
-            taxCalculationRow("returnsCheckYourAnswers.totalCredits.creditsRequested.label", displayMonetaryValue(taxLiability.totalCredit), "", "row-border"),
+            taxCalculationRow("returnsCheckYourAnswers.totalCredits.creditsRequested.label", taxLiability.totalCredit.asPounds, "row-border"),
             ),
             head = Some(Seq(
                 HeadCell(
