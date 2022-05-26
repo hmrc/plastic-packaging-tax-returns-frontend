@@ -43,7 +43,7 @@
 
 @layout(pageTitle = title(form, messages("importedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("importedPlasticPackaging.caption"))
+    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 

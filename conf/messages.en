@@ -30,7 +30,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-
+caption.total.plastic = Total Plastic Packaging
 return.title.tail = Submit return
 
 timeout.title = You’re about to be signed out
@@ -183,7 +183,6 @@ humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished p
 
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
-importedPlasticPackaging.caption = Total plastic packaging
 importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?

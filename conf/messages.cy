@@ -2,6 +2,8 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+caption.total.plastic = Total Plastic Packaging
+
 site.no = No
 site.yes = Yes
 
@@ -122,7 +124,6 @@ amend.confirmation.paragraph.3 = when it’s been updated, to find out how much 
 
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
-importedPlasticPackaging.caption = Total plastic packaging
 importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
