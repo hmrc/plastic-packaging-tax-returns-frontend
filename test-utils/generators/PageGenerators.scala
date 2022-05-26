@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryDirectlyExportedComponentsPage: Arbitrary[DirectlyExportedComponentsPage.type] =
+    Arbitrary(DirectlyExportedComponentsPage)
+
   implicit lazy val arbitraryAgentsPage: Arbitrary[AgentsPage.type] =
     Arbitrary(AgentsPage)
 
