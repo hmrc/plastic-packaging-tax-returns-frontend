@@ -22,7 +22,7 @@ import connectors.{CacheConnector, FinancialsConnector, ObligationsConnector, Su
 import models.{EisError, EisFailure}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, when}
@@ -37,6 +37,14 @@ import scala.concurrent.Future
 
 class IndexControllerSpec
     extends SpecBase with MockSubscriptionConnector with MockObligationsConnector {
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    Mockito.reset(mockSubscriptionConnector)
+    Mockito.reset(mockFinancialsConnector)
+    Mockito.reset(mockObligationsConnector)
+    Mockito.reset(config)
+  }
 
   private val mockFinancialsConnector = mock[FinancialsConnector]
   private val page                    = mock[IndexView]
@@ -269,10 +277,6 @@ class IndexControllerSpec
   }
 
   private def setUpMocks(obligation: PPTObligations = createDefaultPPTObligation) = {
-    reset(mockFinancialsConnector)
-    reset(mockSubscriptionConnector)
-    reset(mockObligationsConnector)
-
     val subscription = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
     mockGetSubscription(subscription)
 
