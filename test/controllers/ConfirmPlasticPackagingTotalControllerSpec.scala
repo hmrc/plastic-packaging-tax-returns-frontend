@@ -69,7 +69,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
       "must display all the answer with total" in {
 
         val application: Application = buildApplication(
-          createUserAnswer(manufacturedPlastic = true -> 20000, importedPlastic = true -> 25000).success.value)
+          createUserAnswer(manufacturedPlastic = true -> 20000L, importedPlastic = true -> 25000L).success.value)
 
         running(application) {
           val request = FakeRequest(GET, routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
@@ -147,7 +147,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
 
   private def createUserAnswer
   (
-    manufacturedPlastic: (Boolean, Int),
+    manufacturedPlastic: (Boolean, Long),
     importedPlastic: (Boolean, Long)
   ): Try[UserAnswers] = {
     UserAnswers("123").set(ObligationCacheable, taxReturnOb).get
@@ -161,14 +161,6 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
     UserAnswers("123").set(ObligationCacheable, taxReturnOb).get
       .set(ManufacturedPlasticPackagingPage, false).get
       .set(ImportedPlasticPackagingPage, false).get
-  }
-
-  private def createUserAnswer: UserAnswers = {
-    UserAnswers("123").set(ObligationCacheable, taxReturnOb).get
-      .set(ManufacturedPlasticPackagingPage, true).get
-      .set(ManufacturedPlasticPackagingWeightPage, 1000).get
-      .set(ImportedPlasticPackagingPage, true).get
-      .set(ImportedPlasticPackagingWeightPage, 2000L).get
   }
 
   private def assertResults
