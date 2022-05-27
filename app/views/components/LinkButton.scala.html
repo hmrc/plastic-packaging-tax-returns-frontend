@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import pages.behaviours.PageBehaviours
+@this(govukButton: GovukButton)
 
-class ManufacturedPlasticPackagingWeightPageSpec extends PageBehaviours {
+@(messageKey: String, linkUrl: String, id: String = "link-button")(implicit messages: Messages)
 
-  "ManufacturedPlasticPackagingWeightPage" - {
-
-    beRetrievable[Long](ManufacturedPlasticPackagingWeightPage)
-
-    beSettable[Long](ManufacturedPlasticPackagingWeightPage)
-
-    beRemovable[Long](ManufacturedPlasticPackagingWeightPage)
-  }
-}
+<span class="govuk-button-group">
+    @govukButton(Button(
+        content = Text(messages(messageKey)),
+        classes = "govuk-!-margin-right-1",
+        href = Some(linkUrl),
+        attributes = Map("id" -> id)
+    ))
+</span>

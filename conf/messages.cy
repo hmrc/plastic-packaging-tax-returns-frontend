@@ -19,6 +19,7 @@ site.no = No
 site.yes = Yes
 
 return.quarter = {0} to {1} {2}
+caption.total.plastic = Total Plastic Packaging
 caption.exported.plastic = Exported plastic packaging
 return.title.tail = Submit return
 
@@ -145,12 +146,12 @@ importedPlasticPackaging.error.required = Select yes if you imported finished pl
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
 
 importedPlasticPackaging.paragraph.1 = Tax is chargeable on finished plastic packaging components you import.
-importedPlasticPackaging.paragraph.2 = Finished means you've made no further substantial modifications.
-importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+importedPlasticPackaging.paragraph.2 = Plastic packaging is finished when the last substantial modification in the manufacturing process has been made.
+importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}
 importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
-importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
-importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
+importedPlasticPackagingWeight.heading = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
 importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms

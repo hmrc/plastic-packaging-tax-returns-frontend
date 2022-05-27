@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@import components.{paragraphBody, LinkButton}
 
-import pages.behaviours.PageBehaviours
+@this(
+        layout: templates.Layout,
+        paragraph: paragraphBody,
+        linkButton: LinkButton,
+)
 
-class ManufacturedPlasticPackagingWeightPageSpec extends PageBehaviours {
+@()(implicit request: Request[_], messages: Messages)
 
-  "ManufacturedPlasticPackagingWeightPage" - {
+@layout(pageTitle = titleNoForm(messages("notStartOtherReturns.heading"))) {
 
-    beRetrievable[Long](ManufacturedPlasticPackagingWeightPage)
+    <h1 class="govuk-heading-xl">@messages("notStartOtherReturns.heading")</h1>
 
-    beSettable[Long](ManufacturedPlasticPackagingWeightPage)
+    @paragraph(messages("notStartOtherReturns.detail"))
 
-    beRemovable[Long](ManufacturedPlasticPackagingWeightPage)
-  }
+    @linkButton(
+        messageKey = "notStartOtherReturns.button",
+        linkUrl = routes.IndexController.onPageLoad.url
+    )
+
 }

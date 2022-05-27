@@ -76,7 +76,7 @@ class Navigator @Inject() () {
   private def startYourReturnRoute(answers: UserAnswers): Call =
     answers.get(StartYourReturnPage) match {
       case Some(true)  => routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-      case Some(false) => routes.IndexController.onPageLoad
+      case Some(false) => routes.NotStartOtherReturnsController.onPageLoad
       case _           => throw new Exception("Unable to navigate to page")
     }
 

@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 
 @this(
     appConfig: FrontendAppConfig,
@@ -31,7 +32,7 @@
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     hmrcLanguageSelect: HmrcLanguageSelect,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
-    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
     hmrcScripts: HmrcScripts,
     stdBanner: StandardBetaBanner,
     hmrcUserResearchBanner: HmrcUserResearchBanner,
@@ -89,11 +90,15 @@
     <div class="govuk-grid-row">
         <div class=@mainTemplateCass>
             @contentBlock
-        </div>
-    </div>
 
-    <div class="govuk-!-margin-top-8">
-        @hmrcReportTechnicalIssueHelper()
+            @hmrcReportTechnicalIssue(
+                ReportTechnicalIssue(
+                    serviceCode = "plastic-packaging-tax",
+                    baseUrl = Some(appConfig.contactFrontEnd),
+                    referrerUrl = Some(s"${request.uri}")
+                )
+            )
+        </div>
     </div>
 }
 

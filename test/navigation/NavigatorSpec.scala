@@ -69,7 +69,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(StartYourReturnPage,
               NormalMode,
               answers.get
-            ) mustBe routes.IndexController.onPageLoad
+            ) mustBe routes.NotStartOtherReturnsController.onPageLoad
 
           }
         }
@@ -125,7 +125,7 @@ class NavigatorSpec extends SpecBase {
         "for the ManufacturedPlasticPackagingWeightPage" - {
 
           "navigate to ImportedPlasticPackagingPage" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ManufacturedPlasticPackagingWeightPage,
               NormalMode,
@@ -335,7 +335,7 @@ class NavigatorSpec extends SpecBase {
         "for the ManufacturedPlasticPackagingWeightPage" - {
 
           "navigate to ImportedPlasticPackagingPage" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ManufacturedPlasticPackagingWeightPage,
               CheckMode,

@@ -47,7 +47,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
 
     "not bind longs larger than Long.MaxValue" in {
 
-      forAll(longsLargerThanMaxValue -> "massiveInt") {
+      forAll(longsLargerThanMaxValue -> "massiveLong") {
         num: BigInt =>
           val result = form.bind(Map(fieldName -> num.toString)).apply(fieldName)
           result.errors must contain only nonNumericError
@@ -56,7 +56,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
 
     "not bind longs smaller than Long.MinValue" in {
 
-      forAll(longsSmallerThanMinValue -> "massivelySmallInt") {
+      forAll(longsSmallerThanMinValue -> "massivelySmallLong") {
         num: BigInt =>
           val result = form.bind(Map(fieldName -> num.toString)).apply(fieldName)
           result.errors must contain only nonNumericError
@@ -70,7 +70,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
     minimum: Long,
     expectedError: FormError
   ): Unit =
-    s"not bind longs below $minimum" in {
+    s"not bind long integers below $minimum" in {
 
       forAll(longsBelowValue(minimum) -> "longBelowMin") {
         number: Long =>
@@ -85,7 +85,7 @@ trait LongFieldBehaviours extends FieldBehaviours {
     maximum: Long,
     expectedError: FormError
   ): Unit =
-    s"not bind longs above $maximum" in {
+    s"not bind long integers above $maximum" in {
 
       forAll(longsAboveValue(maximum) -> "longAboveMax") {
         number: Long =>
