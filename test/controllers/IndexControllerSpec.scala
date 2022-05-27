@@ -44,6 +44,8 @@ class IndexControllerSpec
     Mockito.reset(mockFinancialsConnector)
     Mockito.reset(mockObligationsConnector)
     Mockito.reset(config)
+    Mockito.reset(cacheConnector)
+    Mockito.reset(page)
   }
 
   private val mockFinancialsConnector = mock[FinancialsConnector]
