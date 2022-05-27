@@ -30,7 +30,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-
+caption.total.plastic = Total Plastic Packaging
 return.title.tail = Submit return
 
 timeout.title = You’re about to be signed out
@@ -183,18 +183,17 @@ humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished p
 
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
-importedPlasticPackaging.caption = Total plastic packaging
 importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
 
 importedPlasticPackaging.paragraph.1 = Tax is chargeable on finished plastic packaging components you import.
-importedPlasticPackaging.paragraph.2 = Finished means you've made no further substantial modifications.
-importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+importedPlasticPackaging.paragraph.2 = Plastic packaging is finished when the last substantial modification in the manufacturing process has been made.
+importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}
 importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
-importedPlasticPackagingWeight.title = How much did your finished imported plastic packaging components weigh?
-importedPlasticPackagingWeight.heading = How much did your finished imported plastic packaging components weigh?
+importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
+importedPlasticPackagingWeight.heading = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.caption = Total plastic packaging
 importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
