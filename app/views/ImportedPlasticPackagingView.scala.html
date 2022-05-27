@@ -29,21 +29,21 @@
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
+@fullStop = {.}
+
 @guidanceLink = {
-   <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link" target="_blank">
-       @messages("importedPlasticPackaging.paragraph.link")
-   </a>
+   <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link" target="_blank">@messages("importedPlasticPackaging.paragraph.link").trim()</a>@fullStop
 }
 
 @paragraphContent ={
     @paragraphBody(messages("importedPlasticPackaging.paragraph.1"))
     @paragraphBody(messages("importedPlasticPackaging.paragraph.2"))
-    @paragraphBody(messages("importedPlasticPackaging.paragraph.3", guidanceLink))
+    @paragraphBody(messages("importedPlasticPackaging.paragraph.3", guidanceLink).trim())
 }
 
 @layout(pageTitle = title(form, messages("importedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("importedPlasticPackaging.caption"))
+    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
