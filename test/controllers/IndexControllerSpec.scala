@@ -291,9 +291,7 @@ class IndexControllerSpec
   private def verifyResults(obligation: PPTObligations) = {
     val captor: ArgumentCaptor[Option[PPTObligations]] =
       ArgumentCaptor.forClass(classOf[Option[PPTObligations]])
-    verify(page, atLeastOnce()).apply(any(), any(), captor.capture(), any(), any(), any())(any(),
-                                                                                           any()
-    )
+    verify(page).apply(any(), any(), captor.capture(), any(), any(), any())(any(), any())
 
     captor.getValue.get mustBe obligation
   }
