@@ -130,7 +130,7 @@ importedPlasticPackaging.change.hidden = Have you imported finished plastic pack
 
 importedPlasticPackaging.paragraph.1 = Tax is chargeable on finished plastic packaging components you import.
 importedPlasticPackaging.paragraph.2 = Plastic packaging is finished when the last substantial modification in the manufacturing process has been made.
-importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+importedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}
 importedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
 
 importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
