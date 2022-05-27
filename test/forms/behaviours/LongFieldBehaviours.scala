@@ -46,13 +46,12 @@ trait LongFieldBehaviours extends FieldBehaviours {
       }
     }
 
-    // TODO tmp - get build back-up, will put proper solution in new PR
-/*
     "not bind longs larger than Long.MaxValue" in {
 
       val tuple: (Gen[BigInt], String) = longsLargerThanMaxValue -> "massiveLong"
       forAll(tuple) {
         num: BigInt =>
+          println(s"  testing with $num")
           val result = form.bind(Map(fieldName -> num.toString)).apply(fieldName)
           result.errors must contain only nonNumericError
       }
@@ -66,7 +65,6 @@ trait LongFieldBehaviours extends FieldBehaviours {
           result.errors must contain only nonNumericError
       }
     }
-*/
   }
 
   def longFieldWithMinimum(
