@@ -14,17 +14,29 @@
  * limitations under the License.
  *@
 
+@import components._
+@import viewmodels.LegendSize
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("directlyExportedComponents.title"))) {
+@paragraphContent = {
+    @paragraphBody(messages("directlyExportedComponents.paragraph.1"))
+    @paragraphBody(messages("directlyExportedComponents.paragraph.2"))
+}
+
+@layout(pageTitle = title(form, messages("directlyExportedComponents.title", 1234), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("caption.exported.plastic"))
 
     @formHelper(action = routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -35,8 +47,8 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("directlyExportedComponents.heading")).asPageHeading()
-            )
+                legend = LegendViewModel(messages("directlyExportedComponents.heading")).asPageHeading(size = LegendSize.Large)
+            ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(

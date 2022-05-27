@@ -16,6 +16,7 @@
 
 @import models.returns.TaxReturnObligation
 @import components._
+@import viewmodels.LegendSize
 
 @this(
     layout: templates.Layout,
@@ -54,7 +55,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading()
+                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading(size = LegendSize.Large)
             ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 

@@ -17,6 +17,7 @@
 @import models.returns.TaxReturnObligation
 @import components._
 @import viewmodels.InputWidth._
+@import viewmodels.LabelSize
 
 @this(
     layout: templates.Layout,
@@ -58,7 +59,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("importedPlasticPackagingWeight.heading")).asPageHeading()
+                label = LabelViewModel(messages("importedPlasticPackagingWeight.heading")).asPageHeading(size = LabelSize.Large)
             )
             .asKg()
             .withWidth(Fixed10)

@@ -30,7 +30,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-
+caption.exported.plastic = Exported plastic packaging
 return.title.tail = Submit return
 
 timeout.title = You’re about to be signed out
@@ -162,6 +162,15 @@ convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
 convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
 convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
+
+directlyExportedComponents.title = Did you export any of your {0}kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.heading = Did you export any of your {0}kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.checkYourAnswersLabel = directlyExportedComponents
+directlyExportedComponents.error.required = Select yes if directlyExportedComponents
+directlyExportedComponents.change.hidden = DirectlyExportedComponents
+directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
+directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you'll need to pay tax on them.
+
 
 exportedPlasticPackagingWeight.title = How much of your finished plastic packaging components did you directly export?
 exportedPlasticPackagingWeight.heading = How much of your finished plastic packaging components did you directly export?
@@ -353,8 +362,3 @@ agents.client.identifier.auth.error = This registration number is either incorre
 deregistered.heading = You deregistered this account from Plastic Packaging Tax
 deregistered.bta.link = Go to your business tax account
 deregistered.title = You deregistered this account from Plastic Packaging Tax
-directlyExportedComponents.title = directlyExportedComponents
-directlyExportedComponents.heading = directlyExportedComponents
-directlyExportedComponents.checkYourAnswersLabel = directlyExportedComponents
-directlyExportedComponents.error.required = Select yes if directlyExportedComponents
-directlyExportedComponents.change.hidden = DirectlyExportedComponents

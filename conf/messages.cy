@@ -2,8 +2,25 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+site.back  = Yn ôl
+site.back.hiddenText  = i’r dudalen flaenorol
+site.backToGovUk  = Yn ôl i GOV.UK
+site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.acceptAndSend  = Derbyn ac anfon
+site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
+site.error.summary.title  = Mae problem wedi codi
+site.link.change  = Newid
+site.link.change.hidden  = Newid {0}
+site.link.remove  = Tynnu
+site.link.remove.hidden  = Tynnu {0} o’r rhestr
+site.button.continue  = Yn eich blaen
+site.button.tryAgain  = Rhowch gynnig arall arni
 site.no = No
 site.yes = Yes
+
+return.quarter = {0} to {1} {2}
+caption.exported.plastic = Exported plastic packaging
+return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
@@ -159,20 +176,6 @@ timeoutDialog.message  = Er eich diogelwch, cewch eich allgofnodi ymhen [time re
 timeoutDialog.messageSuffix  = Bydd eich atebion yn cael eu cadw.
 timeoutDialog.keepAlive.text  = Aros wedi mewngofnodi
 timeoutDialog.signout.text  = Allgofnodi
-
-site.back  = Yn ôl
-site.back.hiddenText  = i’r dudalen flaenorol
-site.backToGovUk  = Yn ôl i GOV.UK
-site.button.saveAndContinue  = Cadw ac yn eich blaen
-site.button.acceptAndSend  = Derbyn ac anfon
-site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
-site.error.summary.title  = Mae problem wedi codi
-site.link.change  = Newid
-site.link.change.hidden  = Newid {0}
-site.link.remove  = Tynnu
-site.link.remove.hidden  = Tynnu {0} o’r rhestr
-site.button.continue  = Yn eich blaen
-site.button.tryAgain  = Rhowch gynnig arall arni
 
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
