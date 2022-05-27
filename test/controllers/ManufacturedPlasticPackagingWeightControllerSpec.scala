@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.CacheConnector
 import forms.ManufacturedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,6 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.ManufacturedPlasticPackagingWeightView
 
 import scala.concurrent.Future
@@ -36,56 +37,48 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ManufacturedPlasticPackagingWeightFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer: Long = 1
 
-  lazy val manufacturedPlasticPackagingWeightRoute =
-    routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val ManufacturedPlasticPackagingWeightRoute = routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "ManufacturedPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswers.set(ManufacturedPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, manufacturedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
+
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(ManufacturedPlasticPackagingWeightPage,
-        validAnswer
-      ).success.value
+      val ans = userAnswers.set(ManufacturedPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
-        val request = FakeRequest(GET, manufacturedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
-          request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
@@ -95,16 +88,14 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
+            bind[CacheConnector].toInstance(mockCacheConnector))
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, manufacturedPlasticPackagingWeightRoute)
+          FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value
@@ -120,7 +111,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, manufacturedPlasticPackagingWeightRoute)
+          FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
@@ -130,9 +121,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
@@ -141,7 +130,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, manufacturedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
 
         val result = route(application, request).value
 
@@ -156,7 +145,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, manufacturedPlasticPackagingWeightRoute)
+          FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value

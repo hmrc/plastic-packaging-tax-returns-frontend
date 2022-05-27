@@ -16,10 +16,10 @@
 
 package forms
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class ManufacturedPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours {
+class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
   val form = new ManufacturedPlasticPackagingWeightFormProvider()()
 
@@ -28,33 +28,21 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends IntFieldBehavio
     val fieldName = "value"
 
     val minimum = 0
-    val maximum = 999999
+    val maximum = 999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
-    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
-
-    behave like intField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName,
-                                     "manufacturedPlasticPackagingWeight.error.nonNumeric"
-                           ),
-                         wholeNumberError =
-                           FormError(fieldName,
-                                     "manufacturedPlasticPackagingWeight.error.wholeNumber"
-                           )
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validDataGenerator
     )
 
-    behave like intFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "manufacturedPlasticPackagingWeight.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError  = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.wholeNumber")
     )
 
     behave like mandatoryField(

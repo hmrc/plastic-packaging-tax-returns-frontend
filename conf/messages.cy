@@ -3,9 +3,7 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 caption.total.plastic = Total Plastic Packaging
-
-site.no = No
-site.yes = Yes
+return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
@@ -124,6 +122,7 @@ amend.confirmation.paragraph.3 = when it’s been updated, to find out how much 
 
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
+importedPlasticPackaging.caption = Total plastic packaging
 importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
@@ -181,7 +180,3 @@ agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax
 agents.client.identifier.length.error=Registration number must be 15 characters
 agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
 agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
-
-notStartOtherReturns.heading = You cannot start returns for other periods yet
-notStartOtherReturns.detail = You can only start returns for periods that have ended.
-notStartOtherReturns.button = Back to your account

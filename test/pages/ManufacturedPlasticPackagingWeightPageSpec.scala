@@ -22,10 +22,10 @@ class ManufacturedPlasticPackagingWeightPageSpec extends PageBehaviours {
 
   "ManufacturedPlasticPackagingWeightPage" - {
 
-    beRetrievable[Int](ManufacturedPlasticPackagingWeightPage)
+    beRetrievable[Long](ManufacturedPlasticPackagingWeightPage)
 
-    beSettable[Int](ManufacturedPlasticPackagingWeightPage)
+    beSettable[Long](ManufacturedPlasticPackagingWeightPage)
 
-    beRemovable[Int](ManufacturedPlasticPackagingWeightPage)
+    beRemovable[Long](ManufacturedPlasticPackagingWeightPage)
   }
 }

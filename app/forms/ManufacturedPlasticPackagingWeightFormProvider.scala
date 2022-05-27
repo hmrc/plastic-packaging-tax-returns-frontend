@@ -17,18 +17,24 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class ManufacturedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Int] =
+  def apply(): Form[Long] =
     Form(
-      "value" -> int("manufacturedPlasticPackagingWeight.error.required",
-                     "manufacturedPlasticPackagingWeight.error.wholeNumber",
-                     "manufacturedPlasticPackagingWeight.error.nonNumeric"
+      "value" -> long(
+        "manufacturedPlasticPackagingWeight.error.required",
+        "manufacturedPlasticPackagingWeight.error.wholeNumber",
+        "manufacturedPlasticPackagingWeight.error.nonNumeric",
+        "manufacturedPlasticPackagingWeight.error.spaces"
       )
-        .verifying(inRange(0, 999999, "manufacturedPlasticPackagingWeight.error.outOfRange"))
+        .verifying(minimumValue(0L, "manufacturedPlasticPackagingWeight.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L,"manufacturedPlasticPackagingWeight.error.outOfRange.high" ))
+
+
     )
 
 }

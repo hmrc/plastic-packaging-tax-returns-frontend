@@ -95,5 +95,4 @@ trait InputFluency {
       input.withCssClass(inputWidth.toString)
 
   }
-
 }
