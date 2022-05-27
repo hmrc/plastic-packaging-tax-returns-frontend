@@ -47,26 +47,31 @@ class DirectlyExportedComponentsViewSpec extends PlaySpec with GuiceOneAppPerSui
     page(form, NormalMode)(request, messages)
 
   "DirectlyExportedComponentsView" should {
+    val view = createView
 
     "have a title" in {
       //todo update when we can populate with total kgs
-      val view = createView
+
 
       view.select("title").text mustBe
         "Did you export any of your 1,234kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a caption" in {
-      val view = createView
 
       view.getElementById("section-header").text() mustBe messages("caption.exported.plastic")
     }
 
     "contain paragraph content" in{
-      val view = createView
-println(view.getElementById("value-hint").text())
-      view.getElementById("value-hint").text() must ("dcs")
+
+      view.getElementById("value-hint").text() must include (messages("directlyExportedComponents.paragraph.1"))
+      view.getElementById("value-hint").text() must include (messages("directlyExportedComponents.paragraph.2"))
     }
+    "contain save & continue button" in {
+
+      view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
+    }
+
   }
 
 }
