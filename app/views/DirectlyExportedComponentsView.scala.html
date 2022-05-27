@@ -47,7 +47,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("directlyExportedComponents.heading")).asPageHeading(size = LegendSize.Large)
+                legend = LegendViewModel(messages("directlyExportedComponents.heading")).asPageHeading()
             ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 

@@ -59,7 +59,13 @@ class DirectlyExportedComponentsViewSpec extends PlaySpec with GuiceOneAppPerSui
     "have a caption" in {
       val view = createView
 
-      view.getElementById("section-header").text mustBe messages("caption.exported.plastic")
+      view.getElementById("section-header").text() mustBe messages("caption.exported.plastic")
+    }
+
+    "contain paragraph content" in{
+      val view = createView
+println(view.getElementById("value-hint").text())
+      view.getElementById("value-hint").text() must ("dcs")
     }
   }
 

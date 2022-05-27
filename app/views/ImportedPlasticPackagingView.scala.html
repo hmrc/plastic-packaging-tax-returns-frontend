@@ -55,7 +55,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading(size = LegendSize.Large)
+                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading()
             ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
