@@ -15,8 +15,8 @@ site.link.remove  = Tynnu
 site.link.remove.hidden  = Tynnu {0} o’r rhestr
 site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
-site.no = No
-site.yes = Yes
+site.no = Na
+site.yes = Iawn
 site.continue = Save and continue
 
 caption.total.plastic = Total plastic packaging
