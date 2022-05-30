@@ -74,7 +74,7 @@ class ConvertedPackagingCreditController @Inject() (
     val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
       throw new IllegalStateException("Obligation not found in user-answers")
     )
-    val futureExportCredits = exportCreditsConnector.get(request.request.pptReference,
+    val futureExportCredits = exportCreditsConnector.get(request.pptReference,
       obligation.fromDate.minusYears(2),
       obligation.fromDate.minusDays(1)
     )
@@ -87,9 +87,7 @@ class ConvertedPackagingCreditController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(
-          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-        )
+        val pptId: String = request.pptReference
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")

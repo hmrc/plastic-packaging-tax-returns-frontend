@@ -36,7 +36,7 @@ class DataRetrievalActionImpl @Inject() (
   ): Future[OptionalDataRequest[A]] = {
 
     implicit val hc   = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val pptId: String = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+    val pptId: String = request.pptReference
 
     cacheConnector.get(pptId).map {
       OptionalDataRequest(request, request.user.identityData.internalId, _)

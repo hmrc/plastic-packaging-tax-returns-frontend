@@ -38,7 +38,7 @@ class DirectDebitController @Inject()
   extends FrontendBaseController with I18nSupport {
 
   def redirectLink: Action[AnyContent] = identify.async { implicit request =>
-    val pptRef = request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+    val pptRef = request.pptReference
     val futureLink = connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
     futureLink.map { link => Redirect(Call("GET", link)) }
   }
