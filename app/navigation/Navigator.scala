@@ -27,20 +27,26 @@ import models._
 @Singleton
 class Navigator @Inject() () {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
+  private val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
+
+    // return routes
     case StartYourReturnPage => startYourReturnRoute
     case ManufacturedPlasticPackagingPage => manufacturedPlasticPackagingRoute(_, mode = NormalMode)
     case ImportedPlasticPackagingPage => importedPlasticPackagingRoute(_, mode = NormalMode)
     case ManufacturedPlasticPackagingWeightPage =>
       _ => routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     case ImportedPlasticPackagingWeightPage =>
-      _ => routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+      _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+    case HumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
     case HumanMedicinesPlasticPackagingWeightPage =>
       _ => routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case RecycledPlasticPackagingWeightPage => _ => routes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
     case ConvertedPackagingCreditPage => _ => routes.ReturnsCheckYourAnswersController.onPageLoad
+
+
+        //amend return routes
     case AmendAreYouSurePage => amendAreYouSureRoute
     case AmendManufacturedPlasticPackagingPage =>
       _ => routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
@@ -54,15 +60,19 @@ class Navigator @Inject() () {
       _ => routes.CheckYourAnswersController.onPageLoad
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
+  private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] = {
+        //amend return routes
     case AmendAreYouSurePage => _ => routes.CheckYourAnswersController.onPageLoad
     case AmendManufacturedPlasticPackagingPage => _ => routes.CheckYourAnswersController.onPageLoad
     case AmendImportedPlasticPackagingPage => _ => routes.CheckYourAnswersController.onPageLoad
     case AmendHumanMedicinePlasticPackagingPage => _ => routes.CheckYourAnswersController.onPageLoad
     case AmendDirectExportPlasticPackagingPage => _ => routes.CheckYourAnswersController.onPageLoad
     case AmendRecycledPlasticPackagingPage => _ => routes.CheckYourAnswersController.onPageLoad
+
+    // return routes
     case ManufacturedPlasticPackagingPage => manufacturedPlasticPackagingRoute(_, mode = CheckMode)
     case ImportedPlasticPackagingPage => importedPlasticPackagingRoute(_, mode = CheckMode)
+    case HumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = CheckMode)
     case _ => _ => routes.ReturnsCheckYourAnswersController.onPageLoad
   }
 
@@ -101,6 +111,15 @@ class Navigator @Inject() () {
         } else {
           routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
         }
+      case _           => throw new Exception("Unable to navigate to page")
+    }
+
+  private def humanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =
+    answers.get(HumanMedicinesPlasticPackagingPage) match {
+      case Some(true) => routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(false) =>
+        if (mode == CheckMode) {routes.ReturnsCheckYourAnswersController.onPageLoad()}
+        else {routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)}
       case _           => throw new Exception("Unable to navigate to page")
     }
 

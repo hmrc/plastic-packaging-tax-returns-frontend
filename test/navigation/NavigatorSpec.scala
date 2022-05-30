@@ -136,15 +136,38 @@ class NavigatorSpec extends SpecBase {
 
         }
 
-        "for the ImportedPlasticPackagingWeightPage" - {
+        "for the HumanMedicinesPlasticPackagingPage" - {
+          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is Yes" in {
+            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, true)
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingWeightPage, 1000L)
-
-            navigator.nextPage(ImportedPlasticPackagingWeightPage,
+            navigator.nextPage(HumanMedicinesPlasticPackagingPage,
               NormalMode,
               answers.get
             ) mustBe routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+          }
+
+          "navigate to ExportedPlasticPackagingWeightPage when answer is No" in {
+
+            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, false)
+
+            navigator.nextPage(HumanMedicinesPlasticPackagingPage,
+              NormalMode,
+              answers.get
+            ) mustBe routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
+
+          }
+
+        }
+
+        "for the HumanMedicinesPlasticPackagingPage" - {
+
+          "navigate to ExportedPlasticPackagingWeightPage" in {
+            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingWeightPage, 1000L)
+
+            navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage,
+              NormalMode,
+              answers.get
+            ) mustBe routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
 
           }
 
@@ -153,7 +176,7 @@ class NavigatorSpec extends SpecBase {
         "for the HumanMedicinesPlasticPackagingWeightPage" - {
 
           "navigate to ExportedPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage,
               NormalMode,

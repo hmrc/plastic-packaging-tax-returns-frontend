@@ -56,6 +56,7 @@ class ReturnsCheckYourAnswersController @Inject()(
             ManufacturedPlasticPackagingWeightSummary,
             ImportedPlasticPackagingSummary,
             ImportedPlasticPackagingWeightSummary,
+            HumanMedicinesPlasticPackagingSummary,
             HumanMedicinesPlasticPackagingWeightSummary,
             ExportedPlasticPackagingWeightSummary,
             RecycledPlasticPackagingWeightSummary,
