@@ -65,7 +65,7 @@ class ManufacturedPlasticPackagingController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val pptId: String = request.pptReference
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")

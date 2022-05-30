@@ -19,14 +19,22 @@ package models.requests
 import play.api.mvc.WrappedRequest
 import models.UserAnswers
 
-case class OptionalDataRequest[A](
-    request: IdentifiedRequest[A],
-    userId: String,
-    userAnswers: Option[UserAnswers]
-  ) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A] (
+  request: IdentifiedRequest[A],
+  userId: String,
+  userAnswers: Option[UserAnswers]
+) extends WrappedRequest[A](request) {
+
+  def pptReference: String = request.pptReference
+
+}
 
 case class DataRequest[A](
-   request: IdentifiedRequest[A],
-   userId: String,
-   userAnswers: UserAnswers
-  ) extends WrappedRequest[A](request)
+  request: IdentifiedRequest[A],
+  userId: String,
+  userAnswers: UserAnswers
+) extends WrappedRequest[A](request) {
+
+  def pptReference: String = request.pptReference
+
+}

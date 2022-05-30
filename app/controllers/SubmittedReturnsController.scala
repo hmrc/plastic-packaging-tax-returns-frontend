@@ -37,8 +37,7 @@ class SubmittedReturnsController @Inject()(
     identify.async {
 
       implicit request =>
-        val pptReference =
-          request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+        val pptReference = request.pptReference
 
         obligationsConnector.getFulfilled(pptReference).map { taxReturnObligations =>
           Ok(view(taxReturnObligations))

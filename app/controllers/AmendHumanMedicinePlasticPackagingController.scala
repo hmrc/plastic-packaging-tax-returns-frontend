@@ -16,12 +16,12 @@
 
 package controllers
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.AmendHumanMedicinePlasticPackagingFormProvider
 import models.Mode
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -62,7 +62,7 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val pptId: String = request.pptReference
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have a tax return against which to amend")
