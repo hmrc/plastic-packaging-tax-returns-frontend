@@ -17,7 +17,8 @@ site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
 site.no = Na
 site.yes = Iawn
-site.continue = Save and continue
+site.continue = Cadw ac yn eich blaen
+site.change = Newid
 
 caption.total.plastic = Total plastic packaging
 return.title.tail = Submit return
