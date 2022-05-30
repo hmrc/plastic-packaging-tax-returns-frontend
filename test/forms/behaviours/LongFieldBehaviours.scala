@@ -16,7 +16,6 @@
 
 package forms.behaviours
 
-import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
 
 trait LongFieldBehaviours extends FieldBehaviours {
@@ -29,7 +28,6 @@ trait LongFieldBehaviours extends FieldBehaviours {
   ): Unit = {
 
     "not bind non-numeric numbers" in {
-
       forAll(nonNumerics -> "nonNumeric") {
         nonNumeric =>
           val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
@@ -38,7 +36,6 @@ trait LongFieldBehaviours extends FieldBehaviours {
     }
 
     "not bind decimals" in {
-
       forAll(decimals -> "decimal") {
         decimal =>
           val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
@@ -46,27 +43,17 @@ trait LongFieldBehaviours extends FieldBehaviours {
       }
     }
 
-    // TODO tmp - get build back-up, will put proper solution in new PR
-/*
     "not bind longs larger than Long.MaxValue" in {
-
-      val tuple: (Gen[BigInt], String) = longsLargerThanMaxValue -> "massiveLong"
-      forAll(tuple) {
-        num: BigInt =>
-          val result = form.bind(Map(fieldName -> num.toString)).apply(fieldName)
-          result.errors must contain only nonNumericError
-      }
+      val tooBig: BigInt = BigInt(Long.MaxValue) + 1
+      val result = form.bind(Map(fieldName -> tooBig.toString)).apply(fieldName)
+      result.errors must contain only nonNumericError
     }
 
     "not bind longs smaller than Long.MinValue" in {
-
-      forAll(longsSmallerThanMinValue -> "massivelySmallLong") {
-        num: BigInt =>
-          val result = form.bind(Map(fieldName -> num.toString)).apply(fieldName)
-          result.errors must contain only nonNumericError
-      }
+      val tooSmall: BigInt = BigInt(Long.MinValue) - 1
+      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      result.errors must contain only nonNumericError
     }
-*/
   }
 
   def longFieldWithMinimum(
@@ -74,30 +61,53 @@ trait LongFieldBehaviours extends FieldBehaviours {
     fieldName: String,
     minimum: Long,
     expectedError: FormError
-  ): Unit =
-    s"not bind long integers below $minimum" in {
+  ): Unit = {
 
-      forAll(longsBelowValue(minimum) -> "longBelowMin") {
-        number: Long =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors must contain only expectedError
-      }
+    s"not bind long integers below $minimum" in {
+      val tooSmall = minimum - 1
+      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      result.errors must contain only expectedError
     }
+
+    s"do bind long integers equal to $minimum" in {
+      val tooSmall = minimum
+      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      result.errors mustBe empty
+    }
+
+    s"do bind long integers above $minimum" in {
+      val tooBig = minimum + 1
+      val result = form.bind(Map(fieldName -> tooBig.toString)).apply(fieldName)
+      result.errors mustBe empty
+    }
+
+  }
 
   def longFieldWithMaximum(
     form: Form[_],
     fieldName: String,
     maximum: Long,
     expectedError: FormError
-  ): Unit =
-    s"not bind long integers above $maximum" in {
+  ): Unit = {
 
-      forAll(longsAboveValue(maximum) -> "longAboveMax") {
-        number: Long =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors must contain only expectedError
-      }
+    s"not bind long integers above $maximum" in {
+      val tooBig = BigInt(maximum) + 1
+      val result = form.bind(Map(fieldName -> tooBig.toString)).apply(fieldName)
+      result.errors must contain only expectedError
     }
+
+    s"do bind long integers equal to $maximum" in {
+      val justRight = BigInt(maximum)
+      val result = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
+      result.errors mustBe empty
+    }
+
+    s"do bind long integers less then $maximum" in {
+      val justRight = BigInt(maximum) - 1
+      val result = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
+      result.errors mustBe empty
+    }
+  }
 
   def longFieldWithRange(
     form: Form[_],
@@ -105,14 +115,9 @@ trait LongFieldBehaviours extends FieldBehaviours {
     minimum: Long,
     maximum: Long,
     expectedError: FormError
-  ): Unit =
-    s"not bind longs outside the range $minimum to $maximum" in {
-
-      forAll(longsOutsideRange(minimum, maximum) -> "longOutsideRange") {
-        number =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors must contain only expectedError
-      }
-    }
+  ): Unit = {
+    longFieldWithMaximum(form, fieldName, maximum, expectedError)
+    longFieldWithMinimum(form, fieldName, minimum, expectedError)
+  }
 
 }
