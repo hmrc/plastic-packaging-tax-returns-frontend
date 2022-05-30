@@ -30,7 +30,7 @@ case object ManufacturedPlasticPackagingPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value.map {
       case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.remove(ManufacturedPlasticPackagingWeightPage)
+      case _ => userAnswers.set(ManufacturedPlasticPackagingWeightPage, 0L)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }
