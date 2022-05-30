@@ -27,8 +27,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, when}
 import play.api.inject.bind
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import support.PptTestData.{createSubscriptionDisplayResponse, ukLimitedCompanySubscription}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import views.html.IndexView
@@ -40,6 +42,16 @@ class IndexControllerSpec
 
   private val mockFinancialsConnector = mock[FinancialsConnector]
   private val page                    = mock[IndexView]
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(page, mockFinancialsConnector)
+
+    // Empty html from page.apply
+    when(page.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply(""))
+
+  }
+
 
   "Index Controller" - {
 
@@ -111,13 +123,12 @@ class IndexControllerSpec
           bind[IndexView].toInstance(page)
         ).build()
 
-        running(application) {
-
+        val futureResult: Future[Result] = running(application) {
           val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
           route(application, request).value
-
         }
 
+        await(futureResult)
         verifyNoInteractions(mockObligationsConnector)
         verifyResults(PPTObligations(None, None, 0, false, false))
 
@@ -138,16 +149,14 @@ class IndexControllerSpec
           bind[IndexView].toInstance(page)
         ).build()
 
-        running(application) {
-
+        val futureResult: Future[Result] = running(application) {
           val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
           route(application, request).value
-
         }
 
+        await(futureResult)
         verify(mockObligationsConnector).getOpen(any[String])(any())
         verifyResults(expectedObligation)
-
       }
     }
 
@@ -167,13 +176,12 @@ class IndexControllerSpec
           bind[IndexView].toInstance(page)
         ).build()
 
-        running(application) {
-
+        val futureResult: Future[Result] = running(application) {
           val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
           route(application, request).value
-
         }
 
+        await(futureResult)
         verifyNoInteractions(mockFinancialsConnector)
         val captor: ArgumentCaptor[Option[String]] =
           ArgumentCaptor.forClass(classOf[Option[String]])
@@ -183,7 +191,6 @@ class IndexControllerSpec
         )
 
         captor.getValue.get mustBe "You have no payments due."
-
       }
     }
 
@@ -200,15 +207,13 @@ class IndexControllerSpec
           bind[IndexView].toInstance(page)
         ).build()
 
-        running(application) {
-
+        val futureResult: Future[Result] = running(application) {
           val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
           route(application, request).value
-
         }
 
+        await(futureResult)
         verify(mockFinancialsConnector).getPaymentStatement(any[String])(any())
-
       }
     }
 
@@ -267,6 +272,7 @@ class IndexControllerSpec
       }
     }
   }
+
 
   private def setUpMocks(obligation: PPTObligations = createDefaultPPTObligation) = {
     reset(mockFinancialsConnector)
