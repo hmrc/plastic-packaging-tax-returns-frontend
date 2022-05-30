@@ -2,6 +2,23 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+site.back  = Yn ôl
+site.back.hiddenText  = i’r dudalen flaenorol
+site.backToGovUk  = Yn ôl i GOV.UK
+site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.acceptAndSend  = Derbyn ac anfon
+site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
+site.error.summary.title  = Mae problem wedi codi
+site.link.change  = Newid
+site.link.change.hidden  = Newid {0}
+site.link.remove  = Tynnu
+site.link.remove.hidden  = Tynnu {0} o’r rhestr
+site.button.continue  = Yn eich blaen
+site.button.tryAgain  = Rhowch gynnig arall arni
+site.no = Na
+site.yes = Iawn
+site.continue = Save and continue
+
 caption.total.plastic = Total plastic packaging
 return.title.tail = Submit return
 
@@ -80,7 +97,6 @@ amendImportedPlasticPackaging.hint.list.1 = used in the long-term storage of goo
 amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
 amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
 
-
 amendManufacturedPlasticPackaging.title = How much did your finished manufactured plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendManufacturedPlasticPackaging.heading = How much did your finished manufactured plastic packaging components weigh?
 amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
@@ -150,6 +166,33 @@ importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
 importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
+manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.error.required = Select yes if you’ve manufactured finished plastic packaging components in this period
+manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
+manufacturedPlasticPackaging.paragraph.2 = Plastic packaging is finished if you’ve made the last substantial modification in the manufacturing process.
+manufacturedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
+
+manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
+manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
+manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
+manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
+manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
+manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
@@ -159,20 +202,6 @@ timeoutDialog.message  = Er eich diogelwch, cewch eich allgofnodi ymhen [time re
 timeoutDialog.messageSuffix  = Bydd eich atebion yn cael eu cadw.
 timeoutDialog.keepAlive.text  = Aros wedi mewngofnodi
 timeoutDialog.signout.text  = Allgofnodi
-
-site.back  = Yn ôl
-site.back.hiddenText  = i’r dudalen flaenorol
-site.backToGovUk  = Yn ôl i GOV.UK
-site.button.saveAndContinue  = Cadw ac yn eich blaen
-site.button.acceptAndSend  = Derbyn ac anfon
-site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
-site.error.summary.title  = Mae problem wedi codi
-site.link.change  = Newid
-site.link.change.hidden  = Newid {0}
-site.link.remove  = Tynnu
-site.link.remove.hidden  = Tynnu {0} o’r rhestr
-site.button.continue  = Yn eich blaen
-site.button.tryAgain  = Rhowch gynnig arall arni
 
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
