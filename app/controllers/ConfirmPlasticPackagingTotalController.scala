@@ -46,7 +46,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
     implicit request =>
       Try(SummaryListViewModel(rows =
         Seq(
@@ -57,17 +57,10 @@ class ConfirmPlasticPackagingTotalController @Inject()
           PlasticPackagingTotalSummary
         ).flatMap(_.row(request.userAnswers))
       )) match {
-        case Success(list) => Future.successful(Ok(view(list)))
+        case Success(list) => Ok(view(list))
         case Failure(error) =>
           logger.error(error.getMessage)
-          Future.successful(Redirect(routes.IndexController.onPageLoad))
+          Redirect(routes.IndexController.onPageLoad)
       }
-  }
-
-  // todo Redirect this to the right page when this will be available/created.
-  // todo Add test for this.
-  def redirectLink: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-    Future.successful(Redirect(routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)))
   }
 }

@@ -118,25 +118,6 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
         }
       }
     }
-
-    "when redirectLink" - {
-
-      "raise and error" - {
-        "when not authorised" in {
-          val application = applicationBuilderFailedAuth(userAnswers = None).build()
-
-          running(application) {
-            val request =
-              FakeRequest(POST, routes.ConfirmPlasticPackagingTotalController.redirectLink.url)
-                .withFormUrlEncodedBody(("value", "0"))
-
-            val result = route(application, request).value
-
-            intercept[InsufficientEnrolments](status(result))
-          }
-        }
-      }
-    }
   }
 
   private def buildApplication(userAnswer: UserAnswers) = {

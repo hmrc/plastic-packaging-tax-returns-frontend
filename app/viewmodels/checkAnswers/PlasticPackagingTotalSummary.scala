@@ -33,7 +33,7 @@ object PlasticPackagingTotalSummary extends SummaryViewModel {
       actions = Seq.empty
     ))
 
-
+//todo if these exceptions get thrown we should redirect the user to the questions to input them
   private def calculateTotal(answers: UserAnswers): Long = {
     answers.get(ManufacturedPlasticPackagingWeightPage).map(
       value => ManufacturedPlasticWeight(value).totalKg
