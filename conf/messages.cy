@@ -17,7 +17,8 @@ site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
 site.no = Na
 site.yes = Iawn
-site.continue = Save and continue
+site.continue = Cadw ac yn eich blaen
+site.change = Newid
 
 caption.total.plastic = Total plastic packaging
 return.title.tail = Submit return
@@ -209,3 +210,12 @@ agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax
 agents.client.identifier.length.error=Registration number must be 15 characters
 agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
 agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+
+confirmPlasticPackagingTotal.title = Confirm your plastic packaging total - Submit return
+confirmPlasticPackagingTotal.sectionHeader = Total plastic packaging
+confirmPlasticPackagingTotal.heading = Confirm your plastic packaging total
+confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label = Manufactured plastic packaging
+confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight of manufactured plastic packaging
+confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
+confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
+confirmPlasticPackagingTotal.total.label = Plastic packaging total

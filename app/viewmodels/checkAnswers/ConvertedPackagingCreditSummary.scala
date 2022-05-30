@@ -30,19 +30,20 @@ object ConvertedPackagingCreditSummary extends SummaryViewModel {
     answers.get(ConvertedPackagingCreditPage).map {
       answer =>
         SummaryListRowViewModel(key = "convertedPackagingCredit.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.ConvertedPackagingCreditController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("convertedPackagingCredit.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(answer.toString),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              routes.ConvertedPackagingCreditController.onPageLoad(
+                CheckMode
+              ).url
+            )
+              .withVisuallyHiddenText(
+                messages("convertedPackagingCredit.change.hidden")
+              )
+          )
         )
     }
 
 }
+

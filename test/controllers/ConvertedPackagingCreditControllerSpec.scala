@@ -24,7 +24,7 @@ import models.returns.TaxReturnObligation
 import models.{ExportCreditBalance, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, eq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,8 +33,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.twirl.api.HtmlFormat
 import views.html.ConvertedPackagingCreditView
 
 import java.time.LocalDate
