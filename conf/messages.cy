@@ -2,7 +2,7 @@ service.name=Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
-caption.total.plastic = Total Plastic Packaging
+caption.total.plastic = Total plastic packaging
 return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig

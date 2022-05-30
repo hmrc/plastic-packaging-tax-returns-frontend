@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@import components.SectionHeader
+@import components.{SectionHeader, LinkButton}
+@import models.NormalMode
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         sectionHeader: SectionHeader,
         govukSummaryList: GovukSummaryList,
-        formHelper: FormWithCSRF
+        button: LinkButton
 )
 
 @(list: SummaryList)(implicit request: Request[_], messages: Messages)
@@ -34,10 +35,6 @@
 
     @govukSummaryList(list)
 
-    @formHelper(action = routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode), 'autoComplete -> "off") {
+    @button("site.button.continue", routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url)
 
-        @govukButton(
-            ButtonViewModel(messages("site.button.continue"))
-        )
-    }
 }

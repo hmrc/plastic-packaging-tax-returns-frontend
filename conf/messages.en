@@ -31,7 +31,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
-caption.total.plastic = Total Plastic Packaging
+caption.total.plastic = Total plastic packaging
 return.title.tail = Submit return
 
 timeout.title = You’re about to be signed out
