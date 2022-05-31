@@ -219,3 +219,21 @@ confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight o
 confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
 confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
 confirmPlasticPackagingTotal.total.label = Plastic packaging total
+
+humanMedicinesPlasticPackaging.caption = Exported plastic packaging
+humanMedicinesPlasticPackaging.heading = Were any of the {0} of finished plastic packaging components that you exported used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
+humanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
+humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
+humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
+humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
+
+humanMedicinesPlasticPackagingWeight.heading = How much of your exported {0} of finished plastic packaging components were used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Humans medicines packaging
+humanMedicinesPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+humanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+humanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+humanMedicinesPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
