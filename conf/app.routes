@@ -72,10 +72,10 @@ POST       /exportedPlasticPackagingWeight                  controllers.Exported
 GET        /changeExportedPlasticPackagingWeight                        controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeExportedPlasticPackagingWeight                        controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /humanMedicinesPlasticPackagingWeight                  controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /humanMedicinesPlasticPackagingWeight                  controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /changeHumanMedicinesPlasticPackagingWeight                        controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeHumanMedicinesPlasticPackagingWeight                        controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /exported-medicines-packaging-weight                  controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /exported-medicines-packaging-weight                  controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exported-medicines-packaging-weight                        controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exported-medicines-packaging-weight                        controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET        /imported-components                        controllers.ImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /imported-components                        controllers.ImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
@@ -125,7 +125,7 @@ GET        /direct-debit                  controllers.payments.DirectDebitContro
 
 GET        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.onPageLoad
 
-GET        /humanMedicinesPlasticPackaging                        controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /humanMedicinesPlasticPackaging                        controllers.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeHumanMedicinesPlasticPackaging                  controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeHumanMedicinesPlasticPackaging                  controllers.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /exported-medicines-packaging                        controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /exported-medicines-packaging                        controllers.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exported-medicines-packaging                  controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exported-medicines-packaging                  controllers.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
