@@ -16,19 +16,30 @@
 
 package forms
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class HumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mappings {
+class HumanMedicinesPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
 
-  def apply(): Form[Long] =
-    Form(
-      "value" -> long("humanMedicinesPlasticPackagingWeight.error.required",
-                     "humanMedicinesPlasticPackagingWeight.error.wholeNumber",
-                     "humanMedicinesPlasticPackagingWeight.error.nonNumeric"
-      )
-        .verifying(inRange(0, 99999999999L, "humanMedicinesPlasticPackagingWeight.error.outOfRange"))
+  val requiredKey = "humanMedicinesPlasticPackaging.error.required"
+  val invalidKey = "error.boolean"
+
+  val form = new HumanMedicinesPlasticPackagingFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
 
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

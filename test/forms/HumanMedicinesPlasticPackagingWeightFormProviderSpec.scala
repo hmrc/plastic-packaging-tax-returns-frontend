@@ -16,10 +16,10 @@
 
 package forms
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class HumanMedicinesPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours {
+class HumanMedicinesPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
   val form = new HumanMedicinesPlasticPackagingWeightFormProvider()()
 
@@ -27,14 +27,14 @@ class HumanMedicinesPlasticPackagingWeightFormProviderSpec extends IntFieldBehav
 
     val fieldName = "value"
 
-    val minimum = 0
-    val maximum = 9999999
+    val minimum = 0L
+    val maximum = 99999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like intField(form,
+    behave like longField(form,
                          fieldName,
                          nonNumericError =
                            FormError(fieldName,
@@ -46,7 +46,7 @@ class HumanMedicinesPlasticPackagingWeightFormProviderSpec extends IntFieldBehav
                            )
     )
 
-    behave like intFieldWithRange(form,
+    behave like longFieldWithRange(form,
                                   fieldName,
                                   minimum = minimum,
                                   maximum = maximum,
