@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.CacheConnector
 import forms.HumanMedicinesPlasticPackagingFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,7 +29,6 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.HumanMedicinesPlasticPackagingView
 
 import scala.concurrent.Future
@@ -43,7 +42,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
   lazy val humanMedicinesPlasticPackagingRoute = routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
-  val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0).get
+  val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
 
 
   "HumanMedicinesPlasticPackaging Controller" - {

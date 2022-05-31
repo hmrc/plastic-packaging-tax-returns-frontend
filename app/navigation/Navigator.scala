@@ -39,10 +39,10 @@ class Navigator @Inject() () {
       _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
     case HumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
     case HumanMedicinesPlasticPackagingWeightPage =>
-      _ => routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
+      _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case DirectlyExportedComponentsPage => directlyExportedComponentsRoute(_, mode = NormalMode)
     case ExportedPlasticPackagingWeightPage =>
-      _ => routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+      _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
     case HumanMedicinesPlasticPackagingWeightPage =>
       _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case RecycledPlasticPackagingWeightPage => _ => routes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
@@ -132,7 +132,7 @@ class Navigator @Inject() () {
         if(mode == CheckMode) {
           routes.ReturnsCheckYourAnswersController.onPageLoad
         } else {
-          routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
+          routes.HumanMedicinesPlasticPackagingController.onPageLoad(mode)
         }
       case _           => throw new Exception("Unable to navigate to page")
     }
@@ -142,7 +142,7 @@ class Navigator @Inject() () {
       case Some(true) => routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
       case Some(false) =>
         if (mode == CheckMode) {routes.ReturnsCheckYourAnswersController.onPageLoad()}
-        else {routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)}
+        else {routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)}
       case _           => throw new Exception("Unable to navigate to page")
     }
 

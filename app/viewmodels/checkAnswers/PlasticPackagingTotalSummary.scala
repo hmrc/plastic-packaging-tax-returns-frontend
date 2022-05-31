@@ -33,15 +33,11 @@ object PlasticPackagingTotalSummary extends SummaryViewModel {
       actions = Seq.empty
     ))
 
-  def getTotalPlastic(answers: UserAnswers): Long ={
-    calculateTotal(answers)
-  }
-
 //todo if these exceptions get thrown we should redirect the user to the questions to input them
-   def calculateTotal(answers: UserAnswers): Long = {
+  def calculateTotal(answers: UserAnswers): Long = {
     answers.get(ManufacturedPlasticPackagingWeightPage).map(
       value => ManufacturedPlasticWeight(value).totalKg
-    ).getOrElse(throw new IllegalStateException("Manufacture Plastic Weight not found.")) +
+    ).getOrElse(throw new IllegalStateException("Manufactured Plastic Weight not found.")) +
       answers.get(ImportedPlasticPackagingWeightPage).map(
         value => ImportedPlasticWeight(value).totalKg
       ).getOrElse(throw new IllegalStateException("Imported Plastic Weight not found."))

@@ -52,13 +52,8 @@ class ExportedPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
-
-
-        val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
+        val preparedForm = request.userAnswers.fill(ExportedPlasticPackagingWeightPage, form)
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, totalPlastic)))
@@ -70,7 +65,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
+        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
 
         form.bindFromRequest().fold(

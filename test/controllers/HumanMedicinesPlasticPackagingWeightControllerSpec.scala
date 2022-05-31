@@ -41,7 +41,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0L
-  val exportedAmount = 8
+  val exportedAmount = 8L
 
   lazy val humanMedicinesPlasticPackagingWeightRoute =
     routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url

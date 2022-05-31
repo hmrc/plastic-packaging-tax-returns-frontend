@@ -21,7 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.DirectlyExportedComponentsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.PlasticPackagingTotalSummary.getTotalPlastic
+import viewmodels.checkAnswers.PlasticPackagingTotalSummary.calculateTotal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -30,7 +30,7 @@ object DirectlyExportedComponentsSummary extends SummaryViewModel{
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(DirectlyExportedComponentsPage).map {
       answer =>
-        val totalPlastic = getTotalPlastic(answers)
+        val totalPlastic = calculateTotal(answers)
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(

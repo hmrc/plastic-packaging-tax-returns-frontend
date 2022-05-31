@@ -49,9 +49,9 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
 
   val form = formProvider()
 
-  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Int] =
+  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Long] =
     request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-      .fold[Either[Result, Int]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
+      .fold[Either[Result, Long]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
