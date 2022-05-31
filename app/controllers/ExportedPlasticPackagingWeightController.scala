@@ -29,6 +29,7 @@ import pages.ExportedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.PlasticPackagingTotalSummary
 import views.html.ExportedPlasticPackagingWeightView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,13 +52,16 @@ class ExportedPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
+
+
         val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
+          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, totalPlastic)))
           case None => Future.successful(Redirect(routes.IndexController.onPageLoad))
         }
     }
@@ -66,12 +70,11 @@ class ExportedPlasticPackagingWeightController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
+
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

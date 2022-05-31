@@ -40,6 +40,8 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new DirectlyExportedComponentsFormProvider()
   val form = formProvider()
 
+  val totalPlastic = 1234L
+
   lazy val directlyExportedComponentsRoute = routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
 
   "DirectlyExportedComponents Controller" - {
@@ -56,7 +58,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
@@ -74,7 +76,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +122,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 

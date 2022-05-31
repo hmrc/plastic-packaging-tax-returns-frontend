@@ -21,15 +21,16 @@ import models.{CheckMode, UserAnswers}
 import pages.DirectlyExportedComponentsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.PlasticPackagingTotalSummary.getTotalPlastic
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object DirectlyExportedComponentsSummary  {
+object DirectlyExportedComponentsSummary extends SummaryViewModel{
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(DirectlyExportedComponentsPage).map {
       answer =>
-
+        val totalPlastic = getTotalPlastic(answers)
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
@@ -37,7 +38,7 @@ object DirectlyExportedComponentsSummary  {
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden"))
+              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic))
           )
         )
     }

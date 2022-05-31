@@ -17,9 +17,8 @@
 package controllers
 
 import base.SpecBase
-import connectors.CacheConnector
 import forms.ExportedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,6 +28,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.ExportedPlasticPackagingWeightView
 
 import scala.concurrent.Future
@@ -40,17 +40,15 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer = 0L
 
-  lazy val exportedPlasticPackagingWeightRoute =
-    routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val exportedPlasticPackagingWeightRoute = routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "ExportedPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswers.set(ExportedPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
@@ -60,19 +58,15 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val view = application.injector.instanceOf[ExportedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(ExportedPlasticPackagingWeightPage,
-        validAnswer
-      ).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ExportedPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
@@ -82,23 +76,21 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
-          request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
+      val mockSessionRepository = mock[SessionRepository]
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -116,7 +108,7 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -130,9 +122,7 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 

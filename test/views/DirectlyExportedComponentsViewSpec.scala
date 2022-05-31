@@ -43,18 +43,24 @@ class DirectlyExportedComponentsViewSpec extends PlaySpec with GuiceOneAppPerSui
 
   val page = inject[DirectlyExportedComponentsView]
 
+  val totalPlastic = 1234L
+
   private def createView: Html =
-    page(form, NormalMode)(request, messages)
+    page(form, NormalMode, totalPlastic)(request, messages)
 
   "DirectlyExportedComponentsView" should {
     val view = createView
 
     "have a title" in {
-      //todo update when we can populate with total kgs
-
 
       view.select("title").text mustBe
         "Did you export any of your 1,234 kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
+
+    }
+    "have a heading" in{
+
+      view.select("h1").text mustBe
+        "Did you export any of your 1,234 kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?"
 
     }
     "have a caption" in {

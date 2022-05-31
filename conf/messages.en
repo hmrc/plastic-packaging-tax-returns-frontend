@@ -167,20 +167,25 @@ convertedPackagingCredit.balanceUnavailable = Your credit balance is currently u
 
 directlyExportedComponents.title = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
-directlyExportedComponents.checkYourAnswersLabel = directlyExportedComponents
-directlyExportedComponents.error.required = Select yes if directlyExportedComponents
-directlyExportedComponents.change.hidden = DirectlyExportedComponents
+directlyExportedComponents.checkYourAnswersLabel = Exported plastic packaging
+directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
+directlyExportedComponents.change.hidden = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
 directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you'll need to pay tax on them.
 
-exportedPlasticPackagingWeight.title = How much of your finished plastic packaging components did you directly export?
-exportedPlasticPackagingWeight.heading = How much of your finished plastic packaging components did you directly export?
-exportedPlasticPackagingWeight.checkYourAnswersLabel = Direct exports
-exportedPlasticPackagingWeight.error.nonNumeric = Enter a weight using numbers
-exportedPlasticPackagingWeight.error.required = Enter a weight
-exportedPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
-exportedPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
-exportedPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components did you directly export?
+exportedPlasticPackagingWeight.title = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.heading = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.checkYourAnswersLabel = Weight of exported plastic packaging
+exportedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+exportedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+exportedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+exportedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+exportedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+exportedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+exportedPlasticPackagingWeight.change.hidden = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+exportedPlasticPackagingWeight.paragraph.line.1 = Only include plastic packaging that has been exported by you, or on your behalf.
+exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export will show as a deduction on your tax calculation.
 
 humanMedicinesPlasticPackagingWeight.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
 humanMedicinesPlasticPackagingWeight.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?

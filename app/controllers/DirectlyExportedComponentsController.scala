@@ -24,7 +24,9 @@ import navigation.Navigator
 import pages.DirectlyExportedComponentsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.PlasticPackagingTotalSummary
 import views.html.DirectlyExportedComponentsView
 
 import javax.inject.Inject
@@ -48,21 +50,21 @@ class DirectlyExportedComponentsController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(DirectlyExportedComponentsPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
 
-        Ok(view(preparedForm, mode))
+        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
+
+        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form)
+        Ok(view(preparedForm, mode, totalPlastic))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
+        val totalPlastic = PlasticPackagingTotalSummary.getTotalPlastic(request.userAnswers)
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))

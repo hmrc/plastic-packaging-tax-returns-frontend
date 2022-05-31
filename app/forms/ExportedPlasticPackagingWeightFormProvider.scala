@@ -22,13 +22,13 @@ import play.api.data.Form
 
 class ExportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Int] =
+  def apply(): Form[Long] =
     Form(
-      "value" -> int("exportedPlasticPackagingWeight.error.required",
+      "value" -> long("exportedPlasticPackagingWeight.error.required",
                      "exportedPlasticPackagingWeight.error.wholeNumber",
                      "exportedPlasticPackagingWeight.error.nonNumeric"
       )
-        .verifying(inRange(0, 9999999, "exportedPlasticPackagingWeight.error.outOfRange"))
+        .verifying(inRange(0L, 99999999999L, "exportedPlasticPackagingWeight.error.outOfRange"))
     )
 
 }

@@ -167,7 +167,7 @@ class NavigatorSpec extends SpecBase {
         "for the ExportedPlasticPackagingWeightPage" - {
 
           "navigate to RecycledPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ExportedPlasticPackagingWeightPage,
               NormalMode,

@@ -67,10 +67,15 @@ POST       /convertedPackagingCredit                  controllers.ConvertedPacka
 GET        /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeConvertedPackagingCredit                        controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = CheckMode)
 
-GET        /exportedPlasticPackagingWeight                  controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /exportedPlasticPackagingWeight                  controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /changeExportedPlasticPackagingWeight                        controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeExportedPlasticPackagingWeight                        controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /directly-exported-components                        controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
+POST       /directly-exported-components                        controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /directly-exported-weight                                 controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /directly-exported-weight                                 controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-directly-exported-weight                          controllers.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-directly-exported-weight                          controllers.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET        /humanMedicinesPlasticPackagingWeight                  controllers.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
 POST       /humanMedicinesPlasticPackagingWeight                  controllers.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
@@ -122,11 +127,5 @@ POST       /changeAgents                  controllers.AgentsController.onSubmit(
 
 GET        /make-a-payment                controllers.MakePaymentController.redirectLink()
 GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
-
-
-GET        /directly-exported-components                        controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
-POST       /directly-exported-components                        controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.onPageLoad
