@@ -14,17 +14,38 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.PrintLong
+@import components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    sectionHeader: SectionHeader,
+    details: GovukDetails
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackaging.title"))) {
+@paragraphContent ={
+    @paragraphBody(messages("humanMedicinesPlasticPackaging.detail"))
+
+    @details(Details(
+        id = Some("reveal"),
+        summary = Text(messages("humanMedicinesPlasticPackaging.reveal")),
+        content = Text(messages("humanMedicinesPlasticPackaging.reveal.content"))
+    ))
+
+}
+
+
+@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackaging.heading", amount.asKgs), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("humanMedicinesPlasticPackaging.caption"))
 
     @formHelper(action = routes.HumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -35,8 +56,9 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("humanMedicinesPlasticPackaging.heading")).asPageHeading()
+                legend = LegendViewModel(messages("humanMedicinesPlasticPackaging.heading", amount.asKgs)).asPageHeading()
             )
+            .withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(

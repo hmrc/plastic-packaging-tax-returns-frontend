@@ -22,10 +22,11 @@ import forms.HumanMedicinesPlasticPackagingFormProvider
 
 import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.HumanMedicinesPlasticPackagingPage
+import pages.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HumanMedicinesPlasticPackagingView
 
@@ -45,11 +46,15 @@ class HumanMedicinesPlasticPackagingController @Inject()(
 
   private val form = formProvider()
 
+  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Int] =
+    request.userAnswers.get(ExportedPlasticPackagingWeightPage)
+      .fold[Either[Result, Int]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.fill(HumanMedicinesPlasticPackagingPage, form)
 
-      Ok(view(preparedForm, mode))
+      exportedAmount.fold[Result](identity, amount => Ok(view(amount, preparedForm, mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -58,8 +63,7 @@ class HumanMedicinesPlasticPackagingController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
+          Future.successful(exportedAmount.fold[Result](identity, amount => BadRequest(view(amount, formWithErrors, mode)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HumanMedicinesPlasticPackagingPage, value))

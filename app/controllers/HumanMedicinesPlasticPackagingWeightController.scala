@@ -23,11 +23,12 @@ import forms.HumanMedicinesPlasticPackagingWeightFormProvider
 
 import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.HumanMedicinesPlasticPackagingWeightPage
+import pages.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HumanMedicinesPlasticPackagingWeightView
 
@@ -48,17 +49,18 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
 
   val form = formProvider()
 
+  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Int] =
+    request.userAnswers.get(ExportedPlasticPackagingWeightPage)
+      .fold[Either[Result, Int]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(HumanMedicinesPlasticPackagingWeightPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+        val preparedForm = request.userAnswers.fill(HumanMedicinesPlasticPackagingWeightPage, form)
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None => Future.successful(Redirect(routes.IndexController.onPageLoad))
+          case Some(obligation) => exportedAmount.fold[Result](identity, amount => Ok(view(amount, preparedForm, mode, obligation)))
+          case None => Redirect(routes.IndexController.onPageLoad)
         }
     }
 
@@ -71,7 +73,7 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          formWithErrors => Future.successful(exportedAmount.fold[Result](identity, amount => BadRequest(view(amount, formWithErrors, mode, obligation)))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

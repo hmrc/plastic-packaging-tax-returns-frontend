@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HumanMedicinesPlasticPackagingPage
+import pages.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,11 +43,14 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
   lazy val humanMedicinesPlasticPackagingRoute = routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
+  val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0).get
+
+
   "HumanMedicinesPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
 
       running(application) {
         val request = FakeRequest(GET, humanMedicinesPlasticPackagingRoute)
@@ -57,13 +60,13 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
         val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(0L, form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(HumanMedicinesPlasticPackagingPage, true).success.value
+      val userAnswers = answersWithPreset.set(HumanMedicinesPlasticPackagingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -75,7 +78,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(0L, form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -86,7 +89,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(answersWithPreset))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector)
@@ -107,7 +110,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
 
       running(application) {
         val request =
@@ -121,7 +124,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(0L, boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 
