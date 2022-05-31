@@ -236,4 +236,5 @@ humanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered a
 humanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
 humanMedicinesPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+humanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
 humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
