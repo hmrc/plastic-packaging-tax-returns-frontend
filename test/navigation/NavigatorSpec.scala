@@ -149,7 +149,7 @@ class NavigatorSpec extends SpecBase {
           }
 
         }
-        
+
         "for the HumanMedicinesPlasticPackagingPage" - {
           "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is Yes" in {
             val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, true)

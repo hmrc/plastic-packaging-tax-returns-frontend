@@ -26,7 +26,8 @@ class HumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mapping
     Form(
       "value" -> long("humanMedicinesPlasticPackagingWeight.error.required",
                      "humanMedicinesPlasticPackagingWeight.error.wholeNumber",
-                     "humanMedicinesPlasticPackagingWeight.error.nonNumeric"
+                     "humanMedicinesPlasticPackagingWeight.error.nonNumeric",
+        "humanMedicinesPlasticPackagingWeight.error.spaces"
       )
         .verifying(inRange(0, 99999999999L, "humanMedicinesPlasticPackagingWeight.error.outOfRange"))
     )

@@ -177,6 +177,33 @@ importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
 importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
+manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.error.required = Select yes if you’ve manufactured finished plastic packaging components in this period
+manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
+manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
+manufacturedPlasticPackaging.paragraph.2 = Plastic packaging is finished if you’ve made the last substantial modification in the manufacturing process.
+manufacturedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
+manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
+
+manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
+manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
+manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
+manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
+manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
+manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
+manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
@@ -207,3 +234,31 @@ agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax
 agents.client.identifier.length.error=Registration number must be 15 characters
 agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
 agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+
+confirmPlasticPackagingTotal.title = Confirm your plastic packaging total - Submit return
+confirmPlasticPackagingTotal.sectionHeader = Total plastic packaging
+confirmPlasticPackagingTotal.heading = Confirm your plastic packaging total
+confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label = Manufactured plastic packaging
+confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight of manufactured plastic packaging
+confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
+confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
+confirmPlasticPackagingTotal.total.label = Plastic packaging total
+
+humanMedicinesPlasticPackaging.caption = Exported plastic packaging
+humanMedicinesPlasticPackaging.heading = Were any of the {0} of finished plastic packaging components that you exported used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
+humanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
+humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
+humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
+humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
+
+humanMedicinesPlasticPackagingWeight.heading = How much of your exported {0} of finished plastic packaging components were used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Humans medicines packaging
+humanMedicinesPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+humanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+humanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+humanMedicinesPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+humanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
+humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
