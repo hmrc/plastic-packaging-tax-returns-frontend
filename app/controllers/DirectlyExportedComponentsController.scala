@@ -19,61 +19,57 @@ package controllers
 import connectors.CacheConnector
 import controllers.actions._
 import forms.DirectlyExportedComponentsFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{DirectlyExportedComponentsPage, ManufacturedPlasticPackagingPage}
+import pages.DirectlyExportedComponentsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DirectlyExportedComponentsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectlyExportedComponentsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         cacheConnector: CacheConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: DirectlyExportedComponentsFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: DirectlyExportedComponentsView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DirectlyExportedComponentsController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: DirectlyExportedComponentsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: DirectlyExportedComponentsView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData) {
+      implicit request =>
+        val preparedForm = request.userAnswers.get(DirectlyExportedComponentsPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(DirectlyExportedComponentsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+        Ok(view(preparedForm, mode))
+    }
 
-      Ok(view(preparedForm, mode))
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        val pptId: String = request.pptReference
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
+        form.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))
+              _              <- cacheConnector.set(pptId, updatedAnswers)
 
-      val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+            } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
+        )
+    }
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(DirectlyExportedComponentsPage, value)
-            )
-            _ <- cacheConnector.set(pptId, updatedAnswers)
-
-          } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
-      )
-  }
 }

@@ -139,6 +139,14 @@ amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Pla
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
+directlyExportedComponents.title = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.heading = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.checkYourAnswersLabel = directlyExportedComponents
+directlyExportedComponents.error.required = Select yes if directlyExportedComponents
+directlyExportedComponents.change.hidden = DirectlyExportedComponents
+directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
+directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you'll need to pay tax on them.
+
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.caption = Total plastic packaging
@@ -169,33 +177,6 @@ importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
 importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
-manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.error.required = Select yes if you’ve manufactured finished plastic packaging components in this period
-manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
-manufacturedPlasticPackaging.paragraph.2 = Plastic packaging is finished if you’ve made the last substantial modification in the manufacturing process.
-manufacturedPlasticPackaging.paragraph.3 = If you’re still not sure, {0}.
-manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as finished and what we mean by components and substantial modifications
-
-manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
-manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
-manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
-manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
-manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
-manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
-manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
-manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
-manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
-manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
-manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
-manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
-
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
@@ -206,18 +187,23 @@ timeoutDialog.messageSuffix  = Bydd eich atebion yn cael eu cadw.
 timeoutDialog.keepAlive.text  = Aros wedi mewngofnodi
 timeoutDialog.signout.text  = Allgofnodi
 
+site.back  = Yn ôl
+site.back.hiddenText  = i’r dudalen flaenorol
+site.backToGovUk  = Yn ôl i GOV.UK
+site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.acceptAndSend  = Derbyn ac anfon
+site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
+site.error.summary.title  = Mae problem wedi codi
+site.link.change  = Newid
+site.link.change.hidden  = Newid {0}
+site.link.remove  = Tynnu
+site.link.remove.hidden  = Tynnu {0} o’r rhestr
+site.button.continue  = Yn eich blaen
+site.button.tryAgain  = Rhowch gynnig arall arni
+
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
 agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax registration number
 agents.client.identifier.length.error=Registration number must be 15 characters
 agents.client.identifier.format.error=Enter your client’s Plastic Packaging Tax registration number in the correct format
 agents.client.identifier.auth.error=This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
-
-confirmPlasticPackagingTotal.title = Confirm your plastic packaging total - Submit return
-confirmPlasticPackagingTotal.sectionHeader = Total plastic packaging
-confirmPlasticPackagingTotal.heading = Confirm your plastic packaging total
-confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label = Manufactured plastic packaging
-confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight of manufactured plastic packaging
-confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
-confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
-confirmPlasticPackagingTotal.total.label = Plastic packaging total

@@ -54,7 +54,7 @@ class DirectlyExportedComponentsViewSpec extends PlaySpec with GuiceOneAppPerSui
 
 
       view.select("title").text mustBe
-        "Did you export any of your 1,234kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "Did you export any of your 1,234 kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a caption" in {
