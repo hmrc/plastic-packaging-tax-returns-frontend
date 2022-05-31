@@ -18,16 +18,19 @@ package controllers
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
-import connectors.{ServiceError, TaxReturnsConnector}
+import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
-import models.returns.{ReturnType, TaxReturn, TaxReturnObligation}
+import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
+import viewmodels.checkAnswers.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
+import viewmodels.checkAnswers.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
+import viewmodels.checkAnswers.ManufacturedPlasticPackagingWeightSummary.CheckYourAnswerForManufacturedPlasticWeight
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnsCheckYourAnswersView
@@ -52,10 +55,10 @@ class ReturnsCheckYourAnswersController @Inject()(
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(
-            ManufacturedPlasticPackagingSummary,
-            ManufacturedPlasticPackagingWeightSummary,
-            ImportedPlasticPackagingSummary,
-            ImportedPlasticPackagingWeightSummary,
+            CheckYourAnswerManufacturedPlasticPackaging,
+            CheckYourAnswerForManufacturedPlasticWeight,
+            CheckYourAnswerImportedPlasticPackagingSummary,
+            CheckYourAnswerImportedPlasticPackagingWeight,
             HumanMedicinesPlasticPackagingWeightSummary,
             ExportedPlasticPackagingWeightSummary,
             RecycledPlasticPackagingWeightSummary,
@@ -82,9 +85,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
 
-        val pptId: String = request.request.enrolmentId.getOrElse(
-          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-        )
+        val pptId: String = request.pptReference
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Obligation not found!")

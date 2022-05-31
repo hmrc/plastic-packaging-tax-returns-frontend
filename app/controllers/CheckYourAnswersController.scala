@@ -18,22 +18,20 @@ package controllers
 
 import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
-import connectors.{ServiceError, TaxReturnsConnector}
+import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnDisplayApi, ReturnType, TaxReturn, TaxReturnObligation}
+import models.returns.{ReturnDisplayApi, ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
+import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
-import repositories.{ SessionRepository, Entry}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -69,9 +67,7 @@ class CheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
 
-        val pptId: String = request.request.enrolmentId.getOrElse(
-          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-        )
+        val pptId: String = request.request.pptReference
 
         val obligation = request.userAnswers.get[String](AmendSelectedPeriodKey).getOrElse(
           throw new IllegalStateException("Obligation not found!")

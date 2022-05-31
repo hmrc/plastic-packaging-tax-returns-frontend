@@ -24,14 +24,14 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ImportedPlasticPackagingSummary extends SummaryViewModel {
+class ImportedPlasticPackagingSummary private (key: String ) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ImportedPlasticPackagingPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(key = "importedPlasticPackaging.checkYourAnswersLabel",
+        SummaryListRowViewModel(key = key,
                                 value = ValueViewModel(value),
                                 actions = Seq(
                                   ActionItemViewModel(
@@ -40,6 +40,7 @@ object ImportedPlasticPackagingSummary extends SummaryViewModel {
                                       CheckMode
                                     ).url
                                   )
+                                    .withAttribute("id" -> "confirm-pp-total-imported-plastic")
                                     .withVisuallyHiddenText(
                                       messages("importedPlasticPackaging.change.hidden")
                                     )
@@ -47,4 +48,13 @@ object ImportedPlasticPackagingSummary extends SummaryViewModel {
         )
     }
 
+}
+
+object ImportedPlasticPackagingSummary {
+
+  private val importedPlasticPackagingLabel = "importedPlasticPackaging.checkYourAnswersLabel"
+  private val confirmImportedPlasticPackagingLabel = "confirmPlasticPackagingTotal.importedPlasticPackaging.label"
+
+  val CheckYourAnswerImportedPlasticPackagingSummary = new ImportedPlasticPackagingSummary(importedPlasticPackagingLabel)
+  val ConfirmImportedPlasticPackagingSummary = new ImportedPlasticPackagingSummary(confirmImportedPlasticPackagingLabel)
 }

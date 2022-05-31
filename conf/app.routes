@@ -128,3 +128,5 @@ GET        /directly-exported-components                        controllers.Dire
 POST       /directly-exported-components                        controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-directly-eported-components                  controllers.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.onPageLoad

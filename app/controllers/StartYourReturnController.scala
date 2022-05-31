@@ -50,9 +50,7 @@ class StartYourReturnController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val pptId: String = request.request.enrolmentId.getOrElse(
-        throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-      )
+      val pptId: String = request.pptReference
 
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.userId)).get(StartYourReturnPage) match {
         case None => form
@@ -72,9 +70,7 @@ class StartYourReturnController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val pptId: String = request.request.enrolmentId.getOrElse(
-        throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-      )
+      val pptId: String = request.pptReference
 
       taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
         form.bindFromRequest().fold(

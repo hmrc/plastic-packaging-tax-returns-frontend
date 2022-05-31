@@ -30,18 +30,18 @@ object HumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
     answers.get(HumanMedicinesPlasticPackagingWeightPage).map {
       answer =>
         SummaryListRowViewModel(key = "humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("humanMedicinesPlasticPackagingWeight.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(answer.toString),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(
+                CheckMode
+              ).url
+            )
+              .withVisuallyHiddenText(
+                messages("humanMedicinesPlasticPackagingWeight.change.hidden")
+              )
+          )
         )
     }
 

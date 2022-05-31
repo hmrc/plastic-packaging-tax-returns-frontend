@@ -21,28 +21,43 @@ import models.{CheckMode, UserAnswers}
 import pages.ManufacturedPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ManufacturedPlasticPackagingWeightSummary extends SummaryViewModel {
+class ManufacturedPlasticPackagingWeightSummary private (key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ManufacturedPlasticPackagingWeightPage).map {
-      answer =>
-        SummaryListRowViewModel(key = "manufacturedPlasticPackagingWeight.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.ManufacturedPlasticPackagingWeightController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("manufacturedPlasticPackagingWeight.change.hidden")
-                                    )
-                                )
-        )
+    answers.get(ManufacturedPlasticPackagingWeightPage).map  {
+          answer => createSummaryListView(answer.toLong.asKgs)
     }
+
+  private def createSummaryListView(value: String)(implicit messages: Messages): SummaryListRow = {
+    SummaryListRowViewModel(key = key,
+      value = ValueViewModel(value),
+      actions = Seq(
+        ActionItemViewModel(
+          "site.change",
+          routes.ManufacturedPlasticPackagingWeightController.onPageLoad(
+            CheckMode
+          ).url
+        ).withAttribute(("id", "confirm-pp-total-weight-manufactured"))
+          .withVisuallyHiddenText(
+            messages("manufacturedPlasticPackagingWeight.change.hidden")
+          )
+      )
+    )
+
+  }
+
+}
+
+object ManufacturedPlasticPackagingWeightSummary {
+
+  private val manufacturedPlasticWeightPageLabel = "manufacturedPlasticPackagingWeight.checkYourAnswersLabel"
+  private val confirmPlasticPackagingTotalLabel = "confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label"
+
+  val CheckYourAnswerForManufacturedPlasticWeight = new ManufacturedPlasticPackagingWeightSummary(manufacturedPlasticWeightPageLabel)
+  val ConfirmManufacturedPlasticPackagingSummary = new ManufacturedPlasticPackagingWeightSummary(confirmPlasticPackagingTotalLabel)
 
 }

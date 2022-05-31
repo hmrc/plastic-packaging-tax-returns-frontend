@@ -65,7 +65,7 @@ class AmendAreYouSureController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
+        val pptId: String = request.pptReference
         val userAnswers   = request.userAnswers
 
         val submittedReturn =

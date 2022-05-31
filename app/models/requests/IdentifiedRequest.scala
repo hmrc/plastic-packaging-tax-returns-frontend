@@ -22,7 +22,7 @@ import play.api.mvc.{Request, WrappedRequest}
 case class IdentifiedRequest[+A](
   request: Request[A],
   user: SignedInUser,
-  enrolmentId: Option[String]
+  private val enrolmentId: Option[String]
 ) extends WrappedRequest[A](request) {
 
   def internalId: String = user.identityData.internalId
