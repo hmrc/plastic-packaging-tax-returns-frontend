@@ -59,7 +59,6 @@ class HumanMedicinesPlasticPackagingController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val pptId: String = request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId, all users at this point should have one"))
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -67,7 +66,7 @@ class HumanMedicinesPlasticPackagingController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HumanMedicinesPlasticPackagingPage, value))
-            _ <- cacheConnector.set(pptId, updatedAnswers)
+            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
           } yield Redirect(navigator.nextPage(HumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
       )
   }

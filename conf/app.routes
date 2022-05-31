@@ -123,6 +123,8 @@ POST       /changeAgents                  controllers.AgentsController.onSubmit(
 GET        /make-a-payment                controllers.MakePaymentController.redirectLink()
 GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
 
+GET        /confirm-plastic-packaging-total                       controllers.ConfirmPlasticPackagingTotalController.onPageLoad
+
 GET        /humanMedicinesPlasticPackaging                        controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /humanMedicinesPlasticPackaging                        controllers.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /changeHumanMedicinesPlasticPackaging                  controllers.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)

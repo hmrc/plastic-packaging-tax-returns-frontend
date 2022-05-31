@@ -22,14 +22,14 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.EisFailure
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
-
-import javax.inject.Inject
+import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
@@ -46,8 +46,7 @@ class IndexController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
-      val pptReference =
-        request.request.enrolmentId.getOrElse(throw new IllegalStateException("no enrolmentId"))
+      val pptReference = request.pptReference
 
       subscriptionConnector.get(pptReference).flatMap {
         case Right(subscription) =>

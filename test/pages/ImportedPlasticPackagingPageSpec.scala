@@ -16,6 +16,7 @@
 
 package pages
 
+import models.UserAnswers
 import pages.behaviours.PageBehaviours
 
 class ImportedPlasticPackagingPageSpec extends PageBehaviours {
@@ -27,5 +28,24 @@ class ImportedPlasticPackagingPageSpec extends PageBehaviours {
     beSettable[Boolean](ImportedPlasticPackagingPage)
 
     beRemovable[Boolean](ImportedPlasticPackagingPage)
+  }
+
+  "clean up" - {
+    "must return the same answer" - {
+      "when answer was Yes" in {
+        val answer = UserAnswers("123").set(ImportedPlasticPackagingPage, true).get
+
+        ImportedPlasticPackagingPage.cleanup(Some(true), answer).get mustBe answer
+      }
+    }
+
+    "must return a value of zero" - {
+      "when answer is no" in {
+        val answer = UserAnswers("123").set(ImportedPlasticPackagingPage, false).get
+        val expectedAnswer = answer.copy().set(ImportedPlasticPackagingWeightPage, 0L).get
+
+        ImportedPlasticPackagingPage.cleanup(Some(false), answer).get mustBe expectedAnswer
+      }
+    }
   }
 }

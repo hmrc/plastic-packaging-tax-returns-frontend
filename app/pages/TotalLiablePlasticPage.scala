@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.WrappedRequest
-import models.UserAnswers
+import play.api.libs.json.JsPath
 
-case class OptionalDataRequest[A] (
-  request: IdentifiedRequest[A],
-  userId: String,
-  userAnswers: Option[UserAnswers]
-) extends WrappedRequest[A](request) {
+case object TotalLiablePlasticPage extends QuestionPage[Long] {
 
-  def pptReference: String = request.pptReference
+  override def path: JsPath = JsPath \ toString
 
-}
-
-case class DataRequest[A](
-  request: IdentifiedRequest[A],
-  userId: String,
-  userAnswers: UserAnswers
-) extends WrappedRequest[A](request) {
-
-  def pptReference: String = request.pptReference
-
+  override def toString: String = "totalLiablePlastic"
 }

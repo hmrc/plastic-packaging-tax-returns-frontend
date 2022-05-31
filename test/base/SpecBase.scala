@@ -93,6 +93,10 @@ trait SpecBase
   def messages(app: Application): Messages =
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
+  def messages(app: Application, message: String) = {
+    app.injector.instanceOf[MessagesApi].preferred(FakeRequest()).apply(message)
+  }
+
   protected def applicationBuilder(
     userAnswers: Option[UserAnswers] = None
   ): GuiceApplicationBuilder =

@@ -24,27 +24,29 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ManufacturedPlasticPackagingSummary extends SummaryViewModel {
-
+class ManufacturedPlasticPackagingSummary private (key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ManufacturedPlasticPackagingPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(key = "manufacturedPlasticPackaging.checkYourAnswersLabel",
-                                value = ValueViewModel(value),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.ManufacturedPlasticPackagingController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("manufacturedPlasticPackaging.change.hidden")
-                                    )
-                                )
+        SummaryListRowViewModel(key = key,
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
+            ).withAttribute("id"-> "confirm-pp-total-manufactured-plastic")
+              .withVisuallyHiddenText(messages("manufacturedPlasticPackaging.change.hidden"))
+          )
         )
     }
+}
+object ManufacturedPlasticPackagingSummary {
 
+  private val manufacturedPlasticPageLabel = "manufacturedPlasticPackaging.checkYourAnswersLabel"
+  private val confirmPlasticPackagingTotalLabel = "confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label"
+
+  val CheckYourAnswerManufacturedPlasticPackaging = new ManufacturedPlasticPackagingSummary(manufacturedPlasticPageLabel)
+  val ConfirmManufacturedPlasticPackaging = new ManufacturedPlasticPackagingSummary(confirmPlasticPackagingTotalLabel)
 }

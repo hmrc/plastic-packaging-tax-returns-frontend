@@ -6,6 +6,7 @@ site.change = Change
 site.no = No
 site.yes = Yes
 site.continue = Save and continue
+site.button.continue = Continue
 site.continue.confirm = Confirm and continue
 site.start = Start now
 site.startAgain = Start again
@@ -370,12 +371,20 @@ deregistered.heading = You deregistered this account from Plastic Packaging Tax
 deregistered.bta.link = Go to your business tax account
 deregistered.title = You deregistered this account from Plastic Packaging Tax
 
+confirmPlasticPackagingTotal.title = Confirm your plastic packaging total - Submit return
+confirmPlasticPackagingTotal.sectionHeader = Total plastic packaging
+confirmPlasticPackagingTotal.heading = Confirm your plastic packaging total
+confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label = Manufactured plastic packaging
+confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight of manufactured plastic packaging
+confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
+confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
+confirmPlasticPackagingTotal.total.label = Plastic packaging total
+
 humanMedicinesPlasticPackaging.caption = Exported plastic packaging
 humanMedicinesPlasticPackaging.heading = Were any of the {0} of finished plastic packaging components that you exported used for the immediate packaging of licenced human medicines?
 humanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
 humanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
 humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
-
 humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
 humanMedicinesPlasticPackaging.error.required = Select yes if humanMedicinesPlasticPackaging
 humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging

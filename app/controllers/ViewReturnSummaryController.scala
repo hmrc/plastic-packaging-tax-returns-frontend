@@ -46,9 +46,7 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
 
-        val pptId: String = request.request.enrolmentId.getOrElse(
-          throw new IllegalStateException("no enrolmentId, all users at this point should have one")
-        )
+        val pptId: String = request.pptReference
 
         if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
 
