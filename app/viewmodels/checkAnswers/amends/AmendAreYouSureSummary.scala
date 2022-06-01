@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.amends
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.AmendAreYouSurePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.all.FluentActionItem
+import viewmodels.govuk.summarylist.SummaryListRowViewModel
+import viewmodels.govuk.summarylist.ActionItemViewModel
+import viewmodels.govuk.summarylist.ValueViewModel
 import viewmodels.implicits._
 
 object AmendAreYouSureSummary {
@@ -32,16 +34,16 @@ object AmendAreYouSureSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(key = "amendAreYouSure.checkYourAnswersLabel",
-                                value = ValueViewModel(value),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.AmendAreYouSureController.onPageLoad(CheckMode).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("amendAreYouSure.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.amends.routes.AmendAreYouSureController.onPageLoad(CheckMode).url
+            )
+              .withVisuallyHiddenText(
+                messages("amendAreYouSure.change.hidden")
+              )
+          )
         )
     }
 

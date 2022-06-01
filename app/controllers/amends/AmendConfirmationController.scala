@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AmendConfirmation
-import repositories.SessionRepository
 
-import scala.concurrent.ExecutionContext
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class AmendConfirmationController @Inject() (
   val controllerComponents: MessagesControllerComponents,

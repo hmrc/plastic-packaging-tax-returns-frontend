@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.amends
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.SummaryViewModel
+import viewmodels.govuk.all.FluentActionItem
+import viewmodels.govuk.summarylist.SummaryListRowViewModel
+import viewmodels.govuk.summarylist.ActionItemViewModel
+import viewmodels.govuk.summarylist.ValueViewModel
 import viewmodels.implicits._
 
 object AmendDirectExportPlasticPackagingSummary extends SummaryViewModel {
@@ -30,18 +34,18 @@ object AmendDirectExportPlasticPackagingSummary extends SummaryViewModel {
     answers.get(AmendDirectExportPlasticPackagingPage).map {
       answer =>
         SummaryListRowViewModel(key = "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.AmendDirectExportPlasticPackagingController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("amendDirectExportPlasticPackaging.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(answer.toString),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad(
+                CheckMode
+              ).url
+            )
+              .withVisuallyHiddenText(
+                messages("amendDirectExportPlasticPackaging.change.hidden")
+              )
+          )
         )
     }
 

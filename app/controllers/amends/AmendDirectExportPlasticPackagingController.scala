@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.AmendImportedPlasticPackagingFormProvider
+import controllers.amends.routes
+import forms.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.AmendImportedPlasticPackagingPage
+import pages.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AmendImportedPlasticPackagingView
+import views.html.AmendDirectExportPlasticPackagingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendImportedPlasticPackagingController @Inject() (
+class AmendDirectExportPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendImportedPlasticPackagingFormProvider,
+  formProvider: AmendDirectExportPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendImportedPlasticPackagingView
+  view: AmendDirectExportPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -50,7 +51,7 @@ class AmendImportedPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendImportedPlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
@@ -59,7 +60,6 @@ class AmendImportedPlasticPackagingController @Inject() (
           case Some(obligation) => Ok(view(preparedForm, mode, obligation))
           case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
-
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -76,11 +76,11 @@ class AmendImportedPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendImportedPlasticPackagingPage, value)
+                request.userAnswers.set(AmendDirectExportPlasticPackagingPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(AmendImportedPlasticPackagingPage, mode, updatedAnswers)
+              navigator.nextPage(AmendDirectExportPlasticPackagingPage, mode, updatedAnswers)
             )
         )
     }

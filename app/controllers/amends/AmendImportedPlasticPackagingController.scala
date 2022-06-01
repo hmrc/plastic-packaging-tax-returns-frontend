@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.AmendManufacturedPlasticPackagingFormProvider
+import controllers.routes
+import forms.AmendImportedPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.AmendManufacturedPlasticPackagingPage
+import pages.AmendImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AmendManufacturedPlasticPackagingView
+import views.html.AmendImportedPlasticPackagingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendManufacturedPlasticPackagingController @Inject() (
+class AmendImportedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendManufacturedPlasticPackagingFormProvider,
+  formProvider: AmendImportedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendManufacturedPlasticPackagingView
+  view: AmendImportedPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -50,11 +51,10 @@ class AmendManufacturedPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm =
-          request.userAnswers.get(AmendManufacturedPlasticPackagingPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
+        val preparedForm = request.userAnswers.get(AmendImportedPlasticPackagingPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Ok(view(preparedForm, mode, obligation))
@@ -77,11 +77,11 @@ class AmendManufacturedPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendManufacturedPlasticPackagingPage, value)
+                request.userAnswers.set(AmendImportedPlasticPackagingPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(AmendManufacturedPlasticPackagingPage, mode, updatedAnswers)
+              navigator.nextPage(AmendImportedPlasticPackagingPage, mode, updatedAnswers)
             )
         )
     }

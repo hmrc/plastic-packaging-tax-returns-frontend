@@ -14,50 +14,52 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
-import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.AmendAreYouSureFormProvider
+import controllers.routes
+import forms.AmendManufacturedPlasticPackagingFormProvider
 import models.Mode
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.AmendAreYouSurePage
-import play.api.data.Form
+import pages.AmendManufacturedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AmendAreYouSureView
+import views.html.AmendManufacturedPlasticPackagingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendAreYouSureController @Inject() (
+class AmendManufacturedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendAreYouSureFormProvider,
+  formProvider: AmendManufacturedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendAreYouSureView
+  view: AmendManufacturedPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  private val form: Form[Boolean] = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val userAnswers = request.userAnswers
+        val preparedForm =
+          request.userAnswers.get(AmendManufacturedPlasticPackagingPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
 
-        val preparedForm = userAnswers.fill(AmendAreYouSurePage, form)
-
-        userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
+          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
 
     }
@@ -66,28 +68,22 @@ class AmendAreYouSureController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-        val userAnswers   = request.userAnswers
 
-        val submittedReturn =
-          userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable).getOrElse(
-            throw new IllegalStateException("Must have a tax return against which to amend")
-          )
-
-        val obligation = userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          amend =>
+          value =>
             for {
               updatedAnswers <- Future.fromTry(
-                userAnswers
-                  .set(AmendReturnPreviousReturn, submittedReturn)(AmendReturnPreviousReturn.returnDisplayApiWrites)
-                  .flatMap(_.set(AmendAreYouSurePage, amend))
+                request.userAnswers.set(AmendManufacturedPlasticPackagingPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            } yield Redirect(
+              navigator.nextPage(AmendManufacturedPlasticPackagingPage, mode, updatedAnswers)
+            )
         )
     }
 

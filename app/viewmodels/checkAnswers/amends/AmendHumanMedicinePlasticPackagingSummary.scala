@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.amends
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.SummaryViewModel
+import viewmodels.govuk.all.FluentActionItem
+import viewmodels.govuk.summarylist.SummaryListRowViewModel
+import viewmodels.govuk.summarylist.ActionItemViewModel
+import viewmodels.govuk.summarylist.ValueViewModel
 import viewmodels.implicits._
 
 object AmendHumanMedicinePlasticPackagingSummary extends SummaryViewModel {
@@ -30,18 +34,18 @@ object AmendHumanMedicinePlasticPackagingSummary extends SummaryViewModel {
     answers.get(AmendHumanMedicinePlasticPackagingPage).map {
       answer =>
         SummaryListRowViewModel(key = "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
-                                value = ValueViewModel(answer.toString),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withVisuallyHiddenText(
-                                      messages("amendHumanMedicinePlasticPackaging.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(answer.toString),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(
+                CheckMode
+              ).url
+            )
+              .withVisuallyHiddenText(
+                messages("amendHumanMedicinePlasticPackaging.change.hidden")
+              )
+          )
         )
     }
 

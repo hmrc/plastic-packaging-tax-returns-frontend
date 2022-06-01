@@ -22,45 +22,45 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
-POST        /check-your-answers                          controllers.CheckYourAnswersController.onSubmit()
+GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
 
 GET         /returns-check-your-answers                          controllers.ReturnsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /returns-check-your-answers                          controllers.ReturnsCheckYourAnswersController.onSubmit()
 
-GET        /amendConfirmation                            controllers.AmendConfirmationController.onPageLoad()
+GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()
 
 GET        /viewReturnSummary/:periodKey                 controllers.ViewReturnSummaryController.onPageLoad(periodKey: String)
 
-GET        /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendDirectExportPlasticPackaging                  controllers.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendDirectExportPlasticPackaging                        controllers.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendDirectExportPlasticPackaging                        controllers.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendDirectExportPlasticPackaging                        controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendDirectExportPlasticPackaging                        controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /amendHumanMedicinePlasticPackaging                  controllers.AmendHumanMedicinePlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendHumanMedicinePlasticPackaging                  controllers.AmendHumanMedicinePlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendHumanMedicinePlasticPackaging                        controllers.AmendHumanMedicinePlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendHumanMedicinePlasticPackaging                        controllers.AmendHumanMedicinePlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /amendImportedPlasticPackaging                  controllers.AmendImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendImportedPlasticPackaging                  controllers.AmendImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendImportedPlasticPackaging                        controllers.AmendImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendImportedPlasticPackaging                        controllers.AmendImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /amendImportedPlasticPackaging                  controllers.amends.AmendImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendImportedPlasticPackaging                  controllers.amends.AmendImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendImportedPlasticPackaging                        controllers.amends.AmendImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendImportedPlasticPackaging                        controllers.amends.AmendImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /amendManufacturedPlasticPackaging                  controllers.AmendManufacturedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendManufacturedPlasticPackaging                  controllers.AmendManufacturedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendManufacturedPlasticPackaging                        controllers.AmendManufacturedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendManufacturedPlasticPackaging                        controllers.AmendManufacturedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /amendManufacturedPlasticPackaging                  controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendManufacturedPlasticPackaging                  controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendManufacturedPlasticPackaging                        controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendManufacturedPlasticPackaging                        controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /amendRecycledPlasticPackaging                  controllers.AmendRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendRecycledPlasticPackaging                  controllers.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendRecycledPlasticPackaging                        controllers.AmendRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendRecycledPlasticPackaging                        controllers.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /amendRecycledPlasticPackaging                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendRecycledPlasticPackaging                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /amendAreYouSure                        controllers.AmendAreYouSureController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendAreYouSure                        controllers.AmendAreYouSureController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendAreYouSure                  controllers.AmendAreYouSureController.onSubmit(mode: Mode = CheckMode)
+GET        /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onPageLoad(mode: Mode = NormalMode)
+POST       /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onSubmit(mode: Mode = CheckMode)
 
 GET        /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 POST       /convertedPackagingCredit                  controllers.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)
@@ -109,7 +109,7 @@ POST       /changeRecycledPlasticPackagingWeight            controllers.Recycled
 
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
 
-GET        /submittedReturns                       controllers.SubmittedReturnsController.onPageLoad()
+GET        /submittedReturns                       controllers.amends.SubmittedReturnsController.onPageLoad()
 
 GET        /startYourReturn                        controllers.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
 POST       /startYourReturn                        controllers.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
