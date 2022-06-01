@@ -20,10 +20,10 @@ import base.SpecBase
 import cacheables.AmendSelectedPeriodKey
 import controllers.returns.{routes => returnsRoutes}
 import controllers.amends.{routes => amendsRoutes}
-
 import pages._
 import models._
 import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
 
 /*************************************************************
 Returns journey (v1)

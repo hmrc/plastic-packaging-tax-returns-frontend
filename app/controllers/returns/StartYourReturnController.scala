@@ -20,14 +20,14 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
-import forms.StartYourReturnFormProvider
+import forms.returns.StartYourReturnFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.StartYourReturnPage
+import pages.returns.StartYourReturnPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.StartYourReturnView
+import views.html.returns.StartYourReturnView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

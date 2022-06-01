@@ -20,7 +20,7 @@ import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplay
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.amends.routes
-import forms.AmendAreYouSureFormProvider
+import forms.amends.AmendAreYouSureFormProvider
 import models.Mode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator

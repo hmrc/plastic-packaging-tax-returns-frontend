@@ -18,15 +18,15 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.DirectlyExportedComponentsFormProvider
+import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.DirectlyExportedComponentsPage
+import pages.returns.DirectlyExportedComponentsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.PlasticPackagingTotalSummary
-import views.html.DirectlyExportedComponentsView
+import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
+import views.html.returns.DirectlyExportedComponentsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

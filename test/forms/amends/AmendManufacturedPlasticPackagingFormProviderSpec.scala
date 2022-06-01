@@ -16,7 +16,6 @@
 
 package forms.amends
 
-import forms.AmendManufacturedPlasticPackagingFormProvider
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
 

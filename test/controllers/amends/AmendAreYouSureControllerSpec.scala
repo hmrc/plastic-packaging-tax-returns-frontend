@@ -19,7 +19,7 @@ package controllers.amends
 import base.SpecBase
 import cacheables.AmendSelectedPeriodKey
 import connectors.CacheConnector
-import forms.AmendAreYouSureFormProvider
+import forms.amends.AmendAreYouSureFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -33,7 +33,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import views.html.amends.AmendAreYouSureView
-
 
 import scala.concurrent.Future
 

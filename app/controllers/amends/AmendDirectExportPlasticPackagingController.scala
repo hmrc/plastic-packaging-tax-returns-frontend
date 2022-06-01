@@ -20,7 +20,7 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.amends.routes
-import forms.AmendDirectExportPlasticPackagingFormProvider
+import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator

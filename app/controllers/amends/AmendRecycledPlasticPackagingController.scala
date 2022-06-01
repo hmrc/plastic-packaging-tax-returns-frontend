@@ -20,7 +20,7 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.routes
-import forms.AmendRecycledPlasticPackagingFormProvider
+import forms.amends.AmendRecycledPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator

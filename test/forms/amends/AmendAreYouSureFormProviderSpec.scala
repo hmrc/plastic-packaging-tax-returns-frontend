@@ -16,7 +16,6 @@
 
 package forms.amends
 
-import forms.AmendAreYouSureFormProvider
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 

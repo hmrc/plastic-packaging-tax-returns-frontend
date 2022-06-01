@@ -19,17 +19,16 @@ package controllers.returns
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.routes
-import forms.HumanMedicinesPlasticPackagingWeightFormProvider
+import forms.returns.HumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.HumanMedicinesPlasticPackagingWeightView
+import views.html.returns.HumanMedicinesPlasticPackagingWeightView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

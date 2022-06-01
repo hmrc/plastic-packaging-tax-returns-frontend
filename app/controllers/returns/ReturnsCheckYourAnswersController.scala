@@ -21,20 +21,19 @@ import com.google.inject.Inject
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
-import controllers.routes
 import models.Mode
 import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
-import viewmodels.checkAnswers.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
-import viewmodels.checkAnswers.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
-import viewmodels.checkAnswers.ManufacturedPlasticPackagingWeightSummary.CheckYourAnswerForManufacturedPlasticWeight
-import viewmodels.checkAnswers._
+import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
+import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
+import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
+import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingWeightSummary.CheckYourAnswerForManufacturedPlasticWeight
+import viewmodels.checkAnswers.returns._
 import viewmodels.govuk.summarylist._
-import views.html.ReturnsCheckYourAnswersView
+import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

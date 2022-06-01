@@ -18,15 +18,15 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ExportedPlasticPackagingWeightFormProvider
+import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ExportedPlasticPackagingWeightPage
+import pages.returns.ExportedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.PlasticPackagingTotalSummary
-import views.html.ExportedPlasticPackagingWeightView
+import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
+import views.html.returns.ExportedPlasticPackagingWeightView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

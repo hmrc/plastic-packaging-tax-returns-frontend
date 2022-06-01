@@ -18,7 +18,7 @@ package controllers.amends
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.AmendManufacturedPlasticPackagingFormProvider
+import forms.amends.AmendManufacturedPlasticPackagingFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
