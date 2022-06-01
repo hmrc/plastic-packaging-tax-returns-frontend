@@ -14,49 +14,49 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.AmendRecycledPlasticPackagingFormProvider
+import forms.AmendManufacturedPlasticPackagingFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.amends.AmendRecycledPlasticPackagingPage
+import pages.amends.AmendManufacturedPlasticPackagingPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.AmendRecycledPlasticPackagingView
+import views.html.amends.AmendManufacturedPlasticPackagingView
 
 import scala.concurrent.Future
 
-class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new AmendRecycledPlasticPackagingFormProvider()
+  val formProvider = new AmendManufacturedPlasticPackagingFormProvider()
   val form         = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0
 
-  lazy val amendRecycledPlasticPackagingRoute =
-    routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode).url
+  lazy val amendManufacturedPlasticPackagingRoute =
+    routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
 
-  "AmendRecycledPlasticPackaging Controller" - {
+  "AmendManufacturedPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, amendRecycledPlasticPackagingRoute)
+        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AmendRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
@@ -67,14 +67,14 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(AmendRecycledPlasticPackagingPage, validAnswer).success.value
+      val ans = userAnswers.set(AmendManufacturedPlasticPackagingPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
-        val request = FakeRequest(GET, amendRecycledPlasticPackagingRoute)
+        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
 
-        val view = application.injector.instanceOf[AmendRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         val result = route(application, request).value
 
@@ -101,7 +101,7 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, amendRecycledPlasticPackagingRoute)
+          FakeRequest(POST, amendManufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value
@@ -116,7 +116,7 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, amendRecycledPlasticPackagingRoute)
+        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
 
         val result = route(application, request).value
 
@@ -130,12 +130,12 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, amendRecycledPlasticPackagingRoute)
+          FakeRequest(POST, amendManufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[AmendRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         val result = route(application, request).value
 
@@ -151,12 +151,12 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, amendRecycledPlasticPackagingRoute)
+        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -166,14 +166,14 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, amendRecycledPlasticPackagingRoute)
+          FakeRequest(POST, amendManufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

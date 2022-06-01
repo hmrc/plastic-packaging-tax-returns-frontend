@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import base.SpecBase
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.AmendSelectedPeriodKey
 import connectors.CacheConnector
 import forms.AmendAreYouSureFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendAreYouSurePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.AmendAreYouSureView
-import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.html.amends.AmendAreYouSureView
+
 
 import scala.concurrent.Future
 
@@ -184,7 +185,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -200,7 +201,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

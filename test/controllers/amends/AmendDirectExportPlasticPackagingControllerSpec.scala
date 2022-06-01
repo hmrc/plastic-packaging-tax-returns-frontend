@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import base.SpecBase
 import connectors.CacheConnector
@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.AmendDirectExportPlasticPackagingView
+import views.html.amends.AmendDirectExportPlasticPackagingView
 
 import scala.concurrent.Future
 
@@ -158,7 +158,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -175,7 +175,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }
