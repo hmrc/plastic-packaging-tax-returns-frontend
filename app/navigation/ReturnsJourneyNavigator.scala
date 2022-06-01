@@ -16,9 +16,9 @@
 
 package navigation
 
-import controllers.routes
+import controllers.returns.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, Page, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages._
 import play.api.mvc.Call
 
 import javax.inject.Singleton

@@ -40,7 +40,7 @@
 
     @sectionHeader(taxReturn)
 
-    @formHelper(action = routes.ConvertedPackagingCreditController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.ConvertedPackagingCreditController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

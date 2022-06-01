@@ -32,7 +32,7 @@
         messages(s"month.${obligation.toDate.getMonthValue}"),
         obligation.toDate.getYear.toString))) {
 
-    @formHelper(action = routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

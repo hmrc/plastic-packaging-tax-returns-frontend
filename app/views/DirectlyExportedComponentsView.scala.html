@@ -38,7 +38,7 @@
 
     @sectionHeader(messages("caption.exported.plastic"))
 
-    @formHelper(action = routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

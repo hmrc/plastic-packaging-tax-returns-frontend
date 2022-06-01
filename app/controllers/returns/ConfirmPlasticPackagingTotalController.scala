@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import controllers.actions._
-import models.NormalMode
+import controllers.routes
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,7 +31,7 @@ import viewmodels.govuk.summarylist._
 import views.html.ConfirmPlasticPackagingTotalView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 class ConfirmPlasticPackagingTotalController @Inject()
@@ -60,7 +60,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
         case Success(list) => Ok(view(list))
         case Failure(error) =>
           logger.error(error.getMessage)
-          Redirect(routes.IndexController.onPageLoad)
+          Redirect(controllers.routes.IndexController.onPageLoad)
       }
   }
 }

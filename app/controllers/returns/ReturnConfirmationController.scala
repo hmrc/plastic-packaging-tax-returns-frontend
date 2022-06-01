@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import controllers.actions._
-
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{SessionRepository}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ReturnConfirmationView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ReturnConfirmationController @Inject()(

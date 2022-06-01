@@ -119,7 +119,7 @@
 
     @paragraphBody(messages("returnsCheckYourAnswers.totalCredits.description"), classes = "govuk-body-m")
 
-    @formHelper(action = routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
         @govukButton(
             ButtonViewModel(messages("site.continue.confirm"))

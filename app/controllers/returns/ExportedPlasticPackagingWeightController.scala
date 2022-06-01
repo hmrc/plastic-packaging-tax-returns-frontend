@@ -14,46 +14,48 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.DirectlyExportedComponentsFormProvider
+import forms.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.DirectlyExportedComponentsPage
+import pages.ExportedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.PlasticPackagingTotalSummary
-import views.html.DirectlyExportedComponentsView
+import views.html.ExportedPlasticPackagingWeightView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectlyExportedComponentsController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: DirectlyExportedComponentsFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: DirectlyExportedComponentsView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class ExportedPlasticPackagingWeightController @Inject()(
+                                                          override val messagesApi: MessagesApi,
+                                                          cacheConnector: CacheConnector,
+                                                          navigator: Navigator,
+                                                          identify: IdentifierAction,
+                                                          getData: DataRetrievalAction,
+                                                          requireData: DataRequiredAction,
+                                                          formProvider: ExportedPlasticPackagingWeightFormProvider,
+                                                          val controllerComponents: MessagesControllerComponents,
+                                                          view: ExportedPlasticPackagingWeightView
+                                                        )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
-
-        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form)
+        val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
         Ok(view(preparedForm, mode, totalPlastic))
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -62,14 +64,18 @@ class DirectlyExportedComponentsController @Inject() (
         val pptId: String = request.pptReference
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
+
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))
-              _              <- cacheConnector.set(pptId, updatedAnswers)
-
-            } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers.set(ExportedPlasticPackagingWeightPage, value)
+              )
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(
+              navigator.nextPage(ExportedPlasticPackagingWeightPage, mode, updatedAnswers)
+            )
         )
     }
 

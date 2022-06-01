@@ -17,7 +17,7 @@
 package views
 
 import config.FrontendAppConfig
-import controllers.routes
+import controllers.returns.routes
 import controllers.payments.{routes => paymentRoute }
 import models.NormalMode
 import models.obligations.PPTObligations

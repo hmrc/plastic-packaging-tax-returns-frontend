@@ -42,7 +42,7 @@
 
     @sectionHeader(messages("caption.total.plastic"))
 
-    @formHelper(action = routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

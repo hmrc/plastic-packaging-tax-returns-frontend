@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
+import controllers.routes
 import models.Mode
 import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -78,7 +79,7 @@ class ReturnsCheckYourAnswersController @Inject()(
         )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation)))
-          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
+          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
     }

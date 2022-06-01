@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.routes
 import forms.ImportedPlasticPackagingWeightFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator
@@ -31,6 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ImportedPlasticPackagingWeightView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ImportedPlasticPackagingWeightController @Inject() (
@@ -58,7 +58,7 @@ class ImportedPlasticPackagingWeightController @Inject() (
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
+          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 

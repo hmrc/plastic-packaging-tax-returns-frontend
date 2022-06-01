@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import cacheables.ObligationCacheable
 import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
+import controllers.returns.ConvertedPackagingCreditController
 import forms.ConvertedPackagingCreditFormProvider
 import models.returns.TaxReturnObligation
 import models.{ExportCreditBalance, NormalMode, UserAnswers}

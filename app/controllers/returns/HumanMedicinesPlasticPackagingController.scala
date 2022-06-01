@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.routes
 import forms.HumanMedicinesPlasticPackagingFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
@@ -30,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HumanMedicinesPlasticPackagingView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HumanMedicinesPlasticPackagingController @Inject()(
@@ -48,7 +48,7 @@ class HumanMedicinesPlasticPackagingController @Inject()(
 
   private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Long] =
     request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-      .fold[Either[Result, Long]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
+      .fold[Either[Result, Long]](Left(Redirect(controllers.routes.IndexController.onPageLoad)))(Right(_))
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

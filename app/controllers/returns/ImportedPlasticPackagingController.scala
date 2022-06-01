@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ManufacturedPlasticPackagingFormProvider
-
-import javax.inject.Inject
+import controllers.routes
+import forms.ImportedPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.ManufacturedPlasticPackagingPage
+import pages.ImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ManufacturedPlasticPackagingView
+import views.html.ImportedPlasticPackagingView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManufacturedPlasticPackagingController @Inject() (
+class ImportedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ManufacturedPlasticPackagingFormProvider,
+  formProvider: ImportedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: ManufacturedPlasticPackagingView
+  view: ImportedPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -51,14 +51,13 @@ class ManufacturedPlasticPackagingController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingPage) match {
+        val preparedForm = request.userAnswers.get(ImportedPlasticPackagingPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
+          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 
@@ -76,12 +75,10 @@ class ManufacturedPlasticPackagingController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ManufacturedPlasticPackagingPage, value)
+                request.userAnswers.set(ImportedPlasticPackagingPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers)
-            )
+            } yield Redirect(navigator.nextPage(ImportedPlasticPackagingPage, mode, updatedAnswers))
         )
     }
 

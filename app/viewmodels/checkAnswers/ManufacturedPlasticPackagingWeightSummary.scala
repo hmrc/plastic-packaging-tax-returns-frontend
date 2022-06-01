@@ -16,7 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
+import controllers.returns.routes
+
 import models.{CheckMode, UserAnswers}
 import pages.ManufacturedPlasticPackagingWeightPage
 import play.api.i18n.Messages
@@ -25,11 +26,11 @@ import viewmodels.PrintLong
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ManufacturedPlasticPackagingWeightSummary private (key: String) extends SummaryViewModel {
+class ManufacturedPlasticPackagingWeightSummary private(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ManufacturedPlasticPackagingWeightPage).map  {
-          answer => createSummaryListView(answer.toLong.asKgs)
+    answers.get(ManufacturedPlasticPackagingWeightPage).map {
+      answer => createSummaryListView(answer.toLong.asKgs)
     }
 
   private def createSummaryListView(value: String)(implicit messages: Messages): SummaryListRow = {

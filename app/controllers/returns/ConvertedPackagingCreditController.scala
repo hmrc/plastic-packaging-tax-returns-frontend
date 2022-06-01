@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import cacheables.ObligationCacheable
 import connectors.{CacheConnector, ExportCreditsConnector}
 import controllers.actions._
+import controllers.routes
 import forms.ConvertedPackagingCreditFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -61,7 +62,7 @@ class ConvertedPackagingCreditController @Inject() (
             val preparedForm = request.userAnswers.fill(ConvertedPackagingCreditPage, form(possibleCreditBalanceAvailable))
             request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
               case Some(obligation) => Ok(view(preparedForm, mode, obligation, possibleCreditBalanceAvailable.map {_.asPounds}))
-              case None => Redirect(routes.IndexController.onPageLoad)
+              case None => Redirect(controllers.routes.IndexController.onPageLoad)
             }
           }
         }

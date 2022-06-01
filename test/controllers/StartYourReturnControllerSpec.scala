@@ -25,8 +25,7 @@ import models.returns.TaxReturnObligation
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.StartYourReturnPage
 import play.api.inject.bind
@@ -34,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.StartYourReturnView
+import controllers.returns.{routes => routes}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -45,7 +45,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
   val formProvider = new StartYourReturnFormProvider()
   val form = formProvider()
 
-  lazy val startYourReturnRoute = routes.StartYourReturnController.onPageLoad(NormalMode).url
+  lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 
   val obligation: TaxReturnObligation = TaxReturnObligation(
     fromDate = LocalDate.parse("2022-04-01"),

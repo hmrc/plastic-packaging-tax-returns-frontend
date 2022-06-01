@@ -47,7 +47,7 @@
 
     @sectionHeader(messages("humanMedicinesPlasticPackaging.caption"))
 
-    @formHelper(action = routes.HumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.HumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

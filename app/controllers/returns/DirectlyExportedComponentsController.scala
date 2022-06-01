@@ -14,71 +14,62 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
-import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ImportedPlasticPackagingFormProvider
-
-import javax.inject.Inject
+import forms.DirectlyExportedComponentsFormProvider
 import models.Mode
-import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.ImportedPlasticPackagingPage
+import pages.DirectlyExportedComponentsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ImportedPlasticPackagingView
+import viewmodels.checkAnswers.PlasticPackagingTotalSummary
+import views.html.DirectlyExportedComponentsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ImportedPlasticPackagingController @Inject() (
+class DirectlyExportedComponentsController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ImportedPlasticPackagingFormProvider,
+  formProvider: DirectlyExportedComponentsFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: ImportedPlasticPackagingView
+  view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(ImportedPlasticPackagingPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(routes.IndexController.onPageLoad))
-        }
+
+        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
+
+        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form)
+        Ok(view(preparedForm, mode, totalPlastic))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ImportedPlasticPackagingPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(ImportedPlasticPackagingPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))
+              _              <- cacheConnector.set(pptId, updatedAnswers)
+
+            } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
         )
     }
 

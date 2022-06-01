@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.routes
 import forms.HumanMedicinesPlasticPackagingWeightFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
@@ -32,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HumanMedicinesPlasticPackagingWeightView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HumanMedicinesPlasticPackagingWeightController @Inject()(
@@ -51,7 +51,7 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
 
   private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Long] =
     request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-      .fold[Either[Result, Long]](Left(Redirect(routes.IndexController.onPageLoad)))(Right(_))
+      .fold[Either[Result, Long]](Left(Redirect(controllers.routes.IndexController.onPageLoad)))(Right(_))
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
@@ -60,7 +60,7 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => exportedAmount.fold[Result](identity, amount => Ok(view(amount, preparedForm, mode, obligation)))
-          case None => Redirect(routes.IndexController.onPageLoad)
+          case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
     }
 

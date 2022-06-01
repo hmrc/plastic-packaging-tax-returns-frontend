@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
+import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
 import pages.ImportedPlasticPackagingWeightPage
 import play.api.i18n.Messages
