@@ -2,7 +2,6 @@ package forms.$package$
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
-import forms.$package$.$className$FormProvider
 
 class $className$FormProviderSpec extends BooleanFieldBehaviours {
 
