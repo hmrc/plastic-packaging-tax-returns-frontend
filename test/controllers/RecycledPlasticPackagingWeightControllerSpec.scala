@@ -43,7 +43,7 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
   val validAnswer: Int = 0
 
   lazy val recycledPlasticPackagingWeightRoute =
-    routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
+    controllers.returns.routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "RecycledPlasticPackagingWeight Controller" - {
 

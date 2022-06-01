@@ -50,7 +50,7 @@ class ConvertedPackagingCreditControllerSpec extends SpecBase with MockitoSugar 
   val validAnswer: BigDecimal = 1.25
 
   lazy val convertedPackagingCreditRoute =
-    routes.ConvertedPackagingCreditController.onPageLoad(NormalMode).url
+    controllers.returns.routes.ConvertedPackagingCreditController.onPageLoad(NormalMode).url
 
   private val aDate = LocalDate.ofEpochDay(0)
   private val test = UserAnswers("1").set(ObligationCacheable, TaxReturnObligation(

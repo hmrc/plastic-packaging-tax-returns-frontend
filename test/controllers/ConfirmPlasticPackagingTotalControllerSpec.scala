@@ -35,6 +35,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.PrintLong
 import views.html.ConfirmPlasticPackagingTotalView
+import controllers.returns.{routes => returnsRoutes}
 
 import scala.util.Try
 
@@ -49,6 +50,8 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
     when(view.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
+  lazy val confirmPlasticPackagingTotalRoute = controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
+
   "ConfirmPlasticPackagingTotal Controller" - {
 
     "when displaying the page" - {
@@ -57,7 +60,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
         val application = buildApplication(emptyUserAnswers)
 
         running(application) {
-          val request = FakeRequest(GET, routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
 
           val result = route(application, request).value
 
@@ -72,7 +75,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
           createUserAnswer(manufacturedPlastic = true -> 20000L, importedPlastic = true -> 25000L).success.value)
 
         running(application) {
-          val request = FakeRequest(GET, routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
 
           val result = route(application, request).value
 
@@ -88,7 +91,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
         val application: Application = buildApplication(createUserNoAnswer)
 
         running(application) {
-          val request = FakeRequest(GET, routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
 
           val result = route(application, request).value
 
@@ -109,7 +112,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
           val application = applicationBuilderFailedAuth(userAnswers = None).build()
 
           running(application) {
-            val request = FakeRequest(GET, routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+            val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
 
             val result = route(application, request).value
 
@@ -159,28 +162,28 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
       actual.rows(0),
       "confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label",
       messages(application, expectedManufactured._1),
-      Some(routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url))
+      Some(returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url))
 
     assertRowResults(
       application,
       actual.rows(1),
       "confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label",
       expectedManufactured._2.asKgs,
-      Some(routes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
+      Some(returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
 
     assertRowResults(
       application,
       actual.rows(2),
       "confirmPlasticPackagingTotal.importedPlasticPackaging.label",
       messages(application, expectedImported._1),
-      Some(routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url))
+      Some(returnsRoutes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url))
 
     assertRowResults(
       application,
       actual.rows(3),
       "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label",
       expectedImported._2.asKgs,
-      Some(routes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
+      Some(returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
 
     assertRowResults(
       application,

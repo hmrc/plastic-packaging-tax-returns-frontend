@@ -44,7 +44,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
   val exportedAmount = 8L
 
   lazy val humanMedicinesPlasticPackagingWeightRoute =
-    routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
+    controllers.returns.routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val userAnswersWithExportAmount = userAnswers.set(ExportedPlasticPackagingWeightPage, value = exportedAmount).success.value
 

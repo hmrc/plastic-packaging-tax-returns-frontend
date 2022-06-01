@@ -48,7 +48,7 @@ class ReturnConfirmationControllerSpec extends SpecBase {
       val expected = Some("12345")
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnConfirmationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.returns.routes.ReturnConfirmationController.onPageLoad().url)
 
         val result = route(application, request).value
 

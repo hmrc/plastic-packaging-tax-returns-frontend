@@ -30,7 +30,7 @@ class NotStartOtherReturnsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.NotStartOtherReturnsController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.returns.routes.NotStartOtherReturnsController.onPageLoad().url)
 
         val result = route(application, request).value
 

@@ -40,7 +40,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
   val formProvider = new HumanMedicinesPlasticPackagingFormProvider()
   val form = formProvider()
 
-  lazy val humanMedicinesPlasticPackagingRoute = routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
+  lazy val humanMedicinesPlasticPackagingRoute = controllers.returns.routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
   val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
 

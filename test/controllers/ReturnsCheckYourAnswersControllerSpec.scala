@@ -52,7 +52,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
       running(application) {
 
-        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[ReturnsCheckYourAnswersView]
@@ -72,7 +72,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
       running(application) {
 
-        val request = FakeRequest(GET, routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -92,12 +92,12 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
       running(application) {
 
-        val request = FakeRequest(POST, routes.ReturnsCheckYourAnswersController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.ReturnConfirmationController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad().url
 
         verify(mockSessionRepo).set(any())
 

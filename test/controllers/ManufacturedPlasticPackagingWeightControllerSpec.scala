@@ -43,7 +43,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
   val validAnswer: Long = 1
 
-  lazy val ManufacturedPlasticPackagingWeightRoute = routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val ManufacturedPlasticPackagingWeightRoute = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "ManufacturedPlasticPackagingWeight Controller" - {
 

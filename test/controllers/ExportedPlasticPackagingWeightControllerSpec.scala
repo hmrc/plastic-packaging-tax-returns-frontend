@@ -43,7 +43,7 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
   val validAnswer = 0L
   val totalPlastic: Long = 12
 
-  lazy val exportedPlasticPackagingWeightRoute = routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val exportedPlasticPackagingWeightRoute = controllers.returns.routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
   val answersWithPreset: UserAnswers = emptyUserAnswers
     .set(ManufacturedPlasticPackagingWeightPage, 7L).get
     .set(ImportedPlasticPackagingWeightPage, 5L).get

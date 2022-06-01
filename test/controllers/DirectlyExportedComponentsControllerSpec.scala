@@ -45,7 +45,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
 
   val totalPlastic: Long = 12
 
-  lazy val directlyExportedComponentsRoute = routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
+  lazy val directlyExportedComponentsRoute = controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
 
   "DirectlyExportedComponents Controller" - {
 

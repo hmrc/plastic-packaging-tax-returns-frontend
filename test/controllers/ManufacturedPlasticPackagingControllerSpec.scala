@@ -41,7 +41,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
   val form = formProvider()
 
   lazy val manufacturedPlasticPackagingRoute =
-    routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+    controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
 
   "ManufacturedPlasticPackaging Controller" - {
 
