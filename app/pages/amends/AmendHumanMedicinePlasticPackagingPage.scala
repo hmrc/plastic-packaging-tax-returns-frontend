@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.amends
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AmendManufacturedPlasticPackagingPage extends QuestionPage[Int] {
+case object AmendHumanMedicinePlasticPackagingPage extends QuestionPage[Int] {
 
   override def path: JsPath = JsPath \ "amend" \ toString
 
-  override def toString: String = "amendManufacturedPlasticPackaging"
+  override def toString: String = "amendHumanMedicinePlasticPackaging"
 }

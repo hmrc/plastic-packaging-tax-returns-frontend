@@ -17,13 +17,7 @@
 package cacheables
 
 import models.returns.ReturnDisplayApi
-import pages.{
-  AmendDirectExportPlasticPackagingPage,
-  AmendHumanMedicinePlasticPackagingPage,
-  AmendImportedPlasticPackagingPage,
-  AmendManufacturedPlasticPackagingPage,
-  AmendRecycledPlasticPackagingPage
-}
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
 import play.api.libs.json.{JsObject, JsPath, Json, Writes}
 import queries.{Gettable, Settable}
 

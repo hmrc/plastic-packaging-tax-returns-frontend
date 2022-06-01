@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.amends
 
 import models.{CheckMode, UserAnswers}
-import pages.AmendAreYouSurePage
+import pages.amends.AmendAreYouSurePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.FluentActionItem

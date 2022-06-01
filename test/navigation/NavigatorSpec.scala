@@ -21,6 +21,7 @@ import cacheables.AmendSelectedPeriodKey
 import controllers.routes
 import pages._
 import models._
+import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
 
 /*************************************************************
 Returns journey (v1)

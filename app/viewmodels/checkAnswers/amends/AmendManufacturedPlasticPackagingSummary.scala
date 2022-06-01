@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.amends
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.AmendManufacturedPlasticPackagingPage
+import pages.amends.AmendManufacturedPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel

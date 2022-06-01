@@ -16,6 +16,7 @@
 
 package pages
 
+import pages.amends.AmendManufacturedPlasticPackagingPage
 import pages.behaviours.PageBehaviours
 
 class AmendManufacturedPlasticPackagingPageSpec extends PageBehaviours {

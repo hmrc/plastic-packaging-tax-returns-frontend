@@ -16,6 +16,7 @@
 
 package pages
 
+import pages.amends.AmendAreYouSurePage
 import pages.behaviours.PageBehaviours
 
 class AmendAreYouSurePageSpec extends PageBehaviours {

@@ -24,7 +24,7 @@ import forms.AmendAreYouSureFormProvider
 import models.Mode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator
-import pages.AmendAreYouSurePage
+import pages.amends.AmendAreYouSurePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
