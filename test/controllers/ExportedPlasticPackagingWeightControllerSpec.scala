@@ -40,7 +40,7 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 1L
+  val validAnswer = 0L
   val totalPlastic: Long = 12
 
   lazy val exportedPlasticPackagingWeightRoute = routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
@@ -56,13 +56,12 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
-
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ExportedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, totalPlastic)(request, messages(application)
+        contentAsString(result) mustEqual view(form, NormalMode, totalPlastic)(request, messages(application)
         ).toString
       }
     }

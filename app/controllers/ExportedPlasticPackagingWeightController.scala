@@ -50,15 +50,15 @@ class ExportedPlasticPackagingWeightController @Inject()(
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
-        val preparedForm = request.userAnswers.fill(ExportedPlasticPackagingWeightPage, form)
-
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, totalPlastic)))
-          case None => Future.successful(Redirect(routes.IndexController.onPageLoad))
+        val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
         }
+        Ok(view(preparedForm, mode, totalPlastic))
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
