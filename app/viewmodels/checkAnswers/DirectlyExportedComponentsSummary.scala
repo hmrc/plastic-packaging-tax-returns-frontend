@@ -18,34 +18,28 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.ExportedPlasticPackagingWeightPage
+import pages.DirectlyExportedComponentsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.PlasticPackagingTotalSummary.calculateTotal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ExportedPlasticPackagingWeightSummary extends SummaryViewModel {
+object DirectlyExportedComponentsSummary extends SummaryViewModel{
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ExportedPlasticPackagingWeightPage).map {
+    answers.get(DirectlyExportedComponentsPage).map {
       answer =>
         val totalPlastic = calculateTotal(answers)
+        val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(key = "exportedPlasticPackagingWeight.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
+        SummaryListRowViewModel(
+          key     = "directlyExportedComponents.checkYourAnswersLabel",
+          value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              routes.ExportedPlasticPackagingWeightController.onPageLoad(
-                CheckMode
-              ).url
-            )
-              .withVisuallyHiddenText(
-                messages("exportedPlasticPackagingWeight.change.hidden", totalPlastic)
-              )
+            ActionItemViewModel("site.change", routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic))
           )
         )
     }
-
 }

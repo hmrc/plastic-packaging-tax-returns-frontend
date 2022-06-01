@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class HumanMedicinesPlasticPackagingWeightPageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "HumanMedicinesPlasticPackagingWeightPage" - {
+class DirectlyExportedComponentsFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Long](HumanMedicinesPlasticPackagingWeightPage)
-
-    beSettable[Long](HumanMedicinesPlasticPackagingWeightPage)
-
-    beRemovable[Long](HumanMedicinesPlasticPackagingWeightPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("directlyExportedComponents.error.required")
+    )
 }

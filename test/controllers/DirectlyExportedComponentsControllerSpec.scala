@@ -18,69 +18,68 @@ package controllers
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.ExportedPlasticPackagingWeightFormProvider
+import forms.DirectlyExportedComponentsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
+import pages.{DirectlyExportedComponentsPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.ExportedPlasticPackagingWeightView
+import repositories.SessionRepository
+import views.html.DirectlyExportedComponentsView
 
 import scala.concurrent.Future
 
-class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
-
-  val formProvider = new ExportedPlasticPackagingWeightFormProvider()
-  val form = formProvider()
+class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0L
+  val formProvider = new DirectlyExportedComponentsFormProvider()
+  val form = formProvider()
+
+  val answersWithPreset: UserAnswers = emptyUserAnswers.set(ManufacturedPlasticPackagingWeightPage, 7L).get.set(ImportedPlasticPackagingWeightPage, 5L).get
+
   val totalPlastic: Long = 12
 
-  lazy val exportedPlasticPackagingWeightRoute = routes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
-  val answersWithPreset: UserAnswers = emptyUserAnswers
-    .set(ManufacturedPlasticPackagingWeightPage, 7L).get
-    .set(ImportedPlasticPackagingWeightPage, 5L).get
+  lazy val directlyExportedComponentsRoute = routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
 
-  "ExportedPlasticPackagingWeight Controller" - {
+  "DirectlyExportedComponents Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
 
       running(application) {
-        val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, directlyExportedComponentsRoute)
+
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ExportedPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, totalPlastic)(request, messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(form, NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = answersWithPreset.set(ExportedPlasticPackagingWeightPage, validAnswer).success.value
+      val userAnswers = answersWithPreset.set(DirectlyExportedComponentsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, directlyExportedComponentsRoute)
 
-        val view = application.injector.instanceOf[ExportedPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, totalPlastic)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
@@ -100,8 +99,8 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, exportedPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
+          FakeRequest(POST, directlyExportedComponentsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -116,12 +115,12 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, exportedPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, directlyExportedComponentsRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[ExportedPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 
         val result = route(application, request).value
 
@@ -135,7 +134,7 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, exportedPlasticPackagingWeightRoute)
+        val request = FakeRequest(GET, directlyExportedComponentsRoute)
 
         val result = route(application, request).value
 
@@ -150,13 +149,12 @@ class ExportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, exportedPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
+          FakeRequest(POST, directlyExportedComponentsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }

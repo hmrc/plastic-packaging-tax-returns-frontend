@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HumanMedicinesPlasticPackagingWeightPage
+import pages.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,15 +40,18 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer = 0L
+  val exportedAmount = 8L
 
   lazy val humanMedicinesPlasticPackagingWeightRoute =
     routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
+  val userAnswersWithExportAmount = userAnswers.set(ExportedPlasticPackagingWeightPage, value = exportedAmount).success.value
+
   "HumanMedicinesPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswers.set(HumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = userAnswersWithExportAmount.set(HumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -60,7 +63,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
         val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(exportedAmount, form.fill(validAnswer), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -68,7 +71,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(HumanMedicinesPlasticPackagingWeightPage,
+      val ans = userAnswersWithExportAmount.set(HumanMedicinesPlasticPackagingWeightPage,
         validAnswer
       ).success.value
 
@@ -82,7 +85,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(exportedAmount, form.fill(validAnswer), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -96,7 +99,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(userAnswersWithExportAmount))
           .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector)
           )
@@ -116,7 +119,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithExportAmount)).build()
 
       running(application) {
         val request =
@@ -130,7 +133,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(exportedAmount, boundForm, NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }

@@ -14,50 +14,41 @@
  * limitations under the License.
  *@
 
-@import components.SectionHeader
-@import viewmodels.InputWidth._
+@import components._
+@import viewmodels._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={
-<p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.1")</p>
-<p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.2")</p>
-
+@paragraphContent = {
+    @paragraphBody(messages("directlyExportedComponents.paragraph.1"))
+    @paragraphBody(messages("directlyExportedComponents.paragraph.2"))
 }
 
-@hintContent = {
-    @paragraphContent
-    <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
-}
-
-@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic))) {
+@layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.exported.plastic"))
 
-    @formHelper(action = routes.ExportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukInput(
-            InputViewModel(
+        @govukRadios(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic)).asPageHeading()
-            )
-            .asNumeric()
-            .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
-            .withSuffix(PrefixOrSuffix(content = "kg"))
+                legend = LegendViewModel(messages("directlyExportedComponents.heading", totalPlastic)).asPageHeading()
+            ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(

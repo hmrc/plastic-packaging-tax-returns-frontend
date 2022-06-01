@@ -16,10 +16,10 @@
 
 package forms
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class ExportedPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours {
+class ExportedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
   val form = new ExportedPlasticPackagingWeightFormProvider()()
 
@@ -28,31 +28,42 @@ class ExportedPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
     val fieldName = "value"
 
     val minimum = 0
-    val maximum = 9999999
+    val maximum = 99999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
-    behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
-
-    behave like intField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName, "exportedPlasticPackagingWeight.error.nonNumeric"),
-                         wholeNumberError =
-                           FormError(fieldName, "exportedPlasticPackagingWeight.error.wholeNumber")
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validDataGenerator
     )
 
-    behave like intFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "exportedPlasticPackagingWeight.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError  = FormError(fieldName, "exportedPlasticPackagingWeight.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "exportedPlasticPackagingWeight.error.wholeNumber")
     )
 
+    behave like longFieldWithMinimum(form,
+      fieldName,
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "exportedPlasticPackagingWeight.error.outOfRange.low",
+        Seq(minimum)
+      )
+    )
+
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "exportedPlasticPackagingWeight.error.outOfRange.high",
+        Seq(maximum)
+      )
+    )
     behave like mandatoryField(
       form,
       fieldName,

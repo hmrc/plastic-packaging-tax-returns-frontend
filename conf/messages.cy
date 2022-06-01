@@ -20,7 +20,9 @@ site.yes = Iawn
 site.continue = Cadw ac yn eich blaen
 site.change = Newid
 
+return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
+caption.exported.plastic = Exported plastic packaging
 return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
@@ -137,6 +139,28 @@ amend.confirmation.paragraph.1 =This may take up to 24 hours to show on your Pla
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
+directlyExportedComponents.title = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.heading = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.checkYourAnswersLabel = Exported plastic packaging
+directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
+directlyExportedComponents.change.hidden = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
+directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
+directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you'll need to pay tax on them.
+
+exportedPlasticPackagingWeight.title = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.heading = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.checkYourAnswersLabel = Weight of exported plastic packaging
+exportedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+exportedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+exportedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+exportedPlasticPackagingWeight.error.spaces = Weight must not include spaces
+exportedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+exportedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+exportedPlasticPackagingWeight.change.hidden = How much of your {0} kg of finished plastic packaging components did you export?
+exportedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+exportedPlasticPackagingWeight.paragraph.line.1 = Only include plastic packaging that has been exported by you, or on your behalf.
+exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export will show as a deduction on your tax calculation.
+
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.caption = Total plastic packaging
@@ -204,6 +228,20 @@ timeoutDialog.messageSuffix  = Bydd eich atebion yn cael eu cadw.
 timeoutDialog.keepAlive.text  = Aros wedi mewngofnodi
 timeoutDialog.signout.text  = Allgofnodi
 
+site.back  = Yn ôl
+site.back.hiddenText  = i’r dudalen flaenorol
+site.backToGovUk  = Yn ôl i GOV.UK
+site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.acceptAndSend  = Derbyn ac anfon
+site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
+site.error.summary.title  = Mae problem wedi codi
+site.link.change  = Newid
+site.link.change.hidden  = Newid {0}
+site.link.remove  = Tynnu
+site.link.remove.hidden  = Tynnu {0} o’r rhestr
+site.button.continue  = Yn eich blaen
+site.button.tryAgain  = Rhowch gynnig arall arni
+
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
 agents.client.identifier.empty.error=Enter your client’s Plastic Packaging Tax registration number
@@ -219,3 +257,23 @@ confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label = Weight o
 confirmPlasticPackagingTotal.importedPlasticPackaging.label = Imported plastic packaging
 confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of imported plastic packaging
 confirmPlasticPackagingTotal.total.label = Plastic packaging total
+
+humanMedicinesPlasticPackaging.caption = Exported plastic packaging
+humanMedicinesPlasticPackaging.heading = Were any of the {0} of finished plastic packaging components that you exported used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
+humanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
+humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
+humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
+humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
+
+humanMedicinesPlasticPackagingWeight.heading = How much of your exported {0} of finished plastic packaging components were used for the immediate packaging of licenced human medicines?
+humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Humans medicines packaging
+humanMedicinesPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+humanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+humanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+humanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+humanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+humanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+humanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
+humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?

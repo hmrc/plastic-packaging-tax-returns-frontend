@@ -17,6 +17,8 @@
 @import models.returns.TaxReturnObligation
 @import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
+@import viewmodels._
+@import components._
 
 @this(
     layout: templates.Layout,
@@ -24,14 +26,14 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: SectionHeader
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs))) {
 
-    @sectionHeader(taxReturn)
+    @sectionHeader(messages("humanMedicinesPlasticPackaging.caption"))
 
     @formHelper(action = routes.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -42,10 +44,11 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("humanMedicinesPlasticPackagingWeight.heading")).asPageHeading()
+                label = LabelViewModel(messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("humanMedicinesPlasticPackagingWeight.hint"))))
         )
 
         @govukButton(

@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.HumanMedicinesPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -30,7 +31,7 @@ object HumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
     answers.get(HumanMedicinesPlasticPackagingWeightPage).map {
       answer =>
         SummaryListRowViewModel(key = "humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
+          value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel(
               "site.change",

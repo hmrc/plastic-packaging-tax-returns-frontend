@@ -18,14 +18,14 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
-class HumanMedicinesPlasticPackagingWeightPageSpec extends PageBehaviours {
+class HumanMedicinesPlasticPackagingPageSpec extends PageBehaviours {
 
-  "HumanMedicinesPlasticPackagingWeightPage" - {
+  "HumanMedicinesPlasticPackagingPage" - {
 
-    beRetrievable[Long](HumanMedicinesPlasticPackagingWeightPage)
+    beRetrievable[Boolean](HumanMedicinesPlasticPackagingPage)
 
-    beSettable[Long](HumanMedicinesPlasticPackagingWeightPage)
+    beSettable[Boolean](HumanMedicinesPlasticPackagingPage)
 
-    beRemovable[Long](HumanMedicinesPlasticPackagingWeightPage)
+    beRemovable[Boolean](HumanMedicinesPlasticPackagingPage)
   }
 }
