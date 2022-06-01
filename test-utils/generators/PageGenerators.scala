@@ -18,6 +18,8 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
+import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
 
 trait PageGenerators {
 

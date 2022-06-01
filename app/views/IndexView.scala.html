@@ -167,14 +167,14 @@
 @returnsLink = @{
     obligations.flatMap { obligations =>
         if(obligations.displaySubmitReturnsLink) {
-            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = routes.StartYourReturnController.onPageLoad(NormalMode)))
+            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode)))
         } else {
             None
         }
     }
 }
 
-@viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = routes.SubmittedReturnsController.onPageLoad)}
+@viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)}
 
 @layout(
     pageTitle    = titleNoForm(messages("account.homePage.title")),

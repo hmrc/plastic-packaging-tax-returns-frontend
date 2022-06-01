@@ -16,23 +16,20 @@
 
 package controllers
 
-import base.SpecBase
-import connectors.{CacheConnector, TaxReturnsConnector}
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
+import base.{MockObligationsConnector, SpecBase}
+import connectors.{CacheConnector, ObligationsConnector, TaxReturnsConnector}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when, reset}
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
-import views.html.ViewReturnSummaryView
+import views.html.amends.ViewReturnSummaryView
 
 import scala.concurrent.Future
-import connectors.ObligationsConnector
-import models.returns.TaxReturnObligation
-import base.MockObligationsConnector
 
 class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
 
@@ -63,7 +60,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
 
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)
 
-        val request = FakeRequest(routes.ViewReturnSummaryController.onPageLoad("00XX"))
+        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("00XX"))
 
         val result = route(application, request).value
 
@@ -85,7 +82,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
           .build()
 
         running(application) {
-          val request = FakeRequest(routes.ViewReturnSummaryController.onPageLoad("MALFORMED"))
+          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("MALFORMED"))
 
           val ex = intercept[Exception](await(route(application, request).value))
           ex.getMessage mustBe "Period key 'MALFORMED' is not allowed."

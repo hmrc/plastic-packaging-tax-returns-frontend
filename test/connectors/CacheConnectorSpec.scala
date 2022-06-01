@@ -25,7 +25,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.concurrent.ScalaFutures
-import pages.AmendAreYouSurePage
+import pages.amends.AmendAreYouSurePage
 import uk.gov.hmrc.http.HttpClient
 import java.time.LocalDateTime
 import scala.concurrent.Future
