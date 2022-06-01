@@ -29,7 +29,8 @@ class HumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mapping
                      "humanMedicinesPlasticPackagingWeight.error.nonNumeric",
         "humanMedicinesPlasticPackagingWeight.error.spaces"
       )
-        .verifying(inRange(0, 99999999999L, "humanMedicinesPlasticPackagingWeight.error.outOfRange"))
+        .verifying(minimumValue(0L, "humanMedicinesPlasticPackagingWeight.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "humanMedicinesPlasticPackagingWeight.error.outOfRange.high"))
     )
 
 }
