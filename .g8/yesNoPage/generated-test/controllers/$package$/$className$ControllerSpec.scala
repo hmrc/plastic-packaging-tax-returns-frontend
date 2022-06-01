@@ -1,5 +1,6 @@
 package controllers.$package$
 
+import base.SpecBase
 import connectors.CacheConnector
 import forms.$package$.$className$FormProvider
 import models.{NormalMode, UserAnswers}
