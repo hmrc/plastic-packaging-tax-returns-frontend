@@ -28,10 +28,9 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers._
-import viewmodels.checkAnswers.amends.{AmendDirectExportPlasticPackagingSummary, AmendHumanMedicinePlasticPackagingSummary, AmendImportedPlasticPackagingSummary, AmendManufacturedPlasticPackagingSummary, AmendRecycledPlasticPackagingSummary}
+import viewmodels.checkAnswers.amends._
 import viewmodels.govuk.summarylist._
-import views.html.CheckYourAnswersView
+import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -35,7 +35,7 @@
 
     @govukSummaryList(list)
 
-    @formHelper(action = routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
         @govukButton(
             ButtonViewModel(messages("site.continue.confirm"))

@@ -45,7 +45,7 @@
 
     @sectionHeader(obligation)
 
-    @formHelper(action = routes.AmendImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

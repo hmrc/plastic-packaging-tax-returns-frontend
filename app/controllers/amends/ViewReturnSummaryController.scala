@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
-import views.html.ViewReturnSummaryView
+import views.html.amends.ViewReturnSummaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -84,7 +84,7 @@ class Navigator @Inject() () {
   private def amendAreYouSureRoute(answers: UserAnswers): Call =
     (answers.get(AmendAreYouSurePage), answers.get(AmendSelectedPeriodKey)) match {
       case (Some(true), _)  => controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-      case (Some(false), Some(key)) => routes.ViewReturnSummaryController.onPageLoad(key)
+      case (Some(false), Some(key)) => controllers.amends.routes.ViewReturnSummaryController.onPageLoad(key)
       case _        => throw new Exception("Unable to navigate to page")
     }
 

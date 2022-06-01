@@ -30,7 +30,7 @@ POST        /returns-check-your-answers                          controllers.Ret
 
 GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()
 
-GET        /viewReturnSummary/:periodKey                 controllers.ViewReturnSummaryController.onPageLoad(periodKey: String)
+GET        /viewReturnSummary/:periodKey                 controllers.amends.ViewReturnSummaryController.onPageLoad(periodKey: String)
 
 GET        /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit(mode: Mode = NormalMode)

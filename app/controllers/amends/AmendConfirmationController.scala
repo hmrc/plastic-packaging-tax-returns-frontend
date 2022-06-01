@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AmendConfirmation
+import views.html.amends.AmendConfirmation
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
