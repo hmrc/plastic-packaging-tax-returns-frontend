@@ -46,14 +46,23 @@ class HumanMedicinesPlasticPackagingWeightFormProviderSpec extends LongFieldBeha
                            )
     )
 
-    behave like longFieldWithRange(form,
+    behave like longFieldWithMinimum(form,
                                   fieldName,
                                   minimum = minimum,
+                                  expectedError = FormError(
+                                    fieldName,
+                                    "humanMedicinesPlasticPackagingWeight.error.outOfRange.low",
+                                    Seq(minimum)
+                                  )
+    )
+
+    behave like longFieldWithMaximum(form,
+                                  fieldName,
                                   maximum = maximum,
                                   expectedError = FormError(
                                     fieldName,
-                                    "humanMedicinesPlasticPackagingWeight.error.outOfRange",
-                                    Seq(minimum, maximum)
+                                    "humanMedicinesPlasticPackagingWeight.error.outOfRange.high",
+                                    Seq(maximum)
                                   )
     )
 
