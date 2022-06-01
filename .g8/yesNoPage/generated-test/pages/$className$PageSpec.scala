@@ -1,6 +1,7 @@
-package pages
+package pages.$package$
 
 import pages.behaviours.PageBehaviours
+import pages.$package$.$className$Page
 
 class $className$PageSpec extends PageBehaviours {
 

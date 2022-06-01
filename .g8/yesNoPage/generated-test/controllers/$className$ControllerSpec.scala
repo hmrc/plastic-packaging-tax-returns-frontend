@@ -1,7 +1,7 @@
-package controllers
+package controllers.$package$
 
 import base.SpecBase
-import forms.$className$FormProvider
+import forms.$package$.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -24,7 +24,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new $className$FormProvider()
   val form = formProvider()
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val $className;format="decap"$Route = controllers.$package$.routes.$className$Controller.onPageLoad(NormalMode).url
 
   "$className$ Controller" - {
 
