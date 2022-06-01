@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package forms.amends
 
+import forms.AmendImportedPlasticPackagingFormProvider
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
 
-class AmendRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
+class AmendImportedPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
 
-  val form = new AmendRecycledPlasticPackagingFormProvider()()
+  val form = new AmendImportedPlasticPackagingFormProvider()()
 
   ".value" - {
 
@@ -37,9 +38,9 @@ class AmendRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
     behave like intField(form,
                          fieldName,
                          nonNumericError =
-                           FormError(fieldName, "amendRecycledPlasticPackaging.error.nonNumeric"),
+                           FormError(fieldName, "amendImportedPlasticPackaging.error.nonNumeric"),
                          wholeNumberError =
-                           FormError(fieldName, "amendRecycledPlasticPackaging.error.wholeNumber")
+                           FormError(fieldName, "amendImportedPlasticPackaging.error.wholeNumber")
     )
 
     behave like intFieldWithRange(form,
@@ -48,7 +49,7 @@ class AmendRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
                                   maximum = maximum,
                                   expectedError =
                                     FormError(fieldName,
-                                              "amendRecycledPlasticPackaging.error.outOfRange",
+                                              "amendImportedPlasticPackaging.error.outOfRange",
                                               Seq(minimum, maximum)
                                     )
     )
@@ -56,7 +57,7 @@ class AmendRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "amendRecycledPlasticPackaging.error.required")
+      requiredError = FormError(fieldName, "amendImportedPlasticPackaging.error.required")
     )
   }
 }

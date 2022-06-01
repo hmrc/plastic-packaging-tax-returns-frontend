@@ -45,7 +45,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.SubmittedReturnsController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -86,7 +86,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.SubmittedReturnsController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
 
         val result = route(application, request).value
 

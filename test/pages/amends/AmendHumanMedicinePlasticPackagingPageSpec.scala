@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages.amends
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import pages.behaviours.PageBehaviours
 
-class AmendAreYouSureFormProviderSpec extends BooleanFieldBehaviours {
+class AmendHumanMedicinePlasticPackagingPageSpec extends PageBehaviours {
 
-  val requiredKey = "amendAreYouSure.error.required"
-  val invalidKey  = "error.boolean"
+  "AmendHumanMedicinePlasticPackagingPage" - {
 
-  val form = new AmendAreYouSureFormProvider()()
+    beRetrievable[Int](AmendHumanMedicinePlasticPackagingPage)
 
-  ".value" - {
+    beSettable[Int](AmendHumanMedicinePlasticPackagingPage)
 
-    val fieldName = "value"
-
-    behave like booleanField(form, fieldName, invalidError = FormError(fieldName, invalidKey))
-
-    behave like mandatoryField(form, fieldName, requiredError = FormError(fieldName, requiredKey))
+    beRemovable[Int](AmendHumanMedicinePlasticPackagingPage)
   }
 }

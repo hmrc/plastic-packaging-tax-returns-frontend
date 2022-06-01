@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package forms.amends
 
+import forms.AmendManufacturedPlasticPackagingFormProvider
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
 
-class AmendHumanMedicinePlasticPackagingFormProviderSpec extends IntFieldBehaviours {
+class AmendManufacturedPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
 
-  val form = new AmendHumanMedicinePlasticPackagingFormProvider()()
+  val form = new AmendManufacturedPlasticPackagingFormProvider()()
 
   ".value" - {
 
@@ -38,11 +39,11 @@ class AmendHumanMedicinePlasticPackagingFormProviderSpec extends IntFieldBehavio
                          fieldName,
                          nonNumericError =
                            FormError(fieldName,
-                                     "amendHumanMedicinePlasticPackaging.error.nonNumeric"
+                                     "amendManufacturedPlasticPackaging.error.nonNumeric"
                            ),
                          wholeNumberError =
                            FormError(fieldName,
-                                     "amendHumanMedicinePlasticPackaging.error.wholeNumber"
+                                     "amendManufacturedPlasticPackaging.error.wholeNumber"
                            )
     )
 
@@ -52,7 +53,7 @@ class AmendHumanMedicinePlasticPackagingFormProviderSpec extends IntFieldBehavio
                                   maximum = maximum,
                                   expectedError =
                                     FormError(fieldName,
-                                              "amendHumanMedicinePlasticPackaging.error.outOfRange",
+                                              "amendManufacturedPlasticPackaging.error.outOfRange",
                                               Seq(minimum, maximum)
                                     )
     )
@@ -60,7 +61,7 @@ class AmendHumanMedicinePlasticPackagingFormProviderSpec extends IntFieldBehavio
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "amendHumanMedicinePlasticPackaging.error.required")
+      requiredError = FormError(fieldName, "amendManufacturedPlasticPackaging.error.required")
     )
   }
 }

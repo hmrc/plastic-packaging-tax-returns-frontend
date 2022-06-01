@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.amends
 
-import pages.amends.AmendDirectExportPlasticPackagingPage
 import pages.behaviours.PageBehaviours
 
-class AmendDirectExportPlasticPackagingPageSpec extends PageBehaviours {
+class AmendImportedPlasticPackagingPageSpec extends PageBehaviours {
 
-  "AmendDirectExportPlasticPackagingPage" - {
+  "AmendImportedPlasticPackagingPage" - {
 
-    beRetrievable[Int](AmendDirectExportPlasticPackagingPage)
+    beRetrievable[Int](AmendImportedPlasticPackagingPage)
 
-    beSettable[Int](AmendDirectExportPlasticPackagingPage)
+    beSettable[Int](AmendImportedPlasticPackagingPage)
 
-    beRemovable[Int](AmendDirectExportPlasticPackagingPage)
+    beRemovable[Int](AmendImportedPlasticPackagingPage)
   }
 }

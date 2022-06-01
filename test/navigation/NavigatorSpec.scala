@@ -42,7 +42,7 @@ start-date
 
 class NavigatorSpec extends SpecBase {
 
-  val navigator = new Navigator
+  val navigator = new Navigator(amends = new AmendsJourneyNavigator, returns = new ReturnsJourneyNavigator)
 
   "Navigator" - {
 
@@ -228,7 +228,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(AmendAreYouSurePage,
               NormalMode,
               answers.get
-            ) mustBe routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+            ) mustBe controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
           }
 
@@ -239,7 +239,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(AmendAreYouSurePage,
               NormalMode,
               answers.get
-            ) mustBe (routes.ViewReturnSummaryController.onPageLoad("TEST"))
+            ) mustBe (controllers.amends.routes.ViewReturnSummaryController.onPageLoad("TEST"))
           }
 
         }
@@ -249,7 +249,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendManufacturedPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
 
         }
 
@@ -258,7 +258,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendImportedPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
 
         }
 
@@ -267,7 +267,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendHumanMedicinePlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
 
         }
 
@@ -276,7 +276,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendDirectExportPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
 
         }
 
@@ -285,7 +285,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendRecycledPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe routes.CheckYourAnswersController.onPageLoad
+          ) mustBe controllers.amends.routes.CheckYourAnswersController.onPageLoad
 
         }
       }

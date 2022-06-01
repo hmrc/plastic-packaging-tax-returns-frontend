@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package pages
+package pages.amends
 
-import pages.amends.AmendManufacturedPlasticPackagingPage
 import pages.behaviours.PageBehaviours
 
 class AmendManufacturedPlasticPackagingPageSpec extends PageBehaviours {
