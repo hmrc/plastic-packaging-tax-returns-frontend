@@ -9,8 +9,8 @@ echo "" >> ../conf/app.routes
 echo "GET        /$className;format="decap"$                        controllers.$package$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.routes
 echo "POST       /$className;format="decap"$                        controllers.$package$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.routes
 
-echo "GET        /change$className$                  controllers.$package$$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /change$className$                  controllers.$package$$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /change$className$                  controllers.$package$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /change$className$                  controllers.$package$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
