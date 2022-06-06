@@ -48,7 +48,7 @@ class ExportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPe
   private def createView: Html =
     page(form, NormalMode, totalPlastic)(request, messages)
 
-  "DirectlyExportedComponentsView" should {
+  "ExportedPlasticPackagingWeightView" should {
     val view = createView
 
     "have a title" in {
