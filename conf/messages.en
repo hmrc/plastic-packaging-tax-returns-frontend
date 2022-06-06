@@ -404,3 +404,13 @@ humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if 
 humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
 humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
 humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
+
+exportedRecycledPlasticPackaging.title = Did any of your {0}kg exported finished plastic packaging components contain 30% or more recycled plastic?
+exportedRecycledPlasticPackaging.heading = Did any of your {0}kg exported finished plastic packaging components contain 30% or more recycled plastic?
+exportedRecycledPlasticPackaging.sectionHeader = Exported plastic packaging
+exportedRecycledPlasticPackaging.hint1 = "You will not be charged tax on these but you must still tell us about them.
+exportedRecycledPlasticPackaging.hint2 = Find out {0}."
+exportedRecycledPlasticPackaging.hint2.link = what we mean by recycled plastic packaging
+exportedRecycledPlasticPackaging.checkYourAnswersLabel = exportedRecycledPlasticPackaging
+exportedRecycledPlasticPackaging.error.required = Select yes if exportedRecycledPlasticPackaging
+exportedRecycledPlasticPackaging.change.hidden = ExportedRecycledPlasticPackaging

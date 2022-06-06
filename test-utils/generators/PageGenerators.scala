@@ -23,6 +23,9 @@ import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPa
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingPage: Arbitrary[ExportedRecycledPlasticPackagingPage.type] =
+    Arbitrary(ExportedRecycledPlasticPackagingPage)
+
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[HumanMedicinesPlasticPackagingPage.type] =
     Arbitrary(HumanMedicinesPlasticPackagingPage)
 
