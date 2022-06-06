@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
 @import components.{SectionHeader, paragraphBody, paragraph, Link}
 
 @this(
@@ -25,7 +26,8 @@
     sectionHeader: SectionHeader,
     paragraphBody: paragraphBody,
     paragraph: paragraph,
-    link: Link
+    link: Link,
+    config: FrontendAppConfig
 )
 
 @(form: Form[_], mode: Mode, exportedWeight: Long)(implicit request: Request[_], messages: Messages)
@@ -40,7 +42,7 @@
 
 @paragraphContent = {
     @paragraphBody(messages("exportedRecycledPlasticPackaging.hint1"))
-    @paragraph(messages("exportedRecycledPlasticPackaging.hint2", pptRecycledPlasticGuidanceLink))
+    @paragraph(content = Html(messages("exportedRecycledPlasticPackaging.hint2", pptRecycledPlasticGuidanceLink)))
 }
 
 @layout(pageTitle = title(form, messages("exportedRecycledPlasticPackaging.title", exportedWeight.toString), Some(messages("return.title.tail")))) {
