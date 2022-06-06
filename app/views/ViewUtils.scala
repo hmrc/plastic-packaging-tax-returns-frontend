@@ -44,12 +44,14 @@ object ViewUtils {
   def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
     messages(s"month.$monthNumber")
 
-  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
+  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
+    // TODO move to Obligation
     messages("return.quarter",
       getMonthName(from.getMonthValue),
       getMonthName(to.getMonthValue),
       to.getYear.toString
     )
+  }
 
   def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
     displayReturnQuarter(obligation.fromDate, obligation.toDate)

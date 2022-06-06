@@ -20,6 +20,23 @@ site.yes = Iawn
 site.continue = Cadw ac yn eich blaen
 site.change = Newid
 
+date.day = Day
+date.month = Month
+date.year = Year
+
+month.1 = January
+month.2 = February
+month.3 = March
+month.4 = April
+month.5 = May
+month.6 = June
+month.7 = July
+month.8 = August
+month.9 = September
+month.10 = October
+month.11 = November
+month.12 = December
+
 return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
@@ -277,3 +294,9 @@ humanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg o
 humanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
 humanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
 humanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+
+submit-return.check-your-answers.heading = Check your answers before sending your tax return
+submit-return.check-your-answers.section1.heading = Business details
+submit-return.check-your-answers.section1.row1 = Plastic Packaging Tax registration number
+submit-return.check-your-answers.section1.row2 = Return period
+submit-return.check-your-answers.section2.heading = Total plastic packaging

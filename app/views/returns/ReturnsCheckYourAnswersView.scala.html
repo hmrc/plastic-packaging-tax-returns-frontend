@@ -15,10 +15,10 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
 @import controllers.helpers.TaxLiability
 @import components.paragraphBody
 @import viewmodels.{PrintBigDecimal, PrintLong}
+@import viewmodels.InputWidth
 
 @this(
     layout: templates.Layout,
@@ -27,10 +27,9 @@
     formHelper: FormWithCSRF,
     govukTable: GovukTable,
     paragraphBody: paragraphBody,
-    sectionHeader: ReturnQuarterHeading
 )
 
-@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation, pptReference: String)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
@@ -56,12 +55,29 @@
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
 }
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@summaryRow(shortKey: String, value: String) = @{
+    val key_root = "submit-return.check-your-answers."
+    SummaryListRow(key = Key(key_root + shortKey, classes = InputWidth.ThreeQuarters.toString), value = Value(value))
+}
 
-    @sectionHeader(taxReturn)
+@sectionHeading(text: String)(implicit messages: Messages) = {
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-7">@messages(text)</h2>
+}
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+@layout(pageTitle = titleNoForm(messages("submit-return.check-your-answers.heading"))) {
 
+    <h1 class="govuk-heading-xl">@messages("submit-return.check-your-answers.heading")</h1>
+
+    @sectionHeading("submit-return.check-your-answers.section1.heading")
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            summaryRow("section1.row1", pptReference),
+            summaryRow("section1.row2", taxReturn.toReturnQuarter)
+        ),
+        classes = "govuk-!-margin-bottom-9"
+    ))
+
+    @sectionHeading("submit-return.check-your-answers.section2.heading")
     @govukSummaryList(list)
 
     @govukTable(Table(

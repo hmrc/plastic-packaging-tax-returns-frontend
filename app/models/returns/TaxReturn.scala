@@ -18,7 +18,9 @@ package models.returns
 
 import models.returns.ReturnType.ReturnType
 import org.joda.time.{DateTime, DateTimeZone}
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import views.ViewUtils
 
 import java.time.LocalDate
 
@@ -27,7 +29,11 @@ final case class TaxReturnObligation(
   toDate: LocalDate,
   dueDate: LocalDate,
   periodKey: String
-)
+) {
+  def toReturnQuarter(implicit messages: Messages): String = {
+    ViewUtils.displayReturnQuarter(fromDate, toDate)
+  }
+}
 
 object TaxReturnObligation {
   implicit val format: OFormat[TaxReturnObligation] = Json.format[TaxReturnObligation]

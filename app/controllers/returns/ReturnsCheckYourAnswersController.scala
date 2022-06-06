@@ -77,7 +77,7 @@ class ReturnsCheckYourAnswersController @Inject()(
           answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation)))
+          case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation, request.pptReference)))
           case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
