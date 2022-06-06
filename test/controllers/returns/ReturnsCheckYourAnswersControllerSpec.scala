@@ -17,52 +17,53 @@
 package controllers.returns
 
 import base.SpecBase
-import connectors.{ServiceError, TaxReturnsConnector}
+import connectors.TaxReturnsConnector
 import controllers.helpers.TaxLiability
-import models.NormalMode
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{eq => eqq, _}
 import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.MockitoSugar.mock
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.Future
 
-class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfterEach {
 
-  def setupMock: OngoingStubbing[Future[Either[ServiceError, Option[String]]]] = {
+  private val mockView = mock[ReturnsCheckYourAnswersView]
 
-    reset(mockSessionRepo, mockTaxReturnConnector)
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(
+      mockSessionRepo,
+      mockTaxReturnConnector,
+      mockView
+    )
 
-    when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
-
-    when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
-
+    when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
   }
 
   "Returns Check Your Answers Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[ReturnsCheckYourAnswersView].toInstance(mockView))
+        .build()
 
       running(application) {
-
-        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
+        status(result) mustEqual OK
 
-        val view = application.injector.instanceOf[ReturnsCheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
         val liability = TaxLiability()
-        val mode = NormalMode
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(mode, list, liability, taxReturnOb)(request, messages(application)).toString
-
+        verify(mockView).apply(any(), eqq(list), eqq(liability), eqq(taxReturnOb), eqq("123"))(any(), any())
       }
     }
 
@@ -72,7 +73,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
       running(application) {
 
-        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -83,7 +84,8 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
     "must cache payment ref and redirect for a POST" in {
 
-      setupMock
+      when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
+      when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[SessionRepository].toInstance(mockSessionRepo),
