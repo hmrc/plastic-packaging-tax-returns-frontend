@@ -139,3 +139,8 @@ GET        /nonExportedHumanMedicinesPlasticPackaging                        con
 POST       /nonExportedHumanMedicinesPlasticPackaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /nonExportedHumanMedicinesPlasticPackagingWeight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /nonExportedHumanMedicinesPlasticPackagingWeight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /changeNonExportedHumanMedicinesPlasticPackagingWeight                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeNonExportedHumanMedicinesPlasticPackagingWeight                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
