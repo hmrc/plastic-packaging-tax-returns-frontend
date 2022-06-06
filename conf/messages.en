@@ -404,3 +404,9 @@ humanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if 
 humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPackaging
 humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
 humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
+
+nonExportedHumanMedicinesPlasticPackaging.title = nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.heading = nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.checkYourAnswersLabel = nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.change.hidden = NonExportedHumanMedicinesPlasticPackaging

@@ -134,3 +134,8 @@ GET        /exported-medicines-packaging                        controllers.retu
 POST       /exported-medicines-packaging                        controllers.returns.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
 GET        /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /nonExportedHumanMedicinesPlasticPackaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /nonExportedHumanMedicinesPlasticPackaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
