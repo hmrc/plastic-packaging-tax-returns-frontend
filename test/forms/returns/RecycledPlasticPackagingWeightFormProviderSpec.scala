@@ -16,10 +16,10 @@
 
 package forms.returns
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours {
+class RecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
   val form = new RecycledPlasticPackagingWeightFormProvider()()
 
@@ -28,13 +28,13 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
     val fieldName = "value"
 
     val minimum = 0
-    val maximum = 9999999
+    val maximum = 99999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like intField(form,
+    behave like longField(form,
                          fieldName,
                          nonNumericError =
                            FormError(fieldName, "recycledPlasticPackagingWeight.error.nonNumeric"),
@@ -42,7 +42,7 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
                            FormError(fieldName, "recycledPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like intFieldWithRange(form,
+    behave like longFieldWithRange(form,
                                   fieldName,
                                   minimum = minimum,
                                   maximum = maximum,

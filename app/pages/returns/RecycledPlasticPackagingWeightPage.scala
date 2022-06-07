@@ -19,7 +19,7 @@ package pages.returns
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object RecycledPlasticPackagingWeightPage extends QuestionPage[Int] {
+case object RecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ toString
 

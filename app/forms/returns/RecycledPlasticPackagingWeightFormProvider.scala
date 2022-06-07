@@ -23,13 +23,13 @@ import javax.inject.Inject
 
 class RecycledPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Int] =
+  def apply(): Form[Long] =
     Form(
-      "value" -> int("recycledPlasticPackagingWeight.error.required",
-                     "recycledPlasticPackagingWeight.error.wholeNumber",
-                     "recycledPlasticPackagingWeight.error.nonNumeric"
-      )
-        .verifying(inRange(0, 9999999, "recycledPlasticPackagingWeight.error.outOfRange"))
+      "value" -> long(
+        "recycledPlasticPackagingWeight.error.required",
+        "recycledPlasticPackagingWeight.error.wholeNumber",
+        "recycledPlasticPackagingWeight.error.nonNumeric",
+        "recycledPlasticPackagingWeight.error.spaces"
+      ).verifying(inRange(0, 99999999999L, "recycledPlasticPackagingWeight.error.outOfRange"))
     )
-
 }

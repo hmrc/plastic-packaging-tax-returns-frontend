@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+package pages.returns
 
+import models.UserAnswers
+import pages.ExportedRecycledPlasticPackagingPage
 import pages.behaviours.PageBehaviours
 
 class ExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
@@ -27,5 +29,24 @@ class ExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
     beSettable[Boolean](ExportedRecycledPlasticPackagingPage)
 
     beRemovable[Boolean](ExportedRecycledPlasticPackagingPage)
+
+    "clean up" - {
+      "must return the same answer" - {
+        "when answer was Yes" in {
+          val answer = UserAnswers("123").set(ExportedRecycledPlasticPackagingPage, true).get
+
+          ExportedRecycledPlasticPackagingPage.cleanup(Some(true), answer).get mustBe answer
+        }
+      }
+
+      "must return a value of zero" - {
+        "when answer is no" in {
+          val answer = UserAnswers("123").set(ExportedRecycledPlasticPackagingPage, false).get
+          val expectedAnswer = answer.copy().set(RecycledPlasticPackagingWeightPage, 0L).get
+
+          ExportedRecycledPlasticPackagingPage.cleanup(Some(false), answer).get mustBe expectedAnswer
+        }
+      }
+    }
   }
 }
