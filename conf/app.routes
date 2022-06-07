@@ -25,7 +25,7 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
 
-GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
 
 GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()

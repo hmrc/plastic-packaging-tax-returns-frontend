@@ -35,7 +35,7 @@
     link: Link
 )
 
-@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation,
+@(list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation,
         pptReference: String, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{

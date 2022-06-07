@@ -22,7 +22,6 @@ import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
-import models.Mode
 import models.requests.DataRequest
 import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -54,12 +53,12 @@ class ReturnsCheckYourAnswersController @Inject()(
   appConfig: FrontendAppConfig
 ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(
-//            CheckYourAnswerManufacturedPlasticPackaging,
+            CheckYourAnswerManufacturedPlasticPackaging,
             CheckYourAnswerForManufacturedPlasticWeight,
             CheckYourAnswerImportedPlasticPackagingSummary,
             CheckYourAnswerImportedPlasticPackagingWeight,
@@ -81,17 +80,17 @@ class ReturnsCheckYourAnswersController @Inject()(
           answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => displayPage(mode, request, list, liability, obligation)
+          case Some(obligation) => displayPage(request, list, liability, obligation)
           case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
     }
 
-  private def displayPage(mode: Mode, request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
+  private def displayPage(request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
     obligation: TaxReturnObligation)(implicit messages: Messages) = {
 
     val creditsAdviceUrl = appConfig.creditsAdviceUrl
-    Future.successful(Ok(view(mode, list, liability, obligation, request.pptReference,
+    Future.successful(Ok(view(list, liability, obligation, request.pptReference,
       creditsAdviceUrl)(request, messages)))
   }
 
