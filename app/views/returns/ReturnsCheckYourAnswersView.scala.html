@@ -71,9 +71,9 @@
     <h2 class="govuk-heading-m">@messages(text)</h2>
 }
 
-@para(shortKey: String) = @{
+@para(shortKey: String, classes: String = "govuk-body") = @{
     val text = messages("submit-return.check-your-answers." + shortKey)
-    paragraphBody(message = text)
+    paragraphBody(message = text, classes=classes)
 }
 
 @bullets(shortKeys: String*) = @{
@@ -141,11 +141,12 @@
     @bullets("credits.line3", "credits.line4")
     @paraLink("credits.line5", "credits.line5.link-text", creditAdviceLnkUrl)
 
-    @sectionHeading("Now send your return")
+    @sectionHeading("submit-return.check-your-answers.now-send.heading")
+    @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
 
     @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
         @govukButton(
-            ButtonViewModel(messages("site.continue.confirm"))
+            ButtonViewModel(messages("submit-return.check-your-answers.now-send.button-text"))
         )
     }
 }

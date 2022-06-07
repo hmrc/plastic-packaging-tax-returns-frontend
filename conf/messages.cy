@@ -308,3 +308,7 @@ submit-return.check-your-answers.credits.line3 = exported
 submit-return.check-your-answers.credits.line4 = converted into different packaging
 submit-return.check-your-answers.credits.line5 = Find out more about {0}.
 submit-return.check-your-answers.credits.line5.link-text = claiming credits (opens in new tab)
+
+submit-return.check-your-answers.now-send.heading = Now send your return
+submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+submit-return.check-your-answers.now-send.button-text = Submit return
