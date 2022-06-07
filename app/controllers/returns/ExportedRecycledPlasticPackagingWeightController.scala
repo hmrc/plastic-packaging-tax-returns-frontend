@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
 import forms.ExportedRecycledPlasticPackagingWeightFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.ExportedRecycledPlasticPackagingWeightPage
@@ -29,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ExportedRecycledPlasticPackagingWeightView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ExportedRecycledPlasticPackagingWeightController @Inject()(

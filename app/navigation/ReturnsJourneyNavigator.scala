@@ -19,7 +19,7 @@ package navigation
 import controllers.returns.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, RecycledPlasticPackagingPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -48,10 +48,12 @@ class ReturnsJourneyNavigator {
       _ => routes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     case DirectlyExportedComponentsPage => directlyExportedComponentsRoute(_, mode = NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
-    case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+    case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.RecycledPlasticPackagingController.onPageLoad(NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
     case ExportedRecycledPlasticPackagingPage => exportedRecycledPlasticPackagingPageRoute(_, mode = NormalMode)
+    case ExportedRecycledPlasticPackagingWeightPage => _ => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+    case RecycledPlasticPackagingPage => recycledPlasticPackagingPageRoute(_, mode = NormalMode)
     case RecycledPlasticPackagingWeightPage => _ => routes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
     case ConvertedPackagingCreditPage => _ => routes.ReturnsCheckYourAnswersController.onPageLoad
   }
@@ -133,14 +135,14 @@ class ReturnsJourneyNavigator {
           routes.ReturnsCheckYourAnswersController.onPageLoad()
         }
         else {
-          routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)
+          routes.RecycledPlasticPackagingController.onPageLoad(mode)
         }
       case _ => throw new Exception("Unable to navigate to page")
     }
 
   private def exportedRecycledPlasticPackagingPageRoute(answers: UserAnswers, mode: Mode): Call =
     answers.get(ExportedRecycledPlasticPackagingPage) match {
-      case Some(true)  => routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(true)  => routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode)
       case Some(false) =>
         if (mode == CheckMode) {
           routes.ReturnsCheckYourAnswersController.onPageLoad()
@@ -151,4 +153,16 @@ class ReturnsJourneyNavigator {
       case _ => throw new Exception("Unable to navigate to page")
     }
 
+  private def recycledPlasticPackagingPageRoute(answers: UserAnswers, mode: Mode): Call =
+    answers.get(RecycledPlasticPackagingPage) match {
+      case Some(true)  => routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(false) =>
+        if (mode == CheckMode) {
+          routes.ReturnsCheckYourAnswersController.onPageLoad()
+        }
+        else {
+          routes.ConvertedPackagingCreditController.onPageLoad(mode)
+        }
+      case _ => throw new Exception("Unable to navigate to page")
+    }
 }

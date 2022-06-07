@@ -34,7 +34,7 @@ object ExportedRecycledPlasticPackagingWeightSummary  {
           key     = "exportedRecycledPlasticPackagingWeight.checkYourAnswersLabel",
           value   = ValueViewModel(answer.toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("exportedRecycledPlasticPackagingWeight.change.hidden"))
           )
         )

@@ -156,7 +156,7 @@ GET        /changeRecycledPlasticPackaging                  controllers.returns.
 POST       /changeRecycledPlasticPackaging                  controllers.returns.RecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /exportedRecycledPlasticPackagingWeight                  controllers.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /exportedRecycledPlasticPackagingWeight                  controllers.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /changeExportedRecycledPlasticPackagingWeight                        controllers.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeExportedRecycledPlasticPackagingWeight                        controllers.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /exportedRecycledPlasticPackagingWeight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /exportedRecycledPlasticPackagingWeight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
