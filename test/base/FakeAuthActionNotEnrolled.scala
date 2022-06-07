@@ -16,7 +16,7 @@
 
 package base
 
-import controllers.actions.AuthAgentAction
+import controllers.actions.AuthCheckAction
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._
@@ -24,7 +24,6 @@ import uk.gov.hmrc.auth.core.Enrolments
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.actions.AuthCheckAction
 
 class FakeAuthActionNotEnrolled @Inject() (bodyParsers: PlayBodyParsers) extends AuthCheckAction {
 

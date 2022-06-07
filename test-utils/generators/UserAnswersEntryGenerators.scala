@@ -41,6 +41,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(ExportedRecycledPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedRecycledPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingUserAnswersEntry: Arbitrary[(HumanMedicinesPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {

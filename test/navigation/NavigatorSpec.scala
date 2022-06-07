@@ -141,7 +141,7 @@ class NavigatorSpec extends SpecBase {
 
         "for the ExportedPlasticPackagingWeightPage" - {
 
-          "navigate to RecycledPlasticPackagingWeightPage" in {
+          "navigate to HumanMedicinesPlasticPackagingController" in {
             val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ExportedPlasticPackagingWeightPage,
@@ -163,14 +163,14 @@ class NavigatorSpec extends SpecBase {
             ) mustBe returnsRoutes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
           }
 
-          "navigate to RecycledPlasticPackagingWeightPage when answer is No" in {
+          "navigate to ExportedRecycledPlasticPackagingPage when answer is No" in {
 
             val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, false)
 
             navigator.nextPage(HumanMedicinesPlasticPackagingPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
 
           }
 
@@ -178,13 +178,13 @@ class NavigatorSpec extends SpecBase {
 
         "for the HumanMedicinesPlasticPackagingWeightPage" - {
 
-          "navigate to RecycledPlasticPackagingWeightPage" in {
+          "navigate to ExportedRecycledPlasticPackagingPage" in {
             val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
 
           }
 
@@ -194,7 +194,7 @@ class NavigatorSpec extends SpecBase {
         "for the RecycledPlasticPackagingWeightPage" - {
 
           "navigate to ConvertedPackagingCreditPage" in {
-            val answers = UserAnswers("id").set(RecycledPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(RecycledPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(RecycledPlasticPackagingWeightPage,
               NormalMode,

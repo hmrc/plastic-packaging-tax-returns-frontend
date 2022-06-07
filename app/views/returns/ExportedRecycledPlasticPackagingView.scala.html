@@ -1,0 +1,73 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import components.{SectionHeader, paragraphBody, paragraph, Link}
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody,
+    paragraph: paragraph,
+    link: Link,
+    config: FrontendAppConfig
+)
+
+@(form: Form[_], mode: Mode, exportedWeight: Long)(implicit request: Request[_], messages: Messages)
+
+@pptRecycledPlasticGuidanceLink = {
+    @link(
+        id = "ppt-recycled-plastic-guidance",
+        text = messages("exportedRecycledPlasticPackaging.hint2.link").trim(),
+        call = Call("GET", "/foo")
+    )
+}
+
+@guidanceLink = {
+    <a href="@config.pptRecycledPlasticGuidanceLink" class="govuk-link" id="govuk-guidance-link" target="_blank">@messages("exportedRecycledPlasticPackaging.hint2.link").trim()</a>.
+}
+
+@paragraphContent = {
+    @paragraphBody(messages("exportedRecycledPlasticPackaging.hint1"))
+    @paragraphBody(messages("exportedRecycledPlasticPackaging.hint2", guidanceLink).trim())
+}
+
+@layout(pageTitle = title(form, messages("exportedRecycledPlasticPackaging.title", exportedWeight.toString), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("exportedRecycledPlasticPackaging.sectionHeader"))
+
+    @formHelper(action = controllers.returns.routes.ExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("exportedRecycledPlasticPackaging.heading", exportedWeight.toString)).asPageHeading()
+            ).withHint(Hint(content = HtmlContent(paragraphContent)))
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}

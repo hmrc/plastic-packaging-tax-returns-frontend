@@ -29,6 +29,9 @@ trait PageGenerators {
   implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingPage.type] =
     Arbitrary(NonExportedHumanMedicinesPlasticPackagingPage)
 
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingPage: Arbitrary[ExportedRecycledPlasticPackagingPage.type] =
+    Arbitrary(ExportedRecycledPlasticPackagingPage)
+
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[HumanMedicinesPlasticPackagingPage.type] =
     Arbitrary(HumanMedicinesPlasticPackagingPage)
 

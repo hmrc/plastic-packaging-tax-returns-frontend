@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package forms.returns
+package forms
+
+import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
 
-import javax.inject.Inject
+class ExportedRecycledPlasticPackagingFormProvider @Inject() extends Mappings {
 
-class RecycledPlasticPackagingWeightFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Long] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> long(
-        "recycledPlasticPackagingWeight.error.required",
-        "recycledPlasticPackagingWeight.error.wholeNumber",
-        "recycledPlasticPackagingWeight.error.nonNumeric",
-        "recycledPlasticPackagingWeight.error.spaces"
-      ).verifying(inRange(0, 99999999999L, "recycledPlasticPackagingWeight.error.outOfRange"))
+      "value" -> boolean("exportedRecycledPlasticPackaging.error.required")
     )
 }

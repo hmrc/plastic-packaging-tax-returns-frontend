@@ -40,7 +40,7 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer: Int = 0
+  val validAnswer: Long = 0L
 
   lazy val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url

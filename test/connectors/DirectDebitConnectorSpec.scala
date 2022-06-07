@@ -19,9 +19,6 @@ package connectors
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import play.api.http.Status.OK
-import play.api.libs.json.Json
-import play.api.test.Helpers.{await, status}
 
 class DirectDebitConnectorSpec extends ConnectorISpec {
 

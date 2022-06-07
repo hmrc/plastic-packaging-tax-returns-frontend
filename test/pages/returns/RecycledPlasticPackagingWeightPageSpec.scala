@@ -22,10 +22,10 @@ class RecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
 
   "RecycledPlasticPackagingWeightPage" - {
 
-    beRetrievable[Int](RecycledPlasticPackagingWeightPage)
+    beRetrievable[Long](RecycledPlasticPackagingWeightPage)
 
-    beSettable[Int](RecycledPlasticPackagingWeightPage)
+    beSettable[Long](RecycledPlasticPackagingWeightPage)
 
-    beRemovable[Int](RecycledPlasticPackagingWeightPage)
+    beRemovable[Long](RecycledPlasticPackagingWeightPage)
   }
 }
