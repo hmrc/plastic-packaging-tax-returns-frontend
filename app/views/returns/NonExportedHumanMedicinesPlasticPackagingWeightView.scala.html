@@ -14,19 +14,26 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+@import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
+@import viewmodels._
+@import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKgs))) {
+
+    @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption"))
 
     @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -37,10 +44,11 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading")).asPageHeading()
+                label = LabelViewModel(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("nonExportedHumanMedicinesPlasticPackagingWeight.hint"))))
         )
 
         @govukButton(

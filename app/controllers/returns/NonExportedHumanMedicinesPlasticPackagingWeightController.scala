@@ -20,8 +20,9 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,6 +46,13 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
   val form = formProvider()
 
+  private def nonExportedAmount(implicit request: DataRequest[_]) = {
+    val total    = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    total - exported
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -53,7 +61,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(nonExportedAmount, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +69,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(nonExportedAmount, formWithErrors, mode))),
 
         value =>
           for {
