@@ -25,6 +25,14 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ExportedRecycledPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedRecycledPlasticPackagingWeightPage.type]
+        value <- arbitrary[Long].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
