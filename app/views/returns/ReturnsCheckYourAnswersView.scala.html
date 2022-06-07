@@ -19,6 +19,9 @@
 @import components.paragraphBody
 @import viewmodels.{PrintBigDecimal, PrintLong}
 @import viewmodels.InputWidth
+@import views.html.components.bulletList
+@import views.html.components.Link
+@import views.html.components.paragraph
 
 @this(
     layout: templates.Layout,
@@ -27,9 +30,13 @@
     formHelper: FormWithCSRF,
     govukTable: GovukTable,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
+    bulletList: bulletList,
+    link: Link
 )
 
-@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation, pptReference: String)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation,
+        pptReference: String, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
@@ -56,12 +63,32 @@
 }
 
 @summaryRow(shortKey: String, value: String) = @{
-    val key_root = "submit-return.check-your-answers."
-    SummaryListRow(key = Key(key_root + shortKey, classes = InputWidth.ThreeQuarters.toString), value = Value(value))
+    val text = messages("submit-return.check-your-answers." + shortKey)
+    SummaryListRow(key = Key(text, classes = InputWidth.ThreeQuarters.toString), value = Value(value))
 }
 
 @sectionHeading(text: String)(implicit messages: Messages) = {
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-7">@messages(text)</h2>
+    <h2 class="govuk-heading-m">@messages(text)</h2>
+}
+
+@para(shortKey: String) = @{
+    val text = messages("submit-return.check-your-answers." + shortKey)
+    paragraphBody(message = text)
+}
+
+@bullets(shortKeys: String*) = @{
+    bulletList(shortKeys.map { shortKey => Html(messages("submit-return.check-your-answers." + shortKey)) })
+}
+
+@paraLink(paraShortKey: String, linkShortKey: String, url: String) = @{
+    def longKey(shortKey: String) = "submit-return.check-your-answers." + shortKey
+    def text(shortKey: String) = messages(longKey(shortKey))
+    paragraph(content = Html(messages(longKey(paraShortKey), link(
+        id = longKey(linkShortKey),
+        text = text(linkShortKey),
+        call = Call("GET", url),
+        newTab = true
+    ))))
 }
 
 @layout(pageTitle = titleNoForm(messages("submit-return.check-your-answers.heading"))) {
@@ -108,35 +135,15 @@
 
     @paragraphBody(messages("returnsCheckYourAnswers.taxLiability.description"), classes = "govuk-body-m")
 
-    @govukTable(Table(
-        rows = Seq(
-            taxCalculationRow("returnsCheckYourAnswers.totalCredits.creditsRequested.label", taxLiability.totalCredit.asPounds, "row-border"),
-            ),
-            head = Some(Seq(
-                HeadCell(
-                    classes = "govuk-!-width-one-half",
-                    content = hiddenText("returnsCheckYourAnswers.header.amount")
-            ),
-            HeadCell(
-                content = hiddenText("returnsCheckYourAnswers.header.amount"),
-                classes = "govuk-!-width-one-quarter",
-                format = Some("numeric")
-                ),
-            HeadCell(
-                content = hiddenText("returnsCheckYourAnswers.header.amount"),
-                classes = "govuk-!-width-one-quarter"
-                ))),
-            caption = Some(messages("returnsCheckYourAnswers.totalCredits.label")),
-            captionClasses = "govuk-table__caption--m",
-            firstCellIsHeader = true,
-            classes = "row-header--no-border cell--no-border"
-            )
-    )
+    @sectionHeading("submit-return.check-your-answers.credits.heading")
+    @para("credits.line1")
+    @para("credits.line2")
+    @bullets("credits.line3", "credits.line4")
+    @paraLink("credits.line5", "credits.line5.link-text", creditAdviceLnkUrl)
 
-    @paragraphBody(messages("returnsCheckYourAnswers.totalCredits.description"), classes = "govuk-body-m")
+    @sectionHeading("Now send your return")
 
     @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
-
         @govukButton(
             ButtonViewModel(messages("site.continue.confirm"))
         )

@@ -18,14 +18,17 @@ package controllers.returns
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
+import models.requests.DataRequest
 import models.returns.{ReturnType, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
@@ -39,23 +42,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ReturnsCheckYourAnswersController @Inject()(
-                                                   override val messagesApi: MessagesApi,
-                                                   identify: IdentifierAction,
-                                                   getData: DataRetrievalAction,
-                                                   requireData: DataRequiredAction,
-                                                   returnsConnector: TaxReturnsConnector,
-                                                   taxReturnHelper: TaxReturnHelper,
-                                                   sessionRepository: SessionRepository,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   view: ReturnsCheckYourAnswersView
-                                                 ) extends FrontendBaseController with I18nSupport {
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  returnsConnector: TaxReturnsConnector,
+  taxReturnHelper: TaxReturnHelper,
+  sessionRepository: SessionRepository,
+  val controllerComponents: MessagesControllerComponents,
+  view: ReturnsCheckYourAnswersView,
+  appConfig: FrontendAppConfig
+) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val list = SummaryListViewModel(rows =
           Seq(
-            CheckYourAnswerManufacturedPlasticPackaging,
+//            CheckYourAnswerManufacturedPlasticPackaging,
             CheckYourAnswerForManufacturedPlasticWeight,
             CheckYourAnswerImportedPlasticPackagingSummary,
             CheckYourAnswerImportedPlasticPackagingWeight,
@@ -77,11 +81,19 @@ class ReturnsCheckYourAnswersController @Inject()(
           answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
         )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation, request.pptReference)))
+          case Some(obligation) => displayPage(mode, request, list, liability, obligation)
           case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
     }
+
+  private def displayPage(mode: Mode, request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
+    obligation: TaxReturnObligation)(implicit messages: Messages) = {
+
+    val creditsAdviceUrl = appConfig.creditsAdviceUrl
+    Future.successful(Ok(view(mode, list, liability, obligation, request.pptReference,
+      creditsAdviceUrl)(request, messages)))
+  }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {

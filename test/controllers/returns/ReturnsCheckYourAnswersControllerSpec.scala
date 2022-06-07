@@ -45,7 +45,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
   }
 
   "Returns Check Your Answers Controller" - {
@@ -63,7 +63,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
         val list = SummaryListViewModel(Seq.empty)
         val liability = TaxLiability()
-        verify(mockView).apply(any(), eqq(list), eqq(liability), eqq(taxReturnOb), eqq("123"))(any(), any())
+        verify(mockView).apply(any(), eqq(list), eqq(liability), eqq(taxReturnOb), eqq("123"), any())(any(), any())
       }
     }
 

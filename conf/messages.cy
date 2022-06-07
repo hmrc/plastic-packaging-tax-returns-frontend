@@ -300,3 +300,11 @@ submit-return.check-your-answers.section1.heading = Business details
 submit-return.check-your-answers.section1.row1 = Plastic Packaging Tax registration number
 submit-return.check-your-answers.section1.row2 = Return period
 submit-return.check-your-answers.section2.heading = Total plastic packaging
+
+submit-return.check-your-answers.credits.heading = Credits
+submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.
+submit-return.check-your-answers.credits.line2 = You may be able to claim credit in future if the packaging is either:
+submit-return.check-your-answers.credits.line3 = exported
+submit-return.check-your-answers.credits.line4 = converted into different packaging
+submit-return.check-your-answers.credits.line5 = Find out more about {0}.
+submit-return.check-your-answers.credits.line5.link-text = claiming credits (opens in new tab)
