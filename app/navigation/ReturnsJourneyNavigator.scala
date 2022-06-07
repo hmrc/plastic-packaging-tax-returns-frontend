@@ -27,6 +27,13 @@ import javax.inject.Singleton
 @Singleton
 class ReturnsJourneyNavigator {
 
+  private def exportSplit(answers: UserAnswers): Boolean = {
+    val total    = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    exported < total
+  }
+
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
 
     case StartYourReturnPage => startYourReturnRoute
@@ -44,6 +51,7 @@ class ReturnsJourneyNavigator {
     case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+    case ExportedRecycledPlasticPackagingPage => exportedRecycledPlasticPackagingPageRoute(_, mode = NormalMode)
     case RecycledPlasticPackagingWeightPage => _ => routes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
     case ConvertedPackagingCreditPage => _ => routes.ReturnsCheckYourAnswersController.onPageLoad
   }
@@ -129,4 +137,18 @@ class ReturnsJourneyNavigator {
         }
       case _ => throw new Exception("Unable to navigate to page")
     }
+
+  private def exportedRecycledPlasticPackagingPageRoute(answers: UserAnswers, mode: Mode): Call =
+    answers.get(ExportedRecycledPlasticPackagingPage) match {
+      case Some(true)  => routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(false) =>
+        if (mode == CheckMode) {
+          routes.ReturnsCheckYourAnswersController.onPageLoad()
+        }
+        else {
+          routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
+        }
+      case _ => throw new Exception("Unable to navigate to page")
+    }
+
 }
