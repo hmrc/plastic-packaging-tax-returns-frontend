@@ -45,12 +45,24 @@ class ExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBe
       wholeNumberError = FormError(fieldName, "exportedRecycledPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like longFieldWithRange(
-      form,
+    behave like longFieldWithMinimum(form,
       fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
-      expectedError = FormError(fieldName, "exportedRecycledPlasticPackagingWeight.error.outOfRange", Seq(minimum, maximum))
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "exportedRecycledPlasticPackagingWeight.error.outOfRange.low",
+        Seq(minimum)
+      )
+    )
+
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "exportedRecycledPlasticPackagingWeight.error.outOfRange.high",
+        Seq(maximum)
+      )
     )
 
     behave like mandatoryField(
