@@ -1,8 +1,7 @@
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.$package$
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.$className$Page
+import pages.$package$.$className$Page
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -20,7 +19,7 @@ object $className$Summary  {
           key     = "$className;format="decap"$.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.$className$Controller.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.$package$.routes.$className$Controller.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("$className;format="decap"$.change.hidden"))
           )
         )

@@ -150,3 +150,8 @@ POST       /exported-components-recycled                        controllers.retu
 GET        /change-exported-components-recycled                  controllers.returns.ExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exported-components-recycled                  controllers.returns.ExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
+GET        /recycledPlasticPackaging                        controllers.returns.RecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /recycledPlasticPackaging                        controllers.returns.RecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /changeRecycledPlasticPackaging                  controllers.returns.RecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeRecycledPlasticPackaging                  controllers.returns.RecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+

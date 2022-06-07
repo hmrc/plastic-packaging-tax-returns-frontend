@@ -171,7 +171,7 @@ directlyExportedComponents.checkYourAnswersLabel = Exported plastic packaging
 directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
 directlyExportedComponents.change.hidden = Did you export any of your {0} kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
-directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you'll need to pay tax on them.
+directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them.
 
 exportedPlasticPackagingWeight.title = How much of your {0} kg of finished plastic packaging components did you export?
 exportedPlasticPackagingWeight.heading = How much of your {0} kg of finished plastic packaging components did you export?
@@ -436,3 +436,8 @@ exportedRecycledPlasticPackaging.checkYourAnswersLabel = exportedRecycledPlastic
 exportedRecycledPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components contained 30% or more recycled plastic
 exportedRecycledPlasticPackaging.change.hidden = ExportedRecycledPlasticPackaging
 
+recycledPlasticPackaging.title = recycledPlasticPackaging
+recycledPlasticPackaging.heading = recycledPlasticPackaging
+recycledPlasticPackaging.checkYourAnswersLabel = recycledPlasticPackaging
+recycledPlasticPackaging.error.required = Select yes if recycledPlasticPackaging
+recycledPlasticPackaging.change.hidden = RecycledPlasticPackaging

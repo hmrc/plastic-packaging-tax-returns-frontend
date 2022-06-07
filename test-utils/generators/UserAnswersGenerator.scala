@@ -21,8 +21,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
@@ -32,6 +32,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedRecycledPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(RecycledPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(HumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::

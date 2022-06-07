@@ -18,8 +18,8 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 
 trait PageGenerators {
 
@@ -31,6 +31,9 @@ trait PageGenerators {
 
   implicit lazy val arbitraryExportedRecycledPlasticPackagingPage: Arbitrary[ExportedRecycledPlasticPackagingPage.type] =
     Arbitrary(ExportedRecycledPlasticPackagingPage)
+
+  implicit lazy val arbitraryRecycledPlasticPackagingPage: Arbitrary[RecycledPlasticPackagingPage.type] =
+    Arbitrary(RecycledPlasticPackagingPage)
 
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[HumanMedicinesPlasticPackagingPage.type] =
     Arbitrary(HumanMedicinesPlasticPackagingPage)
