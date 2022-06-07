@@ -38,7 +38,7 @@ class ReturnsJourneyNavigator {
       _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
     case HumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
     case HumanMedicinesPlasticPackagingWeightPage =>
-      _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+      _ => routes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     case DirectlyExportedComponentsPage => directlyExportedComponentsRoute(_, mode = NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
@@ -110,7 +110,7 @@ class ReturnsJourneyNavigator {
       case Some(true) => routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
       case Some(false) =>
         if (mode == CheckMode) {routes.ReturnsCheckYourAnswersController.onPageLoad()}
-        else {routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)}
+        else {routes.ExportedRecycledPlasticPackagingController.onPageLoad(mode)}
       case _           => throw new Exception("Unable to navigate to page")
     }
 }

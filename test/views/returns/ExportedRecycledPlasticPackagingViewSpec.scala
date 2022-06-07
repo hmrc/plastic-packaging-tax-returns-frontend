@@ -21,6 +21,7 @@ import forms.ExportedRecycledPlasticPackagingFormProvider
 import models.NormalMode
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
@@ -46,12 +47,12 @@ class ExportedRecycledPlasticPackagingViewSpec
   implicit def messages: Messages = realMessagesApi.preferred(request)
   val weight: Long = 200
 
-  private def createView: Html =
-    page(formProvider(), NormalMode, weight)(request, messages)
+  private def createView(form: Form[Boolean]): Html =
+    page(form, NormalMode, weight)(request, messages)
 
   "view" should {
 
-    val view = createView
+    val view = createView(formProvider())
     "have a title" in {
       view.select("title").text() must include(messages("exportedRecycledPlasticPackaging.title", weight))
 
@@ -71,13 +72,26 @@ class ExportedRecycledPlasticPackagingViewSpec
 
     "contain paragraph content" in{
       view.getElementById("value-hint").text() must include (messages("exportedRecycledPlasticPackaging.hint1"))
-     // view.getElementById("value-hint").text() must include (messages("exportedRecycledPlasticPackaging.hint2"))
-     // view.select("a").get(0) must haveHref(appConfig.pptRecycledPlasticGuidanceLink)
+      view.getElementById("value-hint").text() must include (messages(
+        "exportedRecycledPlasticPackaging.hint2",
+        messages("exportedRecycledPlasticPackaging.hint2.link")))
+      view.getElementById("govuk-guidance-link") must haveHref(appConfig.pptRecycledPlasticGuidanceLink)
     }
 
     "contain save & continue button" in {
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
     }
+
+    "return an error" when {
+      "no answer was selected" in {
+        val emptyForm: Map[String, String] = Map.empty
+        val view = createView(formProvider().bind(emptyForm))
+
+        view.getElementsByClass("govuk-error-summary").text() must include("Select yes if any of your exported finished plastic packaging components contained 30% or more recycled plastic")
+        view.getElementsByClass("govuk-error-summary").text() must include(messages("exportedRecycledPlasticPackaging.error.required"))
+      }
+    }
+
   }
 
 }

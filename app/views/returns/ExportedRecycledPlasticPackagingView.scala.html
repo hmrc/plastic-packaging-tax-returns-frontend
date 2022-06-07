@@ -35,14 +35,18 @@
 @pptRecycledPlasticGuidanceLink = {
     @link(
         id = "ppt-recycled-plastic-guidance",
-        text = messages("exportedRecycledPlasticPackaging.hint2.link"),
+        text = messages("exportedRecycledPlasticPackaging.hint2.link").trim(),
         call = Call("GET", "/foo")
     )
 }
 
+@guidanceLink = {
+    <a href="@config.pptRecycledPlasticGuidanceLink" class="govuk-link" id="govuk-guidance-link" target="_blank">@messages("exportedRecycledPlasticPackaging.hint2.link").trim()</a>.
+}
+
 @paragraphContent = {
     @paragraphBody(messages("exportedRecycledPlasticPackaging.hint1"))
-    @paragraph(content = Html(messages("exportedRecycledPlasticPackaging.hint2", pptRecycledPlasticGuidanceLink)))
+    @paragraphBody(messages("exportedRecycledPlasticPackaging.hint2", guidanceLink).trim())
 }
 
 @layout(pageTitle = title(form, messages("exportedRecycledPlasticPackaging.title", exportedWeight.toString), Some(messages("return.title.tail")))) {
