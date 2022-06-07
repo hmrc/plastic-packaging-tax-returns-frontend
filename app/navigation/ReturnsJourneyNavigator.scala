@@ -19,7 +19,7 @@ package navigation
 import controllers.returns.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -40,6 +40,8 @@ class ReturnsJourneyNavigator {
     case HumanMedicinesPlasticPackagingWeightPage =>
       _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case DirectlyExportedComponentsPage => directlyExportedComponentsRoute(_, mode = NormalMode)
+    case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
+    case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
     case RecycledPlasticPackagingWeightPage => _ => routes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
@@ -52,6 +54,7 @@ class ReturnsJourneyNavigator {
     case ImportedPlasticPackagingPage => importedPlasticPackagingRoute(_, mode = CheckMode)
     case ImportedPlasticPackagingWeightPage => _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
     case HumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = CheckMode)
+    case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = CheckMode)
     case _ => _ => routes.ReturnsCheckYourAnswersController.onPageLoad
   }
 
@@ -100,7 +103,7 @@ class ReturnsJourneyNavigator {
         if(mode == CheckMode) {
           routes.ReturnsCheckYourAnswersController.onPageLoad
         } else {
-          routes.HumanMedicinesPlasticPackagingController.onPageLoad(mode)
+          routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
         }
       case _           => throw new Exception("Unable to navigate to page")
     }
@@ -112,5 +115,18 @@ class ReturnsJourneyNavigator {
         if (mode == CheckMode) {routes.ReturnsCheckYourAnswersController.onPageLoad()}
         else {routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)}
       case _           => throw new Exception("Unable to navigate to page")
+    }
+
+  private def nonExportedHumanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =
+    answers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
+      case Some(true)  => routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(false) =>
+        if (mode == CheckMode) {
+          routes.ReturnsCheckYourAnswersController.onPageLoad()
+        }
+        else {
+          routes.RecycledPlasticPackagingWeightController.onPageLoad(mode)
+        }
+      case _ => throw new Exception("Unable to navigate to page")
     }
 }

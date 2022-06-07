@@ -135,10 +135,10 @@ POST       /exported-medicines-packaging                        controllers.retu
 GET        /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /nonExportedHumanMedicinesPlasticPackaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /nonExportedHumanMedicinesPlasticPackaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeNonExportedHumanMedicinesPlasticPackaging                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
 GET        /nonExportedHumanMedicinesPlasticPackagingWeight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
 POST       /nonExportedHumanMedicinesPlasticPackagingWeight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)

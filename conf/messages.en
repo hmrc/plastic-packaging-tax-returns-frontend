@@ -405,10 +405,13 @@ humanMedicinesPlasticPackaging.checkYourAnswersLabel = humanMedicinesPlasticPack
 humanMedicinesPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
 humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
 
-nonExportedHumanMedicinesPlasticPackaging.title = nonExportedHumanMedicinesPlasticPackaging
-nonExportedHumanMedicinesPlasticPackaging.heading = nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.caption = Non-exported plastic packaging
+nonExportedHumanMedicinesPlasticPackaging.heading = You did not export {0} of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
+nonExportedHumanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
 nonExportedHumanMedicinesPlasticPackaging.checkYourAnswersLabel = nonExportedHumanMedicinesPlasticPackaging
-nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if nonExportedHumanMedicinesPlasticPackaging
+nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
 nonExportedHumanMedicinesPlasticPackaging.change.hidden = NonExportedHumanMedicinesPlasticPackaging
 
 nonExportedHumanMedicinesPlasticPackagingWeight.title = NonExportedHumanMedicinesPlasticPackagingWeight

@@ -20,10 +20,11 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.NonExportedHumanMedicinesPlasticPackagingPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
@@ -44,6 +45,13 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
 
   val form = formProvider()
 
+  private def nonExportedAmount(implicit request: DataRequest[_]) = {
+    val total    = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    total - exported
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -52,7 +60,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(nonExportedAmount, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -60,7 +68,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(nonExportedAmount, formWithErrors, mode))),
 
         value =>
           for {
