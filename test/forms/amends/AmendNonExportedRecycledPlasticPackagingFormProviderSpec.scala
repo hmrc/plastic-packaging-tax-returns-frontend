@@ -19,7 +19,7 @@ package forms.amends
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
 
-class AmendNonExportRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
+class AmendNonExportedRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
 
   val form = new AmendRecycledPlasticPackagingFormProvider()()
 

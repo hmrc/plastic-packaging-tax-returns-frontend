@@ -39,7 +39,7 @@
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 
-    @formHelper(action = controllers.returns.routes.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -48,7 +48,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("NonExportRecycledPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
+                label = LabelViewModel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
             )
             .asKg()
             .withHint(Hint(content = HtmlContent(paragraphContent)))

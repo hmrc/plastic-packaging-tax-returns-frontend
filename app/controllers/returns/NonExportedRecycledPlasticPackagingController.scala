@@ -18,11 +18,11 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.NonExportRecycledPlasticPackagingFormProvider
+import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -31,16 +31,16 @@ import views.html.returns.NonExportRecycledPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportRecycledPlasticPackagingController @Inject()(
-                                                             override val messagesApi: MessagesApi,
-                                                             cacheConnector: CacheConnector,
-                                                             navigator: Navigator,
-                                                             identify: IdentifierAction,
-                                                             getData: DataRetrievalAction,
-                                                             requireData: DataRequiredAction,
-                                                             formProvider: NonExportRecycledPlasticPackagingFormProvider,
-                                                             val controllerComponents: MessagesControllerComponents,
-                                                             view: NonExportRecycledPlasticPackagingView
+class NonExportedRecycledPlasticPackagingController @Inject()(
+                                                               override val messagesApi: MessagesApi,
+                                                               cacheConnector: CacheConnector,
+                                                               navigator: Navigator,
+                                                               identify: IdentifierAction,
+                                                               getData: DataRetrievalAction,
+                                                               requireData: DataRequiredAction,
+                                                               formProvider: NonExportedRecycledPlasticPackagingFormProvider,
+                                                               val controllerComponents: MessagesControllerComponents,
+                                                               view: NonExportRecycledPlasticPackagingView
                                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -59,7 +59,7 @@ class NonExportRecycledPlasticPackagingController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(NonExportRecycledPlasticPackagingPage) match {
+      val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -76,9 +76,9 @@ class NonExportRecycledPlasticPackagingController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportRecycledPlasticPackagingPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedRecycledPlasticPackagingPage, value))
             _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(NonExportRecycledPlasticPackagingPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(NonExportedRecycledPlasticPackagingPage, mode, updatedAnswers))
       )
   }
 }

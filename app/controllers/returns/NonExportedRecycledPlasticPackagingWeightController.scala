@@ -16,15 +16,13 @@
 
 package controllers.returns
 
-import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.NonExportRecycledPlasticPackagingWeightFormProvider
+import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingWeightPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -33,16 +31,16 @@ import views.html.returns.NonExportRecycledPlasticPackagingWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportRecycledPlasticPackagingWeightController @Inject()(
-                                                                   override val messagesApi: MessagesApi,
-                                                                   cacheConnector: CacheConnector,
-                                                                   navigator: Navigator,
-                                                                   identify: IdentifierAction,
-                                                                   getData: DataRetrievalAction,
-                                                                   requireData: DataRequiredAction,
-                                                                   formProvider: NonExportRecycledPlasticPackagingWeightFormProvider,
-                                                                   val controllerComponents: MessagesControllerComponents,
-                                                                   view: NonExportRecycledPlasticPackagingWeightView
+class NonExportedRecycledPlasticPackagingWeightController @Inject()(
+                                                                     override val messagesApi: MessagesApi,
+                                                                     cacheConnector: CacheConnector,
+                                                                     navigator: Navigator,
+                                                                     identify: IdentifierAction,
+                                                                     getData: DataRetrievalAction,
+                                                                     requireData: DataRequiredAction,
+                                                                     formProvider: NonExportedRecycledPlasticPackagingWeightFormProvider,
+                                                                     val controllerComponents: MessagesControllerComponents,
+                                                                     view: NonExportRecycledPlasticPackagingWeightView
                                                                  )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
@@ -60,7 +58,7 @@ class NonExportRecycledPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(NonExportRecycledPlasticPackagingWeightPage) match {
+        val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
@@ -76,11 +74,11 @@ class NonExportRecycledPlasticPackagingWeightController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(NonExportRecycledPlasticPackagingWeightPage, value)
+                request.userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(NonExportRecycledPlasticPackagingWeightPage, mode, updatedAnswers)
+              navigator.nextPage(NonExportedRecycledPlasticPackagingWeightPage, mode, updatedAnswers)
             )
         )
     }

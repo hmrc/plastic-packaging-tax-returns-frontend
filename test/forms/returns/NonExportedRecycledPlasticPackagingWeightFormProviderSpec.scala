@@ -19,9 +19,9 @@ package forms.returns
 import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class NonExportRecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
+class NonExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
-  val form = new NonExportRecycledPlasticPackagingWeightFormProvider()()
+  val form = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
 
   ".value" - {
 

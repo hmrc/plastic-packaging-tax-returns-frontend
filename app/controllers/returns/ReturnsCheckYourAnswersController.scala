@@ -69,8 +69,8 @@ class ReturnsCheckYourAnswersController @Inject()(
             ExportedRecycledPlasticPackagingWeightSummary,
             NonExportedHumanMedicinesPlasticPackagingSummary,
             NonExportedHumanMedicinesPlasticPackagingWeightSummary,
-            NonExportRecycledPlasticPackagingSummary,
-            NonExportRecycledPlasticPackagingWeightSummary,
+            NonExportedRecycledPlasticPackagingSummary,
+            NonExportedRecycledPlasticPackagingWeightSummary,
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))
         )

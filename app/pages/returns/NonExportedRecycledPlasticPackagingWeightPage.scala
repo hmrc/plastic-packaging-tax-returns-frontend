@@ -22,7 +22,7 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object NonExportRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
+case object NonExportedRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -31,7 +31,7 @@ case object NonExportRecycledPlasticPackagingWeightPage extends QuestionPage[Lon
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
       if (amount > 0)
-        userAnswers.set(NonExportRecycledPlasticPackagingPage, true, cleanup = false)
+        userAnswers.set(NonExportedRecycledPlasticPackagingPage, true, cleanup = false)
       else
         super.cleanup(value, userAnswers)
     ).getOrElse(super.cleanup(value, userAnswers))

@@ -22,7 +22,7 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object NonExportRecycledPlasticPackagingPage extends QuestionPage[Boolean] {
+case object NonExportedRecycledPlasticPackagingPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -33,7 +33,7 @@ case object NonExportRecycledPlasticPackagingPage extends QuestionPage[Boolean] 
       case true =>
         super.cleanup(value, userAnswers)
       case _ =>
-        userAnswers.set(NonExportRecycledPlasticPackagingWeightPage, 0L)
+        userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, 0L)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }

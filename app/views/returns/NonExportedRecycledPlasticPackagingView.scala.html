@@ -43,7 +43,7 @@
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 
-    @formHelper(action = controllers.returns.routes.NonExportRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

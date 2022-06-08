@@ -16,15 +16,22 @@
 
 package forms.returns
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class NonExportRecycledPlasticPackagingFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[Boolean] =
+class NonExportedRecycledPlasticPackagingWeightFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Long] =
     Form(
-      "value" -> boolean("NonExportRecycledPlasticPackaging.error.required")
-  )
+      "value" -> long("NonExportRecycledPlasticPackagingWeight.error.required",
+        "NonExportRecycledPlasticPackagingWeight.error.wholeNumber",
+        "NonExportRecycledPlasticPackagingWeight.error.nonNumeric",
+        "NonExportRecycledPlasticPackagingWeight.error.spaces"
+      )
+        .verifying(minimumValue(0L, "NonExportRecycledPlasticPackagingWeight.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "NonExportRecycledPlasticPackagingWeight.error.outOfRange.high"))
+    )
+
 }

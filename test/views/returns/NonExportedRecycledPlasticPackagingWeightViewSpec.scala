@@ -16,7 +16,7 @@
 
 package views.returns
 
-import forms.returns.NonExportRecycledPlasticPackagingWeightFormProvider
+import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,11 +31,11 @@ import play.twirl.api.Html
 import support.ViewMatchers
 import views.html.returns.NonExportRecycledPlasticPackagingWeightView
 
-class NonExportRecycledPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
+class NonExportedRecycledPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
 
   val page: NonExportRecycledPlasticPackagingWeightView = inject[NonExportRecycledPlasticPackagingWeightView]
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
-  val form: Form[Long] = new NonExportRecycledPlasticPackagingWeightFormProvider()()
+  val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
   private val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   implicit def messages: Messages =
