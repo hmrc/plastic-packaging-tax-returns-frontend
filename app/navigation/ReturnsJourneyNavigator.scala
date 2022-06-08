@@ -120,6 +120,7 @@ class ReturnsJourneyNavigator {
   // Start of exported / non-exported routing mini loops                                     *
   // These loops must be preserved for normal and check modes                                *
   // Any changes from the direct export question implies full completion of the mini loop    *
+  // Edit at ANY point in a mini loop also implies full completion of that loop              *
   *******************************************************************************************/
 
   private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode = NormalMode): Call =
