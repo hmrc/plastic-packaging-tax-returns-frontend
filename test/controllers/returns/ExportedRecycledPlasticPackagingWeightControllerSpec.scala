@@ -146,6 +146,23 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
       }
     }
 
+    "must redirect GET to home page when exported amount not found" in {
+
+      val userAnswers = UserAnswers(userAnswersId).set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
+      }
+    }
+
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
@@ -163,6 +180,23 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
       }
     }
 
+    "must redirect to home page for a POST if no exported amount found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val t: Map[String,String] = Map("errors" -> "test")
+      running(application) {
+        val request =
+          FakeRequest(POST, exportedRecycledPlasticPackagingWeightRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
+      }
+    }
+
     "raise and error" - {
       "when not authorised" in {
         val application = applicationBuilderFailedAuth(userAnswers = None).build()
@@ -176,20 +210,6 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
         }
       }
 
-      "when exported amount not found" in {
-
-        val userAnswers = UserAnswers(userAnswersId).set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-        running(application) {
-          val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
-
-          val result = route(application, request).value
-
-          intercept[IllegalStateException](status(result))
-        }
-      }
     }
   }
 }

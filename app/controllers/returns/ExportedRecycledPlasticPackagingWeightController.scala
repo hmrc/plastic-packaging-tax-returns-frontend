@@ -25,7 +25,7 @@ import navigation.Navigator
 import pages.ExportedRecycledPlasticPackagingWeightPage
 import pages.returns.ExportedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ExportedRecycledPlasticPackagingWeightView
 
@@ -49,20 +49,18 @@ class ExportedRecycledPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ExportedRecycledPlasticPackagingWeightPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = request.userAnswers.fill(ExportedRecycledPlasticPackagingWeightPage, form)
 
-      Ok(view(preparedForm, mode, extractExportedAmount))
+      exportedAmount.fold[Result](identity, amount => Ok(view(preparedForm, mode, amount)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, extractExportedAmount))),
+        formWithErrors => {
+          Future.successful(exportedAmount.fold[Result](identity, amount => BadRequest(view(formWithErrors, mode, amount))))
+        },
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedRecycledPlasticPackagingWeightPage, value))
@@ -71,8 +69,7 @@ class ExportedRecycledPlasticPackagingWeightController @Inject()(
       )
   }
 
-  private def extractExportedAmount() (implicit request: DataRequest[AnyContent]): Long = {
+  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Long] =
     request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-      .getOrElse(throw new IllegalStateException("Invalid exported recycled weight for Plastic Packaging"))
-  }
+      .fold[Either[Result, Long]](Left(Redirect(controllers.routes.IndexController.onPageLoad)))(Right(_))
 }
