@@ -45,7 +45,9 @@
 @*  TODO: uncomment when we are providing the submission ID
 *   @paragraphBody(message = messages("return.confirmation.body.2"), classes = "govuk-body clear-float")
 *@
-    @paragraphBody(message = messages("return.confirmation.body.3"), classes = "govuk-body clear-float")
+
+    @paragraphBody(message = messages("return.confirmation.body.1"), classes = "govuk-body clear-float", id=Some("find-details"))
+    @paragraphBody(message = messages("return.confirmation.body.3"), classes = "govuk-body clear-float", id=Some("confirmation"))
 
     <p class="govuk-body">
         @link(id = "account-link", messages("return.confirmation.return.link"), call = routes.IndexController.onPageLoad)
