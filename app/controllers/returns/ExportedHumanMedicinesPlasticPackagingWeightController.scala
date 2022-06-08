@@ -19,30 +19,30 @@ package controllers.returns
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.HumanMedicinesPlasticPackagingWeightFormProvider
+import forms.returns.ExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedHumanMedicinesPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.HumanMedicinesPlasticPackagingWeightView
+import views.html.returns.ExportedHumanMedicinesPlasticPackagingWeightView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HumanMedicinesPlasticPackagingWeightController @Inject()(
-                                                                override val messagesApi: MessagesApi,
-                                                                cacheConnector: CacheConnector,
-                                                                navigator: Navigator,
-                                                                identify: IdentifierAction,
-                                                                getData: DataRetrievalAction,
-                                                                requireData: DataRequiredAction,
-                                                                formProvider: HumanMedicinesPlasticPackagingWeightFormProvider,
-                                                                val controllerComponents: MessagesControllerComponents,
-                                                                view: HumanMedicinesPlasticPackagingWeightView
+class ExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
+                                                                        override val messagesApi: MessagesApi,
+                                                                        cacheConnector: CacheConnector,
+                                                                        navigator: Navigator,
+                                                                        identify: IdentifierAction,
+                                                                        getData: DataRetrievalAction,
+                                                                        requireData: DataRequiredAction,
+                                                                        formProvider: ExportedHumanMedicinesPlasticPackagingWeightFormProvider,
+                                                                        val controllerComponents: MessagesControllerComponents,
+                                                                        view: ExportedHumanMedicinesPlasticPackagingWeightView
                                                               )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
@@ -55,7 +55,7 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.fill(HumanMedicinesPlasticPackagingWeightPage, form)
+        val preparedForm = request.userAnswers.fill(ExportedHumanMedicinesPlasticPackagingWeightPage, form)
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => exportedAmount.fold[Result](identity, amount => Ok(view(amount, preparedForm, mode, obligation)))
@@ -76,11 +76,11 @@ class HumanMedicinesPlasticPackagingWeightController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(HumanMedicinesPlasticPackagingWeightPage, value)
+                request.userAnswers.set(ExportedHumanMedicinesPlasticPackagingWeightPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage, mode, updatedAnswers)
+              navigator.nextPage(ExportedHumanMedicinesPlasticPackagingWeightPage, mode, updatedAnswers)
             )
         )
     }

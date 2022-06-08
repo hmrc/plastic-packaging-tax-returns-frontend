@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package forms.returns
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import play.api.data.Form
 
-class ExportedRecycledPlasticPackagingWeightFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class ExportedHumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long(
-        "exportedRecycledPlasticPackagingWeight.error.required",
-        "exportedRecycledPlasticPackagingWeight.error.wholeNumber",
-        "exportedRecycledPlasticPackagingWeight.error.nonNumeric",
-        "exportedRecycledPlasticPackagingWeight.error.spaces")
-        .verifying(minimumValue(0L, "exportedRecycledPlasticPackagingWeight.error.outOfRange.low"))
-        .verifying(maximumValue(99999999999L, "exportedRecycledPlasticPackagingWeight.error.outOfRange.high"))
+      "value" -> long("humanMedicinesPlasticPackagingWeight.error.required",
+                     "humanMedicinesPlasticPackagingWeight.error.wholeNumber",
+                     "humanMedicinesPlasticPackagingWeight.error.nonNumeric",
+        "humanMedicinesPlasticPackagingWeight.error.spaces"
+      )
+        .verifying(minimumValue(0L, "humanMedicinesPlasticPackagingWeight.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "humanMedicinesPlasticPackagingWeight.error.outOfRange.high"))
     )
+
 }

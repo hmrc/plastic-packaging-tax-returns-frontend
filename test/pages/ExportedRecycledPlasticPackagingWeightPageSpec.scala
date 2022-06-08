@@ -17,6 +17,7 @@
 package pages
 
 import pages.behaviours.PageBehaviours
+import pages.returns.ExportedRecycledPlasticPackagingWeightPage
 
 class ExportedRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
 

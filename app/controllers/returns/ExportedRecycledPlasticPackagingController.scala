@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ExportedRecycledPlasticPackagingFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}

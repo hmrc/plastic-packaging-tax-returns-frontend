@@ -19,14 +19,13 @@ package controllers.returns
 import base.SpecBase
 import connectors.CacheConnector
 import controllers.{routes => appRoutes}
-import forms.ExportedRecycledPlasticPackagingWeightFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingWeightFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ExportedRecycledPlasticPackagingWeightPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -46,7 +45,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
   val validAnswer = 200L
   val exportedAmount = 8L
 
-  lazy val exportedRecycledPlasticPackagingWeightRoute = routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val exportedRecycledPlasticPackagingWeightRoute = controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val userAnswersWithExportAmount = userAnswers.set(ExportedPlasticPackagingWeightPage, value = exportedAmount).success.value
 

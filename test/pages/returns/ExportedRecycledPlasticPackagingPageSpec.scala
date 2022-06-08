@@ -17,7 +17,6 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.ExportedRecycledPlasticPackagingWeightPage
 import pages.behaviours.PageBehaviours
 
 class ExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {

@@ -20,10 +20,11 @@ import models.{CheckMode, UserAnswers}
 import pages.returns.RecycledPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RecycledPlasticPackagingSummary  {
+object RecycledPlasticPackagingSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RecycledPlasticPackagingPage).map {

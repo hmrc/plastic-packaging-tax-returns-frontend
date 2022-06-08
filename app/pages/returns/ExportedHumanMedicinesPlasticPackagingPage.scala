@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package pages
+package pages.returns
 
+import models.UserAnswers
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ExportedRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
+import scala.util.Try
+
+case object ExportedHumanMedicinesPlasticPackagingPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "exportedRecycledPlasticPackagingWeight"
+  override def toString: String = "humanMedicinesPlasticPackaging"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value.map {
+      case true => super.cleanup(value, userAnswers)
+      case _ => userAnswers.set(ExportedHumanMedicinesPlasticPackagingWeightPage, 0L)
+    }
+  }.getOrElse(super.cleanup(value, userAnswers))
 }

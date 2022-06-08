@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.{ExportedRecycledPlasticPackagingWeightPage, QuestionPage}
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -32,7 +32,6 @@ case object ExportedRecycledPlasticPackagingPage extends QuestionPage[Boolean] {
     value.map {
       case true => super.cleanup(value, userAnswers)
       case _    => userAnswers.set(ExportedRecycledPlasticPackagingWeightPage, 0L)
-    }
-      .getOrElse(super.cleanup(value, userAnswers))
+    }.getOrElse(super.cleanup(value, userAnswers))
 
 }

@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.CacheConnector
 import controllers.returns.{routes => returnsRoutes}
 import controllers.{routes => appRoutes}
-import forms.ExportedRecycledPlasticPackagingFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor

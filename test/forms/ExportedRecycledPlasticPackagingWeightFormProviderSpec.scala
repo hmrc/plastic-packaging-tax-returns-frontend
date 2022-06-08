@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.LongFieldBehaviours
+import forms.returns.ExportedRecycledPlasticPackagingWeightFormProvider
 import play.api.data.FormError
 
 class ExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
