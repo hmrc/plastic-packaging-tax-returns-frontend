@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package pages.returns
+package forms.returns
 
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import play.api.data.Form
 
-class HumanMedicinesPlasticPackagingPageSpec extends PageBehaviours {
+import javax.inject.Inject
 
-  "HumanMedicinesPlasticPackagingPage" - {
+class ExportedHumanMedicinesPlasticPackagingFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Boolean](HumanMedicinesPlasticPackagingPage)
-
-    beSettable[Boolean](HumanMedicinesPlasticPackagingPage)
-
-    beRemovable[Boolean](HumanMedicinesPlasticPackagingPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("humanMedicinesPlasticPackaging.error.required")
+    )
 }

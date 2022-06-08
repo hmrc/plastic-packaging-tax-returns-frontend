@@ -16,7 +16,7 @@
 
 package forms.returns
 
-import forms.behaviours.{IntFieldBehaviours, LongFieldBehaviours}
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
 class NonExportedHumanMedicinesPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {

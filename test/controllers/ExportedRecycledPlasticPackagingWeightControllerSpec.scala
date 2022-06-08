@@ -25,12 +25,11 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ExportedRecycledPlasticPackagingWeightPage
-import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.ExportedPlasticPackagingWeightPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.ExportedRecycledPlasticPackagingWeightView
 
 import scala.concurrent.Future

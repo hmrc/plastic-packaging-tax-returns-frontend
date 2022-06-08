@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.returns
 
 import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
-import pages.returns.HumanMedicinesPlasticPackagingWeightPage
+import pages.returns.ExportedHumanMedicinesPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.PrintLong
@@ -27,17 +27,17 @@ import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object HumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
+object ExportedHumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HumanMedicinesPlasticPackagingWeightPage).map {
+    answers.get(ExportedHumanMedicinesPlasticPackagingWeightPage).map {
       answer =>
         SummaryListRowViewModel(key = "humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
           value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(
+              routes.ExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(
                 CheckMode
               ).url
             )
