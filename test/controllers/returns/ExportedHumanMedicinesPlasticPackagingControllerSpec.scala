@@ -18,29 +18,29 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.HumanMedicinesPlasticPackagingFormProvider
+import forms.returns.ExportedHumanMedicinesPlasticPackagingFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedHumanMedicinesPlasticPackagingPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.HumanMedicinesPlasticPackagingView
+import views.html.returns.ExportedHumanMedicinesPlasticPackagingView
 
 import scala.concurrent.Future
 
-class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class ExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new HumanMedicinesPlasticPackagingFormProvider()
+  val formProvider = new ExportedHumanMedicinesPlasticPackagingFormProvider()
   val form = formProvider()
 
-  lazy val humanMedicinesPlasticPackagingRoute = controllers.returns.routes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
+  lazy val humanMedicinesPlasticPackagingRoute = controllers.returns.routes.ExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
   val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
 
@@ -56,7 +56,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(0L, form, NormalMode)(request, messages(application)).toString
@@ -65,14 +65,14 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = answersWithPreset.set(HumanMedicinesPlasticPackagingPage, true).success.value
+      val userAnswers = answersWithPreset.set(ExportedHumanMedicinesPlasticPackagingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, humanMedicinesPlasticPackagingRoute)
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingView]
 
         val result = route(application, request).value
 
@@ -118,7 +118,7 @@ class HumanMedicinesPlasticPackagingControllerSpec extends SpecBase with Mockito
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingView]
 
         val result = route(application, request).value
 

@@ -16,15 +16,30 @@
 
 package forms.returns
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import javax.inject.Inject
+class ExportedHumanMedicinesPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
 
-class HumanMedicinesPlasticPackagingFormProvider @Inject() extends Mappings {
+  val requiredKey = "humanMedicinesPlasticPackaging.error.required"
+  val invalidKey = "error.boolean"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("humanMedicinesPlasticPackaging.error.required")
+  val form = new ExportedHumanMedicinesPlasticPackagingFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

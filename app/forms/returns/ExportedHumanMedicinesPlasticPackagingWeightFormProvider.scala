@@ -21,7 +21,7 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-class HumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mappings {
+class ExportedHumanMedicinesPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Long] =
     Form(
