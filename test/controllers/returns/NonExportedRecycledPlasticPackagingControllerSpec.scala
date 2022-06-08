@@ -24,12 +24,12 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{NonExportedRecycledPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.{NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.NonExportRecycledPlasticPackagingView
+import views.html.returns.NonExportedRecycledPlasticPackagingView
 
 import scala.concurrent.Future
 
@@ -59,7 +59,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, amount)(request, messages(application)).toString
@@ -75,7 +75,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingRoute)
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         val result = route(application, request).value
 
@@ -121,7 +121,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         val result = route(application, request).value
 

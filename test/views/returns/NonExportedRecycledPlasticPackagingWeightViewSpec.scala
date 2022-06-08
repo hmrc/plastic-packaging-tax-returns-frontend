@@ -29,11 +29,11 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.ViewMatchers
-import views.html.returns.NonExportRecycledPlasticPackagingWeightView
+import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 
 class NonExportedRecycledPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
 
-  val page: NonExportRecycledPlasticPackagingWeightView = inject[NonExportRecycledPlasticPackagingWeightView]
+  val page: NonExportedRecycledPlasticPackagingWeightView = inject[NonExportedRecycledPlasticPackagingWeightView]
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
   val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
   private val realMessagesApi: MessagesApi = inject[MessagesApi]

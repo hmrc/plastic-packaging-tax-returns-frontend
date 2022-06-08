@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.NonExportRecycledPlasticPackagingWeightView
+import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 
 import scala.concurrent.Future
 
@@ -60,7 +60,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, amount)(request,
@@ -80,7 +80,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingWeightRoute)
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
@@ -128,7 +128,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
         val result = route(application, request).value
 

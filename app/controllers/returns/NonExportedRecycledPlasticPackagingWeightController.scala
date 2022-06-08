@@ -26,7 +26,7 @@ import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagi
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.NonExportRecycledPlasticPackagingWeightView
+import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
                                                                      requireData: DataRequiredAction,
                                                                      formProvider: NonExportedRecycledPlasticPackagingWeightFormProvider,
                                                                      val controllerComponents: MessagesControllerComponents,
-                                                                     view: NonExportRecycledPlasticPackagingWeightView
+                                                                     view: NonExportedRecycledPlasticPackagingWeightView
                                                                  )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
