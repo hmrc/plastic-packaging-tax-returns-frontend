@@ -18,29 +18,29 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.HumanMedicinesPlasticPackagingFormProvider
+import forms.returns.ExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedHumanMedicinesPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.HumanMedicinesPlasticPackagingView
+import views.html.returns.ExportedHumanMedicinesPlasticPackagingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HumanMedicinesPlasticPackagingController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         cacheConnector: CacheConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: HumanMedicinesPlasticPackagingFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HumanMedicinesPlasticPackagingView
+class ExportedHumanMedicinesPlasticPackagingController @Inject()(
+                                                                  override val messagesApi: MessagesApi,
+                                                                  cacheConnector: CacheConnector,
+                                                                  navigator: Navigator,
+                                                                  identify: IdentifierAction,
+                                                                  getData: DataRetrievalAction,
+                                                                  requireData: DataRequiredAction,
+                                                                  formProvider: ExportedHumanMedicinesPlasticPackagingFormProvider,
+                                                                  val controllerComponents: MessagesControllerComponents,
+                                                                  view: ExportedHumanMedicinesPlasticPackagingView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
@@ -51,7 +51,7 @@ class HumanMedicinesPlasticPackagingController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.fill(HumanMedicinesPlasticPackagingPage, form)
+      val preparedForm = request.userAnswers.fill(ExportedHumanMedicinesPlasticPackagingPage, form)
 
       exportedAmount.fold[Result](identity, amount => Ok(view(amount, preparedForm, mode)))
   }
@@ -64,9 +64,9 @@ class HumanMedicinesPlasticPackagingController @Inject()(
           Future.successful(exportedAmount.fold[Result](identity, amount => BadRequest(view(amount, formWithErrors, mode)))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HumanMedicinesPlasticPackagingPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedHumanMedicinesPlasticPackagingPage, value))
             _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(HumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(ExportedHumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
       )
   }
 }

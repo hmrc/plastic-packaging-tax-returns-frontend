@@ -16,16 +16,16 @@
 
 package viewmodels.checkAnswers.returns
 
-import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
-import pages.ExportedRecycledPlasticPackagingWeightPage
+import pages.returns.ExportedRecycledPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import viewmodels.govuk.all.FluentActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object ExportedRecycledPlasticPackagingWeightSummary {
+object ExportedRecycledPlasticPackagingWeightSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ExportedRecycledPlasticPackagingWeightPage).map {
@@ -34,7 +34,7 @@ object ExportedRecycledPlasticPackagingWeightSummary {
           key = "exportedRecycledPlasticPackagingWeight.checkYourAnswersLabel",
           value = ValueViewModel(answer.toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("exportedRecycledPlasticPackagingWeight.change.hidden"))
           )
         )

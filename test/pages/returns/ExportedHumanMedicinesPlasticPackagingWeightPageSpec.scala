@@ -16,22 +16,16 @@
 
 package pages.returns
 
-import models.UserAnswers
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class ExportedHumanMedicinesPlasticPackagingWeightPageSpec extends PageBehaviours {
 
-case object HumanMedicinesPlasticPackagingPage extends QuestionPage[Boolean] {
+  "HumanMedicinesPlasticPackagingWeightPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[Long](ExportedHumanMedicinesPlasticPackagingWeightPage)
 
-  override def toString: String = "humanMedicinesPlasticPackaging"
+    beSettable[Long](ExportedHumanMedicinesPlasticPackagingWeightPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.set(HumanMedicinesPlasticPackagingWeightPage, 0L)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+    beRemovable[Long](ExportedHumanMedicinesPlasticPackagingWeightPage)
+  }
 }

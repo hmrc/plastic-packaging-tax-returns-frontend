@@ -24,15 +24,34 @@ import scala.util.Try
 
 case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
 
+  private def exportedAllPlastic(answers: UserAnswers): Boolean = {
+    val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported     = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported     = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    exported >= (manufactured + imported)
+  }
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "exportedPlasticPackagingWeight"
 
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
-      if (amount > 0)
-        userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
-      else
-        super.cleanup(value, userAnswers)
+      if (amount > 0) {
+        if(exportedAllPlastic(userAnswers)) {
+          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
+            .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+            .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
+            .remove(RecycledPlasticPackagingPage).get
+            .remove(RecycledPlasticPackagingWeightPage)
+        }
+        else {
+          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
+        }
+      } else {
+        userAnswers.remove(ExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(ExportedRecycledPlasticPackagingPage)
+      }
     ).getOrElse(super.cleanup(value, userAnswers))
 }

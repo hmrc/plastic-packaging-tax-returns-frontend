@@ -18,11 +18,10 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ExportedRecycledPlasticPackagingWeightFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ExportedRecycledPlasticPackagingWeightPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

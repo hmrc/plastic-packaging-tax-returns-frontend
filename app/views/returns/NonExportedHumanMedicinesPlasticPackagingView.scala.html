@@ -42,7 +42,7 @@
 
 }
 
-@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKgs))) {
+@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKgs), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackaging.caption"))
 

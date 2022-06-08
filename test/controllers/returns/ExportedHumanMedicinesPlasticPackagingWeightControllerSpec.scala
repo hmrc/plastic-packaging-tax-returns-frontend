@@ -18,24 +18,24 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.HumanMedicinesPlasticPackagingWeightFormProvider
+import forms.returns.ExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedHumanMedicinesPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.HumanMedicinesPlasticPackagingWeightView
+import views.html.returns.ExportedHumanMedicinesPlasticPackagingWeightView
 
 import scala.concurrent.Future
 
-class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
+class ExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new HumanMedicinesPlasticPackagingWeightFormProvider()
+  val formProvider = new ExportedHumanMedicinesPlasticPackagingWeightFormProvider()
   val form = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
@@ -44,14 +44,14 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
   val exportedAmount = 8L
 
   lazy val humanMedicinesPlasticPackagingWeightRoute =
-    controllers.returns.routes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
+    controllers.returns.routes.ExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val userAnswersWithExportAmount = userAnswers.set(ExportedPlasticPackagingWeightPage, value = exportedAmount).success.value
 
   "HumanMedicinesPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswersWithExportAmount.set(HumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = userAnswersWithExportAmount.set(ExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -60,7 +60,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingWeightView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(exportedAmount, form.fill(validAnswer), NormalMode, taxReturnOb)(request,
@@ -71,7 +71,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswersWithExportAmount.set(HumanMedicinesPlasticPackagingWeightPage,
+      val ans = userAnswersWithExportAmount.set(ExportedHumanMedicinesPlasticPackagingWeightPage,
         validAnswer
       ).success.value
 
@@ -80,7 +80,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
       running(application) {
         val request = FakeRequest(GET, humanMedicinesPlasticPackagingWeightRoute)
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
@@ -128,7 +128,7 @@ class HumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with M
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[HumanMedicinesPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[ExportedHumanMedicinesPlasticPackagingWeightView]
 
         val result = route(application, request).value
 

@@ -16,16 +16,12 @@
 
 package pages.returns
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class HumanMedicinesPlasticPackagingPageSpec extends PageBehaviours {
+case object ExportedRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
 
-  "HumanMedicinesPlasticPackagingPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](HumanMedicinesPlasticPackagingPage)
-
-    beSettable[Boolean](HumanMedicinesPlasticPackagingPage)
-
-    beRemovable[Boolean](HumanMedicinesPlasticPackagingPage)
-  }
+  override def toString: String = "exportedRecycledPlasticPackagingWeight"
 }

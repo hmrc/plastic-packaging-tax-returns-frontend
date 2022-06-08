@@ -16,7 +16,7 @@
 
 package views.returns
 
-import forms.returns.HumanMedicinesPlasticPackagingWeightFormProvider
+import forms.returns.ExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.NormalMode
 import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
@@ -30,16 +30,16 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.ViewMatchers
-import views.html.returns.HumanMedicinesPlasticPackagingWeightView
+import views.html.returns.ExportedHumanMedicinesPlasticPackagingWeightView
 
 import java.time.LocalDate
 
-class HumanMedicinesPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
+class ExportedHumanMedicinesPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
 
-  val page: HumanMedicinesPlasticPackagingWeightView = inject[HumanMedicinesPlasticPackagingWeightView]
+  val page: ExportedHumanMedicinesPlasticPackagingWeightView = inject[ExportedHumanMedicinesPlasticPackagingWeightView]
   val request: Request[AnyContent]                 = FakeRequest().withCSRFToken
   val aTaxObligation: TaxReturnObligation          = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-  val form: Form[Long]                             = new HumanMedicinesPlasticPackagingWeightFormProvider()()
+  val form: Form[Long]                             = new ExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
   private val realMessagesApi: MessagesApi         = inject[MessagesApi]
 
   implicit def messages: Messages =
