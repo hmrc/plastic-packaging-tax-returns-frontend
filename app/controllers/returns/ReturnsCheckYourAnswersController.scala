@@ -23,10 +23,12 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
 import models.Mode
 import models.returns.{ReturnType, TaxReturnObligation}
+import pages.{ExportedRecycledPlasticPackagingPage, ExportedRecycledPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.{ExportedRecycledPlasticPackagingSummary, ExportedRecycledPlasticPackagingWeightSummary}
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
 import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
@@ -59,12 +61,15 @@ class ReturnsCheckYourAnswersController @Inject()(
             CheckYourAnswerForManufacturedPlasticWeight,
             CheckYourAnswerImportedPlasticPackagingSummary,
             CheckYourAnswerImportedPlasticPackagingWeight,
-            HumanMedicinesPlasticPackagingSummary,
-            HumanMedicinesPlasticPackagingWeightSummary,
-            NonExportedHumanMedicinesPlasticPackagingSummary,
-            NonExportedHumanMedicinesPlasticPackagingWeightSummary,
             DirectlyExportedComponentsSummary,
             ExportedPlasticPackagingWeightSummary,
+            HumanMedicinesPlasticPackagingSummary,
+            HumanMedicinesPlasticPackagingWeightSummary,
+            ExportedRecycledPlasticPackagingSummary,
+            ExportedRecycledPlasticPackagingWeightSummary,
+            NonExportedHumanMedicinesPlasticPackagingSummary,
+            NonExportedHumanMedicinesPlasticPackagingWeightSummary,
+            RecycledPlasticPackagingSummary,
             RecycledPlasticPackagingWeightSummary,
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))

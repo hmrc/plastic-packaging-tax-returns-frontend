@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.QuestionPage
+import pages.{ExportedRecycledPlasticPackagingPage, ExportedRecycledPlasticPackagingWeightPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -30,8 +30,17 @@ case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.set(ExportedPlasticPackagingWeightPage, 0L)
+      case true =>
+        userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(RecycledPlasticPackagingPage).get
+          .remove(RecycledPlasticPackagingWeightPage)
+      case _ =>
+        userAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
+          .remove(HumanMedicinesPlasticPackagingPage).get
+          .remove(HumanMedicinesPlasticPackagingWeightPage).get
+          .remove(ExportedRecycledPlasticPackagingPage).get
+          .remove(ExportedRecycledPlasticPackagingWeightPage)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }

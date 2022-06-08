@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ExportedRecycledPlasticPackagingSummary  {
+object ExportedRecycledPlasticPackagingSummary extends SummaryViewModel  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ExportedRecycledPlasticPackagingPage).map {
