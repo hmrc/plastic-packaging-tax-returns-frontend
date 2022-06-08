@@ -20,6 +20,7 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.ExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.ExportedRecycledPlasticPackagingWeightPage
 import pages.returns.ExportedPlasticPackagingWeightPage
@@ -48,32 +49,30 @@ class ExportedRecycledPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val weightExported = request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-        .getOrElse(throw new IllegalStateException("Invalid exported recycled weight for Plastic Packaging"))
-
       val preparedForm = request.userAnswers.get(ExportedRecycledPlasticPackagingWeightPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, weightExported))
+      Ok(view(preparedForm, mode, extractExportedAmount))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
-        formWithErrors => {
-          val weightExported = request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-            .getOrElse(throw new IllegalStateException("Invalid exported recycled weight for Plastic Packaging"))
-
-          Future.successful(BadRequest(view(formWithErrors, mode, weightExported)))
-        },
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors, mode, extractExportedAmount))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedRecycledPlasticPackagingWeightPage, value))
             _              <- cacheConnector.set(request.pptReference, updatedAnswers)
           } yield Redirect(navigator.nextPage(ExportedRecycledPlasticPackagingWeightPage, mode, updatedAnswers))
       )
+  }
+
+  private def extractExportedAmount() (implicit request: DataRequest[AnyContent]): Long = {
+    request.userAnswers.get(ExportedPlasticPackagingWeightPage)
+      .getOrElse(throw new IllegalStateException("Invalid exported recycled weight for Plastic Packaging"))
   }
 }

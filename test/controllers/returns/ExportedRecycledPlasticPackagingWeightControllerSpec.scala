@@ -114,7 +114,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithExportAmount)).build()
 
       running(application) {
         val request =
@@ -128,7 +128,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, 0L)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, exportedAmount)(request, messages(application)).toString
       }
     }
 
