@@ -26,7 +26,7 @@ case object NonExportRecycledPlasticPackagingWeightPage extends QuestionPage[Lon
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "recycledPlasticPackagingWeight"
+  override def toString: String = "nonExportRecycledPlasticPackagingWeight"
 
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>

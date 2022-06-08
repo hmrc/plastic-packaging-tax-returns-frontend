@@ -15,6 +15,7 @@
  *@
 
 @import components.{SectionHeader, paragraphBody}
+@import viewmodels._
 
 @this(
     layout: templates.Layout,
@@ -26,10 +27,10 @@
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, bool: Boolean = true)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, amount: Long, bool: Boolean = true)(implicit request: Request[_], messages: Messages)
 
-@variableTitle = @{if(bool) messages("NonExportRecycledPlasticPackaging.title.no.export") else messages("NonExportrecycledPlasticPackaging.title.export")}
-@variableH1 = @{if(bool) messages("NonExportRecycledPlasticPackaging.heading.no.export") else messages("NonExportrecycledPlasticPackaging.heading.export")}
+@variableTitle = @{if(bool) messages("NonExportRecycledPlasticPackaging.title.no.export", amount.asKgs) else messages("NonExportrecycledPlasticPackaging.title.export")}
+@variableH1 = @{if(bool) messages("NonExportRecycledPlasticPackaging.heading.no.export", amount.asKgs) else messages("NonExportrecycledPlasticPackaging.heading.export")}
 
 @guidanceLink = {<a href="https://www.gov.uk/guidance/work-out-which-packaging-is-subject-to-plastic-packaging-tax#recycled-plastic" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("NonExportRecycledPlasticPackaging.paragraph.link")</a>}
 
@@ -38,7 +39,7 @@
     @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.2", guidanceLink))
 }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title"))) {
+@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKgs), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 

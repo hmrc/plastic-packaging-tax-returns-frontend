@@ -41,8 +41,10 @@ class NonExportRecycledPlasticPackagingWeightViewSpec extends PlaySpec with Guic
   implicit def messages: Messages =
     realMessagesApi.preferred(request)
 
+  val amount = 321L
+
   private def createView(form: Form[Long] = form): Html =
-    page(form, NormalMode)(request, messages)
+    page(form, NormalMode, amount)(request, messages)
 
   "NonExport Recycled Plastic Packaging Weight page" should {
     val view: Html = createView()

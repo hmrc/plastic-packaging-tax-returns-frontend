@@ -102,15 +102,15 @@ POST       /manufactured-weight                             controllers.returns.
 GET        /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /recycled                      controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /recycled                       controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /non-exported-recycled                      controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /non-exported-recycled                       controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-non-exported-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-non-exported-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /recycled-weight                  controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /recycled-weight                   controllers.returns.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-recycled-weight             controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-recycled-weight             controllers.returns.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET        /non-exported-recycled-weight                  controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /non-exported-recycled-weight                   controllers.returns.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-non-exported-recycled-weight             controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-non-exported-recycled-weight             controllers.returns.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
 

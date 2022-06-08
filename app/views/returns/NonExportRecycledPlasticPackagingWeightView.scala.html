@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
 @import viewmodels.InputWidth._
 @import viewmodels._
 @import components._
@@ -29,14 +28,14 @@
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
-@paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
-<hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
+    @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
+    <hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKgs), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 
@@ -49,7 +48,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("NonExportRecycledPlasticPackagingWeight.heading")).asPageHeading()
+                label = LabelViewModel(messages("NonExportRecycledPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
             )
             .asKg()
             .withHint(Hint(content = HtmlContent(paragraphContent)))

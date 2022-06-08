@@ -21,9 +21,10 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.NonExportRecycledPlasticPackagingWeightFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.Navigator
-import pages.returns.NonExportRecycledPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingWeightPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,23 +43,28 @@ class NonExportRecycledPlasticPackagingWeightController @Inject()(
                                                                    formProvider: NonExportRecycledPlasticPackagingWeightFormProvider,
                                                                    val controllerComponents: MessagesControllerComponents,
                                                                    view: NonExportRecycledPlasticPackagingWeightView
-                                                        )(implicit ec: ExecutionContext)
+                                                                 )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
+
+  private def nonExportedAmount(implicit request: DataRequest[_]) = {
+    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    (manufactured + imported) - exported
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(NonExportRecycledPlasticPackagingWeightPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode)))
-          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-
-        }
+        Ok(view(preparedForm, mode, nonExportedAmount))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -66,7 +72,7 @@ class NonExportRecycledPlasticPackagingWeightController @Inject()(
       implicit request =>
         val pptId: String = request.pptReference
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, nonExportedAmount))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.NonExportRecycledPlasticPackagingPage
+import pages.returns.{NonExportRecycledPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,13 +40,19 @@ class NonExportRecycledPlasticPackagingControllerSpec extends SpecBase with Mock
   val formProvider = new NonExportRecycledPlasticPackagingFormProvider()
   val form = formProvider()
 
+  val validAnswer = 0L
+  //todo: CARL fix flaky tests
+  val amount: Long = 0
+
   lazy val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
+  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = amount).success.value
   "RecycledPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val ans = userAnswersWithExportAmount.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingRoute)
@@ -56,7 +62,7 @@ class NonExportRecycledPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, amount)(request, messages(application)).toString
       }
     }
 
@@ -74,7 +80,7 @@ class NonExportRecycledPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, amount)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +126,7 @@ class NonExportRecycledPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, amount)(request, messages(application)).toString
       }
     }
 

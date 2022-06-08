@@ -42,6 +42,8 @@ class NonExportRecycledPlasticPackagingWeightControllerSpec extends SpecBase wit
 
   val validAnswer: Long = 0L
 
+  val amount = 321L
+
   lazy val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
@@ -61,7 +63,7 @@ class NonExportRecycledPlasticPackagingWeightControllerSpec extends SpecBase wit
         val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request,
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, amount)(request,
           messages(application)
         ).toString
       }
@@ -83,7 +85,7 @@ class NonExportRecycledPlasticPackagingWeightControllerSpec extends SpecBase wit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, amount)(
           request,
           messages(application)
         ).toString
@@ -131,7 +133,7 @@ class NonExportRecycledPlasticPackagingWeightControllerSpec extends SpecBase wit
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, amount)(request,
           messages(application)
         ).toString
       }

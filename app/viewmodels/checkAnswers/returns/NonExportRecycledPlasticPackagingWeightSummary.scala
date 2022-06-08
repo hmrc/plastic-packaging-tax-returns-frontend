@@ -31,7 +31,7 @@ object NonExportRecycledPlasticPackagingWeightSummary extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NonExportRecycledPlasticPackagingWeightPage).map {
       answer =>
-        SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
+        SummaryListRowViewModel(key = "NonExportRecycledPlasticPackagingWeight.checkYourAnswersLabel",
           value = ValueViewModel(answer.toString),
           actions = Seq(
             ActionItemViewModel(
@@ -41,7 +41,7 @@ object NonExportRecycledPlasticPackagingWeightSummary extends SummaryViewModel {
               ).url
             )
               .withVisuallyHiddenText(
-                messages("recycledPlasticPackagingWeight.change.hidden")
+                messages("NonExportRecycledPlasticPackagingWeight.change.hidden")
               )
           )
         )

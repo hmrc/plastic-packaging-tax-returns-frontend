@@ -16,20 +16,19 @@
 
 package controllers.returns
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.NonExportRecycledPlasticPackagingFormProvider
-
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
-import pages.returns.{DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import connectors.CacheConnector
 import models.requests.DataRequest
+import navigation.Navigator
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingPage}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NonExportRecycledPlasticPackagingView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NonExportRecycledPlasticPackagingController @Inject()(
@@ -42,12 +41,20 @@ class NonExportRecycledPlasticPackagingController @Inject()(
                                                              formProvider: NonExportRecycledPlasticPackagingFormProvider,
                                                              val controllerComponents: MessagesControllerComponents,
                                                              view: NonExportRecycledPlasticPackagingView
-                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   // todo: content switch logic
   val noDirectExports: Boolean = true
+
+  private def nonExportedAmount(implicit request: DataRequest[_]) = {
+    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    (manufactured + imported) - exported
+  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -57,7 +64,7 @@ class NonExportRecycledPlasticPackagingController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, noDirectExports))
+      Ok(view(preparedForm, mode, nonExportedAmount, noDirectExports))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -65,7 +72,7 @@ class NonExportRecycledPlasticPackagingController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, noDirectExports))),
+          Future.successful(BadRequest(view(formWithErrors, mode, nonExportedAmount, noDirectExports))),
 
         value =>
           for {
