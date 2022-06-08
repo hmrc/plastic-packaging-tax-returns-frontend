@@ -27,11 +27,12 @@ import javax.inject.Singleton
 @Singleton
 class ReturnsJourneyNavigator {
 
-  private def exportSplit(answers: UserAnswers): Boolean = {
-    val total = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+  private def exportedAllPlastic(answers: UserAnswers): Boolean = {
+    val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported     = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported     = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
 
-    exported < total
+    exported >= (manufactured + imported)
   }
 
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
@@ -164,14 +165,14 @@ class ReturnsJourneyNavigator {
     }
 
   private def exportedRecycledPlasticPackagingWeightPageRoute(answers: UserAnswers, mode: Mode): Call =
-    exportSplit(answers) match {
-      case true  => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
-      case false =>
+    exportedAllPlastic(answers) match {
+      case true  =>
         if(mode == CheckMode) {
           routes.ReturnsCheckYourAnswersController.onPageLoad()
         } else {
           routes.ConvertedPackagingCreditController.onPageLoad(mode)
         }
+      case false => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
       case _     => throw new Exception("Unable to navigate to page")
     }
 }

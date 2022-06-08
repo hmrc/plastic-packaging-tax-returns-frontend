@@ -22,7 +22,7 @@ import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -46,10 +46,11 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
   val form = formProvider()
 
   private def nonExportedAmount(implicit request: DataRequest[_]) = {
-    val total    = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported     = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported     = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
 
-    total - exported
+    (manufactured + imported) - exported
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
