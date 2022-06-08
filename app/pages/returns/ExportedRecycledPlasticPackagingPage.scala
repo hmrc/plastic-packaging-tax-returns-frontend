@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+package pages.returns
 
 import models.UserAnswers
-import pages.returns.RecycledPlasticPackagingWeightPage
+import pages.{ExportedRecycledPlasticPackagingWeightPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -28,10 +28,11 @@ case object ExportedRecycledPlasticPackagingPage extends QuestionPage[Boolean] {
 
   override def toString: String = "exportedRecycledPlasticPackaging"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map {
       case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.set(RecycledPlasticPackagingWeightPage, 0L)
+      case _    => userAnswers.set(ExportedRecycledPlasticPackagingWeightPage, 0L)
     }
-  }.getOrElse(super.cleanup(value, userAnswers))
+      .getOrElse(super.cleanup(value, userAnswers))
+
 }

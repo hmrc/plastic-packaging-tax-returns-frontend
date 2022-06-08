@@ -21,8 +21,7 @@ import controllers.actions._
 import forms.ExportedRecycledPlasticPackagingFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ExportedRecycledPlasticPackagingPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

@@ -28,8 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ExportedRecycledPlasticPackagingPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call

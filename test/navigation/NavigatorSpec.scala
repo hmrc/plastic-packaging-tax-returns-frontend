@@ -23,7 +23,7 @@ import controllers.amends.{routes => amendsRoutes}
 import pages._
 import models._
 import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
 
 /*************************************************************
 Returns journey (v1)
@@ -188,6 +188,17 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+        }
+
+        "for the ExportedRecycledPlasticPackagingPage" - {
+          "navigatye to RecycledPlasticPackagingWeightPage when answer is yes" in {
+            val answers = UserAnswers("id").set(ExportedRecycledPlasticPackagingPage, true)
+
+            navigator.nextPage(ExportedRecycledPlasticPackagingPage,
+              NormalMode,
+              answers.get
+            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+          }
         }
 
 

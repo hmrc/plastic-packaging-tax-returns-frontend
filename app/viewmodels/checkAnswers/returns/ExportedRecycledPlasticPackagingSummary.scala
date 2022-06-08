@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.returns
 
-import controllers.routes
+import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
-import pages.ExportedRecycledPlasticPackagingWeightPage
+import pages.returns.ExportedRecycledPlasticPackagingPage
 import play.api.i18n.Messages
+import viewmodels.govuk.all.FluentActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object ExportedRecycledPlasticPackagingWeightSummary  {
+object ExportedRecycledPlasticPackagingSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ExportedRecycledPlasticPackagingWeightPage).map {
+    answers.get(ExportedRecycledPlasticPackagingPage).map {
       answer =>
+        val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "exportedRecycledPlasticPackagingWeight.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.toString),
+          key = "exportedRecycledPlasticPackaging.checkYourAnswersLabel",
+          value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("exportedRecycledPlasticPackagingWeight.change.hidden"))
+            ActionItemViewModel("site.change", routes.ExportedRecycledPlasticPackagingController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("exportedRecycledPlasticPackaging.change.hidden"))
           )
         )
     }
+
 }

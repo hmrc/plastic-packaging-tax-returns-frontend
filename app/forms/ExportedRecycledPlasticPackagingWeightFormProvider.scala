@@ -27,7 +27,8 @@ class ExportedRecycledPlasticPackagingWeightFormProvider @Inject() extends Mappi
       "value" -> long(
         "exportedRecycledPlasticPackagingWeight.error.required",
         "exportedRecycledPlasticPackagingWeight.error.wholeNumber",
-        "exportedRecycledPlasticPackagingWeight.error.nonNumeric")
+        "exportedRecycledPlasticPackagingWeight.error.nonNumeric",
+        "exportedRecycledPlasticPackagingWeight.error.spaces")
         .verifying(minimumValue(0L, "exportedRecycledPlasticPackagingWeight.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "exportedRecycledPlasticPackagingWeight.error.outOfRange.high"))
     )
