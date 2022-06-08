@@ -14,14 +14,10 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
 @import controllers.helpers.TaxLiability
-@import components.paragraphBody
-@import viewmodels.{PrintBigDecimal, PrintLong}
+@import models.returns.TaxReturnObligation
 @import viewmodels.InputWidth
-@import views.html.components.bulletList
-@import views.html.components.Link
-@import views.html.components.paragraph
+@import components.{Link, bulletList, paragraph, paragraphBody}
 
 @this(
     layout: templates.Layout,
@@ -62,13 +58,22 @@
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
 }
 
+@toLongKey(shortKey: String) = @{
+    "submit-return.check-your-answers." + shortKey
+}
+
+@summaryRowTable(shortKey: String, value: String) = @{
+    taxCalculationRow(toLongKey(shortKey), value)
+}
+
 @summaryRow(shortKey: String, value: String) = @{
     val text = messages("submit-return.check-your-answers." + shortKey)
-    SummaryListRow(key = Key(text, classes = InputWidth.ThreeQuarters.toString), value = Value(value))
+    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
+    SummaryListRow(key = Key(text, classes = classes), value = Value(value))
 }
 
 @sectionHeading(text: String)(implicit messages: Messages) = {
-    <h2 class="govuk-heading-m">@messages(text)</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages(text)</h2>
 }
 
 @para(shortKey: String, classes: String = "govuk-body") = @{
@@ -81,10 +86,9 @@
 }
 
 @paraLink(paraShortKey: String, linkShortKey: String, url: String) = @{
-    def longKey(shortKey: String) = "submit-return.check-your-answers." + shortKey
-    def text(shortKey: String) = messages(longKey(shortKey))
-    paragraph(content = Html(messages(longKey(paraShortKey), link(
-        id = longKey(linkShortKey),
+    def text(shortKey: String) = messages(toLongKey(shortKey))
+    paragraph(content = Html(messages(toLongKey(paraShortKey), link(
+        id = toLongKey(linkShortKey),
         text = text(linkShortKey),
         call = Call("GET", url),
         newTab = true
@@ -95,55 +99,49 @@
 
     <h1 class="govuk-heading-xl">@messages("submit-return.check-your-answers.heading")</h1>
 
-    @sectionHeading("submit-return.check-your-answers.section1.heading")
+    <!-- Business details -->
+    @sectionHeading("submit-return.check-your-answers.business-details.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRow("section1.row1", pptReference),
-            summaryRow("section1.row2", taxReturn.toReturnQuarter)
-        ),
-        classes = "govuk-!-margin-bottom-9"
+            summaryRow("business-details.row1", pptReference),
+            summaryRow("business-details.row2", taxReturn.toReturnQuarter)
+        )
     ))
 
-    @sectionHeading("submit-return.check-your-answers.section2.heading")
-    @govukSummaryList(list)
-
+    <!-- Packaging total -->
+    @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
     @govukTable(Table(
         rows = Seq(
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.exemptPackaging.label", taxLiability.totalKgExempt.asKgs),
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.liablePackaging.label", taxLiability.totalKgLiable.asKgs, "row-border"),
-            taxCalculationRow("returnsCheckYourAnswers.taxLiability.label", taxLiability.taxDue.asPounds, "row-border")
-            ),
-        head = Some(Seq(
-            HeadCell(
-                content = hiddenText("returns.checkYourReturnPage.header.item"),
-                classes = "govuk-!-width-one-half"
-            ),
-        HeadCell(
-            content = hiddenText("returns.checkYourReturnPage.header.amount"),
-            classes = "govuk-!-width-one-quarter",
-            format = Some("numeric")
-            ),
-        HeadCell(
-            content = hiddenText("returns.checkYourReturnPage.header.empty"),
-            classes = "govuk-!-width-one-quarter"
-        ))),
-        caption = Some(messages("returnsCheckYourAnswers.taxLiability.subheading")),
-        captionClasses = "govuk-table__caption--m",
-        firstCellIsHeader = true,
-        classes = "row-header--no-border cell--no-border "
+            taxCalculationRow("submit-return.check-your-answers.tax-calc.row1", taxLiability.plasticPackagingTotal),
+            taxCalculationRow("submit-return.check-your-answers.tax-calc.row2", taxLiability.deductionsTotal),
+            taxCalculationRow("submit-return.check-your-answers.tax-calc.row3", taxLiability.chargeableTotal),
+            taxCalculationRow("submit-return.check-your-answers.tax-calc.row4", taxLiability.taxDue)
+        ),
+
     ))
 
-    @paragraphBody(messages("returnsCheckYourAnswers.taxLiability.description"), classes = "govuk-body-m")
+    <!-- Tax calculation -->
+    @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
+    @govukTable(Table(
+        rows = Seq(
+            summaryRowTable("tax-calc.row1", taxLiability.plasticPackagingTotal),
+            summaryRowTable("tax-calc.row2", taxLiability.deductionsTotal),
+            summaryRowTable("tax-calc.row3", taxLiability.chargeableTotal),
+            summaryRowTable("tax-calc.row4", taxLiability.taxDue)
+        )
+    ))
+    @para("tax-calc.footnote")
 
+    <!-- Credits -->
     @sectionHeading("submit-return.check-your-answers.credits.heading")
     @para("credits.line1")
     @para("credits.line2")
     @bullets("credits.line3", "credits.line4")
     @paraLink("credits.line5", "credits.line5.link-text", creditAdviceLnkUrl)
 
+    <!-- Submit -->
     @sectionHeading("submit-return.check-your-answers.now-send.heading")
     @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
-
     @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
         @govukButton(
             ButtonViewModel(messages("submit-return.check-your-answers.now-send.button-text"))

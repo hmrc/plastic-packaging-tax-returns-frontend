@@ -395,10 +395,21 @@ humanMedicinesPlasticPackaging.error.required = Select yes if any of your export
 humanMedicinesPlasticPackaging.change.hidden = HumanMedicinesPlasticPackaging
 
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
-submit-return.check-your-answers.section1.heading = Business details
-submit-return.check-your-answers.section1.row1 = Plastic Packaging Tax registration number
-submit-return.check-your-answers.section1.row2 = Return period
-submit-return.check-your-answers.section2.heading = Total plastic packaging
+submit-return.check-your-answers.business-details.heading = Business details
+submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
+submit-return.check-your-answers.business-details.row2 = Return period
+
+submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
+submit-return.check-your-answers.packaging-total.row1 = Weight of manufactured plastic packaging
+submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row3 = Plastic packaging total
+
+submit-return.check-your-answers.tax-calc.heading = Your tax calculation
+submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
+submit-return.check-your-answers.tax-calc.row2 = Deductions total
+submit-return.check-your-answers.tax-calc.row3 = Chargeable plastic packaging total
+submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
+submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.

@@ -16,31 +16,40 @@
 
 package controllers.helpers
 
+import viewmodels.{PrintBigDecimal, PrintLong}
+
 import scala.math.BigDecimal.RoundingMode
 
 case class TaxLiability(
-                         totalKgLiable: Long = 0,
-                         totalKgExempt: Long = 0,
-                         totalCredit: BigDecimal = 0,
-                         taxDue: BigDecimal = 0
-                       )
+  private val totalKgLiable: Long = 0,
+  private val totalKgExempt: Long = 0,
+  private val totalCredit: BigDecimal = 0,
+  private val _taxDue: BigDecimal = 0
+) {
+
+  def plasticPackagingTotal: String = totalKgLiable.asKgs
+  def deductionsTotal: String = totalKgExempt.asKgs
+  def chargeableTotal: String = math.max(totalKgLiable - totalKgExempt, 0).asKgs
+  def taxDue: String = _taxDue.asPounds
+}
 
 object TaxLiabilityFactory {
 
   private val taxValueInPencePerKg = BigDecimal("0.20")
 
   def create(
-              totalManufacturedKg: Long,
-              totalImportedKg: Long,
-              totalHumanMedicinesKg: Long,
-              totalDirectExportsKg: Long,
-              totalConversionCreditPounds: BigDecimal,
-              totalRecycledKg: Long
-            ): TaxLiability = {
+    totalManufacturedKg: Long,
+    totalImportedKg: Long,
+    totalHumanMedicinesKg: Long,
+    totalDirectExportsKg: Long,
+    totalConversionCreditPounds: BigDecimal,
+    totalRecycledKg: Long
+  ): TaxLiability = {
 
     val totalKgLiable = totalManufacturedKg + totalImportedKg
     val totalKgExempt = totalHumanMedicinesKg + totalDirectExportsKg + totalRecycledKg
 
+    // TODO - little bit of duplication
     val taxDue = taxValueInPencePerKg * BigDecimal(
       scala.math.max(totalKgLiable - totalKgExempt, 0)
     ).setScale(2, RoundingMode.HALF_EVEN)
@@ -48,7 +57,7 @@ object TaxLiabilityFactory {
     TaxLiability(totalKgLiable = totalKgLiable,
       totalKgExempt = totalKgExempt,
       totalCredit = totalConversionCreditPounds,
-      taxDue = taxDue
+      _taxDue = taxDue
     )
   }
 
