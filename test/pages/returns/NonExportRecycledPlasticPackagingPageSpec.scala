@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package forms.returns
+package pages.returns
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class NonExportRecycledPlasticPackagingPageSpec extends PageBehaviours {
 
-class RecycledPlasticPackagingFormProvider @Inject() extends Mappings {
+  "RecycledPlasticPackagingPage" - {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("recycledPlasticPackaging.error.required")
-  )
+    beRetrievable[Boolean](NonExportRecycledPlasticPackagingPage)
+
+    beSettable[Boolean](NonExportRecycledPlasticPackagingPage)
+
+    beRemovable[Boolean](NonExportRecycledPlasticPackagingPage)
+  }
 }

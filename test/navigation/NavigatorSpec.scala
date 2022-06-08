@@ -23,7 +23,7 @@ import controllers.amends.{routes => amendsRoutes}
 import pages._
 import models._
 import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportRecycledPlasticPackagingWeightPage, StartYourReturnPage}
 
 /*************************************************************
 Returns journey (v1)
@@ -170,7 +170,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(HumanMedicinesPlasticPackagingPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe returnsRoutes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
 
           }
 
@@ -184,7 +184,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+            ) mustBe returnsRoutes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
 
           }
 
@@ -194,9 +194,9 @@ class NavigatorSpec extends SpecBase {
         "for the RecycledPlasticPackagingWeightPage" - {
 
           "navigate to ConvertedPackagingCreditPage" in {
-            val answers = UserAnswers("id").set(RecycledPlasticPackagingWeightPage, 1000)
+            val answers = UserAnswers("id").set(NonExportRecycledPlasticPackagingWeightPage, 1000L)
 
-            navigator.nextPage(RecycledPlasticPackagingWeightPage,
+            navigator.nextPage(NonExportRecycledPlasticPackagingWeightPage,
               NormalMode,
               answers.get
             ) mustBe returnsRoutes.ConvertedPackagingCreditController.onPageLoad(NormalMode)

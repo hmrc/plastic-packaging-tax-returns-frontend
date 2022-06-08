@@ -16,39 +16,30 @@
 
 package forms.returns
 
-import forms.behaviours.LongFieldBehaviours
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
+class NonExportRecycledPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
 
-  val form = new ManufacturedPlasticPackagingWeightFormProvider()()
+  val requiredKey = "NonExportRecycledPlasticPackaging.error.required"
+  val invalidKey = "error.boolean"
+
+  val form = new NonExportRecycledPlasticPackagingFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
 
-    val minimum = 0
-    val maximum = 99999999999L
-
-    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
-
-    behave like fieldThatBindsValidData(
+    behave like booleanField(
       form,
       fieldName,
-      validDataGenerator
-    )
-
-    behave like longField(
-      form,
-      fieldName,
-      nonNumericError  = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.nonNumeric"),
-      wholeNumberError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.wholeNumber")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.required")
+      requiredError = FormError(fieldName, requiredKey)
     )
   }
 }

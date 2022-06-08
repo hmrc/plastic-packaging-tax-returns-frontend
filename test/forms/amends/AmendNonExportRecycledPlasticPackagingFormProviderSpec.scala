@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package forms.returns
+package forms.amends
 
 import forms.behaviours.IntFieldBehaviours
 import play.api.data.FormError
 
-class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours {
+class AmendNonExportRecycledPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
 
-  val form = new RecycledPlasticPackagingWeightFormProvider()()
+  val form = new AmendRecycledPlasticPackagingFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
 
     val minimum = 0
-    val maximum = 9999999
+    val maximum = 99999999
 
     val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
 
@@ -37,9 +37,9 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
     behave like intField(form,
                          fieldName,
                          nonNumericError =
-                           FormError(fieldName, "recycledPlasticPackagingWeight.error.nonNumeric"),
+                           FormError(fieldName, "amendRecycledPlasticPackaging.error.nonNumeric"),
                          wholeNumberError =
-                           FormError(fieldName, "recycledPlasticPackagingWeight.error.wholeNumber")
+                           FormError(fieldName, "amendRecycledPlasticPackaging.error.wholeNumber")
     )
 
     behave like intFieldWithRange(form,
@@ -48,7 +48,7 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
                                   maximum = maximum,
                                   expectedError =
                                     FormError(fieldName,
-                                              "recycledPlasticPackagingWeight.error.outOfRange",
+                                              "amendRecycledPlasticPackaging.error.outOfRange",
                                               Seq(minimum, maximum)
                                     )
     )
@@ -56,7 +56,7 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends IntFieldBehaviours 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "recycledPlasticPackagingWeight.error.required")
+      requiredError = FormError(fieldName, "amendRecycledPlasticPackaging.error.required")
     )
   }
 }

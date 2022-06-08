@@ -18,7 +18,7 @@ package pages.amends
 
 import pages.behaviours.PageBehaviours
 
-class AmendRecycledPlasticPackagingPageSpec extends PageBehaviours {
+class AmendNonExportRecycledPlasticPackagingPageSpec extends PageBehaviours {
 
   "AmendRecycledPlasticPackagingPage" - {
 

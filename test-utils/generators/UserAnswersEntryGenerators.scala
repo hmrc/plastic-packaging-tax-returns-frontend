@@ -25,10 +25,10 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(RecycledPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportRecycledPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RecycledPlasticPackagingPage.type]
+        page  <- arbitrary[NonExportRecycledPlasticPackagingPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -83,10 +83,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(NonExportRecycledPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RecycledPlasticPackagingWeightPage.type]
+        page  <- arbitrary[NonExportRecycledPlasticPackagingWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }

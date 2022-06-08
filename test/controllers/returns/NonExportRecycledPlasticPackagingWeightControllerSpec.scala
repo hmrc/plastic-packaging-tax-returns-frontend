@@ -18,38 +18,38 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.RecycledPlasticPackagingWeightFormProvider
+import forms.returns.NonExportRecycledPlasticPackagingWeightFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.RecycledPlasticPackagingWeightPage
+import pages.returns.NonExportRecycledPlasticPackagingWeightPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.RecycledPlasticPackagingWeightView
+import views.html.returns.NonExportRecycledPlasticPackagingWeightView
 
 import scala.concurrent.Future
 
-class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
+class NonExportRecycledPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new RecycledPlasticPackagingWeightFormProvider()
+  val formProvider = new NonExportRecycledPlasticPackagingWeightFormProvider()
   val form = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer: Int = 0
+  val validAnswer: Long = 0L
 
   lazy val recycledPlasticPackagingWeightRoute =
-    controllers.returns.routes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
+    controllers.returns.routes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "RecycledPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val ans = userAnswers.set(RecycledPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = userAnswers.set(NonExportRecycledPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -58,10 +58,10 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request,
           messages(application)
         ).toString
       }
@@ -69,7 +69,7 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(RecycledPlasticPackagingWeightPage,
+      val ans = userAnswers.set(NonExportRecycledPlasticPackagingWeightPage,
         validAnswer
       ).success.value
 
@@ -78,12 +78,12 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingWeightRoute)
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
           request,
           messages(application)
         ).toString
@@ -126,12 +126,12 @@ class RecycledPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingWeightView]
+        val view = application.injector.instanceOf[NonExportRecycledPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request,
           messages(application)
         ).toString
       }

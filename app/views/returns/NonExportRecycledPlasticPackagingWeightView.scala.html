@@ -14,29 +14,47 @@
  * limitations under the License.
  *@
 
+@import models.returns.TaxReturnObligation
+@import viewmodels.InputWidth._
+@import viewmodels._
+@import components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("recycledPlasticPackaging.title"))) {
+@paragraphContent ={
+@paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
+<hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
+}
 
-    @formHelper(action = controllers.returns.routes.RecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title"))) {
+
+    @sectionHeader(messages("caption.non.exported.plastic"))
+
+    @formHelper(action = controllers.returns.routes.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("recycledPlasticPackaging.heading")).asPageHeading()
+                label = LabelViewModel(messages("NonExportRecycledPlasticPackagingWeight.heading")).asPageHeading()
             )
+            .asKg()
+            .withHint(Hint(content = HtmlContent(paragraphContent)))
+            .withWidth(Fixed10)
+
         )
 
         @govukButton(

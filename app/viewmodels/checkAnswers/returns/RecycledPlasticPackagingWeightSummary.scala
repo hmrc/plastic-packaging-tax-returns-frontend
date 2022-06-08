@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.returns
 
 import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
-import pages.returns.RecycledPlasticPackagingWeightPage
+import pages.returns.NonExportRecycledPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
@@ -29,14 +29,14 @@ import viewmodels.implicits._
 object RecycledPlasticPackagingWeightSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RecycledPlasticPackagingWeightPage).map {
+    answers.get(NonExportRecycledPlasticPackagingWeightPage).map {
       answer =>
         SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
           value = ValueViewModel(answer.toString),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              routes.RecycledPlasticPackagingWeightController.onPageLoad(
+              routes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(
                 CheckMode
               ).url
             )
