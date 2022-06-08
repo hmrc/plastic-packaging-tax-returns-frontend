@@ -45,7 +45,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
   val validAnswer = 0L
   val exportedAmount = 8L
 
-  lazy val exportedRecycledPlasticPackagingWeightRoute = routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val exportedRecycledPlasticPackagingWeightRoute = controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val userAnswersWithExportAmount = userAnswers.set(ExportedPlasticPackagingWeightPage, value = exportedAmount).success.value
 

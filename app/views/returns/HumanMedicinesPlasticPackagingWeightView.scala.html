@@ -31,7 +31,7 @@
 
 @(amount: Long, form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs))) {
+@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("humanMedicinesPlasticPackaging.caption"))
 

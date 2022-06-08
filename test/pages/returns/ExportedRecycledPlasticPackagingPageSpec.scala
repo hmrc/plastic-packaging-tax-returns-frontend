@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.ExportedRecycledPlasticPackagingPage
+import pages.{ExportedRecycledPlasticPackagingPage, ExportedRecycledPlasticPackagingWeightPage}
 import pages.behaviours.PageBehaviours
 
 class ExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
@@ -42,7 +42,7 @@ class ExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
       "must return a value of zero" - {
         "when answer is no" in {
           val answer = UserAnswers("123").set(ExportedRecycledPlasticPackagingPage, false).get
-          val expectedAnswer = answer.copy().set(RecycledPlasticPackagingWeightPage, 0L).get
+          val expectedAnswer = answer.copy().set(ExportedRecycledPlasticPackagingWeightPage, 0L).get
 
           ExportedRecycledPlasticPackagingPage.cleanup(Some(false), answer).get mustBe expectedAnswer
         }
