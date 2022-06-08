@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package pages.returns
+package forms
 
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class NonExportRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "NonExportRecycledPlasticPackagingWeightPage" - {
+class ExportedRecycledPlasticPackagingFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Long](NonExportRecycledPlasticPackagingWeightPage)
-
-    beSettable[Long](NonExportRecycledPlasticPackagingWeightPage)
-
-    beRemovable[Long](NonExportRecycledPlasticPackagingWeightPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("exportedRecycledPlasticPackaging.error.required")
+    )
 }

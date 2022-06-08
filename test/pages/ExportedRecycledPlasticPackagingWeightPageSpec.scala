@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages.returns
+package pages
 
 import pages.behaviours.PageBehaviours
 
-class NonExportRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
+class ExportedRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
 
-  "NonExportRecycledPlasticPackagingWeightPage" - {
+  "ExportedRecycledPlasticPackagingWeightPage" - {
 
-    beRetrievable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beRetrievable[Long](ExportedRecycledPlasticPackagingWeightPage)
 
-    beSettable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beSettable[Long](ExportedRecycledPlasticPackagingWeightPage)
 
-    beRemovable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beRemovable[Long](ExportedRecycledPlasticPackagingWeightPage)
   }
 }

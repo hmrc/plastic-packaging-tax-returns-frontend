@@ -16,28 +16,30 @@
 
 package viewmodels.checkAnswers.returns
 
+import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
-import pages.returns.NonExportRecycledPlasticPackagingPage
+import pages.returns.NonExportedHumanMedicinesPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.all.FluentActionItem
+import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object NonExportRecycledPlasticPackagingSummary extends SummaryViewModel   {
+object NonExportedHumanMedicinesPlasticPackagingSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NonExportRecycledPlasticPackagingPage).map {
+    answers.get(NonExportedHumanMedicinesPlasticPackagingPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "NonExportRecycledPlasticPackaging.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          key = "nonExportedHumanMedicinesPlasticPackaging.checkYourAnswersLabel",
+          value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.returns.routes.NonExportRecycledPlasticPackagingController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("NonExportRecycledPlasticPackaging.change.hidden"))
+            ActionItemViewModel("site.change", routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("nonExportedHumanMedicinesPlasticPackaging.change.hidden"))
           )
         )
     }

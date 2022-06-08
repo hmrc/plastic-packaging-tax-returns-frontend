@@ -102,6 +102,11 @@ POST       /manufactured-weight                             controllers.returns.
 GET        /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
+GET        /recycled                      controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /recycled                       controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
 GET        /recycled-weight                  controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
 POST       /recycled-weight                   controllers.returns.NonExportRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /change-recycled-weight             controllers.returns.NonExportRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
@@ -135,7 +140,22 @@ POST       /exported-medicines-packaging                        controllers.retu
 GET        /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exported-medicines-packaging                  controllers.returns.HumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /recycled                      controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /recycled                       controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-recycled                 controllers.returns.NonExportRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET        /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /non-exported-medicines-packaging-weight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /non-exported-medicines-packaging-weight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /exported-components-recycled                        controllers.returns.ExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST       /exported-components-recycled                        controllers.returns.ExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exported-components-recycled                  controllers.returns.ExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exported-components-recycled                  controllers.returns.ExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /exportedRecycledPlasticPackagingWeight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /exportedRecycledPlasticPackagingWeight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)

@@ -18,14 +18,14 @@ package pages.returns
 
 import pages.behaviours.PageBehaviours
 
-class NonExportRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
+class NonExportedHumanMedicinesPlasticPackagingPageSpec extends PageBehaviours {
 
-  "NonExportRecycledPlasticPackagingWeightPage" - {
+  "NonExportedHumanMedicinesPlasticPackagingPage" - {
 
-    beRetrievable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beRetrievable[Boolean](NonExportedHumanMedicinesPlasticPackagingPage)
 
-    beSettable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beSettable[Boolean](NonExportedHumanMedicinesPlasticPackagingPage)
 
-    beRemovable[Long](NonExportRecycledPlasticPackagingWeightPage)
+    beRemovable[Boolean](NonExportedHumanMedicinesPlasticPackagingPage)
   }
 }

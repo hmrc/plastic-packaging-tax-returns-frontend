@@ -14,28 +14,21 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
-@import viewmodels._
-@import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    govukButton: GovukButton
 )
 
-@(amount: Long, form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("exportedRecycledPlasticPackagingWeight.title"))) {
 
-    @sectionHeader(messages("humanMedicinesPlasticPackaging.caption"))
-
-    @formHelper(action = controllers.returns.routes.HumanMedicinesPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -44,11 +37,10 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("humanMedicinesPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
+                label = LabelViewModel(messages("exportedRecycledPlasticPackagingWeight.heading")).asPageHeading()
             )
-            .asKg()
+            .asNumeric()
             .withWidth(Fixed10)
-            .withHint(Hint(content = Text(messages("humanMedicinesPlasticPackagingWeight.hint"))))
         )
 
         @govukButton(

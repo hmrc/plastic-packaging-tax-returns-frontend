@@ -16,9 +16,9 @@
 
 package viewmodels.checkAnswers.returns
 
-import controllers.returns.routes
+import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.returns.NonExportRecycledPlasticPackagingWeightPage
+import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
@@ -26,25 +26,19 @@ import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object RecycledPlasticPackagingWeightSummary extends SummaryViewModel {
+object NonExportedHumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
 
-  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NonExportRecycledPlasticPackagingWeightPage).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage).map {
       answer =>
-        SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
+
+        SummaryListRowViewModel(
+          key = "nonExportedHumanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
           value = ValueViewModel(answer.toString),
           actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              routes.NonExportRecycledPlasticPackagingWeightController.onPageLoad(
-                CheckMode
-              ).url
-            )
-              .withVisuallyHiddenText(
-                messages("recycledPlasticPackagingWeight.change.hidden")
-              )
+            ActionItemViewModel("site.change", controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden"))
           )
         )
     }
-
 }

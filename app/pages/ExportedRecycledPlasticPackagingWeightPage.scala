@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package pages.returns
+package pages
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class NonExportRecycledPlasticPackagingWeightPageSpec extends PageBehaviours {
+case object ExportedRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
 
-  "NonExportRecycledPlasticPackagingWeightPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Long](NonExportRecycledPlasticPackagingWeightPage)
-
-    beSettable[Long](NonExportRecycledPlasticPackagingWeightPage)
-
-    beRemovable[Long](NonExportRecycledPlasticPackagingWeightPage)
-  }
+  override def toString: String = "exportedRecycledPlasticPackagingWeight"
 }

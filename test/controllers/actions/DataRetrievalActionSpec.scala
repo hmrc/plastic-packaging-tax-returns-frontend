@@ -18,9 +18,8 @@ package controllers.actions
 
 import base.SpecBase
 import connectors.CacheConnector
-import controllers.routes
-import models.{NormalMode, SignedInUser, UserAnswers}
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
+import models.{NormalMode, SignedInUser, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
