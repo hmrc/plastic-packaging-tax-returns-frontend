@@ -105,5 +105,13 @@ case class TaxReturnViewModel (
     createSummaryRow[HumanMedicinesPlasticPackagingWeightSummary](messageKey)
   }
 
+  def nonexportedRecycledYesNo(messageKey: String): SummaryListRow = {
+    // TODO get correct one
+    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+  }
+
+  def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
+    createSummaryRow[RecycledPlasticPackagingWeightSummary](messageKey)
+  }
 
 }

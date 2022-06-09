@@ -21,18 +21,20 @@ import models.{CheckMode, UserAnswers}
 import pages.returns.RecycledPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object RecycledPlasticPackagingWeightSummary extends SummaryViewModel {
+class RecycledPlasticPackagingWeightSummary(key: String = "recycledPlasticPackagingWeight.checkYourAnswersLabel")
+  extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RecycledPlasticPackagingWeightPage).map {
-      answer =>
-        SummaryListRowViewModel(key = "recycledPlasticPackagingWeight.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
+      answer: Int =>
+        SummaryListRowViewModel(key = key,
+          value = ValueViewModel(answer.toLong.asKgs),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
