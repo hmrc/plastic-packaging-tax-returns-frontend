@@ -31,10 +31,10 @@ class NonExportedRecycledPlasticPackagingWeightSummary(key: String = "NonExportR
   extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RecycledPlasticPackagingWeightPage).map {
-      answer: Int =>
+    answers.get(NonExportedRecycledPlasticPackagingWeightPage).map {
+      answer =>
         SummaryListRowViewModel(key = key,
-          value = ValueViewModel(answer.toLong.asKgs),
+          value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel(
               "site.change",

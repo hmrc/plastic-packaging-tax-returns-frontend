@@ -25,16 +25,18 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
+import viewmodels.PrintLong
 
-object NonExportedHumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
+class NonExportedHumanMedicinesPlasticPackagingWeightSummary(key: String = "nonExportedHumanMedicinesPlasticPackagingWeight.checkYourAnswersLabel")
+  extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage).map {
-      answer =>
+      answer: Long =>
 
         SummaryListRowViewModel(
-          key = "nonExportedHumanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
+          key = key,
+          value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden"))

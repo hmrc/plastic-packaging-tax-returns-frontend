@@ -22,9 +22,10 @@ import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage,
+  ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 

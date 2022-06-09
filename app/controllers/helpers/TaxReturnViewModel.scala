@@ -81,15 +81,14 @@ case class TaxReturnViewModel (
   }
 
   def packagingTotal: String = {
-    val total = ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
-      + ensureAnswer[ImportedPlasticPackagingWeightSummary]
+    val total = (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
+      + ensureAnswer[ImportedPlasticPackagingWeightSummary])
     total.asKgs
   }
 
 
   def exportedYesNo(messageKey: String): SummaryListRow = {
-    // TODO get correct one
-    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+    createSummaryRow[ExportedRecycledPlasticPackagingSummary](messageKey)
   }
 
   def exportedWeight(messageKey: String): SummaryListRow = {
@@ -98,20 +97,19 @@ case class TaxReturnViewModel (
 
 
   def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[HumanMedicinesPlasticPackagingSummary](messageKey)
+    createSummaryRow[NonExportedHumanMedicinesPlasticPackagingSummary](messageKey)
   }
 
   def nonexportedMedicineWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[HumanMedicinesPlasticPackagingWeightSummary](messageKey)
+    createSummaryRow[NonExportedHumanMedicinesPlasticPackagingWeightSummary](messageKey)
   }
 
   def nonexportedRecycledYesNo(messageKey: String): SummaryListRow = {
-    // TODO get correct one
-    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+    createSummaryRow[NonExportedRecycledPlasticPackagingSummary](messageKey)
   }
 
   def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[RecycledPlasticPackagingWeightSummary](messageKey)
+    createSummaryRow[NonExportedRecycledPlasticPackagingWeightSummary](messageKey)
   }
 
 }
