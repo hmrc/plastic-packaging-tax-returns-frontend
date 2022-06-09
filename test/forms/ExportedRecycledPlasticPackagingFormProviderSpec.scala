@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import play.api.data.FormError
 
 class ExportedRecycledPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {

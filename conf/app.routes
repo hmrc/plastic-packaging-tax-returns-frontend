@@ -159,3 +159,9 @@ GET        /exportedRecycledPlasticPackagingWeight                  controllers.
 POST       /exportedRecycledPlasticPackagingWeight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeExportedRecycledPlasticPackagingWeight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /exported-recycled-weight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /exported-recycled-weight                  controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exported-recycled-weight                       controllers.returns.ExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exported-recycled-weight                        controllers.returns.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+

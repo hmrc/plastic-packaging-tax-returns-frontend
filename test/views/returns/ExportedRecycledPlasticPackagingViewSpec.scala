@@ -17,7 +17,7 @@
 package views.returns
 
 import config.FrontendAppConfig
-import forms.ExportedRecycledPlasticPackagingFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.NormalMode
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

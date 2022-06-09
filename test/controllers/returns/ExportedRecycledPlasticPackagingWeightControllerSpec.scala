@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.ExportedRecycledPlasticPackagingWeightFormProvider
+import controllers.{routes => appRoutes}
+import forms.returns.ExportedRecycledPlasticPackagingWeightFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ExportedRecycledPlasticPackagingWeightPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingWeightPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.ExportedRecycledPlasticPackagingWeightView
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import views.html.returns._
 
 import scala.concurrent.Future
 
@@ -41,7 +42,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0L
+  val validAnswer = 200L
   val exportedAmount = 8L
 
   lazy val exportedRecycledPlasticPackagingWeightRoute = controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
@@ -52,37 +53,35 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
     "must return OK and the correct view for a GET" in {
 
-      val ans = userAnswersWithExportAmount.set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithExportAmount)).build()
+
+      running(application) {
+        val view = application.injector.instanceOf[ExportedRecycledPlasticPackagingWeightView]
+
+        val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, exportedAmount)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val ans = userAnswersWithExportAmount
+        .set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ExportedRecycledPlasticPackagingWeightView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
-
         val view = application.injector.instanceOf[ExportedRecycledPlasticPackagingWeightView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, exportedAmount)(request, messages(application)).toString
       }
     }
 
@@ -114,7 +113,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithExportAmount)).build()
 
       running(application) {
         val request =
@@ -128,7 +127,7 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, exportedAmount)(request, messages(application)).toString
       }
     }
 
@@ -142,7 +141,24 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual appRoutes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect GET to home page when exported amount not found" in {
+
+      val userAnswers = UserAnswers(userAnswersId).set(ExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
       }
     }
 
@@ -159,8 +175,40 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual appRoutes.JourneyRecoveryController.onPageLoad().url
       }
+    }
+
+    "must redirect to home page for a POST if no exported amount found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val t: Map[String,String] = Map("errors" -> "test")
+      running(application) {
+        val request =
+          FakeRequest(POST, exportedRecycledPlasticPackagingWeightRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
+      }
+    }
+
+    "raise and error" - {
+      "when not authorised" in {
+        val application = applicationBuilderFailedAuth(userAnswers = None).build()
+
+        running(application) {
+          val request = FakeRequest(GET, exportedRecycledPlasticPackagingWeightRoute)
+
+          val result = route(application, request).value
+
+          intercept[InsufficientEnrolments](status(result))
+        }
+      }
+
     }
   }
 }

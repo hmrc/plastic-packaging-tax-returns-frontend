@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.CacheConnector
 import controllers.returns.{routes => returnsRoutes}
 import controllers.{routes => appRoutes}
-import forms.ExportedRecycledPlasticPackagingFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -28,8 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ExportedRecycledPlasticPackagingPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -38,7 +37,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HttpResponse
-import views.html.returns.ExportedRecycledPlasticPackagingView
+import views.html.returns.{ExportedRecycledPlasticPackagingView, ExportedRecycledPlasticPackagingWeightView}
 
 import scala.concurrent.Future
 
@@ -51,6 +50,8 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
 
   lazy val exportedRecycledPlasticPackagingRoute = returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
   val view = mock[ExportedRecycledPlasticPackagingView]
+
+  val exportedAmount: Long = 200L
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,7 +76,7 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
 
           val captor: ArgumentCaptor[Long] = ArgumentCaptor.forClass(classOf[Long])
           verify(view).apply(any(), any(), captor.capture())(any(), any())
-          captor.getValue mustBe 200L
+          captor.getValue mustBe exportedAmount
         }
       }
 
@@ -115,6 +116,18 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
         }
       }
 
+      "must redirect to home page on GET when cannot find weight" in {
+        val application = applicationBuilder(Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, exportedRecycledPlasticPackagingRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
+        }
+      }
 
       "raise and error" - {
         "when not authorised" in {
@@ -129,22 +142,26 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
           }
         }
 
-        "when cannot find weight" in {
-          val application = applicationBuilder(Some(emptyUserAnswers)).build()
+        "when invalid data is submitted" in {
+          val application = applicationBuilder(userAnswers = createUserAnswer(true)).build()
 
           running(application) {
-            val request = FakeRequest(GET, exportedRecycledPlasticPackagingRoute)
+            val request =
+              FakeRequest(POST, exportedRecycledPlasticPackagingRoute)
+                .withFormUrlEncodedBody(("value", "invalid value"))
+
+            val boundForm = form.bind(Map("value" -> "invalid value"))
+
+            val view = application.injector.instanceOf[ExportedRecycledPlasticPackagingView]
 
             val result = route(application, request).value
 
-            intercept[IllegalStateException](status(result))
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) mustEqual view(boundForm, NormalMode, exportedAmount)(request, messages(application)).toString
           }
         }
       }
-
     }
-
-
 
     "must redirect to the next page when valid data is submitted" in {
 
@@ -156,7 +173,7 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
           )
           .build()
 
-      when(cacheConnector.set(any(),any())(any())).thenReturn(Future.successful(HttpResponse(200, "test")))
+      when(cacheConnector.set(any(),any())(any())).thenReturn(Future.successful(HttpResponse(exportedAmount.toInt, "test")))
 
       running(application) {
         val request =
@@ -170,23 +187,19 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must redirect to home page when no amount is found" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, exportedRecycledPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[ExportedRecycledPlasticPackagingView]
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, 0L)(request, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
       }
     }
 
@@ -224,6 +237,6 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
   private def createUserAnswer(isAnswerYes: Boolean): Option[UserAnswers] = {
     Some(UserAnswers("123")
       .set(ExportedRecycledPlasticPackagingPage, isAnswerYes).get
-      .set(ExportedPlasticPackagingWeightPage, 200L).get)
+      .set(ExportedPlasticPackagingWeightPage, exportedAmount).get)
   }
 }

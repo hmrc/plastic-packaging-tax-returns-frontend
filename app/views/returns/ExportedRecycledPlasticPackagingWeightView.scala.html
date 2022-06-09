@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import controllers.returns.routes
+@import components.SectionHeader
 @import viewmodels.InputWidth._
 
 @this(
@@ -21,12 +23,15 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, weightExported: Long)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("exportedRecycledPlasticPackagingWeight.title"))) {
+@layout(pageTitle = title(form, messages("exportedRecycledPlasticPackagingWeight.title", weightExported.toString), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("exportedRecycledPlasticPackagingWeight.sectionHeader"))
 
     @formHelper(action = controllers.returns.routes.ExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -37,10 +42,11 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("exportedRecycledPlasticPackagingWeight.heading")).asPageHeading()
+                label = LabelViewModel(messages("exportedRecycledPlasticPackagingWeight.heading", weightExported.toString)).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
+            .withHint(Hint(content = Text(messages("exportedRecycledPlasticPackagingWeight.hint"))))
         )
 
         @govukButton(

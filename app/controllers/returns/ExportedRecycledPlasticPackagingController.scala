@@ -18,13 +18,13 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.ExportedRecycledPlasticPackagingFormProvider
+import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.ExportedRecycledPlasticPackagingPage
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{ExportedHumanMedicinesPlasticPackagingPage, ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ExportedRecycledPlasticPackagingView
 
@@ -49,14 +49,9 @@ class ExportedRecycledPlasticPackagingController @Inject()(
     (identify andThen getData andThen requireData) {
       implicit request =>
 
-        val weight = request.userAnswers.get(ExportedPlasticPackagingWeightPage)
-          .getOrElse(throw new IllegalStateException("Invalid exported recycled weight for Plastic Packaging"))
+        val preparedForm = request.userAnswers.fill(ExportedRecycledPlasticPackagingPage, form)
 
-        val preparedForm = request.userAnswers.get(ExportedRecycledPlasticPackagingPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, mode, weight))
+        exportedAmount.fold[Result](identity, amount => Ok(view(preparedForm, mode, amount)))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -67,8 +62,7 @@ class ExportedRecycledPlasticPackagingController @Inject()(
 
         form.bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, 0L))),
-
+            Future.successful(exportedAmount.fold[Result](identity, amount => BadRequest(view(formWithErrors, mode,amount)))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedRecycledPlasticPackagingPage, value))
@@ -76,4 +70,9 @@ class ExportedRecycledPlasticPackagingController @Inject()(
             } yield Redirect(navigator.nextPage(ExportedRecycledPlasticPackagingPage, mode, updatedAnswers))
         )
     }
+
+
+  private def exportedAmount(implicit request: DataRequest[_]): Either[Result, Long] =
+    request.userAnswers.get(ExportedPlasticPackagingWeightPage)
+      .fold[Either[Result, Long]](Left(Redirect(controllers.routes.IndexController.onPageLoad)))(Right(_))
 }

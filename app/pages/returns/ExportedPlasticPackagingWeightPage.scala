@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.{ExportedRecycledPlasticPackagingPage, QuestionPage}
+import pages._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
