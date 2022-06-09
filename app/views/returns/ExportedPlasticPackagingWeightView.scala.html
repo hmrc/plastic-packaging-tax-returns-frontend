@@ -39,7 +39,7 @@
     <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic))) {
+@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.exported.plastic"))
 

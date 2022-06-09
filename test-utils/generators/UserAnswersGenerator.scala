@@ -21,27 +21,32 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(HumanMedicinesPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(ExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
+    arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
+    arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(ExportedRecycledPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(ExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] ::
-      arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] ::
-      arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(ExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(AmendAreYouSurePage.type, JsValue)] ::
       arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] ::

@@ -18,13 +18,28 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[HumanMedicinesPlasticPackagingPage.type] =
-    Arbitrary(HumanMedicinesPlasticPackagingPage)
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingWeightPage: Arbitrary[ExportedRecycledPlasticPackagingWeightPage.type] =
+    Arbitrary(ExportedRecycledPlasticPackagingWeightPage)
+
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type] =
+    Arbitrary(NonExportedHumanMedicinesPlasticPackagingWeightPage)
+
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingPage.type] =
+    Arbitrary(NonExportedHumanMedicinesPlasticPackagingPage)
+
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingPage: Arbitrary[ExportedRecycledPlasticPackagingPage.type] =
+    Arbitrary(ExportedRecycledPlasticPackagingPage)
+
+  implicit lazy val arbitraryRecycledPlasticPackagingPage: Arbitrary[NonExportedRecycledPlasticPackagingPage.type] =
+    Arbitrary(NonExportedRecycledPlasticPackagingPage)
+
+  implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[ExportedHumanMedicinesPlasticPackagingPage.type] =
+    Arbitrary(ExportedHumanMedicinesPlasticPackagingPage)
 
   implicit lazy val arbitraryDirectlyExportedComponentsPage: Arbitrary[DirectlyExportedComponentsPage.type] =
     Arbitrary(DirectlyExportedComponentsPage)
@@ -40,8 +55,8 @@ trait PageGenerators {
     Arbitrary(ConvertedPackagingCreditPage)
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
-    : Arbitrary[RecycledPlasticPackagingWeightPage.type] =
-    Arbitrary(RecycledPlasticPackagingWeightPage)
+    : Arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type] =
+    Arbitrary(NonExportedRecycledPlasticPackagingWeightPage)
 
   implicit lazy val arbitraryManufacturedPlasticPackagingWeightPage
     : Arbitrary[ManufacturedPlasticPackagingWeightPage.type] =
@@ -60,8 +75,8 @@ trait PageGenerators {
     Arbitrary(ImportedPlasticPackagingPage)
 
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightPage
-    : Arbitrary[HumanMedicinesPlasticPackagingWeightPage.type] =
-    Arbitrary(HumanMedicinesPlasticPackagingWeightPage)
+    : Arbitrary[ExportedHumanMedicinesPlasticPackagingWeightPage.type] =
+    Arbitrary(ExportedHumanMedicinesPlasticPackagingWeightPage)
 
   implicit lazy val arbitraryExportedPlasticPackagingWeightPage
     : Arbitrary[ExportedPlasticPackagingWeightPage.type] =

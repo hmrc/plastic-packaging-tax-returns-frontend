@@ -1,0 +1,63 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.{SectionHeader, paragraphBody}
+@import viewmodels._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader,
+    paragraphBody: paragraphBody
+)
+
+@(form: Form[_], mode: Mode, amount: Long, bool: Boolean = true)(implicit request: Request[_], messages: Messages)
+
+@variableTitle = @{if(bool) messages("NonExportRecycledPlasticPackaging.title.no.export", amount.asKgs) else messages("NonExportrecycledPlasticPackaging.title.export")}
+@variableH1 = @{if(bool) messages("NonExportRecycledPlasticPackaging.heading.no.export", amount.asKgs) else messages("NonExportrecycledPlasticPackaging.heading.export")}
+
+@guidanceLink = {<a href="https://www.gov.uk/guidance/work-out-which-packaging-is-subject-to-plastic-packaging-tax#recycled-plastic" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("NonExportRecycledPlasticPackaging.paragraph.link")</a>}
+
+@paragraphContent ={
+    @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.1"))
+    @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.2", guidanceLink))
+}
+
+@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKgs), Some(messages("return.title.tail")))) {
+
+    @sectionHeader(messages("caption.non.exported.plastic"))
+
+    @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(variableH1).asPageHeading()
+            ).withHint(Hint(content = HtmlContent(paragraphContent)))
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}

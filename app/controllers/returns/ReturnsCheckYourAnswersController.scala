@@ -62,15 +62,22 @@ class ReturnsCheckYourAnswersController @Inject()(
             CheckYourAnswerForManufacturedPlasticWeight,
             CheckYourAnswerImportedPlasticPackagingSummary,
             CheckYourAnswerImportedPlasticPackagingWeight,
-            new HumanMedicinesPlasticPackagingSummary,
-            new HumanMedicinesPlasticPackagingWeightSummary,
             DirectlyExportedComponentsSummary,
-            new ExportedPlasticPackagingWeightSummary,
-            new RecycledPlasticPackagingWeightSummary,
+            ExportedPlasticPackagingWeightSummary,
+            ExportedHumanMedicinesPlasticPackagingSummary,
+            ExportedHumanMedicinesPlasticPackagingWeightSummary,
+            ExportedRecycledPlasticPackagingSummary,
+            ExportedRecycledPlasticPackagingWeightSummary,
+            NonExportedHumanMedicinesPlasticPackagingSummary,
+            NonExportedHumanMedicinesPlasticPackagingWeightSummary,
+            NonExportedRecycledPlasticPackagingSummary,
+            NonExportedRecycledPlasticPackagingWeightSummary,
             ConvertedPackagingCreditSummary
           ).flatMap(_.row(request.userAnswers))
         )
         val answers = request.userAnswers.data.value.toMap
+
+        // TODO - we need to adjust this for returns V2!
         val liability: TaxLiability = TaxLiabilityFactory.create(
           answers.getOrElse("manufacturedPlasticPackagingWeight", 0).toString.toLong,
           answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,

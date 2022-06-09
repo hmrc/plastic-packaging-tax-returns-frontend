@@ -19,16 +19,56 @@ package generators
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingUserAnswersEntry: Arbitrary[(HumanMedicinesPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ExportedRecycledPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HumanMedicinesPlasticPackagingPage.type]
+        page  <- arbitrary[ExportedRecycledPlasticPackagingWeightPage.type]
+        value <- arbitrary[Long].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type]
+        value <- arbitrary[Long].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[NonExportedHumanMedicinesPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryExportedRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(ExportedRecycledPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedRecycledPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[NonExportedRecycledPlasticPackagingPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryHumanMedicinesPlasticPackagingUserAnswersEntry: Arbitrary[(ExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedHumanMedicinesPlasticPackagingPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -75,10 +115,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RecycledPlasticPackagingWeightPage.type]
+        page  <- arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -111,10 +151,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(ExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HumanMedicinesPlasticPackagingWeightPage.type]
+        page  <- arbitrary[ExportedHumanMedicinesPlasticPackagingWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }

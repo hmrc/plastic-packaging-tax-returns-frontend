@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.QuestionPage
+import pages._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -30,9 +30,26 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
-      if (amount > 0)
-        userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
-      else
-        super.cleanup(value, userAnswers)
+      if (amount > 0) {
+        userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(NonExportedRecycledPlasticPackagingPage).get
+          .remove(NonExportedRecycledPlasticPackagingWeightPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(ExportedRecycledPlasticPackagingPage).get
+          .remove(ExportedRecycledPlasticPackagingWeightPage)
+
+      } else {
+        userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(NonExportedRecycledPlasticPackagingPage).get
+          .remove(NonExportedRecycledPlasticPackagingWeightPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(ExportedRecycledPlasticPackagingPage).get
+          .remove(ExportedRecycledPlasticPackagingWeightPage)
+      }
     ).getOrElse(super.cleanup(value, userAnswers))
 }
