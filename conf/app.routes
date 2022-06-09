@@ -118,7 +118,7 @@ POST       /changeStartYourReturn                  controllers.returns.StartYour
 
 GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
-GET        /returnConfirmation                       controllers.returns.ReturnConfirmationController.onPageLoad()
+GET        /return-submitted                       controllers.returns.ReturnConfirmationController.onPageLoad()
 
 GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
 POST       /agents                        controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
