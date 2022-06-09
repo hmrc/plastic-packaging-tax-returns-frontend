@@ -23,6 +23,7 @@ site.change = Newid
 return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
+caption.non.exported.plastic = Non-exported plastic packaging
 return.title.tail = Submit return
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
@@ -217,6 +218,32 @@ manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft an
 manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
 manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
 manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+
+NonExportRecycledPlasticPackaging.title.no.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.heading.no.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.title.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.heading.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.checkYourAnswersLabel = recycledPlasticPackaging
+NonExportRecycledPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components contained 30% or more recycled plastic
+NonExportRecycledPlasticPackaging.change.hidden = Non exported Recycled packaging
+NonExportRecycledPlasticPackaging.paragraph.line.1 = You will not be charged tax on these but you must still tell us about them.
+NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}
+NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
+
+NonExportRecycledPlasticPackagingWeight.title = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.checkYourAnswersLabel = Non exported Recycled packaging weight
+NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+NonExportRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+NonExportRecycledPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+NonExportRecycledPlasticPackagingWeight.error.outOfRange = Weight must be between {0} and {1}
+NonExportRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+NonExportRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+NonExportRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
+NonExportRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deduction on your tax calculation.
+
 
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.

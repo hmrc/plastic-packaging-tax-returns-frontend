@@ -18,11 +18,12 @@ package navigation
 
 import base.SpecBase
 import cacheables.AmendSelectedPeriodKey
-import controllers.returns.{routes => returnsRoutes}
 import controllers.amends.{routes => amendsRoutes}
+import controllers.returns.{routes => returnsRoutes}
+import models._
 import pages.amends._
 import pages.returns._
-import models._
+
 /*************************************************************
 Returns journey (v1)
   **************************************************************
@@ -189,7 +190,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "for the ExportedRecycledPlasticPackagingPage" - {
-          "navigatye to RecycledPlasticPackagingWeightPage when answer is yes" in {
+          "navigate to RecycledPlasticPackagingWeightPage when answer is yes" in {
             val answers = UserAnswers("id").set(ExportedRecycledPlasticPackagingPage, true)
 
             navigator.nextPage(ExportedRecycledPlasticPackagingPage,
@@ -203,9 +204,9 @@ class NavigatorSpec extends SpecBase {
         "for the RecycledPlasticPackagingWeightPage" - {
 
           "navigate to ConvertedPackagingCreditPage" in {
-            val answers = UserAnswers("id").set(RecycledPlasticPackagingWeightPage, 1000L)
+            val answers = UserAnswers("id").set(NonExportedRecycledPlasticPackagingWeightPage, 1000L)
 
-            navigator.nextPage(RecycledPlasticPackagingWeightPage,
+            navigator.nextPage(NonExportedRecycledPlasticPackagingWeightPage,
               NormalMode,
               answers.get
             ) mustBe returnsRoutes.ConvertedPackagingCreditController.onPageLoad(NormalMode)

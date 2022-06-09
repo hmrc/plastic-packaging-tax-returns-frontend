@@ -18,63 +18,69 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.RecycledPlasticPackagingFormProvider
+import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.RecycledPlasticPackagingPage
+import pages.returns.{NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.RecycledPlasticPackagingView
+import views.html.returns.NonExportedRecycledPlasticPackagingView
 
 import scala.concurrent.Future
 
-class RecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new RecycledPlasticPackagingFormProvider()
+  val formProvider = new NonExportedRecycledPlasticPackagingFormProvider()
   val form = formProvider()
 
-  lazy val recycledPlasticPackagingRoute = controllers.returns.routes.RecycledPlasticPackagingController.onPageLoad(NormalMode).url
+  val validAnswer = 0L
+  //todo: CARL fix flaky tests
+  val amount: Long = 0
 
+  lazy val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
+
+  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = amount).success.value
   "RecycledPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val ans = userAnswersWithExportAmount.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, amount)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(RecycledPlasticPackagingPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(NonExportedRecycledPlasticPackagingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, recycledPlasticPackagingRoute)
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, amount)(request, messages(application)).toString
       }
     }
 
@@ -115,12 +121,12 @@ class RecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[RecycledPlasticPackagingView]
+        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, amount)(request, messages(application)).toString
       }
     }
 

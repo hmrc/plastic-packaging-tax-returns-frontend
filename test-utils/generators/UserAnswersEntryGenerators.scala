@@ -57,10 +57,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(RecycledPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RecycledPlasticPackagingPage.type]
+        page  <- arbitrary[NonExportedRecycledPlasticPackagingPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -115,10 +115,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RecycledPlasticPackagingWeightPage.type]
+        page  <- arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }

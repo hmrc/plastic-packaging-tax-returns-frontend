@@ -17,7 +17,7 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.QuestionPage
+import pages._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -43,8 +43,8 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
           userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
             .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
             .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
-            .remove(RecycledPlasticPackagingPage).get
-            .remove(RecycledPlasticPackagingWeightPage)
+            .remove(NonExportedRecycledPlasticPackagingPage).get
+            .remove(NonExportedRecycledPlasticPackagingWeightPage)
         }
         else {
           userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)

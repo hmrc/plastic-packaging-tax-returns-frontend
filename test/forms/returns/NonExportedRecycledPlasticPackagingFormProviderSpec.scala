@@ -19,12 +19,12 @@ package forms.returns
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class RecycledPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
+class NonExportedRecycledPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "recycledPlasticPackaging.error.required"
+  val requiredKey = "NonExportRecycledPlasticPackaging.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new RecycledPlasticPackagingFormProvider()()
+  val form = new NonExportedRecycledPlasticPackagingFormProvider()()
 
   ".value" - {
 

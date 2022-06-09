@@ -16,24 +16,16 @@
 
 package pages.returns
 
-import models.UserAnswers
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class NonExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
 
-case object RecycledPlasticPackagingPage extends QuestionPage[Boolean] {
+  "RecycledPlasticPackagingPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[Boolean](NonExportedRecycledPlasticPackagingPage)
 
-  override def toString: String = "recycledPlasticPackaging"
+    beSettable[Boolean](NonExportedRecycledPlasticPackagingPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true =>
-        super.cleanup(value, userAnswers)
-      case _ =>
-        userAnswers.set(RecycledPlasticPackagingWeightPage, 0L)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+    beRemovable[Boolean](NonExportedRecycledPlasticPackagingPage)
+  }
 }

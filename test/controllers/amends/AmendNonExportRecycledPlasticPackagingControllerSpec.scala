@@ -33,7 +33,7 @@ import views.html.amends.AmendRecycledPlasticPackagingView
 
 import scala.concurrent.Future
 
-class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class AmendNonExportRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendRecycledPlasticPackagingFormProvider()
   val form         = formProvider()

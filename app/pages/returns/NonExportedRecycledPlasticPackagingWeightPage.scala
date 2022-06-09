@@ -16,12 +16,23 @@
 
 package pages.returns
 
+import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object RecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
+import scala.util.Try
+
+case object NonExportedRecycledPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "recycledPlasticPackagingWeight"
+  override def toString: String = "nonExportRecycledPlasticPackagingWeight"
+
+  override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
+    value.map(amount =>
+      if (amount > 0)
+        userAnswers.set(NonExportedRecycledPlasticPackagingPage, true, cleanup = false)
+      else
+        super.cleanup(value, userAnswers)
+    ).getOrElse(super.cleanup(value, userAnswers))
 }

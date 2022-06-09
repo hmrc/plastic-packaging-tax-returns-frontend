@@ -33,8 +33,8 @@ case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
       case true =>
         userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
           .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
-          .remove(RecycledPlasticPackagingPage).get
-          .remove(RecycledPlasticPackagingWeightPage)
+          .remove(NonExportedRecycledPlasticPackagingPage).get
+          .remove(NonExportedRecycledPlasticPackagingWeightPage)
       case _ =>
         userAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
           .remove(ExportedHumanMedicinesPlasticPackagingPage).get

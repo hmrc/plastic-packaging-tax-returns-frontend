@@ -33,7 +33,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedRecycledPlasticPackagingPage.type, JsValue)] ::
-    arbitrary[(RecycledPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
@@ -41,7 +41,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] ::
-      arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::

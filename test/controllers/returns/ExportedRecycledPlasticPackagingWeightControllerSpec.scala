@@ -31,7 +31,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import views.html.returns.ExportedRecycledPlasticPackagingWeightView
+import views.html.returns._
 
 import scala.concurrent.Future
 

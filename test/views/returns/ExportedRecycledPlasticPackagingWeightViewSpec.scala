@@ -16,7 +16,7 @@
 
 package views.returns
 
-import forms.returns.{ExportedRecycledPlasticPackagingWeightFormProvider, RecycledPlasticPackagingWeightFormProvider}
+import forms.returns.{ExportedRecycledPlasticPackagingWeightFormProvider}
 import models.NormalMode
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec

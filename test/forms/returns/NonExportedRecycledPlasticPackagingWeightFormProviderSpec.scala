@@ -19,9 +19,9 @@ package forms.returns
 import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class RecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
+class NonExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours {
 
-  val form = new RecycledPlasticPackagingWeightFormProvider()()
+  val form = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
 
   ".value" - {
 
@@ -35,28 +35,37 @@ class RecycledPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
     behave like longField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName, "recycledPlasticPackagingWeight.error.nonNumeric"),
-                         wholeNumberError =
-                           FormError(fieldName, "recycledPlasticPackagingWeight.error.wholeNumber")
+      fieldName,
+      nonNumericError =
+        FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.nonNumeric"),
+      wholeNumberError =
+        FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like longFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "recycledPlasticPackagingWeight.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longFieldWithMinimum(form,
+      fieldName,
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "NonExportRecycledPlasticPackagingWeight.error.outOfRange.low",
+        Seq(minimum)
+      )
+    )
+
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "NonExportRecycledPlasticPackagingWeight.error.outOfRange.high",
+        Seq(maximum)
+      )
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "recycledPlasticPackagingWeight.error.required")
+      requiredError = FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.required")
     )
   }
 }
