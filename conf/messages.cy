@@ -325,3 +325,26 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight mu
 nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
 nonExportedHumanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
 nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
+
+exportedRecycledPlasticPackaging.title = Did any of your {0}kg exported finished plastic packaging components contain 30% or more recycled plastic?
+exportedRecycledPlasticPackaging.heading = Did any of your {0}kg exported finished plastic packaging components contain 30% or more recycled plastic?
+exportedRecycledPlasticPackaging.sectionHeader = Exported plastic packaging
+exportedRecycledPlasticPackaging.hint1 = You will not be charged tax on these but you must still tell us about them.
+exportedRecycledPlasticPackaging.hint2 = Find out {0}
+exportedRecycledPlasticPackaging.hint2.link = what we mean by recycled plastic packaging
+exportedRecycledPlasticPackaging.checkYourAnswersLabel = exportedRecycledPlasticPackaging
+exportedRecycledPlasticPackaging.error.required = Select yes if any of your exported finished plastic packaging components contained 30% or more recycled plastic
+exportedRecycledPlasticPackaging.change.hidden = ExportedRecycledPlasticPackaging
+
+exportedRecycledPlasticPackagingWeight.title = How much of your exported {0}kg of finished plastic packaging components contained 30% or more recycled plastic?
+exportedRecycledPlasticPackagingWeight.heading = How much of your exported {0}kg of finished plastic packaging components contained 30% or more recycled plastic?
+exportedRecycledPlasticPackagingWeight.sectionHeader = Exported plastic packaging
+exportedRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
+exportedRecycledPlasticPackagingWeight.checkYourAnswersLabel = Recycled packaging total
+exportedRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
+exportedRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
+exportedRecycledPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
+exportedRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
+exportedRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+exportedRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
+exportedRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
