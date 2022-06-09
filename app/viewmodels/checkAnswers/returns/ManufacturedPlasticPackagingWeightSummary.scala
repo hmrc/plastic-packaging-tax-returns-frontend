@@ -29,9 +29,13 @@ import viewmodels.implicits._
 class ManufacturedPlasticPackagingWeightSummary private(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ManufacturedPlasticPackagingWeightPage).map {
-      answer => createSummaryListView(answer.toLong.asKgs)
+    answer(answers).map {
+      answer => createSummaryListView(answer.asKgs)
     }
+
+  override def answer(answers: UserAnswers): Option[Long] = {
+    answers.get(ManufacturedPlasticPackagingWeightPage)
+  }
 
   private def createSummaryListView(value: String)(implicit messages: Messages): SummaryListRow = {
     SummaryListRowViewModel(key = key,

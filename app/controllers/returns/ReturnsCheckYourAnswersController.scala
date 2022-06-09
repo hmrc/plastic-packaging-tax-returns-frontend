@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
+import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper, TaxReturnViewModel}
 import models.requests.DataRequest
 import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -90,8 +90,8 @@ class ReturnsCheckYourAnswersController @Inject()(
     obligation: TaxReturnObligation)(implicit messages: Messages) = {
 
     val creditsAdviceUrl = appConfig.creditsAdviceUrl
-    Future.successful(Ok(view(list, liability, obligation, request.pptReference,
-      creditsAdviceUrl)(request, messages)))
+    val returnViewModel = TaxReturnViewModel(request.pptReference, obligation, request.userAnswers)
+    Future.successful(Ok(view(list, liability, obligation, returnViewModel, request.pptReference, creditsAdviceUrl)(request, messages)))
   }
 
   def onSubmit(): Action[AnyContent] =

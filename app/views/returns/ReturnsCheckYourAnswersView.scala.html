@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
+@import components.{Link, bulletList, paragraph, paragraphBody}
 @import controllers.helpers.TaxLiability
 @import models.returns.TaxReturnObligation
 @import viewmodels.InputWidth
-@import components.{Link, bulletList, paragraph, paragraphBody}
+@import controllers.helpers.TaxReturnViewModel
 
 @this(
     layout: templates.Layout,
@@ -31,7 +32,7 @@
     link: Link
 )
 
-@(list: SummaryList, taxLiability: TaxLiability, taxReturn: TaxReturnObligation,
+@(list: SummaryList, taxLiability: TaxLiability, obligation: TaxReturnObligation, taxReturn: TaxReturnViewModel,
         pptReference: String, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
@@ -72,6 +73,17 @@
     SummaryListRow(key = Key(text, classes = classes), value = Value(value))
 }
 
+@summaryRowWithChange2(shortKey: String, value: String, href: String) = @{
+    val text = messages("submit-return.check-your-answers." + shortKey)
+    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
+    val action = ActionItem(content = "site.change", href = href)
+    SummaryListRow(key = Key(text, classes = classes), value = Value(value), actions = Some(Actions(items = Seq(action))))
+}
+
+@summaryRowWithChange(shortKey: String, f: String => SummaryListRow) = @{
+    f(toLongKey(shortKey))
+}
+
 @sectionHeading(text: String)(implicit messages: Messages) = {
     <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages(text)</h2>
 }
@@ -104,20 +116,20 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRow("business-details.row1", pptReference),
-            summaryRow("business-details.row2", taxReturn.toReturnQuarter)
+            summaryRow("business-details.row2", obligation.toReturnQuarter)
         )
     ))
 
     <!-- Packaging total -->
-    @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
-    @govukTable(Table(
+    @sectionHeading("submit-return.check-your-answers.packaging-total.heading")
+    @govukSummaryList(SummaryList(
         rows = Seq(
-            taxCalculationRow("submit-return.check-your-answers.tax-calc.row1", taxLiability.plasticPackagingTotal),
-            taxCalculationRow("submit-return.check-your-answers.tax-calc.row2", taxLiability.deductionsTotal),
-            taxCalculationRow("submit-return.check-your-answers.tax-calc.row3", taxLiability.chargeableTotal),
-            taxCalculationRow("submit-return.check-your-answers.tax-calc.row4", taxLiability.taxDue)
-        ),
-
+            summaryRowWithChange("packaging-total.row1", taxReturn.manufacturedYesNo),
+            summaryRowWithChange("packaging-total.row2", taxReturn.manufacturedWeight),
+            summaryRowWithChange("packaging-total.row3", taxReturn.importedYesNo),
+            summaryRowWithChange("packaging-total.row4", taxReturn.importedWeight),
+            summaryRow("packaging-total.row5", taxReturn.packagingTotal),
+        )
     ))
 
     <!-- Tax calculation -->

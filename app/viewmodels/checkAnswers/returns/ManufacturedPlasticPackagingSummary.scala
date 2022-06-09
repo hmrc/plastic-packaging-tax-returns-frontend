@@ -20,26 +20,27 @@ import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
 import pages.returns.ManufacturedPlasticPackagingPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ManufacturedPlasticPackagingSummary private (key: String) extends SummaryViewModel {
+class ManufacturedPlasticPackagingSummary (key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ManufacturedPlasticPackagingPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(key = key,
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
+        SummaryListRow(key = Key(key, classes="govuk-!-font-weight-regular"),
+          value = Value(value),
+          actions = Some(Actions(items = Seq(
+            ActionItem(
+              routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url,
+              messages("site.change"),
+
             ).withAttribute("id"-> "confirm-pp-total-manufactured-plastic")
               .withVisuallyHiddenText(messages("manufacturedPlasticPackaging.change.hidden"))
-          )
+          )))
         )
     }
 }

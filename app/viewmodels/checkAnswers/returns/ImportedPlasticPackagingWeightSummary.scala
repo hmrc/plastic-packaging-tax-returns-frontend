@@ -26,12 +26,16 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ImportedPlasticPackagingWeightSummary private (key: String) extends SummaryViewModel {
+class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ImportedPlasticPackagingWeightPage).map {
+    answer(answers).map {
           answer => createSummaryListRow(answer.asKgs)
     }
+
+  override def answer(answers: UserAnswers): Option[Long] = {
+    answers.get(ImportedPlasticPackagingWeightPage)
+  }
 
   private def createSummaryListRow(value: String)(implicit messages: Messages): SummaryListRow = {
     SummaryListRowViewModel(key = key,

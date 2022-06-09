@@ -301,9 +301,11 @@ submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax r
 submit-return.check-your-answers.business-details.row2 = Return period
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
-submit-return.check-your-answers.packaging-total.row1 = Weight of manufactured plastic packaging
+submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
 submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
-submit-return.check-your-answers.packaging-total.row3 = Plastic packaging total
+submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
+submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
 
 submit-return.check-your-answers.tax-calc.heading = Your tax calculation
 submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
