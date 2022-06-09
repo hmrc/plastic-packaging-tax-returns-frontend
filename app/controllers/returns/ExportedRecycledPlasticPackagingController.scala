@@ -22,7 +22,7 @@ import forms.returns.ExportedRecycledPlasticPackagingFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedHumanMedicinesPlasticPackagingPage, ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
+import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

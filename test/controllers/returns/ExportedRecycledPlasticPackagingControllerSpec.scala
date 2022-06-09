@@ -28,7 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
+import pages.returns.{ExportedHumanMedicinesPlasticPackagingPage, ExportedPlasticPackagingWeightPage, ExportedRecycledPlasticPackagingPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -52,6 +52,8 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
   val view = mock[ExportedRecycledPlasticPackagingView]
 
   val exportedAmount: Long = 200L
+
+  val answersWithPreset = emptyUserAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -81,7 +83,10 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
       }
 
       "must populate the view correctly on a GET when the question has previously been answered YES" in {
-        val application = applicationBuilder(userAnswers = createUserAnswer(true))
+
+        val userAnswers = answersWithPreset.set(ExportedRecycledPlasticPackagingPage, true).success.value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[ExportedRecycledPlasticPackagingView].toInstance(view))
           .build()
 
@@ -99,7 +104,10 @@ class ExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mocki
       }
 
       "must populate the view correctly on a GET when the question has previously been answered No" in {
-        val application = applicationBuilder(userAnswers = createUserAnswer(false))
+
+        val userAnswers = answersWithPreset.set(ExportedRecycledPlasticPackagingPage, false).success.value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[ExportedRecycledPlasticPackagingView].toInstance(view))
           .build()
 
