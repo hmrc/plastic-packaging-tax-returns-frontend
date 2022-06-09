@@ -145,6 +145,15 @@
         )
     ))
 
+    <!-- Non-exported packaging -->
+    @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            summaryRowWithChange("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
+            summaryRowWithChange("nonexported-packaging.row2", taxReturn.nonexportedMedicineWeight),
+        )
+    ))
+
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
     @govukTable(Table(

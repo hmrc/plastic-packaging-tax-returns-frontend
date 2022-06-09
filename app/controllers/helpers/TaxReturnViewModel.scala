@@ -86,6 +86,7 @@ case class TaxReturnViewModel (
     total.asKgs
   }
 
+
   def exportedYesNo(messageKey: String): SummaryListRow = {
     // TODO get correct one
     createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
@@ -93,6 +94,15 @@ case class TaxReturnViewModel (
 
   def exportedWeight(messageKey: String): SummaryListRow = {
     createSummaryRow[ExportedPlasticPackagingWeightSummary](messageKey)
+  }
+
+
+  def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
+    createSummaryRow[HumanMedicinesPlasticPackagingSummary](messageKey)
+  }
+
+  def nonexportedMedicineWeight(messageKey: String): SummaryListRow = {
+    createSummaryRow[HumanMedicinesPlasticPackagingWeightSummary](messageKey)
   }
 
 

@@ -26,7 +26,8 @@ import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object HumanMedicinesPlasticPackagingSummary extends SummaryViewModel {
+class HumanMedicinesPlasticPackagingSummary(key: String = "humanMedicinesPlasticPackaging.checkYourAnswersLabel")
+  extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HumanMedicinesPlasticPackagingPage).map {
@@ -35,7 +36,7 @@ object HumanMedicinesPlasticPackagingSummary extends SummaryViewModel {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "humanMedicinesPlasticPackaging.checkYourAnswersLabel",
+          key = key,
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.HumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url)

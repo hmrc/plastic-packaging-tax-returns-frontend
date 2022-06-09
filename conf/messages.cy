@@ -315,6 +315,18 @@ submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
 submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
 
 submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row3 = Exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row4 = Weight of exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row5 = Exported plastic packaging containing 30% or more recycled plastic
+submit-return.check-your-answers.exported-packaging.row6 = Weight of exported plastic packaging containing 30% or more recycled plastic
+
+submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.

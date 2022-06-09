@@ -27,12 +27,13 @@ import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object HumanMedicinesPlasticPackagingWeightSummary extends SummaryViewModel {
+class HumanMedicinesPlasticPackagingWeightSummary(key: String = "humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel")
+  extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HumanMedicinesPlasticPackagingWeightPage).map {
       answer =>
-        SummaryListRowViewModel(key = "humanMedicinesPlasticPackagingWeight.checkYourAnswersLabel",
+        SummaryListRowViewModel(key = key,
           value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel(
