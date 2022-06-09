@@ -22,9 +22,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.{InputWidth, PrintLong}
 import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.checkAnswers.returns.{ImportedPlasticPackagingSummary, ImportedPlasticPackagingWeightSummary,
-  ManufacturedPlasticPackagingSummary, ManufacturedPlasticPackagingWeightSummary}
-
+import viewmodels.checkAnswers.returns._
 import scala.reflect.ClassTag
 
 case class TaxReturnViewModel (
@@ -86,6 +84,15 @@ case class TaxReturnViewModel (
     val total = ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
       + ensureAnswer[ImportedPlasticPackagingWeightSummary]
     total.asKgs
+  }
+
+  def exportedYesNo(messageKey: String): SummaryListRow = {
+    // TODO get correct one
+    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+  }
+
+  def exportedWeight(messageKey: String): SummaryListRow = {
+    createSummaryRow[ExportedPlasticPackagingWeightSummary](messageKey)
   }
 
 

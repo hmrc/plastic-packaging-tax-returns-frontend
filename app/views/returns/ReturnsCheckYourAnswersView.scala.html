@@ -132,6 +132,19 @@
         )
     ))
 
+    <!-- Exported packaging -->
+    @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            summaryRowWithChange("exported-packaging.row1", taxReturn.exportedYesNo),
+            summaryRowWithChange("exported-packaging.row2", taxReturn.exportedWeight),
+//            summaryRowWithChange("exported-packaging.row3", taxReturn.exportedMedicineYesNo),
+//            summaryRowWithChange("exported-packaging.row4", taxReturn.exportedMedicineWeight),
+//            summaryRowWithChange("exported-packaging.row5", taxReturn.exportedRecycledYesNo),
+//            summaryRowWithChange("exported-packaging.row6", taxReturn.exportedRecycledWeight),
+        )
+    ))
+
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
     @govukTable(Table(
