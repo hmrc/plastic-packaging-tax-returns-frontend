@@ -34,13 +34,21 @@ case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
         userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
           .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
           .remove(NonExportedRecycledPlasticPackagingPage).get
-          .remove(NonExportedRecycledPlasticPackagingWeightPage)
+          .remove(NonExportedRecycledPlasticPackagingWeightPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(ExportedRecycledPlasticPackagingPage).get
+          .remove(ExportedRecycledPlasticPackagingWeightPage)
       case _ =>
         userAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
           .remove(ExportedHumanMedicinesPlasticPackagingPage).get
           .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
           .remove(ExportedRecycledPlasticPackagingPage).get
-          .remove(ExportedRecycledPlasticPackagingWeightPage)
+          .remove(ExportedRecycledPlasticPackagingWeightPage).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
+          .remove(NonExportedRecycledPlasticPackagingPage).get
+          .remove(NonExportedRecycledPlasticPackagingWeightPage)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }

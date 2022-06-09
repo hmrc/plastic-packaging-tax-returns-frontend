@@ -28,7 +28,9 @@ class NonExportedHumanMedicinesPlasticPackagingWeightFormProvider @Inject() exte
       "value" -> long(
         "nonExportedHumanMedicinesPlasticPackagingWeight.error.required",
         "nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber",
-        "nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric")
+        "nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric",
+            "nonExportedHumanMedicinesPlasticPackagingWeight.error.spaces")
+
         .verifying(minimumValue(0L, "nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high"))
     )
