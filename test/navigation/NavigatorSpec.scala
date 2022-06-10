@@ -140,65 +140,65 @@ class NavigatorSpec extends SpecBase {
 
         "for the ExportedPlasticPackagingWeightPage" - {
 
-          "navigate to HumanMedicinesPlasticPackagingController" in {
+          "navigate to NonExportedHumanMedicinesPlasticPackagingController" in {
             val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(ExportedPlasticPackagingWeightPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.ExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+            ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
 
           }
 
         }
-
-        "for the ExportedHumanMedicinesPlasticPackagingPage" - {
-          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingPage, true)
-
-            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
-          }
-
-          "navigate to ExportedRecycledPlasticPackagingPage when answer is No" in {
-
-            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingPage, false)
-
-            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-        "for the ExportedHumanMedicinesPlasticPackagingWeightPage" - {
-
-          "navigate to ExportedRecycledPlasticPackagingPage" in {
-            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingWeightPage, 1000L)
-
-            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingWeightPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-        "for the ExportedRecycledPlasticPackagingPage" - {
-          "navigate to RecycledPlasticPackagingWeightPage when answer is yes" in {
-            val answers = UserAnswers("id").set(ExportedRecycledPlasticPackagingPage, true)
-
-            navigator.nextPage(ExportedRecycledPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
-          }
-        }
+//
+//        "for the ExportedHumanMedicinesPlasticPackagingPage" - {
+//          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is Yes" in {
+//            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingPage, true)
+//
+//            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingPage,
+//              NormalMode,
+//              answers.get
+//            ) mustBe returnsRoutes.ExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+//          }
+//
+//          "navigate to ExportedRecycledPlasticPackagingPage when answer is No" in {
+//
+//            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingPage, false)
+//
+//            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingPage,
+//              NormalMode,
+//              answers.get
+//            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+//
+//          }
+//
+//        }
+//
+//        "for the ExportedHumanMedicinesPlasticPackagingWeightPage" - {
+//
+//          "navigate to ExportedRecycledPlasticPackagingPage" in {
+//            val answers = UserAnswers("id").set(ExportedHumanMedicinesPlasticPackagingWeightPage, 1000L)
+//
+//            navigator.nextPage(ExportedHumanMedicinesPlasticPackagingWeightPage,
+//              NormalMode,
+//              answers.get
+//            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+//
+//          }
+//
+//        }
+//
+//        "for the ExportedRecycledPlasticPackagingPage" - {
+//          "navigate to RecycledPlasticPackagingWeightPage when answer is yes" in {
+//            val answers = UserAnswers("id").set(ExportedRecycledPlasticPackagingPage, true)
+//
+//            navigator.nextPage(ExportedRecycledPlasticPackagingPage,
+//              NormalMode,
+//              answers.get
+//            ) mustBe returnsRoutes.ExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+//          }
+//        }
 
 
         "for the RecycledPlasticPackagingWeightPage" - {
@@ -343,7 +343,7 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is No" in {
+          "navigate to ConfirmPlasticPackagingTotalController when answer is No" in {
 
             val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, false)
 
