@@ -49,7 +49,7 @@ class ReturnsJourneyNavigator {
 //    case ExportedHumanMedicinesPlasticPackagingPage => humanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
 //    case ExportedHumanMedicinesPlasticPackagingWeightPage =>
 //      _ => routes.ExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
-    case DirectlyExportedComponentsPage  => _ => routes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode) // directlyExportedComponentsRoute(_, mode = NormalMode)
+    case DirectlyExportedComponentsPage  => directlyExportedComponentsRoute(_,mode = NormalMode) // directlyExportedComponentsRoute(_, mode = NormalMode)
     case ExportedPlasticPackagingWeightPage =>
       _ => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
@@ -126,12 +126,12 @@ class ReturnsJourneyNavigator {
   // Edit at ANY point in a mini loop also implies full completion of that loop              *
   *******************************************************************************************/
 
-//  private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode = NormalMode): Call =
-//    answers.get(DirectlyExportedComponentsPage) match {
-//      case Some(true)  => routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
-//      case Some(false) => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
-//      case _           => throw new Exception("Unable to navigate to page")
-//    }
+  private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode = NormalMode): Call =
+    answers.get(DirectlyExportedComponentsPage) match {
+      case Some(true)  => routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
+      case Some(false) => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
+      case _           => throw new Exception("Unable to navigate to page")
+    }
 
 //  private def humanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =
 //    answers.get(ExportedHumanMedicinesPlasticPackagingPage) match {
