@@ -87,5 +87,25 @@ class SubmittedReturnsViewSpec extends PlaySpec with GuiceOneAppPerSuite with In
       doc.getElementsByAttributeValue("id","return-item").size() mustBe 2
 
     }
+
+    "have return link" in {
+
+      val view = createView(aSequenceOfObligations)
+      val doc: Document = Jsoup.parse(view.toString())
+
+      doc.getElementById("account-homepage").text must include (
+        "Go to your Plastic Packaging Tax account"
+      )
+
+    }
+
+    "have technical issue link" in {
+
+      val view = createView(aSequenceOfObligations)
+      val doc: Document = Jsoup.parse(view.toString())
+
+      doc.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include ("Is this page not working properly?")
+
+    }
   }
 }
