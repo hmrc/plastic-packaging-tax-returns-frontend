@@ -155,6 +155,7 @@
 
     <!-- Non-exported packaging -->
     @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
+    @changeLink(taxReturn.nonexportedStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowWithChange("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
