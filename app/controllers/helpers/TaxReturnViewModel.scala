@@ -33,7 +33,7 @@ case class TaxReturnViewModel (
   private val obligation: TaxReturnObligation,
   private val userAnswers: UserAnswers
 ) (implicit messages: Messages) {
-  
+
   private def stylize(row: SummaryListRow) = {
     val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
     row.copy(
@@ -95,7 +95,7 @@ case class TaxReturnViewModel (
 
 
   def exportedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[ExportedRecycledPlasticPackagingSummary](messageKey)
+    createSummaryRow[DirectlyExportedComponentsSummary](messageKey)
   }
 
   def exportedWeight(messageKey: String): SummaryListRow = {
@@ -148,5 +148,6 @@ case class TaxReturnViewModel (
   }
 
   def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
+  def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
 
 }

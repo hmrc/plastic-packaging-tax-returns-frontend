@@ -62,7 +62,7 @@ class ReturnsCheckYourAnswersController @Inject()(
             CheckYourAnswerForManufacturedPlasticWeight,
             CheckYourAnswerImportedPlasticPackagingSummary,
             CheckYourAnswerImportedPlasticPackagingWeight,
-            DirectlyExportedComponentsSummary,
+            new DirectlyExportedComponentsSummary,
             new ExportedPlasticPackagingWeightSummary,
             ExportedHumanMedicinesPlasticPackagingSummary,
             ExportedHumanMedicinesPlasticPackagingWeightSummary,

@@ -141,6 +141,7 @@
 
     <!-- Exported packaging -->
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
+    @changeLink(taxReturn.exportedStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowWithChange("exported-packaging.row1", taxReturn.exportedYesNo),
