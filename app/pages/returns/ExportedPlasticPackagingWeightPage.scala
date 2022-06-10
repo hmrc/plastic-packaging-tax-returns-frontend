@@ -33,7 +33,7 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
       if (amount > 0) {
         userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
       } else {
-        userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
+        userAnswers
           .remove(ExportedHumanMedicinesPlasticPackagingPage).get
           .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
           .remove(ExportedRecycledPlasticPackagingPage).get
