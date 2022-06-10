@@ -106,6 +106,12 @@
         newTab = true
     ))))
 }
+    
+@changeLink(url: String) = @{
+    paragraph(
+        content = link(id = "", text = messages("site.change"), call = Call("GET", url)),
+    )
+}
 
 @layout(pageTitle = titleNoForm(messages("submit-return.check-your-answers.heading"))) {
 
@@ -122,6 +128,7 @@
 
     <!-- Packaging total -->
     @sectionHeading("submit-return.check-your-answers.packaging-total.heading")
+    @changeLink(taxReturn.packagingTotalStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowWithChange("packaging-total.row1", taxReturn.manufacturedYesNo),

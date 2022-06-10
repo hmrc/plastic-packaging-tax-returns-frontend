@@ -16,7 +16,8 @@
 
 package controllers.helpers
 
-import models.UserAnswers
+import controllers.returns.routes
+import models.{CheckMode, UserAnswers}
 import models.returns.TaxReturnObligation
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -32,12 +33,13 @@ case class TaxReturnViewModel (
   private val obligation: TaxReturnObligation,
   private val userAnswers: UserAnswers
 ) (implicit messages: Messages) {
-
+  
   private def stylize(row: SummaryListRow) = {
     val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
-    row.copy(key = row.key.copy(
-      classes = classes
-    ))
+    row.copy(
+      key = row.key.copy(classes = classes),
+      actions = None
+    )
   }
 
   private def instantiate[PageType <: SummaryViewModel](messageKey: String, tag: ClassTag[PageType]) = {
@@ -144,5 +146,7 @@ case class TaxReturnViewModel (
     val taxDue = taxValueInPencePerKg * BigDecimal(chargeableTotalNumeric).setScale(2, RoundingMode.HALF_EVEN)
     taxDue.asPounds
   }
+
+  def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
 
 }
