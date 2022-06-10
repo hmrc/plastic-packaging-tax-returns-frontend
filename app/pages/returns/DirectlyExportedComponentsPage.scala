@@ -30,25 +30,13 @@ case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value.map {
-      case true =>
-        userAnswers.remove(NonExportedHumanMedicinesPlasticPackagingPage).get
-          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
-          .remove(NonExportedRecycledPlasticPackagingPage).get
-          .remove(NonExportedRecycledPlasticPackagingWeightPage).get
-          .remove(ExportedHumanMedicinesPlasticPackagingPage).get
-          .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
-          .remove(ExportedRecycledPlasticPackagingPage).get
-          .remove(ExportedRecycledPlasticPackagingWeightPage)
+      case true => super.cleanup(value, userAnswers)
       case _ =>
         userAnswers.set(ExportedPlasticPackagingWeightPage, 0L).get
           .remove(ExportedHumanMedicinesPlasticPackagingPage).get
           .remove(ExportedHumanMedicinesPlasticPackagingWeightPage).get
           .remove(ExportedRecycledPlasticPackagingPage).get
-          .remove(ExportedRecycledPlasticPackagingWeightPage).get
-          .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
-          .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
-          .remove(NonExportedRecycledPlasticPackagingPage).get
-          .remove(NonExportedRecycledPlasticPackagingWeightPage)
+          .remove(ExportedRecycledPlasticPackagingWeightPage)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }
