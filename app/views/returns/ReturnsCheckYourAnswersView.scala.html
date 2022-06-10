@@ -156,14 +156,25 @@
         )
     ))
 
+    <!-- Deductions -->
+    @sectionHeading("submit-return.check-your-answers.deductions.heading")
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            summaryRowWithChange("deductions.row1", taxReturn.exportedWeight),
+            summaryRowWithChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
+            summaryRowWithChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
+            summaryRow("deductions.row4", taxReturn.deductionsTotal),
+        )
+    ))
+
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
     @govukTable(Table(
         rows = Seq(
-            summaryRowTable("tax-calc.row1", taxLiability.plasticPackagingTotal),
-            summaryRowTable("tax-calc.row2", taxLiability.deductionsTotal),
-            summaryRowTable("tax-calc.row3", taxLiability.chargeableTotal),
-            summaryRowTable("tax-calc.row4", taxLiability.taxDue)
+            summaryRowTable("tax-calc.row1", taxReturn.packagingTotal),
+            summaryRowTable("tax-calc.row2", taxReturn.deductionsTotal),
+            summaryRowTable("tax-calc.row3", taxReturn.chargeableTotal),
+            summaryRowTable("tax-calc.row4", taxReturn.taxDue)
         )
     ))
     @para("tax-calc.footnote")

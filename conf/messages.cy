@@ -366,7 +366,6 @@ exportedRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be be
 exportedRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
 exportedRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 
-
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
 submit-return.check-your-answers.business-details.heading = Business details
 submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
@@ -399,6 +398,12 @@ submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plast
 submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
 submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+
+submit-return.check-your-answers.deductions.heading = Deductions
+submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
+submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row4 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.

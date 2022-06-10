@@ -20,9 +20,11 @@ import models.UserAnswers
 import models.returns.TaxReturnObligation
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.{InputWidth, PrintLong}
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns._
+import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
+
+import scala.math.BigDecimal.RoundingMode
 import scala.reflect.ClassTag
 
 case class TaxReturnViewModel (
@@ -58,7 +60,7 @@ case class TaxReturnViewModel (
     instantiate("", tag)
       .answer(userAnswers)
       .getOrElse {
-        val className = implicitly[ClassTag[PageType]].runtimeClass.getSimpleName
+        val className = tag.runtimeClass.getSimpleName
         val errorMessage = s"The field for '$className' is missing from user-answers"
         throw new IllegalStateException(errorMessage)
       }
@@ -80,10 +82,13 @@ case class TaxReturnViewModel (
     createSummaryRow[ImportedPlasticPackagingWeightSummary](messageKey)
   }
 
-  def packagingTotal: String = {
-    val total = (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
+  private def packagingTotalNumeric: Long = {
+    (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
       + ensureAnswer[ImportedPlasticPackagingWeightSummary])
-    total.asKgs
+  }
+
+  def packagingTotal: String = {
+    packagingTotalNumeric.asKgs
   }
 
 
@@ -94,7 +99,6 @@ case class TaxReturnViewModel (
   def exportedWeight(messageKey: String): SummaryListRow = {
     createSummaryRow[ExportedPlasticPackagingWeightSummary](messageKey)
   }
-
 
   def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
     createSummaryRow[NonExportedHumanMedicinesPlasticPackagingSummary](messageKey)
@@ -110,6 +114,35 @@ case class TaxReturnViewModel (
 
   def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
     createSummaryRow[NonExportedRecycledPlasticPackagingWeightSummary](messageKey)
+  }
+
+  private def deductionsTotalNumeric: Long = {
+    (ensureAnswer[ExportedPlasticPackagingWeightSummary]
+      + ensureAnswer[NonExportedHumanMedicinesPlasticPackagingWeightSummary]
+      + ensureAnswer[NonExportedRecycledPlasticPackagingWeightSummary])
+  }
+
+  def deductionsTotal: String = {
+    deductionsTotalNumeric.asKgs
+  }
+
+
+  private def chargeableTotalNumeric = {
+    // TODO if totalDeductions > totalPackaging is this the correct behaviour?!
+    scala.math.max(0, (packagingTotalNumeric - deductionsTotalNumeric))
+  }
+
+  def chargeableTotal: String = {
+    chargeableTotalNumeric.asKgs
+  }
+
+
+  // TODO robbed from TaxLiabilityFactory - should be in app-config?
+  private val taxValueInPencePerKg = BigDecimal("0.20")
+
+  def taxDue: String = {
+    val taxDue = taxValueInPencePerKg * BigDecimal(chargeableTotalNumeric).setScale(2, RoundingMode.HALF_EVEN)
+    taxDue.asPounds
   }
 
 }
