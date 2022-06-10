@@ -68,8 +68,7 @@ class ReturnsCheckYourAnswersController @Inject()(
             NonExportedHumanMedicinesPlasticPackagingSummary,
             NonExportedHumanMedicinesPlasticPackagingWeightSummary,
             NonExportedRecycledPlasticPackagingSummary,
-            NonExportedRecycledPlasticPackagingWeightSummary,
-            ConvertedPackagingCreditSummary
+            NonExportedRecycledPlasticPackagingWeightSummary
           ).flatMap(_.row(request.userAnswers))
         )
         val answers = request.userAnswers.data.value.toMap
