@@ -80,7 +80,7 @@
     SummaryListRow(key = Key(text, classes = classes), value = Value(value), actions = Some(Actions(items = Seq(action))))
 }
 
-@summaryRowWithChange(shortKey: String, f: String => SummaryListRow) = @{
+@summaryRowWithoutChange(shortKey: String, f: String => SummaryListRow) = @{
     f(toLongKey(shortKey))
 }
 
@@ -128,50 +128,50 @@
 
     <!-- Packaging total -->
     @sectionHeading("submit-return.check-your-answers.packaging-total.heading")
-    @changeLink(taxReturn.packagingTotalStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithChange("packaging-total.row1", taxReturn.manufacturedYesNo),
-            summaryRowWithChange("packaging-total.row2", taxReturn.manufacturedWeight),
-            summaryRowWithChange("packaging-total.row3", taxReturn.importedYesNo),
-            summaryRowWithChange("packaging-total.row4", taxReturn.importedWeight),
+            summaryRowWithoutChange("packaging-total.row1", taxReturn.manufacturedYesNo),
+            summaryRowWithoutChange("packaging-total.row2", taxReturn.manufacturedWeight),
+            summaryRowWithoutChange("packaging-total.row3", taxReturn.importedYesNo),
+            summaryRowWithoutChange("packaging-total.row4", taxReturn.importedWeight),
             summaryRow("packaging-total.row5", taxReturn.packagingTotal),
         )
     ))
+    @changeLink(taxReturn.packagingTotalStartUrl)
 
     <!-- Exported packaging -->
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
-    @changeLink(taxReturn.exportedStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithChange("exported-packaging.row1", taxReturn.exportedYesNo),
-            summaryRowWithChange("exported-packaging.row2", taxReturn.exportedWeight),
+            summaryRowWithoutChange("exported-packaging.row1", taxReturn.exportedYesNo),
+            summaryRowWithoutChange("exported-packaging.row2", taxReturn.exportedWeight),
 //            summaryRowWithChange("exported-packaging.row3", taxReturn.exportedMedicineYesNo),
 //            summaryRowWithChange("exported-packaging.row4", taxReturn.exportedMedicineWeight),
 //            summaryRowWithChange("exported-packaging.row5", taxReturn.exportedRecycledYesNo),
 //            summaryRowWithChange("exported-packaging.row6", taxReturn.exportedRecycledWeight),
         )
     ))
+    @changeLink(taxReturn.exportedStartUrl)
 
     <!-- Non-exported packaging -->
     @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
-    @changeLink(taxReturn.nonexportedStartUrl)
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithChange("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
-            summaryRowWithChange("nonexported-packaging.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowWithChange("nonexported-packaging.row3", taxReturn.nonexportedRecycledYesNo),
-            summaryRowWithChange("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
+            summaryRowWithoutChange("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
+            summaryRowWithoutChange("nonexported-packaging.row2", taxReturn.nonexportedMedicineWeight),
+            summaryRowWithoutChange("nonexported-packaging.row3", taxReturn.nonexportedRecycledYesNo),
+            summaryRowWithoutChange("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
+    @changeLink(taxReturn.nonexportedStartUrl)
 
     <!-- Deductions -->
     @sectionHeading("submit-return.check-your-answers.deductions.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithChange("deductions.row1", taxReturn.exportedWeight),
-            summaryRowWithChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowWithChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
+            summaryRowWithoutChange("deductions.row1", taxReturn.exportedWeight),
+            summaryRowWithoutChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
+            summaryRowWithoutChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
             summaryRow("deductions.row4", taxReturn.deductionsTotal),
         )
     ))
