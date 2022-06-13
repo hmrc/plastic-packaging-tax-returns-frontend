@@ -18,6 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -46,14 +47,6 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
   val form = formProvider()
 
-  private def nonExportedAmount(implicit request: DataRequest[_]) = {
-    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported     = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported     = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-
-    (manufactured + imported) - exported
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -62,7 +55,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(nonExportedAmount, preparedForm, mode))
+      NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(nonExportedAmount, preparedForm, mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -70,8 +63,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(nonExportedAmount, formWithErrors, mode))),
-
+          Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
+            identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))

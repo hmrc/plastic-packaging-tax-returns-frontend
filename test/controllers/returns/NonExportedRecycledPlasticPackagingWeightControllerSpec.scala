@@ -17,7 +17,9 @@
 package controllers.returns
 
 import base.SpecBase
+import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
+import controllers.{routes => appRoutes}
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
@@ -41,8 +43,11 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 0L
-//todo CARL fix flaky tests
-  val amount = 0L
+  val manufacturedAmount = 200L
+  val importedAmount = 100L
+  val exportedAmount = 50L
+  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  lazy val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
 
   lazy val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
@@ -51,7 +56,8 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
     "must return OK and the correct view for a GET" in {
 
-      val ans = userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = nonExportedAnswer
+        .set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -63,7 +69,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, amount)(request,
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, nonExportedAmount)(request,
           messages(application)
         ).toString
       }
@@ -71,9 +77,8 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage,
-        validAnswer
-      ).success.value
+      val ans = nonExportedAnswer
+        .set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -85,13 +90,27 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, amount)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, nonExportedAmount)(
           request,
           messages(application)
         ).toString
       }
     }
 
+    "must redirect GET to home page when exported amount not found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).success.value)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, recycledPlasticPackagingWeightRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
+      }
+    }
     "must redirect to the next page when valid data is submitted" in {
 
       val mockCacheConnector = mock[CacheConnector]
@@ -119,7 +138,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
 
       running(application) {
         val request =
@@ -133,7 +152,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, amount)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, nonExportedAmount)(request,
           messages(application)
         ).toString
       }
