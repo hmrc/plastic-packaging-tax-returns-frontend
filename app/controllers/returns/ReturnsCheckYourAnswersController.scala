@@ -21,20 +21,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
 import models.requests.DataRequest
 import models.returns.{ReturnType, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
-import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
-import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
-import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingWeightSummary.CheckYourAnswerForManufacturedPlasticWeight
-import viewmodels.checkAnswers.returns._
-import viewmodels.govuk.summarylist._
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
