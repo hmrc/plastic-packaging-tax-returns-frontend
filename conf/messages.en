@@ -302,8 +302,9 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
-return.confirmation.panel = Your reference number is {0}
-return.confirmation.panel.empty = Nothing to pay
+return.confirmation.panel = Your charge reference for this return is {0}
+return.confirmation.panel.empty = You have nothing to pay for this return
+return.confirmation.body.1 = You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account.
 return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = We will not email you a confirmation.
 return.confirmation.return.link = Return to your Plastic Packaging Tax account
