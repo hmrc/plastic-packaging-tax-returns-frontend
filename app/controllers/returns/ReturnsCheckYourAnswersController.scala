@@ -56,46 +56,14 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val list = SummaryListViewModel(rows =
-          Seq(
-            CheckYourAnswerManufacturedPlasticPackaging,
-            CheckYourAnswerForManufacturedPlasticWeight,
-            CheckYourAnswerImportedPlasticPackagingSummary,
-            CheckYourAnswerImportedPlasticPackagingWeight,
-            new DirectlyExportedComponentsSummary,
-            new ExportedPlasticPackagingWeightSummary,
-            ExportedHumanMedicinesPlasticPackagingSummary,
-            ExportedHumanMedicinesPlasticPackagingWeightSummary,
-            new ExportedRecycledPlasticPackagingSummary,
-            ExportedRecycledPlasticPackagingWeightSummary,
-            new NonExportedHumanMedicinesPlasticPackagingSummary,
-            new NonExportedHumanMedicinesPlasticPackagingWeightSummary,
-            new NonExportedRecycledPlasticPackagingSummary,
-            new NonExportedRecycledPlasticPackagingWeightSummary,
-            ConvertedPackagingCreditSummary
-          ).flatMap(_.row(request.userAnswers))
-        )
-        val answers = request.userAnswers.data.value.toMap
-
-        // TODO - we need to adjust this for returns V2!
-        val liability: TaxLiability = TaxLiabilityFactory.create(
-          answers.getOrElse("manufacturedPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("humanMedicinesPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("exportedPlasticPackagingWeight", 0).toString.toLong,
-          BigDecimal(answers.getOrElse("convertedPackagingCredit", 0).toString),
-          answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
-        )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => displayPage(request, list, liability, obligation)
+          case Some(obligation) => displayPage(request, obligation)
           case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
     }
 
-  private def displayPage(request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
-    obligation: TaxReturnObligation)(implicit messages: Messages) = {
-
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit messages: Messages) = {
     val returnViewModel = TaxReturnViewModel(request, obligation, appConfig)
     Future.successful(Ok(view(returnViewModel)(request, messages)))
   }
@@ -110,6 +78,7 @@ class ReturnsCheckYourAnswersController @Inject()(
           throw new IllegalStateException("Obligation not found!")
         )
 
+        // TODO use same code for calculating return fields and check-your-answers fields
         val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
 
         returnsConnector.submit(taxReturn).flatMap {
