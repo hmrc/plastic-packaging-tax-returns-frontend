@@ -96,9 +96,8 @@ class ReturnsCheckYourAnswersController @Inject()(
   private def displayPage(request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
     obligation: TaxReturnObligation)(implicit messages: Messages) = {
 
-    val creditsAdviceUrl = appConfig.creditsAdviceUrl
-    val returnViewModel = TaxReturnViewModel(request.pptReference, obligation, request.userAnswers)
-    Future.successful(Ok(view(returnViewModel, creditsAdviceUrl)(request, messages)))
+    val returnViewModel = TaxReturnViewModel(request.pptReference, obligation, request.userAnswers, appConfig)
+    Future.successful(Ok(view(returnViewModel)(request, messages)))
   }
 
   def onSubmit(): Action[AnyContent] =

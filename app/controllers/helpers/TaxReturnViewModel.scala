@@ -16,6 +16,7 @@
 
 package controllers.helpers
 
+import config.FrontendAppConfig
 import controllers.returns.routes
 import models.{CheckMode, UserAnswers}
 import models.returns.TaxReturnObligation
@@ -32,7 +33,8 @@ import scala.reflect.ClassTag
 case class TaxReturnViewModel (
   pptReference: String,
   private val obligation: TaxReturnObligation,
-  private val userAnswers: UserAnswers
+  private val userAnswers: UserAnswers,
+  private val appConfig: FrontendAppConfig
 ) (implicit messages: Messages) {
 
   private def stylize(row: SummaryListRow) = {
@@ -160,4 +162,5 @@ case class TaxReturnViewModel (
     ViewUtils.displayLocalDate(obligation.toDate)
   }
 
+  def creditsGuidanceUrl: String = appConfig.creditsGuidanceUrl
 }

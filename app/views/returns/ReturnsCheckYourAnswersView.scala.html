@@ -30,7 +30,7 @@
     link: Link
 )
 
-@(taxReturn: TaxReturnViewModel, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
@@ -191,7 +191,7 @@
     @para("credits.line1")
     @para("credits.line2")
     @bullets("credits.line3", "credits.line4")
-    @paraLink("credits.line5", "credits.line5.link-text", creditAdviceLnkUrl)
+    @paraLink("credits.line5", "credits.line5.link-text", taxReturn.creditsGuidanceUrl)
 
     <!-- Submit -->
     @sectionHeading("submit-return.check-your-answers.now-send.heading")

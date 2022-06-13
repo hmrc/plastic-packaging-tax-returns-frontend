@@ -44,7 +44,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any())(any(), any())).thenReturn(new Html(""))
   }
 
   "Returns Check Your Answers Controller" - {
@@ -59,7 +59,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        verify(mockView).apply(any(), any())(any(), any())
+        verify(mockView).apply(any())(any(), any())
       }
     }
 
