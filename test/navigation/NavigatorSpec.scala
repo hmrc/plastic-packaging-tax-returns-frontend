@@ -227,26 +227,12 @@ class NavigatorSpec extends SpecBase {
         //        }
 
 
-        "for the RecycledPlasticPackagingWeightPage" - {
+        "for the NonExportedRecycledPlasticPackagingWeightPage" - {
 
-          "navigate to ConvertedPackagingCreditPage" in {
+          "navigate to ReturnsCheckYourAnswers" in {
             val answers = UserAnswers("id").set(NonExportedRecycledPlasticPackagingWeightPage, 1000L)
 
             navigator.nextPage(NonExportedRecycledPlasticPackagingWeightPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-        "for the ConvertedPackagingCreditPage" - {
-
-          "navigate to ReturnsCheckYourAnswers" in {
-            val answers = UserAnswers("id").set[BigDecimal](ConvertedPackagingCreditPage, 1000)
-
-            navigator.nextPage(ConvertedPackagingCreditPage,
               NormalMode,
               answers.get
             ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
