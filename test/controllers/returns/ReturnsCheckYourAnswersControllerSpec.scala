@@ -18,7 +18,6 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
-import controllers.helpers.TaxLiability
 import org.mockito.ArgumentMatchers.{eq => eqq, _}
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
@@ -45,7 +44,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(new Html(""))
   }
 
   "Returns Check Your Answers Controller" - {
@@ -60,7 +59,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
-        verify(mockView).apply(eqq(taxReturnOb), any(), eqq("123"), any())(any(), any())
+        verify(mockView).apply(any(), eqq("123"), any())(any(), any())
       }
     }
 

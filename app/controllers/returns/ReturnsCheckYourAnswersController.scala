@@ -98,7 +98,7 @@ class ReturnsCheckYourAnswersController @Inject()(
 
     val creditsAdviceUrl = appConfig.creditsAdviceUrl
     val returnViewModel = TaxReturnViewModel(request.pptReference, obligation, request.userAnswers)
-    Future.successful(Ok(view(obligation, returnViewModel, request.pptReference, creditsAdviceUrl)(request, messages)))
+    Future.successful(Ok(view(returnViewModel, request.pptReference, creditsAdviceUrl)(request, messages)))
   }
 
   def onSubmit(): Action[AnyContent] =

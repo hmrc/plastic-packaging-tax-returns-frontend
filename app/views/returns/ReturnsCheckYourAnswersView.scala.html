@@ -32,8 +32,7 @@
     link: Link
 )
 
-@(obligation: TaxReturnObligation, taxReturn: TaxReturnViewModel,
-        pptReference: String, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, pptReference: String, creditAdviceLnkUrl: String)(implicit request: Request[_], messages: Messages)
 
 @taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
     Seq(
@@ -122,8 +121,8 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRow("business-details.row1", pptReference),
-            summaryRow("business-details.row2", obligation.startDatePrettyPrint), 
-            summaryRow("business-details.row3", obligation.endDatePrettyPrint)
+            summaryRow("business-details.row2", taxReturn.startDatePrettyPrint), 
+            summaryRow("business-details.row3", taxReturn.endDatePrettyPrint)
         )
     ))
 

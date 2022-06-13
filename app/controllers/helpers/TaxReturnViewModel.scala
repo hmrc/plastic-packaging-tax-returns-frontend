@@ -24,6 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns._
 import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
+import views.ViewUtils
 
 import scala.math.BigDecimal.RoundingMode
 import scala.reflect.ClassTag
@@ -150,5 +151,13 @@ case class TaxReturnViewModel (
   def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
+
+  def startDatePrettyPrint(implicit messages: Messages): String = {
+    ViewUtils.displayLocalDate(obligation.fromDate)
+  }
+
+  def endDatePrettyPrint(implicit messages: Messages): String = {
+    ViewUtils.displayLocalDate(obligation.toDate)
+  }
 
 }
