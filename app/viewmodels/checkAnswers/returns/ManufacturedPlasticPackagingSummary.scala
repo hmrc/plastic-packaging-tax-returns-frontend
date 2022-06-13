@@ -31,7 +31,7 @@ class ManufacturedPlasticPackagingSummary (key: String) extends SummaryViewModel
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRow(key = Key(key, classes="govuk-!-font-weight-regular"),
+        SummaryListRow(key = Key(key, classes="govuk-!-width-three-quarters"),
           value = Value(value),
           actions = Some(Actions(items = Seq(
             ActionItem(
