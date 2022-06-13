@@ -54,13 +54,13 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends PlaySpec w
     "have a title" in {
 
       view.select("title").text mustBe
-        "Out of the 1,234 kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "Out of the 1,234kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "Out of the 1,234 kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
+        "Out of the 1,234kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
 
     }
     "have a caption" in {
