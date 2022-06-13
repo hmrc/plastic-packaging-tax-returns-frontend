@@ -122,7 +122,8 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRow("business-details.row1", pptReference),
-            summaryRow("business-details.row2", obligation.toReturnQuarter)
+            summaryRow("business-details.row2", obligation.startDatePrettyPrint), 
+            summaryRow("business-details.row3", obligation.endDatePrettyPrint)
         )
     ))
 

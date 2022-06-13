@@ -33,6 +33,14 @@ final case class TaxReturnObligation(
   def toReturnQuarter(implicit messages: Messages): String = {
     ViewUtils.displayReturnQuarter(fromDate, toDate)
   }
+  
+  def startDatePrettyPrint(implicit messages: Messages): String = {
+    ViewUtils.displayLocalDate(fromDate)
+  }
+  
+  def endDatePrettyPrint(implicit messages: Messages): String = {
+    ViewUtils.displayLocalDate(toDate)
+  }
 }
 
 object TaxReturnObligation {
