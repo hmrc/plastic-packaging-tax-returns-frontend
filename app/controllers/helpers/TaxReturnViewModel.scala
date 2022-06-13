@@ -18,8 +18,9 @@ package controllers.helpers
 
 import config.FrontendAppConfig
 import controllers.returns.routes
-import models.{CheckMode, UserAnswers}
+import models.requests.DataRequest
 import models.returns.TaxReturnObligation
+import models.{CheckMode, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
@@ -31,11 +32,12 @@ import scala.math.BigDecimal.RoundingMode
 import scala.reflect.ClassTag
 
 case class TaxReturnViewModel (
-  pptReference: String,
+  private val request: DataRequest[_], 
   private val obligation: TaxReturnObligation,
-  private val userAnswers: UserAnswers,
   private val appConfig: FrontendAppConfig
 ) (implicit messages: Messages) {
+
+  private def userAnswers: UserAnswers = request.userAnswers
 
   private def stylize(row: SummaryListRow) = {
     val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
@@ -150,6 +152,7 @@ case class TaxReturnViewModel (
     taxDue.asPounds
   }
 
+  
   def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
@@ -163,4 +166,5 @@ case class TaxReturnViewModel (
   }
 
   def creditsGuidanceUrl: String = appConfig.creditsGuidanceUrl
+  def pptReference: String = request.pptReference
 }

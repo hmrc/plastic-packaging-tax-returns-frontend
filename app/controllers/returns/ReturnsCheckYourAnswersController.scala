@@ -96,7 +96,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   private def displayPage(request: DataRequest[AnyContent], list: SummaryList, liability: TaxLiability,
     obligation: TaxReturnObligation)(implicit messages: Messages) = {
 
-    val returnViewModel = TaxReturnViewModel(request.pptReference, obligation, request.userAnswers, appConfig)
+    val returnViewModel = TaxReturnViewModel(request, obligation, appConfig)
     Future.successful(Ok(view(returnViewModel)(request, messages)))
   }
 
