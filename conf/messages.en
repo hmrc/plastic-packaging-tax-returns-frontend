@@ -302,8 +302,9 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
-return.confirmation.panel = Your reference number is {0}
-return.confirmation.panel.empty = Nothing to pay
+return.confirmation.panel = Your charge reference for this return is {0}
+return.confirmation.panel.empty = You have nothing to pay for this return
+return.confirmation.body.1 = You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account.
 return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = We will not email you a confirmation.
 return.confirmation.return.link = Return to your Plastic Packaging Tax account
@@ -465,3 +466,63 @@ exportedRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg
 exportedRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 exportedRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
 exportedRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+
+submit-return.check-your-answers.heading = Check your answers before sending your tax return
+submit-return.check-your-answers.business-details.heading = Business details
+submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
+submit-return.check-your-answers.business-details.row2 = Return period
+
+submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
+submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
+submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
+submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
+
+submit-return.check-your-answers.tax-calc.heading = Your tax calculation
+submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
+submit-return.check-your-answers.tax-calc.row2 = Deductions total
+submit-return.check-your-answers.tax-calc.row3 = Chargeable plastic packaging total
+submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
+submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
+
+submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row3 = Exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row4 = Weight of exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row5 = Exported plastic packaging containing 30% or more recycled plastic
+submit-return.check-your-answers.exported-packaging.row6 = Weight of exported plastic packaging containing 30% or more recycled plastic
+
+submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+
+submit-return.check-your-answers.deductions.heading = Deductions
+submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
+submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row4 = Deductions total
+
+submit-return.check-your-answers.credits.heading = Credits
+submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.
+submit-return.check-your-answers.credits.line2 = You may be able to claim credit in future if the packaging is either:
+submit-return.check-your-answers.credits.line3 = exported
+submit-return.check-your-answers.credits.line4 = converted into different packaging
+submit-return.check-your-answers.credits.line5 = Find out more about {0}.
+submit-return.check-your-answers.credits.line5.link-text = claiming credits (opens in new tab)
+
+submit-return.check-your-answers.now-send.heading = Now send your return
+submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+submit-return.check-your-answers.now-send.button-text = Submit return
+
+returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
+returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
+returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
+returnsCheckYourAnswers.taxLiability.label = Tax Liability
+returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
+returnsCheckYourAnswers.totalCredits.label = Total Credits
+returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
+returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.

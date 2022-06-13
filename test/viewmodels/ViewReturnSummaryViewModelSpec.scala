@@ -86,15 +86,15 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the manufactured field" in  {
-      liableSection.fields(0) mustBe Field("viewReturnSummary.liable.field.manufactured", "100 kg")
+      liableSection.fields(0) mustBe Field("viewReturnSummary.liable.field.manufactured", "100kg")
     }
 
     "have the imported field" in  {
-      liableSection.fields(1) mustBe Field("viewReturnSummary.liable.field.imported", "2 kg")
+      liableSection.fields(1) mustBe Field("viewReturnSummary.liable.field.imported", "2kg")
     }
 
     "have the total field" in  {
-      liableSection.fields(2) mustBe Field("viewReturnSummary.liable.field.total", "102 kg", bold = true)
+      liableSection.fields(2) mustBe Field("viewReturnSummary.liable.field.total", "102kg", bold = true)
     }
   }
 
@@ -110,19 +110,19 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the exported field" in  {
-      exemptSection.fields(0) mustBe Field("viewReturnSummary.exempt.field.exported", "5 kg")
+      exemptSection.fields(0) mustBe Field("viewReturnSummary.exempt.field.exported", "5kg")
     }
 
     "have the medicine field" in  {
-      exemptSection.fields(1) mustBe Field("viewReturnSummary.exempt.field.medicine", "4 kg")
+      exemptSection.fields(1) mustBe Field("viewReturnSummary.exempt.field.medicine", "4kg")
     }
 
     "have the recycled field" in  {
-      exemptSection.fields(2) mustBe Field("viewReturnSummary.exempt.field.recycled", "6 kg")
+      exemptSection.fields(2) mustBe Field("viewReturnSummary.exempt.field.recycled", "6kg")
     }
 
     "have the recycled total" in  {
-      exemptSection.fields(3) mustBe Field("viewReturnSummary.exempt.field.total", "3 kg", bold = true)
+      exemptSection.fields(3) mustBe Field("viewReturnSummary.exempt.field.total", "3kg", bold = true)
     }
   }
 
@@ -138,15 +138,15 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the liable field" in {
-      calculationSection.fields(0) mustBe Field("viewReturnSummary.calculation.field.liable", "102 kg")
+      calculationSection.fields(0) mustBe Field("viewReturnSummary.calculation.field.liable", "102kg")
     }
 
     "have the exempt field" in {
-      calculationSection.fields(1) mustBe Field("viewReturnSummary.calculation.field.exempt", "3 kg")
+      calculationSection.fields(1) mustBe Field("viewReturnSummary.calculation.field.exempt", "3kg")
     }
 
     "have the total field" in {
-      calculationSection.fields(2) mustBe Field("viewReturnSummary.calculation.field.total", "9 kg")
+      calculationSection.fields(2) mustBe Field("viewReturnSummary.calculation.field.total", "9kg")
     }
 
     "have the tax total" in {

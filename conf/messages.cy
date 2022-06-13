@@ -20,6 +20,23 @@ site.yes = Iawn
 site.continue = Cadw ac yn eich blaen
 site.change = Newid
 
+date.day = Day
+date.month = Month
+date.year = Year
+
+month.1 = January
+month.2 = February
+month.3 = March
+month.4 = April
+month.5 = May
+month.6 = June
+month.7 = July
+month.8 = August
+month.9 = September
+month.10 = October
+month.11 = November
+month.12 = December
+
 return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
@@ -348,3 +365,54 @@ exportedRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg
 exportedRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 exportedRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
 exportedRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+
+submit-return.check-your-answers.heading = Check your answers before sending your tax return
+submit-return.check-your-answers.business-details.heading = Business details
+submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
+submit-return.check-your-answers.business-details.row2 = Return period
+
+submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
+submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
+submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
+submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
+
+submit-return.check-your-answers.tax-calc.heading = Your tax calculation
+submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
+submit-return.check-your-answers.tax-calc.row2 = Deductions total
+submit-return.check-your-answers.tax-calc.row3 = Chargeable plastic packaging total
+submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
+submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
+
+submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row3 = Exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row4 = Weight of exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.exported-packaging.row5 = Exported plastic packaging containing 30% or more recycled plastic
+submit-return.check-your-answers.exported-packaging.row6 = Weight of exported plastic packaging containing 30% or more recycled plastic
+
+submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+
+submit-return.check-your-answers.deductions.heading = Deductions
+submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
+submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row4 = Deductions total
+
+submit-return.check-your-answers.credits.heading = Credits
+submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.
+submit-return.check-your-answers.credits.line2 = You may be able to claim credit in future if the packaging is either:
+submit-return.check-your-answers.credits.line3 = exported
+submit-return.check-your-answers.credits.line4 = converted into different packaging
+submit-return.check-your-answers.credits.line5 = Find out more about {0}.
+submit-return.check-your-answers.credits.line5.link-text = claiming credits (opens in new tab)
+
+submit-return.check-your-answers.now-send.heading = Now send your return
+submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+submit-return.check-your-answers.now-send.button-text = Submit return

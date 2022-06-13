@@ -21,21 +21,27 @@ import models.{CheckMode, UserAnswers}
 import pages.returns.ExportedPlasticPackagingWeightPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary.calculateTotal
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object ExportedPlasticPackagingWeightSummary extends SummaryViewModel {
+class ExportedPlasticPackagingWeightSummary(key: String = "exportedPlasticPackagingWeight.checkYourAnswersLabel")
+  extends SummaryViewModel {
+
+  override def answer(answers: UserAnswers): Option[Long] = {
+    answers.get(ExportedPlasticPackagingWeightPage)
+  }
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ExportedPlasticPackagingWeightPage).map {
+    answer(answers).map {
       answer =>
         val totalPlastic = calculateTotal(answers)
 
-        SummaryListRowViewModel(key = "exportedPlasticPackagingWeight.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
+        SummaryListRowViewModel(key = key,
+          value = ValueViewModel(answer.asKgs),
           actions = Seq(
             ActionItemViewModel(
               "site.change",

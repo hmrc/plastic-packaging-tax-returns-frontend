@@ -16,7 +16,7 @@
 
 package base
 
-import controllers.actions.{AuthAgentAction, IdentifierAction}
+import controllers.actions.AuthAgentAction
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._

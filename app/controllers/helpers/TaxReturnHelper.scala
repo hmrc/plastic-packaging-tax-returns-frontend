@@ -20,9 +20,8 @@ import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
 import models.UserAnswers
 import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
-import pages._
-import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, ExportedHumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingWeightPage}
+import pages.amends._
+import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier

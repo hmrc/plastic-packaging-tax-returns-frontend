@@ -19,7 +19,7 @@ import java.text.DecimalFormat
 package object viewmodels {
 
   private val poundsFormat = new DecimalFormat("£#,##0.00")
-  private val kgsFormat = new DecimalFormat("#,### kg")
+  private val kgsFormat = new DecimalFormat("#,###kg")
 
   implicit class PrintBigDecimal(val amount: BigDecimal) extends AnyVal {
     def asPounds: String = poundsFormat.format(amount)

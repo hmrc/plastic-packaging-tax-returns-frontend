@@ -25,7 +25,7 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
 
-GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
 
 GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()
@@ -123,7 +123,7 @@ POST       /changeStartYourReturn                  controllers.returns.StartYour
 
 GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
-GET        /returnConfirmation                       controllers.returns.ReturnConfirmationController.onPageLoad()
+GET        /return-submitted                       controllers.returns.ReturnConfirmationController.onPageLoad()
 
 GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
 POST       /agents                        controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
