@@ -30,7 +30,7 @@ import scala.math.BigDecimal.RoundingMode
 import scala.reflect.ClassTag
 
 case class TaxReturnViewModel (
-  private val pptReference: String,
+  pptReference: String,
   private val obligation: TaxReturnObligation,
   private val userAnswers: UserAnswers
 ) (implicit messages: Messages) {
