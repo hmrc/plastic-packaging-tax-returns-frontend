@@ -17,11 +17,12 @@
 package controllers.returns
 
 import base.SpecBase
+import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, contains}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
@@ -29,7 +30,6 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 
 import scala.concurrent.Future
@@ -42,16 +42,22 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0L
-  val exportedAmount = 8L
+  val amount = 8L
+
+  val manufacturedAmount = 200L
+  val importedAmount = 100L
+  val exportedAmount = 50L
+  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
 
   lazy val nonExportedHumanMedicinesPlasticPackagingWeightRoute = routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
-  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = exportedAmount).success.value
+  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = amount).success.value
 
   "NonExportedHumanMedicinesPlasticPackagingWeight Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswersWithExportAmount.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -63,13 +69,13 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(0L, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswersWithExportAmount.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
       val mockCacheConnector = mock[CacheConnector]
 
@@ -90,7 +96,21 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(0L, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect GET to home page when exported amount not found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
       }
     }
 
@@ -121,7 +141,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
 
       running(application) {
         val request =
@@ -135,7 +155,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(0L, boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 

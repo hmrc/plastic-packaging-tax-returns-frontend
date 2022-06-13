@@ -18,13 +18,13 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage}
+import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
@@ -45,14 +45,6 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
 
   val form = formProvider()
 
-  private def nonExportedAmount(implicit request: DataRequest[_]) = {
-    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported     = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported     = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-
-    (manufactured + imported) - exported
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -61,7 +53,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(nonExportedAmount, preparedForm, mode))
+      NonExportedAmountHelper.nonExportedAmount.fold(identity, value => Ok(view(value, preparedForm, mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -69,8 +61,8 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(nonExportedAmount, formWithErrors, mode))),
-
+          Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
+            identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value))

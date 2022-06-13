@@ -183,7 +183,6 @@ class ExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val t: Map[String,String] = Map("errors" -> "test")
       running(application) {
         val request =
           FakeRequest(POST, exportedRecycledPlasticPackagingWeightRoute)

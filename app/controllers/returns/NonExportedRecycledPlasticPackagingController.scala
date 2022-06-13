@@ -18,11 +18,11 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
+import pages.returns.NonExportedRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,13 +48,6 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
   // todo: content switch logic
   val noDirectExports: Boolean = true
 
-  private def nonExportedAmount(implicit request: DataRequest[_]) = {
-    val manufactured = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported = request.userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = request.userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-
-    (manufactured + imported) - exported
-  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -64,7 +57,7 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, nonExportedAmount, noDirectExports))
+      NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(preparedForm, mode, nonExportedAmount, noDirectExports)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,8 +65,8 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, nonExportedAmount, noDirectExports))),
-
+          Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
+            identity, exportedAmount => BadRequest(view(formWithErrors, mode, exportedAmount, noDirectExports)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedRecycledPlasticPackagingPage, value))

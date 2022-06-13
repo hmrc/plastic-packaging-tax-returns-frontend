@@ -17,11 +17,13 @@
 package controllers.returns
 
 import base.SpecBase
+import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
+import controllers.{routes => appRoutes}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, contains}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.{NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
@@ -29,7 +31,6 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
 import scala.concurrent.Future
@@ -45,11 +46,17 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
 
   val answersWithPreset = emptyUserAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L).get
 
+  val manufacturedAmount = 200L
+  val importedAmount = 100L
+  val exportedAmount = 50L
+  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  lazy val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+
   "NonExportedHumanMedicinesPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
 
       running(application) {
         val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute)
@@ -59,13 +66,13 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(0L, form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(NonExportedHumanMedicinesPlasticPackagingPage, true).success.value
+      val userAnswers = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -77,7 +84,22 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(0L, form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(true), NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect GET to home page when exported amount not found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
       }
     }
 
@@ -109,7 +131,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
+      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
 
       running(application) {
         val request =
@@ -123,7 +145,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(0L, boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 

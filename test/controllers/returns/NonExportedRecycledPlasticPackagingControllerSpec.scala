@@ -17,6 +17,7 @@
 package controllers.returns
 
 import base.SpecBase
+import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.{NormalMode, UserAnswers}
@@ -41,16 +42,20 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
   val form = formProvider()
 
   val validAnswer = 0L
-  //todo: CARL fix flaky tests
-  val amount: Long = 0
+
+  val manufacturedAmount = 200L
+  val importedAmount = 100L
+  val exportedAmount = 50L
+  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  lazy val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
 
   lazy val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
-  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = amount).success.value
   "RecycledPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val ans = userAnswersWithExportAmount.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = nonExportedAnswer
+        .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -62,13 +67,13 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, amount)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, nonExportedAmount)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(NonExportedRecycledPlasticPackagingPage, true).success.value
+      val userAnswers = nonExportedAnswer.set(NonExportedRecycledPlasticPackagingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -80,7 +85,22 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, amount)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, nonExportedAmount)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to home page on GET when amount questions has not been answers" in {
+      val ans = UserAnswers(userAnswersId).set(NonExportedRecycledPlasticPackagingPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, recycledPlasticPackagingRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
       }
     }
 
@@ -112,7 +132,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
 
       running(application) {
         val request =
@@ -126,7 +146,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, amount)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, nonExportedAmount)(request, messages(application)).toString
       }
     }
 
