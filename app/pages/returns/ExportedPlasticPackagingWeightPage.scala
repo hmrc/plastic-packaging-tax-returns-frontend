@@ -41,10 +41,10 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
       if (amount > 0) {
         if(exportedAllPlastic(userAnswers)) {
           userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
-            .remove(NonExportedHumanMedicinesPlasticPackagingPage).get
-            .remove(NonExportedHumanMedicinesPlasticPackagingWeightPage).get
-            .remove(NonExportedRecycledPlasticPackagingPage).get
-            .remove(NonExportedRecycledPlasticPackagingWeightPage)
+            .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
+            .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
+            .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
+            .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
         }
         else {
           userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)

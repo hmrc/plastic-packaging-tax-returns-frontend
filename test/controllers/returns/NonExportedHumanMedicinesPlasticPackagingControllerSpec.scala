@@ -49,7 +49,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
   val manufacturedAmount = 200L
   val importedAmount = 100L
   val exportedAmount = 50L
-  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  val nonExportedAmount = (manufacturedAmount + importedAmount) - exportedAmount
   lazy val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
 
   "NonExportedHumanMedicinesPlasticPackaging Controller" - {
