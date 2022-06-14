@@ -24,12 +24,12 @@ package object viewmodels {
   implicit class PrintBigDecimal(val amount: BigDecimal) extends AnyVal {
     def asPounds: String = poundsFormat.format(amount)
 
-    def asKgs: String = kgsFormat.format(amount)
+    def asKg: String = kgsFormat.format(amount)
   }
 
   implicit class PrintLong(val amount: Long) extends AnyVal {
     def asPounds: String = poundsFormat.format(amount)
 
-    def asKgs: String = kgsFormat.format(amount)
+    def asKg: String = kgsFormat.format(amount)
   }
 }

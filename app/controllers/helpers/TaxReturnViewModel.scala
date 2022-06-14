@@ -80,7 +80,7 @@ case class TaxReturnViewModel (
   }
 
   def packagingTotal: String = {
-    packagingTotalNumeric.asKgs
+    packagingTotalNumeric.asKg
   }
 
 
@@ -115,7 +115,7 @@ case class TaxReturnViewModel (
   }
 
   def deductionsTotal: String = {
-    deductionsTotalNumeric.asKgs
+    deductionsTotalNumeric.asKg
   }
 
 
@@ -125,7 +125,7 @@ case class TaxReturnViewModel (
   }
 
   def chargeableTotal: String = {
-    chargeableTotalNumeric.asKgs
+    chargeableTotalNumeric.asKg
   }
 
 

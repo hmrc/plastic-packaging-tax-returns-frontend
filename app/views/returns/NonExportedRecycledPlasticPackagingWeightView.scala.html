@@ -35,7 +35,7 @@
     <hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKgs), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKg), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 
@@ -48,7 +48,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKgs)).asPageHeading()
+                label = LabelViewModel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg)).asPageHeading()
             )
             .asKg()
             .withHint(Hint(content = HtmlContent(paragraphContent)))

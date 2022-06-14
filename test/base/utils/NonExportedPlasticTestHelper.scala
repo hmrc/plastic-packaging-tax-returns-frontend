@@ -35,11 +35,11 @@ object NonExportedPlasticTestHelper {
     importedAmount: Long
   ): UserAnswers = {
     UserAnswers("123")
-      .set(DirectlyExportedComponentsPage,true).get
-      .set(ExportedPlasticPackagingWeightPage,exportedAmount).get
-      .set(ManufacturedPlasticPackagingPage,true).get
-      .set(ManufacturedPlasticPackagingWeightPage,manufacturedAmount).get
-      .set(ImportedPlasticPackagingPage,true).get
-      .set(ImportedPlasticPackagingWeightPage,importedAmount).get
+      .set(DirectlyExportedComponentsPage,true, cleanup = false).get
+      .set(ExportedPlasticPackagingWeightPage,exportedAmount, cleanup = false).get
+      .set(ManufacturedPlasticPackagingPage,true, cleanup = false).get
+      .set(ManufacturedPlasticPackagingWeightPage,manufacturedAmount, cleanup = false).get
+      .set(ImportedPlasticPackagingPage,true, cleanup = false).get
+      .set(ImportedPlasticPackagingWeightPage,importedAmount, cleanup = false).get
   }
 }

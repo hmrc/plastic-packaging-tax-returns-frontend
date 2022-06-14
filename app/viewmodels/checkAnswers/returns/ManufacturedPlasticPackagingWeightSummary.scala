@@ -30,7 +30,7 @@ class ManufacturedPlasticPackagingWeightSummary private(key: String) extends Sum
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answer(answers).map {
-      answer => createSummaryListView(answer.asKgs)
+      answer => createSummaryListView(answer.asKg)
     }
 
   override def answer(answers: UserAnswers): Option[Long] = {

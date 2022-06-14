@@ -42,7 +42,7 @@
 
 }
 
-@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKgs), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackaging.caption"))
 
@@ -55,7 +55,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKgs)).asPageHeading()
+                legend = LegendViewModel(messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg)).asPageHeading()
             )
             .withHint(Hint(content = HtmlContent(paragraphContent)))
         )

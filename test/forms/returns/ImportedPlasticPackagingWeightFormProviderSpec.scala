@@ -35,22 +35,31 @@ class ImportedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
     behave like longField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName, "importedPlasticPackagingWeight.error.nonNumeric"),
-                         wholeNumberError =
-                           FormError(fieldName, "importedPlasticPackagingWeight.error.wholeNumber")
+      fieldName,
+      nonNumericError =
+        FormError(fieldName, "importedPlasticPackagingWeight.error.nonNumeric"),
+      wholeNumberError =
+        FormError(fieldName, "importedPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like longFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "importedPlasticPackagingWeight.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longFieldWithMinimum(form,
+      fieldName,
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "importedPlasticPackagingWeight.error.outOfRange.low",
+        Seq(minimum)
+      )
+    )
+
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "importedPlasticPackagingWeight.error.outOfRange.high",
+        Seq(maximum)
+      )
     )
 
     behave like mandatoryField(

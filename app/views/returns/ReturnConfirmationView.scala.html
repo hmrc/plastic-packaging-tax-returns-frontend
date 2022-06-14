@@ -26,18 +26,32 @@
         appConfig: FrontendAppConfig
 )
 
+
 @(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
+
+
+@chargeRefMsg = @{
+    chargeReference.fold(Html(messages("return.confirmation.panel.empty")))(ref => {
+        Html(s"""<div class="govuk-panel__body">
+                ${messages("return.confirmation.panel")}
+                <span class="govuk-!-font-size-48">
+                    <strong>$ref</strong>
+                </span>
+            </div>"""
+        )
+    })
+}
 
 @layout(
     pageTitle    = titleNoForm(messages("return.confirmation.title")),
     showBackLink = false
     ) {
 
+
 @* this panel content will contain the submission ID *@
     @govukPanel(Panel(
         title = Text(messages("return.confirmation.submitted")),
-
-        content = Text(chargeReference.fold(messages("return.confirmation.panel.empty"))(ref => messages("return.confirmation.panel", ref)))
+        content = HtmlContent(chargeRefMsg)
         )
     )
 
