@@ -17,6 +17,7 @@
 @import components.{Link, bulletList, paragraph, paragraphBody}
 @import viewmodels.InputWidth
 @import controllers.helpers.TaxReturnViewModel
+@import views.ViewUtils.RichSummaryListRow
 @import controllers.helpers.RowInfo
 
 @this(
@@ -59,6 +60,13 @@
 @summaryRowFromFunc(shortKey: String, f: String => RowInfo) = @{
     val row = f(toLongKey(shortKey))
     summaryRow(row.key, row.value, "govuk-!-width-one-quarter govuk-table__cell--numeric")
+}
+
+@summaryRowWithoutChange2(shortKey: String, value: String) = @{
+    SummaryListRow(key = Key(toLongKey(shortKey), classes="govuk-!-font-weight-regular govuk-!-width-three-quarters"),
+        value = Value(value),
+        actions = None
+    )
 }
 
 @sectionHeading(text: String)(implicit messages: Messages) = {
@@ -145,7 +153,7 @@
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
             summaryRowFromFunc("deductions.row2", taxReturn.nonexportedMedicineWeight),
             summaryRowFromFunc("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRowFromString("deductions.row4", taxReturn.deductionsTotal),
+            summaryRowWithoutChange2("deductions.row4", taxReturn.deductionsTotal).bold,
         )
     ))
 
@@ -156,7 +164,7 @@
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
             summaryRowFromString("tax-calc.row2", taxReturn.deductionsTotal),
             summaryRowFromString("tax-calc.row3", taxReturn.chargeableTotal),
-            summaryRowFromString("tax-calc.row4", taxReturn.taxDue)
+            summaryRowWithoutChange2("tax-calc.row4", taxReturn.taxDue).bold
         )
     ))
     @para("tax-calc.footnote")
