@@ -35,8 +35,6 @@ class ReturnsJourneyNavigator {
     exported >= (manufactured + imported)
   }
 
-  // TODO - commented out `exported` journey for the time being until we get agreement that it ca be completely removed
-
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
 
     case StartYourReturnPage => startYourReturnRoute
