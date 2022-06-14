@@ -27,9 +27,9 @@ case class TaxLiability(
   private val _taxDue: BigDecimal = 0
 ) {
 
-  def plasticPackagingTotal: String = totalKgLiable.asKgs
-  def deductionsTotal: String = totalKgExempt.asKgs
-  def chargeableTotal: String = math.max(totalKgLiable - totalKgExempt, 0).asKgs
+  def plasticPackagingTotal: String = totalKgLiable.asKg
+  def deductionsTotal: String = totalKgExempt.asKg
+  def chargeableTotal: String = math.max(totalKgLiable - totalKgExempt, 0).asKg
   def taxDue: String = _taxDue.asPounds
 }
 

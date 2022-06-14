@@ -40,7 +40,7 @@
     <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKgs), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.exported.plastic"))
 
@@ -53,7 +53,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKgs)).asPageHeading()
+                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
             )
             .asNumeric()
             .withWidth(Fixed10)

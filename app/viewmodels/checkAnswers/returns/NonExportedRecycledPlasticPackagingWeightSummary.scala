@@ -34,7 +34,7 @@ class NonExportedRecycledPlasticPackagingWeightSummary(key: String = "NonExportR
     answer(answers).map {
       answer =>
         SummaryListRowViewModel(key = key,
-          value = ValueViewModel(answer.asKgs),
+          value = ValueViewModel(answer.asKg),
           actions = Seq(
             ActionItemViewModel(
               "site.change",

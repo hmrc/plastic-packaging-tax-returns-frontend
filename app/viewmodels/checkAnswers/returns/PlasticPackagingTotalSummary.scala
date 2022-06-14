@@ -31,7 +31,7 @@ object PlasticPackagingTotalSummary extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     Some(SummaryListRowViewModel(
       key = "confirmPlasticPackagingTotal.total.label",
-      value = ValueViewModel(calculateTotal(answers).asKgs).withCssClass("total-weight"),
+      value = ValueViewModel(calculateTotal(answers).asKg).withCssClass("total-weight"),
       actions = Seq.empty
     ))
 

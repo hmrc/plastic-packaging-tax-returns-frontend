@@ -30,7 +30,7 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answer(answers).map {
-          answer => createSummaryListRow(answer.asKgs)
+          answer => createSummaryListRow(answer.asKg)
     }
 
   override def answer(answers: UserAnswers): Option[Long] = {
