@@ -248,7 +248,7 @@ manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
 
 NonExportRecycledPlasticPackaging.title.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading.no.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
-NonExportRecycledPlasticPackaging.title.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.title.no.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging containing 30% or more recycled
 NonExportRecycledPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components contained 30% or more recycled plastic
