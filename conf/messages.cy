@@ -326,8 +326,7 @@ nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden = How much of your
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
 submit-return.check-your-answers.business-details.heading = Business details
 submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
-submit-return.check-your-answers.business-details.row2 = Return period start date
-submit-return.check-your-answers.business-details.row3 = Return period end date
+submit-return.check-your-answers.business-details.row2 = Return period
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
 submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging

@@ -152,4 +152,5 @@ case class TaxReturnViewModel (
 
   def creditsGuidanceUrl: String = appConfig.creditsGuidanceUrl
   def pptReference: String = request.pptReference
+  def returnQuarter: String = obligation.toReturnQuarter
 }
