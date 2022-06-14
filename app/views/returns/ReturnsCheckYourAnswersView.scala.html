@@ -69,12 +69,12 @@
     val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
     SummaryListRow(key = Key(text, classes = classes), value = Value(value))
 }
-
-@summaryRowWithChange2(shortKey: String, value: String, href: String) = @{
+@summaryRowWithValueRight(shortKey: String, value: String) = @{
     val text = messages("submit-return.check-your-answers." + shortKey)
-    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
-    val action = ActionItem(content = "site.change", href = href)
-    SummaryListRow(key = Key(text, classes = classes), value = Value(value), actions = Some(Actions(items = Seq(action))))
+    SummaryListRow(
+        key = Key(text, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"), 
+        value = Value(value, classes = "govuk-table__cell--numeric")
+    )
 }
 
 @summaryRowWithoutChange(shortKey: String, f: String => SummaryListRow) = @{
@@ -132,7 +132,7 @@
             summaryRowWithoutChange("packaging-total.row2", taxReturn.manufacturedWeight),
             summaryRowWithoutChange("packaging-total.row3", taxReturn.importedYesNo),
             summaryRowWithoutChange("packaging-total.row4", taxReturn.importedWeight),
-            summaryRow("packaging-total.row5", taxReturn.packagingTotal),
+            summaryRowWithValueRight("packaging-total.row5", taxReturn.packagingTotal),
         )
     ))
     @changeLink(taxReturn.packagingTotalStartUrl)
@@ -143,10 +143,6 @@
         rows = Seq(
             summaryRowWithoutChange("exported-packaging.row1", taxReturn.exportedYesNo),
             summaryRowWithoutChange("exported-packaging.row2", taxReturn.exportedWeight),
-//            summaryRowWithChange("exported-packaging.row3", taxReturn.exportedMedicineYesNo),
-//            summaryRowWithChange("exported-packaging.row4", taxReturn.exportedMedicineWeight),
-//            summaryRowWithChange("exported-packaging.row5", taxReturn.exportedRecycledYesNo),
-//            summaryRowWithChange("exported-packaging.row6", taxReturn.exportedRecycledWeight),
         )
     ))
     @changeLink(taxReturn.exportedStartUrl)
@@ -170,7 +166,7 @@
             summaryRowWithoutChange("deductions.row1", taxReturn.exportedWeight),
             summaryRowWithoutChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
             summaryRowWithoutChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRow("deductions.row4", taxReturn.deductionsTotal),
+            summaryRowWithValueRight("deductions.row4", taxReturn.deductionsTotal),
         )
     ))
 

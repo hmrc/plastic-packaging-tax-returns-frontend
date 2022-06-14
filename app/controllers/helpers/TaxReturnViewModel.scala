@@ -40,9 +40,9 @@ case class TaxReturnViewModel (
   private def userAnswers: UserAnswers = request.userAnswers
 
   private def stylize(row: SummaryListRow) = {
-    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
     row.copy(
-      key = row.key.copy(classes = classes),
+      key = row.key.copy(classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
+      value = row.value.copy(classes = "govuk-!-width-one-quarter govuk-table__cell--numeric"), 
       actions = None
     )
   }
