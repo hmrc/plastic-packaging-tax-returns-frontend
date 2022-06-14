@@ -257,7 +257,7 @@ NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}
 NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
 
 NonExportRecycledPlasticPackagingWeight.title = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
-NonExportRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportedRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.checkYourAnswersLabel = Non exported Recycled packaging weight
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 NonExportRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
