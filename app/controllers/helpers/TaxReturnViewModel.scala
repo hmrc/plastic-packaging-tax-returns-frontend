@@ -27,14 +27,10 @@ import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
-import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.checkAnswers.returns._
 import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
 import views.ViewUtils
 
 import scala.math.BigDecimal.RoundingMode
-import scala.reflect.ClassTag
-import viewmodels.PrintLong
 
 case class TaxReturnViewModel (
   private val request: DataRequest[_], 
@@ -44,22 +40,6 @@ case class TaxReturnViewModel (
 
   private def userAnswers: UserAnswers = request.userAnswers
 
-  private def instantiate[PageType <: SummaryViewModel](messageKey: String, tag: ClassTag[PageType]) = {
-    tag.runtimeClass.getConstructor(classOf[String])
-      .newInstance(messageKey).asInstanceOf[PageType]
-  }
-
-  private def ensureAnswer[PageType <: SummaryViewModel: ClassTag]: Long = {
-    val tag = implicitly[ClassTag[PageType]]
-    instantiate("", tag)
-      .answer(userAnswers)
-      .getOrElse {
-        val className = tag.runtimeClass.getSimpleName
-        val errorMessage = s"The field for '$className' is missing from user-answers"
-        throw new IllegalStateException(errorMessage)
-      }
-  }
-  
   private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
     userAnswers.get(page).getOrElse {
       throw new IllegalStateException(s"The field for '$page' is missing from user-answers")
@@ -102,8 +82,7 @@ case class TaxReturnViewModel (
   }
 
   private def packagingTotalNumeric: Long = {
-    (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
-      + ensureAnswer[ImportedPlasticPackagingWeightSummary])
+    getMustHave(ManufacturedPlasticPackagingWeightPage) + getMustHave(ImportedPlasticPackagingWeightPage)
   }
 
   def packagingTotal: String = {
@@ -136,9 +115,9 @@ case class TaxReturnViewModel (
   }
 
   private def deductionsTotalNumeric: Long = {
-    (ensureAnswer[ExportedPlasticPackagingWeightSummary]
-      + ensureAnswer[NonExportedHumanMedicinesPlasticPackagingWeightSummary]
-      + ensureAnswer[NonExportedRecycledPlasticPackagingWeightSummary])
+    getMustHave(ExportedPlasticPackagingWeightPage)
+     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
+     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage)
   }
 
   def deductionsTotal: String = {
