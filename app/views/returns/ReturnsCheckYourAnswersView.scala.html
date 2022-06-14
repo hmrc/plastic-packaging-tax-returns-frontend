@@ -24,7 +24,6 @@
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
-    govukTable: GovukTable,
     paragraphBody: paragraphBody,
     paragraph: paragraph,
     bulletList: bulletList,
@@ -33,36 +32,12 @@
 
 @(taxReturn: TaxReturnViewModel)(implicit request: Request[_], messages: Messages)
 
-@taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
-    Seq(
-        TableRow(
-        content = Text(messages(key)),
-        classes = classes,
-        attributes = attributes
-        ),
-        TableRow(
-        content = Text(value),
-        classes = classes,
-        format = Some("numeric"),
-        attributes = attributes
-        ),
-        TableRow(
-        classes = classes,
-        attributes = attributes
-        )
-    )
-}
-
 @hiddenText(key: String) = @{
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
 }
 
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
-}
-
-@summaryRowTable(shortKey: String, value: String) = @{
-    taxCalculationRow(toLongKey(shortKey), value)
 }
     
 @summaryRow(key: String, value: String, valueClasses: String = "") = @{
@@ -177,12 +152,12 @@
 
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
-    @govukTable(Table(
+    @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowTable("tax-calc.row1", taxReturn.packagingTotal),
-            summaryRowTable("tax-calc.row2", taxReturn.deductionsTotal),
-            summaryRowTable("tax-calc.row3", taxReturn.chargeableTotal),
-            summaryRowTable("tax-calc.row4", taxReturn.taxDue)
+            summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
+            summaryRowFromString("tax-calc.row2", taxReturn.deductionsTotal),
+            summaryRowFromString("tax-calc.row3", taxReturn.chargeableTotal),
+            summaryRowFromString("tax-calc.row4", taxReturn.taxDue)
         )
     ))
     @para("tax-calc.footnote")
