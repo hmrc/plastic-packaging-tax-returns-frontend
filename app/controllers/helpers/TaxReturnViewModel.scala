@@ -25,12 +25,12 @@ import pages.QuestionPage
 import pages.returns._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
-import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
+import viewmodels.{PrintBigDecimal, PrintLong}
 import views.ViewUtils
 
 import scala.math.BigDecimal.RoundingMode
+
+case class RowInfo(key: String, value: String)
 
 case class TaxReturnViewModel (
   private val request: DataRequest[_], 
@@ -46,43 +46,37 @@ case class TaxReturnViewModel (
     }
   }
 
-  private def createRow(key: String, value: String) = {
-    SummaryListRow(
-      key = Key(content = Text(key), classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
-      value = Value(content = Text(value), classes = "govuk-!-width-one-quarter govuk-table__cell--numeric"),
-    )
-  }
-
   private def createYesNoRow(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
     val answer = getMustHave(page)
     val value = if (answer) "site.yes" else "site.no"
-    createRow(messages(messageKey), messages(value))
+    RowInfo(key = messages(messageKey), value = messages(value))
   }
 
   private def createKgsRow(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
     val answer = getMustHave(page)
     val value = answer.asKgs
-    createRow(messages(messageKey), value)
+    RowInfo(key = messages(messageKey), value = value)
   }
 
-  def manufacturedYesNo(messageKey: String): SummaryListRow = {
+  def manufacturedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(ManufacturedPlasticPackagingPage, messageKey)
   }
 
-  def manufacturedWeight(messageKey: String): SummaryListRow = {
+  def manufacturedWeight(messageKey: String): RowInfo = {
     createKgsRow(ManufacturedPlasticPackagingWeightPage, messageKey)
   }
 
-  def importedYesNo(messageKey: String): SummaryListRow = {
+  def importedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(ImportedPlasticPackagingPage, messageKey)
   }
 
-  def importedWeight(messageKey: String): SummaryListRow = {
+  def importedWeight(messageKey: String): RowInfo = {
     createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
   private def packagingTotalNumeric: Long = {
-    getMustHave(ManufacturedPlasticPackagingWeightPage) + getMustHave(ImportedPlasticPackagingWeightPage)
+    (getMustHave(ManufacturedPlasticPackagingWeightPage) 
+      + getMustHave(ImportedPlasticPackagingWeightPage))
   }
 
   def packagingTotal: String = {
@@ -90,34 +84,34 @@ case class TaxReturnViewModel (
   }
 
 
-  def exportedYesNo(messageKey: String): SummaryListRow = {
+  def exportedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(DirectlyExportedComponentsPage, messageKey)
   }
 
-  def exportedWeight(messageKey: String): SummaryListRow = {
+  def exportedWeight(messageKey: String): RowInfo = {
     createKgsRow(ExportedPlasticPackagingWeightPage, messageKey)
   }
 
-  def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
+  def nonexportedMedicineYesNo(messageKey: String): RowInfo = {
     createYesNoRow(NonExportedHumanMedicinesPlasticPackagingPage, messageKey)
   }
 
-  def nonexportedMedicineWeight(messageKey: String): SummaryListRow = {
+  def nonexportedMedicineWeight(messageKey: String): RowInfo = {
     createKgsRow(NonExportedHumanMedicinesPlasticPackagingWeightPage, messageKey)
   }
 
-  def nonexportedRecycledYesNo(messageKey: String): SummaryListRow = {
+  def nonexportedRecycledYesNo(messageKey: String): RowInfo = {
     createYesNoRow(NonExportedRecycledPlasticPackagingPage, messageKey)
   }
 
-  def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
+  def nonexportedRecycledWeight(messageKey: String): RowInfo = {
     createKgsRow(NonExportedRecycledPlasticPackagingWeightPage, messageKey)
   }
 
   private def deductionsTotalNumeric: Long = {
-    getMustHave(ExportedPlasticPackagingWeightPage)
+    (getMustHave(ExportedPlasticPackagingWeightPage)
      + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
-     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage)
+     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
   }
 
   def deductionsTotal: String = {

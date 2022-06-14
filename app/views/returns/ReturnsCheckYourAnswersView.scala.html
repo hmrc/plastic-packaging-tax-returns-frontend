@@ -17,6 +17,7 @@
 @import components.{Link, bulletList, paragraph, paragraphBody}
 @import viewmodels.InputWidth
 @import controllers.helpers.TaxReturnViewModel
+@import controllers.helpers.RowInfo
 
 @this(
     layout: templates.Layout,
@@ -69,6 +70,7 @@
     val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
     SummaryListRow(key = Key(text, classes = classes), value = Value(value))
 }
+    
 @summaryRowWithValueRight(shortKey: String, value: String) = @{
     val text = messages("submit-return.check-your-answers." + shortKey)
     SummaryListRow(
@@ -77,8 +79,12 @@
     )
 }
 
-@summaryRowWithoutChange(shortKey: String, f: String => SummaryListRow) = @{
-    f(toLongKey(shortKey))
+@summaryRowWithoutChange(shortKey: String, f: String => RowInfo) = @{
+    val row = f(toLongKey(shortKey))
+    SummaryListRow(
+        key = Key(content = Text(row.key), classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
+        value = Value(content = Text(row.value), classes = "govuk-!-width-one-quarter govuk-table__cell--numeric"),
+    )
 }
 
 @sectionHeading(text: String)(implicit messages: Messages) = {
