@@ -21,8 +21,12 @@ import controllers.returns.routes
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import models.{CheckMode, UserAnswers}
+import pages.QuestionPage
+import pages.returns.{NonExportedRecycledPlasticPackagingPage, _}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import play.api.libs.json.Reads
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns._
 import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
@@ -72,9 +76,24 @@ case class TaxReturnViewModel (
         throw new IllegalStateException(errorMessage)
       }
   }
+  
+  private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
+    userAnswers.get(page).getOrElse {
+      throw new IllegalStateException(s"The field for '$page' is missing from user-answers")
+    }
+  }
+
+  private def createYesNoRow(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
+    val answer = getMustHave(page)
+    val value = if (answer) "site.yes" else "site.no"
+    SummaryListRow(
+      key = Key(content = Text(messages(messageKey)), classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
+      value = Value(content = Text(messages(value)), classes = "govuk-!-width-one-quarter govuk-table__cell--numeric"),
+    )
+  }
 
   def manufacturedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+    createYesNoRow(ManufacturedPlasticPackagingPage, messageKey)
   }
 
   def manufacturedWeight(messageKey: String): SummaryListRow = {
@@ -82,7 +101,7 @@ case class TaxReturnViewModel (
   }
 
   def importedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[ImportedPlasticPackagingSummary](messageKey)
+    createYesNoRow(ImportedPlasticPackagingPage, messageKey)
   }
 
   def importedWeight(messageKey: String): SummaryListRow = {
@@ -100,7 +119,7 @@ case class TaxReturnViewModel (
 
 
   def exportedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[DirectlyExportedComponentsSummary](messageKey)
+    createYesNoRow(DirectlyExportedComponentsPage, messageKey)
   }
 
   def exportedWeight(messageKey: String): SummaryListRow = {
@@ -108,7 +127,7 @@ case class TaxReturnViewModel (
   }
 
   def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedHumanMedicinesPlasticPackagingSummary](messageKey)
+    createYesNoRow(NonExportedHumanMedicinesPlasticPackagingPage, messageKey)
   }
 
   def nonexportedMedicineWeight(messageKey: String): SummaryListRow = {
@@ -116,7 +135,7 @@ case class TaxReturnViewModel (
   }
 
   def nonexportedRecycledYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedRecycledPlasticPackagingSummary](messageKey)
+    createYesNoRow(NonExportedRecycledPlasticPackagingPage, messageKey)
   }
 
   def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
