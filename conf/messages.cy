@@ -244,7 +244,7 @@ NonExportRecycledPlasticPackaging.checkYourAnswersLabel = recycledPlasticPackagi
 NonExportRecycledPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components contained 30% or more recycled plastic
 NonExportRecycledPlasticPackaging.change.hidden = Non exported Recycled packaging
 NonExportRecycledPlasticPackaging.paragraph.line.1 = You will not be charged tax on these but you must still tell us about them.
-NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}
+NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
 
 NonExportRecycledPlasticPackagingWeight.title = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
