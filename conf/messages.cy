@@ -43,6 +43,17 @@ caption.exported.plastic = Exported plastic packaging
 caption.non.exported.plastic = Non-exported plastic packaging
 return.title.tail = Submit return
 
+return.confirmation.title = Return submitted
+return.confirmation.submitted = Return submitted
+return.confirmation.panel = Your charge reference for this return is
+return.confirmation.panel.empty = You have nothing to pay for this return
+return.confirmation.body.1 = You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account.
+return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
+return.confirmation.body.3 = We will not email you a confirmation.
+return.confirmation.return.link = Return to your Plastic Packaging Tax account
+return.confirmation.exitSurvey.text = {0} (Takes 30 seconds)
+return.confirmation.exitSurvey.text.link = What did you think of this service?
+
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
 account.homePage.organisation.group = {0} (representative organisation for group)
