@@ -78,10 +78,6 @@ class TaxReturnHelper @Inject()(
             userAnswers.get(ImportedPlasticPackagingWeightPage).map(
               value => ImportedPlasticWeight(value)
             ),
-          humanMedicinesPlasticWeight =
-            userAnswers.get(ExportedHumanMedicinesPlasticPackagingWeightPage).map(
-              value => HumanMedicinesPlasticWeight(value)
-            ),
           exportedPlasticWeight =
             userAnswers.get(ExportedPlasticPackagingWeightPage).map(
               value => ExportedPlasticWeight(value)
