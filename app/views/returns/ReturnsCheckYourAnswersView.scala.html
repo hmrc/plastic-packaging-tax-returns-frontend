@@ -62,13 +62,6 @@
     summaryRow(row.key, row.value, "govuk-!-width-one-quarter govuk-table__cell--numeric")
 }
 
-@summaryRowWithoutChange2(shortKey: String, value: String) = @{
-    SummaryListRow(key = Key(toLongKey(shortKey), classes="govuk-!-font-weight-regular govuk-!-width-three-quarters"),
-        value = Value(value),
-        actions = None
-    )
-}
-
 @sectionHeading(text: String)(implicit messages: Messages) = {
     <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages(text)</h2>
 }
@@ -119,7 +112,7 @@
             summaryRowFromFunc("packaging-total.row2", taxReturn.manufacturedWeight),
             summaryRowFromFunc("packaging-total.row3", taxReturn.importedYesNo),
             summaryRowFromFunc("packaging-total.row4", taxReturn.importedWeight),
-            summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal),
+            summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
     @changeLink(taxReturn.packagingTotalStartUrl)
@@ -153,7 +146,7 @@
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
             summaryRowFromFunc("deductions.row2", taxReturn.nonexportedMedicineWeight),
             summaryRowFromFunc("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRowWithoutChange2("deductions.row4", taxReturn.deductionsTotal).bold,
+            summaryRowFromString("deductions.row4", taxReturn.deductionsTotal).bold,
         )
     ))
 
@@ -164,7 +157,7 @@
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
             summaryRowFromString("tax-calc.row2", taxReturn.deductionsTotal),
             summaryRowFromString("tax-calc.row3", taxReturn.chargeableTotal),
-            summaryRowWithoutChange2("tax-calc.row4", taxReturn.taxDue).bold
+            summaryRowFromString("tax-calc.row4", taxReturn.taxDue).bold
         )
     ))
     @para("tax-calc.footnote")

@@ -77,6 +77,7 @@ object ViewUtils {
       def boldClass(c: String): String = c + " govuk-!-font-weight-bold"
       that.copy(
         key = that.key.copy(classes = boldClass(that.key.classes)),
+        value = that.value.copy(classes = boldClass(that.value.classes)),
         classes = boldClass(that.classes)
       )
     }
