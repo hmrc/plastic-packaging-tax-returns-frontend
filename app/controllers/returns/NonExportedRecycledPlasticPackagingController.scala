@@ -45,9 +45,6 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
 
   val form = formProvider()
 
-  // todo: content switch logic
-  val noDirectExports: Boolean = true
-
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -57,7 +54,7 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(preparedForm, mode, nonExportedAmount, noDirectExports)))
+      NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(preparedForm, mode, nonExportedAmount)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -66,7 +63,7 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
-            identity, exportedAmount => BadRequest(view(formWithErrors, mode, exportedAmount, noDirectExports)))),
+            identity, exportedAmount => BadRequest(view(formWithErrors, mode, exportedAmount)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedRecycledPlasticPackagingPage, value))
