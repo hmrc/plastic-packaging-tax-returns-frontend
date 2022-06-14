@@ -17,6 +17,7 @@
 @import components.{Link, bulletList, paragraph, paragraphBody}
 @import viewmodels.InputWidth
 @import controllers.helpers.TaxReturnViewModel
+@import views.ViewUtils.RichSummaryListRow
 
 @this(
     layout: templates.Layout,
@@ -81,6 +82,13 @@
     f(toLongKey(shortKey))
 }
 
+@summaryRowWithoutChange2(shortKey: String, value: String) = @{
+    SummaryListRow(key = Key(toLongKey(shortKey), classes="govuk-!-font-weight-regular govuk-!-width-three-quarters"),
+        value = Value(value),
+        actions = None
+    )
+}
+
 @sectionHeading(text: String)(implicit messages: Messages) = {
     <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages(text)</h2>
 }
@@ -132,7 +140,7 @@
             summaryRowWithoutChange("packaging-total.row2", taxReturn.manufacturedWeight),
             summaryRowWithoutChange("packaging-total.row3", taxReturn.importedYesNo),
             summaryRowWithoutChange("packaging-total.row4", taxReturn.importedWeight),
-            summaryRow("packaging-total.row5", taxReturn.packagingTotal),
+            summaryRow("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
     @changeLink(taxReturn.packagingTotalStartUrl)
@@ -166,18 +174,18 @@
             summaryRowWithoutChange("deductions.row1", taxReturn.exportedWeight),
             summaryRowWithoutChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
             summaryRowWithoutChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRow("deductions.row4", taxReturn.deductionsTotal),
+            summaryRow("deductions.row4", taxReturn.deductionsTotal).bold,
         )
     ))
 
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
-    @govukTable(Table(
+    @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowTable("tax-calc.row1", taxReturn.packagingTotal),
-            summaryRowTable("tax-calc.row2", taxReturn.deductionsTotal),
-            summaryRowTable("tax-calc.row3", taxReturn.chargeableTotal),
-            summaryRowTable("tax-calc.row4", taxReturn.taxDue)
+            summaryRowWithoutChange2("tax-calc.row1", taxReturn.packagingTotal),
+            summaryRowWithoutChange2("tax-calc.row2", taxReturn.deductionsTotal),
+            summaryRowWithoutChange2("tax-calc.row3", taxReturn.chargeableTotal),
+            summaryRowWithoutChange2("tax-calc.row4", taxReturn.taxDue).bold,
         )
     ))
     @para("tax-calc.footnote")
