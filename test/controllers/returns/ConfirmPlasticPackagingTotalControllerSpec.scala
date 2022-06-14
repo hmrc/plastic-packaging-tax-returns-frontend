@@ -168,7 +168,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
       application,
       actual.rows(1),
       "confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label",
-      expectedManufactured._2.asKgs,
+      expectedManufactured._2.asKg,
       Some(returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
 
     assertRowResults(
@@ -182,14 +182,14 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
       application,
       actual.rows(3),
       "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label",
-      expectedImported._2.asKgs,
+      expectedImported._2.asKg,
       Some(returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
 
     assertRowResults(
       application,
       actual.rows(4),
       "confirmPlasticPackagingTotal.total.label",
-      (expectedManufactured._2 + expectedImported._2).asKgs
+      (expectedManufactured._2 + expectedImported._2).asKg
     )
   }
 

@@ -54,13 +54,13 @@ class ExportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPe
     "have a title" in {
 
       view.select("title").text mustBe
-        "How much of your 1,234 kg of finished plastic packaging components did you export? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "How much of your 1,234kg of finished plastic packaging components did you export? - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "How much of your 1,234 kg of finished plastic packaging components did you export?"
+        "How much of your 1,234kg of finished plastic packaging components did you export?"
     }
 
     "have a caption" in {

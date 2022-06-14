@@ -36,7 +36,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightSummary(key: String = "nonE
 
         SummaryListRowViewModel(
           key = key,
-          value = ValueViewModel(answer.asKgs),
+          value = ValueViewModel(answer.asKg),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden"))

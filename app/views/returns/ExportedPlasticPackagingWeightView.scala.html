@@ -16,6 +16,7 @@
 
 @import components.SectionHeader
 @import viewmodels.InputWidth._
+@import viewmodels._
 
 @this(
     layout: templates.Layout,
@@ -39,7 +40,7 @@
     <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
 }
 
-@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.exported.plastic"))
 
@@ -52,7 +53,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic)).asPageHeading()
+                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
             )
             .asNumeric()
             .withWidth(Fixed10)

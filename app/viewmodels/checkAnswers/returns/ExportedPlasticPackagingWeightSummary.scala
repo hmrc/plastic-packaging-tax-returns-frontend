@@ -41,7 +41,7 @@ class ExportedPlasticPackagingWeightSummary(key: String = "exportedPlasticPackag
         val totalPlastic = calculateTotal(answers)
 
         SummaryListRowViewModel(key = key,
-          value = ValueViewModel(answer.asKgs),
+          value = ValueViewModel(answer.asKg),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
@@ -50,7 +50,7 @@ class ExportedPlasticPackagingWeightSummary(key: String = "exportedPlasticPackag
               ).url
             )
               .withVisuallyHiddenText(
-                messages("exportedPlasticPackagingWeight.change.hidden", totalPlastic)
+                messages("exportedPlasticPackagingWeight.change.hidden", totalPlastic.asKg)
               )
           )
         )

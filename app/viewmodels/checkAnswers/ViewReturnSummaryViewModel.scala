@@ -64,20 +64,20 @@ object ViewReturnSummaryViewModel {
       ),
       DetailsSection(
         Section("liable")(
-          "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKgs,
-          "imported" -> submittedReturn.returnDetails.importedWeight.asKgs,
-          "total" -> submittedReturn.returnDetails.liableWeight.asKgs
+          "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKg,
+          "imported" -> submittedReturn.returnDetails.importedWeight.asKg,
+          "total" -> submittedReturn.returnDetails.liableWeight.asKg
         ),
         Section("exempt")(
-          "exported" -> submittedReturn.returnDetails.directExports.asKgs,
-          "medicine" -> submittedReturn.returnDetails.humanMedicines.asKgs,
-          "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKgs,
-          "total" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
+          "exported" -> submittedReturn.returnDetails.directExports.asKg,
+          "medicine" -> submittedReturn.returnDetails.humanMedicines.asKg,
+          "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKg,
+          "total" -> submittedReturn.returnDetails.totalNotLiable.asKg,
         ),
         Section("calculation", lastBig = true)(
-          "liable" -> submittedReturn.returnDetails.liableWeight.asKgs,
-          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKgs,
-          "total" -> submittedReturn.returnDetails.totalWeight.asKgs,
+          "liable" -> submittedReturn.returnDetails.liableWeight.asKg,
+          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKg,
+          "total" -> submittedReturn.returnDetails.totalWeight.asKg,
           "tax" -> submittedReturn.returnDetails.taxDue.asPounds,
         ),
         Section("credits", lastBold = false)(

@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.returns.DirectlyExportedComponentsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary.calculateTotal
 import viewmodels.govuk.all.FluentActionItem
@@ -41,7 +42,7 @@ case class DirectlyExportedComponentsSummary(key: String = "directlyExportedComp
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic))
+              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic.asKg))
           )
         )
     }
