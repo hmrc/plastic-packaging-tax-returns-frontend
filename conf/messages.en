@@ -246,7 +246,7 @@ manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goo
 manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
 manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
 
-NonExportRecycledPlasticPackaging.title.no.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.title.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading.no.export = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.title.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading.export = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?

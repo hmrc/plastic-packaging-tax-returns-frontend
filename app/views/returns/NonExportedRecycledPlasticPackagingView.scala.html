@@ -39,7 +39,7 @@
     @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.2", guidanceLink))
 }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKgs), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages(variableTitle, amount.asKgs), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.non.exported.plastic"))
 
