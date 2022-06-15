@@ -17,13 +17,14 @@
 @import components.{Link, bulletList, paragraph, paragraphBody}
 @import viewmodels.InputWidth
 @import controllers.helpers.TaxReturnViewModel
+@import views.ViewUtils.RichSummaryListRow
+@import controllers.helpers.RowInfo
 
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
-    govukTable: GovukTable,
     paragraphBody: paragraphBody,
     paragraph: paragraph,
     bulletList: bulletList,
@@ -32,26 +33,6 @@
 
 @(taxReturn: TaxReturnViewModel)(implicit request: Request[_], messages: Messages)
 
-@taxCalculationRow(key: String, value: String, classes: String = "govuk-body", attributes: Map[String, String] = Map()) = @{
-    Seq(
-        TableRow(
-        content = Text(messages(key)),
-        classes = classes,
-        attributes = attributes
-        ),
-        TableRow(
-        content = Text(value),
-        classes = classes,
-        format = Some("numeric"),
-        attributes = attributes
-        ),
-        TableRow(
-        classes = classes,
-        attributes = attributes
-        )
-    )
-}
-
 @hiddenText(key: String) = @{
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
 }
@@ -59,26 +40,26 @@
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
 }
-
-@summaryRowTable(shortKey: String, value: String) = @{
-    taxCalculationRow(toLongKey(shortKey), value)
+    
+@summaryRow(key: String, value: String, valueClasses: String = "") = @{
+    SummaryListRow(
+        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"), 
+        value = Value(value, classes = valueClasses)
+    )
 }
 
-@summaryRow(shortKey: String, value: String) = @{
-    val text = messages("submit-return.check-your-answers." + shortKey)
-    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
-    SummaryListRow(key = Key(text, classes = classes), value = Value(value))
+@summaryRowWithWideValue(shortKey: String, value: String) = @{
+    val text = messages(toLongKey(shortKey))
+    summaryRow(text, value)
+}
+    
+@summaryRowFromString(shortKey: String, value: String) = @{
+    summaryRowFromFunc(shortKey, key => RowInfo(key, value))
 }
 
-@summaryRowWithChange2(shortKey: String, value: String, href: String) = @{
-    val text = messages("submit-return.check-your-answers." + shortKey)
-    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
-    val action = ActionItem(content = "site.change", href = href)
-    SummaryListRow(key = Key(text, classes = classes), value = Value(value), actions = Some(Actions(items = Seq(action))))
-}
-
-@summaryRowWithoutChange(shortKey: String, f: String => SummaryListRow) = @{
-    f(toLongKey(shortKey))
+@summaryRowFromFunc(shortKey: String, f: String => RowInfo) = @{
+    val row = f(toLongKey(shortKey))
+    summaryRow(row.key, row.value, "govuk-!-width-one-quarter govuk-table__cell--numeric")
 }
 
 @sectionHeading(text: String)(implicit messages: Messages) = {
@@ -118,9 +99,8 @@
     @sectionHeading("submit-return.check-your-answers.business-details.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRow("business-details.row1", taxReturn.pptReference),
-            summaryRow("business-details.row2", taxReturn.startDatePrettyPrint), 
-            summaryRow("business-details.row3", taxReturn.endDatePrettyPrint)
+            summaryRowWithWideValue("business-details.row1", taxReturn.pptReference),
+            summaryRowWithWideValue("business-details.row2", taxReturn.returnQuarter),
         )
     ))
 
@@ -128,11 +108,11 @@
     @sectionHeading("submit-return.check-your-answers.packaging-total.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithoutChange("packaging-total.row1", taxReturn.manufacturedYesNo),
-            summaryRowWithoutChange("packaging-total.row2", taxReturn.manufacturedWeight),
-            summaryRowWithoutChange("packaging-total.row3", taxReturn.importedYesNo),
-            summaryRowWithoutChange("packaging-total.row4", taxReturn.importedWeight),
-            summaryRow("packaging-total.row5", taxReturn.packagingTotal),
+            summaryRowFromFunc("packaging-total.row1", taxReturn.manufacturedYesNo),
+            summaryRowFromFunc("packaging-total.row2", taxReturn.manufacturedWeight),
+            summaryRowFromFunc("packaging-total.row3", taxReturn.importedYesNo),
+            summaryRowFromFunc("packaging-total.row4", taxReturn.importedWeight),
+            summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
     @changeLink(taxReturn.packagingTotalStartUrl)
@@ -141,8 +121,8 @@
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithoutChange("exported-packaging.row1", taxReturn.exportedYesNo),
-            summaryRowWithoutChange("exported-packaging.row2", taxReturn.exportedWeight),
+            summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
+            summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
     @changeLink(taxReturn.exportedStartUrl)
@@ -151,10 +131,10 @@
     @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithoutChange("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
-            summaryRowWithoutChange("nonexported-packaging.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowWithoutChange("nonexported-packaging.row3", taxReturn.nonexportedRecycledYesNo),
-            summaryRowWithoutChange("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
+            summaryRowFromFunc("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
+            summaryRowFromFunc("nonexported-packaging.row2", taxReturn.nonexportedMedicineWeight),
+            summaryRowFromFunc("nonexported-packaging.row3", taxReturn.nonexportedRecycledYesNo),
+            summaryRowFromFunc("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
     @changeLink(taxReturn.nonexportedStartUrl)
@@ -163,21 +143,21 @@
     @sectionHeading("submit-return.check-your-answers.deductions.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithoutChange("deductions.row1", taxReturn.exportedWeight),
-            summaryRowWithoutChange("deductions.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowWithoutChange("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRow("deductions.row4", taxReturn.deductionsTotal),
+            summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
+            summaryRowFromFunc("deductions.row2", taxReturn.nonexportedMedicineWeight),
+            summaryRowFromFunc("deductions.row3", taxReturn.nonexportedRecycledWeight),
+            summaryRowFromString("deductions.row4", taxReturn.deductionsTotal).bold,
         )
     ))
 
     <!-- Tax calculation -->
     @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
-    @govukTable(Table(
+    @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowTable("tax-calc.row1", taxReturn.packagingTotal),
-            summaryRowTable("tax-calc.row2", taxReturn.deductionsTotal),
-            summaryRowTable("tax-calc.row3", taxReturn.chargeableTotal),
-            summaryRowTable("tax-calc.row4", taxReturn.taxDue)
+            summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
+            summaryRowFromString("tax-calc.row2", taxReturn.deductionsTotal),
+            summaryRowFromString("tax-calc.row3", taxReturn.chargeableTotal),
+            summaryRowFromString("tax-calc.row4", taxReturn.taxDue).bold
         )
     ))
     @para("tax-calc.footnote")

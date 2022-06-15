@@ -34,9 +34,7 @@
     chargeReference.fold(Html(messages("return.confirmation.panel.empty")))(ref => {
         Html(s"""<div class="govuk-panel__body">
                 ${messages("return.confirmation.panel")}
-                <span class="govuk-!-font-size-48">
                     <strong>$ref</strong>
-                </span>
             </div>"""
         )
     })
