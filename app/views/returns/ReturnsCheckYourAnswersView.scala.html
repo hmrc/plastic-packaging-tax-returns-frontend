@@ -145,7 +145,7 @@
             summaryRowWithoutChange("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
-    @if(taxReturn.packagingTotal != "0kg") { @changeLink(taxReturn.exportedStartUrl) }
+    @if(taxReturn.canEditExported) { @changeLink(taxReturn.exportedStartUrl) }
 
     <!-- Non-exported packaging -->
     @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
@@ -157,7 +157,7 @@
             summaryRowWithoutChange("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
-    @if(taxReturn.packagingTotal != "0kg") { @changeLink(taxReturn.nonexportedStartUrl) }
+    @if(taxReturn.canEditNonExported) { @changeLink(taxReturn.nonexportedStartUrl) }
 
     <!-- Deductions -->
     @sectionHeading("submit-return.check-your-answers.deductions.heading")

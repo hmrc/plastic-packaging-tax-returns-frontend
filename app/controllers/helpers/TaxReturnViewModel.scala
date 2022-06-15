@@ -89,10 +89,17 @@ case class TaxReturnViewModel (
     createSummaryRow[ImportedPlasticPackagingWeightSummary](messageKey)
   }
 
-  private def packagingTotalNumeric: Long = {
+  def packagingTotalNumeric: Long = {
     (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
       + ensureAnswer[ImportedPlasticPackagingWeightSummary])
   }
+
+  // Show or hide edit links
+  def exportedTotal: Long         = ensureAnswer[ExportedPlasticPackagingWeightSummary]
+  private def totalPlastic: Long  = ensureAnswer[ManufacturedPlasticPackagingWeightSummary] + ensureAnswer[ImportedPlasticPackagingWeightSummary]
+  def canEditExported: Boolean    = (totalPlastic > 0 && totalPlastic > exportedTotal) || exportedTotal > 0
+  def canEditNonExported: Boolean = totalPlastic > 0 && totalPlastic > exportedTotal
+  // End
 
   def packagingTotal: String = {
     packagingTotalNumeric.asKg
