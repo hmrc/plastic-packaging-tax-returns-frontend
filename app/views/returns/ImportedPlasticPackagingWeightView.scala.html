@@ -32,8 +32,13 @@
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
-    @paragraphBody(messages("importedPlasticPackagingWeight.paragraph.1"))
+    @paragraphBody(messages("importedPlasticPackagingWeight.paragraph.include"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("importedPlasticPackagingWeight.list.include.1")</li>
+        <li>@messages("importedPlasticPackagingWeight.list.include.2")</li>
+    </ul>
 
+    @paragraphBody(messages("importedPlasticPackagingWeight.paragraph.1"))
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("importedPlasticPackagingWeight.li.1")</li>
         <li>@messages("importedPlasticPackagingWeight.li.2")</li>

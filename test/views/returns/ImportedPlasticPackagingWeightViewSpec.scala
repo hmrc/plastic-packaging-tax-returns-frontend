@@ -30,17 +30,17 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.ViewMatchers
-import views.html.returns.ManufacturedPlasticPackagingWeightView
+import views.html.returns.ImportedPlasticPackagingWeightView
 
 import java.time.LocalDate
 
-class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
+class ImportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
 
-  val page: ManufacturedPlasticPackagingWeightView = inject[ManufacturedPlasticPackagingWeightView]
-  val request: Request[AnyContent]                 = FakeRequest().withCSRFToken
-  val aTaxObligation: TaxReturnObligation          = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-  val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()
-  private val realMessagesApi: MessagesApi         = inject[MessagesApi]
+  val page: ImportedPlasticPackagingWeightView = inject[ImportedPlasticPackagingWeightView]
+  val request: Request[AnyContent]             = FakeRequest().withCSRFToken
+  val aTaxObligation: TaxReturnObligation      = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val form: Form[Long]                         = new ManufacturedPlasticPackagingWeightFormProvider()()
+  private val realMessagesApi: MessagesApi     = inject[MessagesApi]
 
   implicit def messages: Messages =
     realMessagesApi.preferred(request)
@@ -54,28 +54,27 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
       val view: Html    = createView(form.fillAndValidate(-1))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.paragraph.include"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.include.1"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.include.2"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.paragraph.include"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.list.include.1"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.list.include.2"))
     }
 
     "have a what not to include paragraph" in {
       val view: Html    = createView(form.fillAndValidate(-1))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.paragraph"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.1"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.2"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.3"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.4"))
-      doc.text() must include(messages("manufacturedPlasticPackagingWeight.list.5"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.paragraph.1"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.li.1"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.li.2"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.li.3"))
+      doc.text() must include(messages("importedPlasticPackagingWeight.li.4"))
     }
 
     "have a hint" in {
       val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("value-hint").text  must include(messages("manufacturedPlasticPackagingWeight.hint"))
+      doc.getElementById("value-hint").text  must include(messages("importedPlasticPackagingWeight.hint"))
     }
 
     "display error" when {
@@ -83,14 +82,14 @@ class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneA
         val view: Html    = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange.low"))
+        doc.text() must include(messages("importedPlasticPackagingWeight.error.outOfRange.low"))
       }
 
       "number submitted is greater than maximum" in {
         val view: Html    = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("manufacturedPlasticPackagingWeight.error.outOfRange.high"))
+        doc.text() must include(messages("importedPlasticPackagingWeight.error.outOfRange.high"))
       }
     }
   }
