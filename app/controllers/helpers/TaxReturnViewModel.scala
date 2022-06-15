@@ -21,15 +21,16 @@ import controllers.returns.routes
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import models.{CheckMode, UserAnswers}
+import pages.QuestionPage
+import pages.returns._
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.checkAnswers.returns._
-import viewmodels.{InputWidth, PrintBigDecimal, PrintLong}
+import play.api.libs.json.Reads
+import viewmodels.{PrintBigDecimal, PrintLong}
 import views.ViewUtils
 
 import scala.math.BigDecimal.RoundingMode
-import scala.reflect.ClassTag
+
+case class RowInfo(key: String, value: String)
 
 case class TaxReturnViewModel (
   private val request: DataRequest[_], 
@@ -39,64 +40,48 @@ case class TaxReturnViewModel (
 
   private def userAnswers: UserAnswers = request.userAnswers
 
-  private def stylize(row: SummaryListRow) = {
-    val classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"
-    row.copy(
-      key = row.key.copy(classes = classes),
-      actions = None
-    )
+  private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
+    userAnswers.get(page).getOrElse {
+      throw new IllegalStateException(s"The field for '$page' is missing from user-answers")
+    }
   }
 
-  private def instantiate[PageType <: SummaryViewModel](messageKey: String, tag: ClassTag[PageType]) = {
-    tag.runtimeClass.getConstructor(classOf[String])
-      .newInstance(messageKey).asInstanceOf[PageType]
+  private def createYesNoRow(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
+    val answer = getMustHave(page)
+    val value = if (answer) "site.yes" else "site.no"
+    RowInfo(key = messages(messageKey), value = messages(value))
   }
 
-  private def createSummaryRow[PageType <: SummaryViewModel](messageKey: String)(implicit tag: ClassTag[PageType]) = {
-    stylize(instantiate(messageKey, tag)
-      .row(userAnswers)
-      .getOrElse {
-        val errorMessage = s"The field for '${messages(messageKey)}' is missing from user-answers"
-        throw new IllegalStateException(errorMessage)
-      }
-    )
+  private def createKgsRow(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
+    val answer = getMustHave(page)
+    val value = answer.asKgs
+    RowInfo(key = messages(messageKey), value = value)
   }
 
-  private def ensureAnswer[PageType <: SummaryViewModel: ClassTag]: Long = {
-    val tag = implicitly[ClassTag[PageType]]
-    instantiate("", tag)
-      .answer(userAnswers)
-      .getOrElse {
-        val className = tag.runtimeClass.getSimpleName
-        val errorMessage = s"The field for '$className' is missing from user-answers"
-        throw new IllegalStateException(errorMessage)
-      }
+  def manufacturedYesNo(messageKey: String): RowInfo = {
+    createYesNoRow(ManufacturedPlasticPackagingPage, messageKey)
   }
 
-  def manufacturedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[ManufacturedPlasticPackagingSummary](messageKey)
+  def manufacturedWeight(messageKey: String): RowInfo = {
+    createKgsRow(ManufacturedPlasticPackagingWeightPage, messageKey)
   }
 
-  def manufacturedWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[ManufacturedPlasticPackagingWeightSummary](messageKey)
+  def importedYesNo(messageKey: String): RowInfo = {
+    createYesNoRow(ImportedPlasticPackagingPage, messageKey)
   }
 
-  def importedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[ImportedPlasticPackagingSummary](messageKey)
+  def importedWeight(messageKey: String): RowInfo = {
+    createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
-  def importedWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[ImportedPlasticPackagingWeightSummary](messageKey)
-  }
-
-  def packagingTotalNumeric: Long = {
-    (ensureAnswer[ManufacturedPlasticPackagingWeightSummary]
-      + ensureAnswer[ImportedPlasticPackagingWeightSummary])
+  private def packagingTotalNumeric: Long = {
+    (getMustHave(ManufacturedPlasticPackagingWeightPage) 
+      + getMustHave(ImportedPlasticPackagingWeightPage))
   }
 
   // Show or hide edit links
-  def exportedTotal: Long         = ensureAnswer[ExportedPlasticPackagingWeightSummary]
-  private def totalPlastic: Long  = ensureAnswer[ManufacturedPlasticPackagingWeightSummary] + ensureAnswer[ImportedPlasticPackagingWeightSummary]
+  def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
+  private def totalPlastic: Long  = getMustHave(ManufacturedPlasticPackagingWeightPage) + getMustHave(ImportedPlasticPackagingWeightPage)
   def canEditExported: Boolean    = (totalPlastic > 0 && totalPlastic > exportedTotal) || exportedTotal > 0
   def canEditNonExported: Boolean = totalPlastic > 0 && totalPlastic > exportedTotal
   // End
@@ -106,34 +91,34 @@ case class TaxReturnViewModel (
   }
 
 
-  def exportedYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[DirectlyExportedComponentsSummary](messageKey)
+  def exportedYesNo(messageKey: String): RowInfo = {
+    createYesNoRow(DirectlyExportedComponentsPage, messageKey)
   }
 
-  def exportedWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[ExportedPlasticPackagingWeightSummary](messageKey)
+  def exportedWeight(messageKey: String): RowInfo = {
+    createKgsRow(ExportedPlasticPackagingWeightPage, messageKey)
   }
 
-  def nonexportedMedicineYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedHumanMedicinesPlasticPackagingSummary](messageKey)
+  def nonexportedMedicineYesNo(messageKey: String): RowInfo = {
+    createYesNoRow(NonExportedHumanMedicinesPlasticPackagingPage, messageKey)
   }
 
-  def nonexportedMedicineWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedHumanMedicinesPlasticPackagingWeightSummary](messageKey)
+  def nonexportedMedicineWeight(messageKey: String): RowInfo = {
+    createKgsRow(NonExportedHumanMedicinesPlasticPackagingWeightPage, messageKey)
   }
 
-  def nonexportedRecycledYesNo(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedRecycledPlasticPackagingSummary](messageKey)
+  def nonexportedRecycledYesNo(messageKey: String): RowInfo = {
+    createYesNoRow(NonExportedRecycledPlasticPackagingPage, messageKey)
   }
 
-  def nonexportedRecycledWeight(messageKey: String): SummaryListRow = {
-    createSummaryRow[NonExportedRecycledPlasticPackagingWeightSummary](messageKey)
+  def nonexportedRecycledWeight(messageKey: String): RowInfo = {
+    createKgsRow(NonExportedRecycledPlasticPackagingWeightPage, messageKey)
   }
 
   private def deductionsTotalNumeric: Long = {
-    (ensureAnswer[ExportedPlasticPackagingWeightSummary]
-      + ensureAnswer[NonExportedHumanMedicinesPlasticPackagingWeightSummary]
-      + ensureAnswer[NonExportedRecycledPlasticPackagingWeightSummary])
+    (getMustHave(ExportedPlasticPackagingWeightPage)
+     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
+     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
   }
 
   def deductionsTotal: String = {
@@ -174,4 +159,5 @@ case class TaxReturnViewModel (
 
   def creditsGuidanceUrl: String = appConfig.creditsGuidanceUrl
   def pptReference: String = request.pptReference
+  def returnQuarter: String = obligation.toReturnQuarter
 }

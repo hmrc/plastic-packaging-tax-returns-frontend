@@ -20,7 +20,6 @@ import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
-import controllers.helpers.TaxLiabilityFactory
 import models.UserAnswers
 import models.returns._
 import org.mockito.MockitoSugar.mock
@@ -59,10 +58,6 @@ trait SpecBase
     LocalDate.parse("2022-06-30"),
     LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
-
-  val liability = TaxLiabilityFactory.create(
-    1000, 200, 300, 400, 2, 200
-  )
 
   val mockResponse = mock[HttpResponse]
 

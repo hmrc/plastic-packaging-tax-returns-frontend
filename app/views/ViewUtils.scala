@@ -21,6 +21,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{PrefixOrSuffix, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.FluentInput
 
 import java.time.LocalDate
@@ -69,5 +70,16 @@ object ViewUtils {
       input
         .asNumeric()
         .withSuffix(PrefixOrSuffix(content = Text("kg")))
+  }
+
+  implicit class RichSummaryListRow(val that: SummaryListRow) extends AnyVal {
+    def bold: SummaryListRow = {
+      def boldClass(c: String): String = c + " govuk-!-font-weight-bold"
+      that.copy(
+        key = that.key.copy(classes = boldClass(that.key.classes)),
+        value = that.value.copy(classes = boldClass(that.value.classes)),
+        classes = boldClass(that.classes)
+      )
+    }
   }
 }

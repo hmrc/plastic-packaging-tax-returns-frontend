@@ -31,5 +31,6 @@ package object viewmodels {
     def asPounds: String = poundsFormat.format(amount)
 
     def asKg: String = kgsFormat.format(amount)
+    def asKgs: String = asKg
   }
 }
