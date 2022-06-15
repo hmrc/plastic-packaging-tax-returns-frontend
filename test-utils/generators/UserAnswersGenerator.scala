@@ -29,19 +29,20 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(HumanMedicinesPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
+    arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
+    arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] ::
-      arbitrary[(RecycledPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] ::
-      arbitrary[(HumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(AmendAreYouSurePage.type, JsValue)] ::
       arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] ::

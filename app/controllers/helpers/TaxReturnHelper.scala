@@ -20,9 +20,8 @@ import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
 import models.UserAnswers
 import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
-import pages._
-import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage}
+import pages.amends._
+import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
@@ -79,10 +78,6 @@ class TaxReturnHelper @Inject()(
             userAnswers.get(ImportedPlasticPackagingWeightPage).map(
               value => ImportedPlasticWeight(value)
             ),
-          humanMedicinesPlasticWeight =
-            userAnswers.get(HumanMedicinesPlasticPackagingWeightPage).map(
-              value => HumanMedicinesPlasticWeight(value)
-            ),
           exportedPlasticWeight =
             userAnswers.get(ExportedPlasticPackagingWeightPage).map(
               value => ExportedPlasticWeight(value)
@@ -91,7 +86,7 @@ class TaxReturnHelper @Inject()(
             userAnswers.get(ConvertedPackagingCreditPage).map(
               value => ConvertedPackagingCredit(value)
             ),
-          recycledPlasticWeight = userAnswers.get(RecycledPlasticPackagingWeightPage).map(
+          recycledPlasticWeight = userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage).map(
             value => RecycledPlasticWeight(value)
           )
         )

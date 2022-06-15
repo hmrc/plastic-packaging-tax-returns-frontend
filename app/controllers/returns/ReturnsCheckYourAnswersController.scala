@@ -18,70 +18,48 @@ package controllers.returns
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxLiability, TaxLiabilityFactory, TaxReturnHelper}
-import models.Mode
+import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import models.requests.DataRequest
 import models.returns.{ReturnType, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.CheckYourAnswerImportedPlasticPackagingSummary
-import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.CheckYourAnswerImportedPlasticPackagingWeight
-import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.CheckYourAnswerManufacturedPlasticPackaging
-import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingWeightSummary.CheckYourAnswerForManufacturedPlasticWeight
-import viewmodels.checkAnswers.returns._
-import viewmodels.govuk.summarylist._
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ReturnsCheckYourAnswersController @Inject()(
-                                                   override val messagesApi: MessagesApi,
-                                                   identify: IdentifierAction,
-                                                   getData: DataRetrievalAction,
-                                                   requireData: DataRequiredAction,
-                                                   returnsConnector: TaxReturnsConnector,
-                                                   taxReturnHelper: TaxReturnHelper,
-                                                   sessionRepository: SessionRepository,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   view: ReturnsCheckYourAnswersView
-                                                 ) extends FrontendBaseController with I18nSupport {
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  returnsConnector: TaxReturnsConnector,
+  taxReturnHelper: TaxReturnHelper,
+  sessionRepository: SessionRepository,
+  val controllerComponents: MessagesControllerComponents,
+  view: ReturnsCheckYourAnswersView,
+  appConfig: FrontendAppConfig
+) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val list = SummaryListViewModel(rows =
-          Seq(
-            CheckYourAnswerManufacturedPlasticPackaging,
-            CheckYourAnswerForManufacturedPlasticWeight,
-            CheckYourAnswerImportedPlasticPackagingSummary,
-            CheckYourAnswerImportedPlasticPackagingWeight,
-            HumanMedicinesPlasticPackagingSummary,
-            HumanMedicinesPlasticPackagingWeightSummary,
-            DirectlyExportedComponentsSummary,
-            ExportedPlasticPackagingWeightSummary,
-            RecycledPlasticPackagingWeightSummary,
-            ConvertedPackagingCreditSummary
-          ).flatMap(_.row(request.userAnswers))
-        )
-        val answers = request.userAnswers.data.value.toMap
-        val liability: TaxLiability = TaxLiabilityFactory.create(
-          answers.getOrElse("manufacturedPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("importedPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("humanMedicinesPlasticPackagingWeight", 0).toString.toLong,
-          answers.getOrElse("exportedPlasticPackagingWeight", 0).toString.toLong,
-          BigDecimal(answers.getOrElse("convertedPackagingCredit", 0).toString),
-          answers.getOrElse("recycledPlasticPackagingWeight", 0).toString.toLong
-        )
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view( mode, list, liability, obligation)))
+          case Some(obligation) => displayPage(request, obligation)
           case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
 
     }
+
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit messages: Messages) = {
+    val returnViewModel = TaxReturnViewModel(request, obligation, appConfig)
+    Future.successful(Ok(view(returnViewModel)(request, messages)))
+  }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -93,6 +71,7 @@ class ReturnsCheckYourAnswersController @Inject()(
           throw new IllegalStateException("Obligation not found!")
         )
 
+        // TODO use same code for calculating return fields and check-your-answers fields
         val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
 
         returnsConnector.submit(taxReturn).flatMap {

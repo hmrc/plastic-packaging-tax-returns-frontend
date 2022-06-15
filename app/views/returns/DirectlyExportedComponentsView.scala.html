@@ -34,7 +34,7 @@
     @paragraphBody(messages("directlyExportedComponents.paragraph.2"))
 }
 
-@layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.exported.plastic"))
 
@@ -47,7 +47,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("directlyExportedComponents.heading", totalPlastic)).asPageHeading()
+                legend = LegendViewModel(messages("directlyExportedComponents.heading", totalPlastic.asKg)).asPageHeading()
             ).withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 

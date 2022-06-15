@@ -21,13 +21,15 @@ import models.{CheckMode, UserAnswers}
 import pages.returns.DirectlyExportedComponentsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintLong
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary.calculateTotal
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object DirectlyExportedComponentsSummary extends SummaryViewModel {
+case class DirectlyExportedComponentsSummary(key: String = "directlyExportedComponents.checkYourAnswersLabel") 
+  extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(DirectlyExportedComponentsPage).map {
@@ -36,11 +38,11 @@ object DirectlyExportedComponentsSummary extends SummaryViewModel {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "directlyExportedComponents.checkYourAnswersLabel",
+          key = key,
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic))
+              .withVisuallyHiddenText(messages("directlyExportedComponents.change.hidden", totalPlastic.asKg))
           )
         )
     }

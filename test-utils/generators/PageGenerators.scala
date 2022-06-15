@@ -23,8 +23,14 @@ import pages.returns._
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingPage: Arbitrary[HumanMedicinesPlasticPackagingPage.type] =
-    Arbitrary(HumanMedicinesPlasticPackagingPage)
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type] =
+    Arbitrary(NonExportedHumanMedicinesPlasticPackagingWeightPage)
+
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingPage.type] =
+    Arbitrary(NonExportedHumanMedicinesPlasticPackagingPage)
+
+  implicit lazy val arbitraryRecycledPlasticPackagingPage: Arbitrary[NonExportedRecycledPlasticPackagingPage.type] =
+    Arbitrary(NonExportedRecycledPlasticPackagingPage)
 
   implicit lazy val arbitraryDirectlyExportedComponentsPage: Arbitrary[DirectlyExportedComponentsPage.type] =
     Arbitrary(DirectlyExportedComponentsPage)
@@ -40,8 +46,8 @@ trait PageGenerators {
     Arbitrary(ConvertedPackagingCreditPage)
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
-    : Arbitrary[RecycledPlasticPackagingWeightPage.type] =
-    Arbitrary(RecycledPlasticPackagingWeightPage)
+    : Arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type] =
+    Arbitrary(NonExportedRecycledPlasticPackagingWeightPage)
 
   implicit lazy val arbitraryManufacturedPlasticPackagingWeightPage
     : Arbitrary[ManufacturedPlasticPackagingWeightPage.type] =
@@ -58,10 +64,6 @@ trait PageGenerators {
   implicit lazy val arbitraryImportedPlasticPackagingPage
     : Arbitrary[ImportedPlasticPackagingPage.type] =
     Arbitrary(ImportedPlasticPackagingPage)
-
-  implicit lazy val arbitraryHumanMedicinesPlasticPackagingWeightPage
-    : Arbitrary[HumanMedicinesPlasticPackagingWeightPage.type] =
-    Arbitrary(HumanMedicinesPlasticPackagingWeightPage)
 
   implicit lazy val arbitraryExportedPlasticPackagingWeightPage
     : Arbitrary[ExportedPlasticPackagingWeightPage.type] =

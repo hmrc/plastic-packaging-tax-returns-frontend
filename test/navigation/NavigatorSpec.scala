@@ -17,30 +17,30 @@
 package navigation
 
 import base.SpecBase
+import base.utils.NonExportedPlasticTestHelper
 import cacheables.AmendSelectedPeriodKey
-import controllers.returns.{routes => returnsRoutes}
 import controllers.amends.{routes => amendsRoutes}
-import pages._
+import controllers.returns.{routes => returnsRoutes}
 import models._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
-import pages.returns.{ConvertedPackagingCreditPage, ExportedPlasticPackagingWeightPage, HumanMedicinesPlasticPackagingPage, HumanMedicinesPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, RecycledPlasticPackagingWeightPage, StartYourReturnPage}
+import pages.amends._
+import pages.returns._
 
-/*************************************************************
-Returns journey (v1)
-  **************************************************************
-start-date
-  Yes: continue to manufactured-components (y/n)
-    Yes: continue to manufactured-weight
-    No: imported-components (y/n)
-      Yes: imported-weight
-      No: human-medicines-packaging-weight
-  No: account
-  human-medicines-packaging-weight
-  exported-plastic-packaging-weight
-  recycled-plastic-packaging-weight
-  how-much-credit
-  check-your-return
-  *************************************************************/
+/** ***********************************************************
+ * Returns journey (v1)
+ * *************************************************************
+ * start-date
+ * Yes: continue to manufactured-components (y/n)
+ * Yes: continue to manufactured-weight
+ * No: imported-components (y/n)
+ * Yes: imported-weight
+ * No: human-medicines-packaging-weight
+ * No: account
+ * human-medicines-packaging-weight
+ * exported-plastic-packaging-weight
+ * recycled-plastic-packaging-weight
+ * how-much-credit
+ * check-your-return
+ * *********************************************************** */
 
 class NavigatorSpec extends SpecBase {
 
@@ -139,78 +139,64 @@ class NavigatorSpec extends SpecBase {
 
         }
 
+        "for the DirectlyExportedPlasticPackagingPage" - {
+
+          "navigate to ExportedPlasticPackagingWeightPage when yes" in {
+            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true)
+
+            navigator.nextPage(DirectlyExportedComponentsPage,
+              NormalMode,
+              answers.get
+            ) mustBe returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
+
+
+          }
+
+          "navigate to NonExportedHumanMedicinesPlasticPackagingController when no" in {
+            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false)
+
+            navigator.nextPage(DirectlyExportedComponentsPage,
+              NormalMode,
+              answers.get
+            ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+          }
+        }
+
         "for the ExportedPlasticPackagingWeightPage" - {
 
-          "navigate to RecycledPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
+          "navigate to NonExportedHumanMedicinesPlasticPackagingController" - {
+            "when exported amount is less then the total plastic package" in {
+              val answers = NonExportedPlasticTestHelper.createUserAnswer(
+                exportedAmount = 1000L,
+                manufacturedAmount = 1000L,
+                importedAmount = 50L)
 
-            navigator.nextPage(ExportedPlasticPackagingWeightPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.HumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+              navigator.nextPage(ExportedPlasticPackagingWeightPage,
+                NormalMode,
+                answers
+              ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
 
+            }
           }
 
+          "navigate to the check your answer page when" - {
+            "exported amount greater the the total plastic package" in {
+              val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
+
+              navigator.nextPage(ExportedPlasticPackagingWeightPage,
+                NormalMode,
+                answers.get
+              ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+            }
+          }
         }
 
-        "for the HumanMedicinesPlasticPackagingPage" - {
-          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, true)
-
-            navigator.nextPage(HumanMedicinesPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.HumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
-          }
-
-          "navigate to RecycledPlasticPackagingWeightPage when answer is No" in {
-
-            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingPage, false)
-
-            navigator.nextPage(HumanMedicinesPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-        "for the HumanMedicinesPlasticPackagingWeightPage" - {
-
-          "navigate to RecycledPlasticPackagingWeightPage" in {
-            val answers = UserAnswers("id").set(HumanMedicinesPlasticPackagingWeightPage, 1000L)
-
-            navigator.nextPage(HumanMedicinesPlasticPackagingWeightPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.RecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-
-        "for the RecycledPlasticPackagingWeightPage" - {
-
-          "navigate to ConvertedPackagingCreditPage" in {
-            val answers = UserAnswers("id").set(RecycledPlasticPackagingWeightPage, 1000)
-
-            navigator.nextPage(RecycledPlasticPackagingWeightPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ConvertedPackagingCreditController.onPageLoad(NormalMode)
-
-          }
-
-        }
-
-        "for the ConvertedPackagingCreditPage" - {
+        "for the NonExportedRecycledPlasticPackagingWeightPage" - {
 
           "navigate to ReturnsCheckYourAnswers" in {
-            val answers = UserAnswers("id").set[BigDecimal](ConvertedPackagingCreditPage, 1000)
+            val answers = UserAnswers("id").set(NonExportedRecycledPlasticPackagingWeightPage, 1000L)
 
-            navigator.nextPage(ConvertedPackagingCreditPage,
+            navigator.nextPage(NonExportedRecycledPlasticPackagingWeightPage,
               NormalMode,
               answers.get
             ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
@@ -333,7 +319,7 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-          "navigate to HumanMedicinesPlasticPackagingWeightPage when answer is No" in {
+          "navigate to ConfirmPlasticPackagingTotalController when answer is No" in {
 
             val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, false)
 

@@ -18,10 +18,6 @@ package connectors
 
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import play.api.http.Status.OK
-import play.api.libs.json.Json
-import play.api.test.Helpers.{await, status}
 
 class DirectDebitConnectorSpec extends ConnectorISpec {
 
@@ -37,21 +33,7 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
     wireMockServer.stop()
     super.afterAll()
   }
-//TODO: Reimpliment unit tests for DD
 
-  private def stubEndPointForDirectDebit
-  (
-    status: Int,
-    pptReference: String,
-    body: String = ""
-  ) =
-    stubFor(
-      WireMock.get(s"/direct-debit/$pptReference")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
+  //TODO: Reimplement unit tests for DD
 
 }

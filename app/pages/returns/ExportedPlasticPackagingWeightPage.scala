@@ -17,12 +17,20 @@
 package pages.returns
 
 import models.UserAnswers
-import pages.QuestionPage
+import pages._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
 case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
+
+  private def exportedAllPlastic(answers: UserAnswers): Boolean = {
+    val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported     = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported     = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+
+    exported >= (manufactured + imported)
+  }
 
   override def path: JsPath = JsPath \ toString
 
@@ -30,9 +38,19 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
 
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
-      if (amount > 0)
-        userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
-      else
+      if (amount > 0) {
+        if(exportedAllPlastic(userAnswers)) {
+          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
+            .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
+            .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
+            .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
+            .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
+        }
+        else {
+          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
+        }
+      } else {
         super.cleanup(value, userAnswers)
+      }
     ).getOrElse(super.cleanup(value, userAnswers))
 }

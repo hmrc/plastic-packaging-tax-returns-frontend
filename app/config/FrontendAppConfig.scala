@@ -79,6 +79,7 @@ class FrontendAppConfig @Inject() (
   
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
+  lazy val pptRecycledPlasticGuidanceLink: String = configuration.get[String]("urls.pptRecycledPlasticGuidanceLink")
   
 
   def pptReturnSubmissionUrl(pptReference: String): String =
@@ -136,4 +137,8 @@ class FrontendAppConfig @Inject() (
 
   def pptStartDirectDebit : String =
     s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
+
+  def creditsGuidanceUrl: String =
+    configuration.get[String]("urls.pptCreditsGuidanceLink")
+
 }

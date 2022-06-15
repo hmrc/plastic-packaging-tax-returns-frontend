@@ -16,15 +16,13 @@
 
 package base
 
-import cacheables.ReturnDisplayApiCacheable
-import cacheables.ObligationCacheable
+import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.helpers.TaxLiabilityFactory
 import models.UserAnswers
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
-import models.returns.TaxReturnObligation
+import models.returns._
 import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -40,7 +38,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
-import connectors.ObligationsConnector
 
 trait SpecBase
     extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
