@@ -125,7 +125,12 @@
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
-    @if(taxReturn.canEditExported) { @changeLink(taxReturn.exportedStartUrl) }
+
+    @if(taxReturn.canEditExported) {
+        @changeLink(taxReturn.exportedStartUrl)
+    } else {
+        <hint style="color: grey">In order to change this section you must first declare manufactured or imported plastic packaging amounts.</hint>
+    }
 
     <!-- Non-exported packaging -->
     @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
@@ -137,7 +142,12 @@
             summaryRowFromFunc("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
-    @if(taxReturn.canEditNonExported) { @changeLink(taxReturn.nonexportedStartUrl) }
+
+    @if(taxReturn.canEditNonExported) {
+        @changeLink(taxReturn.nonexportedStartUrl)
+    } else {
+        <hint style="color: grey">In order to change this section you must first declare manufactured or imported plastic packaging that has not been exported to another country.</hint>
+    }
 
     <!-- Deductions -->
     @sectionHeading("submit-return.check-your-answers.deductions.heading")
