@@ -75,7 +75,11 @@ account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
 account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
+account.homePage.card.payments.payment.link = Make a PPT payment
 account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
+
+account.homePage.card.history.header = History
+account.homePage.card.history.viewreturnslink = View or amend submitted returns
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru
@@ -278,7 +282,6 @@ NonExportRecycledPlasticPackagingWeight.change.hidden = How much of your finishe
 NonExportRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deduction on your tax calculation.
 
-
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
@@ -302,6 +305,7 @@ site.link.remove  = Tynnu
 site.link.remove.hidden  = Tynnu {0} o’r rhestr
 site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
+site.continue.confirm = Confirm and continue
 
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
@@ -386,3 +390,52 @@ submit-return.check-your-answers.credits.line5.link-text = claiming credits (ope
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 submit-return.check-your-answers.now-send.button-text = Submit return
+
+help.not.include = examples of things you should not include
+
+checkYourAnswers.title = Check Your Answers
+checkYourAnswers.heading = Check Your Answers
+
+startYourReturn.title = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.heading = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.error.required = Select yes if you want to start your return
+startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
+
+notStartOtherReturns.heading = You cannot start returns for other periods yet
+notStartOtherReturns.detail = You can only start returns for periods that have ended.
+notStartOtherReturns.button = Back to your account
+
+submittedReturns.title = View submitted returns
+submittedReturns.heading = View submitted returns
+submittedReturns.nothingsubmitted = You have not submitted any returns yet.
+submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
+
+viewReturnSummary.sectionHeader = Submitted return for
+viewReturnSummary.amendLink = Amend this return
+viewReturnSummary.viewReturnsLink = View submitted returns
+viewReturnSummary.summary.heading = Summary
+viewReturnSummary.summary.field.liability = Tax liability for this period
+viewReturnSummary.summary.field.processed = Return processed
+viewReturnSummary.summary.field.reference = Charge reference number for this return
+viewReturnSummary.details.heading = Details
+viewReturnSummary.liable.heading = Liable plastic packaging
+viewReturnSummary.liable.field.manufactured = Plastic packaging manufactured
+viewReturnSummary.liable.field.imported = Plastic packaging imported
+viewReturnSummary.liable.field.total = Liable plastic packaging total
+viewReturnSummary.exempt.heading = Exempt plastic packaging
+viewReturnSummary.exempt.field.exported = Plastic packaging exported
+viewReturnSummary.exempt.field.medicine = Plastic packaging used for licenced human medicines
+viewReturnSummary.exempt.field.recycled = Plastic packaging containing 30% or more recycled
+viewReturnSummary.exempt.field.total = Exempt plastic packaging total
+viewReturnSummary.calculation.heading = Your tax calculation
+viewReturnSummary.calculation.field.total = Plastic packaging total
+viewReturnSummary.calculation.field.exempt = Exempt plastic packaging total
+viewReturnSummary.calculation.field.liable = Liable plastic packaging total
+viewReturnSummary.calculation.field.tax = Tax
+viewReturnSummary.calculation.field.credit = Credit claimed
+viewReturnSummary.calculation.field.debit = Debit??
+viewReturnSummary.calculation.field.liability = Your tax liability
+viewReturnSummary.credits.heading = Credits
+viewReturnSummary.credits.field.credit = Credit claimed
+viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
