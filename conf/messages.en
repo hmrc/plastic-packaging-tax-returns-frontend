@@ -490,3 +490,4 @@ returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculate
 returnsCheckYourAnswers.totalCredits.label = Total Credits
 returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
 returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
+
