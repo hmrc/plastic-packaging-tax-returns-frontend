@@ -16,34 +16,24 @@
 
 package views.returns
 
+import base.ViewSpecBase
 import forms.returns.ManufacturedPlasticPackagingWeightFormProvider
 import models.NormalMode
 import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.ViewMatchers
 import views.html.returns.ManufacturedPlasticPackagingWeightView
 
 import java.time.LocalDate
 
-class ManufacturedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
+class ManufacturedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewMatchers {
 
   val page: ManufacturedPlasticPackagingWeightView = inject[ManufacturedPlasticPackagingWeightView]
-  val request: Request[AnyContent]                 = FakeRequest().withCSRFToken
   val aTaxObligation: TaxReturnObligation          = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
   val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()
-  private val realMessagesApi: MessagesApi         = inject[MessagesApi]
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
 
   private def createView(form: Form[Long] = form): Html =
     page(form, NormalMode, aTaxObligation)(request, messages)

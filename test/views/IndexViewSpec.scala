@@ -16,27 +16,22 @@
 
 package views
 
+import base.ViewSpecBase
 import config.FrontendAppConfig
+import controllers.payments.{routes => paymentRoute}
 import controllers.returns.routes
-import controllers.payments.{routes => paymentRoute }
 import models.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.scalatestplus.play.PlaySpec
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
-import support.{ViewAssertions, ViewMatchers}
-import views.html.IndexView
 import support.ObligationsTestData.{noneDueUpToDate, oneDueOneOverdue, oneDueTwoOverdue, oneDueUpToDate}
+import support.{ViewAssertions, ViewMatchers}
 import views.ObligationScenarioTypes.{NoneDueUpToDate, OneDueOneOverdue, OneDueTwoOverdue, OneDueUpToDate}
 import views.SubscriptionTypes.{Group, Partnership, SingleEntity}
-import play.api.test.CSRFTokenHelper.CSRFRequest
+import views.html.IndexView
 
 object ObligationScenarioTypes extends Enumeration {
   type ObligationScenarioTyp = Value
@@ -51,7 +46,7 @@ object SubscriptionTypes extends Enumeration {
 }
 
 class IndexPageViewSpec
-    extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewAssertions with ViewMatchers {
+    extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private val homePage                     = inject[IndexView]
   private val appConfig                    = inject[FrontendAppConfig]
@@ -59,17 +54,13 @@ class IndexPageViewSpec
   private val groupSubscription            = mock[SubscriptionDisplayResponse]
   private val partnershipSubscription      = mock[SubscriptionDisplayResponse]
   val completeReturnUrl                    = "/complete-return-url"
-  val request: Request[AnyContent]         = FakeRequest().withCSRFToken
   val pptFinancials                        = Some("You owe £100")
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   when(singleEntitySubscription.entityName).thenReturn("Single entity subscription")
   when(groupSubscription.entityName).thenReturn("Group subscription")
   when(groupSubscription.isGroup).thenReturn(true)
   when(partnershipSubscription.entityName).thenReturn("Partnership subscription")
   when(partnershipSubscription.isPartnership).thenReturn(true)
-
-  implicit def messages: Messages = realMessagesApi.preferred(request)
 
   private def createView(
     appConfig: FrontendAppConfig,
