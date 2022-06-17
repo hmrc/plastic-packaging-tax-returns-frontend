@@ -56,10 +56,6 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = plastic-packaging-tax-returns-frontend-scaffold
-index.heading = plastic-packaging-tax-returns-frontend-scaffold
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
-
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
@@ -80,7 +76,6 @@ unauthorised.paragraph.1 = You need to {0} to use this service
 unauthorised.paragraph.1.link = register for Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
-
 
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
@@ -114,7 +109,6 @@ amendImportedPlasticPackaging.hint = Do not include plastic packaging components
 amendImportedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
 amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
 amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
-
 
 amendManufacturedPlasticPackaging.title = How much did your manufactured finished  plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendManufacturedPlasticPackaging.heading = How much did your manufactured finished  plastic packaging components weigh?
@@ -208,7 +202,7 @@ importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as num
 importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 importedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 importedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-importedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+importedPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 importedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 importedPlasticPackagingWeight.change.hidden = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.paragraph.1 = Do not include plastic packaging which is (any of the following):
@@ -240,7 +234,7 @@ manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as 
 manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
@@ -253,7 +247,6 @@ manufacturedPlasticPackagingWeight.list.5 = reused for the presentation of goods
 manufacturedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
 manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
 manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
-
 
 NonExportRecycledPlasticPackaging.title = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
@@ -377,17 +370,6 @@ notStartOtherReturns.heading = You cannot start returns for other periods yet
 notStartOtherReturns.detail = You can only start returns for periods that have ended.
 notStartOtherReturns.button = Back to your account
 
-returnsCheckYourAnswers.heading = Check your return
-returnsCheckYourAnswers.answers.subheading = Plastic Packaging Tax Return
-returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
-returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
-returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
-returnsCheckYourAnswers.taxLiability.label = Tax Liability
-returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
-returnsCheckYourAnswers.totalCredits.label = Total Credits
-returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
-returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
-
 agents.title = What is your client’s Plastic Packaging Tax registration number?
 agents.heading = What is your client’s Plastic Packaging Tax registration number?
 agents.checkYourAnswersLabel = What is your client’s Plastic Packaging Tax registration number?
@@ -424,9 +406,9 @@ nonExportedHumanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Weight o
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 nonExportedHumanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
-nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 nonExportedHumanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
 nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
 
@@ -476,12 +458,3 @@ submit-return.check-your-answers.credits.line5.link-text = claiming credits (ope
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 submit-return.check-your-answers.now-send.button-text = Submit return
-
-returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
-returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
-returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
-returnsCheckYourAnswers.taxLiability.label = Tax Liability
-returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
-returnsCheckYourAnswers.totalCredits.label = Total Credits
-returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
-returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
