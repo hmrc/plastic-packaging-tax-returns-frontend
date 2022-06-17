@@ -31,17 +31,19 @@
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
-    @amendLink = @{if(appConfig.isAmendsFeatureEnabled) link("amend-return",
-                    messages("viewReturnSummary.amendLink"),
-                    controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode))
-                    }
 
 @layout(pageTitle = titleNoForm(returnPeriod), showBackLink = false) {
 
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    <p>@amendLink</p>
+    @if(appConfig.isAmendsFeatureEnabled){
+        <p>@link("amend-return",
+                messages("viewReturnSummary.amendLink"),
+                controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode)
+            )
+        </p>
+    }
 
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
 
