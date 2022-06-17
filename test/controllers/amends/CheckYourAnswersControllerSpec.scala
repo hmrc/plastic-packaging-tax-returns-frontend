@@ -17,17 +17,46 @@
 package controllers.amends
 
 import base.SpecBase
-import models.NormalMode
+import config.{Features, FrontendAppConfig}
+import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.when
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.{Application, inject}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
+import scala.concurrent.Future
+
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+
+  override def applicationBuilder(userAnswers: Option[UserAnswers]): GuiceApplicationBuilder =
+    super.applicationBuilder(userAnswers)
+      .overrides(inject.bind[FrontendAppConfig].toInstance(config))
 
   "(Amend journey) Check Your Answers Controller" - {
 
+    "must redirect to account page when amends toggle is disabled" in{
+      when(config.isAmendsFeatureEnabled).thenReturn(false)
+
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result: Future[Result] = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+         }
+    }
+
     "must return OK and the correct view for a GET" in {
+      when(config.isAmendsFeatureEnabled).thenReturn(true)
+      when(config.userResearchUrl).thenReturn("some Url")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -46,6 +75,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
+      when(config.isAmendsFeatureEnabled).thenReturn(true)
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -60,6 +90,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must redirect when previous tax return is not in user answers" in {
+      when(config.isAmendsFeatureEnabled).thenReturn(true)
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
