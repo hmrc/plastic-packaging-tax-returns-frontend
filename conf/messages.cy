@@ -70,12 +70,12 @@ signedOut.title =[Content Not Found] - For your security, we signed you out
 signedOut.heading =[Content Not Found] - For your security, we signed you out
 signedOut.guidance =[Content Not Found] - We have saved your answers.
 
-unauthorised.title = Nid ydych wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-unauthorised.heading = Nid ydych wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-unauthorised.paragraph.1 =[Content Not Found] - You need to {0} to use this service
-unauthorised.paragraph.1.link =[Content Not Found] - register for Plastic Packaging Tax
-unauthorised.paragraph.2 =[Content Not Found] - Visit the {0} for more information.
-unauthorised.paragraph.2.link =[Content Not Found] - Plastic Packaging Tax guidance
+unauthorised.title = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
+unauthorised.heading = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
+unauthorised.paragraph.1 = Mae angen i chi {0} i ddefnyddio’r gwasanaeth hwn.
+unauthorised.paragraph.1.link = gofrestru ar gyfer y Dreth Deunydd Pacio Plastig
+unauthorised.paragraph.2 = wch i’r {0} i gael rhagor o wybodaeth.
+unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 amendDirectExportPlasticPackaging.title =[Content Not Found] - How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading =[Content Not Found] - How much of your finished plastic packaging components did you directly export?
@@ -310,45 +310,45 @@ return.confirmation.return.link =[Content Not Found] - Return to your Plastic Pa
 return.confirmation.exitSurvey.text = {0} (mae’n cymryd 30 eiliad)
 return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
 
-account.homePage.title =[Content Not Found] - Your Plastic Packaging Tax account
-account.homePage.registrationNumber =[Content Not Found] - PPT registration number: {0}
+account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
+account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
 account.homePage.organisation.group =[Content Not Found] - {0} (representative organisation for group)
 
 account.homePage.currentBalance =[Content Not Found] - Your current balance
 account.homePage.currentBalance.onDate =[Content Not Found] - on {0}
 
-account.homePage.card.makeReturn.header =[Content Not Found] - Your returns
+account.homePage.card.makeReturn.header = Ffurflenni Treth
 account.homePage.card.makeReturn.line1.multipleOverdue =[Content Not Found] - You have {0} returns overdue.
 account.homePage.card.makeReturn.line1.singleOverdue =[Content Not Found] - Your return for {0} is overdue.
-account.homePage.card.makeReturn.line1.none =[Content Not Found] - You have no returns to submit.
-account.homePage.card.makeReturn.line2.due =[Content Not Found] - You must submit your return for {0} between {1} and {2}.
+account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
+account.homePage.card.makeReturn.line2.due = You must submit your return for {0} between {1} and {2}.
 account.homePage.card.makeReturn.line3.createLink =Cyflwyno Ffurflen TAW
-account.homePage.card.makeReturn.guidance.link =[Content Not Found] - Find out how to complete a return (yn agor tab newydd)
-account.homePage.card.makeReturn.returnDates.link =[Content Not Found] - Return dates
+account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
+account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure =[Content Not Found] - We cannot display tax return details.
 
-account.homePage.card.payments.header =[Content Not Found] - Payments
-account.homePage.card.payments.nothingOutstanding =[Content Not Found] - You have no payments due.
+account.homePage.card.payments.header = Taliadau
+account.homePage.card.payments.nothingOutstanding = Nid oes gennych dreth i’w thalu.
 account.homePage.card.payments.inCredit =[Content Not Found] - You are {0} in credit.
 account.homePage.card.payments.debitDue =[Content Not Found] - You owe {0}. You must pay by {1}.
 account.homePage.card.payments.overDue =[Content Not Found] - You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue =[Content Not Found] - You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error =[Content Not Found] - We cannot display payment details.
-account.homePage.card.payments.payment.link =[Content Not Found] - Make a PPT payment
-account.homePage.card.payments.direct.debit.link =[Content Not Found] - Set up or manage a Direct Debit
+account.homePage.card.payments.payment.link = Gwneud taliad Treth Deunydd Pacio Plastig
+account.homePage.card.payments.direct.debit.link = Sefydlu neu reoli Debyd Uniongyrchol
 
 account.homePage.card.history.header =[Content Not Found] - History
 account.homePage.card.history.viewreturnslink =[Content Not Found] - View or amend submitted returns
 
-account.homePage.manage.ppt.account.header =[Content Not Found] - Manage your account
-account.homePage.card.registration.details.1.link.single =[Content Not Found] - Your registration details
-account.homePage.card.registration.details.1.link.group =[Content Not Found] - Representative member details
-account.homePage.card.registration.details.1.link.partnership =[Content Not Found] - Nominated partner details
-account.homePage.card.registration.details.1.body =[Content Not Found] - View and change contact details.
-account.homePage.card.registration.details.2.link.group =[Content Not Found] - Group member details
-account.homePage.card.registration.details.2.link.partnership =[Content Not Found] - Partner details
-account.homePage.card.registration.details.2.body.group =[Content Not Found] - View and change contact details, and add or remove group members.
-account.homePage.card.registration.details.2.body.partnership =[Content Not Found] - View and change contact details, and add or remove partners.
+account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
+account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru
+account.homePage.card.registration.details.1.link.group = Manylion yr aelod cynrychiadol
+account.homePage.card.registration.details.1.link.partnership = Manylion y bartneriaeth
+account.homePage.card.registration.details.1.body = Bwrw golwg dros y manylion cyswllt a’u newid
+account.homePage.card.registration.details.2.link.group = Manylion aelodau’r grŵp
+account.homePage.card.registration.details.2.link.partnership = Manylion y partneriaid
+account.homePage.card.registration.details.2.body.group = Bwrw golwg dros y manylion cyswllt a’u newid, ac ychwanegu neu dynnu aelodau o’r grŵp.
+account.homePage.card.registration.details.2.body.partnership = Bwrw golwg dros y manylion cyswllt a’u newid, ac ychwanegu neu dynnu partneriaid.
 
 account.homePage.card.deregister.link =[Content Not Found] - Deregister from Plastic Packaging Tax
 account.homePage.card.deregister.body =[Content Not Found] - Cancel your Plastic Packaging Tax registration.
