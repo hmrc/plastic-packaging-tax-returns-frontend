@@ -129,7 +129,7 @@
     @if(taxReturn.canEditExported) {
         @changeLink(taxReturn.exportedStartUrl)
     } else {
-        <hint style="color: grey">In order to change this section you must first declare manufactured or imported plastic packaging amounts.</hint>
+        <p>@messages("submit-return.check-your-answers.exported-packaging-change-reason")</p>
     }
 
     <!-- Non-exported packaging -->
@@ -146,7 +146,7 @@
     @if(taxReturn.canEditNonExported) {
         @changeLink(taxReturn.nonexportedStartUrl)
     } else {
-        <hint style="color: grey">In order to change this section you must first declare manufactured or imported plastic packaging that has not been exported to another country.</hint>
+        <p>@messages("submit-return.check-your-answers.nonexported-packaging-change-reason")</p>
     }
 
     <!-- Deductions -->
