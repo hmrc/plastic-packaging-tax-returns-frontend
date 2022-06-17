@@ -106,6 +106,9 @@ class FrontendAppConfig @Inject() (
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)
 
+  def isAmendsFeatureEnabled: Boolean =
+    isFeatureEnabled(Features.amendsEnabled)
+
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
 
