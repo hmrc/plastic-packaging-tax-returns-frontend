@@ -79,6 +79,12 @@ case class TaxReturnViewModel (
       + getMustHave(ImportedPlasticPackagingWeightPage))
   }
 
+  // Show or hide edit links
+  def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
+  def canEditExported: Boolean    = (packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal) || exportedTotal > 0
+  def canEditNonExported: Boolean = packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal
+  // End
+
   def packagingTotal: String = {
     packagingTotalNumeric.asKg
   }

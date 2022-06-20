@@ -441,12 +441,14 @@ submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on c
 submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
 submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
 submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
+submit-return.check-your-answers.exported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging amounts.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
 submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
 submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.nonexported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging that has not been exported to another country.
 
 submit-return.check-your-answers.deductions.heading = Deductions
 submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
