@@ -218,6 +218,9 @@ importedPlasticPackagingWeight.li.3 = permanently set aside for a non-packaging 
 importedPlasticPackagingWeight.li.4 = used in the long-term storage of goods
 importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
+importedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+importedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
+importedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
@@ -242,10 +245,14 @@ manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
-manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
-manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
-manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
-manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+manufacturedPlasticPackagingWeight.list.1 = permanently set aside for non-packaging use
+manufacturedPlasticPackagingWeight.list.2 = manufactured to be rail, aircraft and ship goods stores
+manufacturedPlasticPackagingWeight.list.3 = used in the long-term storage of goods
+manufacturedPlasticPackagingWeight.list.4 = an integral part of the goods
+manufacturedPlasticPackagingWeight.list.5 = reused for the presentation of goods
+manufacturedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
+manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 
 
 NonExportRecycledPlasticPackaging.title = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
@@ -370,17 +377,6 @@ notStartOtherReturns.heading = You cannot start returns for other periods yet
 notStartOtherReturns.detail = You can only start returns for periods that have ended.
 notStartOtherReturns.button = Back to your account
 
-returnsCheckYourAnswers.heading = Check your return
-returnsCheckYourAnswers.answers.subheading = Plastic Packaging Tax Return
-returnsCheckYourAnswers.taxLiability.subheading = Tax Liability
-returnsCheckYourAnswers.taxLiability.exemptPackaging.label = Total Exempt Packaging
-returnsCheckYourAnswers.taxLiability.liablePackaging.label = Total Liable Packaging
-returnsCheckYourAnswers.taxLiability.label = Tax Liability
-returnsCheckYourAnswers.taxLiability.description = Liable Packaging is calculated on the Total weight of Manufactured and Imported packaging during this period minus the weight of any exempt packaging. The weight of Liable packaging is charged at £200 per Tonne (£0.20 per KG)
-returnsCheckYourAnswers.totalCredits.label = Total Credits
-returnsCheckYourAnswers.totalCredits.creditsRequested.label = Credit Requested
-returnsCheckYourAnswers.totalCredits.description = Credits will be updated to your Plastic Packaging Tax account balance for future returns.
-
 agents.title = What is your client’s Plastic Packaging Tax registration number?
 agents.heading = What is your client’s Plastic Packaging Tax registration number?
 agents.checkYourAnswersLabel = What is your client’s Plastic Packaging Tax registration number?
@@ -430,7 +426,7 @@ submit-return.check-your-answers.business-details.row2 = Return period
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
 submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
-submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row2 = Weight of manufactured plastic packaging
 submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
 submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
 submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total

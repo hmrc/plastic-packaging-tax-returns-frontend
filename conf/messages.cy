@@ -75,7 +75,11 @@ account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
 account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
 account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
 account.homePage.card.payments.error = We cannot display payment details.
+account.homePage.card.payments.payment.link = Make a PPT payment
 account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
+
+account.homePage.card.history.header = History
+account.homePage.card.history.viewreturnslink = View or amend submitted returns
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru
@@ -219,6 +223,9 @@ importedPlasticPackagingWeight.li.3 = permanently set aside for a non-packaging 
 importedPlasticPackagingWeight.li.4 = used in the long-term storage of goods
 importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
+importedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+importedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
+importedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
@@ -243,10 +250,14 @@ manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 manufacturedPlasticPackagingWeight.paragraph = Do not include plastic packaging which is (any of the following):
-manufacturedPlasticPackagingWeight.list.1 = manufactured to be rail, aircraft and ship goods stores
-manufacturedPlasticPackagingWeight.list.2 = used in the long-term storage of goods
-manufacturedPlasticPackagingWeight.list.3 = an integral part of the goods
-manufacturedPlasticPackagingWeight.list.4 = reused for the presentation of goods
+manufacturedPlasticPackagingWeight.list.1 = permanently set aside for non-packaging use
+manufacturedPlasticPackagingWeight.list.2 = manufactured to be rail, aircraft and ship goods stores
+manufacturedPlasticPackagingWeight.list.3 = used in the long-term storage of goods
+manufacturedPlasticPackagingWeight.list.4 = an integral part of the goods
+manufacturedPlasticPackagingWeight.list.5 = reused for the presentation of goods
+manufacturedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
+manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 
 NonExportRecycledPlasticPackaging.title = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading= You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
@@ -271,7 +282,6 @@ NonExportRecycledPlasticPackagingWeight.change.hidden = How much of your finishe
 NonExportRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deduction on your tax calculation.
 
-
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimeout.paragraph.saved = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
@@ -295,6 +305,7 @@ site.link.remove  = Tynnu
 site.link.remove.hidden  = Tynnu {0} o’r rhestr
 site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
+site.continue.confirm = Confirm and continue
 
 account.agents.selectClient.header=What is your client’s Plastic Packaging Tax registration number?
 account.agents.selectClient.hint.body=This is the 15 character registration number they received when they registered for Plastic Packaging Tax. For example, XMPPT0001234567.
@@ -340,7 +351,7 @@ submit-return.check-your-answers.business-details.row2 = Return period
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
 submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
-submit-return.check-your-answers.packaging-total.row2 = Weight of imported plastic packaging
+submit-return.check-your-answers.packaging-total.row2 = Weight of manufactured plastic packaging
 submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
 submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
 submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
@@ -381,7 +392,6 @@ submit-return.check-your-answers.credits.line5.link-text = claiming credits (ope
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 submit-return.check-your-answers.now-send.button-text = Submit return
-
 
 submit-return.check-your-answers.error.heading = You cannot submit this return yet
 submit-return.check-your-answers.error.line1 = To submit this return, you will first need to change your answers. Your total plastic packaging weight must be greater your deductions total.
