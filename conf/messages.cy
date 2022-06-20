@@ -229,7 +229,7 @@ manufacturedPlasticPackaging.paragraph.link = gwiriwch pryd mae deunydd pacio yn
 
 manufacturedPlasticPackagingWeight.title = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig y gwnaethoch eu gweithgynhyrchu?
 manufacturedPlasticPackagingWeight.heading = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig y gwnaethoch eu gweithgynhyrchu?
-manufacturedPlasticPackagingWeight.checkYourAnswersLabel =[Content Not Found] - Manufactured packaging total
+manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Deunydd pacio plastig a weithgynhyrchwyd
 manufacturedPlasticPackagingWeight.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
 manufacturedPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
 manufacturedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
