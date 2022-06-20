@@ -14,23 +14,27 @@
  * limitations under the License.
  *@
 
+@import components.{paragraphBody,Link}
+
 @this(
     layout: templates.Layout,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    link: Link
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("journeyRecovery.startAgain.title")), showBackLink = false) {
+@homePageLink = @{
+    link(id = "account-link", text = messages("journeyRecovery.startAgain.link.2"), call = routes.IndexController.onPageLoad)
+}
+
+@layout(pageTitle = titleNoForm(messages("journeyRecovery.startAgain.title"), Some(messages("return.title.tail"))), showBackLink = false) {
 
     <h1 class="govuk-heading-xl">@messages("journeyRecovery.startAgain.heading")</h1>
 
-    <p class="govuk-body">@messages("journeyRecovery.startAgain.guidance")</p>
-
-    <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("site.startAgain"))
-                .asLink(routes.IndexController.onPageLoad.url)
-        )
-    </p>
+    @paragraphBody(
+        message = messages("journeyRecovery.startAgain.link.1", homePageLink),
+        id = Some("account-link-body")
+    )
 }
