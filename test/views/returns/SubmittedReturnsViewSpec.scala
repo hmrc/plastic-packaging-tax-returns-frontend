@@ -75,8 +75,7 @@ class SubmittedReturnsViewSpec extends PlaySpec with GuiceOneAppPerSuite with In
       val view = createView(previousReturn)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementsByAttributeValue("id","return-item").size() mustBe 1
-
+      doc.getElementsByAttributeValue("id","return-item-1").size() mustBe 1
     }
 
     "have multiple returns in list" in {
@@ -84,7 +83,7 @@ class SubmittedReturnsViewSpec extends PlaySpec with GuiceOneAppPerSuite with In
       val view = createView(twoSubmittedReturns)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementsByAttributeValue("id","return-item").size() mustBe 2
+      doc.getElementsByAttributeValueStarting("id","return-item-").size() mustBe 2
 
     }
 
