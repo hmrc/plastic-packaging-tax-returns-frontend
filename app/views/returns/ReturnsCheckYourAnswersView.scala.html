@@ -19,6 +19,7 @@
 @import controllers.helpers.TaxReturnViewModel
 @import views.ViewUtils.RichSummaryListRow
 @import controllers.helpers.RowInfo
+@import config.FrontendAppConfig
 
 @this(
     layout: templates.Layout,
@@ -28,6 +29,7 @@
     paragraphBody: paragraphBody,
     paragraph: paragraph,
     bulletList: bulletList,
+    appConfig: FrontendAppConfig,
     link: Link
 )
 
@@ -99,8 +101,8 @@
     @sectionHeading("submit-return.check-your-answers.business-details.heading")
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithWideValue("business-details.row1", taxReturn.pptReference),
-            summaryRowWithWideValue("business-details.row2", taxReturn.returnQuarter),
+            summaryRowWithWideValue("business-details.row1", taxReturn.request.pptReference),
+            summaryRowWithWideValue("business-details.row2", taxReturn.obligation.toReturnQuarter),
         )
     ))
 
@@ -125,7 +127,7 @@
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
-    @if(taxReturn.canEditExported) {
+    @if(taxReturn.canEditExported || !taxReturn.isSubmittable) {
         @changeLink(taxReturn.exportedStartUrl)
     } else {
         <p>@messages("submit-return.check-your-answers.exported-packaging-change-reason")</p>
@@ -141,7 +143,7 @@
             summaryRowFromFunc("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
-    @if(taxReturn.canEditNonExported) {
+    @if(taxReturn.canEditNonExported || !taxReturn.isSubmittable) {
         @changeLink(taxReturn.nonexportedStartUrl)
     } else {
         <p>@messages("submit-return.check-your-answers.nonexported-packaging-change-reason")</p>
@@ -175,14 +177,20 @@
     @para("credits.line1")
     @para("credits.line2")
     @bullets("credits.line3", "credits.line4")
-    @paraLink("credits.line5", "credits.line5.link-text", taxReturn.creditsGuidanceUrl)
+    @paraLink("credits.line5", "credits.line5.link-text", appConfig.creditsGuidanceUrl)
 
     <!-- Submit -->
-    @sectionHeading("submit-return.check-your-answers.now-send.heading")
-    @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
-    @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
-        @govukButton(
-            ButtonViewModel(messages("submit-return.check-your-answers.now-send.button-text"))
-        )
+    @if(taxReturn.isSubmittable) {
+        @sectionHeading("submit-return.check-your-answers.now-send.heading")
+        @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
+
+        @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+            @govukButton(
+                ButtonViewModel(messages("submit-return.check-your-answers.now-send.button-text"))
+            )
+        }
+    } else {
+        @sectionHeading("submit-return.check-your-answers.error.heading")
+        @para("error.line1")
     }
 }

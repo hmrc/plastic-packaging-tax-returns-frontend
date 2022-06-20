@@ -16,7 +16,6 @@
 
 package controllers.helpers
 
-import config.FrontendAppConfig
 import controllers.returns.routes
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
@@ -32,10 +31,10 @@ import scala.math.BigDecimal.RoundingMode
 
 case class RowInfo(key: String, value: String)
 
+//todo move this to viewmodels
 case class TaxReturnViewModel (
-  private val request: DataRequest[_], 
-  private val obligation: TaxReturnObligation,
-  private val appConfig: FrontendAppConfig
+  request: DataRequest[_],
+  obligation: TaxReturnObligation
 ) (implicit messages: Messages) {
 
   private def userAnswers: UserAnswers = request.userAnswers
@@ -156,7 +155,5 @@ case class TaxReturnViewModel (
     ViewUtils.displayLocalDate(obligation.toDate)
   }
 
-  def creditsGuidanceUrl: String = appConfig.creditsGuidanceUrl
-  def pptReference: String = request.pptReference
-  def returnQuarter: String = obligation.toReturnQuarter
+  def isSubmittable: Boolean = packagingTotalNumeric >= deductionsTotalNumeric
 }
