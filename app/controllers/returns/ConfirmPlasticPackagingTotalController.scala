@@ -90,5 +90,4 @@ class ConfirmPlasticPackagingTotalController @Inject()
         }
     }
   }
-
 }
