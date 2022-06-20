@@ -19,11 +19,13 @@
 @this(
 )
 
-@(message: String, taxReturn:TaxReturnObligation)
+@(message: String, taxReturn:TaxReturnObligation, index: Int)
 
 @call = @{controllers.amends.routes.ViewReturnSummaryController.onPageLoad(taxReturn.periodKey)}
 
-<li id="return-item" class="govuk-list">
+@returnItem = @{"return-item-" + (index+1)}
+
+<li id=@returnItem class="govuk-list">
  <p class="govuk-heading-m">@message
  <br><a class="govuk-body" href="@call">View return</a></p>
 </li>
