@@ -392,6 +392,8 @@ submit-return.check-your-answers.credits.line5.link-text = claiming credits (ope
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 submit-return.check-your-answers.now-send.button-text = Submit return
+submit-return.check-your-answers.error.heading = Submitting your return
+submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
 
 help.not.include = examples of things you should not include
 

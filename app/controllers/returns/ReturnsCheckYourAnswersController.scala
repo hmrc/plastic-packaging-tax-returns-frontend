@@ -30,8 +30,7 @@ import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnsCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnsCheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,
@@ -44,7 +43,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: ReturnsCheckYourAnswersView,
   appConfig: FrontendAppConfig
-) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -57,7 +56,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     }
 
   private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit messages: Messages) = {
-    val returnViewModel = TaxReturnViewModel(request, obligation, appConfig)
+    val returnViewModel = TaxReturnViewModel(request, obligation)
     Future.successful(Ok(view(returnViewModel)(request, messages)))
   }
 
