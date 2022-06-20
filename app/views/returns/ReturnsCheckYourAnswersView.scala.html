@@ -42,10 +42,10 @@
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
 }
-    
+
 @summaryRow(key: String, value: String, valueClasses: String = "") = @{
     SummaryListRow(
-        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"), 
+        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
         value = Value(value, classes = valueClasses)
     )
 }
@@ -54,7 +54,7 @@
     val text = messages(toLongKey(shortKey))
     summaryRow(text, value)
 }
-    
+
 @summaryRowFromString(shortKey: String, value: String) = @{
     summaryRowFromFunc(shortKey, key => RowInfo(key, value))
 }
@@ -86,7 +86,7 @@
         newTab = true
     ))))
 }
-    
+
 @changeLink(url: String) = @{
     paragraph(
         content = link(id = "", text = messages("site.change"), call = Call("GET", url)),

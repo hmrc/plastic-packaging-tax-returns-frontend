@@ -50,24 +50,22 @@ class ConfirmPlasticPackagingTotalController @Inject()
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
-    implicit request =>
-      Try(SummaryListViewModel(rows =
-        Seq(
-          ConfirmManufacturedPlasticPackaging,
-          ConfirmManufacturedPlasticPackagingSummary,
-          ConfirmImportedPlasticPackagingSummary,
-          ConfirmImportedPlasticPackagingWeightLabel,
-          PlasticPackagingTotalSummary
-        ).flatMap(_.row(request.userAnswers))
-      )) match {
-        case Success(list) => {
-          Ok(view(list))
+      implicit request =>
+        Try(SummaryListViewModel(rows =
+          Seq(
+            ConfirmManufacturedPlasticPackaging,
+            ConfirmManufacturedPlasticPackagingSummary,
+            ConfirmImportedPlasticPackagingSummary,
+            ConfirmImportedPlasticPackagingWeightLabel,
+            PlasticPackagingTotalSummary
+          ).flatMap(_.row(request.userAnswers))
+        )) match {
+          case Success(list) => Ok(view(list))
+          case Failure(error) =>
+            logger.error(error.getMessage)
+            Redirect(controllers.routes.IndexController.onPageLoad)
         }
-        case Failure(error) =>
-          logger.error(error.getMessage)
-          Redirect(controllers.routes.IndexController.onPageLoad)
-      }
-  }
+    }
 
   def onwardRouting: Action[AnyContent] = {
     (identify andThen getData andThen requireData).async {
@@ -92,4 +90,5 @@ class ConfirmPlasticPackagingTotalController @Inject()
         }
     }
   }
+
 }
