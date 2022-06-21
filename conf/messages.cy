@@ -271,7 +271,6 @@ NonExportRecycledPlasticPackagingWeight.error.outOfRange = Weight must be betwee
 NonExportRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 NonExportRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 NonExportRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
-NonExportRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deduction on your tax calculation.
 
