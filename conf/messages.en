@@ -188,7 +188,6 @@ exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export w
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.caption = Total plastic packaging
-importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
 
