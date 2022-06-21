@@ -333,7 +333,6 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weig
 nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
 nonExportedHumanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
-nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
 
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
 submit-return.check-your-answers.business-details.heading = Business details
