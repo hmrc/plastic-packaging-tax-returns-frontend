@@ -220,7 +220,6 @@ importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.error.required = Select yes if you’ve manufactured finished plastic packaging components in this period
 manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
