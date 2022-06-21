@@ -181,7 +181,6 @@ exportedPlasticPackagingWeight.error.wholeNumber = Weight must not include decim
 exportedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 exportedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 exportedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
-exportedPlasticPackagingWeight.change.hidden = How much of your kg of finished plastic packaging components did you export?
 exportedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Only include plastic packaging that has been exported by you, or on your behalf.
 exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export will show as a deduction on your tax calculation.
