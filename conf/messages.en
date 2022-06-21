@@ -162,7 +162,6 @@ convertedPackagingCredit.error.nonNumeric = Enter a value using numbers
 convertedPackagingCredit.error.required = Enter a value
 convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
 convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
-convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
 convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
 
