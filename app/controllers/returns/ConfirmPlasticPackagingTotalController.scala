@@ -16,7 +16,10 @@
 
 package controllers.returns
 
+import connectors.CacheConnector
 import controllers.actions._
+import models.NormalMode
+import pages.returns.{DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, NonExportedRecycledPlasticPackagingWeightPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +33,7 @@ import viewmodels.govuk.summarylist._
 import views.html.returns.ConfirmPlasticPackagingTotalView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class ConfirmPlasticPackagingTotalController @Inject()
@@ -40,26 +43,53 @@ class ConfirmPlasticPackagingTotalController @Inject()
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: ConfirmPlasticPackagingTotalView
+  view: ConfirmPlasticPackagingTotalView,
+  cacheConnector: CacheConnector
 ) (implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
-    implicit request =>
-      Try(SummaryListViewModel(rows =
-        Seq(
-          ConfirmManufacturedPlasticPackaging,
-          ConfirmManufacturedPlasticPackagingSummary,
-          ConfirmImportedPlasticPackagingSummary,
-          ConfirmImportedPlasticPackagingWeightLabel,
-          PlasticPackagingTotalSummary
-        ).flatMap(_.row(request.userAnswers))
-      )) match {
-        case Success(list) => Ok(view(list))
-        case Failure(error) =>
-          logger.error(error.getMessage)
-          Redirect(controllers.routes.IndexController.onPageLoad)
-      }
+      implicit request =>
+        Try(SummaryListViewModel(rows =
+          Seq(
+            ConfirmManufacturedPlasticPackaging,
+            ConfirmManufacturedPlasticPackagingSummary,
+            ConfirmImportedPlasticPackagingSummary,
+            ConfirmImportedPlasticPackagingWeightLabel,
+            PlasticPackagingTotalSummary
+          ).flatMap(_.row(request.userAnswers))
+        )) match {
+          case Success(list) => {
+            Ok(view(list))
+          }
+          case Failure(error) =>
+            logger.error(error.getMessage)
+            Redirect(controllers.routes.IndexController.onPageLoad)
+        }
+    }
+
+  def onwardRouting: Action[AnyContent] = {
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
+
+        if(totalPlastic <= 0) {
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers
+              .set(DirectlyExportedComponentsPage, false).get
+              .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
+              .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
+              .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
+              .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
+              .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
+            )
+            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+
+          } yield Redirect(controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad())
+        } else {
+          Future.successful(Redirect(controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode)))
+        }
+    }
   }
 }

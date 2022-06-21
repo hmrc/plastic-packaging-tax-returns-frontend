@@ -20,7 +20,7 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
 
 GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
@@ -129,6 +129,7 @@ GET        /make-a-payment                controllers.MakePaymentController.redi
 GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
 
 GET        /confirm-plastic-packaging-total                       controllers.returns.ConfirmPlasticPackagingTotalController.onPageLoad
+GET        /confirm-plastic-packaging-total-routing               controllers.returns.ConfirmPlasticPackagingTotalController.onwardRouting()
 
 GET        /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST       /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)

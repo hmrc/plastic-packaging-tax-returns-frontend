@@ -24,13 +24,19 @@ import java.text.NumberFormat
 import java.time.LocalDate
 import java.util.Locale
 
-final case class PPTFinancials(
-  creditAmount: Option[BigDecimal],
-  debitAmount: Option[(BigDecimal, LocalDate)],
-  overdueAmount: Option[BigDecimal]
-) {
+final case class Charge(amount: BigDecimal, date: LocalDate)
 
-  def amountToPayInPence: Int = debitAmount.map(_._1).orElse(overdueAmount).map(a => (100 * a).toInt).getOrElse(0)
+object Charge {
+  implicit val writes: OFormat[Charge] = Json.format[Charge]
+}
+
+final case class PPTFinancials(
+                                creditAmount: Option[BigDecimal],
+                                debitAmount: Option[Charge],
+                                overdueAmount: Option[BigDecimal]
+                              ) {
+
+  def amountToPayInPence: Int = debitAmount.map(_.amount).orElse(overdueAmount).map(a => (100 * a).toInt).getOrElse(0)
 
   private def getMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"month.${date.getMonthValue}")
@@ -40,14 +46,14 @@ final case class PPTFinancials(
       case (None, None, None) => messages("account.homePage.card.payments.nothingOutstanding")
       case (Some(amount), None, None) =>
         messages("account.homePage.card.payments.inCredit", formatCurrencyAmount(amount))
-      case (None, Some((amount, date)), None) =>
+      case (None, Some(Charge(amount, date)), None) =>
         messages("account.homePage.card.payments.debitDue",
                  formatCurrencyAmount(amount),
                  s"${date.getDayOfMonth} ${getMonth(date)} ${date.getYear}"
         )
       case (None, None, Some(amount)) =>
         messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount))
-      case (None, Some((debit, _)), Some(overdue)) =>
+      case (None, Some(Charge(debit, _)), Some(overdue)) =>
         messages("account.homePage.card.payments.debitAndOverDue",
                  formatCurrencyAmount(debit),
                  formatCurrencyAmount(overdue)

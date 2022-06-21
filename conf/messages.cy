@@ -301,14 +301,19 @@ viewReturnSummary.credits.field.debit =[Content Not Found] - Tax credits debit (
 
 return.confirmation.title = Ffurflen Dreth wedi’i chyflwyno
 return.confirmation.submitted = Ffurflen Dreth wedi’i chyflwyno
-return.confirmation.panel =[Content Not Found] - Your charge reference for this return is
-return.confirmation.panel.empty =[Content Not Found] - You have nothing to pay for this return
-return.confirmation.body.1 =[Content Not Found] - You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account.
+return.confirmation.panel = Eich cyfeirnod tâl ar gyfer y Ffurflen Dreth hon yw
+return.confirmation.panel.empty = Does dim byd gennych i’w dalu ar gyfer y Ffurflen Dreth hon.
+return.confirmation.body.1 = Gallwch ddod o hyd i fanylion y Ffurflen Dreth hon yn adran Ffurflenni Treth a gyflwynwyd o’ch cyfrif Treth Deunydd Pacio Plastig.
 return.confirmation.body.2 =[Content Not Found] - You can also find this reference number on the main screen of your Plastic Packaging Tax account.
-return.confirmation.body.3 =[Content Not Found] - We will not email you a confirmation.
-return.confirmation.return.link =[Content Not Found] - Return to your Plastic Packaging Tax account
-return.confirmation.exitSurvey.text = {0} (mae’n cymryd 30 eiliad)
+return.confirmation.body.3 = Ni fyddwn yn anfon cadarnhad atoch drwy e-bost.
+return.confirmation.exitSurvey.text = {0}
 return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
+return.confirmation.checkWhatYouOwe =[Content Not Found] - Check what you owe
+return.confirmation.homePage.link1 = {0} to:
+return.confirmation.homePage.link2 = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
+return.confirmation.bulletList.first =[Content Not Found] - see the total tax you owe
+return.confirmation.bulletList.second =[Content Not Found] - make a payment
+return.confirmation.bulletList.third =[Content Not Found] - view payment due date
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}

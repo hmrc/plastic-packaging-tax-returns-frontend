@@ -32,12 +32,13 @@
 
 
 @*TODO: order the Seq by obligation dates before operating on*@
+
 @returnsLine = @{
     if(obligations.isEmpty) {
         messages("submittedReturns.nothingsubmitted")
     } else {
-        obligations.map {
-            o => taxReturnLink(displayReturnQuarter(o), o)
+        obligations.zipWithIndex.map {
+            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i)
         }
     }
 }
