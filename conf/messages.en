@@ -394,7 +394,6 @@ nonExportedHumanMedicinesPlasticPackaging.reveal = What do we mean by immediate 
 nonExportedHumanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
 nonExportedHumanMedicinesPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging used for licenced human medicines
 nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
-nonExportedHumanMedicinesPlasticPackaging.change.hidden = NonExportedHumanMedicinesPlasticPackaging
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Non-exported plastic packaging
 nonExportedHumanMedicinesPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
