@@ -57,11 +57,11 @@ class ViewReturnSummaryController @Inject() (
           submittedReturn <- submittedReturnF
           obligation <- fulfilledObligationF
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
+            request.userAnswers.getOrElse(UserAnswers(request.cacheKey)).set(
               AmendSelectedPeriodKey, periodKey
-            ).getOrElse(UserAnswers(request.userId)).set(
+            ).getOrElse(UserAnswers(request.cacheKey)).set(
               ObligationCacheable, obligation.head
-            ).getOrElse(UserAnswers(request.userId)).set(
+            ).getOrElse(UserAnswers(request.cacheKey)).set(
               ReturnDisplayApiCacheable, submittedReturn
             )
           )

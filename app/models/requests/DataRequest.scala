@@ -26,6 +26,7 @@ case class OptionalDataRequest[A] (
 ) extends WrappedRequest[A](request) {
 
   def pptReference: String = request.pptReference
+  def cacheKey: String     = s"$userId-$pptReference"
 
 }
 
@@ -36,5 +37,6 @@ case class DataRequest[A](
 ) extends WrappedRequest[A](request) {
 
   def pptReference: String = request.pptReference
+  def cacheKey: String     = s"$userId-$pptReference"
 
 }

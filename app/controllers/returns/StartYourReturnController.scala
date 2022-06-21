@@ -51,14 +51,14 @@ class StartYourReturnController @Inject()(
 
       val pptId: String = request.pptReference
 
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.userId)).get(StartYourReturnPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.cacheKey)).get(StartYourReturnPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
 
-        Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).
+        Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.cacheKey)).
           set(ObligationCacheable, taxReturnObligation)).map { ans => cacheConnector.set(pptId, ans) }
 
         Future.successful(Ok(view(preparedForm, mode, taxReturnObligation)))
@@ -79,7 +79,7 @@ class StartYourReturnController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
+                request.userAnswers.getOrElse(UserAnswers(request.cacheKey)).set(StartYourReturnPage, value)
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))

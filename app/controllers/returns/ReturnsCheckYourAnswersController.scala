@@ -75,7 +75,7 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         returnsConnector.submit(taxReturn).flatMap {
           case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.userId, optChargeRef)).map{
+            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
             }
           case Left(error) => throw error
