@@ -41,7 +41,7 @@ return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
 caption.non.exported.plastic = Non-exported plastic packaging
-return.title.tail = Submit return
+return.title.tail = Cyflwyno Ffurflen Dreth
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
@@ -403,6 +403,11 @@ help.not.include = examples of things you should not include
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
+
+journeyRecovery.startAgain.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+journeyRecovery.startAgain.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+journeyRecovery.startAgain.link.1 = Go to your {0}.
+journeyRecovery.startAgain.link.2 = Plastic Packaging Tax account
 
 startYourReturn.title = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.heading = Do you want to start your return for {0} to {1} {2}?
