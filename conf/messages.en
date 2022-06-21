@@ -199,7 +199,6 @@ importedPlasticPackaging.paragraph.link = check when packaging is classed as fin
 importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.heading = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.caption = Total plastic packaging
-importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
 importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 importedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
