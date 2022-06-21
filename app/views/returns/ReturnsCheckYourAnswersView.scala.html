@@ -87,9 +87,9 @@
     ))))
 }
 
-@changeLink(url: String) = @{
+@changeLink(linkTextShortKey: String, url: String) = @{
     paragraph(
-        content = link(id = "", text = messages("site.change"), call = Call("GET", url)),
+        content = link(id = "", text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
     )
 }
 
@@ -117,7 +117,7 @@
             summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
-    @changeLink(taxReturn.packagingTotalStartUrl)
+    @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalStartUrl)
 
     <!-- Exported packaging -->
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
@@ -128,9 +128,9 @@
         )
     ))
     @if(taxReturn.canEditExported || !taxReturn.isSubmittable) {
-        @changeLink(taxReturn.exportedStartUrl)
+        @changeLink("exported-packaging.change-link-text", taxReturn.exportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.exported-packaging-change-reason")</p>
+        <p>@messages("submit-return.check-your-answers.exported-packaging.no-change-reason")</p>
     }
 
     <!-- Non-exported packaging -->
@@ -144,9 +144,9 @@
         )
     ))
     @if(taxReturn.canEditNonExported || !taxReturn.isSubmittable) {
-        @changeLink(taxReturn.nonexportedStartUrl)
+        @changeLink("nonexported-packaging.change-link-text", taxReturn.nonexportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.nonexported-packaging-change-reason")</p>
+        <p>@messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason")</p>
     }
 
     <!-- Deductions -->

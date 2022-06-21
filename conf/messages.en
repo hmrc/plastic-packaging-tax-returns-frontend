@@ -430,6 +430,7 @@ submit-return.check-your-answers.packaging-total.row2 = Weight of manufactured p
 submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
 submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
 submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
+submit-return.check-your-answers.packaging-total.change-link-text = Change any answer from total plastic packaging
 
 submit-return.check-your-answers.tax-calc.heading = Your tax calculation
 submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
@@ -441,14 +442,16 @@ submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on c
 submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
 submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
 submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
-submit-return.check-your-answers.exported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging amounts.
+submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
 submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
 submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
-submit-return.check-your-answers.nonexported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging that has not been exported to another country.
+submit-return.check-your-answers.nonexported-packaging.change-link-text = Change any answer from non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.no-change-reason = To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Deductions
 submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
