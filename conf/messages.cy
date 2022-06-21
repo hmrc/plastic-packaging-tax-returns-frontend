@@ -41,7 +41,7 @@ return.quarter = {0} to {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
 caption.non.exported.plastic = Non-exported plastic packaging
-return.title.tail = Submit return
+return.title.tail = Cyflwyno Ffurflen Dreth
 
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
@@ -339,6 +339,7 @@ submit-return.check-your-answers.packaging-total.row2 = Weight of manufactured p
 submit-return.check-your-answers.packaging-total.row3 = Imported plastic packaging
 submit-return.check-your-answers.packaging-total.row4 = Weight of imported plastic packaging
 submit-return.check-your-answers.packaging-total.row5 = Plastic packaging total
+submit-return.check-your-answers.packaging-total.change-link-text = Change any answer from total plastic packaging
 
 submit-return.check-your-answers.tax-calc.heading = Your tax calculation
 submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
@@ -350,14 +351,16 @@ submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on c
 submit-return.check-your-answers.exported-packaging.heading = Plastic packaging exported by you
 submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
 submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
-submit-return.check-your-answers.exported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging amounts.
+submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
 submit-return.check-your-answers.nonexported-packaging.row1 = Non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row2 = Weight of non-exported plastic packaging used for licenced human medicines
 submit-return.check-your-answers.nonexported-packaging.row3 = Non-exported plastic packaging containing 30% or more recycled
 submit-return.check-your-answers.nonexported-packaging.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
-submit-return.check-your-answers.nonexported-packaging-change-reason = In order to change this section you must first declare manufactured or imported plastic packaging that has not been exported to another country.
+submit-return.check-your-answers.nonexported-packaging.change-link-text = Change any answer from non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.no-change-reason = To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Deductions
 submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
@@ -376,6 +379,7 @@ submit-return.check-your-answers.credits.line5.link-text = claiming credits (ope
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 submit-return.check-your-answers.now-send.button-text = Submit return
+
 submit-return.check-your-answers.error.heading = Submitting your return
 submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
 
@@ -383,6 +387,11 @@ help.not.include = examples of things you should not include
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
+
+journeyRecovery.startAgain.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+journeyRecovery.startAgain.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+journeyRecovery.startAgain.link.1 = Go to your {0}.
+journeyRecovery.startAgain.link.2 = Plastic Packaging Tax account
 
 startYourReturn.title = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.heading = Do you want to start your return for {0} to {1} {2}?

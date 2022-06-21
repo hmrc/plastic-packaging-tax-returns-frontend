@@ -168,7 +168,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -185,7 +185,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }
