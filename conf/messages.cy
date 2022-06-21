@@ -176,7 +176,6 @@ directlyExportedComponents.title = Did you export any of your {0} of finished pl
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.checkYourAnswersLabel = Exported plastic packaging
 directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
-directlyExportedComponents.change.hidden = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
 directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them.
 
