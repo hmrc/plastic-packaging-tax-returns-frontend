@@ -229,7 +229,6 @@ manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as
 
 manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
 manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
