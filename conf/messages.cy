@@ -40,6 +40,15 @@ timeout.title = Rydych ar fin cael eich allgofnodi
 timeout.message = Er eich diogelwch, cewch eich allgofnodi ymhen.
 timeout.keepAlive = Aros wedi mewngofnodi
 timeout.signOut = Allgofnodi
+return.confirmation.exitSurvey.text = {0} (mae’n cymryd 30 eiliad)
+return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
+return.confirmation.checkWhatYouOwe = Check what you owe
+return.confirmation.homePage.link1 = {0} to:
+return.confirmation.homePage.link2 = Go to your PPT account
+return.confirmation.bulletList.first = see the total tax you owe
+return.confirmation.bulletList.second = make a payment
+return.confirmation.bulletList.third = view payment due date
+
 
 error.browser.title.prefix =[Content Not Found] - Error:
 error.boolean =[Content Not Found] - Please give an answer
@@ -296,7 +305,6 @@ return.confirmation.body.1 = Gallwch ddod o hyd i fanylion y Ffurflen Dreth hon 
 return.confirmation.body.2 =[Content Not Found] - You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = Ni fyddwn yn anfon cadarnhad atoch drwy e-bost.
 return.confirmation.return.link = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
-return.confirmation.exitSurvey.text = {0}
 return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
 return.confirmation.checkWhatYouOwe =[Content Not Found] - Check what you owe
 return.confirmation.homePage.link1 = {0} to:

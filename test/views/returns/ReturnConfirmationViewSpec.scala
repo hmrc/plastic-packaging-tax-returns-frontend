@@ -16,27 +16,17 @@
 
 package views.returns
 
+import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
+import support.ViewMatchers
 import views.html.returns.ReturnConfirmationView
 
-class ReturnConfirmationViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
-
+class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
 
   val page: ReturnConfirmationView = inject[ReturnConfirmationView]
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
-
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
 
   private def createView(chargeRef: Option[String]): Html =
     page(chargeRef)(request, messages)
@@ -44,63 +34,95 @@ class ReturnConfirmationViewSpec extends PlaySpec with GuiceOneAppPerSuite with 
   "Submitted returns page" should {
 
     "have a title" in {
-
       val view = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.select("title").text() mustBe "Return submitted - Plastic Packaging Tax - GOV.UK"
-
+      doc.getElementsByClass("govuk-panel__title").text() must include("Return submitted")
+      doc.getElementsByClass("govuk-panel__title").text() must include(messages("return.confirmation.submitted"))
     }
 
     "have a charge reference" in {
-
       val view = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementsByClass("govuk-panel__body").text must include ("Your charge reference for this return is ABC123")
-
+      doc.getElementsByClass("govuk-panel__body").text must include("Your charge reference for this return is ABC123")
     }
 
     "have no charge reference" in {
-
       val view = createView(None)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementsByClass("govuk-panel__body").text must include ("You have nothing to pay for this return")
-
+      doc.getElementsByClass("govuk-panel__body").text mustBe ""
     }
 
     "have find details paragraph" in {
-
       val view = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("find-details").text must include (
+      doc.getElementById("find-details").text must include(
         "You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account."
       )
-
     }
 
     "have confirmation paragraph" in {
-
       val view = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("confirmation").text must include (
+      doc.getElementById("confirmation").text must include(
         "We will not email you a confirmation."
       )
-
     }
 
-    "have return link" in {
+    "have nothing to pay when there is no charge reference" in {
+      val view = createView(None)
+      val doc: Document = Jsoup.parse(view.toString())
 
+      doc.getElementById("nothing-to-pay").text must include(
+        "You have nothing to pay for this return."
+      )
+      doc.getElementById("nothing-to-pay").text must include(
+        messages("return.confirmation.panel.empty")
+      )
+    }
+
+    "contain 'Check what you owe' label" in {
       val view = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("account-link").text must include (
-        "Return to your Plastic Packaging Tax account"
-      )
+      doc.getElementById("check-what-you-owe").text() must include("Check what you owe")
+      doc.getElementById("check-what-you-owe").text() must include(messages("return.confirmation.checkWhatYouOwe"))
+    }
 
+    "contain 'Go to your PPT account' link" when {
+      "have no charge reference" in {
+        val view = createView(None)
+        val doc: Document = Jsoup.parse(view.toString())
+
+        doc.getElementById("account-link-body").text must
+          include("Go to your PPT account")
+        doc.getElementById("account-link-body").text must
+          include(messages("return.confirmation.homePage.link2"))
+        doc.getElementById("account-link").select("a").get(0) must
+          haveHref(routes.IndexController.onPageLoad)
+        doc.getElementsByClass("govuk-list--bullet").size() mustBe 0
+      }
+
+      "charge reference is present" in {
+        val view = createView(Some("ABCVF"))
+        val doc: Document = Jsoup.parse(view.toString())
+
+        doc.getElementById("account-link-body").text must
+          include("Go to your PPT account to:" )
+        doc.getElementById("account-link-body").text must include(
+          messages("return.confirmation.homePage.link1",
+            messages("return.confirmation.homePage.link2"))
+        )
+        doc.getElementById("account-link").select("a").get(0) must
+          haveHref(routes.IndexController.onPageLoad)
+
+        assertBulletList(doc)
+      }
     }
 
     "have survey link" in {
@@ -122,6 +144,16 @@ class ReturnConfirmationViewSpec extends PlaySpec with GuiceOneAppPerSuite with 
       doc.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include ("Is this page not working properly?")
 
     }
+  }
 
+  private def assertBulletList(doc: Document) = {
+    doc.getElementsByClass("dashed-list-item").size() mustBe 3
+    val listNode = doc.getElementsByClass("dashed-list-item")
+    listNode.get(0).text() mustBe "see the total tax you owe"
+    listNode.get(0).text() mustBe messages("return.confirmation.bulletList.first")
+    listNode.get(1).text() mustBe "make a payment"
+    listNode.get(1).text() mustBe messages("return.confirmation.bulletList.second")
+    listNode.get(2).text() mustBe "view payment due date"
+    listNode.get(2).text() mustBe messages("return.confirmation.bulletList.third")
   }
 }
