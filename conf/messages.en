@@ -351,7 +351,6 @@ help.not.include = examples of things you should not include
 startYourReturn.title = Do you want to start your return for the {0} to {1} {2} accounting period?
 startYourReturn.heading = Do you want to start your return for the {0} to {1} {2} accounting period?
 startYourReturn.error.required = Select yes if you want to start your return
-startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.first.obligation.hint = Only give details from your tax start date until the end of the accounting period.
 
 notStartOtherReturns.heading = You cannot start returns for other periods yet

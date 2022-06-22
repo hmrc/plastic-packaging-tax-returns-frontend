@@ -366,6 +366,7 @@ help.not.include =[Content Not Found] - examples of things you should not includ
 startYourReturn.title =[Content Not Found] - Do you want to start your return for {0} to {1} {2}?
 startYourReturn.heading =[Content Not Found] - Do you want to start your return for {0} to {1} {2}?
 startYourReturn.error.required = Dewiswch ‘Iawn’ os hoffech ddechrau’ch Ffurflen Dreth
+startYourReturn.first.obligation.hint =[Content Not Found] - Only give details from your tax start date until the end of the accounting period.
 
 notStartOtherReturns.heading = Ni allwch ddechrau Ffurflenni Treth ar gyfer cyfnodau eraill eto
 notStartOtherReturns.detail = Dim ond ar gyfer cyfnodau sydd wedi dod i ben y gallwch ddechrau Ffurflenni Treth.
