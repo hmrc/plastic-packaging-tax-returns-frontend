@@ -64,7 +64,8 @@ journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gw
 journeyRecovery.continue.guidance =[Content Not Found] - [Add content to explain how to proceed.]
 journeyRecovery.startAgain.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.startAgain.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
-journeyRecovery.startAgain.guidance =[Content Not Found] - [Add content to explain why the user needs to start again.]
+journeyRecovery.startAgain.link.1 = Ewch i’ch cyfrif {0}.
+journeyRecovery.startAgain.link.2 = Treth Deunydd Pacio Plastig
 
 signedOut.title =[Content Not Found] - For your security, we signed you out
 signedOut.heading =[Content Not Found] - For your security, we signed you out
@@ -294,6 +295,7 @@ return.confirmation.panel.empty = Does dim byd gennych i’w dalu ar gyfer y Ffu
 return.confirmation.body.1 = Gallwch ddod o hyd i fanylion y Ffurflen Dreth hon yn adran Ffurflenni Treth a gyflwynwyd o’ch cyfrif Treth Deunydd Pacio Plastig.
 return.confirmation.body.2 =[Content Not Found] - You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = Ni fyddwn yn anfon cadarnhad atoch drwy e-bost.
+return.confirmation.return.link = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
 return.confirmation.exitSurvey.text = {0}
 return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
 return.confirmation.checkWhatYouOwe =[Content Not Found] - Check what you owe
@@ -410,6 +412,7 @@ submit-return.check-your-answers.packaging-total.row2 = Pwysau’r deunydd pacio
 submit-return.check-your-answers.packaging-total.row3 = Deunydd pacio plastig a fewnforiwyd
 submit-return.check-your-answers.packaging-total.row4 = Pwysau’r deunydd pacio plastig a fewnforiwyd
 submit-return.check-your-answers.packaging-total.row5 = Cyfanswm y deunydd pacio plastig
+submit-return.check-your-answers.packaging-total.change-link-text =[Content Not Found] - Change any answer from total plastic packaging
 
 submit-return.check-your-answers.tax-calc.heading = Eich cyfrifiad treth
 submit-return.check-your-answers.tax-calc.row1 = Cyfanswm y deunydd pacio plastig
@@ -421,12 +424,16 @@ submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tu
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd gennych
 submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
+submit-return.check-your-answers.exported-packaging.change-link-text =[Content Not Found] - Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.no-change-reason =[Content Not Found] - To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Deunydd pacio plastig heb ei allforio
 submit-return.check-your-answers.nonexported-packaging.row1 = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 submit-return.check-your-answers.nonexported-packaging.row2 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 submit-return.check-your-answers.nonexported-packaging.row3 = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 submit-return.check-your-answers.nonexported-packaging.row4 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+submit-return.check-your-answers.nonexported-packaging.change-link-text =[Content Not Found] - Change any answer from non-exported plastic packaging
+submit-return.check-your-answers.nonexported-packaging.no-change-reason =[Content Not Found] - To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Didyniadau
 submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd
@@ -445,3 +452,6 @@ submit-return.check-your-answers.credits.line5.link-text = hawlio credydau (yn a
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
 submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
+
+submit-return.check-your-answers.error.heading =[Content Not Found] - Submitting your return
+submit-return.check-your-answers.error.line1 =[Content Not Found] - You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
