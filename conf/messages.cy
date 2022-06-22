@@ -409,8 +409,8 @@ journeyRecovery.startAgain.heading = Mae’n ddrwg gennym, mae problem gyda’r 
 journeyRecovery.startAgain.link.1 = Go to your {0}.
 journeyRecovery.startAgain.link.2 = Plastic Packaging Tax account
 
-startYourReturn.title = Do you want to start your return for {0} to {1} {2}?
-startYourReturn.heading = Do you want to start your return for {0} to {1} {2}?
+startYourReturn.title = Do you want to start your return for the {0} to {1} {2} accounting period?
+startYourReturn.heading = Do you want to start your return for the {0} to {1} {2} accounting period?
 startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.error.required = Select yes if you want to start your return
 startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
