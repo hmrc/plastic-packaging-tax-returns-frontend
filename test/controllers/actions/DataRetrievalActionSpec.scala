@@ -47,7 +47,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
     "when there is no data in the cache" - {
 
-      "must set userAnswers to 'None' in the request" in {
+      "must build a userAnswers object and add it to the request" in {
 
         val cacheConnector = mock[CacheConnector]
         when(cacheConnector.get(any())(any())) thenReturn Future(None)
@@ -56,7 +56,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val result =
           action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
 
-        result.userAnswers must not be defined
+        result.userAnswers.id mustBe "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b-12345"
 
       }
     }
@@ -67,14 +67,14 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
         val cacheConnector = mock[CacheConnector]
         when(cacheConnector.get(any())(any())) thenReturn Future(
-          Some(UserAnswers("id"))
+          Some(UserAnswers("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b-12345"))
         )
         val action = new Harness(cacheConnector)
 
         val result =
           action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
 
-        result.userAnswers mustBe defined
+        result.userAnswers.id mustBe "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b-12345"
 
       }
     }

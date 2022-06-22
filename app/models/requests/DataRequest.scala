@@ -21,22 +21,21 @@ import models.UserAnswers
 
 case class OptionalDataRequest[A] (
   request: IdentifiedRequest[A],
-  userId: String,
-  userAnswers: Option[UserAnswers]
+  answers: Option[UserAnswers]
 ) extends WrappedRequest[A](request) {
 
-  def pptReference: String = request.pptReference
-  def cacheKey: String     = s"$userId-$pptReference"
+  def pptReference: String     = request.pptReference
+  def cacheKey: String         = request.cacheKey
+  def userAnswers: UserAnswers = answers.getOrElse(UserAnswers(request.cacheKey))
 
 }
 
 case class DataRequest[A](
   request: IdentifiedRequest[A],
-  userId: String,
   userAnswers: UserAnswers
 ) extends WrappedRequest[A](request) {
 
   def pptReference: String = request.pptReference
-  def cacheKey: String     = s"$userId-$pptReference"
+  def cacheKey: String     = request.cacheKey
 
 }

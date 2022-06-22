@@ -57,14 +57,9 @@ class ViewReturnSummaryController @Inject() (
           submittedReturn <- submittedReturnF
           obligation <- fulfilledObligationF
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.cacheKey)).set(
-              AmendSelectedPeriodKey, periodKey
-            ).getOrElse(UserAnswers(request.cacheKey)).set(
-              ObligationCacheable, obligation.head
-            ).getOrElse(UserAnswers(request.cacheKey)).set(
-              ReturnDisplayApiCacheable, submittedReturn
-            )
-          )
+            request.userAnswers.set(AmendSelectedPeriodKey, periodKey).get
+              .set(ObligationCacheable, obligation.head).get
+              .set(ReturnDisplayApiCacheable, submittedReturn))
           _ <- cacheConnector.set(pptId, updatedAnswers)
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation.head)

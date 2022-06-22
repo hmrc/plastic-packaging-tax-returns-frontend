@@ -17,6 +17,7 @@
 package controllers.actions
 
 import connectors.CacheConnector
+import models.UserAnswers
 
 import javax.inject.Inject
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
@@ -38,9 +39,7 @@ class DataRetrievalActionImpl @Inject() (
     implicit val hc   = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val pptId: String = request.pptReference
 
-    cacheConnector.get(pptId).map {
-      OptionalDataRequest(request, request.user.identityData.internalId, _)
-    }
+    cacheConnector.get(pptId).map(answers => OptionalDataRequest(request, answers))
   }
 
 }
