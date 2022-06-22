@@ -16,15 +16,10 @@
 
 package views.returns
 
+import base.ViewSpecBase
 import models.UserAnswers
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages.returns.ManufacturedPlasticPackagingPage
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -32,15 +27,9 @@ import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.Confi
 import viewmodels.govuk.summarylist._
 import views.html.returns.ConfirmPlasticPackagingTotalView
 
-class ConfirmPlasticPackagingTotalViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting  with ViewAssertions with ViewMatchers {
+class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
 
   val page: ConfirmPlasticPackagingTotalView = inject[ConfirmPlasticPackagingTotalView]
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
-
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
 
   private def createView(list: SummaryList): Html =
     page(list)(request, messages)

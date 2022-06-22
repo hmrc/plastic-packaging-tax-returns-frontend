@@ -59,9 +59,7 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
 
 object ImportedPlasticPackagingWeightSummary {
 
-  private val importedPlasticPackagingWeightLabel = "importedPlasticPackagingWeight.checkYourAnswersLabel"
   private val confirmImportedPlasticPackagingWeightLabel = "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label"
 
-  val CheckYourAnswerImportedPlasticPackagingWeight = new ImportedPlasticPackagingWeightSummary(importedPlasticPackagingWeightLabel)
   val ConfirmImportedPlasticPackagingWeightLabel = new ImportedPlasticPackagingWeightSummary(confirmImportedPlasticPackagingWeightLabel)
 }

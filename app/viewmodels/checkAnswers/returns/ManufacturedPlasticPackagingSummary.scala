@@ -46,9 +46,7 @@ class ManufacturedPlasticPackagingSummary (key: String) extends SummaryViewModel
 }
 object ManufacturedPlasticPackagingSummary {
 
-  private val manufacturedPlasticPageLabel = "manufacturedPlasticPackaging.checkYourAnswersLabel"
   private val confirmPlasticPackagingTotalLabel = "confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label"
 
-  val CheckYourAnswerManufacturedPlasticPackaging = new ManufacturedPlasticPackagingSummary(manufacturedPlasticPageLabel)
   val ConfirmManufacturedPlasticPackaging = new ManufacturedPlasticPackagingSummary(confirmPlasticPackagingTotalLabel)
 }

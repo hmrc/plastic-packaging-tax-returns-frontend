@@ -56,10 +56,6 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = plastic-packaging-tax-returns-frontend-scaffold
-index.heading = plastic-packaging-tax-returns-frontend-scaffold
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
-
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
@@ -78,7 +74,6 @@ unauthorised.paragraph.1 = You need to {0} to use this service
 unauthorised.paragraph.1.link = register for Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
-
 
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
@@ -112,7 +107,6 @@ amendImportedPlasticPackaging.hint = Do not include plastic packaging components
 amendImportedPlasticPackaging.hint.list.1 = used in the long-term storage of goods
 amendImportedPlasticPackaging.hint.list.2 = an integral part of the goods
 amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
-
 
 amendManufacturedPlasticPackaging.title = How much did your manufactured finished  plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendManufacturedPlasticPackaging.heading = How much did your manufactured finished  plastic packaging components weigh?
@@ -155,33 +149,27 @@ amend.confirmation.paragraph.3 = when it’s been updated, to find out how much 
 
 convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 convertedPackagingCredit.heading = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.checkYourAnswersLabel = Conversion credit
 convertedPackagingCredit.error.nonNumeric = Enter a value using numbers
 convertedPackagingCredit.error.required = Enter a value
 convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
 convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
-convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
 convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
-directlyExportedComponents.checkYourAnswersLabel = Exported plastic packaging
 directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
-directlyExportedComponents.change.hidden = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.paragraph.1 = Only include plastic packaging that has been exported by you, or on your behalf.
 directlyExportedComponents.paragraph.2 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them.
 
 exportedPlasticPackagingWeight.title = How much of your {0} of finished plastic packaging components did you export?
 exportedPlasticPackagingWeight.heading = How much of your {0} of finished plastic packaging components did you export?
-exportedPlasticPackagingWeight.checkYourAnswersLabel = Weight of exported plastic packaging
 exportedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 exportedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 exportedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 exportedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 exportedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 exportedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
-exportedPlasticPackagingWeight.change.hidden = How much of your kg of finished plastic packaging components did you export?
 exportedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Only include plastic packaging that has been exported by you, or on your behalf.
 exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export will show as a deduction on your tax calculation.
@@ -189,7 +177,6 @@ exportedPlasticPackagingWeight.paragraph.line.2 = Plastic packaging you export w
 importedPlasticPackaging.title = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.heading = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.caption = Total plastic packaging
-importedPlasticPackaging.checkYourAnswersLabel = Have you imported finished plastic packaging components in this period?
 importedPlasticPackaging.error.required = Select yes if you imported finished plastic packaging components in this period
 importedPlasticPackaging.change.hidden = Have you imported finished plastic packaging components in this period?
 
@@ -201,12 +188,11 @@ importedPlasticPackaging.paragraph.link = check when packaging is classed as fin
 importedPlasticPackagingWeight.title = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.heading = How much did your imported finished plastic packaging components weigh?
 importedPlasticPackagingWeight.caption = Total plastic packaging
-importedPlasticPackagingWeight.checkYourAnswersLabel = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.error.nonNumeric =  Weight must be entered as numbers only
 importedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 importedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 importedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-importedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+importedPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 importedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 importedPlasticPackagingWeight.change.hidden = How much did your finished imported plastic packaging components weigh?
 importedPlasticPackagingWeight.paragraph.1 = Do not include plastic packaging which is (any of the following):
@@ -223,7 +209,6 @@ importedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 
 manufacturedPlasticPackaging.title = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.heading = Have you manufactured finished plastic packaging components in this period?
-manufacturedPlasticPackaging.checkYourAnswersLabel = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.error.required = Select yes if you’ve manufactured finished plastic packaging components in this period
 manufacturedPlasticPackaging.change.hidden = Have you manufactured finished plastic packaging components in this period?
 manufacturedPlasticPackaging.paragraph.1 = Tax is chargeable when a plastic packaging component is finished.
@@ -233,12 +218,11 @@ manufacturedPlasticPackaging.paragraph.link = check when packaging is classed as
 
 manufacturedPlasticPackagingWeight.title = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.heading = How much did your manufactured finished plastic packaging components weigh?
-manufacturedPlasticPackagingWeight.checkYourAnswersLabel = Manufactured packaging total
 manufacturedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 manufacturedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 manufacturedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 manufacturedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+manufacturedPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 manufacturedPlasticPackagingWeight.error.spaces = Weight must not include spaces
 manufacturedPlasticPackagingWeight.change.hidden = How much did your manufactured finished plastic packaging components weigh?
 manufacturedPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
@@ -252,26 +236,21 @@ manufacturedPlasticPackagingWeight.paragraph.include = Include plastic packaging
 manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
 manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 
-
 NonExportRecycledPlasticPackaging.title = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
 NonExportRecycledPlasticPackaging.heading = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
-NonExportRecycledPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging containing 30% or more recycled
 NonExportRecycledPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components contained 30% or more recycled plastic
-NonExportRecycledPlasticPackaging.change.hidden = Non exported Recycled packaging
 NonExportRecycledPlasticPackaging.paragraph.line.1 = You will not be charged tax on these but you must still tell us about them.
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
 
 NonExportRecycledPlasticPackagingWeight.title = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 NonExportedRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
-NonExportRecycledPlasticPackagingWeight.checkYourAnswersLabel = Weight of non-exported plastic packaging containing 30% or more recycled
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 NonExportRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 NonExportRecycledPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 NonExportRecycledPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
 NonExportRecycledPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 NonExportRecycledPlasticPackagingWeight.error.spaces = Weight must not include spaces
-NonExportRecycledPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deduction on your tax calculation.
 
@@ -307,13 +286,17 @@ viewReturnSummary.credits.field.debit = Tax credits debit (do we show this?)
 return.confirmation.title = Return submitted
 return.confirmation.submitted = Return submitted
 return.confirmation.panel = Your charge reference for this return is
-return.confirmation.panel.empty = You have nothing to pay for this return
+return.confirmation.panel.empty = You have nothing to pay for this return.
 return.confirmation.body.1 = You can find details of this return in the submitted returns section of your Plastic Packaging Tax (PPT) account.
 return.confirmation.body.2 = You can also find this reference number on the main screen of your Plastic Packaging Tax account.
 return.confirmation.body.3 = We will not email you a confirmation.
-return.confirmation.return.link = Return to your Plastic Packaging Tax account
-return.confirmation.exitSurvey.text = {0} (Takes 30 seconds)
+return.confirmation.homePage.link1 = {0} to:
+return.confirmation.homePage.link2 = Go to your PPT account
 return.confirmation.exitSurvey.text.link = What did you think of this service?
+return.confirmation.checkWhatYouOwe = Check what you owe
+return.confirmation.bulletList.first = see the total tax you owe
+return.confirmation.bulletList.second = make a payment
+return.confirmation.bulletList.third = view payment due date
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
@@ -367,7 +350,6 @@ help.not.include = examples of things you should not include
 
 startYourReturn.title = Do you want to start your return for the {0} to {1} {2} accounting period?
 startYourReturn.heading = Do you want to start your return for the {0} to {1} {2} accounting period?
-startYourReturn.checkYourAnswersLabel = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.error.required = Select yes if you want to start your return
 startYourReturn.change.hidden = Do you want to start your return for {0} to {1} {2}?
 startYourReturn.first.obligation.hint = Only give details from your tax start date until the end of the accounting period.
@@ -378,10 +360,8 @@ notStartOtherReturns.button = Back to your account
 
 agents.title = What is your client’s Plastic Packaging Tax registration number?
 agents.heading = What is your client’s Plastic Packaging Tax registration number?
-agents.checkYourAnswersLabel = What is your client’s Plastic Packaging Tax registration number?
 agents.error.required = Enter your client’s Plastic Packaging Tax registration number
 agents.error.length = Registration number must be 15 characters
-agents.change.hidden = What is your client’s Plastic Packaging Tax registration number?
 agents.client.identifier.auth.error = This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
 
 deregistered.heading = You deregistered this account from Plastic Packaging Tax
@@ -402,21 +382,17 @@ nonExportedHumanMedicinesPlasticPackaging.heading = You did not export {0} of yo
 nonExportedHumanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
 nonExportedHumanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
-nonExportedHumanMedicinesPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging used for licenced human medicines
 nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
-nonExportedHumanMedicinesPlasticPackaging.change.hidden = NonExportedHumanMedicinesPlasticPackaging
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Non-exported plastic packaging
 nonExportedHumanMedicinesPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
-nonExportedHumanMedicinesPlasticPackagingWeight.checkYourAnswersLabel = Weight of non-exported plastic packaging used for licenced human medicines
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = 1 tonne is 1,000kg.
 nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers only
 nonExportedHumanMedicinesPlasticPackagingWeight.error.required = Enter the weight, in kilograms
-nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber = Enter a weight using whole numbers
+nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
 nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 nonExportedHumanMedicinesPlasticPackagingWeight.error.spaces = Weight must not include spaces
-nonExportedHumanMedicinesPlasticPackagingWeight.change.hidden = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
 
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
 submit-return.check-your-answers.business-details.heading = Business details

@@ -18,7 +18,7 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
-import org.mockito.ArgumentMatchers.{eq => eqq, _}
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach

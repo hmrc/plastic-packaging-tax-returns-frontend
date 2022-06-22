@@ -17,15 +17,14 @@
 package controllers.amends
 
 import base.SpecBase
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.when
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.{Application, inject}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.{Application, inject}
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 

@@ -23,7 +23,7 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
 
-class ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val request: Request[AnyContent]         = FakeRequest().withCSRFToken
   protected val realMessagesApi: MessagesApi = inject[MessagesApi]
