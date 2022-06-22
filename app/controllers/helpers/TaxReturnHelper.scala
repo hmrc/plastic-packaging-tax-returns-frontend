@@ -22,29 +22,25 @@ import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
 import pages.amends._
 import pages.returns._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
+//TODO: Multi services in here, break it down now, funk soul brother
 class TaxReturnHelper @Inject()(
-                                 override val messagesApi: MessagesApi,
-                                 val controllerComponents: MessagesControllerComponents,
                                  returnsConnector: TaxReturnsConnector,
                                  obligationsConnector: ObligationsConnector
-                               )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+                               )(implicit ec: ExecutionContext){
 
-  def nextObligation(pptId: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
-    obligationsConnector.getOpen(pptId) map { obligations =>
+  def nextOpenObligationAndIfFirst(pptId: String)(implicit hc: HeaderCarrier): Future[(TaxReturnObligation, Boolean)] = {
+    obligationsConnector.getOpen(pptId) flatMap  { obligations =>
       val nextObligation: TaxReturnObligation = obligations.nextObligationToReturn.getOrElse(
         throw new IllegalStateException("Next open obligation can't be found")
       )
-
-      nextObligation
+      obligationsConnector.getFulfilled(pptId).map{
+        fulfilledObs =>
+          (nextObligation, fulfilledObs.isEmpty)
+      }
     }
   }
 

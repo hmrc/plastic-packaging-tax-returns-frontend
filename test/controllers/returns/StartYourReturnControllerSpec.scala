@@ -16,11 +16,11 @@
 
 package controllers.returns
 
-import base.{MockObligationsConnector, SpecBase}
+import base.SpecBase
 import cacheables.ObligationCacheable
-import connectors.{CacheConnector, ObligationsConnector}
+import connectors.CacheConnector
+import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -37,7 +37,9 @@ import views.html.returns.StartYourReturnView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector  {
+class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
+
+  val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -52,8 +54,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
     dueDate = LocalDate.parse("2022-09-30"),
     periodKey = "22AC"
   )
-
-  val pptObligation: PPTObligations = PPTObligations(Some(obligation), Some(obligation), 1, true, true)
+  val isFirst = true
 
   val mockCacheConnector = mock[CacheConnector]
 
@@ -61,13 +62,13 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must return OK and the correct view for a GET" in {
 
-      mockGetObligations(pptObligation)
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
 
       val pptId = "123"
       val userAnswers = UserAnswers(pptId).set(ObligationCacheable, obligation).get
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[ObligationsConnector].toInstance(mockObligationsConnector),
+        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
           bind[CacheConnector].toInstance(mockCacheConnector)
       ).build()
 
@@ -79,7 +80,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
         val view = application.injector.instanceOf[StartYourReturnView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, obligation)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, obligation, isFirst)(request, messages(application)).toString
 
         verify(mockCacheConnector, atLeastOnce).set(refEq(pptId), refEq(userAnswers))(any())
       }
@@ -87,12 +88,12 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      mockGetObligations(pptObligation)
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
 
       val userAnswers = UserAnswers(userAnswersId).set(StartYourReturnPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
       ).build()
 
       running(application) {
@@ -103,13 +104,11 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation, isFirst)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      mockGetObligations(pptObligation)
 
       val mockCacheConnector = mock[CacheConnector]
 
@@ -120,7 +119,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector),
-            bind[ObligationsConnector].toInstance(mockObligationsConnector)
+            bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
           )
           .build()
 
@@ -138,10 +137,10 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      mockGetObligations(pptObligation)
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
       ).build()
 
       running(application) {
@@ -156,7 +155,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation, isFirst)(request, messages(application)).toString
 
       }
     }
