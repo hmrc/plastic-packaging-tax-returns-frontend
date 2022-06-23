@@ -2,6 +2,11 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
+# BTA entry points
+GET        /submit-return                               controllers.Default.redirect(to = "/plastic-packaging-tax/startYourReturn")
+GET        /submitted-returns                           controllers.Default.redirect(to = "/plastic-packaging-tax/submittedReturns")
+
+# Returns endpoints
 GET        /                                             controllers.Default.redirect(to = "/plastic-packaging-tax/account")
 
 GET        /account                                      controllers.IndexController.onPageLoad
