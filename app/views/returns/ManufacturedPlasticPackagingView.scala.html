@@ -32,12 +32,6 @@
 
 @guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
 
-@paragraphContent ={
-    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.1"))
-    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.2"))
-    @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.3", guidanceLink))
-}
-
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
     @sectionHeader(messages("caption.total.plastic"))
@@ -48,12 +42,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @components.heading(messages("manufacturedPlasticPackaging.heading"))
+
+        @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.1"))
+        @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.2"))
+        @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.3", guidanceLink))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("manufacturedPlasticPackaging.heading")).asPageHeading(size = LegendSize.Large)
+                legend = LegendViewModel(messages("manufacturedPlasticPackaging.heading")).
+                    asPageHeading(size = LegendSize.Large).withCssClass("govuk-visually-hidden")
             )
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
         )
 
         @govukButton(
