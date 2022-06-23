@@ -326,7 +326,8 @@ account.homePage.card.payments.payment.link = Make a PPT payment
 account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
 
 account.homePage.card.history.header = History
-account.homePage.card.history.viewreturnslink = View or amend submitted returns
+account.homePage.card.history.viewAmendsReturnsLink = View or amend submitted returns
+account.homePage.card.history.viewReturnsLink = View submitted returns
 
 account.homePage.manage.ppt.account.header = Manage your account
 account.homePage.card.registration.details.1.link.single = Your registration details
