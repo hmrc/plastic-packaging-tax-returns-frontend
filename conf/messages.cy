@@ -341,7 +341,8 @@ account.homePage.card.payments.payment.link = Gwneud taliad Treth Deunydd Pacio 
 account.homePage.card.payments.direct.debit.link = Sefydlu neu reoli Debyd Uniongyrchol
 
 account.homePage.card.history.header =[Content Not Found] - History
-account.homePage.card.history.viewreturnslink =[Content Not Found] - View or amend submitted returns
+account.homePage.card.history.viewAmendsReturnsLink =[Content Not Found] - View or amend submitted returns
+account.homePage.card.history.viewReturnsLink =[Content Not Found] - View submitted returns
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru

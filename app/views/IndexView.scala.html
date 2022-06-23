@@ -174,7 +174,12 @@
     }
 }
 
-@viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)}
+@viewOrAmendReturnsLink = @{
+    link(
+        id = "view-submitted-returns-link",
+        text = if(appConfig.isAmendsFeatureEnabled) messages("account.homePage.card.history.viewAmendsReturnsLink") else messages("account.homePage.card.history.viewReturnsLink") ,
+        call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+}
 
 @layout(
     pageTitle    = titleNoForm(messages("account.homePage.title")),
