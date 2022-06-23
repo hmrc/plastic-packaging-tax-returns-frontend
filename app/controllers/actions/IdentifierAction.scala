@@ -81,6 +81,8 @@ class AuthenticatedIdentifierAction @Inject() (
           )
         )
 
+        println("CREDID: " + credentials.map(c => c.providerId))
+
         val identityData = IdentityData(id,
                                         externalId,
                                         agentCode,
