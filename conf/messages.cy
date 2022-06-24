@@ -239,8 +239,8 @@ manufacturedPlasticPackagingWeight.paragraph.include =[Content Not Found] - Incl
 manufacturedPlasticPackagingWeight.list.include.1 =[Content Not Found] - contains 30% or more recycled plastic
 manufacturedPlasticPackagingWeight.list.include.2 =[Content Not Found] - will be used for the immediate packaging of licenced human medicines
 
-NonExportRecycledPlasticPackaging.title = Ni wnaethoch allforio {0}kg o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-NonExportRecycledPlasticPackaging.heading = Ni wnaethoch allforio {0}kg o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackaging.title = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackaging.heading = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackaging.error.required = Dewiswch ‘Iawn’ os oedd unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig heb eu hallforio yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 NonExportRecycledPlasticPackaging.paragraph.line.1 =Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Dysgwch am {0}.
