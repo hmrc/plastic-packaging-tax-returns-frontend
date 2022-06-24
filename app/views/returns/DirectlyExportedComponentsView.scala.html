@@ -30,7 +30,7 @@
 @(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent = {
-    @paragraphBody(messages("directlyExportedComponents.paragraph.2"))
+    @paragraphBody(messages("directlyExportedComponents.paragraph.1"))
 }
 
 @layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {

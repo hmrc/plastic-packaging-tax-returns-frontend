@@ -56,8 +56,7 @@ class DirectlyExportedComponentsViewSpec extends ViewSpecBase with ViewAssertion
 
     "contain paragraph content" in{
 
-      view.getElementById("value-hint").text() must include (messages("directlyExportedComponents.paragraph.1"))
-      view.getElementById("value-hint").text() must include (messages("directlyExportedComponents.paragraph.2"))
+      view.getElementById("value-hint").text() must include (messages("You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them."))
     }
     "contain save & continue button" in {
 

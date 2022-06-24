@@ -42,13 +42,13 @@ class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAsser
     "have a title" in {
 
       view.select("title").text mustBe
-        "How much of your 1,234kg of finished plastic packaging components did you export? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "How much of your 1,234kg of finished plastic packaging components did you export, or do you intend to export within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "How much of your 1,234kg of finished plastic packaging components did you export?"
+        "How much of your 1,234kg of finished plastic packaging components did you export, or do you intend to export within 12 months?"
     }
 
     "have a caption" in {
@@ -65,7 +65,6 @@ class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAsser
 
     "contain paragraph content" in{
 
-      view.getElementById("value-hint").text() must include (messages("Only include plastic packaging that has been exported by you, or on your behalf."))
       view.getElementById("value-hint").text() must include (messages("Plastic packaging you export will show as a deduction on your tax calculation."))
     }
     "contain save & continue button" in {
