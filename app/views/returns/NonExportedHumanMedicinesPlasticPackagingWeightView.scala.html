@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
 @import viewmodels._
 @import components._
@@ -26,14 +24,14 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    sectionHeader: SectionHeader, 
+    paragraphBody: paragraphBody 
 )
 
 @(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption"))
 
     @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -41,10 +39,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption"))
+
+        <h1 class="govuk-heading-l">@messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKg)</h1>
+        
+        @paragraphBody(messages("nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1"))
+
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKg)).asPageHeading()
+                label = Label()
             )
             .asKg()
             .withWidth(Fixed10)
