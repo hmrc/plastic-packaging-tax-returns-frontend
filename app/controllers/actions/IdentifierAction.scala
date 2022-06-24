@@ -81,6 +81,8 @@ class AuthenticatedIdentifierAction @Inject() (
           )
         )
 
+        logger.debug(s"AuthenticatedIdentifierAction::invokeBlock - Credentials Provider ID (CredId): ${credentials.map(c => c.providerId)}")
+
         val identityData = IdentityData(id,
                                         externalId,
                                         agentCode,

@@ -35,7 +35,7 @@ class AmendConfirmationController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get(request.internalId).map{
+      sessionRepository.get(request.cacheKey).map{
         entry =>
           val chargeRef = entry.flatMap(_.data)
           Ok(view(chargeRef))

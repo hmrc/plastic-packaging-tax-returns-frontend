@@ -25,8 +25,7 @@ case class IdentifiedRequest[+A](
   private val enrolmentId: Option[String]
 ) extends WrappedRequest[A](request) {
 
-  def internalId: String = user.identityData.internalId
-
   def pptReference: String = enrolmentId.getOrElse(throw new IllegalStateException("enrolmentId is missing from request"))
+  def cacheKey: String     = s"${user.identityData.internalId}-$pptReference"
 
 }

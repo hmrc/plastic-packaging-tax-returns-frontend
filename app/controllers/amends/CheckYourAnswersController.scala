@@ -86,7 +86,7 @@ class CheckYourAnswersController @Inject() (
 
         returnsConnector.amend(taxReturn, submissionId).flatMap {
           case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.userId, optChargeRef)).map{
+            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
 
