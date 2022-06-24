@@ -33,16 +33,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StartYourReturnController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         cacheConnector: CacheConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         formProvider: StartYourReturnFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: StartYourReturnView,
-                                         taxReturnHelper: TaxReturnHelper
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                           override val messagesApi: MessagesApi,
+                                           cacheConnector: CacheConnector,
+                                           navigator: Navigator,
+                                           identify: IdentifierAction,
+                                           getData: DataRetrievalAction,
+                                           formProvider: StartYourReturnFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           view: StartYourReturnView,
+                                           taxReturnHelper: TaxReturnHelper
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -56,13 +56,13 @@ class StartYourReturnController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
+      taxReturnHelper.nextOpenObligationAndIfFirst(pptId) flatMap { case (taxReturnObligation, isFirst) =>
 
         Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation)).map {
           ans => cacheConnector.set(pptId, ans)
         }
 
-        Future.successful(Ok(view(preparedForm, mode, taxReturnObligation)))
+        Future.successful(Ok(view(preparedForm, mode, taxReturnObligation, isFirst)))
 
       }
   }
@@ -72,19 +72,18 @@ class StartYourReturnController @Inject()(
 
       val pptId: String = request.pptReference
 
-      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, taxReturnObligation))),
-
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(StartYourReturnPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
-        )
-      }
+      form.bindFromRequest().fold(
+        formWithErrors =>
+          taxReturnHelper.nextOpenObligationAndIfFirst(pptId) map { case (taxReturnObligation, isFirst) =>
+            BadRequest(view(formWithErrors, mode, taxReturnObligation, isFirst))
+          },
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(StartYourReturnPage, value)
+            )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+          } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+      )
   }
 }

@@ -24,7 +24,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form,
     messages("startYourReturn.title",
@@ -45,8 +45,10 @@
                     messages("startYourReturn.heading",
                         messages(s"month.${obligation.fromDate.getMonthValue}"),
                         messages(s"month.${obligation.toDate.getMonthValue}"),
-                        obligation.toDate.getYear.toString)).asPageHeading()
-            )
+                        obligation.toDate.getYear.toString
+                    )
+                ).asPageHeading()
+            ).withHint(Hint(content = if(isFirst) HtmlContent(messages("startYourReturn.first.obligation.hint")) else Empty))
         )
 
         @govukButton(

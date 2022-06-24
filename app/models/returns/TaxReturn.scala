@@ -38,19 +38,22 @@ final case class TaxReturnObligation(
 object TaxReturnObligation {
   implicit val format: OFormat[TaxReturnObligation] = Json.format[TaxReturnObligation]
 }
-
+//TODO: Split out what is a tax return and what is user info re: tax return
 case class TaxReturn(
   id: String,
-  returnType: Option[ReturnType] = Some(ReturnType.NEW),
   periodKey: String,
+  returnType: Option[ReturnType] = Some(ReturnType.NEW),
   manufacturedPlastic: Option[Boolean] = None,
-  manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
-  importedPlastic: Option[Boolean] = None,
-  importedPlasticWeight: Option[ImportedPlasticWeight] = None,
-  humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
-  exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
-  convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
-  recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
+  manufacturedPlasticWeight: Option[ManufacturedPlasticWeight]= None,
+  importedPlastic: Option[Boolean]= None,
+  importedPlasticWeight: Option[ImportedPlasticWeight]= None,
+  exportedPlastic: Option[Boolean]= None,
+  exportedPlasticWeight: Option[ExportedPlasticWeight]= None,
+  humanMedicinesPlastic: Option[Boolean]= None,
+  humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight]= None,
+  recycledPlastic: Option[Boolean]= None,
+  recycledPlasticWeight: Option[RecycledPlasticWeight]= None,
+  convertedPackagingCredit: Option[ConvertedPackagingCredit]= None,
   lastModifiedDateTime: Option[DateTime] = None
 ) {
 

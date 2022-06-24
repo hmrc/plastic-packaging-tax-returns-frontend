@@ -16,31 +16,20 @@
 
 package views.returns
 
+import base.ViewSpecBase
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.ViewMatchers
 import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 
-class NonExportedRecycledPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewMatchers {
+class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewMatchers {
 
   val page: NonExportedRecycledPlasticPackagingWeightView = inject[NonExportedRecycledPlasticPackagingWeightView]
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
   val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
-
   val amount = 321L
 
   private def createView(form: Form[Long] = form): Html =

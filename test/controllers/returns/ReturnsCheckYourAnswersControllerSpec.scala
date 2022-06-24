@@ -18,7 +18,7 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
-import org.mockito.ArgumentMatchers.{eq => eqq, _}
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
@@ -73,7 +73,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
 
       }
     }

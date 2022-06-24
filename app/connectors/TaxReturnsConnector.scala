@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.{ReturnDisplayApi, TaxReturn}
 import play.api.Logger
-import play.api.libs.json.{JsLookupResult, JsString, JsValue}
+import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
