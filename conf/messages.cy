@@ -8,8 +8,8 @@ site.yes = Iawn
 site.continue = Cadw ac yn eich blaen
 site.button.continue = Yn eich blaen
 site.continue.confirm = Cadarnhau ac yn eich blaen
-site.start =[Content Not Found] - Start now
-site.startAgain =[Content Not Found] - Start again
+site.start = Dechrau nawr
+site.startAgain = Dechrau eto
 site.signIn = Mewngofnodi
 site.govuk = GOV.UK
 
@@ -30,7 +30,7 @@ month.10  = Hydref
 month.11  = Tachwedd
 month.12  = Rhagfyr
 
-return.quarter = {0} to {1} {2}
+return.quarter = {0} i {1} {2}
 caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio
@@ -67,9 +67,9 @@ journeyRecovery.startAgain.heading = Mae’n ddrwg gennym, mae problem gyda’r 
 journeyRecovery.startAgain.link.1 = Ewch i’ch cyfrif {0}.
 journeyRecovery.startAgain.link.2 = Treth Deunydd Pacio Plastig
 
-signedOut.title =[Content Not Found] - For your security, we signed you out
-signedOut.heading =[Content Not Found] - For your security, we signed you out
-signedOut.guidance =[Content Not Found] - We have saved your answers.
+signedOut.title = Er eich diogelwch, gwnaethom eich allgofnodi
+signedOut.heading = Er eich diogelwch, gwnaethom eich allgofnodi
+signedOut.guidance = Rydym wedi cadw’ch atebion.
 
 unauthorised.title = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
 unauthorised.heading = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
@@ -166,8 +166,8 @@ directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0
 directlyExportedComponents.error.required = Dewiswch ‘Iawn’ os ydych wedi allforio unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu os ydych yn bwriadu gwneud hynny o fewn y 12 mis nesaf
 directlyExportedComponents.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd. Os nad ydych yn allforio’r deunyddiau plastig hyn cyn pen 12 mis, bydd angen i chi dalu treth arnynt.
 
-exportedPlasticPackagingWeight.title =[Content Not Found] - How much of your {0} of finished plastic packaging components did you export, or do you intend to export within 12 months?
-exportedPlasticPackagingWeight.heading =[Content Not Found] - How much of your {0} of finished plastic packaging components did you export, or do you intend to export within 12 months?
+exportedPlasticPackagingWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
+exportedPlasticPackagingWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 exportedPlasticPackagingWeight.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
 exportedPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
 exportedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
@@ -181,7 +181,7 @@ importedPlasticPackaging.title = A ydych wedi mewnforio cydrannau deunydd pacio 
 importedPlasticPackaging.heading = A ydych wedi mewnforio cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn?
 importedPlasticPackaging.caption = Cyfanswm y deunydd pacio plastig
 importedPlasticPackaging.error.required = Dewiswch ‘Iawn’ os ydych wedi mewnforio cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn
-importedPlasticPackaging.change.hidden =[Content Not Found] - imported plastic packaging
+importedPlasticPackaging.change.hidden = Deunydd pacio plastig a fewnforiwyd
 
 importedPlasticPackaging.paragraph.1 = Mae treth yn daladwy ar gydrannau deunydd pacio plastig gorffenedig rydych yn eu mewnforio.
 importedPlasticPackaging.paragraph.2 = Mae deunydd pacio plastig yn orffenedig pan fo’r addasiad sylweddol olaf yn y broses weithgynhyrchu wedi’i wneud.
@@ -197,25 +197,25 @@ importedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau be
 importedPlasticPackagingWeight.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
 importedPlasticPackagingWeight.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 importedPlasticPackagingWeight.error.spaces = Mae’n rhaid i’r pwysau beidio â chynnwys bylchau
-importedPlasticPackagingWeight.change.hidden =[Content Not Found] -  weight of imported plastic packaging
-importedPlasticPackagingWeight.paragraph.1 =[Content Not Found] - Do not include plastic packaging which is (any of the following):
-importedPlasticPackagingWeight.li.1 =[Content Not Found] - transport packaging used to secure goods on import
-importedPlasticPackagingWeight.li.2 =[Content Not Found] - manufactured to be rail, aircraft and ship goods stores
-importedPlasticPackagingWeight.li.3 =[Content Not Found] - permanently set aside for a non-packaging use
-importedPlasticPackagingWeight.li.4 =[Content Not Found] - used in the long-term storage of goods
-importedPlasticPackagingWeight.li.5 =[Content Not Found] - an integral part of the goods
-importedPlasticPackagingWeight.li.6 =[Content Not Found] - reused for the presentation of goods
-importedPlasticPackagingWeight.paragraph.include =[Content Not Found] - Include plastic packaging which (either of the following):
-importedPlasticPackagingWeight.list.include.1 =[Content Not Found] - contains 30% or more recycled plastic
-importedPlasticPackagingWeight.list.include.2 =[Content Not Found] - will be used for the immediate packaging of licenced human medicines
+importedPlasticPackagingWeight.change.hidden = Pwysau’r deunydd pacio plastig a fewnforiwyd
+importedPlasticPackagingWeight.paragraph.1 = Peidiwch â chynnwys deunydd pacio plastig sydd (yn unrhyw un o’r canlynol):
+importedPlasticPackagingWeight.li.1 = yn ddeunydd pacio cludiant a ddefnyddir i ddiogelu nwyddau wrth eu mewnforio
+importedPlasticPackagingWeight.li.2 = wedi’i weithgynhyrchu i fod yn storfeydd nwyddau ar drenau, awyrennau a llongau
+importedPlasticPackagingWeight.li.3 = wedi’i neilltuo’n barhaol at ddefnydd nad yw’n ymwneud â phecynnu
+importedPlasticPackagingWeight.li.4 = yn cael ei ddefnyddio i storio nwyddau yn yr hirdymor
+importedPlasticPackagingWeight.li.5 = yn rhan annatod o’r nwyddau
+importedPlasticPackagingWeight.li.6 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
+importedPlasticPackagingWeight.paragraph.include = Mae angen i chi gynnwys deunydd pacio plastig sydd (naill ai yn un neu’r llall o’r canlynol):
+importedPlasticPackagingWeight.list.include.1 = yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+importedPlasticPackagingWeight.list.include.2 = ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig
 importedPlasticPackagingWeight.hint = Mae 1 dunnell yn 1,000kg.
 
 manufacturedPlasticPackaging.title = A ydych wedi gweithgynhyrchu cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn?
 manufacturedPlasticPackaging.heading = A ydych wedi gweithgynhyrchu cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn?
 manufacturedPlasticPackaging.error.required = Dewiswch ‘Iawn’ os ydych wedi gweithgynhyrchu cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn
-manufacturedPlasticPackaging.change.hidden =[Content Not Found] - manufactured plastic packaging
+manufacturedPlasticPackaging.change.hidden = Deunydd pacio plastig a weithgynhyrchwyd
 manufacturedPlasticPackaging.paragraph.1 = Mae treth yn daladwy pan fydd cydran deunydd pacio plastig wedi’i gorffen.
-manufacturedPlasticPackaging.paragraph.2 =[Content Not Found] - Plastic packaging is finished when the last substantial modification in the manufacturing process has been made.
+manufacturedPlasticPackaging.paragraph.2 = Mae deunydd pacio plastig yn orffenedig pan fo’r addasiad sylweddol olaf yn y broses weithgynhyrchu wedi’i wneud.
 manufacturedPlasticPackaging.paragraph.3 = Os nad ydych yn siŵr o hyd, {0}.
 manufacturedPlasticPackaging.paragraph.link = gwiriwch pryd mae deunydd pacio yn cael ei ystyried yn orffenedig a beth rydym yn ei olygu wrth gydrannau ac addasiadau sylweddol
 
@@ -227,17 +227,17 @@ manufacturedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysa
 manufacturedPlasticPackagingWeight.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
 manufacturedPlasticPackagingWeight.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 manufacturedPlasticPackagingWeight.error.spaces = Mae’n rhaid i’r pwysau beidio â chynnwys bylchau
-manufacturedPlasticPackagingWeight.change.hidden =[Content Not Found] - weight of manufactured plastic packaging
+manufacturedPlasticPackagingWeight.change.hidden = Pwysau’r deunydd pacio plastig a weithgynhyrchwyd
 manufacturedPlasticPackagingWeight.hint = Mae 1 dunnell yn 1,000kg.
-manufacturedPlasticPackagingWeight.paragraph =[Content Not Found] - Do not include plastic packaging which is (any of the following):
-manufacturedPlasticPackagingWeight.list.1 =[Content Not Found] - permanently set aside for non-packaging use
-manufacturedPlasticPackagingWeight.list.2 =[Content Not Found] - manufactured to be rail, aircraft and ship goods stores
-manufacturedPlasticPackagingWeight.list.3 =[Content Not Found] - used in the long-term storage of goods
-manufacturedPlasticPackagingWeight.list.4 =[Content Not Found] - an integral part of the goods
-manufacturedPlasticPackagingWeight.list.5 =[Content Not Found] - reused for the presentation of goods
-manufacturedPlasticPackagingWeight.paragraph.include =[Content Not Found] - Include plastic packaging which (either of the following):
-manufacturedPlasticPackagingWeight.list.include.1 =[Content Not Found] - contains 30% or more recycled plastic
-manufacturedPlasticPackagingWeight.list.include.2 =[Content Not Found] - will be used for the immediate packaging of licenced human medicines
+manufacturedPlasticPackagingWeight.paragraph = Peidiwch â chynnwys deunydd pacio plastig sydd (yn unrhyw un o’r canlynol):
+manufacturedPlasticPackagingWeight.list.1 = wedi’i neilltuo’n barhaol at ddefnydd nad yw’n ymwneud â phecynnu
+manufacturedPlasticPackagingWeight.list.2 = wedi’i weithgynhyrchu i fod yn storfeydd nwyddau ar drenau, awyrennau a llongau
+manufacturedPlasticPackagingWeight.list.3 = yn cael ei ddefnyddio i storio nwyddau yn yr hirdymor
+manufacturedPlasticPackagingWeight.list.4 = yn rhan annatod o’r nwyddau
+manufacturedPlasticPackagingWeight.list.5 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
+manufacturedPlasticPackagingWeight.paragraph.include = Mae angen i chi gynnwys deunydd pacio plastig sydd (naill ai yn un neu’r llall o’r canlynol):
+manufacturedPlasticPackagingWeight.list.include.1 = yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+manufacturedPlasticPackagingWeight.list.include.2 = ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig
 
 NonExportRecycledPlasticPackaging.title = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackaging.heading = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
@@ -296,43 +296,43 @@ return.confirmation.body.3 = Ni fyddwn yn anfon cadarnhad atoch drwy e-bost.
 return.confirmation.return.link = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
 return.confirmation.exitSurvey.text = {0}
 return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
-return.confirmation.checkWhatYouOwe =[Content Not Found] - Check what you owe
-return.confirmation.homePage.link1 =[Content Not Found] - {0} to:
+return.confirmation.checkWhatYouOwe = Gwirio’r hyn sydd arnoch
+return.confirmation.homePage.link1 ={0} i wneud y canlynol:
 return.confirmation.homePage.link2 = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
-return.confirmation.bulletList.first =[Content Not Found] - see the total tax you owe
-return.confirmation.bulletList.second =[Content Not Found] - make a payment
-return.confirmation.bulletList.third =[Content Not Found] - view payment due date
+return.confirmation.bulletList.first = gweld cyfanswm y dreth sydd arnoch
+return.confirmation.bulletList.second = gwneud taliad
+return.confirmation.bulletList.third = bwrw golwg dros ddyddiad dyledus y taliad
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
-account.homePage.organisation.group =[Content Not Found] - {0} (representative organisation for group)
+account.homePage.organisation.group = {0} (sefydliad cynrychiadol ar gyfer y grŵp)
 
-account.homePage.currentBalance =[Content Not Found] - Your current balance
-account.homePage.currentBalance.onDate =[Content Not Found] - on {0}
+account.homePage.currentBalance = Eich balans presennol
+account.homePage.currentBalance.onDate = ar {0}
 
 account.homePage.card.makeReturn.header = Ffurflenni Treth
-account.homePage.card.makeReturn.line1.multipleOverdue =[Content Not Found] - You have {0} returns overdue.
-account.homePage.card.makeReturn.line1.singleOverdue =[Content Not Found] - Your return for {0} is overdue.
+account.homePage.card.makeReturn.line1.multipleOverdue = Mae gennych {0} o Ffurflenni Treth hwyr.
+account.homePage.card.makeReturn.line1.singleOverdue = Mae’ch Ffurflen Dreth ar gyfer {0} yn hwyr.
 account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
-account.homePage.card.makeReturn.line2.due = You must submit your return for {0} between {1} and {2}.
-account.homePage.card.makeReturn.line3.createLink =Cyflwyno Ffurflen TAW
+account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer {0} rhwng {1} a {2}.
+account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen TAW
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
-account.homePage.card.makeReturn.failure =[Content Not Found] - We cannot display tax return details.
+account.homePage.card.makeReturn.failure = Ni allwn ddangos manylion y Ffurflen Dreth.
 
 account.homePage.card.payments.header = Taliadau
 account.homePage.card.payments.nothingOutstanding = Nid oes gennych dreth i’w thalu.
-account.homePage.card.payments.inCredit =[Content Not Found] - You are {0} in credit.
-account.homePage.card.payments.debitDue =[Content Not Found] - You owe {0}. You must pay by {1}.
-account.homePage.card.payments.overDue =[Content Not Found] - You owe {0}. This payment is overdue.
-account.homePage.card.payments.debitAndOverDue =[Content Not Found] - You owe {0}. This includes {1} which is overdue.
-account.homePage.card.payments.error =[Content Not Found] - We cannot display payment details.
+account.homePage.card.payments.inCredit = Rydych mewn credyd o {0}.
+account.homePage.card.payments.debitDue = Mae arnoch {0}. Mae’n rhaid i chi dalu erbyn {1}.
+account.homePage.card.payments.overDue = Mae arnoch {0}. Mae’r taliad hwn yn hwyr.
+account.homePage.card.payments.debitAndOverDue = Mae arnoch {0}. Mae hyn yn cynnwys {1} sy’n hwyr.
+account.homePage.card.payments.error = Ni allwn ddangos manylion y taliad.
 account.homePage.card.payments.payment.link = Gwneud taliad Treth Deunydd Pacio Plastig
 account.homePage.card.payments.direct.debit.link = Sefydlu neu reoli Debyd Uniongyrchol
 
-account.homePage.card.history.header =[Content Not Found] - History
-account.homePage.card.history.viewAmendsReturnsLink =[Content Not Found] - View or amend submitted returns
-account.homePage.card.history.viewReturnsLink =[Content Not Found] - View submitted returns
+account.homePage.card.history.header = Hanes
+account.homePage.card.history.viewAmendsReturnsLink = Bwrw golwg dros neu ddiwygio Ffurflenni Treth a gyflwynwyd
+account.homePage.card.history.viewReturnsLink = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru
@@ -344,8 +344,8 @@ account.homePage.card.registration.details.2.link.partnership = Manylion y partn
 account.homePage.card.registration.details.2.body.group = Bwrw golwg dros y manylion cyswllt a’u newid, ac ychwanegu neu dynnu aelodau o’r grŵp.
 account.homePage.card.registration.details.2.body.partnership = Bwrw golwg dros y manylion cyswllt a’u newid, ac ychwanegu neu dynnu partneriaid.
 
-account.homePage.card.deregister.link =[Content Not Found] - Deregister from Plastic Packaging Tax
-account.homePage.card.deregister.body =[Content Not Found] - Cancel your Plastic Packaging Tax registration.
+account.homePage.card.deregister.link = Datgofrestru rhag y Dreth Deunydd Pacio Plastig
+account.homePage.card.deregister.body = Canslo’ch cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 
 submittedReturns.title = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 submittedReturns.heading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
@@ -354,24 +354,24 @@ submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plasti
 
 help.not.include =[Content Not Found] - examples of things you should not include
 
-startYourReturn.title =[Content Not Found] - Do you want to start your return for the {0} to {1} {2} accounting period?
-startYourReturn.heading =[Content Not Found] - Do you want to start your return for the {0} to {1} {2} accounting period?
+startYourReturn.title = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
+startYourReturn.heading = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
 startYourReturn.error.required = Dewiswch ‘Iawn’ os hoffech ddechrau’ch Ffurflen Dreth
-startYourReturn.first.obligation.hint =[Content Not Found] - Only give details from your tax start date until the end of the accounting period.
+startYourReturn.first.obligation.hint = Rhowch fanylion o’ch dyddiad dechrau treth tan ddiwedd y cyfnod cyfrifyddu yn unig.
 
 notStartOtherReturns.heading = Ni allwch ddechrau Ffurflenni Treth ar gyfer cyfnodau eraill eto
 notStartOtherReturns.detail = Dim ond ar gyfer cyfnodau sydd wedi dod i ben y gallwch ddechrau Ffurflenni Treth.
 notStartOtherReturns.button = Yn ôl i’ch cyfrif
 
-agents.title =[Content Not Found] - What is your client’s Plastic Packaging Tax registration number?
-agents.heading =[Content Not Found] - What is your client’s Plastic Packaging Tax registration number?
-agents.error.required =[Content Not Found] - Enter your client’s Plastic Packaging Tax registration number
-agents.error.length =[Content Not Found] - Registration number must be 15 characters
-agents.client.identifier.auth.error =[Content Not Found] - This registration number is either incorrect or your client has not authorised you. Check your client has authorised you
+agents.title = Beth yw rhif cofrestru’ch cleient ar gyfer y Dreth Deunydd Pacio Plastig?
+agents.heading = Beth yw rhif cofrestru’ch cleient ar gyfer y Dreth Deunydd Pacio Plastig?
+agents.error.required = Nodwch rif cofrestru eich cleient ar gyfer y Dreth Deunydd Pacio Plastig
+agents.error.length = Mae’n rhaid i’r rhif cofrestru fod yn 15 o gymeriadau
+agents.client.identifier.auth.error = Naill ai mae’r rhif cofrestru hwn yn anghywir neu nid yw eich cleient wedi’ch awdurdodi. Gwiriwch fod eich cleient wedi’ch awdurdodi
 
-deregistered.heading =[Content Not Found] - You deregistered this account from Plastic Packaging Tax
-deregistered.bta.link =[Content Not Found] - Go to your business tax account
-deregistered.title =[Content Not Found] - You deregistered this account from Plastic Packaging Tax
+deregistered.heading = Gwnaethoch ddatgofrestru’r cyfrif hwn rhag y Dreth Deunydd Pacio Plastig
+deregistered.bta.link = Ewch i’ch cyfrif treth busnes
+deregistered.title = Gwnaethoch ddatgofrestru’r cyfrif hwn rhag y Dreth Deunydd Pacio Plastig
 
 confirmPlasticPackagingTotal.title = Cadarnhau cyfanswm eich deunydd pacio plastig - Cyflwyno Ffurflen Dreth
 confirmPlasticPackagingTotal.sectionHeader = Cyfanswm y deunydd pacio plastig
@@ -391,7 +391,7 @@ nonExportedHumanMedicinesPlasticPackaging.error.required = Dewiswch ‘Iawn’ o
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Deunydd pacio plastig heb ei allforio
 nonExportedHumanMedicinesPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
-nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1 =[Content Not Found] - This will show as a deduction on your tax calculation.
+nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1 = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = Mae 1 dunnell yn 1,000kg.
 nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
 nonExportedHumanMedicinesPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
@@ -411,7 +411,7 @@ submit-return.check-your-answers.packaging-total.row2 = Pwysau’r deunydd pacio
 submit-return.check-your-answers.packaging-total.row3 = Deunydd pacio plastig a fewnforiwyd
 submit-return.check-your-answers.packaging-total.row4 = Pwysau’r deunydd pacio plastig a fewnforiwyd
 submit-return.check-your-answers.packaging-total.row5 = Cyfanswm y deunydd pacio plastig
-submit-return.check-your-answers.packaging-total.change-link-text =[Content Not Found] - Change any answer from total plastic packaging
+submit-return.check-your-answers.packaging-total.change-link-text = Newidiwch unrhyw ateb o’r adran Cyfanswm y deunydd pacio plastig
 
 submit-return.check-your-answers.tax-calc.heading = Eich cyfrifiad treth
 submit-return.check-your-answers.tax-calc.row1 = Cyfanswm y deunydd pacio plastig
@@ -423,16 +423,16 @@ submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tu
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd gennych
 submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.change-link-text =[Content Not Found] - Change any answer from plastic packaging exported by you
-submit-return.check-your-answers.exported-packaging.no-change-reason =[Content Not Found] - To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
+submit-return.check-your-answers.exported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig a allforiwyd, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio deunydd pacio plastig.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Deunydd pacio plastig heb ei allforio
 submit-return.check-your-answers.nonexported-packaging.row1 = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 submit-return.check-your-answers.nonexported-packaging.row2 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 submit-return.check-your-answers.nonexported-packaging.row3 = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 submit-return.check-your-answers.nonexported-packaging.row4 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
-submit-return.check-your-answers.nonexported-packaging.change-link-text =[Content Not Found] - Change any answer from non-exported plastic packaging
-submit-return.check-your-answers.nonexported-packaging.no-change-reason =[Content Not Found] - To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
+submit-return.check-your-answers.nonexported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig heb ei allforio
+submit-return.check-your-answers.nonexported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig heb ei allforio, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio rhywfaint o ddeunydd pacio plastig nad yw wedi’i allforio.
 
 submit-return.check-your-answers.deductions.heading = Didyniadau
 submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd
@@ -452,5 +452,5 @@ submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
 submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
 
-submit-return.check-your-answers.error.heading =[Content Not Found] - Submitting your return
-submit-return.check-your-answers.error.line1 =[Content Not Found] - You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
+submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
+submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
