@@ -154,20 +154,4 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
         bold = true, big = true)
     }
   }
-
-  "Tax Credit section" must {
-    val taxCreditSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.taxCredit
-
-    "have the right number of entries" in {
-      taxCreditSection.fields must have(size(1))
-    }
-
-    "have the credit total" in  {
-      taxCreditSection.fields(0) mustBe Field("viewReturnSummary.credits.field.credit", "£7.00")
-    }
-
-    "have the debit total" ignore {
-      taxCreditSection.fields(1) mustBe Field("viewReturnSummary.credits.field.debit", "£8.00")
-    }
-  }
 }
