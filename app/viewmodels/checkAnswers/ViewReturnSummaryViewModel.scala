@@ -25,7 +25,7 @@ import viewmodels.PrintBigDecimal
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
-    Seq(
+    Seq("govuk-!-width-three-quarters",
       if (big) "govuk-body-l" else "govuk-body-m",
       if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular",
     ).mkString(" ")
