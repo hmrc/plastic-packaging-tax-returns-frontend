@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{SectionHeader, Link}
+@import views.html.components.{SectionHeader, Link, paragraphBody}
 @import models.NormalMode
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 @import config.{Features, FrontendAppConfig}
@@ -26,11 +26,17 @@
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
     link: Link,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    paragraphBody: paragraphBody
 )
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
+@guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
+
+@paragraphContent ={
+    @paragraphBody(messages("viewReturnSummary.amend.inset.text", guidanceLink))
+}
 
 @layout(pageTitle = titleNoForm(returnPeriod), showBackLink = false) {
 
@@ -43,6 +49,8 @@
                 controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode)
             )
         </p>
+    } else {
+        <p>@paragraphContent</p>
     }
 
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
