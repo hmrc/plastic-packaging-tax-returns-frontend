@@ -74,7 +74,7 @@ object ViewReturnSummaryViewModel {
           "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKg,
           "total" -> submittedReturn.returnDetails.totalNotLiable.asKg,
         ),
-        Section("calculation", lastBig = true)(
+        Section("calculation", lastBig = false)(
           "liable" -> submittedReturn.returnDetails.liableWeight.asKg,
           "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKg,
           "total" -> submittedReturn.returnDetails.totalWeight.asKg,

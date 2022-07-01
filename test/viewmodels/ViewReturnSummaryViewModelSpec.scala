@@ -151,7 +151,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
     "have the tax total" in {
       calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "£10.00",
-        bold = true, big = true)
+        bold = true, big = false)
     }
   }
 }
