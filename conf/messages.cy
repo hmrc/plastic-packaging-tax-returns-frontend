@@ -257,9 +257,9 @@ NonExportRecycledPlasticPackagingWeight.hint = Mae 1 dunnell yn 1,000kg.
 NonExportRecycledPlasticPackagingWeight.paragraph = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
 
 viewReturnSummary.sectionHeader = Cyflwynwyd Ffurflen Dreth ar gyfer
-viewReturnSummary.amendLink = Amend this return
-viewReturnSummary.amend.inset.text = Os oes angen i chi wneud newidiadau i’r Ffurflen Dreth hon, bydd angen i chi {0}.
-viewReturnSummary.amend.inset.link = gyflwyno’ch Ffurflen Dreth eto gan ddefnyddio’r ffurflen ddiwygio ar-lein hon
+viewReturnSummary.amendLink = Diwygio’r Ffurflen Dreth hon
+viewReturnSummary.amend.inset.text = Os oes angen i chi wneud newidiadau i’ch Ffurflen Dreth, bydd angen i chi {0}.
+viewReturnSummary.amend.inset.link = gyflwyno Ffurflen Dreth newydd gan ddefnyddio’r ffurflen ar-lein hon
 viewReturnSummary.viewReturnsLink = Bwrw golwg dros Ffurflenni Treth a gyflwynwyd o gyfnodau eraill
 viewReturnSummary.summary.heading = Crynodeb
 viewReturnSummary.summary.field.liability = Treth sy’n ddyledus ar y Ffurflen Dreth hon

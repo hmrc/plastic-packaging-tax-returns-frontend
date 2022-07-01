@@ -254,8 +254,8 @@ NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deductio
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
-viewReturnSummary.amend.inset.text = If you need to make changes to this return, you’ll need to {0}.
-viewReturnSummary.amend.inset.link = submit your return again using this online amendment form
+viewReturnSummary.amend.inset.text = If you need to make changes to your return, you’ll need to {0}.
+viewReturnSummary.amend.inset.link = submit a new return using this online form
 viewReturnSummary.viewReturnsLink = View submitted returns from other periods
 viewReturnSummary.summary.heading = Summary
 viewReturnSummary.summary.field.liability = Tax due on this return
