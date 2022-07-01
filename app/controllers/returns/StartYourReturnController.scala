@@ -29,12 +29,14 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
+import config.{Features, FrontendAppConfig}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StartYourReturnController @Inject()(
                                            override val messagesApi: MessagesApi,
+                                           appConfig: FrontendAppConfig,
                                            cacheConnector: CacheConnector,
                                            navigator: Navigator,
                                            identify: IdentifierAction,
@@ -49,24 +51,28 @@ class StartYourReturnController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+      if (!appConfig.isFeatureEnabled(Features.returnsEnabled)){
+        logger.info("Returns disabled. Redirecting to account homepage.")
+        Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+      } else {
+        val pptId: String = request.pptReference
 
-      val pptId: String = request.pptReference
+        val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap{
-        case Some((taxReturnObligation, isFirst)) =>
-          for {
-            ans <- Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation))
-            _ <- cacheConnector.set(pptId, ans)
-          } yield
-            Ok(view(preparedForm, mode, taxReturnObligation, isFirst))
-        case None =>
-          logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap {
+          case Some((taxReturnObligation, isFirst)) =>
+            for {
+              ans <- Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation))
+              _ <- cacheConnector.set(pptId, ans)
+            } yield
+              Ok(view(preparedForm, mode, taxReturnObligation, isFirst))
+          case None =>
+            logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+            Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        }
       }
   }
 
