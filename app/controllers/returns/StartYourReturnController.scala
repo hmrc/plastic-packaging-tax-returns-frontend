@@ -24,6 +24,7 @@ import forms.returns.StartYourReturnFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.returns.StartYourReturnPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,7 +43,7 @@ class StartYourReturnController @Inject()(
                                            val controllerComponents: MessagesControllerComponents,
                                            view: StartYourReturnView,
                                            taxReturnHelper: TaxReturnHelper
-                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
 
@@ -56,14 +57,16 @@ class StartYourReturnController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      taxReturnHelper.nextOpenObligationAndIfFirst(pptId) flatMap { case (taxReturnObligation, isFirst) =>
-
-        Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation)).map {
-          ans => cacheConnector.set(pptId, ans)
-        }
-
-        Future.successful(Ok(view(preparedForm, mode, taxReturnObligation, isFirst)))
-
+      taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap{
+        case Some((taxReturnObligation, isFirst)) =>
+          for {
+            ans <- Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation))
+            _ <- cacheConnector.set(pptId, ans)
+          } yield
+            Ok(view(preparedForm, mode, taxReturnObligation, isFirst))
+        case None =>
+          logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
   }
 
@@ -74,8 +77,12 @@ class StartYourReturnController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          taxReturnHelper.nextOpenObligationAndIfFirst(pptId) map { case (taxReturnObligation, isFirst) =>
-            BadRequest(view(formWithErrors, mode, taxReturnObligation, isFirst))
+          taxReturnHelper.nextOpenObligationAndIfFirst(pptId).map {
+            case Some((taxReturnObligation, isFirst)) =>
+              BadRequest(view(formWithErrors, mode, taxReturnObligation, isFirst))
+            case None =>
+              logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+              Redirect(controllers.routes.IndexController.onPageLoad)
           },
         value =>
           for {
