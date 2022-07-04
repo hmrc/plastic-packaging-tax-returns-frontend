@@ -36,7 +36,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
   private val mockConnector = mock[TaxReturnsConnector]
 
   val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-  val submittedReturn = ReturnDisplayApi("", IdDetails("", ""), Some(charge), returnDisplayDetails)
+  val submittedReturn = ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
 
   "onPageLoad" - {
     "must return OK and the correct view" in {

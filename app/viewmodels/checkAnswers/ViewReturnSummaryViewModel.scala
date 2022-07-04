@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import viewmodels.govuk.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.PrintBigDecimal
+import viewmodels.{PrintBigDecimal, PrintDate}
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
@@ -59,7 +59,7 @@ object ViewReturnSummaryViewModel {
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
         "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
-        "processed" -> submittedReturn.processingDate,
+        "processed" -> submittedReturn.processingDate.asDate,
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(

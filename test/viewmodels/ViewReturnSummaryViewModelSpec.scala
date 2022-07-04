@@ -59,7 +59,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the processed field" in {
-      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "2019-08-28T09:30:47Z") // TODO parse and welsh-ify
+      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "28 August 2019")
     }
 
     "have the reference field" in {
