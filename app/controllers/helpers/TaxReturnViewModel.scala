@@ -34,7 +34,8 @@ case class RowInfo(key: String, value: String)
 //todo move this to viewmodels
 case class TaxReturnViewModel (
   request: DataRequest[_],
-  obligation: TaxReturnObligation
+  obligation: TaxReturnObligation,
+  calculations: Calculations
 ) (implicit messages: Messages) {
 
   private def userAnswers: UserAnswers = request.userAnswers
@@ -73,21 +74,12 @@ case class TaxReturnViewModel (
     createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
-  private def packagingTotalNumeric: Long = {
-    (getMustHave(ManufacturedPlasticPackagingWeightPage) 
-      + getMustHave(ImportedPlasticPackagingWeightPage))
-  }
-
   // Show or hide edit links
   def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
-  def canEditExported: Boolean    = (packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal) || exportedTotal > 0
-  def canEditNonExported: Boolean = packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal
+
+  def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+  def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
   // End
-
-  def packagingTotal: String = {
-    packagingTotalNumeric.asKg
-  }
-
 
   def exportedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(DirectlyExportedComponentsPage, messageKey)
@@ -113,35 +105,42 @@ case class TaxReturnViewModel (
     createKgsRow(NonExportedRecycledPlasticPackagingWeightPage, messageKey)
   }
 
-  private def deductionsTotalNumeric: Long = {
-    (getMustHave(ExportedPlasticPackagingWeightPage)
-     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
-     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
+  // Calcs here
+  // TODO - move to a calculations object in the back end
+
+  def packagingTotal: String = {
+    calculations.packagingTotal.asKg
   }
+
+//  private def packagingTotalNumeric: Long = {
+//    (getMustHave(ManufacturedPlasticPackagingWeightPage)
+//      + getMustHave(ImportedPlasticPackagingWeightPage))
+//  }
+
+//  private def deductionsTotalNumeric: Long = {
+//    (getMustHave(ExportedPlasticPackagingWeightPage)
+//     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
+//     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
+//  }
 
   def deductionsTotal: String = {
-    deductionsTotalNumeric.asKg
+    calculations.deductionsTotal.asKg
   }
 
 
-  private def chargeableTotalNumeric = {
-    // TODO if totalDeductions > totalPackaging is this the correct behaviour?!
-    scala.math.max(0, (packagingTotalNumeric - deductionsTotalNumeric))
-  }
+//  private def chargeableTotalNumeric = {
+//    scala.math.max(0, (packagingTotalNumeric - deductionsTotalNumeric))
+//  }
 
   def chargeableTotal: String = {
-    chargeableTotalNumeric.asKg
+    calculations.chargeableTotal.asKg
   }
-
-
-  // TODO robbed from TaxLiabilityFactory - should be in app-config?
-  private val taxValueInPencePerKg = BigDecimal("0.20")
 
   def taxDue: String = {
-    val taxDue = taxValueInPencePerKg * BigDecimal(chargeableTotalNumeric).setScale(2, RoundingMode.HALF_EVEN)
-    taxDue.asPounds
+    calculations.taxDue.asPounds
   }
 
+  // End calc
   
   def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
@@ -155,5 +154,11 @@ case class TaxReturnViewModel (
     ViewUtils.displayLocalDate(obligation.toDate)
   }
 
-  def isSubmittable: Boolean = packagingTotalNumeric >= deductionsTotalNumeric
+  def isSubmittable: Boolean = calculations.isSubmittable //calculations.packagingTotal >= calculations.deductionsTotal
 }
+
+case class Calculations(taxDue: BigDecimal,
+                        chargeableTotal: BigDecimal,
+                        deductionsTotal: BigDecimal,
+                        packagingTotal: BigDecimal,
+                        isSubmittable: Boolean)
