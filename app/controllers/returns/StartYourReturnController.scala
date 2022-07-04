@@ -21,7 +21,7 @@ import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.returns.StartYourReturnPage
 import play.api.Logging

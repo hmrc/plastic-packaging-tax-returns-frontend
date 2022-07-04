@@ -15,8 +15,6 @@
  */
 
 import java.text.DecimalFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 package object viewmodels {
 
@@ -34,12 +32,5 @@ package object viewmodels {
 
     def asKg: String = kgsFormat.format(amount)
     def asKgs: String = asKg
-  }
-
-  implicit class PrintDate(val date: String) {
-    val datetime = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-      .format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) //TODO: Translate month to Welsh
-
-    def asDate: String = datetime
   }
 }

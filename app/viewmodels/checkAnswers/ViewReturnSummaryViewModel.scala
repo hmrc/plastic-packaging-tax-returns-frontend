@@ -19,9 +19,13 @@ package viewmodels.checkAnswers
 import models.returns.ReturnDisplayApi
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
-import viewmodels.govuk.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.{PrintBigDecimal, PrintDate}
+import viewmodels.PrintBigDecimal
+import viewmodels.govuk.summarylist._
+import views.ViewUtils
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
@@ -55,11 +59,13 @@ final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSec
 
 object ViewReturnSummaryViewModel {
 
-  def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
+  private def toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+
+  def apply(submittedReturn: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
         "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
-        "processed" -> submittedReturn.processingDate.asDate,
+        "processed" -> ViewUtils.displayLocalDate(toLocalDate(submittedReturn.processingDate)),
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(

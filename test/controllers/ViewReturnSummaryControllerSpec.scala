@@ -20,9 +20,11 @@ import base.{MockObligationsConnector, SpecBase}
 import connectors.{CacheConnector, ObligationsConnector, TaxReturnsConnector}
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.i18n.Messages
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,6 +34,9 @@ import views.html.amends.ViewReturnSummaryView
 import scala.concurrent.Future
 
 class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
+
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("August")
 
   private val mockConnector = mock[TaxReturnsConnector]
 
@@ -58,7 +63,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
 
       running(application) {
 
-        val viewModel = ViewReturnSummaryViewModel(submittedReturn)
+        val viewModel = ViewReturnSummaryViewModel(submittedReturn)(mockMessages)
 
         val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("00XX"))
 
