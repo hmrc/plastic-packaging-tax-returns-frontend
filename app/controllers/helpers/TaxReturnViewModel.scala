@@ -18,7 +18,7 @@ package controllers.helpers
 
 import controllers.returns.routes
 import models.requests.DataRequest
-import models.returns.TaxReturnObligation
+import models.returns.{Calculations, TaxReturnObligation}
 import models.{CheckMode, UserAnswers}
 import pages.QuestionPage
 import pages.returns._
@@ -105,32 +105,13 @@ case class TaxReturnViewModel (
     createKgsRow(NonExportedRecycledPlasticPackagingWeightPage, messageKey)
   }
 
-  // Calcs here
-  // TODO - move to a calculations object in the back end
-
   def packagingTotal: String = {
     calculations.packagingTotal.asKg
   }
 
-//  private def packagingTotalNumeric: Long = {
-//    (getMustHave(ManufacturedPlasticPackagingWeightPage)
-//      + getMustHave(ImportedPlasticPackagingWeightPage))
-//  }
-
-//  private def deductionsTotalNumeric: Long = {
-//    (getMustHave(ExportedPlasticPackagingWeightPage)
-//     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
-//     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
-//  }
-
   def deductionsTotal: String = {
     calculations.deductionsTotal.asKg
   }
-
-
-//  private def chargeableTotalNumeric = {
-//    scala.math.max(0, (packagingTotalNumeric - deductionsTotalNumeric))
-//  }
 
   def chargeableTotal: String = {
     calculations.chargeableTotal.asKg
@@ -139,8 +120,6 @@ case class TaxReturnViewModel (
   def taxDue: String = {
     calculations.taxDue.asPounds
   }
-
-  // End calc
   
   def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
@@ -154,11 +133,5 @@ case class TaxReturnViewModel (
     ViewUtils.displayLocalDate(obligation.toDate)
   }
 
-  def isSubmittable: Boolean = calculations.isSubmittable //calculations.packagingTotal >= calculations.deductionsTotal
+  def isSubmittable: Boolean = calculations.isSubmittable
 }
-
-case class Calculations(taxDue: BigDecimal,
-                        chargeableTotal: BigDecimal,
-                        deductionsTotal: BigDecimal,
-                        packagingTotal: BigDecimal,
-                        isSubmittable: Boolean)
