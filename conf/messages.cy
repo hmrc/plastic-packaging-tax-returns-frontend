@@ -350,7 +350,11 @@ account.homePage.card.deregister.link = Datgofrestru rhag y Dreth Deunydd Pacio 
 account.homePage.card.deregister.body = Canslo’ch cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 
 submittedReturns.title = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
+submittedReturns.viewamendtitle = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 submittedReturns.heading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
+submittedReturns.viewamendheading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
+submittedReturns.viewreturn = Bwrw golwg dros y Ffurflen Dreth
+submittedReturns.vieworamendreturn = Bwrw golwg dros y Ffurflen Dreth
 submittedReturns.nothingsubmitted = Nid ydych wedi cyflwyno unrhyw Ffurflenni Treth hyd yn hyn.
 submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
 

@@ -30,7 +30,35 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
 
   "SubmittedReturns Controller" - {
 
-    "must return OK and the correct view for a GET with no obligations" in {
+    "must return OK and the correct view for a GET with no obligations when amend feature is disabled" in {
+
+      val ob: Seq[TaxReturnObligation] =
+        Seq.empty
+
+      mockGetFulfilledObligations(ob)
+
+      val application = applicationBuilder(userAnswers = None).overrides(
+        bind[ObligationsConnector].toInstance(mockObligationsConnector)
+      ).configure("features.amendsEnabled" -> false).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SubmittedReturnsView]
+
+        val ob: Seq[TaxReturnObligation] = {
+          Seq.empty
+        }
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(ob, amendFeatureEnabled = false)(request, messages(application)).toString
+
+      }
+    }
+
+    "must return OK and the correct view for a GET with no obligations when amend feature is enabled" in {
 
       val ob: Seq[TaxReturnObligation] =
         Seq.empty
@@ -53,7 +81,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
         }
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(ob)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(ob, amendFeatureEnabled = true)(request, messages(application)).toString
 
       }
     }
@@ -90,7 +118,7 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
         val view = application.injector.instanceOf[SubmittedReturnsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(ob)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(ob, amendFeatureEnabled = true)(request, messages(application)).toString
 
       }
     }

@@ -28,25 +28,46 @@
 )
 
 
-@(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
+@(obligations: Seq[TaxReturnObligation], amendFeatureEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 
 @*TODO: order the Seq by obligation dates before operating on*@
+
+@linkText = @{
+    if(amendFeatureEnabled){
+        messages("submittedReturns.vieworamendreturn")
+    } else {
+        messages("submittedReturns.viewreturn")
+    }
+}
 
 @returnsLine = @{
     if(obligations.isEmpty) {
         messages("submittedReturns.nothingsubmitted")
     } else {
         obligations.zipWithIndex.map {
-            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i)
+            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, linkText)
         }
     }
 }
 
+@pageTitle = @{
+    if(amendFeatureEnabled){
+        messages("submittedReturns.viewamendtitle")
+    } else {
+        messages("submittedReturns.title")
+    }
+}
 
-@layout(pageTitle = titleNoForm(messages("submittedReturns.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(pageTitle, Some(messages("return.title.tail"))), showBackLink = false) {
 
-    <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
+    <h1 class="govuk-heading-xl">
+        @if(amendFeatureEnabled){
+            @messages("submittedReturns.viewamendheading")
+        } else {
+            @messages("submittedReturns.heading")
+        }
+    </h1>
 
     <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
 
