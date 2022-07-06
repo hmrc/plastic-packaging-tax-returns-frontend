@@ -344,7 +344,11 @@ account.homePage.card.deregister.link = Deregister from Plastic Packaging Tax
 account.homePage.card.deregister.body = Cancel your Plastic Packaging Tax registration.
 
 submittedReturns.title = View submitted returns
+submittedReturns.viewamendtitle = View or amend submitted returns
 submittedReturns.heading = View submitted returns
+submittedReturns.viewamendheading = View or amend submitted returns
+submittedReturns.viewreturn = View return
+submittedReturns.vieworamendreturn = View or amend return
 submittedReturns.nothingsubmitted = You have not submitted any returns yet.
 submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
 
