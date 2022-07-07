@@ -16,16 +16,13 @@
 
 package viewmodels.checkAnswers.amends
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.amends.AmendManufacturedPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.all.FluentActionItem
-import viewmodels.govuk.summarylist.SummaryListRowViewModel
-import viewmodels.govuk.summarylist.ActionItemViewModel
-import viewmodels.govuk.summarylist.ValueViewModel
+import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
 object AmendManufacturedPlasticPackagingSummary extends SummaryViewModel {

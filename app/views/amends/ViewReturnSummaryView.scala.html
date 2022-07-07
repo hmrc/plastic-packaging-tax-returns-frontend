@@ -32,7 +32,7 @@
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
-@guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
+@guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
 @paragraphContent ={
     @paragraphBody(messages("viewReturnSummary.amend.inset.text", guidanceLink))
@@ -43,6 +43,8 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
+    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
+
     @if(appConfig.isAmendsFeatureEnabled){
         <p>@link("amend-return",
                 messages("viewReturnSummary.amendLink"),
@@ -50,10 +52,11 @@
             )
         </p>
     } else {
-        <p>@paragraphContent</p>
+        <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>
+        <div class="govuk-inset-text">
+            @paragraphContent
+        </div>
     }
-
-    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
 
     <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>
     @govukSummaryList(vm.summarySection.summaryList)

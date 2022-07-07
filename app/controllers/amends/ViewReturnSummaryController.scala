@@ -20,7 +20,6 @@ import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApi
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
-import models.UserAnswers
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

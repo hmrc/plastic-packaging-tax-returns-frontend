@@ -25,7 +25,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.FluentInput
 
 import java.time.LocalDate
-import scala.math.BigDecimal.RoundingMode
 
 object ViewUtils {
 

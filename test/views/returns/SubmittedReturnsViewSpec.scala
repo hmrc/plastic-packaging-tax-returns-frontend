@@ -44,11 +44,12 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
 
   "Submitted returns page" should {
 
-    "has a title" in {
+    "have a title" in {
       val view = createView(aSequenceOfObligations)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.select("title").text() mustBe "View submitted returns - Plastic Packaging Tax - GOV.UK"
+      doc.select("title")
+        .text() mustBe "View or amend submitted returns - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "tell you when you have no previous tax returns" in {
