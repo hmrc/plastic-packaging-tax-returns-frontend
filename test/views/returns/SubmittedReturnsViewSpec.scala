@@ -39,21 +39,13 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
     LocalDate.now().plusWeeks(8),
     "PK2"))
 
-  private def createView(previousReturn: Seq[TaxReturnObligation], amendFeatureEnabled: Boolean): Html =
-    page(previousReturn, amendFeatureEnabled)(request, messages)
+  private def createView(previousReturn: Seq[TaxReturnObligation]): Html =
+    page(previousReturn)(request, messages)
 
   "Submitted returns page" should {
 
-    "have a title without amend returns if feature is not enabled" in {
-      val view = createView(aSequenceOfObligations, amendFeatureEnabled = false)
-      val doc: Document = Jsoup.parse(view.toString())
-
-      doc.select("title")
-        .text() mustBe "View submitted returns - Submit return - Plastic Packaging Tax - GOV.UK"
-    }
-
-    "have a title with amend returns if feature is enabled" in {
-      val view = createView(aSequenceOfObligations, amendFeatureEnabled = true)
+    "have a title" in {
+      val view = createView(aSequenceOfObligations)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.select("title")
@@ -62,7 +54,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
 
     "tell you when you have no previous tax returns" in {
       val notSubmittedReturns = Seq.empty
-      val view = createView(notSubmittedReturns, amendFeatureEnabled = false)
+      val view = createView(notSubmittedReturns)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("previous-returns-list").text() mustBe "You have not submitted any returns yet."
@@ -70,7 +62,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
     }
     "have a previous return" in {
       val previousReturn = Seq(aSequenceOfObligations(0))
-      val view = createView(previousReturn, amendFeatureEnabled = false)
+      val view = createView(previousReturn)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementsByAttributeValue("id","return-item-1").size() mustBe 1
@@ -78,7 +70,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
 
     "have multiple returns in list" in {
       val twoSubmittedReturns = aSequenceOfObligations
-      val view = createView(twoSubmittedReturns, amendFeatureEnabled = false)
+      val view = createView(twoSubmittedReturns)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementsByAttributeValueStarting("id","return-item-").size() mustBe 2
@@ -87,7 +79,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
 
     "have return link" in {
 
-      val view = createView(aSequenceOfObligations, amendFeatureEnabled = false)
+      val view = createView(aSequenceOfObligations)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("account-homepage").text must include (
@@ -98,7 +90,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
 
     "have technical issue link" in {
 
-      val view = createView(aSequenceOfObligations, amendFeatureEnabled = false)
+      val view = createView(aSequenceOfObligations)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include ("Is this page not working properly?")

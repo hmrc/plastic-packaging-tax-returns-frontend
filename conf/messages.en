@@ -327,8 +327,7 @@ account.homePage.card.payments.payment.link = Make a PPT payment
 account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
 
 account.homePage.card.history.header = History
-account.homePage.card.history.viewAmendsReturnsLink = View or amend submitted returns
-account.homePage.card.history.viewReturnsLink = View submitted returns
+account.homePage.card.history.viewamendreturnslink = View or amend submitted returns
 
 account.homePage.manage.ppt.account.header = Manage your account
 account.homePage.card.registration.details.1.link.single = Your registration details
@@ -343,11 +342,8 @@ account.homePage.card.registration.details.2.body.partnership = View and change 
 account.homePage.card.deregister.link = Deregister from Plastic Packaging Tax
 account.homePage.card.deregister.body = Cancel your Plastic Packaging Tax registration.
 
-submittedReturns.title = View submitted returns
-submittedReturns.viewamendtitle = View or amend submitted returns
-submittedReturns.heading = View submitted returns
-submittedReturns.viewamendheading = View or amend submitted returns
-submittedReturns.viewreturn = View return
+submittedReturns.title = View or amend submitted returns
+submittedReturns.heading = View or amend submitted returns
 submittedReturns.vieworamendreturn = View or amend return
 submittedReturns.nothingsubmitted = You have not submitted any returns yet.
 submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
