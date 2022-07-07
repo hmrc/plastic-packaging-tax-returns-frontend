@@ -79,7 +79,6 @@ case class TaxReturnViewModel (
 
   def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
-  // End
 
   def exportedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(DirectlyExportedComponentsPage, messageKey)
