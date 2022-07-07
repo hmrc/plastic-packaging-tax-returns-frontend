@@ -333,8 +333,7 @@ account.homePage.card.payments.payment.link = Gwneud taliad Treth Deunydd Pacio 
 account.homePage.card.payments.direct.debit.link = Sefydlu neu reoli Debyd Uniongyrchol
 
 account.homePage.card.history.header = Hanes
-account.homePage.card.history.viewAmendsReturnsLink = Bwrw golwg dros neu ddiwygio Ffurflenni Treth a gyflwynwyd
-account.homePage.card.history.viewReturnsLink = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
+account.homePage.card.history.viewamendreturnslink = Bwrw golwg dros neu ddiwygio Ffurflenni Treth a gyflwynwyd
 
 account.homePage.manage.ppt.account.header = Rheoli’ch cyfrif
 account.homePage.card.registration.details.1.link.single = Eich manylion cofrestru
@@ -350,10 +349,7 @@ account.homePage.card.deregister.link = Datgofrestru rhag y Dreth Deunydd Pacio 
 account.homePage.card.deregister.body = Canslo’ch cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 
 submittedReturns.title = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
-submittedReturns.viewamendtitle = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 submittedReturns.heading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
-submittedReturns.viewamendheading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
-submittedReturns.viewreturn = Bwrw golwg dros y Ffurflen Dreth
 submittedReturns.vieworamendreturn = Bwrw golwg dros y Ffurflen Dreth
 submittedReturns.nothingsubmitted = Nid ydych wedi cyflwyno unrhyw Ffurflenni Treth hyd yn hyn.
 submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig

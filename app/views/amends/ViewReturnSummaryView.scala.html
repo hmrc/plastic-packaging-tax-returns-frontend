@@ -32,7 +32,7 @@
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
-@guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
+@guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
 @paragraphContent ={
     @paragraphBody(messages("viewReturnSummary.amend.inset.text", guidanceLink))

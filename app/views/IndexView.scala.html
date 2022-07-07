@@ -177,7 +177,7 @@
 @viewOrAmendReturnsLink = @{
     link(
         id = "view-submitted-returns-link",
-        text = if(appConfig.isAmendsFeatureEnabled) messages("account.homePage.card.history.viewAmendsReturnsLink") else messages("account.homePage.card.history.viewReturnsLink") ,
+        text = messages("account.homePage.card.history.viewamendreturnslink"),
         call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)
 }
 

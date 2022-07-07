@@ -22,7 +22,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.SubmittedReturnsView
-import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,8 +31,7 @@ class SubmittedReturnsController @Inject()(
                                             identify: IdentifierAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: SubmittedReturnsView,
-                                            obligationsConnector: ObligationsConnector,
-                                            appConfig: FrontendAppConfig
+                                            obligationsConnector: ObligationsConnector
                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
@@ -43,7 +41,7 @@ class SubmittedReturnsController @Inject()(
         val pptReference = request.pptReference
 
         obligationsConnector.getFulfilled(pptReference).map { taxReturnObligations =>
-          Ok(view(taxReturnObligations, appConfig.isAmendsFeatureEnabled))
+          Ok(view(taxReturnObligations))
         }
     }
 }
