@@ -27,7 +27,7 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
     request: IdentifiedRequest[A]
   ): Future[OptionalDataRequest[A]] =
     Future.successful(
-      OptionalDataRequest(request, request.user.identityData.internalId, dataToReturn)
+      OptionalDataRequest(request, dataToReturn)
     )
 
   override protected implicit val executionContext: ExecutionContext =

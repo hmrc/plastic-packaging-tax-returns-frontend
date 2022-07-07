@@ -19,13 +19,17 @@ package viewmodels.checkAnswers
 import models.returns.ReturnDisplayApi
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
-import viewmodels.govuk.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.PrintBigDecimal
+import viewmodels.govuk.summarylist._
+import views.ViewUtils
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
-    Seq(
+    Seq("govuk-!-width-three-quarters",
       if (big) "govuk-body-l" else "govuk-body-m",
       if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular",
     ).mkString(" ")
@@ -49,17 +53,19 @@ object Section {
     )
 }
 
-final case class DetailsSection(liable: Section, exempt: Section, calculation: Section, taxCredit: Section)
+final case class DetailsSection(liable: Section, exempt: Section, calculation: Section)
 
 final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
 
 object ViewReturnSummaryViewModel {
 
-  def apply(submittedReturn: ReturnDisplayApi): ViewReturnSummaryViewModel =
+  private def toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+
+  def apply(submittedReturn: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
         "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
-        "processed" -> submittedReturn.processingDate,
+        "processed" -> ViewUtils.displayLocalDate(toLocalDate(submittedReturn.processingDate)),
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(
@@ -74,17 +80,12 @@ object ViewReturnSummaryViewModel {
           "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKg,
           "total" -> submittedReturn.returnDetails.totalNotLiable.asKg,
         ),
-        Section("calculation", lastBig = true)(
+        Section("calculation", lastBig = false)(
           "liable" -> submittedReturn.returnDetails.liableWeight.asKg,
           "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKg,
           "total" -> submittedReturn.returnDetails.totalWeight.asKg,
           "tax" -> submittedReturn.returnDetails.taxDue.asPounds,
-        ),
-        Section("credits", lastBold = false)(
-          "credit" -> submittedReturn.returnDetails.creditForPeriod.asPounds,
-//          "debit" -> submittedReturn.returnDetails.debitForPeriod.asPounds,
         )
       )
     )
-
 }

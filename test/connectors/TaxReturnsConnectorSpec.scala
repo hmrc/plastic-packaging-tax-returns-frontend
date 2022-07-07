@@ -20,7 +20,7 @@ import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import controllers.helpers.TaxReturnBuilder
+import controllers.TaxReturnBuilder
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, EitherValues}

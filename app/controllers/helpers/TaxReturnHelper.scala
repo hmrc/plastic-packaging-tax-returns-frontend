@@ -32,20 +32,22 @@ class TaxReturnHelper @Inject()(
                                  obligationsConnector: ObligationsConnector
                                )(implicit ec: ExecutionContext){
 
-  def nextOpenObligationAndIfFirst(pptId: String)(implicit hc: HeaderCarrier): Future[(TaxReturnObligation, Boolean)] = {
+  def nextOpenObligationAndIfFirst(pptId: String)(implicit hc: HeaderCarrier): Future[Option[(TaxReturnObligation, Boolean)]] = {
     obligationsConnector.getOpen(pptId) flatMap  { obligations =>
-      val nextObligation: TaxReturnObligation = obligations.nextObligationToReturn.getOrElse(
-        throw new IllegalStateException("Next open obligation can't be found")
+
+      obligations.nextObligationToReturn.fold[Future[Option[(TaxReturnObligation, Boolean)]]](
+        Future.successful(None)
+      )( nextObligation =>
+        obligationsConnector.getFulfilled(pptId).map{
+          fulfilledObs =>
+            Some((nextObligation, fulfilledObs.isEmpty))
+        }
       )
-      obligationsConnector.getFulfilled(pptId).map{
-        fulfilledObs =>
-          (nextObligation, fulfilledObs.isEmpty)
-      }
     }
   }
 
   def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
-    obligationsConnector.getFulfilled(pptId) map {obligations =>
+    obligationsConnector.getFulfilled(pptId) map { obligations =>
       obligations.filter(o => o.periodKey == periodKey)
     }
   }
@@ -58,34 +60,42 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-   def getTaxReturn(pptReference: String, userAnswers: UserAnswers, periodKey: String, returnType: ReturnType): TaxReturn = {
+  def getTaxReturn(pptReference: String, userAnswers: UserAnswers, periodKey: String, returnType: ReturnType): TaxReturn = {
     returnType match {
       case NEW =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
           periodKey = periodKey,
-                    manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
+          manufacturedPlastic = userAnswers.get(ManufacturedPlasticPackagingPage),
           manufacturedPlasticWeight =
             userAnswers.get(ManufacturedPlasticPackagingWeightPage).map(
               value => ManufacturedPlasticWeight(value)
             ),
-              importedPlastic = userAnswers.get (ImportedPlasticPackagingPage),
+          importedPlastic = userAnswers.get(ImportedPlasticPackagingPage),
           importedPlasticWeight =
             userAnswers.get(ImportedPlasticPackagingWeightPage).map(
               value => ImportedPlasticWeight(value)
             ),
+          exportedPlastic = userAnswers.get(DirectlyExportedComponentsPage),
           exportedPlasticWeight =
             userAnswers.get(ExportedPlasticPackagingWeightPage).map(
               value => ExportedPlasticWeight(value)
             ),
+          humanMedicinesPlastic = userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage),
+          humanMedicinesPlasticWeight =
+            userAnswers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage).map(
+              value => HumanMedicinesPlasticWeight(value)
+            ),
+          recycledPlastic = userAnswers.get(NonExportedRecycledPlasticPackagingPage),
+          recycledPlasticWeight = userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage).map(
+            value => RecycledPlasticWeight(value)),
           convertedPackagingCredit =
             userAnswers.get(ConvertedPackagingCreditPage).map(
               value => ConvertedPackagingCredit(value)
-            ),
-          recycledPlasticWeight = userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage).map(
-            value => RecycledPlasticWeight(value)
-          )
+            ).orElse(Some(ConvertedPackagingCredit(0))) //todo only for before credit is used, revisit
+
         )
+      //todo: credits in amends
       case AMEND =>
         TaxReturn(id = pptReference,
           returnType = Some(returnType),
@@ -108,7 +118,9 @@ class TaxReturnHelper @Inject()(
             ),
           recycledPlasticWeight = userAnswers.get(AmendRecycledPlasticPackagingPage).map(
             value => RecycledPlasticWeight(value)
-          )
+          ),
+          convertedPackagingCredit = Some(ConvertedPackagingCredit(0))
+          //TODO: Amends journey is missing credits
         )
     }
   }

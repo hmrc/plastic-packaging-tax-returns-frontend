@@ -33,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.returns.StartYourReturnView
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -62,7 +63,8 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation,isFirst))))
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
 
       val pptId = "123"
       val userAnswers = UserAnswers(pptId).set(ObligationCacheable, obligation).get
@@ -88,12 +90,14 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation,isFirst))))
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
 
       val userAnswers = UserAnswers(userAnswersId).set(StartYourReturnPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
+        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+        bind[CacheConnector].toInstance(mockCacheConnector)
       ).build()
 
       running(application) {
@@ -137,7 +141,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful((obligation,isFirst)))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation,isFirst))))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
@@ -157,6 +161,26 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, obligation, isFirst)(request, messages(application)).toString
 
+      }
+    }
+
+    "redirect to account home when no obligation to start a return" in {
+
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(None))
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
+      ).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, startYourReturnRoute)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
       }
     }
   }

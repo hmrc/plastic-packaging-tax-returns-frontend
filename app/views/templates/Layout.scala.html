@@ -86,13 +86,23 @@
   @if(large) { "govuk-main-wrapper govuk-main-wrapper--auto-spacing" } else { "govuk-grid-column-two-thirds" }
 }
 
+@lang = @{
+    utils.getCurrentLang(request).code.take(2) match {
+        case "cy" => Cy
+        case "en" => En
+        case _ => En
+    }
+}
+
 @fullSizeContent(contentBlock: Html) = {
     <div class="govuk-grid-row">
         <div class=@mainTemplateCass>
             @contentBlock
 
             @hmrcReportTechnicalIssue(
+
                 ReportTechnicalIssue(
+                    language = lang,
                     serviceCode = "plastic-packaging-tax",
                     baseUrl = Some(appConfig.contactFrontEnd),
                     referrerUrl = Some(s"${request.uri}")
@@ -110,11 +120,8 @@
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(stdBanner(appConfig.feedbackUrl)),
         userResearchBanner = Some(UserResearchBanner(
-            utils.getCurrentLang(request).code.take(2) match {
-                case "cy" => Cy
-                case "en" => En
-                case _ => En
-            }, appConfig.userResearchUrl)
+            language = lang,
+            appConfig.userResearchUrl)
         )
     )),
     beforeContentBlock = Some(beforeContent),

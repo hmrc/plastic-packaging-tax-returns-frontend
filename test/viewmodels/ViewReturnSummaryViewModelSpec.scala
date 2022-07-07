@@ -16,16 +16,18 @@
 
 package viewmodels
 
-import models.returns.{
-  IdDetails,
-  ReturnDisplayApi,
-  ReturnDisplayChargeDetails,
-  ReturnDisplayDetails
-}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
+import play.api.i18n.Messages
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
+
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("August")
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
     "21C2", Some("charge-ref-no"), "2022-04-01", "2022-06-30", "2022-07-03", "New"
@@ -45,7 +47,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
 
   "The Summary section" must {
-    val summarySection = ViewReturnSummaryViewModel(submittedReturn).summarySection
+    val summarySection = ViewReturnSummaryViewModel(submittedReturn)(mockMessages).summarySection
     "have the title Key" in {
       summarySection.titleKey mustBe "viewReturnSummary.summary.heading"
     }
@@ -59,7 +61,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the processed field" in {
-      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "2019-08-28T09:30:47Z") // TODO parse and welsh-ify
+      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "28 August 2019")
     }
 
     "have the reference field" in {
@@ -68,14 +70,14 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
     "say 'n/a' when the charge reference number is not available" in {
       val anotherReturn = submittedReturn.copy(chargeDetails = Some(returnDisplayChargeDetails.copy(chargeReference = None)))
-      val section = ViewReturnSummaryViewModel(anotherReturn).summarySection
+      val section = ViewReturnSummaryViewModel(anotherReturn)(mockMessages).summarySection
       section.fields(2) mustBe Field("viewReturnSummary.summary.field.reference", "n/a")
     }
 
   }
 
   "The Liable plastic packaging section" must {
-    val liableSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.liable
+    val liableSection = ViewReturnSummaryViewModel(submittedReturn)(mockMessages).detailsSection.liable
 
     "have the title Key" in {
       liableSection.titleKey mustBe "viewReturnSummary.liable.heading"
@@ -99,7 +101,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
   }
 
   "Exempt section" must {
-    val exemptSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.exempt
+    val exemptSection = ViewReturnSummaryViewModel(submittedReturn)(mockMessages).detailsSection.exempt
 
     "have the title Key" in {
       exemptSection.titleKey mustBe "viewReturnSummary.exempt.heading"
@@ -127,7 +129,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
   }
 
   "Calculation section" must {
-    val calculationSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.calculation
+    val calculationSection = ViewReturnSummaryViewModel(submittedReturn)(mockMessages).detailsSection.calculation
 
     "have the title Key" in {
       calculationSection.titleKey mustBe "viewReturnSummary.calculation.heading"
@@ -151,23 +153,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
     "have the tax total" in {
       calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "£10.00",
-        bold = true, big = true)
-    }
-  }
-
-  "Tax Credit section" must {
-    val taxCreditSection = ViewReturnSummaryViewModel(submittedReturn).detailsSection.taxCredit
-
-    "have the right number of entries" in {
-      taxCreditSection.fields must have(size(1))
-    }
-
-    "have the credit total" in  {
-      taxCreditSection.fields(0) mustBe Field("viewReturnSummary.credits.field.credit", "£7.00")
-    }
-
-    "have the debit total" ignore {
-      taxCreditSection.fields(1) mustBe Field("viewReturnSummary.credits.field.debit", "£8.00")
+        bold = true, big = false)
     }
   }
 }
