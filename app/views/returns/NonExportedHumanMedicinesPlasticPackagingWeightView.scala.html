@@ -25,7 +25,8 @@
     govukInput: GovukInput,
     govukButton: GovukButton,
     sectionHeader: SectionHeader, 
-    paragraphBody: paragraphBody 
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -41,19 +42,16 @@
 
         @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption"))
 
-        <h1 class="govuk-heading-l">@messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKg)</h1>
+        @headingLabel(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", amount.asKg), "header-value")
         
         @paragraphBody(messages("nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1"))
 
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = Label()
-            )
+            InputViewModel(field = form("value"))
             .asKg()
             .withWidth(Fixed10)
             .withHint(Hint(content = Text(messages("nonExportedHumanMedicinesPlasticPackagingWeight.hint"))))
-            .withAttribute("aria-label" -> "human-medicine-input")
+            .withId("value")
         )
 
         @govukButton(
