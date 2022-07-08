@@ -38,7 +38,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new DirectlyExportedComponentsFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   val answersWithPreset: UserAnswers = emptyUserAnswers.set(ManufacturedPlasticPackagingWeightPage, 7L).get.set(ImportedPlasticPackagingWeightPage, 5L).get
 

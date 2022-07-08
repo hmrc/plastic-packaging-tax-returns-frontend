@@ -37,7 +37,7 @@ class AgentsController @Inject()(
                                         view: AgentsView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
 
-  val form = formProvider()
+  private def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify) {
     implicit request =>

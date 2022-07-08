@@ -45,7 +45,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new StartYourReturnFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 

@@ -40,7 +40,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new NonExportedHumanMedicinesPlasticPackagingFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   lazy val nonExportedHumanMedicinesPlasticPackagingRoute = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 

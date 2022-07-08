@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   def onwardRoute = Call("GET", "/foo")
 

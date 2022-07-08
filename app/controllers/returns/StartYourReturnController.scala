@@ -47,7 +47,7 @@ class StartYourReturnController @Inject()(
                                            taxReturnHelper: TaxReturnHelper
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  val form = formProvider()
+  private def form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>

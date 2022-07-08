@@ -39,7 +39,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new NonExportedRecycledPlasticPackagingFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   val validAnswer = 0L
 

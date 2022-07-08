@@ -38,7 +38,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ManufacturedPlasticPackagingFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   lazy val manufacturedPlasticPackagingRoute =
     controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url

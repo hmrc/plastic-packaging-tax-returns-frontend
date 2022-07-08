@@ -38,7 +38,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ImportedPlasticPackagingFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   lazy val importedPlasticPackagingRoute =
     controllers.returns.routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url

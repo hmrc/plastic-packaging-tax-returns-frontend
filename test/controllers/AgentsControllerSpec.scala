@@ -30,7 +30,7 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new AgentsFormProvider()
-  val form = formProvider()
+  private def form = formProvider()
 
   lazy val agentsRoute = routes.AgentsController.onPageLoad(NormalMode).url
 
