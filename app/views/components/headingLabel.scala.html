@@ -14,17 +14,10 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
-
 @this()
 
-@(message: String, taxReturn:TaxReturnObligation, index: Int, linkText: String)
+@(headingContent: String, forID: String = "value")
 
-@call = @{controllers.amends.routes.ViewReturnSummaryController.onPageLoad(taxReturn.periodKey)}
-
-@returnItem = @{"return-item-" + (index+1)}
-
-<li id=@returnItem class="govuk-list">
- <p class="govuk-heading-m">@message
- <br><a class="govuk-body" aria-label="@message" href="@call">@linkText</a></p>
-</li>
+<h1 class="govuk-label-wrapper">
+ <label class="govuk-label govuk-label--l" for="@forID">@headingContent</label>
+</h1>

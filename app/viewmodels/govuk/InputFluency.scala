@@ -29,7 +29,7 @@ trait InputFluency {
 
   object InputViewModel extends ErrorMessageAwareness {
 
-    def apply(field: Field, label: Label)(implicit messages: Messages): Input =
+    def apply(field: Field, label: Label = Label.defaultObject)(implicit messages: Messages): Input =
       Input(id = field.id,
             name = field.name,
             value = field.value,
