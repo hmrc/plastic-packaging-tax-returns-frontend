@@ -18,6 +18,7 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.TaxReturnsConnector
+import models.returns.Calculations
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
@@ -51,8 +52,13 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
     "return OK and the correct view for a GET" in {
 
+      when(mockTaxReturnConnector.getCalculation(any())(any())).thenReturn(Future.successful(
+        Right(Calculations(taxDue = 17, chargeableTotal = 85, deductionsTotal = 15, packagingTotal = 100, isSubmittable = true)))
+      )
+
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[ReturnsCheckYourAnswersView].toInstance(mockView))
+        .overrides(bind[ReturnsCheckYourAnswersView].toInstance(mockView),
+          bind[TaxReturnsConnector].toInstance(mockTaxReturnConnector))
         .build()
 
       running(application) {

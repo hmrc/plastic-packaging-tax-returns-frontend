@@ -127,7 +127,7 @@
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
-    @if(taxReturn.canEditExported || !taxReturn.isSubmittable) {
+    @if(taxReturn.canEditExported) {
         @changeLink("exported-packaging.change-link-text", taxReturn.exportedStartUrl)
     } else {
         <p>@messages("submit-return.check-your-answers.exported-packaging.no-change-reason")</p>
@@ -143,7 +143,7 @@
             summaryRowFromFunc("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
-    @if(taxReturn.canEditNonExported || !taxReturn.isSubmittable) {
+    @if(taxReturn.canEditNonExported) {
         @changeLink("nonexported-packaging.change-link-text", taxReturn.nonexportedStartUrl)
     } else {
         <p>@messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason")</p>

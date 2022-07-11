@@ -68,8 +68,9 @@ class FrontendAppConfig @Inject() (
 
   def returnUrl(relative: String) = s"$host$relative"
 
-  private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
-  private lazy val pptReturnsAmendUrl: String      = s"$pptServiceHost/returns-amend"
+  private lazy val pptReturnsSubmissionUrl: String   = s"$pptServiceHost/returns-submission"
+  private lazy val pptReturnsAmendUrl: String        = s"$pptServiceHost/returns-amend"
+  private lazy val pptReturnsCalculationUrl: String  = s"$pptServiceHost/returns-calculate"
 
   lazy val pptRegistrationFrontEnd =
     configuration.getOptional[String]("platform.frontend.host").getOrElse(
@@ -84,6 +85,9 @@ class FrontendAppConfig @Inject() (
 
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
+
+  def pptReturnCalculationUrl(pptReference: String): String =
+    s"$pptReturnsCalculationUrl/$pptReference"
 
   def pptReturnAmendUrl(pptReference: String, submissionId:String): String =
     s"$pptReturnsAmendUrl/$pptReference/$submissionId"
