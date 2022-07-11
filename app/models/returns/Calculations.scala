@@ -16,23 +16,14 @@
 
 package models.returns
 
-import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import views.ViewUtils
 
-import java.time.LocalDate
+case class Calculations(taxDue: BigDecimal,
+                        chargeableTotal: Long,
+                        deductionsTotal: Long,
+                        packagingTotal: Long,
+                        isSubmittable: Boolean)
 
-final case class TaxReturnObligation(
-  fromDate: LocalDate,
-  toDate: LocalDate,
-  dueDate: LocalDate,
-  periodKey: String
-) {
-  def toReturnQuarter(implicit messages: Messages): String = {
-    ViewUtils.displayReturnQuarter(fromDate, toDate)
-  }
-}
-
-object TaxReturnObligation {
-  implicit val format: OFormat[TaxReturnObligation] = Json.format[TaxReturnObligation]
+object Calculations {
+  implicit val format: OFormat[Calculations] = Json.format[Calculations]
 }

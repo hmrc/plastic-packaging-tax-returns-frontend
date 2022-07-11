@@ -74,22 +74,16 @@ class CheckYourAnswersController @Inject() (
 
         val pptId: String = request.request.pptReference
 
-        val obligation = request.userAnswers.get[String](AmendSelectedPeriodKey).getOrElse(
-          throw new IllegalStateException("Obligation not found!")
-        )
-
-        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation, ReturnType.AMEND)
         val submissionId: String = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable)
           .getOrElse(throw new IllegalStateException("must have a submission id to amend a return"))
           .idDetails
           .submissionId
 
-        returnsConnector.amend(taxReturn, submissionId).flatMap {
+        returnsConnector.amend(pptId, submissionId).flatMap {
           case Right(optChargeRef) =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
-
           case Left(error) =>
             throw error
         }
