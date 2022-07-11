@@ -101,21 +101,26 @@ trait Formatters {
                                      ): Formatter[Long] =
     new Formatter[Long] {
 
+      val extractNumberRegex = """^[^\d-]*(-?\d+\.?\d*)\D*$""".r
       val decimalRegexp = """^-?(\d*\.\d*)$"""
 
       private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]) =
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Long] =
         baseFormatter
           .bind(key, data)
           .right.map(_.replace(",", "").replace(" ", ""))
           .right.flatMap {
-          case s if s.matches(decimalRegexp) =>
-            Left(Seq(FormError(key, wholeNumberKey, args)))
-          case s =>
-            nonFatalCatch
-              .either(s.toLowerCase.replaceAll("(kg|kilos|kilogrammes|kilograms)","").toLong)
-              .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+          case extractNumberRegex(numString) =>
+            if (numString.matches(decimalRegexp)) {
+              Left(Seq(FormError(key, wholeNumberKey, args)))
+            }
+            else {
+              nonFatalCatch
+                .either(numString.toLong)
+                .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+            }
+          case _ => Left(Seq(FormError(key, nonNumericKey, args)))
         }
 
       override def unbind(key: String, value: Long) =

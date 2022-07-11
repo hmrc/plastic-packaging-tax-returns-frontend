@@ -120,4 +120,34 @@ trait LongFieldBehaviours extends FieldBehaviours {
     longFieldWithMinimum(form, fieldName, minimum, expectedError)
   }
 
+  def numericStringExtractor(
+                              form: Form[_],
+                              fieldName: String,
+                              outOfRangeError: FormError,
+                              wholeNumberError: FormError
+                            ): Unit = {
+
+    val validInputs = Seq("10", "10suffix", "prefix10", "pre10suffix", "£+10symbolic")
+
+    validInputs.foreach(x =>
+      s"field extracts number from $x" in {
+
+        val result = form.bind(Map(fieldName -> x))
+        result.errors mustEqual Seq.empty
+        result.value mustBe Some(10L)
+
+      }
+    )
+
+    "field errors with decimal input" in {
+      val result = form.bind(Map(fieldName -> "pre10.2suf")).apply(fieldName)
+      result.errors must contain only wholeNumberError
+    }
+
+    "field errors with negative input" in {
+      val result = form.bind(Map(fieldName -> "pre-10suf")).apply(fieldName)
+      result.errors.map(_.message) mustBe Seq("manufacturedPlasticPackagingWeight.error.outOfRange.low")
+    }
+  }
+
 }
