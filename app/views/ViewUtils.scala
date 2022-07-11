@@ -67,8 +67,8 @@ object ViewUtils {
   implicit class FluentInputSuffixes(val input: Input) extends AnyVal {
     def asKg(): Input =
       input
-        .asNumeric()
         .withSuffix(PrefixOrSuffix(content = Text("kg")))
+        .withPattern("[0-9]*")
   }
 
   implicit class RichSummaryListRow(val that: SummaryListRow) extends AnyVal {

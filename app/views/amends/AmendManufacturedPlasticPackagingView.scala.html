@@ -56,7 +56,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("amendManufacturedPlasticPackaging.heading")).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
             .withHint(Hint(content = HtmlContent(hintContent)))
             .describedBy("test described by part")

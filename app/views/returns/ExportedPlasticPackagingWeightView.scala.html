@@ -54,7 +54,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
             .withHint(Hint(content = HtmlContent(hintContent)))
             .withSuffix(PrefixOrSuffix(content = "kg"))

@@ -51,7 +51,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("convertedPackagingCredit.heading")).asPageHeading()
             )
-            .asNumeric()
+            .asKg()
             .withWidth(Fixed10)
             .withHint(Hint(content = Text(creditBalance)))
         )
