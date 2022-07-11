@@ -16,8 +16,8 @@
 
 @this()
 
-@(headingKey: String, forValue: String)
+@(headingContent: String, forID: String = "value")
 
 <h1 class="govuk-label-wrapper">
- <label class="govuk-label govuk-label--l" for="@forValue">@headingKey</label>
+ <label class="govuk-label govuk-label--l" for="@forID">@headingContent</label>
 </h1>
