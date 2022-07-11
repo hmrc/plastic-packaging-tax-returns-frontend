@@ -49,7 +49,7 @@
 
         @govukInput(
             InputViewModel(field = form("value"))
-            .withInputMode("numeric")
+            .asNumeric()
             .withWidth(Fixed10)
             .withHint(Hint(content = HtmlContent(messages("exportedPlasticPackagingWeight.hint"))))
             .withSuffix(PrefixOrSuffix(content = "kg"))
