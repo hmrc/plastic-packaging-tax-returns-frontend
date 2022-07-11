@@ -27,8 +27,7 @@ class NonExportedRecycledPlasticPackagingWeightFormProvider @Inject() extends Ma
     Form(
       "value" -> long("NonExportRecycledPlasticPackagingWeight.error.required",
         "NonExportRecycledPlasticPackagingWeight.error.wholeNumber",
-        "NonExportRecycledPlasticPackagingWeight.error.nonNumeric",
-        "NonExportRecycledPlasticPackagingWeight.error.spaces"
+        "NonExportRecycledPlasticPackagingWeight.error.nonNumeric"
       )
         .verifying(minimumValue(0L, "NonExportRecycledPlasticPackagingWeight.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "NonExportRecycledPlasticPackagingWeight.error.outOfRange.high"))

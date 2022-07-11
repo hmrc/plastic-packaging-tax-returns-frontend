@@ -27,8 +27,7 @@ class ImportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
     Form(
       "value" -> long("importedPlasticPackagingWeight.error.required",
         "importedPlasticPackagingWeight.error.wholeNumber",
-        "importedPlasticPackagingWeight.error.nonNumeric",
-        "importedPlasticPackagingWeight.error.spaces"
+        "importedPlasticPackagingWeight.error.nonNumeric"
       )
         .verifying(minimumValue(0L, "importedPlasticPackagingWeight.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "importedPlasticPackagingWeight.error.outOfRange.high"))

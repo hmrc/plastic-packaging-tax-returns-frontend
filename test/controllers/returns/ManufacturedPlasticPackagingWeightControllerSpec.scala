@@ -36,7 +36,8 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ManufacturedPlasticPackagingWeightFormProvider()
-  val form         = formProvider()
+  val form = formProvider()
+  val mockCacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -45,6 +46,75 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
   lazy val ManufacturedPlasticPackagingWeightRoute = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   "ManufacturedPlasticPackagingWeight Controller" - {
+
+    "must interpret user input with" - {
+
+      "trailing whitespace" in {
+        when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector))
+          .build()
+        val anAnswer = "388 "
+        running(application) {
+          val request =
+            FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
+              .withFormUrlEncodedBody(("value", anAnswer))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+      "opening whitespace" in {
+        when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector))
+          .build()
+        val anAnswer = " 753"
+        running(application) {
+          val request =
+            FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
+              .withFormUrlEncodedBody(("value", anAnswer))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+      "suffices of kg (and variations)" - {
+        val variations = Seq("kg", "kilos", "kilograms", "kilogrammes")
+
+        for (x <- variations) {
+          s"suffixed with $x" in {
+            when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+            val application = applicationBuilder(userAnswers = Some(userAnswers))
+              .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+                bind[CacheConnector].toInstance(mockCacheConnector))
+              .build()
+            val anAnswer = s"546$x"
+            running(application) {
+              val request =
+                FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
+                  .withFormUrlEncodedBody(("value", anAnswer))
+
+              val result = route(application, request).value
+
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual onwardRoute.url
+            }
+          }
+        }
+
+      }
+    }
+
 
     "must return OK and the correct view for a GET" in {
 
@@ -83,14 +153,12 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector))
-          .build()
+        .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[CacheConnector].toInstance(mockCacheConnector))
+        .build()
 
       running(application) {
         val request =
@@ -154,5 +222,6 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
+
   }
 }
