@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.SectionHeader
+@import components.{headingLabel, SectionHeader}
 @import viewmodels.InputWidth._
 @import viewmodels._
 
@@ -24,7 +24,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    sectionHeader: SectionHeader,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
@@ -34,14 +35,7 @@
 
 }
 
-@hintContent = {
-    @paragraphContent
-    <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
-}
-
 @layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("caption.exported.plastic"))
 
     @formHelper(action = controllers.returns.routes.ExportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -49,14 +43,15 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.exported.plastic"))
+        @headingLabel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg))
+        @paragraphContent
+
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
-            )
-            .asNumeric()
+            InputViewModel(field = form("value"))
+            .withInputMode("numeric")
             .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
+            .withHint(Hint(content = HtmlContent(messages("exportedPlasticPackagingWeight.hint"))))
             .withSuffix(PrefixOrSuffix(content = "kg"))
         )
 

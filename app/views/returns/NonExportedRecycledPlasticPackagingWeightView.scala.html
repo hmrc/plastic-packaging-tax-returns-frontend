@@ -25,19 +25,13 @@
     govukInput: GovukInput,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={
-    @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
-    <hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
-}
-
 @layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKg), Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("caption.non.exported.plastic"))
 
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -45,13 +39,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.non.exported.plastic"))
+        @headingLabel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg))
+        @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
+
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg)).asPageHeading()
-            )
+            InputViewModel(field = form("value"))
             .asKg()
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
+            .withHint(Hint(content = HtmlContent(messages("NonExportRecycledPlasticPackagingWeight.hint"))))
             .withWidth(Fixed10)
 
         )

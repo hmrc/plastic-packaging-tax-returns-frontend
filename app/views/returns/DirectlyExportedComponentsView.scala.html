@@ -24,18 +24,13 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent = {
-    @paragraphBody(messages("directlyExportedComponents.paragraph.1"))
-}
-
 @layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("caption.exported.plastic"))
 
     @formHelper(action = controllers.returns.routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -43,11 +38,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.exported.plastic"))
+        @headingLabel(messages("directlyExportedComponents.heading", totalPlastic.asKg))
+        @paragraphBody(message = messages("directlyExportedComponents.paragraph.1"))
+
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("directlyExportedComponents.heading", totalPlastic.asKg)).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
+            RadiosViewModel.yesNo(field = form("value"))
         )
 
         @govukButton(

@@ -26,7 +26,8 @@
     govukInput: GovukInput,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
@@ -47,13 +48,9 @@
         <li>@messages("importedPlasticPackagingWeight.li.5")</li>
         <li>@messages("importedPlasticPackagingWeight.li.6")</li>
     </ul>
-
-   <hint>@messages("importedPlasticPackagingWeight.hint")</hint>
 }
 
 @layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = controllers.returns.routes.ImportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -61,14 +58,15 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.total.plastic"))
+        @headingLabel(messages("importedPlasticPackagingWeight.heading"))
+        @paragraphContent
+
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("importedPlasticPackagingWeight.heading")).asPageHeading()
-            )
+            InputViewModel(field = form("value"))
             .asKg()
             .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
+            .withHint(Hint(content = HtmlContent(messages("importedPlasticPackagingWeight.hint"))))
         )
 
 

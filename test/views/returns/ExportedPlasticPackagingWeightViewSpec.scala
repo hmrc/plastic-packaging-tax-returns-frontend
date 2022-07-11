@@ -65,7 +65,7 @@ class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAsser
 
     "contain paragraph content" in{
 
-      view.getElementById("value-hint").text() must include (messages("Plastic packaging you export will show as a deduction on your tax calculation."))
+      view.getElementsByClass("govuk-body").text() must include (messages("Plastic packaging you export will show as a deduction on your tax calculation."))
     }
     "contain save & continue button" in {
 

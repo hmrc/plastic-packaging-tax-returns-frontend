@@ -26,7 +26,8 @@
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
     sectionHeader: SectionHeader,
-    details: GovukDetails
+    details: GovukDetails,
+    headingLabel: headingLabel
 )
 
 @(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -44,20 +45,18 @@
 
 @layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackaging.caption"))
-
     @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackaging.caption"))
+        @headingLabel(messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg))
+        @paragraphContent
+
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg)).asPageHeading()
-            )
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
+            RadiosViewModel.yesNo(field = form("value"))
         )
 
         @govukButton(
