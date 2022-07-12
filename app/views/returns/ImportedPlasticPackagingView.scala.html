@@ -25,7 +25,8 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
@@ -44,19 +45,18 @@
 
 @layout(pageTitle = title(form, messages("importedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.total.plastic"))
-
     @formHelper(action = controllers.returns.routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.total.plastic"))
+        @headingLabel(messages("importedPlasticPackaging.heading"))
+        @paragraphContent
+
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
+            RadiosViewModel.yesNo(field = form("value"))
         )
 
         @govukButton(

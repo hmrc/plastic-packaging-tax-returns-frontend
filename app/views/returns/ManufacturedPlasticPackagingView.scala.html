@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.{SectionHeader, paragraphBody}
+@import components.{SectionHeader, paragraphBody, headingLabel}
 @import viewmodels.LegendSize
 
 @this(
@@ -25,7 +25,8 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
@@ -40,7 +41,7 @@
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.total.plastic"))
+
 
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -48,12 +49,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.total.plastic"))
+        @headingLabel(messages("manufacturedPlasticPackaging.heading"))
+        @paragraphContent
+
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("manufacturedPlasticPackaging.heading")).asPageHeading(size = LegendSize.Large)
-            )
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
+            RadiosViewModel.yesNo(field = form("value"))
         )
 
         @govukButton(

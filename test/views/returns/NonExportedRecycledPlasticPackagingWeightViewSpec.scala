@@ -51,7 +51,7 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
 
     "contain paragraph content" in {
 
-      view.getElementById("value-hint").text() must include(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
+      view.getElementsByClass("govuk-body").text() must include(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
     }
     "contain save & continue button" in {
 

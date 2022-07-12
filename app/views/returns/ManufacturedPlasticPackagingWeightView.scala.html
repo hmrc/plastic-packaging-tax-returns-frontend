@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.SectionHeader
+@import components.{headingLabel, SectionHeader}
 
 @import viewmodels.LabelSize
 @import viewmodels.InputWidth._
@@ -26,7 +26,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    sectionHeader: SectionHeader,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
@@ -49,14 +50,8 @@
     </p>
 }
 
-@hintContent = {
-    @paragraphContent
-    <hint>@messages("manufacturedPlasticPackagingWeight.hint")</hint>
-}
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -64,18 +59,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.total.plastic"))
+        @headingLabel(messages("manufacturedPlasticPackagingWeight.heading"), "value")
+        @paragraphContent
+
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("manufacturedPlasticPackagingWeight.heading")).asPageHeading(size = LabelSize.Large)
-            )
+            InputViewModel(field = form("value"))
             .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
             .asKg()
-)
-
-
-
+            .withHint(Hint(content = HtmlContent(messages("manufacturedPlasticPackagingWeight.hint"))))
+            .withId("value")
+        )
+        
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )

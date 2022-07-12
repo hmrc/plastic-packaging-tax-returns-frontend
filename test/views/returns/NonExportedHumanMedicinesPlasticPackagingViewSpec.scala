@@ -55,8 +55,8 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
 
     "contain paragraph content" in{
 
-      view.getElementById("value-hint").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal"))
-      view.getElementById("value-hint").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal.content"))
+      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal"))
+      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal.content"))
 
     }
     "contain save & continue button" in {
