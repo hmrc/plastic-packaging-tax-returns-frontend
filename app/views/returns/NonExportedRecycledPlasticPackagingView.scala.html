@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraphBody}
+@import components.{SectionHeader, paragraphBody, headingLabel}
 @import viewmodels._
 
 @this(
@@ -24,7 +24,8 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    headingLabel: headingLabel
 )
 
 @(form: Form[_], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
@@ -38,19 +39,18 @@
 
 @layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.non.exported.plastic"))
-
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @sectionHeader(messages("caption.non.exported.plastic"))
+        @headingLabel(messages("NonExportRecycledPlasticPackaging.heading", amount.asKg))
+        @paragraphContent
+
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("NonExportRecycledPlasticPackaging.heading", amount.asKg)).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
+            RadiosViewModel.yesNo(field = form("value"))
         )
 
         @govukButton(
