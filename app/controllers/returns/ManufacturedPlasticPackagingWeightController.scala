@@ -45,14 +45,12 @@ class ManufacturedPlasticPackagingWeightController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingWeightPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => formProvider()
+          case Some(value) => formProvider().fill(value)
         }
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
@@ -69,7 +67,7 @@ class ManufacturedPlasticPackagingWeightController @Inject() (
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
 
-        form.bindFromRequest().fold(
+        formProvider().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {

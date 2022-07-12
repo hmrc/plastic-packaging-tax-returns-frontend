@@ -30,16 +30,15 @@ import views.html.AgentsView
 import scala.concurrent.ExecutionContext
 
 class AgentsController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        identify: AuthAgentAction,
-                                        formProvider: AgentsFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: AgentsView
-                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
+                                  override val messagesApi: MessagesApi,
+                                  identify: AuthAgentAction,
+                                  formProvider: AgentsFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  view: AgentsView
+                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
 
-  val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify {
     implicit request =>
 
       val currentlySelectedClientIdentifier = getSelectedClientIdentifierFrom(request)
@@ -48,12 +47,12 @@ class AgentsController @Inject()(
       request.flash.get("clientPPTFailed") match {
 
         case Some(_) =>
-          val errorForm = form.fill(
+          val errorForm = formProvider().fill(
             currentlySelectedClientIdentifier.getOrElse("")
           ).withError("identifier", "agents.client.identifier.auth.error")
           Forbidden(view(errorForm, mode))
         case _ =>
-          val preparedForm = form.fill(
+          val preparedForm = formProvider().fill(
             currentlySelectedClientIdentifier.getOrElse("")
           )
 
@@ -65,7 +64,7 @@ class AgentsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify) {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           BadRequest(view(formWithErrors, mode)),
         value => {

@@ -43,14 +43,12 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
                                          view: NonExportedHumanMedicinesPlasticPackagingView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None => formProvider()
+        case Some(value) => formProvider().fill(value)
       }
 
       NonExportedAmountHelper.nonExportedAmount.fold(identity, value => Ok(view(value, preparedForm, mode)))
@@ -59,7 +57,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
             identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),

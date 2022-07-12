@@ -17,6 +17,7 @@
 package controllers.returns
 
 import cacheables.ObligationCacheable
+import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -29,7 +30,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
-import config.{Features, FrontendAppConfig}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,8 +47,6 @@ class StartYourReturnController @Inject()(
                                            taxReturnHelper: TaxReturnHelper
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       if (!appConfig.isFeatureEnabled(Features.returnsEnabled)){
@@ -58,8 +56,8 @@ class StartYourReturnController @Inject()(
         val pptId: String = request.pptReference
 
         val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
+          case None => formProvider()
+          case Some(value) => formProvider().fill(value)
         }
 
         taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap {
@@ -81,7 +79,7 @@ class StartYourReturnController @Inject()(
 
       val pptId: String = request.pptReference
 
-      form.bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           taxReturnHelper.nextOpenObligationAndIfFirst(pptId).map {
             case Some((taxReturnObligation, isFirst)) =>
