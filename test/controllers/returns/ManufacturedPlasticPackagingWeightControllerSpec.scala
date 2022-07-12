@@ -36,7 +36,8 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ManufacturedPlasticPackagingWeightFormProvider()
-  val form         = formProvider()
+  val form = formProvider()
+  val mockCacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -83,14 +84,12 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector))
-          .build()
+        .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[CacheConnector].toInstance(mockCacheConnector))
+        .build()
 
       running(application) {
         val request =
@@ -154,5 +153,6 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
+
   }
 }
