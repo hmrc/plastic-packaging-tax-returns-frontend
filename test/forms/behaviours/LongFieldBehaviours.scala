@@ -129,10 +129,10 @@ trait LongFieldBehaviours extends FieldBehaviours {
 
     val validInputs = Seq("10", "10suffix", "prefix10", "pre10suffix", "£+10symbolic")
 
-    validInputs.foreach(x =>
-      s"field extracts number from $x" in {
+    validInputs.foreach(input =>
+      s"field extracts number from $input" in {
 
-        val result = form.bind(Map(fieldName -> x))
+        val result = form.bind(Map(fieldName -> input))
         result.errors mustEqual Seq.empty
         result.value mustBe Some(10L)
 
