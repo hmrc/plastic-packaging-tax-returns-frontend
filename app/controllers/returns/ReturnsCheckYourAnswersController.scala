@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.TaxReturnViewModel
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import play.api.Logging
