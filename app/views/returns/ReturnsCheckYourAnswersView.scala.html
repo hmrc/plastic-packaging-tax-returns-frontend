@@ -88,8 +88,11 @@
 }
 
 @changeLink(linkTextShortKey: String, url: String) = @{
+
+    val linkId = linkTextShortKey.split("\\.")(0)
+
     paragraph(
-        content = link(id = "", text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
+        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
     )
 }
 
