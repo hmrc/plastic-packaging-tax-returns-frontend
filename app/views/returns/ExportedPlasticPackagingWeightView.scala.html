@@ -48,15 +48,10 @@
         @paragraphContent
 
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
-            )
-            .asKg()
             InputViewModel(field = form("value"))
+            .asKg()
             .withWidth(Fixed10)
             .withHint(Hint(content = HtmlContent(messages("exportedPlasticPackagingWeight.hint"))))
-            .withSuffix(PrefixOrSuffix(content = "kg"))
         )
 
         @govukButton(
