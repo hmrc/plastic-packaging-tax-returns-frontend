@@ -40,7 +40,6 @@ class ReturnsCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: ReturnsCheckYourAnswersView,
