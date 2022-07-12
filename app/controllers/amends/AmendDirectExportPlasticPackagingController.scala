@@ -39,7 +39,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendDirectExportPlasticPackagingFormProvider,
+  form: AmendDirectExportPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AmendDirectExportPlasticPackagingView
 )(implicit ec: ExecutionContext)
@@ -49,8 +49,8 @@ class AmendDirectExportPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
-          case None        => formProvider()
-          case Some(value) => formProvider().fill(value)
+          case None        => form()
+          case Some(value) => form().fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
@@ -68,7 +68,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        formProvider().bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {

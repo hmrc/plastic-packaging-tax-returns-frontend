@@ -39,7 +39,7 @@ class AmendAreYouSureController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendAreYouSureFormProvider,
+  form: AmendAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AmendAreYouSureView
 )(implicit ec: ExecutionContext)
@@ -50,7 +50,7 @@ class AmendAreYouSureController @Inject() (
       implicit request =>
         val userAnswers = request.userAnswers
 
-        val preparedForm = userAnswers.fill(AmendAreYouSurePage, formProvider())
+        val preparedForm = userAnswers.fill(AmendAreYouSurePage, form())
 
         userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
@@ -74,7 +74,7 @@ class AmendAreYouSureController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        formProvider().bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           amend =>
             for {

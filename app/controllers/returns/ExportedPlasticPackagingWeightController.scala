@@ -38,7 +38,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
                                                           identify: IdentifierAction,
                                                           getData: DataRetrievalAction,
                                                           requireData: DataRequiredAction,
-                                                          formProvider: ExportedPlasticPackagingWeightFormProvider,
+                                                          form: ExportedPlasticPackagingWeightFormProvider,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           view: ExportedPlasticPackagingWeightView
 )(implicit ec: ExecutionContext)
@@ -49,8 +49,8 @@ class ExportedPlasticPackagingWeightController @Inject()(
       implicit request =>
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
         val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
-          case None => formProvider()
-          case Some(value) => formProvider().fill(value)
+          case None => form()
+          case Some(value) => form().fill(value)
         }
         Ok(view(preparedForm, mode, totalPlastic))
 
@@ -63,7 +63,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
 
-        formProvider().bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {

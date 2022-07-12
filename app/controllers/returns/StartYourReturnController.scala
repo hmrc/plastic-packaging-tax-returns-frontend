@@ -41,7 +41,7 @@ class StartYourReturnController @Inject()(
                                            navigator: Navigator,
                                            identify: IdentifierAction,
                                            getData: DataRetrievalAction,
-                                           formProvider: StartYourReturnFormProvider,
+                                           form: StartYourReturnFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            view: StartYourReturnView,
                                            taxReturnHelper: TaxReturnHelper
@@ -56,8 +56,8 @@ class StartYourReturnController @Inject()(
         val pptId: String = request.pptReference
 
         val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
-          case None => formProvider()
-          case Some(value) => formProvider().fill(value)
+          case None => form()
+          case Some(value) => form().fill(value)
         }
 
         taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap {
@@ -79,7 +79,7 @@ class StartYourReturnController @Inject()(
 
       val pptId: String = request.pptReference
 
-      formProvider().bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           taxReturnHelper.nextOpenObligationAndIfFirst(pptId).map {
             case Some((taxReturnObligation, isFirst)) =>

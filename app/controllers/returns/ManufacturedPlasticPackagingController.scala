@@ -39,7 +39,7 @@ class ManufacturedPlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ManufacturedPlasticPackagingFormProvider,
+  form: ManufacturedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ManufacturedPlasticPackagingView
 )(implicit ec: ExecutionContext)
@@ -49,8 +49,8 @@ class ManufacturedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingPage) match {
-          case None        => formProvider()
-          case Some(value) => formProvider().fill(value)
+          case None        => form()
+          case Some(value) => form().fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
@@ -68,7 +68,7 @@ class ManufacturedPlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
 
-        formProvider().bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
