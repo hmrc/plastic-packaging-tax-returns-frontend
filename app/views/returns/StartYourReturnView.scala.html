@@ -15,7 +15,7 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.headingLabel
+@import components._
 
 @this(
     layout: templates.Layout,
@@ -23,7 +23,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    headingLabel: headingLabel
+    headingLabel: heading
 )
 
 @(form: Form[_], mode: Mode, obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
@@ -44,8 +44,7 @@
             messages("startYourReturn.heading",
             messages(s"month.${obligation.fromDate.getMonthValue}"),
             messages(s"month.${obligation.toDate.getMonthValue}"),
-            obligation.toDate.getYear.toString),
-            "value"
+            obligation.toDate.getYear.toString)
         )
 
         @govukRadios(
