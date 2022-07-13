@@ -17,10 +17,13 @@
 package controllers.returns
 
 import base.SpecBase
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import forms.returns.ManufacturedPlasticPackagingFormProvider
-import models.NormalMode
+import models.returns.TaxReturnObligation
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentMatchers.{eq => eqq}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,23 +34,26 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.returns.ManufacturedPlasticPackagingView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ManufacturedPlasticPackagingFormProvider()
-  val form = formProvider()
+  private val formProvider = new ManufacturedPlasticPackagingFormProvider()
+  private val form = formProvider()
 
-  lazy val manufacturedPlasticPackagingRoute =
+  private lazy val manufacturedPlasticPackagingRoute =
     controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
 
   "ManufacturedPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, manufacturedPlasticPackagingRoute)
@@ -68,7 +74,9 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
       val ans =
         userAnswers.set(ManufacturedPlasticPackagingPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val application = applicationBuilder(userAnswers = Some(ans))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, manufacturedPlasticPackagingRoute)
@@ -160,5 +168,26 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
+    
+    "submit must redirect to the mini-cya page if the answer has not changed" in {
+      val date = LocalDate.ofEpochDay(0)
+      val obligation = TaxReturnObligation(date, date, date, "")
+      
+      val userAnswers = mock[UserAnswers]
+      when(userAnswers.change(any(), any())(any())).thenReturn(None) // Respond saying the user-answer hasn't changed
+      when(userAnswers.get(eqq(ObligationCacheable))(any())).thenReturn(Some(obligation))
+
+      // TODO all these running() unit tests should go...
+      val application = applicationBuilder(Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(POST,routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url)
+          .withFormUrlEncodedBody(("value", "true"))
+        val result = route(application, request).value
+        
+        status(result) mustBe 303
+        redirectLocation(result) mustBe Some(controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+      }
+    }
+    
   }
 }

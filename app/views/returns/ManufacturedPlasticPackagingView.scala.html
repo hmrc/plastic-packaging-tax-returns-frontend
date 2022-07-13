@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import models.returns.TaxReturnObligation
 @import components.{SectionHeader, paragraphBody}
+@import models.returns.TaxReturnObligation
 @import viewmodels.LegendSize
 
 @this(
@@ -30,7 +30,9 @@
 
 @(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
+@guidanceLink = {
+    <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>
+}
 
 @paragraphContent ={
     @paragraphBody(messages("manufacturedPlasticPackaging.paragraph.1"))
@@ -40,13 +42,14 @@
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+
     @sectionHeader(messages("caption.total.plastic"))
 
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
 
         @govukRadios(
             RadiosViewModel.yesNo(

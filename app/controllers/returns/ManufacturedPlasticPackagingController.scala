@@ -20,12 +20,13 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ManufacturedPlasticPackagingFormProvider
+import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.returns.ManufacturedPlasticPackagingPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ManufacturedPlasticPackagingView
@@ -63,7 +64,7 @@ class ManufacturedPlasticPackagingController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
@@ -73,18 +74,25 @@ class ManufacturedPlasticPackagingController @Inject() (
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          newAnswer => {
-            val answerChanged = userAnswers.get(ManufacturedPlasticPackagingPage).contains(newAnswer)
-
-            for {
-              updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(ManufacturedPlasticPackagingPage, newAnswer))
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers, answerChanged)
-            )
-          }
+          formWithErrors => BadRequest(view(formWithErrors, mode, obligation)),
+          newAnswer => updateAnswersAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
         )
     }
 
+  private def updateAnswersAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
+    (implicit hc: HeaderCarrier, r: DataRequest[_]) = {
+    
+    val maybeAnswers = previousAnswers.change(ManufacturedPlasticPackagingPage, newAnswer)
+    val hasAnswerChanged = maybeAnswers.isDefined
+    if (hasAnswerChanged) cacheConnector.set(pptId, maybeAnswers.get)
+    Redirect(navigator.nextPage(ManufacturedPlasticPackagingPage, mode, maybeAnswers.getOrElse(previousAnswers), hasAnswerChanged))
+
+//    maybeAnswers match {
+//      case None                 => Redirect(routes.ConfirmPlasticPackagingTotalController.onPageLoad)
+//      case Some(updatedAnswers) =>
+//        cacheConnector.set(pptId, updatedAnswers)
+//        navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers, answerChanged)
+//    }
+  }
+  
 }

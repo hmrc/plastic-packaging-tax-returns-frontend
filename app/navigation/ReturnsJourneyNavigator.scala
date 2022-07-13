@@ -76,10 +76,14 @@ class ReturnsJourneyNavigator {
 
   private def manufacturedPlasticPackagingRoute(answers: UserAnswers, mode: Mode = NormalMode, answerChanged: AnswerChanged = false): Call = {
     if (mode == CheckMode) {
-      answers.get(ManufacturedPlasticPackagingPage) match {
-        case Some(true) if answerChanged => routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
-        case Some(false) | Some(true) if !answerChanged => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-        case _ => throw new Exception("Unable to navigate to page")
+      if (!answerChanged)
+        routes.ConfirmPlasticPackagingTotalController.onPageLoad
+      else {
+        answers.get(ManufacturedPlasticPackagingPage) match {
+          case Some(true) => routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
+          case Some(false) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
+          case _ => throw new Exception("Unable to navigate to page")
+        }
       }
     } else {
       answers.get(ManufacturedPlasticPackagingPage) match {
