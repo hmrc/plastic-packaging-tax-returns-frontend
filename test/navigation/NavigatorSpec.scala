@@ -285,13 +285,24 @@ class NavigatorSpec extends SpecBase {
 
         "for the ManufacturedPlasticPackagingPage" - {
 
-          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes" in {
+          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes and has been changed" in {
+            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
+
+            navigator.nextPage(ManufacturedPlasticPackagingPage,
+              CheckMode,
+              answers.get,
+              answerChanged = true
+            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
+
+          }
+
+          "navigate to ConfirmPlasticPackagingTotal when answer is Yes and has not been changed" in {
             val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
 
             navigator.nextPage(ManufacturedPlasticPackagingPage,
               CheckMode,
               answers.get
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
+            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
 
@@ -309,13 +320,24 @@ class NavigatorSpec extends SpecBase {
 
         "for the ImportedPlasticPackagingPage" - {
 
-          "navigate to ImportedPlasticPackagingWeightPage when answer is Yes" in {
+          "navigate to ImportedPlasticPackagingWeightPage when answer is Yes and has been changed" in {
+            val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, true)
+
+            navigator.nextPage(ImportedPlasticPackagingPage,
+              CheckMode,
+              answers.get,
+              answerChanged = true
+            ) mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode)
+
+          }
+
+          "navigate to ConfirmPlasticPackagingTotalController when answer is Yes and has not been changed" in {
             val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, true)
 
             navigator.nextPage(ImportedPlasticPackagingPage,
               CheckMode,
               answers.get
-            ) mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode)
+            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
 

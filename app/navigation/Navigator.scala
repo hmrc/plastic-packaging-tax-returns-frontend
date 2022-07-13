@@ -16,10 +16,11 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
-import pages._
 import models._
+import pages._
+import play.api.mvc.Call
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject()(
@@ -27,18 +28,20 @@ class Navigator @Inject()(
                            returns: ReturnsJourneyNavigator
                          ) {
 
+  type AnswerChanged = Boolean
+
   private val normalRoutes: PartialFunction[Page, UserAnswers => Call] =
     amends.normalRoutes.orElse(returns.normalRoutes)
 
-  private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
+  private val checkRouteMap: PartialFunction[Page, (UserAnswers, AnswerChanged) => Call] =
     amends.checkRoutes.orElse(returns.checkRoutes)
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, answerChanged: AnswerChanged = false): Call =
     mode match {
       case NormalMode =>
         normalRoutes(page)(userAnswers)
       case CheckMode =>
-        checkRouteMap(page)(userAnswers)
+        checkRouteMap(page)(userAnswers, answerChanged)
     }
 
 }

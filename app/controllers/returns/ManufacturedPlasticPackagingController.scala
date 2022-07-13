@@ -52,13 +52,13 @@ class ManufacturedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingPage) match {
-          case None        => form
+          case None => form
           case Some(value) => form.fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 
@@ -67,31 +67,24 @@ class ManufacturedPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
-        
+
         val obligation = userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
 
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          newAnswer => updateAnswersAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
+          newAnswer => {
+            val answerChanged = userAnswers.get(ManufacturedPlasticPackagingPage).contains(newAnswer)
+
+            for {
+              updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(ManufacturedPlasticPackagingPage, newAnswer))
+              _ <- cacheConnector.set(pptId, updatedAnswers)
+            } yield Redirect(
+              navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers, answerChanged)
+            )
+          }
         )
     }
 
-  private def updateAnswersAndGotoNextPage(mode: Mode, pptId: String, userAnswers: UserAnswers, newAnswer: Boolean) 
-    (implicit hc: HeaderCarrier)= {
-
-    val previousAnswer: Option[Boolean] = userAnswers.get(ManufacturedPlasticPackagingPage)
-    if (previousAnswer.contains(newAnswer)) {
-      Future.successful(Redirect(routes.ConfirmPlasticPackagingTotalController.onPageLoad))
-    }
-    else {
-      for {
-        updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(ManufacturedPlasticPackagingPage, newAnswer))
-          _ <- cacheConnector.set(pptId, updatedAnswers)
-      } yield Redirect(
-        navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers)
-      )
-    }
-  }
 }

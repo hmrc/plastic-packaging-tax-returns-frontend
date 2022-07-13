@@ -20,7 +20,7 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
 import models.returns.TaxReturnObligation
 import navigation.Navigator
 import pages.returns.ImportedPlasticPackagingPage
@@ -51,12 +51,12 @@ class ImportedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ImportedPlasticPackagingPage) match {
-          case None        => form
+          case None => form
           case Some(value) => form.fill(value)
         }
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 
@@ -64,6 +64,7 @@ class ImportedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
+        val userAnswers = request.userAnswers
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")
@@ -71,13 +72,16 @@ class ImportedPlasticPackagingController @Inject() (
 
         form.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          value =>
+          newAnswer => {
+            val answerChanged = userAnswers.get(ImportedPlasticPackagingPage).contains(newAnswer)
+
             for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ImportedPlasticPackagingPage, value)
-              )
+              updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(ImportedPlasticPackagingPage, newAnswer))
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(ImportedPlasticPackagingPage, mode, updatedAnswers))
+            } yield Redirect(
+              navigator.nextPage(ImportedPlasticPackagingPage, mode, updatedAnswers, answerChanged)
+            )
+          }
         )
     }
 
