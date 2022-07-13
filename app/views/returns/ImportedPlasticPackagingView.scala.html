@@ -17,19 +17,16 @@
 @import models.returns.TaxReturnObligation
 @import components._
 @import viewmodels.LegendSize
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody,
-    headingLabel: headingLabel
+    paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @fullStop = {.}
 
@@ -47,20 +44,9 @@
 
     @formHelper(action = controllers.returns.routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @sectionHeader(messages("caption.total.plastic"))
-        @headingLabel(messages("importedPlasticPackaging.heading"))
-        @paragraphContent
-
-        @govukRadios(
-            RadiosViewModel.yesNo(field = form("value"))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("caption.total.plastic")),
+            messages("importedPlasticPackaging.heading"),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }

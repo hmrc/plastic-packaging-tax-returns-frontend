@@ -27,7 +27,7 @@
 
 @(form: Form[Long], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={ <p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.1")</p> }
+@paragraphContent = { <p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.1")</p> }
 
 @layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
