@@ -19,10 +19,10 @@
 @import templates.YesNoLayout
 
 @this(
-   layout: templates.Layout,
-   yesNoLayout: YesNoLayout,
-   formHelper: FormWithCSRF,
-   paragraphBody: paragraphBody
+    layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
+    formHelper: FormWithCSRF,
+    paragraphBody: paragraphBody
 )
 
 @(form: Form[Boolean], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)

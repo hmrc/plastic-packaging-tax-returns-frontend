@@ -52,7 +52,7 @@
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @weightInputLayout(Some(messages("caption.total.plastic")),
-            messages("manufacturedPlasticPackagingWeight.title"),
+            messages("manufacturedPlasticPackagingWeight.heading"),
             paragraphText = paragraphContent,
             hintText = Some(messages("manufacturedPlasticPackagingWeight.hint")),
             form = form)
