@@ -33,7 +33,7 @@
 
 @hintText =  @{ if(isFirst) Some(messages("startYourReturn.first.obligation.hint")) else None }
 
-@layout(pageTitle = title(form, pageTitle)) {
+@layout(pageTitle = title(form, pageTitle, Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
 
