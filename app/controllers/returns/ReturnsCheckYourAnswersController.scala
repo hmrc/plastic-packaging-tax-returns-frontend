@@ -21,9 +21,9 @@ import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.TaxReturnViewModel
 import models.requests.DataRequest
-import models.returns.{ReturnType, TaxReturnObligation}
+import models.returns.TaxReturnObligation
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,7 +40,6 @@ class ReturnsCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: ReturnsCheckYourAnswersView,

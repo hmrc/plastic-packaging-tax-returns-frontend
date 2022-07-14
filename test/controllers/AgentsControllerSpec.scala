@@ -28,9 +28,7 @@ import views.html.AgentsView
 class AgentsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new AgentsFormProvider()
-  val form = formProvider()
 
   lazy val agentsRoute = routes.AgentsController.onPageLoad(NormalMode).url
 
@@ -48,7 +46,7 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AgentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -77,7 +75,7 @@ class AgentsControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, agentsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AgentsView]
 

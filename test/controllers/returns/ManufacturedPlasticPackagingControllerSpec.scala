@@ -36,9 +36,7 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new ManufacturedPlasticPackagingFormProvider()
-  val form = formProvider()
 
   lazy val manufacturedPlasticPackagingRoute =
     controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
@@ -57,7 +55,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -78,7 +76,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -118,7 +116,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
           FakeRequest(POST, manufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingView]
 

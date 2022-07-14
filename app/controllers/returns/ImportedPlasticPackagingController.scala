@@ -39,20 +39,18 @@ class ImportedPlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ImportedPlasticPackagingFormProvider,
+  form: ImportedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ImportedPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(ImportedPlasticPackagingPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => form()
+          case Some(value) => form().fill(value)
         }
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
@@ -69,7 +67,7 @@ class ImportedPlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
 
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
