@@ -45,14 +45,14 @@
 
 @summaryRow(key: String, value: String, valueClasses: String = "") = @{
     SummaryListRow(
-        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
+        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"),
         value = Value(value, classes = valueClasses)
     )
 }
 
 @summaryRowWithWideValue(shortKey: String, value: String) = @{
     val text = messages(toLongKey(shortKey))
-    summaryRow(text, value)
+    summaryRow(text, value, "govuk-table__cell--numeric")
 }
 
 @summaryRowFromString(shortKey: String, value: String) = @{

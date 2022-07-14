@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter
 
 final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
   def classes: String =
-    Seq("govuk-!-width-three-quarters",
+    Seq("govuk-!-width-one-half",
       if (big) "govuk-body-l" else "govuk-body-m",
       if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular",
     ).mkString(" ")
