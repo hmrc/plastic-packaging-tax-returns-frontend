@@ -66,7 +66,7 @@ lazy val root = (project in file("."))
     scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
     // Suppress warnings due to mongo dates using $date in their Json representation
     scalacOptions += "-P:silencer:globalFilters=possible missing interpolator: detected interpolated identifier `\\$date`",
-    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test"),
+    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test" / "a11y"),
     libraryDependencies ++= Seq(
       compilerPlugin(
         "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full

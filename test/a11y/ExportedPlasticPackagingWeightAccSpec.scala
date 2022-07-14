@@ -1,0 +1,46 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package a11y
+
+import base.ViewSpecBase
+import forms.returns.ExportedPlasticPackagingWeightFormProvider
+import models.NormalMode
+import play.twirl.api.Html
+import support.{ViewAssertions, ViewMatchers}
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import views.html.returns.ExportedPlasticPackagingWeightView
+
+class ExportedPlasticPackagingWeightAccSpec
+  extends ViewSpecBase
+    with AccessibilityMatchers {
+
+  val form = new ExportedPlasticPackagingWeightFormProvider()()
+
+  val page = inject[ExportedPlasticPackagingWeightView]
+
+  private def createView: Html =
+    page(form, NormalMode, 1234L)(request, messages)
+
+  "ExportedPlasticPackagingWeightAccSpec" should {
+
+    "pass accessibility checks" in {
+      createView.toString() must passAccessibilityChecks
+    }
+
+  }
+
+}
