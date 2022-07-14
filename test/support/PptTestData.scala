@@ -26,7 +26,7 @@ import models.subscription.subscriptionDisplay.{
 import models.subscription.subscriptionUpdate.SubscriptionUpdateRequest
 import models.subscription._
 import org.joda.time.{DateTime, LocalDate}
-import returns.models.subscription.ContactDetails
+import views.models.subscription.ContactDetails
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}

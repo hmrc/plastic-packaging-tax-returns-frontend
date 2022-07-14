@@ -1,3 +1,5 @@
+package views
+
 /*
  * Copyright 2022 HM Revenue & Customs
  *
@@ -14,13 +16,9 @@
  * limitations under the License.
  */
 
-package a11y
-
 import base.ViewSpecBase
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
-import models.NormalMode
 import play.twirl.api.Html
-import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.ExportedPlasticPackagingWeightView
 
@@ -35,7 +33,7 @@ class ExportedPlasticPackagingWeightAccSpec
   private def createView: Html =
     page(form, NormalMode, 1234L)(request, messages)
 
-  "ExportedPlasticPackagingWeightAccSpec" should {
+  "returns.ExportedPlasticPackagingWeightAccSpec" should {
 
     "pass accessibility checks" in {
       createView.toString() must passAccessibilityChecks

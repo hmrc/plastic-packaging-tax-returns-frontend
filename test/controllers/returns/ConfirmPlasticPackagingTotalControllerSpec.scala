@@ -19,7 +19,8 @@ package controllers.returns
 import base.SpecBase
 import cacheables.ObligationCacheable
 import controllers.returns.{routes => returnsRoutes}
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.CheckMode
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}

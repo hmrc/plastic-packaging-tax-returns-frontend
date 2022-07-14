@@ -22,8 +22,9 @@ import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
+import models.Mode.NormalMode
 import models.requests.{IdentifiedRequest, IdentityData}
-import models.{NormalMode, SignedInUser}
+import models.SignedInUser
 import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package returns.models.subscription
+package views.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 

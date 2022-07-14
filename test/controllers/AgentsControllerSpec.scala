@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.AgentsFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.FakeRequest

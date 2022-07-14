@@ -21,6 +21,7 @@ lazy val root = (project in file("."))
   .settings(scalaVersion := "2.12.10",
             name := appName,
             RoutesKeys.routesImport ++= Seq("models._",
+                                            "models.Mode._",
                                             "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
             ),
             TwirlKeys.templateImports ++= Seq("play.twirl.api.HtmlFormat",
@@ -66,7 +67,7 @@ lazy val root = (project in file("."))
     scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
     // Suppress warnings due to mongo dates using $date in their Json representation
     scalacOptions += "-P:silencer:globalFilters=possible missing interpolator: detected interpolated identifier `\\$date`",
-    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test" / "a11y"),
+//    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test" / "a11y"),
     libraryDependencies ++= Seq(
       compilerPlugin(
         "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full

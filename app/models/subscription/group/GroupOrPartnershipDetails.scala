@@ -18,7 +18,7 @@ package models.subscription.group
 
 import models.subscription.{AddressDetails, IndividualDetails, OrganisationDetails}
 import play.api.libs.json.{Json, OFormat}
-import returns.models.subscription.ContactDetails
+import views.models.subscription.ContactDetails
 
 case class GroupOrPartnershipDetails(
   relationship: String,
