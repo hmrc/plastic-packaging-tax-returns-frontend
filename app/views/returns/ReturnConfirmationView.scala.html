@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{paragraphBody,Link}
+@import components.{paragraphBody,Link, paragraph, bulletList}
 @import config.FrontendAppConfig
 
 @this(
@@ -22,7 +22,9 @@
         govukButton: GovukButton,
         govukPanel: GovukPanel,
         paragraphBody: paragraphBody,
+        paragraph: paragraph,
         link: Link,
+        bulletList: bulletList,
         appConfig: FrontendAppConfig
 )
 
@@ -31,7 +33,7 @@
 
 
 @chargeRefMsg = @{
-    chargeReference.fold(Html(messages("return.confirmation.panel.empty")))(ref => {
+    chargeReference.fold(HtmlFormat.empty)(ref => {
         Html(s"""<div class="govuk-panel__body">
                 ${messages("return.confirmation.panel")}
                     <strong>$ref</strong>
@@ -40,6 +42,31 @@
     })
 }
 
+@homePageLink = @{
+    link(id = "account-link", text = messages("return.confirmation.homePage.link2"), call = routes.IndexController.onPageLoad)
+}
+@accountLinkForValidChargeRef = @{
+    paragraphBody(
+        message = messages("return.confirmation.homePage.link1", homePageLink),
+        id = Some("account-link-body")
+    )
+}
+
+@homeAccountLink = {
+    @if(chargeReference.isEmpty) {
+        @paragraphBody(message = messages("return.confirmation.panel.empty"), classes = "govuk-body clear-float", id=Some("nothing-to-pay"))
+
+        <p class="govuk-body" id="account-link-body">@homePageLink</p>
+    } else {
+        @accountLinkForValidChargeRef
+        @bulletList(elements = Seq(
+                                    Html(messages("return.confirmation.bulletList.first")),
+                                    Html(messages("return.confirmation.bulletList.second")),
+                                    Html(messages("return.confirmation.bulletList.third"))
+                                )
+                    )
+    }
+}
 @layout(
     pageTitle    = titleNoForm(messages("return.confirmation.title")),
     showBackLink = false
@@ -61,11 +88,11 @@
     @paragraphBody(message = messages("return.confirmation.body.1"), classes = "govuk-body clear-float", id=Some("find-details"))
     @paragraphBody(message = messages("return.confirmation.body.3"), classes = "govuk-body clear-float", id=Some("confirmation"))
 
-    <p class="govuk-body">
-        @link(id = "account-link", messages("return.confirmation.return.link"), call = routes.IndexController.onPageLoad)
-    </p>
+    <h2 class="govuk-heading-m" id="check-what-you-owe">@messages("return.confirmation.checkWhatYouOwe")</h2>
 
-    @paragraphBody(message = messages("return.confirmation.exitSurvey.text",
-    link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl)))
-    )
+    @homeAccountLink
+
+    <p class="govuk-body" style="margin-top:2.5em">
+        @link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl))
+    </p>
 }

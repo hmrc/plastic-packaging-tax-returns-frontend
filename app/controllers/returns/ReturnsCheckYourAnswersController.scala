@@ -18,15 +18,17 @@ package controllers.returns
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{Features, FrontendAppConfig}
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.TaxReturnViewModel
 import models.requests.DataRequest
-import models.returns.{ReturnType, TaxReturnObligation}
+import models.returns.TaxReturnObligation
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnsCheckYourAnswersView
 
@@ -38,26 +40,36 @@ class ReturnsCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: ReturnsCheckYourAnswersView,
   appConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => displayPage(request, obligation)
-          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        if (!appConfig.isFeatureEnabled(Features.returnsEnabled)){
+          logger.info("Returns disabled. Redirecting to account homepage.")
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        } else {
+          request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+            case Some(obligation) => displayPage(request, obligation)
+            case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          }
         }
-
     }
 
-  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit messages: Messages) = {
-    val returnViewModel = TaxReturnViewModel(request, obligation)
-    Future.successful(Ok(view(returnViewModel)(request, messages)))
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
+                         (implicit messages: Messages, hc: HeaderCarrier) = {
+
+    returnsConnector.getCalculation(request.pptReference).flatMap {
+      case Right(calculations) =>
+        val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
+        Future.successful(Ok(view(returnViewModel)(request, messages)))
+      case Left(error) => throw error
+    }
+
   }
 
   def onSubmit(): Action[AnyContent] =
@@ -66,16 +78,9 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         val pptId: String = request.pptReference
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Obligation not found!")
-        )
-
-        // TODO use same code for calculating return fields and check-your-answers fields
-        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
-
-        returnsConnector.submit(taxReturn).flatMap {
+        returnsConnector.submit(pptId).flatMap {
           case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.userId, optChargeRef)).map{
+            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
             }
           case Left(error) => throw error

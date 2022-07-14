@@ -18,18 +18,16 @@
 @import components._
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize
+@import templates.WeightInputLayout
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    weightInputLayout: WeightInputLayout,
+    paragraphBody: paragraphBody,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
     @paragraphBody(messages("importedPlasticPackagingWeight.paragraph.include"))
@@ -47,33 +45,16 @@
         <li>@messages("importedPlasticPackagingWeight.li.5")</li>
         <li>@messages("importedPlasticPackagingWeight.li.6")</li>
     </ul>
-
-   <hint>@messages("importedPlasticPackagingWeight.hint")</hint>
 }
 
 @layout(pageTitle = title(form, messages("importedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.total.plastic"))
-
     @formHelper(action = controllers.returns.routes.ImportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("importedPlasticPackagingWeight.heading")).asPageHeading()
-            )
-            .asKg()
-            .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
-        )
-
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @weightInputLayout(Some(messages("caption.total.plastic")),
+            messages("importedPlasticPackagingWeight.heading"),
+            paragraphText = paragraphContent,
+            hintText = Some(messages("importedPlasticPackagingWeight.hint")),
+            form = form)
     }
 }

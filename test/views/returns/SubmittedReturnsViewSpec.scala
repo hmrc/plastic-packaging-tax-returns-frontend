@@ -16,25 +16,19 @@
 
 package views.returns
 
+import base.ViewSpecBase
 import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import views.html.returns.SubmittedReturnsView
 
 import java.time.LocalDate
 
-class SubmittedReturnsViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class SubmittedReturnsViewSpec extends ViewSpecBase {
 
 
   val page: SubmittedReturnsView = inject[SubmittedReturnsView]
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
   val aSequenceOfObligations: Seq[TaxReturnObligation] = Seq(TaxReturnObligation(
     LocalDate.now(),
     LocalDate.now().plusWeeks(12),
@@ -45,21 +39,17 @@ class SubmittedReturnsViewSpec extends PlaySpec with GuiceOneAppPerSuite with In
     LocalDate.now().plusWeeks(8),
     "PK2"))
 
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
-
   private def createView(previousReturn: Seq[TaxReturnObligation]): Html =
     page(previousReturn)(request, messages)
 
   "Submitted returns page" should {
 
-    "has a title" in {
+    "have a title" in {
       val view = createView(aSequenceOfObligations)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.select("title").text() mustBe "View submitted returns - Plastic Packaging Tax - GOV.UK"
+      doc.select("title")
+        .text() mustBe "View or amend submitted returns - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "tell you when you have no previous tax returns" in {

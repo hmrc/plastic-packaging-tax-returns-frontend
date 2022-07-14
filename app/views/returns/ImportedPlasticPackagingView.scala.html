@@ -17,23 +17,21 @@
 @import models.returns.TaxReturnObligation
 @import components._
 @import viewmodels.LegendSize
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @fullStop = {.}
 
 @guidanceLink = {
-   <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link" target="_blank">@messages("importedPlasticPackaging.paragraph.link").trim()</a>@fullStop
+   <a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("importedPlasticPackaging.paragraph.link").trim()</a>@fullStop
 }
 
 @paragraphContent ={
@@ -44,23 +42,11 @@
 
 @layout(pageTitle = title(form, messages("importedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.total.plastic"))
-
     @formHelper(action = controllers.returns.routes.ImportedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("importedPlasticPackaging.heading")).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("caption.total.plastic")),
+            messages("importedPlasticPackaging.heading"),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }

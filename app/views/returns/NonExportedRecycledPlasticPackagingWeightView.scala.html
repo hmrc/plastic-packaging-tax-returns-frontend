@@ -17,47 +17,28 @@
 @import viewmodels.InputWidth._
 @import viewmodels._
 @import components._
+@import templates.WeightInputLayout
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody
+    weightInputLayout: WeightInputLayout,
+    paragraphBody: paragraphBody,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={
-    @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
-    <hint>@messages("NonExportRecycledPlasticPackagingWeight.hint")</hint>
-}
+@paragraphContent = { @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph")) }
 
 @layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.non.exported.plastic"))
-
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+        @weightInputLayout(Some(messages("caption.non.exported.plastic")),
+            messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg),
+            paragraphText = paragraphContent,
+            hintText = Some(messages("NonExportRecycledPlasticPackagingWeight.hint")),
+            form = form)
 
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg)).asPageHeading()
-            )
-            .asKg()
-            .withHint(Hint(content = HtmlContent(paragraphContent)))
-            .withWidth(Fixed10)
-
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
     }
 }

@@ -25,7 +25,7 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ImportedPlasticPackagingSummary private (key: String ) extends SummaryViewModel {
+class ImportedPlasticPackagingSummary private(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ImportedPlasticPackagingPage).map {
@@ -33,19 +33,16 @@ class ImportedPlasticPackagingSummary private (key: String ) extends SummaryView
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(key = key,
-                                value = ValueViewModel(value),
-                                actions = Seq(
-                                  ActionItemViewModel(
-                                    "site.change",
-                                    routes.ImportedPlasticPackagingController.onPageLoad(
-                                      CheckMode
-                                    ).url
-                                  )
-                                    .withAttribute("id" -> "confirm-pp-total-imported-plastic")
-                                    .withVisuallyHiddenText(
-                                      messages("importedPlasticPackaging.change.hidden")
-                                    )
-                                )
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url
+            )
+              .withAttribute("id" -> "confirm-pp-total-imported-plastic")
+              .withVisuallyHiddenText(messages("importedPlasticPackaging.change.hidden")
+              )
+          )
         )
     }
 
@@ -53,9 +50,7 @@ class ImportedPlasticPackagingSummary private (key: String ) extends SummaryView
 
 object ImportedPlasticPackagingSummary {
 
-  private val importedPlasticPackagingLabel = "importedPlasticPackaging.checkYourAnswersLabel"
   private val confirmImportedPlasticPackagingLabel = "confirmPlasticPackagingTotal.importedPlasticPackaging.label"
 
-  val CheckYourAnswerImportedPlasticPackagingSummary = new ImportedPlasticPackagingSummary(importedPlasticPackagingLabel)
   val ConfirmImportedPlasticPackagingSummary = new ImportedPlasticPackagingSummary(confirmImportedPlasticPackagingLabel)
 }

@@ -41,7 +41,7 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.nonNumeric"),
+      nonNumericError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.wholeNumber")
     )
 
@@ -50,5 +50,14 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
       fieldName,
       requiredError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.required")
     )
+
+    behave like numericStringExtractor(
+      form,
+      fieldName,
+      wholeNumberError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.wholeNumber"),
+      outOfRangeError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.outOfRange.low")
+    )
+
+
   }
 }

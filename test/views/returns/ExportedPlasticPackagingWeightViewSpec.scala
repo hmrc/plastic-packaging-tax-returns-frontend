@@ -16,28 +16,16 @@
 
 package views.returns
 
+import base.ViewSpecBase
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.ExportedPlasticPackagingWeightView
 
-class ExportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ViewAssertions with ViewMatchers {
-
-  private val realMessagesApi: MessagesApi = inject[MessagesApi]
-
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
-
-  implicit def messages: Messages =
-    realMessagesApi.preferred(request)
+class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val form = new ExportedPlasticPackagingWeightFormProvider()()
 
@@ -54,13 +42,13 @@ class ExportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPe
     "have a title" in {
 
       view.select("title").text mustBe
-        "How much of your 1,234kg of finished plastic packaging components did you export? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "How much of your 1,234kg of finished plastic packaging components did you export, or do you intend to export within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "How much of your 1,234kg of finished plastic packaging components did you export?"
+        "How much of your 1,234kg of finished plastic packaging components did you export, or do you intend to export within 12 months?"
     }
 
     "have a caption" in {
@@ -77,8 +65,7 @@ class ExportedPlasticPackagingWeightViewSpec extends PlaySpec with GuiceOneAppPe
 
     "contain paragraph content" in{
 
-      view.getElementById("value-hint").text() must include (messages("Only include plastic packaging that has been exported by you, or on your behalf."))
-      view.getElementById("value-hint").text() must include (messages("Plastic packaging you export will show as a deduction on your tax calculation."))
+      view.getElementsByClass("govuk-body").text() must include (messages("Plastic packaging you export will show as a deduction on your tax calculation."))
     }
     "contain save & continue button" in {
 

@@ -17,13 +17,15 @@
 package controllers.returns
 
 import cacheables.ObligationCacheable
+import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.returns.StartYourReturnPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -33,36 +35,42 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StartYourReturnController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         cacheConnector: CacheConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         formProvider: StartYourReturnFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: StartYourReturnView,
-                                         taxReturnHelper: TaxReturnHelper
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+                                           override val messagesApi: MessagesApi,
+                                           appConfig: FrontendAppConfig,
+                                           cacheConnector: CacheConnector,
+                                           navigator: Navigator,
+                                           identify: IdentifierAction,
+                                           getData: DataRetrievalAction,
+                                           form: StartYourReturnFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           view: StartYourReturnView,
+                                           taxReturnHelper: TaxReturnHelper
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+      if (!appConfig.isFeatureEnabled(Features.returnsEnabled)){
+        logger.info("Returns disabled. Redirecting to account homepage.")
+        Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+      } else {
+        val pptId: String = request.pptReference
 
-      val pptId: String = request.pptReference
+        val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
+          case None => form()
+          case Some(value) => form().fill(value)
+        }
 
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.userId)).get(StartYourReturnPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
-
-        Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).
-          set(ObligationCacheable, taxReturnObligation)).map { ans => cacheConnector.set(pptId, ans) }
-
-        Future.successful(Ok(view(preparedForm, mode, taxReturnObligation)))
-
+        taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap {
+          case Some((taxReturnObligation, isFirst)) =>
+            for {
+              ans <- Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation))
+              _ <- cacheConnector.set(pptId, ans)
+            } yield
+              Ok(view(preparedForm, mode, taxReturnObligation, isFirst))
+          case None =>
+            logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+            Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        }
       }
   }
 
@@ -71,19 +79,22 @@ class StartYourReturnController @Inject()(
 
       val pptId: String = request.pptReference
 
-      taxReturnHelper.nextObligation(pptId) flatMap { taxReturnObligation =>
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, taxReturnObligation))),
-
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.getOrElse(UserAnswers(request.request.user.identityData.internalId)).set(StartYourReturnPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
-        )
-      }
+      form().bindFromRequest().fold(
+        formWithErrors =>
+          taxReturnHelper.nextOpenObligationAndIfFirst(pptId).map {
+            case Some((taxReturnObligation, isFirst)) =>
+              BadRequest(view(formWithErrors, mode, taxReturnObligation, isFirst))
+            case None =>
+              logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+              Redirect(controllers.routes.IndexController.onPageLoad)
+          },
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(StartYourReturnPage, value)
+            )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+          } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+      )
   }
 }

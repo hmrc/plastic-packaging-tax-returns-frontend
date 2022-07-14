@@ -16,8 +16,6 @@
 
 package models.returns
 
-import models.returns.ReturnType.ReturnType
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import views.ViewUtils
@@ -37,39 +35,4 @@ final case class TaxReturnObligation(
 
 object TaxReturnObligation {
   implicit val format: OFormat[TaxReturnObligation] = Json.format[TaxReturnObligation]
-}
-
-case class TaxReturn(
-  id: String,
-  returnType: Option[ReturnType] = Some(ReturnType.NEW),
-  periodKey: String,
-  manufacturedPlastic: Option[Boolean] = None,
-  manufacturedPlasticWeight: Option[ManufacturedPlasticWeight] = None,
-  importedPlastic: Option[Boolean] = None,
-  importedPlasticWeight: Option[ImportedPlasticWeight] = None,
-  humanMedicinesPlasticWeight: Option[HumanMedicinesPlasticWeight] = None,
-  exportedPlasticWeight: Option[ExportedPlasticWeight] = None,
-  convertedPackagingCredit: Option[ConvertedPackagingCredit] = None,
-  recycledPlasticWeight: Option[RecycledPlasticWeight] = None,
-  lastModifiedDateTime: Option[DateTime] = None
-) {
-
-  def updateLastModified(): TaxReturn =
-    this.copy(lastModifiedDateTime = Some(DateTime.now(DateTimeZone.UTC)))
-
-}
-
-object TaxReturn {
-
-  import play.api.libs.json._
-
-  implicit val dateFormatDefault: Format[DateTime] = new Format[DateTime] {
-
-    override def reads(json: JsValue): JsResult[DateTime] =
-      JodaReads.DefaultJodaDateTimeReads.reads(json)
-
-    override def writes(o: DateTime): JsValue = JodaWrites.JodaDateTimeNumberWrites.writes(o)
-  }
-
-  implicit val format: OFormat[TaxReturn] = Json.format[TaxReturn]
 }

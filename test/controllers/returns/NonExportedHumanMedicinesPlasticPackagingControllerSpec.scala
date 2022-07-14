@@ -38,9 +38,7 @@ import scala.concurrent.Future
 class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new NonExportedHumanMedicinesPlasticPackagingFormProvider()
-  val form = formProvider()
 
   lazy val nonExportedHumanMedicinesPlasticPackagingRoute = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
@@ -66,7 +64,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, formProvider(), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -84,7 +82,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, formProvider().fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -138,7 +136,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
           FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingView]
 
@@ -159,7 +157,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -175,7 +173,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

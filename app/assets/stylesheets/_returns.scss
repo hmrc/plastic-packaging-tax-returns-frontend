@@ -23,6 +23,11 @@
   margin-bottom: 10px;
 }
 
+.govuk-summary-list__value {
+ overflow-wrap: inherit;
+ word-wrap: inherit;
+}
+
 /***************************************
  ***********  Mobile Styling  **********
  ***************************************/

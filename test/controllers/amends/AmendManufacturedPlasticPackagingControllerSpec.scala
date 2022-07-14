@@ -36,8 +36,6 @@ import scala.concurrent.Future
 class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendManufacturedPlasticPackagingFormProvider()
-  val form         = formProvider()
-
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0
@@ -59,7 +57,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -79,7 +77,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -133,7 +131,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
           FakeRequest(POST, amendManufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
@@ -156,7 +154,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -173,7 +171,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

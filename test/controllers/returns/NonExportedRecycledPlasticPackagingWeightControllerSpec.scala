@@ -38,8 +38,6 @@ import scala.concurrent.Future
 class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new NonExportedRecycledPlasticPackagingWeightFormProvider()
-  val form = formProvider()
-
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 0L
@@ -69,7 +67,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, nonExportedAmount)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, nonExportedAmount)(request,
           messages(application)
         ).toString
       }
@@ -90,7 +88,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, nonExportedAmount)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, nonExportedAmount)(
           request,
           messages(application)
         ).toString
@@ -145,7 +143,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
           FakeRequest(POST, recycledPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingWeightView]
 
@@ -168,7 +166,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -185,7 +183,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec extends SpecBase w
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

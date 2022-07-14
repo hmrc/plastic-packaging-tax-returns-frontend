@@ -38,13 +38,12 @@
         messages("submittedReturns.nothingsubmitted")
     } else {
         obligations.zipWithIndex.map {
-            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i)
+            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, messages("submittedReturns.vieworamendreturn"))
         }
     }
 }
 
-
-@layout(pageTitle = titleNoForm(messages("submittedReturns.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("submittedReturns.title"), Some(messages("return.title.tail"))), showBackLink = false) {
 
     <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
 

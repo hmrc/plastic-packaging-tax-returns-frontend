@@ -59,10 +59,8 @@ class ManufacturedPlasticPackagingWeightSummary private(key: String) extends Sum
 
 object ManufacturedPlasticPackagingWeightSummary {
 
-  private val manufacturedPlasticWeightPageLabel = "manufacturedPlasticPackagingWeight.checkYourAnswersLabel"
   private val confirmPlasticPackagingTotalLabel = "confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label"
 
-  val CheckYourAnswerForManufacturedPlasticWeight = new ManufacturedPlasticPackagingWeightSummary(manufacturedPlasticWeightPageLabel)
   val ConfirmManufacturedPlasticPackagingSummary = new ManufacturedPlasticPackagingWeightSummary(confirmPlasticPackagingTotalLabel)
 
 }

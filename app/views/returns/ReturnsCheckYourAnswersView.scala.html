@@ -87,9 +87,12 @@
     ))))
 }
 
-@changeLink(url: String) = @{
+@changeLink(linkTextShortKey: String, url: String) = @{
+
+    val linkId = linkTextShortKey.split("\\.")(0)
+
     paragraph(
-        content = link(id = "", text = messages("site.change"), call = Call("GET", url)),
+        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
     )
 }
 
@@ -117,7 +120,7 @@
             summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
-    @changeLink(taxReturn.packagingTotalStartUrl)
+    @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalStartUrl)
 
     <!-- Exported packaging -->
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
@@ -127,10 +130,10 @@
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
         )
     ))
-    @if(taxReturn.canEditExported || !taxReturn.isSubmittable) {
-        @changeLink(taxReturn.exportedStartUrl)
+    @if(taxReturn.canEditExported) {
+        @changeLink("exported-packaging.change-link-text", taxReturn.exportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.exported-packaging-change-reason")</p>
+        <p>@messages("submit-return.check-your-answers.exported-packaging.no-change-reason")</p>
     }
 
     <!-- Non-exported packaging -->
@@ -143,10 +146,10 @@
             summaryRowFromFunc("nonexported-packaging.row4", taxReturn.nonexportedRecycledWeight),
         )
     ))
-    @if(taxReturn.canEditNonExported || !taxReturn.isSubmittable) {
-        @changeLink(taxReturn.nonexportedStartUrl)
+    @if(taxReturn.canEditNonExported) {
+        @changeLink("nonexported-packaging.change-link-text", taxReturn.nonexportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.nonexported-packaging-change-reason")</p>
+        <p>@messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason")</p>
     }
 
     <!-- Deductions -->
@@ -190,6 +193,7 @@
             )
         }
     } else {
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         @sectionHeading("submit-return.check-your-answers.error.heading")
         @para("error.line1")
     }

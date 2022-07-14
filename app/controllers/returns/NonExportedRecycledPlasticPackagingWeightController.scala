@@ -38,21 +38,18 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
                                                                      identify: IdentifierAction,
                                                                      getData: DataRetrievalAction,
                                                                      requireData: DataRequiredAction,
-                                                                     formProvider: NonExportedRecycledPlasticPackagingWeightFormProvider,
+                                                                     form: NonExportedRecycledPlasticPackagingWeightFormProvider,
                                                                      val controllerComponents: MessagesControllerComponents,
                                                                      view: NonExportedRecycledPlasticPackagingWeightView
                                                                  )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
+          case None => form()
+          case Some(value) => form().fill(value)
         }
         NonExportedAmountHelper.nonExportedAmount.fold(identity, amount => Ok(view(preparedForm, mode, amount)))
     }
@@ -61,7 +58,7 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors =>
             Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
               identity, exportedAmount => BadRequest(view(formWithErrors, mode, exportedAmount)))),

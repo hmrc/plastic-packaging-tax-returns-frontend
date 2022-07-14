@@ -20,7 +20,6 @@ import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApi
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
-import models.UserAnswers
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -57,14 +56,9 @@ class ViewReturnSummaryController @Inject() (
           submittedReturn <- submittedReturnF
           obligation <- fulfilledObligationF
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.userId)).set(
-              AmendSelectedPeriodKey, periodKey
-            ).getOrElse(UserAnswers(request.userId)).set(
-              ObligationCacheable, obligation.head
-            ).getOrElse(UserAnswers(request.userId)).set(
-              ReturnDisplayApiCacheable, submittedReturn
-            )
-          )
+            request.userAnswers.set(AmendSelectedPeriodKey, periodKey).get
+              .set(ObligationCacheable, obligation.head).get
+              .set(ReturnDisplayApiCacheable, submittedReturn))
           _ <- cacheConnector.set(pptId, updatedAnswers)
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation.head)

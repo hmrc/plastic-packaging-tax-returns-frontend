@@ -14,22 +14,20 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraphBody}
+@import components.{SectionHeader, paragraphBody, headingLabel}
 @import viewmodels._
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
 
-@guidanceLink = {<a href="https://www.gov.uk/guidance/work-out-which-packaging-is-subject-to-plastic-packaging-tax#recycled-plastic" target="_blank" class="govuk-link" id="govuk-guidance-link">@messages("NonExportRecycledPlasticPackaging.paragraph.link")</a>}
+@guidanceLink = {<a href="https://www.gov.uk/guidance/work-out-which-packaging-is-subject-to-plastic-packaging-tax#recycled-plastic" class="govuk-link" id="govuk-guidance-link">@messages("NonExportRecycledPlasticPackaging.paragraph.link")</a>}
 
 @paragraphContent ={
     @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.1"))
@@ -38,23 +36,11 @@
 
 @layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.non.exported.plastic"))
-
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("NonExportRecycledPlasticPackaging.heading", amount.asKg)).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("caption.non.exported.plastic")),
+            messages("NonExportRecycledPlasticPackaging.heading",  amount.asKg),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }

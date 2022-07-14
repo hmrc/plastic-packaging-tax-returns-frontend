@@ -26,7 +26,6 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendAreYouSurePage
-import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,9 +38,7 @@ import scala.concurrent.Future
 class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider        = new AmendAreYouSureFormProvider()
-  val form: Form[Boolean] = formProvider()
 
   lazy val amendAreYouSureRoute: String =
     routes.AmendAreYouSureController.onPageLoad(NormalMode).url
@@ -90,7 +87,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -160,7 +157,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, amendAreYouSureRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AmendAreYouSureView]
 
@@ -184,7 +181,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -200,7 +197,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

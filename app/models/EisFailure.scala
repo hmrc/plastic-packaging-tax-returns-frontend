@@ -24,7 +24,11 @@ object EisError {
   implicit val format: OFormat[EisError] = Json.format[EisError]
 }
 
-case class EisFailure(failures: Seq[EisError])
+case class EisFailure(failures: Option[Seq[EisError]]){
+
+  def isDeregistered: Boolean =
+    failures.exists(_.exists(_.code == "NO_DATA_FOUND"))
+}
 
 object EisFailure {
   implicit val format: OFormat[EisFailure] = Json.format[EisFailure]

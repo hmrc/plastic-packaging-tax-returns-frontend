@@ -21,9 +21,8 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.Navigator
-import pages.returns.{ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,19 +38,17 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
+                                        form: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: NonExportedHumanMedicinesPlasticPackagingWeightView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None => form()
+        case Some(value) => form().fill(value)
       }
 
       NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(nonExportedAmount, preparedForm, mode)))
@@ -60,7 +57,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
             identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),

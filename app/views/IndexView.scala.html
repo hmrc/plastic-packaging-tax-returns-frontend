@@ -174,14 +174,19 @@
     }
 }
 
-@viewOrAmendReturnsLink = @{link(id = "view-submitted-returns-link", text = messages("account.homePage.card.history.viewreturnslink"), call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)}
+@viewOrAmendReturnsLink = @{
+    link(
+        id = "view-submitted-returns-link",
+        text = messages("account.homePage.card.history.viewamendreturnslink"),
+        call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+}
 
 @layout(
     pageTitle    = titleNoForm(messages("account.homePage.title")),
     showBackLink = false,
     large = true
 ) {
-    <h2 class="govuk-heading-l">@messages("account.homePage.title")</h2>
+    <h1 class="govuk-heading-l">@messages("account.homePage.title")</h1>
 
     @paragraph(
         content = Html(s"${messages("account.homePage.registrationNumber", pptReference)} </br> $organisationName"),
@@ -190,17 +195,26 @@
 
     <div class="govuk-grid-row govuk-!-grid-column-full govuk-!-margin-top-6 ">
 
-        @card(header = messages("account.homePage.card.makeReturn.header"),
-            lines = Seq[Option[String]](
-                returnsLine1,
-                returnsLine2,
-                returnsError
-            ).filter(_.isDefined).flatten,
-            links = Seq[Option[Html]](
-                returnsLink,
-                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
-            ).filter(_.isDefined).flatten
-        )
+        @if(appConfig.isFeatureEnabled(Features.returnsEnabled)){
+            @card(header = messages("account.homePage.card.makeReturn.header"),
+                lines = Seq[Option[String]](
+                    returnsLine1,
+                    returnsLine2,
+                    returnsError
+                ).filter(_.isDefined).flatten,
+                links = Seq[Option[Html]](
+                    returnsLink,
+                    Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
+                ).filter(_.isDefined).flatten
+            )
+        } else {
+            @card(header = messages("account.homePage.card.makeReturn.header"),
+                lines = Seq(
+                    messages("account.homePage.card.makeReturn.failure")
+                ),
+                links = Seq.empty
+            )
+        }
 
         @* <!-- todo should the link always show? --> *@
         @card(header = messages("account.homePage.card.payments.header"),

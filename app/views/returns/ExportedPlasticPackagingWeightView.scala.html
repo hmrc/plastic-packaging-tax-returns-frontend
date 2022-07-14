@@ -14,55 +14,29 @@
  * limitations under the License.
  *@
 
-@import components.SectionHeader
+@import components.{headingLabel, SectionHeader}
 @import viewmodels.InputWidth._
 @import viewmodels._
+@import templates.WeightInputLayout
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader
+    weightInputLayout: WeightInputLayout,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={
-<p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.1")</p>
-<p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.2")</p>
-
-}
-
-@hintContent = {
-    @paragraphContent
-    <hint>@messages("exportedPlasticPackagingWeight.hint")</hint>
-}
+@paragraphContent = { <p class="govuk-body">@messages("exportedPlasticPackagingWeight.paragraph.line.1")</p> }
 
 @layout(pageTitle = title(form, messages("exportedPlasticPackagingWeight.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.exported.plastic"))
-
     @formHelper(action = controllers.returns.routes.ExportedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg)).asPageHeading()
-            )
-            .asNumeric()
-            .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
-            .withSuffix(PrefixOrSuffix(content = "kg"))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @weightInputLayout(Some(messages("caption.exported.plastic")),
+            messages("exportedPlasticPackagingWeight.heading", totalPlastic.asKg),
+            paragraphText = paragraphContent,
+            hintText = Some(messages("exportedPlasticPackagingWeight.hint")),
+            form = form)
     }
 }

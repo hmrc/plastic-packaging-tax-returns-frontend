@@ -18,9 +18,9 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import models.returns.{ReturnDisplayApi, TaxReturn}
+import models.returns.{Calculations, ReturnDisplayApi}
 import play.api.Logger
-import play.api.libs.json.{JsLookupResult, JsString, JsValue}
+import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -50,11 +50,22 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-  def submit(payload: TaxReturn)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
-    val pptReference = payload.id
+  def getCalculation(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Calculations]] = {
+    val url = appConfig.pptReturnCalculationUrl(pptReference)
 
-    httpClient.POST[TaxReturn, JsValue](appConfig.pptReturnSubmissionUrl(pptReference), payload)
+    httpClient.GET[Calculations](url).
+      map(calculation =>
+        Right(calculation))
+      .recover {
+        case ex: Exception =>
+          Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
+      }
+  }
+
+  def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+    val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
+
+    httpClient.GET[JsValue](appConfig.pptReturnSubmissionUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
@@ -67,13 +78,10 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-
-  def amend(payload: TaxReturn, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+  def amend(pptReference: String, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
-    val pptReference = payload.id
-    val url = appConfig.pptReturnAmendUrl(pptReference, submissionId)
 
-    httpClient.PUT[TaxReturn, JsValue](url, payload)
+    httpClient.GET[JsValue](appConfig.pptReturnAmendUrl(pptReference, submissionId))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)

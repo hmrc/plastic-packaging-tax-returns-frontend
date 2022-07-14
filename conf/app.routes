@@ -2,6 +2,11 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
+# BTA entry points
+GET        /submit-return                                controllers.Default.redirect(to = "/plastic-packaging-tax/startYourReturn")
+GET        /submitted-returns                            controllers.amends.SubmittedReturnsController.onPageLoad()
+
+# Returns endpoints
 GET        /                                             controllers.Default.redirect(to = "/plastic-packaging-tax/account")
 
 GET        /account                                      controllers.IndexController.onPageLoad
@@ -20,7 +25,7 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
 
 GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
 POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
@@ -108,8 +113,6 @@ GET        /change-non-exported-recycled-weight             controllers.returns.
 POST       /change-non-exported-recycled-weight             controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
-
-GET        /submittedReturns                       controllers.amends.SubmittedReturnsController.onPageLoad()
 
 GET        /startYourReturn                        controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
 POST       /startYourReturn                        controllers.returns.StartYourReturnController.onSubmit(mode: Mode = NormalMode)

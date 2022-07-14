@@ -16,7 +16,7 @@ lazy val root = (project in file("."))
   .settings(inConfig(Test)(testSettings): _*)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
-  .settings(majorVersion := 0)
+  .settings(majorVersion := 1)
   .settings(useSuperShell in ThisBuild := false)
   .settings(scalaVersion := "2.12.10",
             name := appName,

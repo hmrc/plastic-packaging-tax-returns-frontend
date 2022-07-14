@@ -36,9 +36,7 @@ import scala.concurrent.Future
 class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new ImportedPlasticPackagingFormProvider()
-  val form = formProvider()
 
   lazy val importedPlasticPackagingRoute =
     controllers.returns.routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url
@@ -57,7 +55,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[ImportedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -78,7 +76,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -118,7 +116,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
           FakeRequest(POST, importedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[ImportedPlasticPackagingView]
 
@@ -141,7 +139,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -157,7 +155,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

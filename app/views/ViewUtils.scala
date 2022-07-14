@@ -25,7 +25,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.FluentInput
 
 import java.time.LocalDate
-import scala.math.BigDecimal.RoundingMode
 
 object ViewUtils {
 
@@ -68,8 +67,8 @@ object ViewUtils {
   implicit class FluentInputSuffixes(val input: Input) extends AnyVal {
     def asKg(): Input =
       input
-        .asNumeric()
         .withSuffix(PrefixOrSuffix(content = Text("kg")))
+        .withPattern("[0-9]*")
   }
 
   implicit class RichSummaryListRow(val that: SummaryListRow) extends AnyVal {

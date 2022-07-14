@@ -19,7 +19,6 @@ package controllers.amends
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.amends.routes
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
@@ -40,20 +39,18 @@ class AmendDirectExportPlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendDirectExportPlasticPackagingFormProvider,
+  form: AmendDirectExportPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AmendDirectExportPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => form()
+          case Some(value) => form().fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
@@ -71,7 +68,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           value =>
             for {
