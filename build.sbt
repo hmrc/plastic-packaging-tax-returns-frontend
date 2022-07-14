@@ -1,4 +1,5 @@
 import play.sbt.routes.RoutesKeys
+import sbt.BasicCommands.alias
 import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
@@ -67,7 +68,6 @@ lazy val root = (project in file("."))
     scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
     // Suppress warnings due to mongo dates using $date in their Json representation
     scalacOptions += "-P:silencer:globalFilters=possible missing interpolator: detected interpolated identifier `\\$date`",
-//    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test" / "a11y"),
     libraryDependencies ++= Seq(
       compilerPlugin(
         "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full
@@ -82,6 +82,7 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
+addCommandAlias("test", "a11y:test")
 lazy val itSettings = Defaults.itSettings ++ Seq(
   unmanagedSourceDirectories := Seq(baseDirectory.value / "it", baseDirectory.value / "test-utils"),
   unmanagedResourceDirectories := Seq(baseDirectory.value / "it" / "resources"),

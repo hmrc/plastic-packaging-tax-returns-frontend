@@ -18,6 +18,7 @@ package views
 
 import base.ViewSpecBase
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
+import models.Mode.NormalMode
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.ExportedPlasticPackagingWeightView

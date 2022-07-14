@@ -20,7 +20,8 @@ import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

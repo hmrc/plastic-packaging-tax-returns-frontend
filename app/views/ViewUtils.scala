@@ -16,7 +16,7 @@
 
 package views
 
-import models.returns.TaxReturnObligation
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{PrefixOrSuffix, Text}

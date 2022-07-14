@@ -18,7 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
@@ -77,11 +77,6 @@ class ExportedPlasticPackagingWeightViewSpec
 
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
     }
-
-    "pass accessibility checks" in {
-      view.toString() must passAccessibilityChecks
-    }
-
   }
 
 }

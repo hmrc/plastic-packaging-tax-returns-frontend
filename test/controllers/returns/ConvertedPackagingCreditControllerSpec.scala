@@ -21,7 +21,8 @@ import cacheables.ObligationCacheable
 import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
 import forms.returns.ConvertedPackagingCreditFormProvider
 import models.returns.TaxReturnObligation
-import models.{ExportCreditBalance, NormalMode, UserAnswers}
+import models.{ExportCreditBalance, UserAnswers}
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

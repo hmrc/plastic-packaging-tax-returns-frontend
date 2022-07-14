@@ -21,6 +21,7 @@ import base.utils.NonExportedPlasticTestHelper
 import cacheables.AmendSelectedPeriodKey
 import controllers.amends.{routes => amendsRoutes}
 import controllers.returns.{routes => returnsRoutes}
+import models.Mode.{CheckMode, NormalMode}
 import models._
 import pages.amends._
 import pages.returns._

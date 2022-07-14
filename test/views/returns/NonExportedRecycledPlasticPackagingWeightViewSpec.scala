@@ -18,7 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
