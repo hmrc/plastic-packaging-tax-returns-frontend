@@ -17,12 +17,16 @@
 package controllers.returns
 
 import base.SpecBase
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode, UserAnswers}
+import models.returns.TaxReturnObligation
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.reset
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ImportedPlasticPackagingPage
 import play.api.inject.bind
@@ -30,24 +34,35 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.returns.ImportedPlasticPackagingView
+import org.mockito.ArgumentMatchers.{eq => eqq}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute = Call("GET", "/foo")
+  private val formProvider = new ImportedPlasticPackagingFormProvider()
+  private val form = formProvider()
+  private lazy val importedPlasticPackagingRoute = routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url
+  private val mockUserAnswers = mock[UserAnswers]
 
-  val formProvider = new ImportedPlasticPackagingFormProvider()
-  val form = formProvider()
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockUserAnswers)
 
-  lazy val importedPlasticPackagingRoute =
-    controllers.returns.routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url
+    val date = LocalDate.ofEpochDay(0)
+    val obligation = TaxReturnObligation(date, date, date, "")
+    when(mockUserAnswers.get(eqq(ObligationCacheable))(any())).thenReturn(Some(obligation))
+  }
 
   "ImportedPlasticPackaging Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, importedPlasticPackagingRoute)
@@ -68,7 +83,9 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
       val ans =
         userAnswers.set(ImportedPlasticPackagingPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val application = applicationBuilder(userAnswers = Some(ans))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, importedPlasticPackagingRoute)
@@ -160,5 +177,23 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
+
+    "submit must redirect to the mini-cya page if the answer has not changed" in {
+
+      when(mockUserAnswers.change(any(), any())(any())).thenReturn(None) // Respond saying the user-answer hasn't changed
+      when(mockUserAnswers.get(eqq(ImportedPlasticPackagingPage))(any())).thenReturn(Some(true)) // TODO shouldn't need this?
+
+      // TODO all these running() unit tests should go...
+      val application = applicationBuilder(Some(mockUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(POST, routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url)
+          .withFormUrlEncodedBody(("value", "true"))
+        val result = route(application, request).value
+
+        status(result) mustBe 303
+        redirectLocation(result) mustBe Some(controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+      }
+    }
+
   }
 }

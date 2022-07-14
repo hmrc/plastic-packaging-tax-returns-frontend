@@ -26,6 +26,8 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{eq => eqq}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.reset
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ManufacturedPlasticPackagingPage
 import play.api.inject.bind
@@ -37,15 +39,22 @@ import views.html.returns.ManufacturedPlasticPackagingView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   private def onwardRoute = Call("GET", "/foo")
-
   private val formProvider = new ManufacturedPlasticPackagingFormProvider()
   private val form = formProvider()
+  private lazy val manufacturedPlasticPackagingRoute = routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+  private val mockUserAnswers = mock[UserAnswers]
 
-  private lazy val manufacturedPlasticPackagingRoute =
-    controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockUserAnswers)
+
+    val date = LocalDate.ofEpochDay(0)
+    val obligation = TaxReturnObligation(date, date, date, "")
+    when(mockUserAnswers.get(eqq(ObligationCacheable))(any())).thenReturn(Some(obligation))
+  }
 
   "ManufacturedPlasticPackaging Controller" - {
 
@@ -170,17 +179,13 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     }
     
     "submit must redirect to the mini-cya page if the answer has not changed" in {
-      val date = LocalDate.ofEpochDay(0)
-      val obligation = TaxReturnObligation(date, date, date, "")
-      
-      val userAnswers = mock[UserAnswers]
-      when(userAnswers.change(any(), any())(any())).thenReturn(None) // Respond saying the user-answer hasn't changed
-      when(userAnswers.get(eqq(ObligationCacheable))(any())).thenReturn(Some(obligation))
+
+      when(mockUserAnswers.change(any(), any())(any())).thenReturn(None) // Respond saying the user-answer hasn't changed
 
       // TODO all these running() unit tests should go...
-      val application = applicationBuilder(Some(userAnswers)).build()
+      val application = applicationBuilder(Some(mockUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(POST,routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url)
+        val request = FakeRequest(POST, routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url)
           .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
         

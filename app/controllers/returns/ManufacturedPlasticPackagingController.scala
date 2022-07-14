@@ -80,7 +80,7 @@ class ManufacturedPlasticPackagingController @Inject() (
     }
 
   private def updateAnswersAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
-    (implicit hc: HeaderCarrier, r: DataRequest[_]) = {
+    (implicit hc: HeaderCarrier) = {
     
     val maybeAnswers = previousAnswers.change(ManufacturedPlasticPackagingPage, newAnswer)
     val hasAnswerChanged = maybeAnswers.isDefined
