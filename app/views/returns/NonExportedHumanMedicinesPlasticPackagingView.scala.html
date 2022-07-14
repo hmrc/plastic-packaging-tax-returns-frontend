@@ -17,20 +17,17 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewmodels.PrintLong
 @import components._
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
     paragraphBody: paragraphBody,
-    sectionHeader: SectionHeader,
-    details: GovukDetails,
-    headingLabel: headingLabel
+    details: GovukDetails
 )
 
-@(amount: Long, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[Boolean], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
     @paragraphBody(messages("nonExportedHumanMedicinesPlasticPackaging.detail"))
@@ -47,20 +44,9 @@
 
     @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @sectionHeader(messages("nonExportedHumanMedicinesPlasticPackaging.caption"))
-        @headingLabel(messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg))
-        @paragraphContent
-
-        @govukRadios(
-            RadiosViewModel.yesNo(field = form("value"))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("nonExportedHumanMedicinesPlasticPackaging.caption")),
+            messages("nonExportedHumanMedicinesPlasticPackaging.heading",  amount.asKg),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }
