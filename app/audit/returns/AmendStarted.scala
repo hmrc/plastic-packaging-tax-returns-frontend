@@ -25,8 +25,8 @@ case class AmendStarted(internalId: String,
 
 object AmendStarted {
   implicit val format: OFormat[AmendStarted] = Json.format[AmendStarted]
-  val eventType: String                      = "pptAmendStarted"
-  val message: String                        = "PPT amend started"
+  val eventType: String                      = "AmendStarted"
+  val message: String                        = "Amend started"
 }
 
 

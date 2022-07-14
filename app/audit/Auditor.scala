@@ -32,6 +32,12 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class Auditor @Inject()(auditConnector: AuditConnector) {
 
+  object Result extends Enumeration {
+    type Result = Value
+
+    val Success, Failure = Value.toString
+  }
+
   def returnStarted(internalId: String,
                     pptReference: String,
                     headers: Seq[(String, String)])
@@ -55,8 +61,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                               response: ExportCreditBalance,
                               headers: Seq[(String, String)])
                              (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetExportCreditsSuccess(internalId, pptReference, fromDate, toDate, response, headers)
-    auditConnector.sendExplicitAudit(GetExportCreditsSuccess.eventType, payload)
+    val payload = GetExportCredits(internalId, pptReference, fromDate, toDate, Result.Success, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(GetExportCredits.eventType, payload)
   }
 
   def getExportCreditsFailure(internalId: String,
@@ -66,8 +72,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                               error: String,
                               headers: Seq[(String, String)])
                              (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetExportCreditsFailure(internalId, pptReference, fromDate, toDate, error, headers)
-    auditConnector.sendExplicitAudit(GetExportCreditsFailure.eventType, payload)
+    val payload = GetExportCredits(internalId, pptReference, fromDate, toDate, Result.Failure, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(GetExportCredits.eventType, payload)
   }
 
   def getFulfilledObligationsSuccess(internalId: String,
@@ -75,8 +81,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                                      response: Seq[TaxReturnObligation],
                                      headers: Seq[(String, String)])
                                     (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetFulfilledObligationsSuccess(internalId, pptReference, response, headers)
-    auditConnector.sendExplicitAudit(GetFulfilledObligationsSuccess.eventType, payload)
+    val payload = GetFulfilledObligations(internalId, pptReference, Result.Success, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(GetFulfilledObligations.eventType, payload)
   }
 
   def getFulfilledObligationsFailure(internalId: String,
@@ -84,8 +90,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                                      error: String,
                                      headers: Seq[(String, String)])
                                     (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetFulfilledObligationsFailure(internalId, pptReference, error, headers)
-    auditConnector.sendExplicitAudit(GetFulfilledObligationsFailure.eventType, payload)
+    val payload = GetFulfilledObligations(internalId, pptReference, Result.Failure, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(GetFulfilledObligations.eventType, payload)
   }
 
   def getOpenObligationsSuccess(internalId: String,
@@ -93,8 +99,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                                 response: PPTObligations,
                                 headers: Seq[(String, String)])
                                (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetOpenObligationsSuccess(internalId, pptReference, response, headers)
-    auditConnector.sendExplicitAudit(GetOpenObligationsSuccess.eventType, payload)
+    val payload = GetOpenObligations(internalId, pptReference, Result.Success, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(GetOpenObligations.eventType, payload)
   }
 
   def getOpenObligationsFailure(internalId: String,
@@ -102,17 +108,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                                 error: String,
                                 headers: Seq[(String, String)])
                                (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetOpenObligationsFailure(internalId, pptReference, error, headers)
-    auditConnector.sendExplicitAudit(GetOpenObligationsFailure.eventType, payload)
-  }
-
-  def getPaymentStatementFailure(internalId: String,
-                                 pptReference: String,
-                                 error: String,
-                                 headers: Seq[(String, String)])
-                                (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetPaymentStatementFailure(internalId, pptReference, error, headers)
-    auditConnector.sendExplicitAudit(GetPaymentStatementFailure.eventType, payload)
+    val payload = GetOpenObligations(internalId, pptReference, Result.Failure, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(GetOpenObligations.eventType, payload)
   }
 
   def getPaymentStatementSuccess(internalId: String,
@@ -120,18 +117,17 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                                  response: PPTFinancials,
                                  headers: Seq[(String, String)])
                                 (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetPaymentStatementSuccess(internalId, pptReference, response, headers)
-    auditConnector.sendExplicitAudit(GetPaymentStatementSuccess.eventType, payload)
+    val payload = GetPaymentStatement(internalId, pptReference, Result.Success, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(GetPaymentStatement.eventType, payload)
   }
 
-  def submitAmendFailure(internalId: String,
-                         pptReference: String,
-                         taxReturn: TaxReturn,
-                         error: String,
-                         headers: Seq[(String, String)])
-                        (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = SubmitAmendFailure(internalId, pptReference, taxReturn, error, headers)
-    auditConnector.sendExplicitAudit(SubmitAmendFailure.eventType, payload)
+  def getPaymentStatementFailure(internalId: String,
+                                 pptReference: String,
+                                 error: String,
+                                 headers: Seq[(String, String)])
+                                (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
+    val payload = GetPaymentStatement(internalId, pptReference, Result.Failure, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(GetPaymentStatement.eventType, payload)
   }
 
   def submitAmendSuccess(internalId: String,
@@ -140,18 +136,18 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                          response: JsValue,
                          headers: Seq[(String, String)])
                         (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = SubmitAmendSuccess(internalId, pptReference, taxReturn, response, headers)
-    auditConnector.sendExplicitAudit(SubmitAmendSuccess.eventType, payload)
+    val payload = SubmitAmend(internalId, pptReference, Result.Success, taxReturn, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(SubmitAmend.eventType, payload)
   }
 
-  def submitReturnFailure(internalId: String,
-                          pptReference: String,
-                          taxReturn: TaxReturn,
-                          error: String,
-                          headers: Seq[(String, String)])
-                         (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = SubmitReturnFailure(internalId, pptReference, taxReturn, error, headers)
-    auditConnector.sendExplicitAudit(SubmitReturnFailure.eventType, payload)
+  def submitAmendFailure(internalId: String,
+                         pptReference: String,
+                         taxReturn: TaxReturn,
+                         error: String,
+                         headers: Seq[(String, String)])
+                        (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
+    val payload = SubmitAmend(internalId, pptReference, Result.Failure, taxReturn, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(SubmitAmend.eventType, payload)
   }
 
   def submitReturnSuccess(internalId: String,
@@ -160,8 +156,18 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                           response: JsValue,
                           headers: Seq[(String, String)])
                          (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = SubmitReturnSuccess(internalId, pptReference, taxReturn, response, headers)
-    auditConnector.sendExplicitAudit(SubmitReturnSuccess.eventType, payload)
+    val payload = SubmitReturn(internalId, pptReference, Result.Success, taxReturn, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(SubmitReturn.eventType, payload)
+  }
+
+  def submitReturnFailure(internalId: String,
+                          pptReference: String,
+                          taxReturn: TaxReturn,
+                          error: String,
+                          headers: Seq[(String, String)])
+                         (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
+    val payload = SubmitReturn(internalId, pptReference, Result.Failure, taxReturn, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(SubmitReturn.eventType, payload)
   }
 
   def getReturnSuccess(internalId: String,
@@ -169,8 +175,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                        response: ReturnDisplayApi,
                        headers: Seq[(String, String)])
                       (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetReturnSuccess(internalId, periodKey, response, headers)
-    auditConnector.sendExplicitAudit(GetReturnSuccess.eventType, payload)
+    val payload = GetReturn(internalId, periodKey, Result.Success, Some(response), None, headers)
+    auditConnector.sendExplicitAudit(GetReturn.eventType, payload)
   }
 
   def getReturnFailure(internalId: String,
@@ -178,8 +184,8 @@ class Auditor @Inject()(auditConnector: AuditConnector) {
                        error: String,
                        headers: Seq[(String, String)])
                       (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = GetReturnFailure(internalId, periodKey, error, headers)
-    auditConnector.sendExplicitAudit(GetReturnFailure.eventType, payload)
+    val payload = GetReturn(internalId, periodKey, Result.Failure, None, Some(error), headers)
+    auditConnector.sendExplicitAudit(GetReturn.eventType, payload)
   }
 }
 

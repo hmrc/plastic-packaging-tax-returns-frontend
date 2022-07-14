@@ -16,20 +16,20 @@
 
 package audit.returns
 
-import models.returns.TaxReturn
+import models.returns.TaxReturnObligation
 import play.api.libs.json.{Json, OFormat}
 
-case class SubmitAmendFailure(internalId: String,
-                              pptReference: String,
-                              taxReturn: TaxReturn,
-                              error: String,
-                              headers: Seq[(String, String)])
+case class GetFulfilledObligations(internalId: String,
+                                   pptReference: String,
+                                   result: String,
+                                   response: Option[Seq[TaxReturnObligation]],
+                                   error: Option[String],
+                                   headers: Seq[(String, String)])
 
-object SubmitAmendFailure {
-  implicit val format: OFormat[SubmitAmendFailure] = Json.format[SubmitAmendFailure]
-  val eventType: String                            = "pptSubmitAmendFailure"
+object GetFulfilledObligations {
+  implicit val format: OFormat[GetFulfilledObligations] = Json.format[GetFulfilledObligations]
+  val eventType: String                                 = "GetFulfilledObligations"
 }
-
 
 
 

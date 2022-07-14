@@ -16,18 +16,21 @@
 
 package audit.returns
 
-import models.returns.TaxReturn
-import play.api.libs.json.{JsValue, Json, OFormat}
+import models.returns.ReturnDisplayApi
+import play.api.libs.json.{Json, OFormat}
 
-case class SubmitReturnSuccess(internalId: String,
-                               pptReference: String,
-                               taxReturn: TaxReturn,
-                               response: JsValue,
-                               headers: Seq[(String, String)])
+case class GetReturn(internalId: String,
+                     periodKey: String,
+                     result: String,
+                     response: Option[ReturnDisplayApi],
+                     error: Option[String],
+                     headers: Seq[(String, String)])
 
-object SubmitReturnSuccess {
-  implicit val format: OFormat[SubmitReturnSuccess] = Json.format[SubmitReturnSuccess]
-  val eventType: String                             = "pptSubmitReturnSuccess"
+object GetReturn {
+  implicit val format: OFormat[GetReturn] = Json.format[GetReturn]
+  val eventType: String                   = "GetReturn"
 }
+
+
 
 

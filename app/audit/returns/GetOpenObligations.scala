@@ -16,16 +16,19 @@
 
 package audit.returns
 
+import models.obligations.PPTObligations
 import play.api.libs.json.{Json, OFormat}
 
-case class GetOpenObligationsFailure(internalId: String,
-                                     pptReference: String,
-                                     error: String,
-                                     headers: Seq[(String, String)])
+case class GetOpenObligations(internalId: String,
+                              pptReference: String,
+                              result: String,
+                              response: Option[PPTObligations],
+                              error: Option[String],
+                              headers: Seq[(String, String)])
 
-object GetOpenObligationsFailure {
-  implicit val format: OFormat[GetOpenObligationsFailure] = Json.format[GetOpenObligationsFailure]
-  val eventType: String                                   = "pptGetOpenObligationsFailure"
+object GetOpenObligations {
+  implicit val format: OFormat[GetOpenObligations] = Json.format[GetOpenObligations]
+  val eventType: String                            = "GetOpenObligations"
 }
 
 

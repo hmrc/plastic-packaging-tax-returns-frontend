@@ -25,6 +25,6 @@ case class ReturnStarted(internalId: String,
 
 object ReturnStarted {
   implicit val format: OFormat[ReturnStarted] = Json.format[ReturnStarted]
-  val eventType: String                       = "pptReturnStarted"
-  val message: String                         = "PPT return started"
+  val eventType: String                       = "ReturnStarted"
+  val message: String                         = "Return started"
 }

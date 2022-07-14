@@ -16,20 +16,23 @@
 
 package audit.returns
 
+import models.ExportCreditBalance
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class GetExportCreditsFailure(internalId: String,
-                                   pptReference: String,
-                                   fromDate: LocalDate,
-                                   toDate: LocalDate,
-                                   error: String,
-                                   headers: Seq[(String, String)])
+case class GetExportCredits(internalId: String,
+                            pptReference: String,
+                            fromDate: LocalDate,
+                            toDate: LocalDate,
+                            result: String,
+                            response: Option[ExportCreditBalance],
+                            error: Option[String],
+                            headers: Seq[(String, String)])
 
-object GetExportCreditsFailure {
-  implicit val format: OFormat[GetExportCreditsFailure] = Json.format[GetExportCreditsFailure]
-  val eventType: String                                 = "pptGetExportCreditsFailure"
+object GetExportCredits {
+  implicit val format: OFormat[GetExportCredits] = Json.format[GetExportCredits]
+  val eventType: String                          = "GetExportCredits"
 }
 
 
