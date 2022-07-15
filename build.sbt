@@ -86,7 +86,6 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
-addCommandAlias("test", "a11y:test")
 lazy val itSettings = Defaults.itSettings ++ Seq(
   unmanagedSourceDirectories := Seq(baseDirectory.value / "it", baseDirectory.value / "test-utils"),
   unmanagedResourceDirectories := Seq(baseDirectory.value / "it" / "resources"),
