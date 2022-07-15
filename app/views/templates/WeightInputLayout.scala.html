@@ -39,7 +39,6 @@
     @govukInput(
         InputViewModel(field = form("value"))
             .asKg()
-            .withInputType("numeric")
             .withWidth(Fixed10)
             .withHint(Hint(content = hintText.fold[Content](Empty)(HtmlContent(_))))
             .withId("value")
