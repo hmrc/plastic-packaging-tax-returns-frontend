@@ -16,6 +16,7 @@
 
 package controllers.amends
 
+import audit.Auditor
 import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
@@ -41,7 +42,8 @@ class AmendAreYouSureController @Inject() (
   requireData: DataRequiredAction,
   form: AmendAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendAreYouSureView
+  view: AmendAreYouSureView,
+  auditor: Auditor
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -84,7 +86,10 @@ class AmendAreYouSureController @Inject() (
                   .flatMap(_.set(AmendAreYouSurePage, amend))
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            } yield {
+              if(amend) auditor.amendStarted(request.request.user.identityData.internalId, pptId, request.headers.headers)
+              Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            }
         )
     }
 
