@@ -143,7 +143,7 @@ case class TaxReturnViewModel (
   }
 
   
-  def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
+  def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
 
