@@ -166,7 +166,9 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
           FakeRequest(POST, startYourReturnRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
-        route(application, request).value
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
 
         verify(mockAuditConnector, times(1)).
           sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
@@ -197,7 +199,9 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
           FakeRequest(POST, startYourReturnRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
-        route(application, request).value
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
 
         verify(mockAuditConnector, times(0)).
           sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
