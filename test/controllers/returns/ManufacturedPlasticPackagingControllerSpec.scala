@@ -22,9 +22,8 @@ import connectors.CacheConnector
 import forms.returns.ManufacturedPlasticPackagingFormProvider
 import models.returns.TaxReturnObligation
 import models.{CheckMode, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{eq => eqq}
-import org.mockito.ArgumentMatchers.any
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.reset
 import org.scalatest.BeforeAndAfterEach
@@ -104,13 +103,17 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     "must redirect to the next page when valid data is submitted" in {
 
       val mockCacheConnector = mock[CacheConnector]
-
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      
+      val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+      when(returnsJourneyNavigator.manufacturedPlasticPackagingRoute(any(), any(), any())).thenReturn(onwardRoute)
+
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
+          .overrides(
+            bind[CacheConnector].toInstance(mockCacheConnector), 
+            bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
           )
           .build()
 

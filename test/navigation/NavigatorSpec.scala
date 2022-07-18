@@ -77,29 +77,6 @@ class NavigatorSpec extends SpecBase {
           }
         }
 
-        "for the ManufacturedPlasticPackagingPage" - {
-
-          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-          }
-
-          "navigate to ImportedPlasticPackagingPage when answer is No" in {
-
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, false)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
-
-          }
-        }
 
         "for the ImportedPlasticPackagingPage" - {
 
@@ -283,40 +260,6 @@ class NavigatorSpec extends SpecBase {
 
       "for the returns journey" - {
 
-        "for the ManufacturedPlasticPackagingPage" - {
-
-          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes and has been changed" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              CheckMode,
-              answers.get,
-              answerChanged = true
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
-
-          }
-
-          "navigate to ConfirmPlasticPackagingTotal when answer is Yes and has not been changed" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-
-          }
-
-          "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
-
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, false)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-
-          }
-        }
 
         "for the ImportedPlasticPackagingPage" - {
 

@@ -20,13 +20,12 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ManufacturedPlasticPackagingFormProvider
-import models.requests.DataRequest
-import models.{Mode, UserAnswers}
 import models.returns.TaxReturnObligation
-import navigation.Navigator
+import models.{Mode, UserAnswers}
+import navigation.ReturnsJourneyNavigator
 import pages.returns.ManufacturedPlasticPackagingPage
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ManufacturedPlasticPackagingView
@@ -37,34 +36,31 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManufacturedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ManufacturedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: ManufacturedPlasticPackagingView
+  view: ManufacturedPlasticPackagingView,
+  returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(ManufacturedPlasticPackagingPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+        val preparedForm = request.userAnswers.fill(ManufacturedPlasticPackagingPage, form)
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
+          case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
@@ -74,7 +70,7 @@ class ManufacturedPlasticPackagingController @Inject() (
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => BadRequest(view(formWithErrors, mode, obligation)),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           newAnswer => updateAnswersAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
         )
     }
@@ -82,17 +78,9 @@ class ManufacturedPlasticPackagingController @Inject() (
   private def updateAnswersAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
     (implicit hc: HeaderCarrier) = {
     
-    val maybeAnswers = previousAnswers.change(ManufacturedPlasticPackagingPage, newAnswer)
-    val hasAnswerChanged = maybeAnswers.isDefined
-    if (hasAnswerChanged) cacheConnector.set(pptId, maybeAnswers.get)
-    Redirect(navigator.nextPage(ManufacturedPlasticPackagingPage, mode, maybeAnswers.getOrElse(previousAnswers), hasAnswerChanged))
-
-//    maybeAnswers match {
-//      case None                 => Redirect(routes.ConfirmPlasticPackagingTotalController.onPageLoad)
-//      case Some(updatedAnswers) =>
-//        cacheConnector.set(pptId, updatedAnswers)
-//        navigator.nextPage(ManufacturedPlasticPackagingPage, mode, updatedAnswers, answerChanged)
-//    }
+    previousAnswers.change(ManufacturedPlasticPackagingPage, newAnswer)
+      .fold[Future[Boolean]](Future.successful(false))(updatedUserAnswers => cacheConnector.set(pptId, updatedUserAnswers).map(_ => true))
+      .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
   
 }
