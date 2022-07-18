@@ -31,7 +31,9 @@ sm -s
 
 ### Accessibilities Test
 
-The following command will only run the accessibilities test in a11y directory
+The following command will only run the accessibilities test in a11y directory. 
+Please note that to run the accessibilities tests you will need to install 
+Node v12 or above
 ```
 sbt a11y:test
 ```
