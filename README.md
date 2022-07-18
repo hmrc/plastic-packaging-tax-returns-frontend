@@ -29,6 +29,12 @@ sm -s
   * To see account page: http://localhost:8505/plastic-packaging-tax/account 
 * Press **Submit**.
 
+### Accessibilities Test
+
+The following command will only run the accessibilities test in a11y directory
+```
+sbt a11y:test
+```
 
 ### Precheck
 
