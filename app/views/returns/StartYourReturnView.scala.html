@@ -33,12 +33,12 @@
 
 @hintText =  @{ if(isFirst) Some(messages("startYourReturn.first.obligation.hint")) else None }
 
-<h4>This is heading 4</h4>
-<h3>This is heading 3</h3>
-<h1>This is heading 1</h1>
-<h2>This is heading 2</h2>
-
 @layout(pageTitle = title(form, pageTitle, Some(messages("return.title.tail")))) {
+
+    <h4>This is heading 4</h4>
+    <h3>This is heading 3</h3>
+    <h1>This is heading 1</h1>
+    <h2>This is heading 2</h2>
 
     @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
 
