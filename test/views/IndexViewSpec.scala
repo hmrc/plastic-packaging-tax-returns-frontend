@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import config.FrontendAppConfig
 import controllers.payments.{routes => paymentRoute}
 import controllers.returns.routes
-import models.NormalMode
+import models.Mode.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element

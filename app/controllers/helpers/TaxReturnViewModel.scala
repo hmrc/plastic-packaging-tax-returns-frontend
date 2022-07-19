@@ -19,7 +19,8 @@ package controllers.helpers
 import controllers.returns.routes
 import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.CheckMode
 import pages.QuestionPage
 import pages.returns._
 import play.api.i18n.Messages

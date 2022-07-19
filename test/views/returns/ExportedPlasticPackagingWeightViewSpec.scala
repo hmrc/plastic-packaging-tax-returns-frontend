@@ -18,14 +18,20 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 import views.html.returns.ExportedPlasticPackagingWeightView
 
-class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
+class ExportedPlasticPackagingWeightViewSpec
+  extends ViewSpecBase
+    with ViewAssertions
+    with ViewMatchers
+    with AccessibilityMatchers {
 
   val form = new ExportedPlasticPackagingWeightFormProvider()()
 
@@ -71,7 +77,6 @@ class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAsser
 
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
     }
-
   }
 
 }

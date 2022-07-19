@@ -18,7 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.ManufacturedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
