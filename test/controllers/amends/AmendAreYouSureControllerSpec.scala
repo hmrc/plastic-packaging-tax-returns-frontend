@@ -21,7 +21,7 @@ import base.SpecBase
 import cacheables.AmendSelectedPeriodKey
 import connectors.CacheConnector
 import forms.amends.AmendAreYouSureFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.ArgumentMatchersSugar.eqTo

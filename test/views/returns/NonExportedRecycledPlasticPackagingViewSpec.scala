@@ -18,7 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.NonExportedRecycledPlasticPackagingView

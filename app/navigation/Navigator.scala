@@ -16,6 +16,8 @@
 
 package navigation
 
+import models.Mode.{CheckMode, NormalMode}
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import pages._

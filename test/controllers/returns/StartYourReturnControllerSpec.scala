@@ -23,7 +23,8 @@ import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
 import models.returns.TaxReturnObligation
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.ArgumentMatchersSugar.eqTo
