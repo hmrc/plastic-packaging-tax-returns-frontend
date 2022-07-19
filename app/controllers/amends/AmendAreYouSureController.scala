@@ -87,7 +87,7 @@ class AmendAreYouSureController @Inject() (
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield {
-              if(amend) auditor.amendStarted(request.request.user.identityData.internalId, pptId, request.headers.headers)
+              if(amend) auditor.amendStarted(request.request.user.identityData.internalId, pptId)
               Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
             }
         )

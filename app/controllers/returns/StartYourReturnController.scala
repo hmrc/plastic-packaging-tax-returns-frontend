@@ -97,7 +97,7 @@ class StartYourReturnController @Inject()(
             )
             _ <- cacheConnector.set(pptId, updatedAnswers)
           } yield {
-            if(value) auditor.returnStarted(request.request.user.identityData.internalId, pptId, request.headers.headers)
+            if(value) auditor.returnStarted(request.request.user.identityData.internalId, pptId)
             Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
           }
       )

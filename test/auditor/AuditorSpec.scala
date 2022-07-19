@@ -31,12 +31,11 @@ import java.time.ZonedDateTime
 class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
   val auditConnector: AuditConnector = mock[AuditConnector]
-  val auditor: Auditor = new Auditor(auditConnector)
-  val processingDate = ZonedDateTime.now()
-  val fromDate: ZonedDateTime = ZonedDateTime.now()
-  val toDate: ZonedDateTime = ZonedDateTime.now.plusDays(1)
-  val pptReference: String = "XMPPT0000000123"
-  val pptUserHeaders: Map[String, String] = Map("testHeaderKey" -> "testHeaderValue")
+  val auditor: Auditor               = new Auditor(auditConnector)
+  val processingDate                 = ZonedDateTime.now()
+  val fromDate: ZonedDateTime        = ZonedDateTime.now()
+  val toDate: ZonedDateTime          = ZonedDateTime.now.plusDays(1)
+  val pptReference: String           = "XMPPT0000000123"
 
   "Auditor" when {
 
@@ -50,7 +49,7 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
           val captor = ArgumentCaptor.forClass(classOf[ReturnStarted])
 
-          auditor.returnStarted("testId", pptReference, pptUserHeaders.toSeq)
+          auditor.returnStarted("testId", pptReference)
 
           verify(auditConnector, times(1)).
             sendExplicitAudit(eqTo(ReturnStarted.eventType), captor.capture())(any(), any(), any())
@@ -74,7 +73,7 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
           val captor = ArgumentCaptor.forClass(classOf[AmendStarted])
 
-          auditor.amendStarted("testId", pptReference, pptUserHeaders.toSeq)
+          auditor.amendStarted("testId", pptReference)
 
           verify(auditConnector, times(1)).
             sendExplicitAudit(eqTo(AmendStarted.eventType), captor.capture())(any(), any(), any())
