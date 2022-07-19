@@ -15,44 +15,29 @@
  *@
 
 @import models.returns.TaxReturnObligation
+@import components.heading
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form,
-    messages("startYourReturn.title",
-        messages(s"month.${obligation.fromDate.getMonthValue}"),
-        messages(s"month.${obligation.toDate.getMonthValue}"),
-        obligation.toDate.getYear.toString))) {
+@pageTitle =  @{messages("startYourReturn.title",
+               messages(s"month.${obligation.fromDate.getMonthValue}"),
+               messages(s"month.${obligation.toDate.getMonthValue}"),
+               obligation.toDate.getYear.toString)}
+
+@hintText =  @{ if(isFirst) Some(messages("startYourReturn.first.obligation.hint")) else None }
+
+@layout(pageTitle = title(form, pageTitle, Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+       @yesNoLayout(None, pageTitle, hintText = hintText, form = form)
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(
-                    messages("startYourReturn.heading",
-                        messages(s"month.${obligation.fromDate.getMonthValue}"),
-                        messages(s"month.${obligation.toDate.getMonthValue}"),
-                        obligation.toDate.getYear.toString
-                    )
-                ).asPageHeading()
-            ).withHint(Hint(content = if(isFirst) HtmlContent(messages("startYourReturn.first.obligation.hint")) else Empty))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
     }
 }

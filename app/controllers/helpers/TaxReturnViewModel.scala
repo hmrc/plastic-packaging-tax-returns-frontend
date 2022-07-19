@@ -18,7 +18,7 @@ package controllers.helpers
 
 import controllers.returns.routes
 import models.requests.DataRequest
-import models.returns.TaxReturnObligation
+import models.returns.{Calculations, TaxReturnObligation}
 import models.{CheckMode, UserAnswers}
 import pages.QuestionPage
 import pages.returns._
@@ -34,7 +34,8 @@ case class RowInfo(key: String, value: String)
 //todo move this to viewmodels
 case class TaxReturnViewModel (
   request: DataRequest[_],
-  obligation: TaxReturnObligation
+  obligation: TaxReturnObligation,
+  calculations: Calculations
 ) (implicit messages: Messages) {
 
   private def userAnswers: UserAnswers = request.userAnswers
@@ -73,21 +74,11 @@ case class TaxReturnViewModel (
     createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
-  private def packagingTotalNumeric: Long = {
-    (getMustHave(ManufacturedPlasticPackagingWeightPage) 
-      + getMustHave(ImportedPlasticPackagingWeightPage))
-  }
-
   // Show or hide edit links
   def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
-  def canEditExported: Boolean    = (packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal) || exportedTotal > 0
-  def canEditNonExported: Boolean = packagingTotalNumeric > 0 && packagingTotalNumeric > exportedTotal
-  // End
 
-  def packagingTotal: String = {
-    packagingTotalNumeric.asKg
-  }
-
+  def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+  def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
 
   def exportedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(DirectlyExportedComponentsPage, messageKey)
@@ -113,35 +104,21 @@ case class TaxReturnViewModel (
     createKgsRow(NonExportedRecycledPlasticPackagingWeightPage, messageKey)
   }
 
-  private def deductionsTotalNumeric: Long = {
-    (getMustHave(ExportedPlasticPackagingWeightPage)
-     + getMustHave(NonExportedHumanMedicinesPlasticPackagingWeightPage)
-     + getMustHave(NonExportedRecycledPlasticPackagingWeightPage))
+  def packagingTotal: String = {
+    calculations.packagingTotal.asKg
   }
 
   def deductionsTotal: String = {
-    deductionsTotalNumeric.asKg
-  }
-
-
-  private def chargeableTotalNumeric = {
-    // TODO if totalDeductions > totalPackaging is this the correct behaviour?!
-    scala.math.max(0, (packagingTotalNumeric - deductionsTotalNumeric))
+    calculations.deductionsTotal.asKg
   }
 
   def chargeableTotal: String = {
-    chargeableTotalNumeric.asKg
+    calculations.chargeableTotal.asKg
   }
-
-
-  // TODO robbed from TaxLiabilityFactory - should be in app-config?
-  private val taxValueInPencePerKg = BigDecimal("0.20")
 
   def taxDue: String = {
-    val taxDue = taxValueInPencePerKg * BigDecimal(chargeableTotalNumeric).setScale(2, RoundingMode.HALF_EVEN)
-    taxDue.asPounds
+    calculations.taxDue.asPounds
   }
-
   
   def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
@@ -155,5 +132,5 @@ case class TaxReturnViewModel (
     ViewUtils.displayLocalDate(obligation.toDate)
   }
 
-  def isSubmittable: Boolean = packagingTotalNumeric >= deductionsTotalNumeric
+  def isSubmittable: Boolean = calculations.isSubmittable
 }

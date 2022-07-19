@@ -32,8 +32,8 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.StartYourReturnView
 import uk.gov.hmrc.http.HttpResponse
+import views.html.returns.StartYourReturnView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -41,11 +41,8 @@ import scala.concurrent.Future
 class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
   val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
-
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new StartYourReturnFormProvider()
-  val form = formProvider()
 
   lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 
@@ -82,7 +79,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
         val view = application.injector.instanceOf[StartYourReturnView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, obligation, isFirst)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, obligation, isFirst)(request, messages(application)).toString
 
         verify(mockCacheConnector, atLeastOnce).set(refEq(pptId), refEq(userAnswers))(any())
       }
@@ -108,7 +105,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, obligation, isFirst)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, obligation, isFirst)(request, messages(application)).toString
       }
     }
 
@@ -152,7 +149,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
           FakeRequest(POST, startYourReturnRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[StartYourReturnView]
 

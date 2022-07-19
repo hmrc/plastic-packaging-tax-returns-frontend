@@ -83,10 +83,12 @@ class IndexControllerSpec
 
         mockGetSubscriptionFailure(
           EisFailure(
-            Seq(
-              EisError(
-                "NO_DATA_FOUND",
-                "The remote endpoint has indicated that the requested resource could not be found."
+            Some(
+              Seq(
+                EisError(
+                  "NO_DATA_FOUND",
+                  "The remote endpoint has indicated that the requested resource could not be found."
+                )
               )
             )
           )
@@ -237,7 +239,7 @@ class IndexControllerSpec
       "get subscription returns a 404 (NOT_FOUND) but no confirming EisFailure in the body" in {
 
         mockGetSubscriptionFailure(
-          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")))
+          EisFailure(Some(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!"))))
         )
 
         val application = applicationBuilderFailedAuth(userAnswers = None).build()
@@ -256,7 +258,7 @@ class IndexControllerSpec
       "get subscription returns a failure other than 404 (NOT_FOUND)" in {
 
         mockGetSubscriptionFailure(
-          EisFailure(Seq(EisError("INTERNAL_SERVER_ERROR", "Something's gone BANG!")))
+          EisFailure(None)
         )
 
         val application = applicationBuilderFailedAuth(userAnswers = None).build()

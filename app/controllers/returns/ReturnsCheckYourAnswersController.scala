@@ -21,13 +21,14 @@ import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.TaxReturnViewModel
 import models.requests.DataRequest
-import models.returns.{ReturnType, TaxReturnObligation}
+import models.returns.TaxReturnObligation
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnsCheckYourAnswersView
 
@@ -39,7 +40,6 @@ class ReturnsCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: ReturnsCheckYourAnswersView,
@@ -60,9 +60,16 @@ class ReturnsCheckYourAnswersController @Inject()(
         }
     }
 
-  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit messages: Messages) = {
-    val returnViewModel = TaxReturnViewModel(request, obligation)
-    Future.successful(Ok(view(returnViewModel)(request, messages)))
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
+                         (implicit messages: Messages, hc: HeaderCarrier) = {
+
+    returnsConnector.getCalculation(request.pptReference).flatMap {
+      case Right(calculations) =>
+        val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
+        Future.successful(Ok(view(returnViewModel)(request, messages)))
+      case Left(error) => throw error
+    }
+
   }
 
   def onSubmit(): Action[AnyContent] =
@@ -71,14 +78,7 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         val pptId: String = request.pptReference
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Obligation not found!")
-        )
-
-        // TODO use same code for calculating return fields and check-your-answers fields
-        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation.periodKey, ReturnType.NEW)
-
-        returnsConnector.submit(taxReturn).flatMap {
+        returnsConnector.submit(pptId).flatMap {
           case Right(optChargeRef) =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.ReturnConfirmationController.onPageLoad())

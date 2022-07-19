@@ -36,12 +36,9 @@ import scala.concurrent.Future
 class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new DirectlyExportedComponentsFormProvider()
-  val form = formProvider()
 
   val answersWithPreset: UserAnswers = emptyUserAnswers.set(ManufacturedPlasticPackagingWeightPage, 7L).get.set(ImportedPlasticPackagingWeightPage, 5L).get
-
   val totalPlastic: Long = 12
 
   lazy val directlyExportedComponentsRoute = controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
@@ -60,7 +57,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, totalPlastic)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
@@ -78,7 +75,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, totalPlastic)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, totalPlastic)(request, messages(application)).toString
       }
     }
 
@@ -117,7 +114,7 @@ class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSuga
           FakeRequest(POST, directlyExportedComponentsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[DirectlyExportedComponentsView]
 

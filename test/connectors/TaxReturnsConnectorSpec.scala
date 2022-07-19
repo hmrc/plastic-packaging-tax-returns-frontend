@@ -20,7 +20,6 @@ import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import controllers.TaxReturnBuilder
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, EitherValues}
@@ -29,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
 class TaxReturnsConnectorSpec
-  extends ConnectorISpec with ScalaFutures with EitherValues with TaxReturnBuilder with BeforeAndAfterEach {
+  extends ConnectorISpec with ScalaFutures with EitherValues with BeforeAndAfterEach {
 
   lazy val connector: TaxReturnsConnector = app.injector.instanceOf[TaxReturnsConnector]
 
@@ -79,7 +78,7 @@ class TaxReturnsConnectorSpec
           body = """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}"""
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
 
         res.isRight mustBe true
         res.value mustBe Some("PANTESTPAN")
@@ -92,7 +91,7 @@ class TaxReturnsConnectorSpec
           body = """{"chargeDetails": null}"""
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
 
         res.isRight mustBe true
         res.value mustBe None
@@ -110,7 +109,7 @@ class TaxReturnsConnectorSpec
           subId = "submission-214"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
 
         res.isRight mustBe true
         res.value mustBe Some("SOMEREF")
@@ -125,7 +124,7 @@ class TaxReturnsConnectorSpec
           subId = "submission-214"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
 
         res.isRight mustBe true
         res.value mustBe None
@@ -155,7 +154,7 @@ class TaxReturnsConnectorSpec
           body = "{"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(aTaxReturn(withId(pptReference))))
+        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
@@ -169,7 +168,7 @@ class TaxReturnsConnectorSpec
           subId = "submission-214"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(aTaxReturn(withId(pptReference)), "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
@@ -197,7 +196,7 @@ class TaxReturnsConnectorSpec
                                                      body: String = ""
                                                    ): StubMapping =
     stubFor(
-      WireMock.post(s"/returns-submission/$pptReference")
+      WireMock.get(s"/returns-submission/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -212,7 +211,7 @@ class TaxReturnsConnectorSpec
                                                     subId: String
                                                   ): StubMapping =
     stubFor(
-      WireMock.put(s"/returns-amend/$pptReference/$subId")
+      WireMock.get(s"/returns-amend/$pptReference/$subId")
         .willReturn(
           aResponse()
             .withStatus(status)

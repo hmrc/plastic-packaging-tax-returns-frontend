@@ -42,7 +42,6 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
 
   private def onwardRoute = Call("GET", "/foo")
   private val formProvider = new ManufacturedPlasticPackagingFormProvider()
-  private val form = formProvider()
   private lazy val manufacturedPlasticPackagingRoute = routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
   private val mockUserAnswers = mock[UserAnswers]
 
@@ -71,7 +70,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -94,7 +93,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -138,7 +137,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
           FakeRequest(POST, manufacturedPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingView]
 

@@ -36,8 +36,6 @@ import scala.concurrent.Future
 class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ImportedPlasticPackagingWeightFormProvider()
-  val form = formProvider()
-
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0L
@@ -60,7 +58,7 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val view = application.injector.instanceOf[ImportedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -82,7 +80,7 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -123,7 +121,7 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
           FakeRequest(POST, importedPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[ImportedPlasticPackagingWeightView]
 

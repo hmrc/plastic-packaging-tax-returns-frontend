@@ -17,34 +17,34 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
+import forms.returns.{NonExportedHumanMedicinesPlasticPackagingFormProvider, NonExportedRecycledPlasticPackagingFormProvider}
 import models.NormalMode
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
+import views.html.returns.{NonExportedHumanMedicinesPlasticPackagingView, NonExportedRecycledPlasticPackagingView}
 
-class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
+class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val form = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
-  val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
+  val form = new NonExportedRecycledPlasticPackagingFormProvider()()
+  val page = inject[NonExportedRecycledPlasticPackagingView]
   val plastic = 1234L
 
   private def createView: Html =
-    page(plastic, form, NormalMode)(request, messages)
+    page(form, NormalMode, plastic)(request, messages)
 
-  "NonExportedHumanMedicinesPlasticPackagingView" should {
+  "NonExportedRecycledPlasticPackagingView" should {
     val view = createView
 
     "have a title" in {
 
       view.select("title").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        "You did not export 1,234kg of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines?"
+        "You did not export 1,234kg of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?"
 
     }
     "have a caption" in {
@@ -55,8 +55,9 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
 
     "contain paragraph content" in{
 
-      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal"))
-      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal.content"))
+      val text = "You will not be charged tax on these but you must still tell us about them. Find out what we mean by recycled plastic packaging."
+
+      view.getElementsByClass("govuk-body").text() must include(text)
 
     }
     "contain save & continue button" in {

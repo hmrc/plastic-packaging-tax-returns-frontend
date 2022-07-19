@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.returns
+@this()
 
-import play.api.i18n.Messages
-import play.api.libs.json.{Json, OFormat}
-import views.ViewUtils
+@(headingKey: String, headingSize: String = "govuk-heading-l")(implicit messages: Messages)
 
-import java.time.LocalDate
-
-final case class TaxReturnObligation(
-  fromDate: LocalDate,
-  toDate: LocalDate,
-  dueDate: LocalDate,
-  periodKey: String
-) {
-  def toReturnQuarter(implicit messages: Messages): String = {
-    ViewUtils.displayReturnQuarter(fromDate, toDate)
-  }
-}
-
-object TaxReturnObligation {
-  implicit val format: OFormat[TaxReturnObligation] = Json.format[TaxReturnObligation]
-}
+<h1 class="@headingSize">@messages(headingKey)</h1>

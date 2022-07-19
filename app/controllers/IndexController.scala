@@ -19,7 +19,6 @@ package controllers
 import config.{Features, FrontendAppConfig}
 import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.EisFailure
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import play.api.i18n.{I18nSupport, Messages}
@@ -63,11 +62,11 @@ class IndexController @Inject() (
             )
           )
         case Left(eisFailure) =>
-          if (isDeregistered(eisFailure)) {
+          if (eisFailure.isDeregistered) {
             Future.successful(Redirect(routes.DeregisteredController.onPageLoad()))
           } else {
             throw new RuntimeException(
-              s"Failed to get subscription - ${eisFailure.failures.headOption.map(_.reason)
+              s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
                 .getOrElse("no underlying reason supplied")}"
             )
           }
@@ -95,8 +94,5 @@ class IndexController @Inject() (
     } else {
       Future.successful(Some(PPTObligations(None, None, 0, false, false)))
     }
-
-  private def isDeregistered(eisFailure: EisFailure) =
-    eisFailure.failures.exists(_.code == "NO_DATA_FOUND")
 
 }

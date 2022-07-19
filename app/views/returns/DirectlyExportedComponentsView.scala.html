@@ -16,42 +16,26 @@
 
 @import components._
 @import viewmodels._
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, totalPlastic:Long)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent = {
-    @paragraphBody(messages("directlyExportedComponents.paragraph.1"))
-}
+@paragraphContent = { @paragraphBody(message = messages("directlyExportedComponents.paragraph.1")) }
 
 @layout(pageTitle = title(form, messages("directlyExportedComponents.title", totalPlastic.asKg), Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("caption.exported.plastic"))
-
     @formHelper(action = controllers.returns.routes.DirectlyExportedComponentsController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("directlyExportedComponents.heading", totalPlastic.asKg)).asPageHeading()
-            ).withHint(Hint(content = HtmlContent(paragraphContent)))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("caption.exported.plastic")),
+            messages("directlyExportedComponents.heading", totalPlastic.asKg),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }

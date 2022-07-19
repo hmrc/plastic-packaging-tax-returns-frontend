@@ -16,14 +16,13 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnDisplayApi, ReturnType, TaxReturnObligation}
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
@@ -40,7 +39,6 @@ class CheckYourAnswersController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
@@ -74,22 +72,16 @@ class CheckYourAnswersController @Inject() (
 
         val pptId: String = request.request.pptReference
 
-        val obligation = request.userAnswers.get[String](AmendSelectedPeriodKey).getOrElse(
-          throw new IllegalStateException("Obligation not found!")
-        )
-
-        val taxReturn = taxReturnHelper.getTaxReturn(pptId, request.userAnswers, obligation, ReturnType.AMEND)
         val submissionId: String = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable)
           .getOrElse(throw new IllegalStateException("must have a submission id to amend a return"))
           .idDetails
           .submissionId
 
-        returnsConnector.amend(taxReturn, submissionId).flatMap {
+        returnsConnector.amend(pptId, submissionId).flatMap {
           case Right(optChargeRef) =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
-
           case Left(error) =>
             throw error
         }
