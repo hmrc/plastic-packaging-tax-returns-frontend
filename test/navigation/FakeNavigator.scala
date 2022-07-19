@@ -22,7 +22,7 @@ import models.{Mode, UserAnswers}
 
 class FakeNavigator(desiredRoute: Call) extends Navigator(new AmendsJourneyNavigator, returns = new ReturnsJourneyNavigator) {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, answerChanged: Boolean): Call =
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 
 }

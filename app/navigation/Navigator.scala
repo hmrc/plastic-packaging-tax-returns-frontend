@@ -28,20 +28,18 @@ class Navigator @Inject()(
                            returns: ReturnsJourneyNavigator
                          ) {
 
-  type AnswerChanged = Boolean
-
   private val normalRoutes: PartialFunction[Page, UserAnswers => Call] =
     amends.normalRoutes.orElse(returns.normalRoutes)
 
-  private val checkRouteMap: PartialFunction[Page, (UserAnswers, AnswerChanged) => Call] =
+  private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
     amends.checkRoutes.orElse(returns.checkRoutes)
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, answerChanged: AnswerChanged = false): Call =
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
       case NormalMode =>
         normalRoutes(page)(userAnswers)
       case CheckMode =>
-        checkRouteMap(page)(userAnswers, answerChanged)
+        checkRouteMap(page)(userAnswers)
     }
 
 }
