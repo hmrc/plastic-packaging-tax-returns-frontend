@@ -26,7 +26,6 @@ import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.JsObject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -81,7 +80,6 @@ class ReturnsCheckYourAnswersController @Inject()(
 
         returnsConnector.submit(pptId).flatMap {
           case Right(optChargeRef) =>
-            val x: JsObject = request.userAnswers.data
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
             }

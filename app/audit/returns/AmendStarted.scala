@@ -20,8 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class AmendStarted(internalId: String,
                         msg: String,
-                        pptReference: String,
-                        headers: Seq[(String, String)])
+                        pptReference: String)
 
 object AmendStarted {
   implicit val format: OFormat[AmendStarted] = Json.format[AmendStarted]

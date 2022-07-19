@@ -30,13 +30,13 @@ import java.time.ZonedDateTime
 
 class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
-  val auditConnector = mock[AuditConnector]
-  val auditor        = new Auditor(auditConnector)
+  val auditConnector: AuditConnector = mock[AuditConnector]
+  val auditor: Auditor = new Auditor(auditConnector)
   val processingDate = ZonedDateTime.now()
-  val fromDate       = ZonedDateTime.now()
-  val toDate         = ZonedDateTime.now.plusDays(1)
-  val pptReference   = "XMPPT0000000123"
-  val pptUserHeaders = Map("testHeaderKey" -> "testHeaderValue")
+  val fromDate: ZonedDateTime = ZonedDateTime.now()
+  val toDate: ZonedDateTime = ZonedDateTime.now.plusDays(1)
+  val pptReference: String = "XMPPT0000000123"
+  val pptUserHeaders: Map[String, String] = Map("testHeaderKey" -> "testHeaderValue")
 
   "Auditor" when {
 
@@ -59,7 +59,6 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
           capturedEvent.internalId mustBe "testId"
           capturedEvent.pptReference mustBe pptReference
           capturedEvent.msg mustBe ReturnStarted.message
-          capturedEvent.headers mustBe pptUserHeaders.toSeq
 
         }
       }
@@ -84,7 +83,6 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
           capturedEvent.internalId mustBe "testId"
           capturedEvent.pptReference mustBe pptReference
           capturedEvent.msg mustBe AmendStarted.message
-          capturedEvent.headers mustBe pptUserHeaders.toSeq
 
         }
       }

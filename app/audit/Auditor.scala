@@ -27,18 +27,16 @@ import scala.concurrent.ExecutionContext
 class Auditor @Inject()(auditConnector: AuditConnector) {
 
   def returnStarted(internalId: String,
-                    pptReference: String,
-                    headers: Seq[(String, String)])
+                    pptReference: String)
                    (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = ReturnStarted(internalId, ReturnStarted.message, pptReference,headers)
+    val payload = ReturnStarted(internalId, ReturnStarted.message, pptReference)
     auditConnector.sendExplicitAudit(ReturnStarted.eventType, payload)
   }
 
   def amendStarted(internalId: String,
-                   pptReference: String,
-                   headers: Seq[(String, String)])
+                   pptReference: String)
                   (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
-    val payload = AmendStarted(internalId, AmendStarted.message, pptReference, headers)
+    val payload = AmendStarted(internalId, AmendStarted.message, pptReference)
     auditConnector.sendExplicitAudit(AmendStarted.eventType, payload)
   }
 

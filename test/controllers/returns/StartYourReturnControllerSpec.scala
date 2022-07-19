@@ -44,10 +44,10 @@ import scala.concurrent.Future
 
 class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
-  val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
-  def onwardRoute = Call("GET", "/foo")
-  val formProvider = new StartYourReturnFormProvider()
-  val mockAuditConnector   = mock[AuditConnector]
+  val mockTaxReturnHelper: TaxReturnHelper      = mock[TaxReturnHelper]
+  def onwardRoute: Call                         = Call("GET", "/foo")
+  val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
+  val mockAuditConnector: AuditConnector        = mock[AuditConnector]
 
   lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 
