@@ -27,8 +27,6 @@ import javax.inject.Singleton
 @Singleton
 class ReturnsJourneyNavigator {
 
-  type AnswerChanged = Boolean
-
   private def exportedAllPlastic(answers: UserAnswers): Boolean = {
     val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
     val imported = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
@@ -40,9 +38,9 @@ class ReturnsJourneyNavigator {
   @deprecated("Call direct route method on this class instead")
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
     // TODO - replace with direct calls
+    // case ManufacturedPlasticPackagingPage => instead call manufacturedPlasticPackagingRoute
+    // case ImportedPlasticPackagingPage => instead call importedPlasticPackagingRoute
     case StartYourReturnPage => startYourReturnRoute
-    //    case ManufacturedPlasticPackagingPage => instead call manufacturedPlasticPackagingRoute
-    case ImportedPlasticPackagingPage => importedPlasticPackagingRoute(_, mode = NormalMode)
     case ManufacturedPlasticPackagingWeightPage =>
       _ => routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     case ImportedPlasticPackagingWeightPage =>
@@ -56,11 +54,11 @@ class ReturnsJourneyNavigator {
   }
 
   @deprecated("Call direct route method on this class instead")
-  val checkRoutes: PartialFunction[Page, (UserAnswers, AnswerChanged) => Call] = {
+  val checkRoutes: PartialFunction[Page, (UserAnswers, Boolean) => Call] = {
     // TODO - replace with direct calls
-//    case ManufacturedPlasticPackagingPage => (answers, answerChanged) => instead call manufacturedPlasticPackagingRoute
+    // case ManufacturedPlasticPackagingPage => instead call manufacturedPlasticPackagingRoute
+    // case ImportedPlasticPackagingPage => instead call importedPlasticPackagingRoute(answers, mode = CheckMode, answersChanged)
     case ManufacturedPlasticPackagingWeightPage => (answers, _) => manufacturedPlasticPackagingWeightRoute(answers)
-    case ImportedPlasticPackagingPage => (answers, answersChanged) => importedPlasticPackagingRoute(answers, mode = CheckMode, answersChanged)
     case ImportedPlasticPackagingWeightPage => (_, _) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
     case DirectlyExportedComponentsPage => (answers, _) => directlyExportedComponentsRoute(answers, mode = CheckMode)
     case ExportedPlasticPackagingWeightPage => (answers, _) => exportedPlasticPackagingWeightRoute(answers, mode = CheckMode)
@@ -91,21 +89,14 @@ class ReturnsJourneyNavigator {
       case Some(_) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
       case _ => throw new Exception("Unable to navigate to page")
     }
-
-  private def importedPlasticPackagingRoute(answers: UserAnswers, mode: Mode = NormalMode, answerChanged: AnswerChanged = false): Call = {
-    if (mode == CheckMode) {
-      answers.get(ImportedPlasticPackagingPage) match {
-        case Some(true) if answerChanged => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-        case Some(false) | Some(true) if !answerChanged => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-        case _ => throw new Exception("Unable to navigate to page")
-      }
-    } else {
-      answers.get(ImportedPlasticPackagingPage) match {
-        case Some(true) => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-        case Some(false) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-        case _ => throw new Exception("Unable to navigate to page")
-      }
-    }
+    
+  def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
+    if (hasAnswerChanged) 
+      (mode, usersAnswer) match {
+      case (_, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case (_, false) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
+    } else 
+      routes.ConfirmPlasticPackagingTotalController.onPageLoad
   }
 
   private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode = NormalMode): Call =

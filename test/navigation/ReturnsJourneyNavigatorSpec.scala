@@ -28,12 +28,12 @@ class ReturnsJourneyNavigatorSpec extends SpecBase {
   "Manufacturing yes / no page" - {
     "for normal mode" - {
 
-      "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes" in {
+      "when answer is Yes" in {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
 
-      "navigate to ImportedPlasticPackagingPage when answer is No" in {
+      "when answer is No" in {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = false)
         call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
       }
@@ -41,20 +41,56 @@ class ReturnsJourneyNavigatorSpec extends SpecBase {
 
     "for check mode" - {
 
-      "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes and has been changed" in {
+      "when answer is Yes and has been changed" in {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
       }
 
-      "navigate to ConfirmPlasticPackagingTotal when answer is Yes and has not been changed" in {
+      "when answer is Yes and has not been changed" in {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = true)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
-      "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
+      "when answer is No" in {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
     }
   }
+
+  "Imported yes / no page" - {
+    "for normal mode" - {
+
+      "when answer is Yes" in {
+        val call = returnsJourneyNavigator.importedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = true)
+        call mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode)
+      }
+      
+      "when answer is No" in {
+        val call = returnsJourneyNavigator.importedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = false)
+        call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      }
+      
+    }
+  
+    "for check mode" - {
+
+      "when answer is Yes and has been changed" in {
+        val call = returnsJourneyNavigator.importedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = true)
+        call mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode)
+      }
+
+      "when answer is Yes and has not been changed" in {
+        val call = returnsJourneyNavigator.importedPlasticPackagingRoute(CheckMode, hasAnswerChanged = false, usersAnswer = true)
+        call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      }
+
+      "when answer is No" in {
+        val call = returnsJourneyNavigator.importedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = false)
+        call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      }
+      
+    }    
+  }
+    
 }

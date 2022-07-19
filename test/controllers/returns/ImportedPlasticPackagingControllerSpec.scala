@@ -22,7 +22,7 @@ import connectors.CacheConnector
 import forms.returns.ImportedPlasticPackagingFormProvider
 import models.{CheckMode, NormalMode, UserAnswers}
 import models.returns.TaxReturnObligation
-import navigation.{FakeNavigator, Navigator}
+import navigation.{FakeNavigator, Navigator, ReturnsJourneyNavigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.reset
@@ -104,13 +104,15 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     "must redirect to the next page when valid data is submitted" in {
 
       val mockCacheConnector = mock[CacheConnector]
-
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+      when(returnsJourneyNavigator.importedPlasticPackagingRoute(any(), any(), any())) thenReturn onwardRoute
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
+          .overrides(
+            bind[CacheConnector].toInstance(mockCacheConnector), 
+            bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
           )
           .build()
 
