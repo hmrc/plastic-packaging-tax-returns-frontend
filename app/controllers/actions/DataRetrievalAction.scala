@@ -17,13 +17,11 @@
 package controllers.actions
 
 import connectors.CacheConnector
-import models.UserAnswers
-
-import javax.inject.Inject
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject() (

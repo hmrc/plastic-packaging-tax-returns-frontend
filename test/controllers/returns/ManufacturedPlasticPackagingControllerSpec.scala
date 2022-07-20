@@ -20,8 +20,9 @@ import base.SpecBase
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import forms.returns.ManufacturedPlasticPackagingFormProvider
+import models.Mode.{CheckMode, NormalMode}
 import models.returns.TaxReturnObligation
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.Mockito.when

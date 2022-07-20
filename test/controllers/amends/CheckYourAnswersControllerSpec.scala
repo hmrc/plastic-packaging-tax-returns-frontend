@@ -18,7 +18,8 @@ package controllers.amends
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.NormalMode
 import org.mockito.Mockito.when
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result

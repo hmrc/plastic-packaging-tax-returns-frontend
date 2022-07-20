@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
-import models.{NormalMode, SignedInUser}
+import models.SignedInUser
+import models.Mode.NormalMode
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{BodyParsers, Headers, Results}
 import play.api.test.Helpers._

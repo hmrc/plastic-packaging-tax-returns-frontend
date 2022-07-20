@@ -17,11 +17,7 @@
 package controllers.helpers
 
 import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
-import models.UserAnswers
-import models.returns.ReturnType.{AMEND, NEW, ReturnType}
 import models.returns._
-import pages.amends._
-import pages.returns._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

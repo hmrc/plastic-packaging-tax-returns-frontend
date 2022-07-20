@@ -17,7 +17,8 @@
 package navigation
 
 import cacheables.AmendSelectedPeriodKey
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.NormalMode
 import pages._
 import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
 import play.api.mvc.Call

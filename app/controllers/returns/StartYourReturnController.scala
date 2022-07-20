@@ -16,6 +16,7 @@
 
 package controllers.returns
 
+import audit.Auditor
 import cacheables.ObligationCacheable
 import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
@@ -44,7 +45,8 @@ class StartYourReturnController @Inject()(
                                            form: StartYourReturnFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            view: StartYourReturnView,
-                                           taxReturnHelper: TaxReturnHelper
+                                           taxReturnHelper: TaxReturnHelper,
+                                           auditor: Auditor
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
@@ -94,7 +96,10 @@ class StartYourReturnController @Inject()(
               request.userAnswers.set(StartYourReturnPage, value)
             )
             _ <- cacheConnector.set(pptId, updatedAnswers)
-          } yield Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+          } yield {
+            if(value) auditor.returnStarted(request.request.user.identityData.internalId, pptId)
+            Redirect(navigator.nextPage(StartYourReturnPage, mode, updatedAnswers))
+          }
       )
   }
 }

@@ -20,10 +20,11 @@ import base.SpecBase
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.Mode.{CheckMode, NormalMode}
+import models.UserAnswers
 import models.returns.TaxReturnObligation
-import navigation.{FakeNavigator, Navigator, ReturnsJourneyNavigator}
-import org.mockito.ArgumentMatchers.any
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.reset
 import org.scalatest.BeforeAndAfterEach
@@ -34,7 +35,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.returns.ImportedPlasticPackagingView
-import org.mockito.ArgumentMatchers.{eq => eqq}
 
 import java.time.LocalDate
 import scala.concurrent.Future

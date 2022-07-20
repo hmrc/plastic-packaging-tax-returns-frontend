@@ -17,7 +17,7 @@
 package models.subscription
 
 import play.api.libs.json.Json
-import returns.models.subscription.ContactDetails
+import models.subscription.ContactDetails
 
 case class PrincipalPlaceOfBusinessDetails(
   addressDetails: AddressDetails,

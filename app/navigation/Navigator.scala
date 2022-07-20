@@ -16,6 +16,7 @@
 
 package navigation
 
+import models.Mode.{CheckMode, NormalMode}
 import models._
 import pages._
 import play.api.mvc.Call

@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package audit.returns
 
-import play.api.mvc.JavascriptLiteral
+import play.api.libs.json.{Json, OFormat}
 
-sealed trait Mode
+case class ReturnStarted(internalId: String,
+                         msg: String,
+                         pptReference: String)
 
-object Mode {
-
-  case object CheckMode  extends Mode
-  case object NormalMode extends Mode
-
-  implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
-
-    override def to(value: Mode): String =
-      value match {
-        case NormalMode => "NormalMode"
-        case CheckMode  => "CheckMode"
-      }
-
-  }
-
+object ReturnStarted {
+  implicit val format: OFormat[ReturnStarted] = Json.format[ReturnStarted]
+  val eventType: String                       = "ReturnStarted"
+  val message: String                         = "Return started"
 }

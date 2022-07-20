@@ -18,7 +18,7 @@ package navigation
 
 import base.SpecBase
 import controllers.returns.{routes => returnsRoutes}
-import models.{CheckMode, NormalMode}
+import models.Mode.{CheckMode, NormalMode}
 
 class ReturnsJourneyNavigatorSpec extends SpecBase {
 

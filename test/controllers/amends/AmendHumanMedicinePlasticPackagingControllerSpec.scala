@@ -19,7 +19,7 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

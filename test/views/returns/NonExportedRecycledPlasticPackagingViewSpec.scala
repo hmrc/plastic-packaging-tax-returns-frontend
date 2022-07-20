@@ -17,11 +17,11 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.{NonExportedHumanMedicinesPlasticPackagingFormProvider, NonExportedRecycledPlasticPackagingFormProvider}
-import models.NormalMode
+import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
+import models.Mode.NormalMode
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.html.returns.{NonExportedHumanMedicinesPlasticPackagingView, NonExportedRecycledPlasticPackagingView}
+import views.html.returns.NonExportedRecycledPlasticPackagingView
 
 class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
