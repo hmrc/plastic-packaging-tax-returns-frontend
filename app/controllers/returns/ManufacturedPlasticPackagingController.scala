@@ -75,9 +75,9 @@ class ManufacturedPlasticPackagingController @Inject() (
 
   private def updateAnswersAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
     (implicit hc: HeaderCarrier) = {
-    
+
     previousAnswers.change(ManufacturedPlasticPackagingPage, newAnswer)
-      .fold[Future[Boolean]](Future.successful(false))(updatedUserAnswers => cacheConnector.set(pptId, updatedUserAnswers).map(_ => true))
+      .fold[Future[Boolean]] (Future.successful(false)) (updatedUserAnswers => cacheConnector.set(pptId, updatedUserAnswers).map(_ => true))
       .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
   
