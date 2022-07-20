@@ -17,11 +17,11 @@
 package navigation
 
 import models.Mode.{CheckMode, NormalMode}
+import models._
+import pages._
+import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
-import pages._
-import models._
 
 @Singleton
 class Navigator @Inject()(

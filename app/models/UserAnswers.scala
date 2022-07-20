@@ -16,6 +16,7 @@
 
 package models
 
+import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -24,7 +25,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
-final case class UserAnswers(
+case class UserAnswers(
   id: String,
   data: JsObject = Json.obj(),
   lastUpdated: Instant = Instant.now
@@ -52,6 +53,19 @@ final case class UserAnswers(
     }
   }
 
+  /**
+    * Attempts to change the value represented by settable to newValue. 
+    * @return
+    *  - Some(UserAnswers) => user answers with updated value
+    *  - None => new value matches existing value, nothing changed
+    *  @throws Exception if changing the value or cleanup failed
+    */
+  def change[A] (questionPage: QuestionPage[A], newValue: A) (implicit format: Format[A]): Option[UserAnswers] = 
+    if (get(questionPage).contains(newValue))
+      None
+    else 
+      Some(set(questionPage, newValue).get)
+  
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
