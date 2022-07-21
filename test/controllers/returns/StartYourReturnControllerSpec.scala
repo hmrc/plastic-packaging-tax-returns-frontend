@@ -16,6 +16,7 @@
 
 package controllers.returns
 
+import audit.returns.ReturnStarted
 import base.SpecBase
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
@@ -26,7 +27,9 @@ import models.UserAnswers
 import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{atLeastOnce, verify, when}
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito
+import org.mockito.Mockito.{atLeastOnce, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.StartYourReturnPage
 import play.api.inject.bind
@@ -34,6 +37,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import views.html.returns.StartYourReturnView
 
 import java.time.LocalDate
@@ -41,9 +45,10 @@ import scala.concurrent.Future
 
 class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
-  val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
-  def onwardRoute = Call("GET", "/foo")
-  val formProvider = new StartYourReturnFormProvider()
+  val mockTaxReturnHelper: TaxReturnHelper      = mock[TaxReturnHelper]
+  def onwardRoute: Call                         = Call("GET", "/foo")
+  val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
+  val mockAuditConnector: AuditConnector        = mock[AuditConnector]
 
   lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 
@@ -121,7 +126,8 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector),
-            bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
+            bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+            bind[AuditConnector].toInstance(mockAuditConnector)
           )
           .build()
 
@@ -134,6 +140,73 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+
+      }
+    }
+
+    "must audit started event when user answers yes" in {
+
+      Mockito.reset(mockAuditConnector)
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector),
+            bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+            bind[AuditConnector].toInstance(mockAuditConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, startYourReturnRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        verify(mockAuditConnector, times(1)).
+          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
+
+      }
+    }
+
+    "must not audit started event when user answers no" in {
+
+      Mockito.reset(mockAuditConnector)
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector),
+            bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+            bind[AuditConnector].toInstance(mockAuditConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, startYourReturnRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        verify(mockAuditConnector, times(0)).
+          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
+
       }
     }
 

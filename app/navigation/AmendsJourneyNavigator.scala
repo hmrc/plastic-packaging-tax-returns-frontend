@@ -39,16 +39,16 @@ class AmendsJourneyNavigator {
     case AmendDirectExportPlasticPackagingPage =>
       _ => controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
     case AmendRecycledPlasticPackagingPage =>
-      _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
+      _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
   }
 
   val checkRoutes: PartialFunction[Page, UserAnswers => Call] = {
-    case AmendAreYouSurePage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendManufacturedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendImportedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendHumanMedicinePlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendDirectExportPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendRecycledPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
+    case AmendAreYouSurePage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendManufacturedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendImportedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendHumanMedicinePlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendDirectExportPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendRecycledPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
   }
 
   private def amendAreYouSureRoute(answers: UserAnswers): Call =

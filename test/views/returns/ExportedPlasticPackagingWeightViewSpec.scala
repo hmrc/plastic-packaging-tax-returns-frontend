@@ -24,7 +24,6 @@ import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 import views.html.returns.ExportedPlasticPackagingWeightView
 
 class ExportedPlasticPackagingWeightViewSpec

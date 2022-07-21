@@ -17,12 +17,12 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.{ImportedPlasticPackagingFormProvider, StartYourReturnFormProvider}
+import forms.returns.StartYourReturnFormProvider
 import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.html.returns.{ImportedPlasticPackagingView, StartYourReturnView}
+import views.html.returns.StartYourReturnView
 
 import java.time.LocalDate
 
