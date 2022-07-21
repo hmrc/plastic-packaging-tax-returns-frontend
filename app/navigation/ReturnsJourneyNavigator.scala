@@ -77,12 +77,17 @@ class ReturnsJourneyNavigator {
     }
 
   def manufacturedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
-      (mode, usersAnswer) match {
-        case(NormalMode, true) if !hasAnswerChanged => routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
-        case (NormalMode, false) => routes.ImportedPlasticPackagingController.onPageLoad(mode)
-        case (_, true)  if  hasAnswerChanged   => routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
-        case _  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-      }
+    if(mode.equals(NormalMode)) {
+      if(usersAnswer)
+        routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
+      else
+        routes.ImportedPlasticPackagingController.onPageLoad(mode)
+    }else {
+      if(usersAnswer && hasAnswerChanged)
+        routes.ManufacturedPlasticPackagingWeightController.onPageLoad(mode)
+      else
+        routes.ConfirmPlasticPackagingTotalController.onPageLoad
+    }
   }
 
   private def manufacturedPlasticPackagingWeightRoute(answers: UserAnswers): Call =
