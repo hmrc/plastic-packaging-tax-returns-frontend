@@ -73,11 +73,11 @@ class ImportedPlasticPackagingController @Inject() (
         )
     }
 
-  private def updateAnswerAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean)
+  private def updateAnswerAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
     (implicit hc: HeaderCarrier) : Future[Result] = {
     
-    previousAnswers.change(ImportedPlasticPackagingPage, newAnswer)
-      .fold[Future[Boolean]] (Future.successful(false)) (updatedUserAnswers => cacheConnector.set(pptId, updatedUserAnswers).map(_ => true))
+    previousAnswers
+      .change_v3(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
   

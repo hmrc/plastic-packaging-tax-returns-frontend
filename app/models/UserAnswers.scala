@@ -16,6 +16,7 @@
 
 package models
 
+import models.UserAnswers.SaveUserAnswerFunc
 import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json._
@@ -23,6 +24,7 @@ import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -65,7 +67,28 @@ case class UserAnswers(
       None
     else 
       Some(set(questionPage, newValue).get)
-  
+
+  /** If user's answer has changed, passes updated user-answers object to given save function  
+    * @param questionPage - the user-answer we might be changing
+    * @param newValue - the user's answer
+    * @param saveUserAnswerFunc - function to call if answer has changed
+    * @param format - formatter for user's answer object type
+    * @tparam A - type of user's answer
+    * @return
+    *  - Future of false if user's answer is the same as the current value
+    *  - Future of true if user's answer has changed
+    */
+  def change_v3[A] (questionPage: QuestionPage[A], newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) 
+    (implicit format: Format[A]): Future[Boolean] =
+    if (get(questionPage).contains(newValue))
+      Future.successful(false)
+    else {
+      val updatedUserAnswers = set(questionPage, newValue).get
+      saveUserAnswerFunc.apply(updatedUserAnswers, true)
+    }
+        
+    
+
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
@@ -109,4 +132,7 @@ object UserAnswers {
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
+
+  type SaveUserAnswerFunc = (UserAnswers, Boolean) => Future[Boolean]
+
 }
