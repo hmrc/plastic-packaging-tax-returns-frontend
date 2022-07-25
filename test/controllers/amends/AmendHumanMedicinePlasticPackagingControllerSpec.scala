@@ -19,8 +19,6 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
-import navigation.{FakeNavigator, Navigator}
-import models.Mode.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -86,30 +84,29 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
       }
     }
 
-//    "must redirect to the next page when valid data is submitted" in {
-//
-//      val mockCacheConnector = mock[CacheConnector]
-//
-//      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-//
-//      val application =
-//        applicationBuilder(userAnswers = Some(userAnswers))
-//          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-//                     bind[CacheConnector].toInstance(mockCacheConnector)
-//          )
-//          .build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, amendHumanMedicinePlasticPackagingRoute)
-//            .withFormUrlEncodedBody(("value", validAnswer.toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual onwardRoute.url
-//      }
-//    }
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, amendHumanMedicinePlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", validAnswer.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+      }
+    }
 
     "must redirect when previous tax return is not in user answers" in {
 

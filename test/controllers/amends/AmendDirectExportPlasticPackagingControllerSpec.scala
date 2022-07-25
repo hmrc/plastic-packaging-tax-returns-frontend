@@ -17,13 +17,19 @@
 package controllers.amends
 
 import base.SpecBase
+import connectors.CacheConnector
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendDirectExportPlasticPackagingPage
+import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.amends.AmendDirectExportPlasticPackagingView
+
+import scala.concurrent.Future
 
 class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
@@ -76,32 +82,30 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
       }
     }
 
-//    "must redirect to the next page when valid data is submitted" in {
-//
-//      val mockCacheConnector = mock[CacheConnector]
-//
-//      val ans = userAnswers.set(AmendDirectExportPlasticPackagingPage, validAnswer).success.value
-//
-//      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-//
-//      val application =
-//        applicationBuilder(userAnswers = Some(ans))
-//          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-//                     bind[CacheConnector].toInstance(mockCacheConnector)
-//          )
-//          .build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
-//            .withFormUrlEncodedBody(("value", validAnswer.toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual onwardRoute.url
-//      }
-//    }
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      val ans = userAnswers.set(AmendDirectExportPlasticPackagingPage, validAnswer).success.value
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(ans)).overrides(
+          bind[CacheConnector].toInstance(mockCacheConnector)
+        ).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", validAnswer.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+      }
+    }
 
     "must redirect when previous tax return is not in user answers" in {
 
