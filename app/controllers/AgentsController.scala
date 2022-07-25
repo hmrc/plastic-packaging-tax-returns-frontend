@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class AgentsController @Inject()(
                                   override val messagesApi: MessagesApi,
                                   identify: AuthAgentAction,
-                                  formProvider: AgentsFormProvider,
+                                  form: AgentsFormProvider,
                                   val controllerComponents: MessagesControllerComponents,
                                   view: AgentsView
                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
@@ -47,12 +47,12 @@ class AgentsController @Inject()(
       request.flash.get("clientPPTFailed") match {
 
         case Some(_) =>
-          val errorForm = formProvider().fill(
+          val errorForm = form().fill(
             currentlySelectedClientIdentifier.getOrElse("")
           ).withError("identifier", "agents.client.identifier.auth.error")
           Forbidden(view(errorForm, mode))
         case _ =>
-          val preparedForm = formProvider().fill(
+          val preparedForm = form().fill(
             currentlySelectedClientIdentifier.getOrElse("")
           )
 
@@ -64,7 +64,7 @@ class AgentsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify) {
     implicit request =>
 
-      formProvider().bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           BadRequest(view(formWithErrors, mode)),
         value => {

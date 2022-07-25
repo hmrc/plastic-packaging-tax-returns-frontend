@@ -21,6 +21,7 @@ import base.utils.NonExportedPlasticTestHelper
 import cacheables.AmendSelectedPeriodKey
 import controllers.amends.{routes => amendsRoutes}
 import controllers.returns.{routes => returnsRoutes}
+import models.Mode.{CheckMode, NormalMode}
 import models._
 import pages.amends._
 import pages.returns._
@@ -73,54 +74,6 @@ class NavigatorSpec extends SpecBase {
               NormalMode,
               answers.get
             ) mustBe returnsRoutes.NotStartOtherReturnsController.onPageLoad
-
-          }
-        }
-
-        "for the ManufacturedPlasticPackagingPage" - {
-
-          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-          }
-
-          "navigate to ImportedPlasticPackagingPage when answer is No" in {
-
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, false)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
-
-          }
-        }
-
-        "for the ImportedPlasticPackagingPage" - {
-
-          "navigate to ImportedPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, true)
-
-            navigator.nextPage(ImportedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-          }
-
-          "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
-
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, false)
-
-            navigator.nextPage(ImportedPlasticPackagingPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
 
           }
         }
@@ -284,54 +237,6 @@ class NavigatorSpec extends SpecBase {
     "in Check mode" - {
 
       "for the returns journey" - {
-
-        "for the ManufacturedPlasticPackagingPage" - {
-
-          "navigate to ManufacturedPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, true)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
-
-          }
-
-          "navigate to ConfirmPlasticPackagingTotal Page when answer is No" in {
-
-            val answers = UserAnswers("id").set(ManufacturedPlasticPackagingPage, false)
-
-            navigator.nextPage(ManufacturedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-
-          }
-        }
-
-        "for the ImportedPlasticPackagingPage" - {
-
-          "navigate to ImportedPlasticPackagingWeightPage when answer is Yes" in {
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, true)
-
-            navigator.nextPage(ImportedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode)
-
-          }
-
-          "navigate to ConfirmPlasticPackagingTotalController when answer is No" in {
-
-            val answers = UserAnswers("id").set(ImportedPlasticPackagingPage, false)
-
-            navigator.nextPage(ImportedPlasticPackagingPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-
-          }
-        }
 
         "for the ManufacturedPlasticPackagingWeightPage" - {
 

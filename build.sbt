@@ -1,4 +1,5 @@
 import play.sbt.routes.RoutesKeys
+import sbt.BasicCommands.alias
 import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
@@ -16,11 +17,16 @@ lazy val root = (project in file("."))
   .settings(inConfig(Test)(testSettings): _*)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
+  .configs(A11yTest)
+  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(majorVersion := 1)
   .settings(useSuperShell in ThisBuild := false)
+  .settings(headerSettings(A11yTest): _*)
+  .settings(automateHeaderSettings(A11yTest))
   .settings(scalaVersion := "2.12.10",
             name := appName,
             RoutesKeys.routesImport ++= Seq("models._",
+                                            "models.Mode._",
                                             "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
             ),
             TwirlKeys.templateImports ++= Seq("play.twirl.api.HtmlFormat",

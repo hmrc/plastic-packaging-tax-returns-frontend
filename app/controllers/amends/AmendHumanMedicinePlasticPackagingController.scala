@@ -21,7 +21,6 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
 import models.returns.TaxReturnObligation
-import navigation.Navigator
 import pages.amends.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,18 +36,16 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendHumanMedicinePlasticPackagingFormProvider,
+  form: AmendHumanMedicinePlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AmendHumanMedicinePlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.fill(AmendHumanMedicinePlasticPackagingPage, form)
+        val preparedForm = request.userAnswers.fill(AmendHumanMedicinePlasticPackagingPage, form())
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Ok(view(preparedForm, obligation))
@@ -66,7 +63,7 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
           value =>
             for {

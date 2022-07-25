@@ -38,7 +38,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: NonExportedHumanMedicinesPlasticPackagingFormProvider,
+                                         form: NonExportedHumanMedicinesPlasticPackagingFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: NonExportedHumanMedicinesPlasticPackagingView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -47,8 +47,8 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
-        case None => formProvider()
-        case Some(value) => formProvider().fill(value)
+        case None => form()
+        case Some(value) => form().fill(value)
       }
 
       NonExportedAmountHelper.nonExportedAmount.fold(identity, value => Ok(view(value, preparedForm, mode)))
@@ -57,7 +57,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      formProvider().bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
             identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),

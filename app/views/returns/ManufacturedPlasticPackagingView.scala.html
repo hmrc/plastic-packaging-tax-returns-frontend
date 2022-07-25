@@ -17,19 +17,16 @@
 @import models.returns.TaxReturnObligation
 @import components.{SectionHeader, paragraphBody, headingLabel}
 @import viewmodels.LegendSize
+@import templates.YesNoLayout
 
 @this(
     layout: templates.Layout,
+    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
-    paragraphBody: paragraphBody,
-    headingLabel: headingLabel
+    paragraphBody: paragraphBody
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax" class="govuk-link" id="govuk-guidance-link">@messages("manufacturedPlasticPackaging.paragraph.link")</a>}
 
@@ -41,24 +38,11 @@
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-
-
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @sectionHeader(messages("caption.total.plastic"))
-        @headingLabel(messages("manufacturedPlasticPackaging.heading"))
-        @paragraphContent
-
-        @govukRadios(
-            RadiosViewModel.yesNo(field = form("value"))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @yesNoLayout(Some(messages("caption.total.plastic")),
+            messages("manufacturedPlasticPackaging.heading"),
+            paragraphText = paragraphContent,
+            form = form)
     }
 }

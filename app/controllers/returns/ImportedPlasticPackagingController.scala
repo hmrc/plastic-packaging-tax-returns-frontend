@@ -20,12 +20,13 @@ import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.Mode
 import models.returns.TaxReturnObligation
-import navigation.Navigator
+import models.{Mode, UserAnswers}
+import navigation.ReturnsJourneyNavigator
 import pages.returns.ImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ImportedPlasticPackagingView
 
@@ -35,26 +36,24 @@ import scala.concurrent.{ExecutionContext, Future}
 class ImportedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ImportedPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: ImportedPlasticPackagingView
+  view: ImportedPlasticPackagingView,
+  returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(ImportedPlasticPackagingPage) match {
-          case None        => formProvider()
-          case Some(value) => formProvider().fill(value)
-        }
+        val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
+        
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
+          case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
     }
 
@@ -62,6 +61,7 @@ class ImportedPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
+        val userAnswers = request.userAnswers
 
         val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")
@@ -69,14 +69,18 @@ class ImportedPlasticPackagingController @Inject() (
 
         formProvider().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ImportedPlasticPackagingPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(ImportedPlasticPackagingPage, mode, updatedAnswers))
+          newAnswer => updateAnswerAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
         )
     }
 
+  private def updateAnswerAndGotoNextPage(mode: Mode, pptId: String, previousAnswers: UserAnswers, newAnswer: Boolean)
+    (implicit hc: HeaderCarrier) : Future[Result] = {
+    val maybeAnswers = previousAnswers.change(ImportedPlasticPackagingPage, newAnswer)
+    val hasAnswerChanged = maybeAnswers match {
+      case None                 => Future.successful(false)
+      case Some(updatedAnswers) => cacheConnector.set(pptId, updatedAnswers).map(_ => true)
+    }
+    hasAnswerChanged.map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
+  }
+  
 }

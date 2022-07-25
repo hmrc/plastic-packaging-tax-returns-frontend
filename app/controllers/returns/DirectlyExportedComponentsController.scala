@@ -38,7 +38,7 @@ class DirectlyExportedComponentsController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: DirectlyExportedComponentsFormProvider,
+  form: DirectlyExportedComponentsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
@@ -50,7 +50,7 @@ class DirectlyExportedComponentsController @Inject() (
 
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
-        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, formProvider())
+        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
         Ok(view(preparedForm, mode, totalPlastic))
     }
 
@@ -60,7 +60,7 @@ class DirectlyExportedComponentsController @Inject() (
         val pptId: String = request.pptReference
         val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
-        formProvider().bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
           value =>
             for {

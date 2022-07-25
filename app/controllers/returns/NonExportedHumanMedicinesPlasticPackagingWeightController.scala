@@ -38,7 +38,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
+                                        form: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: NonExportedHumanMedicinesPlasticPackagingWeightView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -47,8 +47,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage) match {
-        case None => formProvider()
-        case Some(value) => formProvider().fill(value)
+        case None => form()
+        case Some(value) => form().fill(value)
       }
 
       NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(nonExportedAmount, preparedForm, mode)))
@@ -57,7 +57,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      formProvider().bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
             identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),

@@ -15,9 +15,8 @@
  */
 
 package viewmodels.checkAnswers.amends
-
-import models.UserAnswers
 import pages.amends.AmendImportedPlasticPackagingPage
+import models.UserAnswers
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel

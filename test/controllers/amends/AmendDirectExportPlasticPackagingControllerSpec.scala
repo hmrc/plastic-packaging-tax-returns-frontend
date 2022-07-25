@@ -17,27 +17,17 @@
 package controllers.amends
 
 import base.SpecBase
-import connectors.CacheConnector
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
-import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendDirectExportPlasticPackagingPage
-import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
-import scala.concurrent.Future
-
 class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendDirectExportPlasticPackagingFormProvider()
-  val form         = formProvider()
-
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0
@@ -59,7 +49,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
                                                                  messages(application)
         ).toString
       }
@@ -79,7 +69,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -135,7 +125,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
           FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 

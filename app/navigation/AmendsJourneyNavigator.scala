@@ -17,9 +17,9 @@
 package navigation
 
 import cacheables.AmendSelectedPeriodKey
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.amends._
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -38,16 +38,16 @@ class AmendsJourneyNavigator {
     case AmendDirectExportPlasticPackagingPage =>
       _ => controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad()
     case AmendRecycledPlasticPackagingPage =>
-      _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
+      _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
   }
 
   val checkRoutes: PartialFunction[Page, UserAnswers => Call] = {
-    case AmendAreYouSurePage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendManufacturedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendImportedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendHumanMedicinePlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendDirectExportPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
-    case AmendRecycledPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad
+    case AmendAreYouSurePage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendManufacturedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendImportedPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendHumanMedicinePlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendDirectExportPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+    case AmendRecycledPlasticPackagingPage => _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
   }
 
   private def amendAreYouSureRoute(answers: UserAnswers): Call =

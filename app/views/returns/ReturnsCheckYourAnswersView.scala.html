@@ -45,14 +45,14 @@
 
 @summaryRow(key: String, value: String, valueClasses: String = "") = @{
     SummaryListRow(
-        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.ThreeQuarters}"),
+        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"),
         value = Value(value, classes = valueClasses)
     )
 }
 
 @summaryRowWithWideValue(shortKey: String, value: String) = @{
     val text = messages(toLongKey(shortKey))
-    summaryRow(text, value)
+    summaryRow(text, value, "govuk-table__cell--numeric")
 }
 
 @summaryRowFromString(shortKey: String, value: String) = @{
@@ -88,8 +88,11 @@
 }
 
 @changeLink(linkTextShortKey: String, url: String) = @{
+
+    val linkId = linkTextShortKey.split("\\.")(0)
+
     paragraph(
-        content = link(id = "", text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
+        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
     )
 }
 
@@ -117,7 +120,7 @@
             summaryRowFromString("packaging-total.row5", taxReturn.packagingTotal).bold,
         )
     ))
-    @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalStartUrl)
+    @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalMiniCya)
 
     <!-- Exported packaging -->
     @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")

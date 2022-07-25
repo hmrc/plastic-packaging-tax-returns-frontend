@@ -18,7 +18,7 @@ package controllers.home
 
 import controllers.actions.AuthCheckAction
 import controllers.agents.SelectedClientIdentifier
-import models.NormalMode
+import models.Mode.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AffinityGroup

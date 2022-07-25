@@ -16,16 +16,15 @@
 
 package controllers.amends
 
+import audit.Auditor
 import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.amends.routes
 import forms.amends.AmendAreYouSureFormProvider
 import models.Mode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator
 import pages.amends.AmendAreYouSurePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -41,20 +40,19 @@ class AmendAreYouSureController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendAreYouSureFormProvider,
+  form: AmendAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AmendAreYouSureView
+  view: AmendAreYouSureView,
+  auditor: Auditor
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
-
-  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val userAnswers = request.userAnswers
 
-        val preparedForm = userAnswers.fill(AmendAreYouSurePage, form)
+        val preparedForm = userAnswers.fill(AmendAreYouSurePage, form())
 
         userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
@@ -78,7 +76,7 @@ class AmendAreYouSureController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
           amend =>
             for {
@@ -88,7 +86,10 @@ class AmendAreYouSureController @Inject() (
                   .flatMap(_.set(AmendAreYouSurePage, amend))
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            } yield {
+              if(amend) auditor.amendStarted(request.request.user.identityData.internalId, pptId)
+              Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            }
         )
     }
 

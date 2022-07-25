@@ -19,7 +19,7 @@ package controllers.returns
 import base.SpecBase
 import connectors.CacheConnector
 import forms.returns.ManufacturedPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -36,7 +36,6 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ManufacturedPlasticPackagingWeightFormProvider()
-  val form = formProvider()
   val mockCacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")
@@ -60,7 +59,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
@@ -78,7 +77,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(request, messages(application)).toString
       }
     }
 
@@ -112,7 +111,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
           FakeRequest(POST, ManufacturedPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 

@@ -17,17 +17,16 @@
 package controllers.helpers
 
 import controllers.returns.routes
+import models.Mode.CheckMode
+import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
-import models.{CheckMode, UserAnswers}
 import pages.QuestionPage
 import pages.returns._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import viewmodels.{PrintBigDecimal, PrintLong}
 import views.ViewUtils
-
-import scala.math.BigDecimal.RoundingMode
 
 case class RowInfo(key: String, value: String)
 
@@ -120,7 +119,7 @@ case class TaxReturnViewModel (
     calculations.taxDue.asPounds
   }
   
-  def packagingTotalStartUrl: String = routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
+  def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
 

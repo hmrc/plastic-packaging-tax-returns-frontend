@@ -20,7 +20,8 @@ import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -37,12 +38,9 @@ import scala.concurrent.Future
 class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new NonExportedRecycledPlasticPackagingFormProvider()
-  val form = formProvider()
 
   val validAnswer = 0L
-
   val manufacturedAmount = 200L
   val importedAmount = 100L
   val exportedAmount = 50L
@@ -67,7 +65,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, nonExportedAmount)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, nonExportedAmount)(request, messages(application)).toString
       }
     }
 
@@ -85,7 +83,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, nonExportedAmount)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, nonExportedAmount)(request, messages(application)).toString
       }
     }
 
@@ -139,7 +137,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with Mo
           FakeRequest(POST, recycledPlasticPackagingRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
 

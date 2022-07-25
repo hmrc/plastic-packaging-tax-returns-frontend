@@ -16,22 +16,25 @@
 
 package controllers.amends
 
+import audit.returns.AmendStarted
 import base.SpecBase
 import cacheables.AmendSelectedPeriodKey
 import connectors.CacheConnector
 import forms.amends.AmendAreYouSureFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendAreYouSurePage
-import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import views.html.amends.AmendAreYouSureView
 
 import scala.concurrent.Future
@@ -39,14 +42,13 @@ import scala.concurrent.Future
 class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
-
   val formProvider        = new AmendAreYouSureFormProvider()
-  val form: Form[Boolean] = formProvider()
 
   lazy val amendAreYouSureRoute: String =
     routes.AmendAreYouSureController.onPageLoad(NormalMode).url
 
   val mockCacheConnector = mock[CacheConnector]
+  val mockAuditConnector = mock[AuditConnector]
 
   "AmendAreYouSure Controller" - {
 
@@ -90,7 +92,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -149,6 +151,70 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must audit started event when user answers yes" in {
+
+      Mockito.reset(mockAuditConnector)
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector),
+            bind[AuditConnector].toInstance(mockAuditConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, amendAreYouSureRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        verify(mockAuditConnector, times(1)).
+          sendExplicitAudit(eqTo(AmendStarted.eventType), any[AmendStarted])(any(), any(), any())
+
+      }
+    }
+
+    "must not audit started event when user answers no" in {
+
+      Mockito.reset(mockAuditConnector)
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CacheConnector].toInstance(mockCacheConnector),
+            bind[AuditConnector].toInstance(mockAuditConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, amendAreYouSureRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        verify(mockAuditConnector, times(0)).
+          sendExplicitAudit(eqTo(AmendStarted.eventType), any[AmendStarted])(any(), any(), any())
+
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val ans = userAnswers.set(AmendSelectedPeriodKey, "TEST").success.value
@@ -160,7 +226,7 @@ class AmendAreYouSureControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, amendAreYouSureRoute)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = formProvider().bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AmendAreYouSureView]
 

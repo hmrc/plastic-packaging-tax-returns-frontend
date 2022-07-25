@@ -19,27 +19,24 @@
 
 @import viewmodels.LabelSize
 @import viewmodels.InputWidth._
+@import templates.WeightInputLayout
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    sectionHeader: SectionHeader,
-    headingLabel: headingLabel
+    weightInputLayout: WeightInputLayout,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode, taxReturn: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
-    <p class="govuk-body">@messages("manufacturedPlasticPackagingWeight.paragraph.include")
+        <p class="govuk-body">@messages("manufacturedPlasticPackagingWeight.paragraph.include")</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("manufacturedPlasticPackagingWeight.list.include.1")</li>
             <li>@messages("manufacturedPlasticPackagingWeight.list.include.2")</li>
         </ul>
-    </p>
-    <p class="govuk-body">@messages("manufacturedPlasticPackagingWeight.paragraph")
+
+        <p class="govuk-body">@messages("manufacturedPlasticPackagingWeight.paragraph")</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("manufacturedPlasticPackagingWeight.list.1")</li>
             <li>@messages("manufacturedPlasticPackagingWeight.list.2")</li>
@@ -47,35 +44,16 @@
             <li>@messages("manufacturedPlasticPackagingWeight.list.4")</li>
             <li>@messages("manufacturedPlasticPackagingWeight.list.5")</li>
         </ul>
-    </p>
 }
-
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @sectionHeader(messages("caption.total.plastic"))
-        @headingLabel(messages("manufacturedPlasticPackagingWeight.heading"), "value")
-        @paragraphContent
-
-        @govukInput(
-            InputViewModel(field = form("value"))
-            .asNumeric()
-            .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(messages("manufacturedPlasticPackagingWeight.hint"))))
-            .withSuffix(PrefixOrSuffix(content = "kg"))
-            .withId("value")
-)
-
-
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @weightInputLayout(Some(messages("caption.total.plastic")),
+            messages("manufacturedPlasticPackagingWeight.heading"),
+            paragraphText = paragraphContent,
+            hintText = Some(messages("manufacturedPlasticPackagingWeight.hint")),
+            form = form)
     }
 }

@@ -17,7 +17,8 @@
 package viewmodels.checkAnswers.returns
 
 import controllers.returns.routes
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
+import models.Mode.CheckMode
 import pages.returns.ManufacturedPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -31,7 +32,7 @@ class ManufacturedPlasticPackagingSummary (key: String) extends SummaryViewModel
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRow(key = Key(key, classes="govuk-!-width-three-quarters"),
+        SummaryListRow(key = Key(key, classes="govuk-!-width-one-half"),
           value = Value(value),
           actions = Some(Actions(items = Seq(
             ActionItem(

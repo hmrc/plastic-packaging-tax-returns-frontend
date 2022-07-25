@@ -21,7 +21,6 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendRecycledPlasticPackagingFormProvider
 import models.returns.TaxReturnObligation
-import navigation.Navigator
 import pages.amends.AmendRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,20 +36,18 @@ class AmendRecycledPlasticPackagingController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: AmendRecycledPlasticPackagingFormProvider,
+  form: AmendRecycledPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: AmendRecycledPlasticPackagingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendRecycledPlasticPackagingPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
+          case None        => form()
+          case Some(value) => form().fill(value)
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
@@ -69,7 +66,7 @@ class AmendRecycledPlasticPackagingController @Inject() (
           throw new IllegalStateException("Must have a tax return against which to amend")
         )
 
-        form.bindFromRequest().fold(
+        form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
           value =>
             for {

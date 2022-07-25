@@ -20,7 +20,7 @@ import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
-import models.NormalMode
+import models.Mode.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -37,8 +37,6 @@ import scala.concurrent.Future
 class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
-  val form = formProvider()
-
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = 0L
@@ -69,7 +67,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, formProvider().fill(validAnswer), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -96,7 +94,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(nonExportedAmount, formProvider().fill(validAnswer), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -148,7 +146,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Spec
           FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
