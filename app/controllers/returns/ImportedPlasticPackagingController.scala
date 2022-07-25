@@ -77,7 +77,7 @@ class ImportedPlasticPackagingController @Inject() (
     (implicit hc: HeaderCarrier) : Future[Result] = {
     
     previousAnswers
-      .change_v3(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
+      .change(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
   

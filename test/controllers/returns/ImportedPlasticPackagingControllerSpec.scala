@@ -59,9 +59,9 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     val date = LocalDate.ofEpochDay(0)
     val obligation = TaxReturnObligation(date, date, date, "")
     when(mockUserAnswers.get(eqq(ObligationCacheable))(any)).thenReturn(Some(obligation))
-
+    
+    when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
-
     when(returnsJourneyNavigator.importedPlasticPackagingRoute(any, any, any)).thenReturn(onwardRoute)
   }
 
@@ -111,9 +111,6 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      // user answers responds with "answer not changed"
-      when(mockUserAnswers.change_v3 (any, any, any) (any)) thenReturn Future.successful(false)
 
       val application =
         applicationBuilder(userAnswers = Some(mockUserAnswers))
@@ -189,10 +186,8 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
     "submit must redirect to the mini-cya page if the answer has not changed" in {
 
-      // Check change_v3, saveUserAnswerFunc, manufacturedPlasticPackagingRoute, returned redirect val
-      
-      // user answers responds with "answer not changed"
-      when(mockUserAnswers.change_v3 (any, any, any) (any)) thenReturn Future.successful(false)
+      // UserAnswers responds with "answer not changed"
+      when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
 
       // TODO all these running() unit tests should go...
       val application = applicationBuilder(Some(mockUserAnswers))
@@ -212,7 +207,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
       }
       
       verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
-      verify(mockUserAnswers).change_v3(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
+      verify(mockUserAnswers).change(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
       verify(returnsJourneyNavigator).importedPlasticPackagingRoute(CheckMode, false, true)
     }
 

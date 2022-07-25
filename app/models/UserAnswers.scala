@@ -55,19 +55,6 @@ case class UserAnswers(
     }
   }
 
-  /**
-    * Attempts to change the value represented by settable to newValue. 
-    * @return
-    *  - Some(UserAnswers) => user answers with updated value
-    *  - None => new value matches existing value, nothing changed
-    *  @throws Exception if changing the value or cleanup failed
-    */
-  def change[A] (questionPage: QuestionPage[A], newValue: A) (implicit format: Format[A]): Option[UserAnswers] = 
-    if (get(questionPage).contains(newValue))
-      None
-    else 
-      Some(set(questionPage, newValue).get)
-
   /** If user's answer has changed, passes updated user-answers object to given save function  
     * @param questionPage - the user-answer we might be changing
     * @param newValue - the user's answer
@@ -78,7 +65,7 @@ case class UserAnswers(
     *  - Future of false if user's answer is the same as the current value
     *  - Future of true if user's answer has changed
     */
-  def change_v3[A] (questionPage: QuestionPage[A], newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) 
+  def change[A] (questionPage: QuestionPage[A], newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) 
     (implicit format: Format[A]): Future[Boolean] =
     if (get(questionPage).contains(newValue))
       Future.successful(false)
@@ -86,8 +73,6 @@ case class UserAnswers(
       val updatedUserAnswers = set(questionPage, newValue).get
       saveUserAnswerFunc.apply(updatedUserAnswers, true)
     }
-        
-    
 
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 

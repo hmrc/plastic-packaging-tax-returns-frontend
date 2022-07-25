@@ -77,7 +77,7 @@ class ManufacturedPlasticPackagingController @Inject() (
     (implicit hc: HeaderCarrier) = {
 
     previousAnswers
-      .change_v3(ManufacturedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
+      .change(ManufacturedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
   

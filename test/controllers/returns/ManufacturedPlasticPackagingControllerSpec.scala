@@ -48,6 +48,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
   private val mockUserAnswers = mock[UserAnswers]
   private val mockCacheConnector = mock[CacheConnector]
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+  private val saveAnswersFunc = mock[UserAnswers.SaveUserAnswerFunc]
 
   private def any[T]: T = ArgumentMatchers.any[T]()
   
@@ -59,6 +60,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     val obligation = TaxReturnObligation(date, date, date, "")
     when(mockUserAnswers.get(eqq(ObligationCacheable))(any)).thenReturn(Some(obligation))
 
+    when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
+    when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
     when(returnsJourneyNavigator.manufacturedPlasticPackagingRoute(any, any, any)).thenReturn(onwardRoute)
   }
 
@@ -109,9 +112,6 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
 
     "must redirect to the next page when valid data is submitted" in {
 
-      // user answers responds with "answer not changed"
-      when(mockUserAnswers.change_v3 (any, any, any) (any)) thenReturn Future.successful(false)
-      
       val application =
         applicationBuilder(userAnswers = Some(mockUserAnswers))
           .overrides(
@@ -131,7 +131,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         redirectLocation(result).value mustEqual onwardRoute.url
         
         verify(mockCacheConnector).saveUserAnswerFunc(eqq("123"))(any)
-        verify(mockUserAnswers).change_v3 (eqq(ManufacturedPlasticPackagingPage), eqq(true), any) (any)
+        verify(mockUserAnswers).change (eqq(ManufacturedPlasticPackagingPage), eqq(true), any) (any)
         verify(returnsJourneyNavigator).manufacturedPlasticPackagingRoute (NormalMode, false, true)
       }
     }
@@ -190,19 +190,29 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     
     "submit must redirect to the mini-cya page if the answer has not changed" in {
 
-      // user answers responds with "answer not changed"
-      when(mockUserAnswers.change_v3 (any, any, any) (any)) thenReturn Future.successful(false)
+      // UserAnswers responds with "answer not changed"
+      when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
 
       // TODO all these running() unit tests should go...
-      val application = applicationBuilder(Some(mockUserAnswers)).build()
+      val application = applicationBuilder(Some(mockUserAnswers))
+        .overrides(
+          bind[CacheConnector].toInstance(mockCacheConnector),
+          bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
+        )
+        .build()
+
       running(application) {
         val request = FakeRequest(POST, routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url)
           .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
         
         status(result) mustBe 303
-        redirectLocation(result) mustBe Some(controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+        redirectLocation(result) mustBe Some("/foo")
       }
+
+      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
+      verify(mockUserAnswers).change(eqq(ManufacturedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
+      verify(returnsJourneyNavigator).manufacturedPlasticPackagingRoute(CheckMode, false, true)
     }
     
   }
