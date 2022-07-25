@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.amends
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.amends.AmendImportedPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -35,9 +35,7 @@ object AmendImportedPlasticPackagingSummary extends SummaryViewModel {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad(
-                CheckMode
-              ).url
+              controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url
             )
               .withVisuallyHiddenText(
                 messages("amendImportedPlasticPackaging.change.hidden")

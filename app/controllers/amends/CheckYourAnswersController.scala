@@ -16,17 +16,17 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.TaxReturnHelper
 import models.Mode
-import models.returns.{ReturnDisplayApi, ReturnType, TaxReturnObligation}
+import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.amends._
 import viewmodels.govuk.summarylist._
@@ -40,7 +40,6 @@ class CheckYourAnswersController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
-  taxReturnHelper: TaxReturnHelper,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
@@ -50,7 +49,7 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val list = SummaryListViewModel(rows =
+        val list: SummaryList = SummaryListViewModel(rows =
           Seq(AmendManufacturedPlasticPackagingSummary,
               AmendImportedPlasticPackagingSummary,
               AmendHumanMedicinePlasticPackagingSummary,

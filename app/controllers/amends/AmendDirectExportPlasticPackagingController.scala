@@ -19,11 +19,8 @@ package controllers.amends
 import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.amends.routes
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
-import models.Mode
 import models.returns.TaxReturnObligation
-import navigation.Navigator
 import pages.amends.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendDirectExportPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -48,7 +44,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
@@ -57,12 +53,12 @@ class AmendDirectExportPlasticPackagingController @Inject() (
         }
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
+          case Some(obligation) => Ok(view(preparedForm, obligation))
           case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit: Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
@@ -72,7 +68,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
         )
 
         form.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(
@@ -80,7 +76,7 @@ class AmendDirectExportPlasticPackagingController @Inject() (
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(AmendDirectExportPlasticPackagingPage, mode, updatedAnswers)
+              controllers.amends.routes.CheckYourAnswersController.onPageLoad
             )
         )
     }

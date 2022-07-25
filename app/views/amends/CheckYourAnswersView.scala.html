@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import components._
 @import models.returns.TaxReturnObligation
 @import components.ReturnQuarterHeading
 
@@ -22,16 +23,45 @@
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
+    paragraph: paragraph,
+    link: Link,
     sectionHeader: ReturnQuarterHeading
 )
 
+
+
 @(mode: Mode, list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+
+@changeLink(linkTextShortKey: String, url: String) = @{
+    paragraph(
+        content = link(id = "", text = messages(linkTextShortKey), call = Call("GET", url)),
+    )
+}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     @sectionHeader(obligation)
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+
+<p>
+    @changeLink(messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
+    controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad.toString)
+
+    @changeLink(messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
+    controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad.toString)
+
+    @changeLink(messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
+    controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.toString)
+
+    @changeLink(messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
+    controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad.toString)
+
+    @changeLink(messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
+    controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad.toString)
+
+</p>
+
 
     @govukSummaryList(list)
 

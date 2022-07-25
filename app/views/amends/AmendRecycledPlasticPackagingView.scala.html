@@ -28,7 +28,7 @@
     sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
 <p class="govuk-body">@messages("amendRecycledPlasticPackaging.hint")</p>
@@ -38,7 +38,7 @@
 
     @sectionHeader(obligation)
 
-    @formHelper(action = controllers.amends.routes.AmendRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendRecycledPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
