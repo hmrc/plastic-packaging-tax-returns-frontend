@@ -26,13 +26,13 @@
     sectionHeader: ReturnQuarterHeading
 )
 
-@(form: Form[_], mode: Mode, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("amendAreYouSure.title")), showBackLink = false) {
 
     @sectionHeader(obligation)
 
-    @formHelper(action = controllers.amends.routes.AmendAreYouSureController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendAreYouSureController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

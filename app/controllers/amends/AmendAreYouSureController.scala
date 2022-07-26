@@ -21,7 +21,6 @@ import cacheables.{AmendReturnPreviousReturn, ObligationCacheable, ReturnDisplay
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendAreYouSureFormProvider
-import models.Mode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import navigation.Navigator
 import pages.amends.AmendAreYouSurePage
@@ -47,7 +46,7 @@ class AmendAreYouSureController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val userAnswers = request.userAnswers
@@ -55,13 +54,13 @@ class AmendAreYouSureController @Inject() (
         val preparedForm = userAnswers.fill(AmendAreYouSurePage, form())
 
         userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
+          case Some(obligation) => Future.successful(Ok(view(preparedForm, obligation)))
           case None             => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
         }
 
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit: Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
@@ -77,7 +76,7 @@ class AmendAreYouSureController @Inject() (
         )
 
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
           amend =>
             for {
               updatedAnswers <- Future.fromTry(
@@ -86,9 +85,8 @@ class AmendAreYouSureController @Inject() (
                   .flatMap(_.set(AmendAreYouSurePage, amend))
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield {
-              if(amend) auditor.amendStarted(request.request.user.identityData.internalId, pptId)
-              Redirect(navigator.nextPage(AmendAreYouSurePage, mode, updatedAnswers))
+            } yield { Redirect(
+              controllers.amends.routes.CheckYourAnswersController.onPageLoad)
             }
         )
     }
