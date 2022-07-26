@@ -56,7 +56,4 @@ class AmendsJourneyNavigator {
       case (Some(false), Some(key)) => controllers.amends.routes.ViewReturnSummaryController.onPageLoad(key)
       case _        => throw new Exception("Unable to navigate to page")
     }
-
-
-  val x:Call= controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad()
 }

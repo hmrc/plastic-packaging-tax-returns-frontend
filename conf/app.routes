@@ -27,7 +27,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
 
-GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
+GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad()
 POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
 
 GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
@@ -62,10 +62,10 @@ POST       /amendRecycledPlasticPackaging                  controllers.amends.Am
 GET        /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST       /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET        /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onPageLoad(mode: Mode = NormalMode)
-POST       /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onSubmit(mode: Mode = CheckMode)
+GET        /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onPageLoad()
+POST       /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onSubmit()
+GET        /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onPageLoad()
+POST       /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onSubmit()
 
 GET        /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 POST       /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)

@@ -30,7 +30,7 @@
 
 
 
-@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @changeLink(linkTextShortKey: String, url: String) = @{
     paragraph(

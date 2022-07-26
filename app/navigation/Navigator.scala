@@ -35,7 +35,7 @@ class Navigator @Inject()(
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
     amends.checkRoutes.orElse(returns.checkRoutes)
 
-  def nextPage(page: Page, mode:Mode, userAnswers: UserAnswers): Call =
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
       case NormalMode =>
         normalRoutes(page)(userAnswers)
