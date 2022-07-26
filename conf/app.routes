@@ -62,11 +62,6 @@ POST       /amendRecycledPlasticPackaging                  controllers.amends.Am
 GET        /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST       /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET        /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onPageLoad()
-POST       /amendAreYouSure                        controllers.amends.AmendAreYouSureController.onSubmit()
-GET        /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onPageLoad()
-POST       /changeAmendAreYouSure                  controllers.amends.AmendAreYouSureController.onSubmit()
-
 GET        /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 POST       /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)
 GET        /changeConvertedPackagingCredit                        controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
