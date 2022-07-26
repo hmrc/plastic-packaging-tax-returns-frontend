@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
   val testUser: SignedInUser    = PptTestData.newUser("123", Some(pptEnrolment("333")))
-  lazy val amendAreYouSureRoute = controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode).url
+  lazy val amendAreYouSureRoute = controllers.amends.routes.AmendAreYouSureController.onPageLoad().url
 
   class Harness(cacheConnector: CacheConnector)
       extends DataRetrievalActionImpl(cacheConnector) {
