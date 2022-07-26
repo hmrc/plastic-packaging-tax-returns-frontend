@@ -48,7 +48,7 @@
     @if(appConfig.isAmendsFeatureEnabled){
         <p>@link("amend-return",
                 messages("viewReturnSummary.amendLink"),
-                controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode)
+                controllers.amends.routes.CheckYourAnswersController.onPageLoad()
             )
         </p>
     } else {

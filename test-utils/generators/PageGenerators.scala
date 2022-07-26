@@ -69,9 +69,6 @@ trait PageGenerators {
     : Arbitrary[ExportedPlasticPackagingWeightPage.type] =
     Arbitrary(ExportedPlasticPackagingWeightPage)
 
-  implicit lazy val arbitraryAmendAreYouSurePage: Arbitrary[AmendAreYouSurePage.type] =
-    Arbitrary(AmendAreYouSurePage)
-
   implicit lazy val arbitraryAmendRecycledPlasticPackagingPage
     : Arbitrary[AmendRecycledPlasticPackagingPage.type] =
     Arbitrary(AmendRecycledPlasticPackagingPage)

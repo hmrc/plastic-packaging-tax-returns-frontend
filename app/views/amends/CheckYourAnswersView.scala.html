@@ -25,7 +25,7 @@
     sectionHeader: ReturnQuarterHeading
 )
 
-@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 

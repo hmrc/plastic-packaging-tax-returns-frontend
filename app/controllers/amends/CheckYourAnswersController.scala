@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject() (
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val list = SummaryListViewModel(rows =
@@ -59,7 +59,7 @@ class CheckYourAnswersController @Inject() (
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
-            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, list, obligation))}
+            if (appConfig.isAmendsFeatureEnabled) {Ok(view(list, obligation))}
           else
             {Redirect(controllers.routes.IndexController.onPageLoad)}
           case None => Redirect(routes.SubmittedReturnsController.onPageLoad())
