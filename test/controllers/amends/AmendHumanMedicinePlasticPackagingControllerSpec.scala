@@ -19,8 +19,6 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
-import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -42,7 +40,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
 
   lazy val amendHumanMedicinePlasticPackagingRoute =
-    routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode).url
+    routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
 
   "AmendHumanMedicinePlasticPackaging Controller" - {
 
@@ -58,7 +56,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[AmendHumanMedicinePlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -79,7 +77,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -94,8 +92,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[CacheConnector].toInstance(mockCacheConnector)
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()
 
@@ -107,7 +104,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -140,7 +137,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
           messages(application)
         ).toString
       }

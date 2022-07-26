@@ -19,8 +19,6 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
-import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -41,7 +39,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
   val validAnswer = 0
 
   lazy val amendDirectExportPlasticPackagingRoute =
-    routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode).url
+    routes.AmendDirectExportPlasticPackagingController.onPageLoad().url
 
   "AmendDirectExportPlasticPackaging Controller" - {
 
@@ -57,7 +55,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
                                                                  messages(application)
         ).toString
       }
@@ -77,7 +75,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -93,11 +91,9 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(ans))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
+        applicationBuilder(userAnswers = Some(ans)).overrides(
+          bind[CacheConnector].toInstance(mockCacheConnector)
+        ).build()
 
       running(application) {
         val request =
@@ -107,7 +103,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -140,7 +136,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
           messages(application)
         ).toString
       }

@@ -17,7 +17,6 @@
 package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
-import models.subscription.ContactDetails
 
 case class PrimaryContactDetails(
   name: String,
