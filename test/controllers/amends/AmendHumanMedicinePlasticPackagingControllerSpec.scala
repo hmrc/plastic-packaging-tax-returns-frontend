@@ -46,9 +46,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .configure("bootstrap.filters.csrf.enabled" -> false)
-        .build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendHumanMedicinePlasticPackagingRoute)
@@ -69,9 +67,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
       val ans = userAnswers.
         set(AmendHumanMedicinePlasticPackagingPage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(ans))
-        .configure("bootstrap.filters.csrf.enabled" -> false)
-        .build()
+      val application = applicationBuilder(userAnswers = Some(ans)).build()
 
       running(application) {
         val request = FakeRequest(GET, amendHumanMedicinePlasticPackagingRoute)
