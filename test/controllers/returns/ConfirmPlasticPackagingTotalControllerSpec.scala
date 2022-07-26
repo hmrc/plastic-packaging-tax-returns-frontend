@@ -56,7 +56,8 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
   "ConfirmPlasticPackagingTotal Controller" - {
 
     "when displaying the page" - {
-      "must redirect if no data found" in {
+      
+      "fail if no data found" in {
 
         val application = buildApplication(emptyUserAnswers)
 
@@ -65,8 +66,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
 
           val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+          intercept[IllegalStateException](status(result))
         }
       }
 
