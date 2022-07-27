@@ -16,16 +16,21 @@
 
 @import models.returns.TaxReturnObligation
 @import components.ReturnQuarterHeading
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import controllers.amends.AmendSummaryRow
 
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: ReturnQuarterHeading,
+    govukTable : GovukTable
 )
 
-@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation, tableRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
+
+@link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -34,6 +39,37 @@
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
+
+    @govukTable(
+        Table(
+            rows =
+                    tableRows.map( row =>
+                            Seq(
+                                TableRow(
+                                content = Text(row.label),
+                                format = Some("text")
+                            ),
+                            TableRow(
+                                content =  Text(row.oldAnswer),
+                                format = Some("text")
+                            ),
+                            TableRow(
+                                content =  Text(row.newAnswer),
+                                format = Some("text")
+                            ),
+                            TableRow(
+                                content = HtmlContent(link(row.changeUrl)),
+                                format = Some("text")
+                            )
+                        )
+            ),
+            head = None,
+            caption = None,
+            captionClasses = "govuk-table__caption--m",
+            firstCellIsHeader = true
+        )
+    )
+
 
     @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 

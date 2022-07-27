@@ -24,14 +24,23 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.Mode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.amends._
 import viewmodels.govuk.summarylist._
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
+case class AmendSummaryRow(label: String, oldAnswer: String, newAnswer: String, changeUrl: String)
+
+object AmendSummaryRow {
+  implicit def jsonFormats: OFormat[AmendSummaryRow] =
+    Json.using[Json.WithDefaultValues].format[AmendSummaryRow]
+}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -48,6 +57,15 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
+
+        val rows: Seq[AmendSummaryRow] = Seq(
+          AmendManufacturedPlasticPackagingSummary.buildRow(request.userAnswers),
+          AmendImportedPlasticPackagingSummary.buildRow(request.userAnswers),
+          AmendDirectExportPlasticPackagingSummary.buildRow(request.userAnswers),
+          AmendHumanMedicinePlasticPackagingSummary.buildRow(request.userAnswers),
+          AmendRecycledPlasticPackagingSummary.buildRow((request.userAnswers))
+        ).flatten
+
         val list = SummaryListViewModel(rows =
           Seq(AmendManufacturedPlasticPackagingSummary,
               AmendImportedPlasticPackagingSummary,
@@ -59,7 +77,7 @@ class CheckYourAnswersController @Inject() (
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
-            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, list, obligation))}
+            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, list, obligation, rows))}
           else
             {Redirect(controllers.routes.IndexController.onPageLoad)}
           case None => Redirect(routes.SubmittedReturnsController.onPageLoad())

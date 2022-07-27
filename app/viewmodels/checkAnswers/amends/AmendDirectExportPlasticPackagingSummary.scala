@@ -16,9 +16,12 @@
 
 package viewmodels.checkAnswers.amends
 
+import cacheables.ReturnDisplayApiCacheable
+import controllers.amends.AmendSummaryRow
 import models.UserAnswers
 import models.Mode.CheckMode
-import pages.amends.AmendDirectExportPlasticPackagingPage
+import models.returns.ReturnDisplayApi
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendManufacturedPlasticPackagingPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
@@ -27,6 +30,23 @@ import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewMode
 import viewmodels.implicits._
 
 object AmendDirectExportPlasticPackagingSummary extends SummaryViewModel {
+
+  def buildRow(answers: UserAnswers)(implicit messages: Messages): Option[AmendSummaryRow] = {
+
+    val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
+      throw new IllegalArgumentException("Must have a return display API to do an amend")
+    )
+
+    answers.get(AmendDirectExportPlasticPackagingPage).map {
+      answer =>
+        AmendSummaryRow(
+          messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
+          returnDisplayApi.returnDetails.directExports.toString,
+          answer.toString,
+          controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad(CheckMode).url
+        )
+    }
+  }
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AmendDirectExportPlasticPackagingPage).map {
