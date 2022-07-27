@@ -22,26 +22,16 @@ import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Mode
-import models.Mode.CheckMode
+import models.amends.AmendSummaryRow
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.amends._
-import viewmodels.govuk.summarylist._
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
-case class AmendSummaryRow(label: String, oldAnswer: String, newAnswer: String, changeUrl: String)
-
-object AmendSummaryRow {
-  implicit def jsonFormats: OFormat[AmendSummaryRow] =
-    Json.using[Json.WithDefaultValues].format[AmendSummaryRow]
-}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -70,25 +60,32 @@ class CheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
 
-        val totalRows: Seq[AmendSummaryRow] = Seq(
-          AmendManufacturedPlasticPackagingSummary.buildRow(request.userAnswers),
-          AmendImportedPlasticPackagingSummary.buildRow(request.userAnswers),
-          Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal")) // TODO - get from calc
-        ).flatten
-
-        val deductionsRows: Seq[AmendSummaryRow] = Seq(
-          AmendDirectExportPlasticPackagingSummary.buildRow(request.userAnswers),
-          AmendHumanMedicinePlasticPackagingSummary.buildRow(request.userAnswers),
-          AmendRecycledPlasticPackagingSummary.buildRow(request.userAnswers),
-            Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal")) // TODO - get from calc
-        ).flatten
-
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
-            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, obligation, totalRows, deductionsRows))}
-          else
-            {Redirect(controllers.routes.IndexController.onPageLoad)}
+
+            val totalRows: Seq[AmendSummaryRow] = Seq(
+              AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
+              AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
+              Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal")) // TODO - get from calc
+            ).flatten
+
+            val deductionsRows: Seq[AmendSummaryRow] = Seq(
+              AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
+              AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
+              AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
+              Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal")) // TODO - get from calc
+            ).flatten
+
+
+            if (appConfig.isAmendsFeatureEnabled) {
+              Ok(view(mode, obligation, totalRows, deductionsRows))
+            }
+            else {
+              Redirect(controllers.routes.IndexController.onPageLoad)
+            }
+
           case None => Redirect(routes.SubmittedReturnsController.onPageLoad())
+
         }
     }
 

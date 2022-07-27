@@ -17,21 +17,16 @@
 package viewmodels.checkAnswers.amends
 
 import cacheables.ReturnDisplayApiCacheable
-import controllers.amends.AmendSummaryRow
-import models.UserAnswers
 import models.Mode.CheckMode
+import models.UserAnswers
+import models.amends.AmendSummaryRow
 import models.returns.ReturnDisplayApi
-import pages.amends.{AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage}
+import pages.amends.AmendImportedPlasticPackagingPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.govuk.all.FluentActionItem
-import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits._
 
-object AmendImportedPlasticPackagingSummary extends SummaryViewModel {
+object AmendImportedPlasticPackagingSummary {
 
-  def buildRow(answers: UserAnswers)(implicit messages: Messages): Option[AmendSummaryRow] = {
+  def apply(answers: UserAnswers)(implicit messages: Messages): Option[AmendSummaryRow] = {
 
     val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
       throw new IllegalArgumentException("Must have a return display API to do an amend")
@@ -50,24 +45,5 @@ object AmendImportedPlasticPackagingSummary extends SummaryViewModel {
         )
     }
   }
-
-  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AmendImportedPlasticPackagingPage).map {
-      answer =>
-        SummaryListRowViewModel(key = "amendImportedPlasticPackaging.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad(
-                CheckMode
-              ).url
-            )
-              .withVisuallyHiddenText(
-                messages("amendImportedPlasticPackaging.change.hidden")
-              )
-          )
-        )
-    }
 
 }

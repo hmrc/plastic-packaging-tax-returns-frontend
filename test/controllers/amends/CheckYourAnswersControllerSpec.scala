@@ -18,9 +18,11 @@ package controllers.amends
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.UserAnswers
 import models.Mode.NormalMode
+import models.UserAnswers
+import models.amends.AmendSummaryRow
 import org.mockito.Mockito.when
+import play.api.i18n.Messages
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -66,8 +68,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CheckYourAnswersView]
-        val totalRows: Seq[AmendSummaryRow] = Seq.empty
-        val deductionsRows: Seq[AmendSummaryRow] = Seq.empty
+
+        val totalRows: Seq[AmendSummaryRow] = Seq(
+          totalRow(0, 0, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
+        )
+
+        val deductionsRows: Seq[AmendSummaryRow] = Seq(
+          totalRow(0, 0, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
+        )
+
         val mode = NormalMode
 
         status(result) mustEqual OK
@@ -103,5 +112,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
       }
     }
+  }
+
+  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String)
+                      (implicit messages: Messages) = {
+    AmendSummaryRow(
+      messages(key),
+      originalTotal.toString,
+      amendedTotal.toString,
+      ""
+    )
   }
 }

@@ -67,6 +67,7 @@ AmendsCheckYourAnswers.tableHeading.3 = Amended weight
 AmendsCheckYourAnswers.tableHeading.4 = Action
 AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
 AmendsCheckYourAnswers.deductionsTotal = Deductions total
+AmendsCheckYourAnswers.title = Amend your return for {0}
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
