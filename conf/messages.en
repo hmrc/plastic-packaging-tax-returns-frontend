@@ -59,6 +59,13 @@ error.summary.title = There is a problem
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
+AmendsCheckYourAnswers.totalPlastic = Total plastic packaging
+AmendsCheckYourAnswers.deductions = Deductions
+AmendsCheckYourAnswers.tableHeading.1 = Description
+AmendsCheckYourAnswers.tableHeading.2 = Original weight
+AmendsCheckYourAnswers.tableHeading.3 = Amended weight
+AmendsCheckYourAnswers.tableHeading.4 = Action
+
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
 journeyRecovery.startAgain.link.1 = Go to your {0}.

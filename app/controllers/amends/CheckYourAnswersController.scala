@@ -58,26 +58,20 @@ class CheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
 
-        val rows: Seq[AmendSummaryRow] = Seq(
+        val totalRows: Seq[AmendSummaryRow] = Seq(
           AmendManufacturedPlasticPackagingSummary.buildRow(request.userAnswers),
           AmendImportedPlasticPackagingSummary.buildRow(request.userAnswers),
+        ).flatten
+
+        val deductionsRows: Seq[AmendSummaryRow] = Seq(
           AmendDirectExportPlasticPackagingSummary.buildRow(request.userAnswers),
           AmendHumanMedicinePlasticPackagingSummary.buildRow(request.userAnswers),
           AmendRecycledPlasticPackagingSummary.buildRow((request.userAnswers))
         ).flatten
 
-        val list = SummaryListViewModel(rows =
-          Seq(AmendManufacturedPlasticPackagingSummary,
-              AmendImportedPlasticPackagingSummary,
-              AmendHumanMedicinePlasticPackagingSummary,
-              AmendDirectExportPlasticPackagingSummary,
-              AmendRecycledPlasticPackagingSummary
-          ).flatMap(_.row(request.userAnswers))
-        )
-
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
-            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, list, obligation, rows))}
+            if (appConfig.isAmendsFeatureEnabled) {Ok(view(mode, obligation, totalRows, deductionsRows))}
           else
             {Redirect(controllers.routes.IndexController.onPageLoad)}
           case None => Redirect(routes.SubmittedReturnsController.onPageLoad())

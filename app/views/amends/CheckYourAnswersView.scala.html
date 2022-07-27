@@ -15,20 +15,20 @@
  *@
 
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import controllers.amends.AmendSummaryRow
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
     sectionHeader: ReturnQuarterHeading,
-    govukTable : GovukTable
+    header: SectionHeader,
+    cyaTable: AmendsCyaTable
 )
 
-@(mode: Mode, list: SummaryList, obligation: TaxReturnObligation, tableRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
+@(mode: Mode, obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
 
 @link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
@@ -38,38 +38,9 @@
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-    @govukSummaryList(list)
+    @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 
-    @govukTable(
-        Table(
-            rows =
-                    tableRows.map( row =>
-                            Seq(
-                                TableRow(
-                                content = Text(row.label),
-                                format = Some("text")
-                            ),
-                            TableRow(
-                                content =  Text(row.oldAnswer),
-                                format = Some("text")
-                            ),
-                            TableRow(
-                                content =  Text(row.newAnswer),
-                                format = Some("text")
-                            ),
-                            TableRow(
-                                content = HtmlContent(link(row.changeUrl)),
-                                format = Some("text")
-                            )
-                        )
-            ),
-            head = None,
-            caption = None,
-            captionClasses = "govuk-table__caption--m",
-            firstCellIsHeader = true
-        )
-    )
-
+    @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
 
     @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
