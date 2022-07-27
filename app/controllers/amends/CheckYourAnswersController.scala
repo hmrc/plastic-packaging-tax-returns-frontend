@@ -21,7 +21,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.Mode
 import models.amends.AmendSummaryRow
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -56,7 +55,7 @@ class CheckYourAnswersController @Inject() (
     )
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
 
@@ -66,19 +65,18 @@ class CheckYourAnswersController @Inject() (
             val totalRows: Seq[AmendSummaryRow] = Seq(
               AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
               AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-              Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal")) // TODO - get from calc
-            ).flatten
+              totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal") // TODO - get from calc
+            )
 
             val deductionsRows: Seq[AmendSummaryRow] = Seq(
               AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
               AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
               AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-              Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal")) // TODO - get from calc
-            ).flatten
-
+              totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal") // TODO - get from calc
+            )
 
             if (appConfig.isAmendsFeatureEnabled) {
-              Ok(view(mode, obligation, totalRows, deductionsRows))
+              Ok(view(obligation, totalRows, deductionsRows))
             }
             else {
               Redirect(controllers.routes.IndexController.onPageLoad)

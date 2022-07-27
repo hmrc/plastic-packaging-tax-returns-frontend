@@ -19,8 +19,6 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.AmendImportedPlasticPackagingFormProvider
-import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -41,7 +39,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
   val validAnswer = 0
 
   lazy val amendImportedPlasticPackagingRoute =
-    routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode).url
+    routes.AmendImportedPlasticPackagingController.onPageLoad().url
 
   "AmendImportedPlasticPackaging Controller" - {
 
@@ -57,7 +55,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[AmendImportedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
           messages(application)
         ).toString
       }
@@ -77,7 +75,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
           request,
           messages(application)
         ).toString
@@ -92,8 +90,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-                     bind[CacheConnector].toInstance(mockCacheConnector)
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()
 
@@ -105,7 +102,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -138,7 +135,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
                                                                       messages(application)
         ).toString
       }

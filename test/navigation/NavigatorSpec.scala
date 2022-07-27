@@ -169,7 +169,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(AmendAreYouSurePage,
               NormalMode,
               answers.get
-            ) mustBe amendsRoutes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+            ) mustBe amendsRoutes.AmendManufacturedPlasticPackagingController.onPageLoad()
 
           }
 
@@ -190,7 +190,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendManufacturedPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe amendsRoutes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe amendsRoutes.AmendImportedPlasticPackagingController.onPageLoad()
 
         }
 
@@ -199,7 +199,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendImportedPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe amendsRoutes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe amendsRoutes.AmendHumanMedicinePlasticPackagingController.onPageLoad()
 
         }
 
@@ -208,7 +208,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendHumanMedicinePlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe amendsRoutes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe amendsRoutes.AmendDirectExportPlasticPackagingController.onPageLoad()
 
         }
 
@@ -217,7 +217,9 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AmendDirectExportPlasticPackagingPage,
             NormalMode,
             UserAnswers("id")
-          ) mustBe amendsRoutes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
+          ) mustBe amendsRoutes.AmendRecycledPlasticPackagingController.onPageLoad(
+
+          )
 
         }
 

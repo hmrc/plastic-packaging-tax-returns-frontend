@@ -17,7 +17,6 @@
 package viewmodels.checkAnswers.amends
 
 import cacheables.ReturnDisplayApiCacheable
-import models.Mode.CheckMode
 import models.UserAnswers
 import models.amends.AmendSummaryRow
 import models.returns.ReturnDisplayApi
@@ -26,24 +25,27 @@ import play.api.i18n.Messages
 
 object AmendManufacturedPlasticPackagingSummary {
 
-  def apply(answers: UserAnswers)(implicit messages: Messages): Option[AmendSummaryRow] = {
+  def apply(answers: UserAnswers)(implicit messages: Messages): AmendSummaryRow = {
 
     val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    answers.get(AmendManufacturedPlasticPackagingPage).map {
-      answer =>
-        val existing = returnDisplayApi.returnDetails.manufacturedWeight
-        val amended  = if(existing != answer) { answer.toString } else { "" }
+    val maybeAnswer: Option[Int] = answers.get(AmendManufacturedPlasticPackagingPage)
+    val existing: BigDecimal     = returnDisplayApi.returnDetails.manufacturedWeight
 
-        AmendSummaryRow(
-          messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
-          existing.toString,
-          amended,
-          controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad(CheckMode).url
-        )
+    val amended: String = if (maybeAnswer.isDefined && existing != maybeAnswer.get) {
+      maybeAnswer.get.toString
+    } else {
+      ""
     }
+
+    AmendSummaryRow(
+      messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
+      existing.toString,
+      amended,
+      controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url
+    )
   }
 
 }

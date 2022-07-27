@@ -28,7 +28,7 @@
     cyaTable: AmendsCyaTable
 )
 
-@(mode: Mode, obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
+@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
 
 @link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
