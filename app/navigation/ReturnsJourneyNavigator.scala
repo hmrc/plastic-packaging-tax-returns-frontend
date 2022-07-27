@@ -104,9 +104,12 @@ class ReturnsJourneyNavigator {
     }
     
   def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = 
-    (hasAnswerChanged, usersAnswer) match {
-      case (true, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-      case _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
+    (mode, hasAnswerChanged, usersAnswer) match {
+      case (NormalMode, _, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case (NormalMode, _, false)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (CheckMode, true, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case (CheckMode, true, false)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (CheckMode, false, _)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
   }
 
   private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
