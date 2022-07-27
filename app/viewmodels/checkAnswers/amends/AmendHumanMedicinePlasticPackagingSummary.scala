@@ -39,10 +39,13 @@ object AmendHumanMedicinePlasticPackagingSummary extends SummaryViewModel {
 
     answers.get(AmendHumanMedicinePlasticPackagingPage).map {
       answer =>
+        val existing = returnDisplayApi.returnDetails.humanMedicines
+        val amended  = if(existing != answer) { answer.toString } else { "" }
+
         AmendSummaryRow(
           messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
-          returnDisplayApi.returnDetails.humanMedicines.toString,
-          answer.toString,
+          existing.toString,
+          amended,
           controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(CheckMode).url
         )
     }

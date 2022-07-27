@@ -65,6 +65,9 @@ AmendsCheckYourAnswers.tableHeading.1 = Description
 AmendsCheckYourAnswers.tableHeading.2 = Original weight
 AmendsCheckYourAnswers.tableHeading.3 = Amended weight
 AmendsCheckYourAnswers.tableHeading.4 = Action
+AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
+AmendsCheckYourAnswers.deductionsTotal = Deductions total
+AmendsCheckYourAnswers.title = Amend your return for {0}
 
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service

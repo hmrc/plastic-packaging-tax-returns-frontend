@@ -39,10 +39,13 @@ object AmendDirectExportPlasticPackagingSummary extends SummaryViewModel {
 
     answers.get(AmendDirectExportPlasticPackagingPage).map {
       answer =>
+        val existing = returnDisplayApi.returnDetails.directExports
+        val amended  = if(existing != answer) { answer.toString } else { "" }
+
         AmendSummaryRow(
           messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
-          returnDisplayApi.returnDetails.directExports.toString,
-          answer.toString,
+          existing.toString,
+          amended,
           controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad(CheckMode).url
         )
     }

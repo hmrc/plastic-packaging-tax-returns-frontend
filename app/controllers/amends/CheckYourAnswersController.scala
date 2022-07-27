@@ -22,8 +22,9 @@ import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Mode
+import models.Mode.CheckMode
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
@@ -54,6 +55,17 @@ class CheckYourAnswersController @Inject() (
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
+  // TODO - get this from the calculation (back end end point) and append to each table
+  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String)
+                      (implicit messages: Messages) = {
+    AmendSummaryRow(
+      messages(key),
+      originalTotal.toString,
+      amendedTotal.toString,
+      ""
+    )
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
@@ -61,12 +73,14 @@ class CheckYourAnswersController @Inject() (
         val totalRows: Seq[AmendSummaryRow] = Seq(
           AmendManufacturedPlasticPackagingSummary.buildRow(request.userAnswers),
           AmendImportedPlasticPackagingSummary.buildRow(request.userAnswers),
+          Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal")) // TODO - get from calc
         ).flatten
 
         val deductionsRows: Seq[AmendSummaryRow] = Seq(
           AmendDirectExportPlasticPackagingSummary.buildRow(request.userAnswers),
           AmendHumanMedicinePlasticPackagingSummary.buildRow(request.userAnswers),
-          AmendRecycledPlasticPackagingSummary.buildRow((request.userAnswers))
+          AmendRecycledPlasticPackagingSummary.buildRow(request.userAnswers),
+            Some(totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal")) // TODO - get from calc
         ).flatten
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {

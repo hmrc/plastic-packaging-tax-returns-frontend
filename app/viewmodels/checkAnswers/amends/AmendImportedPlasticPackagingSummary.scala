@@ -39,10 +39,13 @@ object AmendImportedPlasticPackagingSummary extends SummaryViewModel {
 
     answers.get(AmendImportedPlasticPackagingPage).map {
       answer =>
+        val existing = returnDisplayApi.returnDetails.importedWeight
+        val amended  = if(existing != answer) { answer.toString } else { "" }
+
         AmendSummaryRow(
           messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
-          returnDisplayApi.returnDetails.humanMedicines.toString,
-          answer.toString,
+          existing.toString,
+          amended,
           controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad(CheckMode).url
         )
     }

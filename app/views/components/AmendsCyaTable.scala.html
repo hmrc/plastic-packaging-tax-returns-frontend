@@ -41,7 +41,7 @@
                     format = Some("text")
                 ),
                 TableRow(
-                    content = HtmlContent(link(row.changeUrl)),
+                    content = if(row.changeUrl) { HtmlContent(link(row.changeUrl)) } else { HtmlContent(HtmlFormat.empty) },
                     format = Some("text")
                 )
             )

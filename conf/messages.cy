@@ -59,6 +59,15 @@ error.summary.title = Mae problem wedi codi
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.heading = Gwiriwch eich atebion
 
+AmendsCheckYourAnswers.totalPlastic = Total plastic packaging
+AmendsCheckYourAnswers.deductions = Deductions
+AmendsCheckYourAnswers.tableHeading.1 = Description
+AmendsCheckYourAnswers.tableHeading.2 = Original weight
+AmendsCheckYourAnswers.tableHeading.3 = Amended weight
+AmendsCheckYourAnswers.tableHeading.4 = Action
+AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
+AmendsCheckYourAnswers.deductionsTotal = Deductions total
+
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.startAgain.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth

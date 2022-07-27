@@ -32,15 +32,15 @@
 
 @link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation)))) {
 
-    @sectionHeader(obligation)
-
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-xl">@messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))</h1>
 
     @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 
     @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
+
+    <!-- TODO - add tax calculation section -->
 
     @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
