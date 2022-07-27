@@ -64,12 +64,13 @@ case class UserAnswers(
     */
   def change[A] (questionPage: QuestionPage[A], newValue: A) (implicit format: Format[A]): Option[UserAnswers] = {
     val previousAnswer = get(questionPage)
+    val updatedAnswers = set(questionPage, newValue)
     if (previousAnswer.contains(newValue)) {
-      logger.error(s"change $questionPage, answer not changed from $newValue")
+      logger.error(s"change $questionPage, new answer the same as $newValue")
       None
     } else {
-      logger.error(s"change $questionPage, answer changed from $previousAnswer to $newValue")
-      Some(set(questionPage, newValue).get)
+      logger.error(s"change $questionPage, answer was $previousAnswer now $newValue")
+      Some(updatedAnswers.get)
     }
   }  
   
