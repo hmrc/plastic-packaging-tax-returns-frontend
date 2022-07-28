@@ -103,7 +103,7 @@ class ReturnsJourneyNavigator {
       case _ => throw new Exception("Unable to navigate to page")
     }
     
-  def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = 
+  def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call =
     (mode, hasAnswerChanged, usersAnswer) match {
       case (NormalMode, _, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
       case (NormalMode, _, false)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
