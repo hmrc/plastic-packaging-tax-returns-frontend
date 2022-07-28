@@ -16,7 +16,9 @@
 
 package models
 
+import models.UserAnswers.logger
 import pages.QuestionPage
+import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -60,11 +62,17 @@ case class UserAnswers(
     *  - None => new value matches existing value, nothing changed
     *  @throws Exception if changing the value or cleanup failed
     */
-  def change[A] (questionPage: QuestionPage[A], newValue: A) (implicit format: Format[A]): Option[UserAnswers] = 
-    if (get(questionPage).contains(newValue))
+  def change[A] (questionPage: QuestionPage[A], newValue: A) (implicit format: Format[A]): Option[UserAnswers] = {
+    val previousAnswer = get(questionPage)
+    val updatedAnswers = set(questionPage, newValue)
+    if (previousAnswer.contains(newValue)) {
+      logger.error(s"change $questionPage, new answer the same as $newValue")
       None
-    else 
-      Some(set(questionPage, newValue).get)
+    } else {
+      logger.error(s"change $questionPage, answer was $previousAnswer now $newValue")
+      Some(updatedAnswers.get)
+    }
+  }  
   
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
@@ -109,4 +117,6 @@ object UserAnswers {
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
+
+  private val logger = Logger(getClass)
 }

@@ -18,12 +18,9 @@ package navigation
 
 import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
-import cacheables.AmendSelectedPeriodKey
-import controllers.amends.{routes => amendsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
-import pages.amends._
 import pages.returns._
 
 /** ***********************************************************
@@ -45,7 +42,7 @@ import pages.returns._
 
 class NavigatorSpec extends SpecBase {
 
-  val navigator = new Navigator(amends = new AmendsJourneyNavigator, returns = new ReturnsJourneyNavigator)
+  val navigator = new Navigator(returns = new ReturnsJourneyNavigator)
 
   "Navigator" - {
 
@@ -159,79 +156,6 @@ class NavigatorSpec extends SpecBase {
         }
       }
 
-      "for the amend journey" - {
-
-        "for the AmendAreYouSurePage" - {
-
-          "navigate to AmendManufacturedPlasticPackagingController when answer is Yes" in {
-            val answers = UserAnswers("id").set(AmendAreYouSurePage, true)
-
-            navigator.nextPage(AmendAreYouSurePage,
-              NormalMode,
-              answers.get
-            ) mustBe amendsRoutes.AmendManufacturedPlasticPackagingController.onPageLoad()
-
-          }
-
-          "navigate to Homepage when answer is No" in {
-
-            val answers = UserAnswers("id").set(AmendAreYouSurePage, false).get.set(AmendSelectedPeriodKey, "TEST")
-
-            navigator.nextPage(AmendAreYouSurePage,
-              NormalMode,
-              answers.get
-            ) mustBe (amendsRoutes.ViewReturnSummaryController.onPageLoad("TEST"))
-          }
-
-        }
-
-        "must go from AmendManufacturedPlasticPackagingPage to AmendImportedPlasticPackagingController" in {
-
-          navigator.nextPage(AmendManufacturedPlasticPackagingPage,
-            NormalMode,
-            UserAnswers("id")
-          ) mustBe amendsRoutes.AmendImportedPlasticPackagingController.onPageLoad()
-
-        }
-
-        "must go from AmendImportedPlasticPackagingPage to AmendHumanMedicinePlasticPackagingController" in {
-
-          navigator.nextPage(AmendImportedPlasticPackagingPage,
-            NormalMode,
-            UserAnswers("id")
-          ) mustBe amendsRoutes.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-
-        }
-
-        "must go from AmendHumanMedicinePlasticPackagingPage to AmendDirectExportPlasticPackagingController" in {
-
-          navigator.nextPage(AmendHumanMedicinePlasticPackagingPage,
-            NormalMode,
-            UserAnswers("id")
-          ) mustBe amendsRoutes.AmendDirectExportPlasticPackagingController.onPageLoad()
-
-        }
-
-        "must go from AmendDirectExportPlasticPackagingPage to AmendRecycledPlasticPackagingController" in {
-
-          navigator.nextPage(AmendDirectExportPlasticPackagingPage,
-            NormalMode,
-            UserAnswers("id")
-          ) mustBe amendsRoutes.AmendRecycledPlasticPackagingController.onPageLoad(
-
-          )
-
-        }
-
-        "must go from AmendRecycledPlasticPackagingPage to CheckYourAnswersController" in {
-
-          navigator.nextPage(AmendRecycledPlasticPackagingPage,
-            NormalMode,
-            UserAnswers("id")
-          ) mustBe amendsRoutes.CheckYourAnswersController.onPageLoad
-
-        }
-      }
     }
 
     "in Check mode" - {
@@ -265,10 +189,6 @@ class NavigatorSpec extends SpecBase {
           }
 
         }
-      }
-
-      "for the amend journey" - {
-        // TODO - implement me!!
       }
     }
   }
