@@ -23,10 +23,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito
 import org.mockito.Mockito.{atLeastOnce, verify, when}
-import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.concurrent.ScalaFutures
-import pages.amends.AmendAreYouSurePage
 import uk.gov.hmrc.http.HttpClient
+
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
@@ -35,7 +34,7 @@ class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
   val mockConfig = mock[FrontendAppConfig]
   val connector = new CacheConnector(config = mockConfig, httpClient = mock[HttpClient])
   val dateVal       = LocalDateTime.now
-  val answers       = UserAnswers("id").set(AmendAreYouSurePage,  true).success.value
+  val answers       = UserAnswers("id")
 
   "GET" must {
     "successfully fetch cache" in {

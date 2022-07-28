@@ -44,7 +44,6 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
-      arbitrary[(AmendAreYouSurePage.type, JsValue)] ::
       arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] ::

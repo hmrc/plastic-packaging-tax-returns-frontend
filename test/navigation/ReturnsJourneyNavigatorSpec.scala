@@ -23,7 +23,7 @@ import models.Mode.{CheckMode, NormalMode}
 class ReturnsJourneyNavigatorSpec extends SpecBase {
 
   private val returnsJourneyNavigator = new ReturnsJourneyNavigator
-  val navigator = new Navigator(amends = new AmendsJourneyNavigator, returns = returnsJourneyNavigator)
+  val navigator = new Navigator(returns = returnsJourneyNavigator)
 
   "Manufacturing yes / no page" - {
     "for normal mode" - {

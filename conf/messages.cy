@@ -133,12 +133,6 @@ amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999
 amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
 amendRecycledPlasticPackaging.hint = Tax is not charged on plastic packaging that contains 30% or more recycled plastic. This will be deducted from your tax liability.
 
-amendAreYouSure.title = Would you like to amend this return?
-amendAreYouSure.heading = Would you like to amend this return?
-amendAreYouSure.checkYourAnswersLabel = amendAreYouSure
-amendAreYouSure.error.required = Select yes if you want to amend your return
-amendAreYouSure.change.hidden = AmendAreYouSure
-
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
 amend.confirmation.panel = Your reference number is {0}
