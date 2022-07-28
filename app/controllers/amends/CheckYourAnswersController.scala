@@ -50,8 +50,8 @@ class CheckYourAnswersController @Inject() (
     AmendSummaryRow(
       messages(key),
       originalTotal.toString,
-      amendedTotal.toString,
-      ""
+      Some(amendedTotal.toString),
+      None
     )
   }
 

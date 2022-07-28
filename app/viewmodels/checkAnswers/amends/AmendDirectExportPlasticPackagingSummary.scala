@@ -34,17 +34,13 @@ object AmendDirectExportPlasticPackagingSummary {
     val maybeAnswer: Option[Int] = answers.get(AmendDirectExportPlasticPackagingPage)
     val existing: BigDecimal     = returnDisplayApi.returnDetails.directExports
 
-    val amended: String = if (maybeAnswer.isDefined && existing != maybeAnswer.get) {
-      maybeAnswer.get.toString
-    } else {
-      ""
-    }
+    val amended: Option[String] = maybeAnswer.map(_.toString)
 
     AmendSummaryRow(
       messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url
+      Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
     )
   }
 

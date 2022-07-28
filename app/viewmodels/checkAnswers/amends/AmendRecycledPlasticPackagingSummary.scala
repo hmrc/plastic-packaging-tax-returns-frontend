@@ -34,17 +34,14 @@ object AmendRecycledPlasticPackagingSummary {
     val maybeAnswer: Option[Int] = answers.get(AmendRecycledPlasticPackagingPage)
     val existing: BigDecimal     = returnDisplayApi.returnDetails.recycledPlastic
 
-    val amended: String = if (maybeAnswer.isDefined && existing != maybeAnswer.get) {
-      maybeAnswer.get.toString
-    } else {
-      ""
-    }
+    val amended: Option[String] = maybeAnswer.map(_.toString)
+
 
     AmendSummaryRow(
       messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url
+      Some(controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
     )
   }
 

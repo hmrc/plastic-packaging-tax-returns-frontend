@@ -32,19 +32,16 @@ object AmendImportedPlasticPackagingSummary {
     )
 
     val maybeAnswer: Option[Int] = answers.get(AmendImportedPlasticPackagingPage)
-    val existing = returnDisplayApi.returnDetails.importedWeight
+    val existing: BigDecimal     = returnDisplayApi.returnDetails.importedWeight
 
-    val amended: String = if (maybeAnswer.isDefined && existing != maybeAnswer.get) {
-      maybeAnswer.get.toString
-    } else {
-      ""
-    }
+    val amended: Option[String] = maybeAnswer.map(_.toString)
+
 
     AmendSummaryRow(
       messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url
+      Some(controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
     )
   }
 

@@ -34,17 +34,14 @@ object AmendHumanMedicinePlasticPackagingSummary {
     val maybeAnswer: Option[Int] = answers.get(AmendHumanMedicinePlasticPackagingPage)
     val existing: BigDecimal     = returnDisplayApi.returnDetails.humanMedicines
 
-    val amended: String = if (maybeAnswer.isDefined && existing != maybeAnswer.get) {
-      maybeAnswer.get.toString
-    } else {
-      ""
-    }
+    val amended: Option[String] = maybeAnswer.map(_.toString)
+
 
     AmendSummaryRow(
       messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
+      Some(controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
     )
   }
 

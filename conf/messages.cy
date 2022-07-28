@@ -68,6 +68,8 @@ AmendsCheckYourAnswers.tableHeading.4 = Action
 AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
 AmendsCheckYourAnswers.deductionsTotal = Deductions total
 AmendsCheckYourAnswers.title = Amend your return for {0}
+AmendsCheckYourAnswers.hiddenCell.action = no action here
+AmendsCheckYourAnswers.hiddenCell.newAnswer = you've not made an amend here
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth

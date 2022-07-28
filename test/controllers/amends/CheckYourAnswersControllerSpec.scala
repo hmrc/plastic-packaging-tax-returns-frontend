@@ -71,28 +71,28 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         val totalRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
-            "Weight of plastic packaging manufactured", "0", "",
-            controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url
+            "Weight of plastic packaging manufactured", "0", None,
+            Some(controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Weight of plastic packaging imported", "1", "",
-            controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url
+            "Weight of plastic packaging imported", "1", None,
+            Some(controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
           ),
           totalRow(0, 0, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
         )
 
         val deductionsRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
-            "Weight of directly exported plastic packaging", "4", "",
-            controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url
+            "Weight of directly exported plastic packaging", "4", None,
+           Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Weight of plastic packaging exported used for licenced human medicines", "3", "",
-            controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
+            "Weight of plastic packaging exported used for licenced human medicines", "3", None,
+            Some(controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Weight of plastic packaging exported containing 30% or more recycled plastic", "5", "",
-            controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url
+            "Weight of plastic packaging exported containing 30% or more recycled plastic", "5", None,
+            Some(controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
           ),
           totalRow(0, 0, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
         )
@@ -138,8 +138,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     AmendSummaryRow(
       messages(key),
       originalTotal.toString,
-      amendedTotal.toString,
-      ""
+      Some(amendedTotal.toString),
+      None
     )
   }
 }
