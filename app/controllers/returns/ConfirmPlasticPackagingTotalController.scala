@@ -23,6 +23,7 @@ import pages.returns._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.ConfirmImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.ConfirmImportedPlasticPackagingWeightLabel
@@ -34,7 +35,6 @@ import views.html.returns.ConfirmPlasticPackagingTotalView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 class ConfirmPlasticPackagingTotalController @Inject()
 (
@@ -51,7 +51,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        Try(SummaryListViewModel(rows =
+        val summaryList: SummaryList = SummaryListViewModel(rows =
           Seq(
             ConfirmManufacturedPlasticPackaging,
             ConfirmManufacturedPlasticPackagingSummary,
@@ -59,14 +59,8 @@ class ConfirmPlasticPackagingTotalController @Inject()
             ConfirmImportedPlasticPackagingWeightLabel,
             PlasticPackagingTotalSummary
           ).flatMap(_.row(request.userAnswers))
-        )) match {
-          case Success(list) => {
-            Ok(view(list))
-          }
-          case Failure(error) =>
-            logger.error(error.getMessage)
-            Redirect(controllers.routes.IndexController.onPageLoad)
-        }
+        )
+        Ok(view(summaryList))
     }
 
   def onwardRouting: Action[AnyContent] = {

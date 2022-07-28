@@ -17,14 +17,11 @@
 package viewmodels.checkAnswers.amends
 
 import models.UserAnswers
-import models.Mode.CheckMode
 import pages.amends.AmendAreYouSurePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.FluentActionItem
-import viewmodels.govuk.summarylist.SummaryListRowViewModel
-import viewmodels.govuk.summarylist.ActionItemViewModel
-import viewmodels.govuk.summarylist.ValueViewModel
+import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
 object AmendAreYouSureSummary {
@@ -39,7 +36,7 @@ object AmendAreYouSureSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.amends.routes.AmendAreYouSureController.onPageLoad(CheckMode).url
+              controllers.amends.routes.AmendAreYouSureController.onPageLoad().url
             )
               .withVisuallyHiddenText(
                 messages("amendAreYouSure.change.hidden")

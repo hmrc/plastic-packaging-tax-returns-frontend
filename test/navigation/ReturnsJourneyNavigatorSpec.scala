@@ -37,6 +37,16 @@ class ReturnsJourneyNavigatorSpec extends SpecBase {
         val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = false)
         call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
       }
+
+      "when answer is Yes and not been changed" in {
+        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = true)
+        call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
+      }
+
+      "when answer is No and not been changed" in {
+        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = false)
+        call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+      }
     }
 
     "for check mode" - {
@@ -46,13 +56,18 @@ class ReturnsJourneyNavigatorSpec extends SpecBase {
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
       }
 
+      "when answer is No and has been changed" in {
+        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = false)
+        call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      }
+
       "when answer is Yes and has not been changed" in {
-        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = true)
+        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = false, usersAnswer = true)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
       "when answer is No" in {
-        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = false)
+        val call = returnsJourneyNavigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = false, usersAnswer = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
     }

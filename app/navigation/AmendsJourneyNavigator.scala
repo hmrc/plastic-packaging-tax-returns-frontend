@@ -18,9 +18,8 @@ package navigation
 
 import cacheables.AmendSelectedPeriodKey
 import models.UserAnswers
-import models.Mode.NormalMode
 import pages._
-import pages.amends.{AmendAreYouSurePage, AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.amends._
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -31,13 +30,13 @@ class AmendsJourneyNavigator {
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
     case AmendAreYouSurePage => amendAreYouSureRoute
     case AmendManufacturedPlasticPackagingPage =>
-      _ => controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad(NormalMode)
+      _ => controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad()
     case AmendImportedPlasticPackagingPage =>
-      _ => controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad(NormalMode)
+      _ => controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad()
     case AmendHumanMedicinePlasticPackagingPage =>
-      _ => controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad(NormalMode)
+      _ => controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad()
     case AmendDirectExportPlasticPackagingPage =>
-      _ => controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad(NormalMode)
+      _ => controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad()
     case AmendRecycledPlasticPackagingPage =>
       _ => controllers.amends.routes.CheckYourAnswersController.onPageLoad()
   }
@@ -53,7 +52,7 @@ class AmendsJourneyNavigator {
 
   private def amendAreYouSureRoute(answers: UserAnswers): Call =
     (answers.get(AmendAreYouSurePage), answers.get(AmendSelectedPeriodKey)) match {
-      case (Some(true), _)  => controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      case (Some(true), _)  => controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad()
       case (Some(false), Some(key)) => controllers.amends.routes.ViewReturnSummaryController.onPageLoad(key)
       case _        => throw new Exception("Unable to navigate to page")
     }

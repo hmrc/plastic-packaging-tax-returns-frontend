@@ -56,24 +56,26 @@ case class UserAnswers(
   }
 
   /** If user's answer has changed, passes updated user-answers object to given save function  
-    * @param questionPage - the user-answer we might be changing
-    * @param newValue - the user's answer
+    *
+    * @param questionPage       - the user-answer we might be changing
+    * @param newValue           - the user's answer
     * @param saveUserAnswerFunc - function to call if answer has changed
-    * @param format - formatter for user's answer object type
+    * @param format             - formatter for user's answer object type
     * @tparam A - type of user's answer
     * @return
     *  - Future of false if user's answer is the same as the current value
     *  - Future of true if user's answer has changed
     */
-  def change[A] (questionPage: QuestionPage[A], newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) 
-    (implicit format: Format[A]): Future[Boolean] =
+  def change[A](questionPage: QuestionPage[A], newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc)
+    (implicit format: Format[A]): Future[Boolean] = {
+    val updatedUserAnswers = set(questionPage, newValue).get
     if (get(questionPage).contains(newValue))
       Future.successful(false)
     else {
-      val updatedUserAnswers = set(questionPage, newValue).get
       saveUserAnswerFunc.apply(updatedUserAnswers, true)
     }
-
+  }
+  
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
