@@ -43,9 +43,11 @@
                     content =  row.newAnswer.fold[Content](HtmlContent(hiddenContent("newAnswer")))(x => Text(x.toLong.asKg)),
                     format = Some("text")
                 ),
-                TableRow(
-                    content = HtmlContent(row.changeUrl.fold(hiddenContent("action"))(link(_))),
-                    format = Some("text")
+                row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true")))( href =>
+                    TableRow(
+                        content = HtmlContent(link(href)),
+                        format = Some("text")
+                    )
                 )
             )
         ),
