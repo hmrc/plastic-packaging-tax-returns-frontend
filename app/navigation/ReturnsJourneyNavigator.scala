@@ -17,8 +17,8 @@
 package navigation
 
 import controllers.returns.routes
-import models.{Mode,UserAnswers}
-import models.Mode.{NormalMode, CheckMode}
+import models.Mode.{CheckMode, NormalMode}
+import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
 import play.api.mvc.Call
@@ -102,15 +102,24 @@ class ReturnsJourneyNavigator {
       case Some(_) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
       case _ => throw new Exception("Unable to navigate to page")
     }
-    
+
   def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call =
-    (mode, hasAnswerChanged, usersAnswer) match {
-      case (NormalMode, _, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-      case (NormalMode, _, false)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-      case (CheckMode, true, true)  => routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-      case (CheckMode, true, false)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-      case (CheckMode, false, _)  => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-  }
+    if (mode.equals(NormalMode)) 
+      importedPlasticPackagingRouteNormalMode(mode, usersAnswer)
+    else 
+      importedPlasticPackagingRouteCheckMode(mode, hasAnswerChanged, usersAnswer)
+
+  private def importedPlasticPackagingRouteCheckMode(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean) =
+    if (usersAnswer && hasAnswerChanged)
+      routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+    else
+      routes.ConfirmPlasticPackagingTotalController.onPageLoad
+
+  private def importedPlasticPackagingRouteNormalMode(mode: Mode, usersAnswer: Boolean) =
+    if (usersAnswer)
+      routes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+    else
+      routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
   private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
     answers.get(DirectlyExportedComponentsPage) match {
