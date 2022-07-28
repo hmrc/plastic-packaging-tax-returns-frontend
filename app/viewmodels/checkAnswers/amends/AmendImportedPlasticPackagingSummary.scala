@@ -32,7 +32,7 @@ object AmendImportedPlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendImportedPlasticPackagingPage).map(_.toString)
-    val existing: BigDecimal     = returnDisplayApi.returnDetails.importedWeight
+    val existing: BigDecimal    = returnDisplayApi.returnDetails.importedWeight
 
     AmendSummaryRow(
       messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),

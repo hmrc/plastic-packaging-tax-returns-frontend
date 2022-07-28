@@ -32,7 +32,7 @@ object AmendDirectExportPlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendDirectExportPlasticPackagingPage).map(_.toString)
-    val existing: BigDecimal     = returnDisplayApi.returnDetails.directExports
+    val existing: BigDecimal    = returnDisplayApi.returnDetails.directExports
 
     AmendSummaryRow(
       messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),

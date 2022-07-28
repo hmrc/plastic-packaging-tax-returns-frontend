@@ -32,7 +32,7 @@ object AmendHumanMedicinePlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.toString)
-    val existing: BigDecimal     = returnDisplayApi.returnDetails.humanMedicines
+    val existing: BigDecimal    = returnDisplayApi.returnDetails.humanMedicines
 
     AmendSummaryRow(
       messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
