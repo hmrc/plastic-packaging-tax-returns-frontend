@@ -24,9 +24,10 @@ import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{any, eq => eqq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{eq => eqq}
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.reset
+import org.mockito.MockitoSugar.{reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ImportedPlasticPackagingPage
@@ -45,14 +46,23 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
   private val formProvider = new ImportedPlasticPackagingFormProvider()
   private lazy val importedPlasticPackagingRoute = routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url
   private val mockUserAnswers = mock[UserAnswers]
+  private val mockCacheConnector = mock[CacheConnector]
+  private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+  private val saveAnswersFunc = mock[UserAnswers.SaveUserAnswerFunc]
+
+  private def any[T]: T = ArgumentMatchers.any[T]()
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUserAnswers)
+    reset(mockUserAnswers, mockCacheConnector, returnsJourneyNavigator)
 
     val date = LocalDate.ofEpochDay(0)
     val obligation = TaxReturnObligation(date, date, date, "")
-    when(mockUserAnswers.get(eqq(ObligationCacheable))(any())).thenReturn(Some(obligation))
+    when(mockUserAnswers.get(eqq(ObligationCacheable))(any)).thenReturn(Some(obligation))
+    
+    when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
+    when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
+    when(returnsJourneyNavigator.importedPlasticPackagingRoute(any, any, any)).thenReturn(onwardRoute)
   }
 
   "ImportedPlasticPackaging Controller" - {
@@ -102,13 +112,8 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-      val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-      when(returnsJourneyNavigator.importedPlasticPackagingRoute(any(), any(), any())) thenReturn onwardRoute
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(mockUserAnswers))
           .overrides(
             bind[CacheConnector].toInstance(mockCacheConnector), 
             bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
@@ -181,19 +186,29 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
     "submit must redirect to the mini-cya page if the answer has not changed" in {
 
-      when(mockUserAnswers.change(any(), any())(any())).thenReturn(None) // Respond saying the user-answer hasn't changed
-      when(mockUserAnswers.get(eqq(ImportedPlasticPackagingPage))(any())).thenReturn(Some(true)) // TODO shouldn't need this?
+      // UserAnswers responds with "answer not changed"
+      when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
 
       // TODO all these running() unit tests should go...
-      val application = applicationBuilder(Some(mockUserAnswers)).build()
+      val application = applicationBuilder(Some(mockUserAnswers))
+        .overrides(
+          bind[CacheConnector].toInstance(mockCacheConnector),
+          bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
+        )
+        .build()
+      
       running(application) {
         val request = FakeRequest(POST, routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url)
           .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustBe 303
-        redirectLocation(result) mustBe Some(controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url)
+        redirectLocation(result) mustBe Some("/foo")
       }
+      
+      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
+      verify(mockUserAnswers).change(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
+      verify(returnsJourneyNavigator).importedPlasticPackagingRoute(CheckMode, false, true)
     }
 
   }
