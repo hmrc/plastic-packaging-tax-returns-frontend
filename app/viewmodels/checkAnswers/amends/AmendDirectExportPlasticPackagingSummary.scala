@@ -31,10 +31,8 @@ object AmendDirectExportPlasticPackagingSummary {
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    val maybeAnswer: Option[Int] = answers.get(AmendDirectExportPlasticPackagingPage)
+    val amended: Option[String] = answers.get(AmendDirectExportPlasticPackagingPage).map(_.toString)
     val existing: BigDecimal     = returnDisplayApi.returnDetails.directExports
-
-    val amended: Option[String] = maybeAnswer.map(_.toString)
 
     AmendSummaryRow(
       messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),

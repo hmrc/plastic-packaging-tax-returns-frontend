@@ -31,11 +31,8 @@ object AmendHumanMedicinePlasticPackagingSummary {
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    val maybeAnswer: Option[Int] = answers.get(AmendHumanMedicinePlasticPackagingPage)
+    val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.toString)
     val existing: BigDecimal     = returnDisplayApi.returnDetails.humanMedicines
-
-    val amended: Option[String] = maybeAnswer.map(_.toString)
-
 
     AmendSummaryRow(
       messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
