@@ -48,10 +48,8 @@
     @if(appConfig.isAmendsFeatureEnabled){
         <p>@link("amend-return",
                 messages("viewReturnSummary.amendLink"),
-            controllers.amends.routes.CheckYourAnswersController.onPageLoad()
-            )<!--           controllers.amends.routes.AmendAreYouSureController.onPageLoad(NormalMode)
-             controllers.amends.routes.CheckYourAnswersController.onPageLoad()-->
-
+                controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+            )
         </p>
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>

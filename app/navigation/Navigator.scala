@@ -25,15 +25,14 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject()(
-                           amends: AmendsJourneyNavigator,
                            returns: ReturnsJourneyNavigator
                          ) {
 
   private val normalRoutes: PartialFunction[Page, UserAnswers => Call] =
-    amends.normalRoutes.orElse(returns.normalRoutes)
+    returns.normalRoutes
 
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
-    amends.checkRoutes.orElse(returns.checkRoutes)
+    returns.checkRoutes
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
