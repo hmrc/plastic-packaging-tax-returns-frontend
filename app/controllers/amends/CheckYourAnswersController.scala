@@ -21,14 +21,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.amends.AmendSummaryRow
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.amends._
-import viewmodels.govuk.summarylist._
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,24 +44,46 @@ class CheckYourAnswersController @Inject() (
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] =
+  // TODO - get this from the calculation (back end end point) and append to each table
+  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String)
+                      (implicit messages: Messages) = {
+    AmendSummaryRow(
+      messages(key),
+      originalTotal.toString,
+      Some(amendedTotal.toString),
+      None
+    )
+  }
+
+  def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val list: SummaryList = SummaryListViewModel(rows =
-          Seq(AmendManufacturedPlasticPackagingSummary,
-              AmendImportedPlasticPackagingSummary,
-              AmendHumanMedicinePlasticPackagingSummary,
-              AmendDirectExportPlasticPackagingSummary,
-              AmendRecycledPlasticPackagingSummary
-          ).flatMap(_.row(request.userAnswers))
-        )
 
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
-            if (appConfig.isAmendsFeatureEnabled) {Ok(view(list, obligation))}
-          else
-            {Redirect(controllers.routes.IndexController.onPageLoad)}
+
+            val totalRows: Seq[AmendSummaryRow] = Seq(
+              AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
+              AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
+              totalRow(0L, 0L, "AmendsCheckYourAnswers.packagingTotal") // TODO - get from calc
+            )
+
+            val deductionsRows: Seq[AmendSummaryRow] = Seq(
+              AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
+              AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
+              AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
+              totalRow(0L, 0L, "AmendsCheckYourAnswers.deductionsTotal") // TODO - get from calc
+            )
+
+            if (appConfig.isAmendsFeatureEnabled) {
+              Ok(view(obligation, totalRows, deductionsRows))
+            }
+            else {
+              Redirect(controllers.routes.IndexController.onPageLoad)
+            }
+
           case None => Redirect(routes.SubmittedReturnsController.onPageLoad())
+
         }
     }
 

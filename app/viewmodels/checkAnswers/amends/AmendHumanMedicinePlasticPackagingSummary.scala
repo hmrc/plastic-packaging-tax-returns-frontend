@@ -16,32 +16,30 @@
 
 package viewmodels.checkAnswers.amends
 
+import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
+import models.amends.AmendSummaryRow
+import models.returns.ReturnDisplayApi
 import pages.amends.AmendHumanMedicinePlasticPackagingPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.SummaryViewModel
-import viewmodels.govuk.all.FluentActionItem
-import viewmodels.govuk.summarylist.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits._
 
-object AmendHumanMedicinePlasticPackagingSummary extends SummaryViewModel {
+object AmendHumanMedicinePlasticPackagingSummary {
 
-  override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AmendHumanMedicinePlasticPackagingPage).map {
-      answer =>
-        SummaryListRowViewModel(key = "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
-          value = ValueViewModel(answer.toString),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
-            )
-              .withVisuallyHiddenText(
-                messages("amendHumanMedicinePlasticPackaging.change.hidden")
-              )
-          )
-        )
-    }
+  def apply(answers: UserAnswers)(implicit messages: Messages): AmendSummaryRow = {
+
+    val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
+      throw new IllegalArgumentException("Must have a return display API to do an amend")
+    )
+
+    val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.toString)
+    val existing: BigDecimal    = returnDisplayApi.returnDetails.humanMedicines
+
+    AmendSummaryRow(
+      messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
+      existing.toString,
+      amended,
+      Some(controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+    )
+  }
 
 }
