@@ -19,9 +19,7 @@ package pages.amends
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-trait AmendJourney
-
-case object AmendRecycledPlasticPackagingPage extends AmendJourney with QuestionPage[Int] {
+case object AmendRecycledPlasticPackagingPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ "amend" \ toString
 
