@@ -31,7 +31,11 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
   val form = new StartYourReturnFormProvider()()
   val page = inject[StartYourReturnView]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.of(2022,7,5),
+    LocalDate.of(2022,10,5),
+    LocalDate.of(2023,1,5),
+    "PK1")
 
   private def createView: Html =
     page(form, NormalMode, aTaxObligation, true)(request, messages)
