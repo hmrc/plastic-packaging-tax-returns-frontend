@@ -14,56 +14,33 @@
  * limitations under the License.
  *@
 
-@import components._
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
+@import components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.amends.AmendSummaryRow
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
     govukButton: GovukButton,
     formHelper: FormWithCSRF,
-    paragraph: paragraph,
-    link: Link,
-    sectionHeader: ReturnQuarterHeading
+    sectionHeader: ReturnQuarterHeading,
+    header: SectionHeader,
+    cyaTable: AmendsCyaTable
 )
 
+@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
 
+@link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
-@(list: SummaryList, obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation)))) {
 
-@changeLink(linkTextShortKey: String, url: String) = @{
-    paragraph(
-        content = link(id = "", text = messages(linkTextShortKey), call = Call("GET", url)),
-    )
-}
+    <h1 class="govuk-heading-xl">@messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))</h1>
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+    @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 
-    @sectionHeader(obligation)
+    @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
-
-<p>
-    @changeLink(messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
-    controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad.toString)
-
-    @changeLink(messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
-    controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad.toString)
-
-    @changeLink(messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
-    controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.toString)
-
-    @changeLink(messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
-    controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad.toString)
-
-    @changeLink(messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
-    controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad.toString)
-
-</p>
-
-
-    @govukSummaryList(list)
+    <!-- TODO - add tax calculation section -->
 
     @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
 
