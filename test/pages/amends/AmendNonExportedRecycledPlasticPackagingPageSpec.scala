@@ -22,10 +22,10 @@ class AmendNonExportedRecycledPlasticPackagingPageSpec extends PageBehaviours {
 
   "AmendRecycledPlasticPackagingPage" - {
 
-    beRetrievable[Int](AmendRecycledPlasticPackagingPage)
+    beRetrievable[Long](AmendRecycledPlasticPackagingPage)
 
-    beSettable[Int](AmendRecycledPlasticPackagingPage)
+    beSettable[Long](AmendRecycledPlasticPackagingPage)
 
-    beRemovable[Int](AmendRecycledPlasticPackagingPage)
+    beRemovable[Long](AmendRecycledPlasticPackagingPage)
   }
 }
