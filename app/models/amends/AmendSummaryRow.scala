@@ -18,7 +18,7 @@ package models.amends
 
 import play.api.libs.json.{Json, OFormat}
 
-case class AmendSummaryRow(label: String, oldAnswer: String, newAnswer: Option[String], changeUrl: Option[String])
+case class AmendSummaryRow(label: String, oldAnswer: String, newAnswer: Option[String], changeUrl: Option[(String, String)])
 
 object AmendSummaryRow {
   implicit def jsonFormats: OFormat[AmendSummaryRow] =

@@ -38,7 +38,7 @@ object AmendManufacturedPlasticPackagingSummary {
       messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      Some(controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
+      Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
     )
   }
 

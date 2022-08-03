@@ -38,7 +38,7 @@ object AmendDirectExportPlasticPackagingSummary {
       messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
       existing.toString,
       amended,
-      Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
+      Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
     )
   }
 
