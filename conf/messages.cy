@@ -60,16 +60,17 @@ checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.heading = Gwiriwch eich atebion
 
 AmendsCheckYourAnswers.totalPlastic = Total plastic packaging
-AmendsCheckYourAnswers.deductions = Deductions
+AmendsCheckYourAnswers.deductions = Didyniadau
 AmendsCheckYourAnswers.tableHeading.1 = Description
 AmendsCheckYourAnswers.tableHeading.2 = Original weight
 AmendsCheckYourAnswers.tableHeading.3 = Amended weight
 AmendsCheckYourAnswers.tableHeading.4 = Action
-AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
-AmendsCheckYourAnswers.deductionsTotal = Deductions total
+AmendsCheckYourAnswers.packagingTotal = Cyfanswm y deunydd pacio plastig
+AmendsCheckYourAnswers.deductionsTotal = Cyfanswm y didyniadau
 AmendsCheckYourAnswers.title = Amend your return for {0}
-AmendsCheckYourAnswers.hiddenCell.action = no action here
-AmendsCheckYourAnswers.hiddenCell.newAnswer = you've not made an amend here
+AmendsCheckYourAnswers.hiddenCell.action = You cannot amend this field
+AmendsCheckYourAnswers.hiddenCell.newAnswer = Not yet amended
+AmendsCheckYourAnswers.submit = Submit amended return
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
@@ -91,7 +92,7 @@ unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you directly export?
-amendDirectExportPlasticPackaging.checkYourAnswersLabel = Weight of directly exported plastic packaging
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd gennych
 amendDirectExportPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendDirectExportPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendDirectExportPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
@@ -101,7 +102,7 @@ amendDirectExportPlasticPackaging.hint = Tax is not charged on plastic packaging
 
 amendHumanMedicinePlasticPackaging.title = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine? - Submit return - Plastic Packaging Tax - GOV.UK
 amendHumanMedicinePlasticPackaging.heading = How much of your finished plastic packaging components were used for the immediate packaging of licensed human medicine?
-amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported used for licenced human medicines
+amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 amendHumanMedicinePlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendHumanMedicinePlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendHumanMedicinePlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
@@ -111,7 +112,7 @@ amendHumanMedicinePlasticPackaging.hint = Tax is not charged on plastic packagin
 
 amendImportedPlasticPackaging.title = How much did your finished imported plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendImportedPlasticPackaging.heading = How much did your finished imported plastic packaging components weigh?
-amendImportedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging imported
+amendImportedPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a fewnforiwyd
 amendImportedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendImportedPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendImportedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
@@ -124,7 +125,7 @@ amendImportedPlasticPackaging.hint.list.3 = reused for the presentation of goods
 
 amendManufacturedPlasticPackaging.title = How much did your manufactured finished  plastic packaging components weigh? - Submit return - Plastic Packaging Tax - GOV.UK
 amendManufacturedPlasticPackaging.heading = How much did your manufactured finished  plastic packaging components weigh?
-amendManufacturedPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging manufactured
+amendManufacturedPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a weithgynhyrchwyd
 amendManufacturedPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendManufacturedPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendManufacturedPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
@@ -137,7 +138,7 @@ amendManufacturedPlasticPackaging.hint.list.3 = reused for the presentation of g
 
 amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
 amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
-amendRecycledPlasticPackaging.checkYourAnswersLabel = Weight of plastic packaging exported containing 30% or more recycled plastic
+amendRecycledPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 amendRecycledPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendRecycledPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers

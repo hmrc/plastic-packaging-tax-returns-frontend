@@ -27,8 +27,8 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
 
-GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad()
-POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
+GET         /amend-return                         controllers.amends.CheckYourAnswersController.onPageLoad()
+POST        /amend-return                         controllers.amends.CheckYourAnswersController.onSubmit()
 
 GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
