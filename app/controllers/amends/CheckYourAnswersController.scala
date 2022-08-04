@@ -46,18 +46,6 @@ class CheckYourAnswersController @Inject() (
   view: CheckYourAnswersView
 ) extends FrontendBaseController with I18nSupport {
 
-  // TODO - get this from the calculation (back end end point) and append to each table
-
-  //do we need this method??
-  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String) = {
-    AmendSummaryRow(
-      key,
-      originalTotal.asKg,
-      Some(amendedTotal.asKg),
-      None
-    )
-  }
-
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
@@ -70,20 +58,24 @@ class CheckYourAnswersController @Inject() (
                 val totalRows: Seq[AmendSummaryRow] = Seq(
                   AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
                   AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-                  totalRow(
-                    calculations.original.packagingTotal,
-                    calculations.amend.packagingTotal,
-                    "AmendsCheckYourAnswers.packagingTotal")
+                  AmendSummaryRow(
+                    "AmendsCheckYourAnswers.packagingTotal",
+                    calculations.original.packagingTotal.asKg,
+                    Some(calculations.amend.packagingTotal.asKg),
+                    None
+                  )
                 )
 
                 val deductionsRows: Seq[AmendSummaryRow] = Seq(
                   AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
                   AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
                   AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-                  totalRow(
-                    calculations.original.deductionsTotal,
-                    calculations.amend.deductionsTotal,
-                    "AmendsCheckYourAnswers.deductionsTotal")
+                  AmendSummaryRow(
+                    "AmendsCheckYourAnswers.deductionsTotal",
+                    calculations.original.deductionsTotal.asKg,
+                    Some(calculations.amend.deductionsTotal.asKg),
+                    None
+                  )
                 )
 
                 val calculationRows: Seq[AmendSummaryRow] = Seq(
