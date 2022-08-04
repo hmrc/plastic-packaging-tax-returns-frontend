@@ -25,7 +25,12 @@
 
 @hiddenContent(contentKey: String) = {<span class="govuk-visually-hidden">@messages(s"AmendsCheckYourAnswers.hiddenCell.$contentKey")</span>}
 
-@link(url: String) = {<a href=@url>@messages("site.change")</a>}
+@link(id: String, label: String, url: String) = {
+<a href="@url" id="amend-@{id}-link">
+    <span aria-hidden="true">@messages("site.change")</span>
+    <span class="govuk-visually-hidden">@messages("AmendsCheckYourAnswers.hiddenCell.changeLink", messages("site.change"), label)</span>
+</a>
+}
 
 @govukTable(
     Table(
@@ -43,12 +48,12 @@
                     content =  row.newAnswer.fold[Content](HtmlContent(hiddenContent("newAnswer")))(x => Text(x.toLong.asKg)),
                     format = Some("text")
                 ),
-                row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true")))( href =>
+                row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true"))){case (linkID, href) =>
                     TableRow(
-                        content = HtmlContent(link(href)),
+                        content = HtmlContent(link(linkID, row.label, href)),
                         format = Some("text")
                     )
-                )
+                }
             )
         ),
         head = Some(

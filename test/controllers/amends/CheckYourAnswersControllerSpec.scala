@@ -72,11 +72,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val totalRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
             "Manufactured plastic packaging", "0", None,
-            Some(controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
+            Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
             "Imported plastic packaging", "1", None,
-            Some(controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
+            Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
           ),
           totalRow(0, 0, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
         )
@@ -84,15 +84,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val deductionsRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
             "Plastic packaging exported by you", "4", None,
-           Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
+           Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
             "Non-exported plastic packaging used for licenced human medicines", "3", None,
-            Some(controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+            Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
             "Non-exported plastic packaging containing 30% or more recycled plastic", "5", None,
-            Some(controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
+            Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
           ),
           totalRow(0, 0, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
         )

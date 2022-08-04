@@ -71,6 +71,7 @@ AmendsCheckYourAnswers.title = Amend your return for {0}
 AmendsCheckYourAnswers.hiddenCell.action = You cannot amend this field
 AmendsCheckYourAnswers.hiddenCell.newAnswer = Not yet amended
 AmendsCheckYourAnswers.submit = Submit amended return
+AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
