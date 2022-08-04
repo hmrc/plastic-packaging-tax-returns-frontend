@@ -36,7 +36,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
   val formProvider = new AmendHumanMedicinePlasticPackagingFormProvider()
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer: Long = 0
 
 
   lazy val amendHumanMedicinePlasticPackagingRoute =

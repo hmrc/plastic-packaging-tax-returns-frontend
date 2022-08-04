@@ -22,10 +22,10 @@ class AmendHumanMedicinePlasticPackagingPageSpec extends PageBehaviours {
 
   "AmendHumanMedicinePlasticPackagingPage" - {
 
-    beRetrievable[Int](AmendHumanMedicinePlasticPackagingPage)
+    beRetrievable[Long](AmendHumanMedicinePlasticPackagingPage)
 
-    beSettable[Int](AmendHumanMedicinePlasticPackagingPage)
+    beSettable[Long](AmendHumanMedicinePlasticPackagingPage)
 
-    beRemovable[Int](AmendHumanMedicinePlasticPackagingPage)
+    beRemovable[Long](AmendHumanMedicinePlasticPackagingPage)
   }
 }

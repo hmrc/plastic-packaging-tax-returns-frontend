@@ -36,7 +36,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
   val formProvider = new AmendManufacturedPlasticPackagingFormProvider()
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer: Long = 0
 
   lazy val amendManufacturedPlasticPackagingRoute =
     routes.AmendManufacturedPlasticPackagingController.onPageLoad().url

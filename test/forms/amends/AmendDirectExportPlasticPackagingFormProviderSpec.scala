@@ -16,10 +16,10 @@
 
 package forms.amends
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class AmendDirectExportPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
+class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehaviours {
 
   val form = new AmendDirectExportPlasticPackagingFormProvider()()
 
@@ -27,34 +27,31 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends IntFieldBehaviou
 
     val fieldName = "value"
 
-    val minimum = 0
-    val maximum = 99999999
+    val minimum = 0L
+    val maximum = 99999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like intField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName,
-                                     "amendDirectExportPlasticPackaging.error.nonNumeric"
-                           ),
-                         wholeNumberError =
-                           FormError(fieldName,
-                                     "amendDirectExportPlasticPackaging.error.wholeNumber"
-                           )
+    behave like longFieldWithMinimum(form,
+      fieldName,
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "amendDirectExportPlasticPackaging.error.outOfRange.low",
+        Seq(minimum)
+      )
     )
 
-    behave like intFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "amendDirectExportPlasticPackaging.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "amendDirectExportPlasticPackaging.error.outOfRange.high",
+        Seq(maximum)
+      )
     )
 
     behave like mandatoryField(

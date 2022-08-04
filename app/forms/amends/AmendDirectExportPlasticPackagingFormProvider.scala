@@ -23,13 +23,14 @@ import javax.inject.Inject
 
 class AmendDirectExportPlasticPackagingFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Int] =
+  def apply(): Form[Long] =
     Form(
-      "value" -> int("amendDirectExportPlasticPackaging.error.required",
+      "value" -> long("amendDirectExportPlasticPackaging.error.required",
                      "amendDirectExportPlasticPackaging.error.wholeNumber",
                      "amendDirectExportPlasticPackaging.error.nonNumeric"
       )
-        .verifying(inRange(0, 99999999, "amendDirectExportPlasticPackaging.error.outOfRange"))
+        .verifying(minimumValue(0L, "amendDirectExportPlasticPackaging.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "amendDirectExportPlasticPackaging.error.outOfRange.high"))
     )
 
 }

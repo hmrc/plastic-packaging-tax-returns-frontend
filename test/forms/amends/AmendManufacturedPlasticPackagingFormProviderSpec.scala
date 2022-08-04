@@ -16,10 +16,10 @@
 
 package forms.amends
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class AmendManufacturedPlasticPackagingFormProviderSpec extends IntFieldBehaviours {
+class AmendManufacturedPlasticPackagingFormProviderSpec extends LongFieldBehaviours {
 
   val form = new AmendManufacturedPlasticPackagingFormProvider()()
 
@@ -27,14 +27,14 @@ class AmendManufacturedPlasticPackagingFormProviderSpec extends IntFieldBehaviou
 
     val fieldName = "value"
 
-    val minimum = 0
-    val maximum = 99999999
+    val minimum = 0L
+    val maximum = 99999999999L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like intField(form,
+    behave like longField(form,
                          fieldName,
                          nonNumericError =
                            FormError(fieldName,
@@ -46,15 +46,24 @@ class AmendManufacturedPlasticPackagingFormProviderSpec extends IntFieldBehaviou
                            )
     )
 
-    behave like intFieldWithRange(form,
-                                  fieldName,
-                                  minimum = minimum,
-                                  maximum = maximum,
-                                  expectedError =
-                                    FormError(fieldName,
-                                              "amendManufacturedPlasticPackaging.error.outOfRange",
-                                              Seq(minimum, maximum)
-                                    )
+    behave like longFieldWithMinimum(form,
+      fieldName,
+      minimum = minimum,
+      expectedError = FormError(
+        fieldName,
+        "amendManufacturedPlasticPackaging.error.outOfRange.low",
+        Seq(minimum)
+      )
+    )
+
+    behave like longFieldWithMaximum(form,
+      fieldName,
+      maximum = maximum,
+      expectedError = FormError(
+        fieldName,
+        "amendManufacturedPlasticPackaging.error.outOfRange.high",
+        Seq(maximum)
+      )
     )
 
     behave like mandatoryField(
