@@ -36,8 +36,6 @@
 
 @layout(pageTitle = title(form, messages("amendRecycledPlasticPackaging.title"))) {
 
-    @sectionHeader(obligation)
-
     @formHelper(action = controllers.amends.routes.AmendRecycledPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {

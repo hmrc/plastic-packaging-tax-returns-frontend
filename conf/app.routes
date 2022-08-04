@@ -40,10 +40,8 @@ GET        /viewReturnSummary/:periodKey                 controllers.amends.View
 GET        /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
 POST       /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
 
-GET        /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-POST       /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
-GET        /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-POST       /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
+GET        /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
+POST       /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
 
 GET        /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
 POST       /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onSubmit()

@@ -31,12 +31,11 @@
 @(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @hintContent = {
-    <p class="govuk-body">@messages("amendHumanMedicinePlasticPackaging.hint")</p>
+    <p class="govuk-body">@messages("amendHumanMedicinePlasticPackaging.para")</p>
+    <hint class="govuk-hint">@messages("amendHumanMedicinePlasticPackaging.hint")</hint>
     }
 
 @layout(pageTitle = title(form, messages("amendHumanMedicinePlasticPackaging.title"))) {
-
-    @sectionHeader(obligation)
 
     @formHelper(action = controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 
