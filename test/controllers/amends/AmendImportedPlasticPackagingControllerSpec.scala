@@ -36,7 +36,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
   val formProvider = new AmendImportedPlasticPackagingFormProvider()
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = 0
+  val validAnswer: Long = 0
 
   lazy val amendImportedPlasticPackagingRoute =
     routes.AmendImportedPlasticPackagingController.onPageLoad().url
