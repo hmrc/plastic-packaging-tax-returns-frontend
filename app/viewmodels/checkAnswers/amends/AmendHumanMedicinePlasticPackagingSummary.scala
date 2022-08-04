@@ -38,7 +38,7 @@ object AmendHumanMedicinePlasticPackagingSummary {
       "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
       existing,
       amended,
-      Some(controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+      Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
     )
   }
 
