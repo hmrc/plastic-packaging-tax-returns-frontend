@@ -150,15 +150,16 @@ amendManufacturedPlasticPackaging.para.list.6 = an integral part of the goods
 amendManufacturedPlasticPackaging.para.list.7 = reused for the presentation of goods
 amendManufacturedPlasticPackaging.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 
-amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
-amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.title = Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
+amendRecycledPlasticPackaging.heading = Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging containing 30% or more recycled plastic
 amendRecycledPlasticPackaging.error.nonNumeric = Amount must be entered as numbers only
 amendRecycledPlasticPackaging.error.required = Enter the weight, in kilograms
 amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
 amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999kg
 amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
-amendRecycledPlasticPackaging.hint = Tax is not charged on plastic packaging that contains 30% or more recycled plastic. This will be deducted from your tax liability.
+amendRecycledPlasticPackaging.para = This will show as a deduction on your tax calculation.
+amendRecycledPlasticPackaging.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended

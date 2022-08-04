@@ -151,15 +151,16 @@ amendManufacturedPlasticPackaging.para.list.6 = yn rhan annatod o’r nwyddau
 amendManufacturedPlasticPackaging.para.list.7 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
 amendManufacturedPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendRecycledPlasticPackaging.title = How much of your finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
-amendRecycledPlasticPackaging.heading = How much of your finished plastic packaging components contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.title = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
+amendRecycledPlasticPackaging.heading = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 amendRecycledPlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
 amendRecycledPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendRecycledPlasticPackaging.error.wholeNumber = Enter the weight using whole numbers
 amendRecycledPlasticPackaging.error.outOfRange = Amount cannot exceed 99,999,999kg
 amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
-amendRecycledPlasticPackaging.hint = Tax is not charged on plastic packaging that contains 30% or more recycled plastic. This will be deducted from your tax liability.
+amendRecycledPlasticPackaging.para = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
+amendRecycledPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
