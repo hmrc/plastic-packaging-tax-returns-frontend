@@ -29,8 +29,8 @@ class AmendManufacturedPlasticPackagingFormProvider @Inject() extends Mappings {
                      "amendManufacturedPlasticPackaging.error.wholeNumber",
                      "amendManufacturedPlasticPackaging.error.nonNumeric"
       )
-        .verifying(minimumValue(0L, "amendManufacturedPlasticPackaging.error.outOfRange"))
-        .verifying(maximumValue(99999999999L, "amendManufacturedPlasticPackaging.error.outOfRange"))
+        .verifying(minimumValue(0L, "amendManufacturedPlasticPackaging.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "amendManufacturedPlasticPackaging.error.outOfRange.high"))
     )
 
 }

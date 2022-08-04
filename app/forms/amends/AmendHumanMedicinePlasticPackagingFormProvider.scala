@@ -29,8 +29,8 @@ class AmendHumanMedicinePlasticPackagingFormProvider @Inject() extends Mappings 
                      "amendHumanMedicinePlasticPackaging.error.wholeNumber",
                      "amendHumanMedicinePlasticPackaging.error.nonNumeric"
       )
-        .verifying(minimumValue(0L, "amendHumanMedicinePlasticPackaging.error.outOfRange"))
-        .verifying(maximumValue(99999999999L, "amendHumanMedicinePlasticPackaging.error.outOfRange"))
+        .verifying(minimumValue(0L, "amendHumanMedicinePlasticPackaging.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "amendHumanMedicinePlasticPackaging.error.outOfRange.high"))
     )
 
 }
