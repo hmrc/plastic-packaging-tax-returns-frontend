@@ -52,7 +52,7 @@ class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
     "return OK and the correct view for a GET" in {
 
-      when(mockTaxReturnConnector.getCalculation(any())(any())).thenReturn(Future.successful(
+      when(mockTaxReturnConnector.getCalculationReturns(any())(any())).thenReturn(Future.successful(
         Right(Calculations(taxDue = 17, chargeableTotal = 85, deductionsTotal = 15, packagingTotal = 100, isSubmittable = true)))
       )
 

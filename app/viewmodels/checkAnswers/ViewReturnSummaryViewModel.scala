@@ -20,7 +20,7 @@ import models.returns.ReturnDisplayApi
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Key, SummaryListRow, Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.PrintBigDecimal
+import viewmodels._
 import viewmodels.govuk.summarylist._
 import views.ViewUtils
 

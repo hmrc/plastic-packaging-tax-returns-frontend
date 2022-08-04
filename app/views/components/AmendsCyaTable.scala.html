@@ -32,15 +32,15 @@
         rows = tableRows.map( row =>
             Seq(
                 TableRow(
-                    content = Text(row.label),
+                    content = Text(messages(row.label)),
                     format = Some("text")
                 ),
                 TableRow(
-                    content =  Text(row.oldAnswer.toLong.asKg),
+                    content =  Text(row.oldAnswer),
                     format = Some("text")
                 ),
                 TableRow(
-                    content =  row.newAnswer.fold[Content](HtmlContent(hiddenContent("newAnswer")))(x => Text(x.toLong.asKg)),
+                    content =  row.newAnswer.fold[Content](HtmlContent(hiddenContent("newAnswer")))(Text(_)),
                     format = Some("text")
                 ),
                 row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true")))( href =>

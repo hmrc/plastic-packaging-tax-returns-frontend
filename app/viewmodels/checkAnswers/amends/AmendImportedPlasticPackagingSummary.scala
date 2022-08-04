@@ -21,22 +21,22 @@ import models.UserAnswers
 import models.amends.AmendSummaryRow
 import models.returns.ReturnDisplayApi
 import pages.amends.AmendImportedPlasticPackagingPage
-import play.api.i18n.Messages
+import viewmodels.PrintLong
 
 object AmendImportedPlasticPackagingSummary {
 
-  def apply(answers: UserAnswers)(implicit messages: Messages): AmendSummaryRow = {
+  def apply(answers: UserAnswers): AmendSummaryRow = {
 
     val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    val amended: Option[String] = answers.get(AmendImportedPlasticPackagingPage).map(_.toString)
-    val existing: BigDecimal    = returnDisplayApi.returnDetails.importedWeight
+    val amended: Option[String] = answers.get(AmendImportedPlasticPackagingPage).map(_.asKg)
+    val existing = returnDisplayApi.returnDetails.importedWeight.asKg
 
     AmendSummaryRow(
-      messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
-      existing.toString,
+      "amendImportedPlasticPackaging.checkYourAnswersLabel",
+      existing,
       amended,
       Some(controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
     )
