@@ -47,10 +47,11 @@ class CheckYourAnswersController @Inject() (
 ) extends FrontendBaseController with I18nSupport {
 
   // TODO - get this from the calculation (back end end point) and append to each table
-  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String)
-                      (implicit messages: Messages) = {
+
+  //do we need this method??
+  private def totalRow(originalTotal: Long, amendedTotal: Long, key: String) = {
     AmendSummaryRow(
-      messages(key),
+      key,
       originalTotal.asKg,
       Some(amendedTotal.asKg),
       None
@@ -60,7 +61,7 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-
+        if (appConfig.isAmendsFeatureEnabled) {
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) =>
 
@@ -106,16 +107,13 @@ class CheckYourAnswersController @Inject() (
                   )
                 )
 
-                if (appConfig.isAmendsFeatureEnabled) {
-                  Ok(view(obligation, totalRows, deductionsRows, calculationRows))
-                }
-                else {
-                  Redirect(controllers.routes.IndexController.onPageLoad)
-                }
+                Ok(view(obligation, totalRows, deductionsRows, calculationRows))
               case Left(error) => throw error
             }
           case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
-
+        }
+      } else {
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 
