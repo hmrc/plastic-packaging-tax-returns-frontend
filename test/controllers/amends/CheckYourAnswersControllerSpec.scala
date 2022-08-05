@@ -18,16 +18,22 @@ package controllers.amends
 
 import base.SpecBase
 import config.FrontendAppConfig
+import connectors.TaxReturnsConnector
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.amends.AmendSummaryRow
-import org.mockito.Mockito.when
+import models.returns.{AmendsCalculations, Calculations}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.mock
 import play.api.i18n.Messages
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, inject}
+import play.twirl.api.{Html, HtmlFormat}
+import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
@@ -35,9 +41,17 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
+  val mockView = mock[CheckYourAnswersView]
+  val expectedHtml = Html("correct view")
+  when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(expectedHtml)
+
   override def applicationBuilder(userAnswers: Option[UserAnswers]): GuiceApplicationBuilder =
     super.applicationBuilder(userAnswers)
-      .overrides(inject.bind[FrontendAppConfig].toInstance(config))
+      .overrides(
+        inject.bind[FrontendAppConfig].toInstance(config),
+        inject.bind[TaxReturnsConnector].toInstance(mockTaxReturnConnector),
+        inject.bind[CheckYourAnswersView].toInstance(mockView)
+      )
 
   "(Amend journey) Check Your Answers Controller" - {
 
@@ -60,6 +74,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       when(config.isAmendsFeatureEnabled).thenReturn(true)
       when(config.userResearchUrl).thenReturn("some Url")
 
+      val calc = Calculations(1, 2, 3, 4, true)
+
+      when(mockTaxReturnConnector.getCalculationAmends(any())(any())).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -67,38 +85,43 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-
         val totalRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
-            "Manufactured plastic packaging", "0", None,
+            "amendManufacturedPlasticPackaging.checkYourAnswersLabel", "0kg", None,
             Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Imported plastic packaging", "1", None,
+            "amendImportedPlasticPackaging.checkYourAnswersLabel", "1kg", None,
             Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
           ),
-          totalRow(0, 0, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
+          totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
         )
 
         val deductionsRows: Seq[AmendSummaryRow] = Seq(
           AmendSummaryRow(
-            "Plastic packaging exported by you", "4", None,
+            "amendDirectExportPlasticPackaging.checkYourAnswersLabel", "4kg", None,
            Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Non-exported plastic packaging used for licenced human medicines", "3", None,
+            "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel", "3kg", None,
             Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
           ),
           AmendSummaryRow(
-            "Non-exported plastic packaging containing 30% or more recycled plastic", "5", None,
+            "amendRecycledPlasticPackaging.checkYourAnswersLabel", "5kg", None,
             Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
           ),
-          totalRow(0, 0, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
+          totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
+        )
+
+        val calculationsRows: Seq[AmendSummaryRow] = Seq(
+          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.1", "4kg", Some("4kg"),None),
+          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.2", "3kg", Some("3kg"), None),
+          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.3", "£1.00", Some("£1.00"), None),
         )
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(taxReturnOb, totalRows, deductionsRows)(request, messages(application)).toString
+        contentAsString(result) mustBe expectedHtml.toString()
+        verify(mockView).apply(refEq(taxReturnOb), refEq(totalRows), refEq(deductionsRows), refEq(calculationsRows))(any(), any())
 
       }
     }
@@ -136,9 +159,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private def totalRow(originalTotal: Long, amendedTotal: Long, key: String)
                       (implicit messages: Messages) = {
     AmendSummaryRow(
-      messages(key),
-      originalTotal.toString,
-      Some(amendedTotal.toString),
+      key,
+      originalTotal.asKg,
+      Some(amendedTotal.asKg),
       None
     )
   }

@@ -65,6 +65,14 @@ AmendsCheckYourAnswers.tableHeading.1 = Description
 AmendsCheckYourAnswers.tableHeading.2 = Original weight
 AmendsCheckYourAnswers.tableHeading.3 = Amended weight
 AmendsCheckYourAnswers.tableHeading.4 = Action
+AmendsCheckYourAnswers.calculation = Your tax calculation
+AmendsCheckYourAnswers.calculation.tableHeading.1 = Description
+AmendsCheckYourAnswers.calculation.tableHeading.2 = Original total
+AmendsCheckYourAnswers.calculation.tableHeading.3 = Amended total
+AmendsCheckYourAnswers.calculation.row.1 = Plastic packaging total
+AmendsCheckYourAnswers.calculation.row.2 = Deductions total
+AmendsCheckYourAnswers.calculation.row.3 = Tax due on this return
+
 AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
 AmendsCheckYourAnswers.deductionsTotal = Deductions total
 AmendsCheckYourAnswers.title = Amend your return for {0}

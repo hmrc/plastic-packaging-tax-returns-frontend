@@ -53,7 +53,7 @@ case class TaxReturnViewModel (
 
   private def createKgsRow(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
     val answer = getMustHave(page)
-    val value = answer.asKgs
+    val value = answer.asKg
     RowInfo(key = messages(messageKey), value = value)
   }
 

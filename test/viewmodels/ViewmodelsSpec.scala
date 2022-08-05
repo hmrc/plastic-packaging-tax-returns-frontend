@@ -49,25 +49,16 @@ class ViewmodelsSpec extends PlaySpec {
 
   "asKgs" must {
     "add the 'kg' sign" in {
-      BigDecimal(1).asKg mustBe "1kg"
+      1L.asKg mustBe "1kg"
     }
     "add the comma" in {
-      BigDecimal(1000).asKg mustBe "1,000kg"
+      1000L.asKg mustBe "1,000kg"
     }
     "add the comma twice" in {
-      BigDecimal(1000000).asKg mustBe "1,000,000kg"
-    }
-    "remove decimals" in {
-      BigDecimal(1.01).asKg mustBe "1kg"
-    }
-    "round up decimal" in {
-      BigDecimal(1.5).asKg mustBe "2kg"
-    }
-    "round down decimal" in {
-      BigDecimal(1.4).asKg mustBe "1kg"
+      1000000L.asKg mustBe "1,000,000kg"
     }
     "work with 0" in {
-      BigDecimal(0).asKg mustBe "0kg"
+      0L.asKg mustBe "0kg"
     }
   }
 

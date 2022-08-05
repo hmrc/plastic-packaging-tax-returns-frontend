@@ -63,7 +63,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
                          (implicit messages: Messages, hc: HeaderCarrier) = {
 
-    returnsConnector.getCalculation(request.pptReference).flatMap {
+    returnsConnector.getCalculationReturns(request.pptReference).flatMap {
       case Right(calculations) =>
         val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
         Future.successful(Ok(view(returnViewModel)(request, messages)))

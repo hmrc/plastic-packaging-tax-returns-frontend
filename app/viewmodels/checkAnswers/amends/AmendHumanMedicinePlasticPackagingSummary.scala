@@ -21,22 +21,22 @@ import models.UserAnswers
 import models.amends.AmendSummaryRow
 import models.returns.ReturnDisplayApi
 import pages.amends.AmendHumanMedicinePlasticPackagingPage
-import play.api.i18n.Messages
+import viewmodels.PrintLong
 
 object AmendHumanMedicinePlasticPackagingSummary {
 
-  def apply(answers: UserAnswers)(implicit messages: Messages): AmendSummaryRow = {
+  def apply(answers: UserAnswers): AmendSummaryRow = {
 
     val returnDisplayApi: ReturnDisplayApi = answers.get(ReturnDisplayApiCacheable).getOrElse(
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.toString)
-    val existing: BigDecimal    = returnDisplayApi.returnDetails.humanMedicines
+    val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.asKg)
+    val existing: String    = returnDisplayApi.returnDetails.humanMedicines.asKg
 
     AmendSummaryRow(
-      messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
-      existing.toString,
+      "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
+      existing,
       amended,
       Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
     )
