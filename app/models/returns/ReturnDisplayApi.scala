@@ -38,18 +38,18 @@ object ReturnDisplayChargeDetails {
 }
 
 case class ReturnDisplayDetails(
-  manufacturedWeight: BigDecimal,
-  importedWeight: BigDecimal,
-  totalNotLiable: BigDecimal,
-  humanMedicines: BigDecimal,
-  directExports: BigDecimal,
-  recycledPlastic: BigDecimal,
+  manufacturedWeight: Long,
+  importedWeight: Long,
+  totalNotLiable: Long,
+  humanMedicines: Long,
+  directExports: Long,
+  recycledPlastic: Long,
   creditForPeriod: BigDecimal,
   debitForPeriod: BigDecimal,
-  totalWeight: BigDecimal,
+  totalWeight: Long,
   taxDue: BigDecimal
 ){
-  def liableWeight: BigDecimal = manufacturedWeight + importedWeight
+  def liableWeight: Long = manufacturedWeight + importedWeight
 }
 
 object ReturnDisplayDetails {

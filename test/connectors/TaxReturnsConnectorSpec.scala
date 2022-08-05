@@ -54,10 +54,11 @@ class TaxReturnsConnectorSpec
 
     "get correctly" in {
 
-      val x: BigDecimal = 0.1
+      val bd: BigDecimal = 0.1
+      val l: Long = 1
       val expectedResult: ReturnDisplayApi =
         ReturnDisplayApi(
-          "", IdDetails(pptReference, "subId"), None, ReturnDisplayDetails(x, x, x, x, x, x, x, x, x, x)
+          "", IdDetails(pptReference, "subId"), None, ReturnDisplayDetails(l, l, l, l, l, l, bd, bd, l, bd)
         )
 
       givenGetReturnsEndpointReturns(

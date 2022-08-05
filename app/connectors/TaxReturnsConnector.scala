@@ -18,11 +18,11 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import models.returns.{Calculations, ReturnDisplayApi}
+import models.returns.{AmendsCalculations, Calculations, ReturnDisplayApi}
 import play.api.Logger
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,17 +50,21 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-  def getCalculation(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Calculations]] = {
-    val url = appConfig.pptReturnCalculationUrl(pptReference)
-
-    httpClient.GET[Calculations](url).
-      map(calculation =>
-        Right(calculation))
+  def getCalculationAmends(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, AmendsCalculations]] =
+    httpClient.GET[AmendsCalculations](appConfig.pptAmendsCalculationUrl(pptReference)).
+      map(Right.apply)
       .recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
       }
-  }
+
+  def getCalculationReturns(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Calculations]] =
+    httpClient.GET[Calculations](appConfig.pptReturnsCalculationUrl(pptReference)).
+      map(Right.apply)
+      .recover {
+        case ex: Exception =>
+          Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
+      }
 
   def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()

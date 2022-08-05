@@ -65,6 +65,14 @@ AmendsCheckYourAnswers.tableHeading.1 = Description
 AmendsCheckYourAnswers.tableHeading.2 = Original weight
 AmendsCheckYourAnswers.tableHeading.3 = Amended weight
 AmendsCheckYourAnswers.tableHeading.4 = Action
+AmendsCheckYourAnswers.calculation = Eich cyfrifiad treth
+AmendsCheckYourAnswers.calculation.tableHeading.1 = Description
+AmendsCheckYourAnswers.calculation.tableHeading.2 = Original total
+AmendsCheckYourAnswers.calculation.tableHeading.3 = Amended total
+AmendsCheckYourAnswers.calculation.row.1 = Cyfanswm y deunydd pacio plastig
+AmendsCheckYourAnswers.calculation.row.2 = Cyfanswm y didyniadau
+AmendsCheckYourAnswers.calculation.row.3 = Treth sy’n ddyledus ar y Ffurflen Dreth hon
+
 AmendsCheckYourAnswers.packagingTotal = Plastic packaging total
 AmendsCheckYourAnswers.deductionsTotal = Deductions total
 AmendsCheckYourAnswers.title = Amend your return for {0}
