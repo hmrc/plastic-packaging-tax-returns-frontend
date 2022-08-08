@@ -16,11 +16,9 @@
 
 package controllers.amends
 
-import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendManufacturedPlasticPackagingFormProvider
-import models.returns.TaxReturnObligation
 import pages.amends.AmendManufacturedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,11 +48,7 @@ class AmendManufacturedPlasticPackagingController @Inject() (
             case None        => form()
             case Some(value) => form().fill(value)
           }
-
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Ok(view(preparedForm, obligation))
-          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
-        }
+        Ok(view(preparedForm))
 
     }
 
@@ -63,12 +57,8 @@ class AmendManufacturedPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.pptReference
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have a tax return against which to amend")
-        )
-
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

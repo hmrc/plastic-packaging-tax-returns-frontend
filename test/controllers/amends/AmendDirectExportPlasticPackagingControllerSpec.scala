@@ -55,7 +55,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider())(request,
                                                                  messages(application)
         ).toString
       }
@@ -75,7 +75,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer))(
           request,
           messages(application)
         ).toString
@@ -107,19 +107,6 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
       }
     }
 
-    "must redirect when previous tax return is not in user answers" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -136,7 +123,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm)(request,
           messages(application)
         ).toString
       }

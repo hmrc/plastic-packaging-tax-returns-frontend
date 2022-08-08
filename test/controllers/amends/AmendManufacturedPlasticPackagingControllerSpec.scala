@@ -55,7 +55,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider())(request,
           messages(application)
         ).toString
       }
@@ -75,7 +75,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer))(
           request,
           messages(application)
         ).toString
@@ -106,19 +106,6 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
       }
     }
 
-    "must redirect when previous tax return is not in user answers" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -135,7 +122,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm)(request,
           messages(application)
         ).toString
       }
