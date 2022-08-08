@@ -33,7 +33,7 @@ POST        /amend-return                         controllers.amends.CheckYourAn
 GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
 
-GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()
+GET        /return-amended                            controllers.amends.AmendConfirmationController.onPageLoad()
 
 GET        /viewReturnSummary/:periodKey                 controllers.amends.ViewReturnSummaryController.onPageLoad(periodKey: String)
 

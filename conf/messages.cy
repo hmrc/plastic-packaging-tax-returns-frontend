@@ -34,7 +34,7 @@ return.quarter = {0} i {1} {2}
 caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio
-return.title.tail = Cyflwyno Ffurflen TAW
+return.title.tail = Cyflwyno Ffurflen Dreth
 
 timeout.title = Rydych ar fin cael eich allgofnodi
 timeout.message = Er eich diogelwch, cewch eich allgofnodi ymhen.
@@ -59,7 +59,7 @@ error.summary.title = Mae problem wedi codi
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.heading = Gwiriwch eich atebion
 
-AmendsCheckYourAnswers.totalPlastic = Total plastic packaging
+AmendsCheckYourAnswers.totalPlastic = Cyfanswm y deunydd pacio plastig
 AmendsCheckYourAnswers.deductions = Didyniadau
 AmendsCheckYourAnswers.tableHeading.1 = Description
 AmendsCheckYourAnswers.tableHeading.2 = Original weight
@@ -98,7 +98,7 @@ unauthorised.paragraph.1.link = gofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 unauthorised.paragraph.2 = wch i’r {0} i gael rhagor o wybodaeth.
 unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
-amendDirectExportPlasticPackaging.title = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export? - Submit return - Plastic Packaging Tax - GOV.UK
+amendDirectExportPlasticPackaging.title = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.heading = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd gennych
 amendDirectExportPlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
@@ -110,7 +110,7 @@ amendDirectExportPlasticPackaging.change.hidden = AmendDirectExportPlasticPackag
 amendDirectExportPlasticPackaging.para = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 amendDirectExportPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendHumanMedicinePlasticPackaging.title = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK
+amendHumanMedicinePlasticPackaging.title = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
 amendHumanMedicinePlasticPackaging.heading = [NEEDS WELSH]  Out of the finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
 amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 amendHumanMedicinePlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
@@ -122,7 +122,7 @@ amendHumanMedicinePlasticPackaging.change.hidden = AmendHumanMedicinePlasticPack
 amendHumanMedicinePlasticPackaging.para = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
 amendHumanMedicinePlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendImportedPlasticPackaging.title = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig a fewnforiwyd? - Cyflwyno Ffurflen Dreth - Treth Deunydd Pacio Plastig - GOV.UK
+amendImportedPlasticPackaging.title = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig a fewnforiwyd?
 amendImportedPlasticPackaging.heading = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig a fewnforiwyd?
 amendImportedPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a fewnforiwyd
 amendImportedPlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
@@ -143,7 +143,7 @@ amendImportedPlasticPackaging.para.list.7 = yn rhan annatod o’r nwyddau
 amendImportedPlasticPackaging.para.list.8 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
 amendImportedPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendManufacturedPlasticPackaging.title = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig y gwnaethoch eu gweithgynhyrchu? - Cyflwyno Ffurflen Dreth - Treth Deunydd Pacio Plastig - GOV.UK
+amendManufacturedPlasticPackaging.title = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig y gwnaethoch eu gweithgynhyrchu?
 amendManufacturedPlasticPackaging.heading = Faint o bwysau oedd eich cydrannau deunydd pacio plastig gorffenedig y gwnaethoch eu gweithgynhyrchu?
 amendManufacturedPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a weithgynhyrchwyd
 amendManufacturedPlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig
@@ -163,7 +163,7 @@ amendManufacturedPlasticPackaging.para.list.6 = yn rhan annatod o’r nwyddau
 amendManufacturedPlasticPackaging.para.list.7 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
 amendManufacturedPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendRecycledPlasticPackaging.title = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK
+amendRecycledPlasticPackaging.title = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.heading = [NEEDS WELSH] Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 amendRecycledPlasticPackaging.error.nonNumeric = Mae’n rhaid nodi’r pwysau fel rhifau yn unig

@@ -45,7 +45,7 @@
 </ul>
 }
 
-@layout(pageTitle = title(form, messages("amendManufacturedPlasticPackaging.title"))) {
+@layout(pageTitle = title(form, messages("amendManufacturedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.amends.routes.AmendManufacturedPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 

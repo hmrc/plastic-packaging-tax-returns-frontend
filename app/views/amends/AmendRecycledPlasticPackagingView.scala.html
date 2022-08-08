@@ -33,7 +33,7 @@
     <p class="govuk-body">@messages("amendRecycledPlasticPackaging.para")</p>
     }
 
-@layout(pageTitle = title(form, messages("amendRecycledPlasticPackaging.title"))) {
+@layout(pageTitle = title(form, messages("amendRecycledPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.amends.routes.AmendRecycledPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 
