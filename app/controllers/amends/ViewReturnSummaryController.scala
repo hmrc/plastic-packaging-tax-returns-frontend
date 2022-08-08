@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
@@ -45,12 +45,12 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
 
-        val pptId: String = request.pptReference
+        val pptReference: String = request.pptReference
 
         if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
 
-        val submittedReturnF: Future[ReturnDisplayApi]             = taxReturnHelper.fetchTaxReturn(pptId, periodKey)
-        val fulfilledObligationF: Future[Seq[TaxReturnObligation]] = taxReturnHelper.getObligation(pptId, periodKey)
+        val submittedReturnF: Future[ReturnDisplayApi]             = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
+        val fulfilledObligationF: Future[Seq[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
 
         for {
           submittedReturn <- submittedReturnF
@@ -59,10 +59,11 @@ class ViewReturnSummaryController @Inject() (
             request.userAnswers.set(AmendSelectedPeriodKey, periodKey).get
               .set(ObligationCacheable, obligation.head).get
               .set(ReturnDisplayApiCacheable, submittedReturn))
-          _ <- cacheConnector.set(pptId, updatedAnswers)
+          _ <- cacheConnector.set(pptReference, updatedAnswers)
         } yield {
           val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation.head)
-          Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn)))
+          val amendCall: Call = controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+          Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
         }
     }
 

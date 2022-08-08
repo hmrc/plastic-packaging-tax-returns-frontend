@@ -22,13 +22,14 @@ import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.amends.AmendSummaryRow
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.requests.DataRequest
+import models.returns.{AmendsCalculations, ReturnDisplayApi, TaxReturnObligation}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.{PrintBigDecimal, PrintLong}
 import viewmodels.checkAnswers.amends._
+import viewmodels.{PrintBigDecimal, PrintLong}
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -49,65 +50,70 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        if (appConfig.isAmendsFeatureEnabled) {
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) =>
-
-            returnsConnector.getCalculationAmends(request.pptReference).map {
-              case Right(calculations) =>
-                val totalRows: Seq[AmendSummaryRow] = Seq(
-                  AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.packagingTotal",
-                    calculations.original.packagingTotal.asKg,
-                    Some(calculations.amend.packagingTotal.asKg),
-                    None
-                  )
-                )
-
-                val deductionsRows: Seq[AmendSummaryRow] = Seq(
-                  AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
-                  AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.deductionsTotal",
-                    calculations.original.deductionsTotal.asKg,
-                    Some(calculations.amend.deductionsTotal.asKg),
-                    None
-                  )
-                )
-
-                val calculationRows: Seq[AmendSummaryRow] = Seq(
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.1",
-                    calculations.original.packagingTotal.asKg,
-                    Some(calculations.amend.packagingTotal.asKg),
-                    None
-                  ),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.2",
-                    calculations.original.deductionsTotal.asKg,
-                    Some(calculations.amend.deductionsTotal.asKg),
-                    None
-                  ),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.3",
-                    calculations.original.taxDue.asPounds,
-                    Some(calculations.amend.taxDue.asPounds),
-                    None
-                  )
-                )
-
-                Ok(view(obligation, totalRows, deductionsRows, calculationRows))
-              case Left(error) => throw error
-            }
-          case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
-        }
-      } else {
+        if (!appConfig.isAmendsFeatureEnabled) {
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        } 
+        else {
+          request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+            case Some(obligation) =>
+              returnsConnector.getCalculationAmends(request.pptReference).map {
+                case Right(calculations) => displayPage(request, obligation, calculations)
+                case Left(error)         => throw error
+              }
+            case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
+          }
         }
     }
+
+  private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation, 
+    calculations: AmendsCalculations) (implicit r: DataRequest[_]) = {
+    
+    val totalRows: Seq[AmendSummaryRow] = Seq(
+      AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
+      AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.packagingTotal",
+        calculations.original.packagingTotal.asKg,
+        Some(calculations.amend.packagingTotal.asKg),
+        None
+      )
+    )
+
+    val deductionsRows: Seq[AmendSummaryRow] = Seq(
+      AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
+      AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
+      AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.deductionsTotal",
+        calculations.original.deductionsTotal.asKg,
+        Some(calculations.amend.deductionsTotal.asKg),
+        None
+      )
+    )
+
+    val calculationRows: Seq[AmendSummaryRow] = Seq(
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.calculation.row.1",
+        calculations.original.packagingTotal.asKg,
+        Some(calculations.amend.packagingTotal.asKg),
+        None
+      ),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.calculation.row.2",
+        calculations.original.deductionsTotal.asKg,
+        Some(calculations.amend.deductionsTotal.asKg),
+        None
+      ),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.calculation.row.3",
+        calculations.original.taxDue.asPounds,
+        Some(calculations.amend.taxDue.asPounds),
+        None
+      )
+    )
+
+    Ok(view(obligation, totalRows, deductionsRows, calculationRows))
+  }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {

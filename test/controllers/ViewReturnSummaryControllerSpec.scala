@@ -25,6 +25,7 @@ import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.inject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
@@ -71,7 +72,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel)(
+        contentAsString(result) mustEqual view("April to June 2022", viewModel, Call("", "/plastic-packaging-tax/check-your-answers"))(
           request,
           messages(application)
         ).toString
