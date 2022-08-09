@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody}
+@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading}
 @import viewmodels.InputWidth
 @import controllers.helpers.TaxReturnViewModel
 @import views.ViewUtils.RichSummaryListRow
@@ -30,7 +30,8 @@
     paragraph: paragraph,
     bulletList: bulletList,
     appConfig: FrontendAppConfig,
-    link: Link
+    link: Link,
+    sectionH2Heading: SectionH2Heading
 )
 
 @(taxReturn: TaxReturnViewModel)(implicit request: Request[_], messages: Messages)
@@ -62,10 +63,6 @@
 @summaryRowFromFunc(shortKey: String, f: String => RowInfo) = @{
     val row = f(toLongKey(shortKey))
     summaryRow(row.key, row.value, "govuk-!-width-one-quarter govuk-table__cell--numeric")
-}
-
-@sectionHeading(text: String)(implicit messages: Messages) = {
-    <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages(text)</h2>
 }
 
 @para(shortKey: String, classes: String = "govuk-body") = @{
@@ -101,7 +98,7 @@
     <h1 class="govuk-heading-xl">@messages("submit-return.check-your-answers.heading")</h1>
 
     <!-- Business details -->
-    @sectionHeading("submit-return.check-your-answers.business-details.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.business-details.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowWithWideValue("business-details.row1", taxReturn.request.pptReference),
@@ -110,7 +107,7 @@
     ))
 
     <!-- Packaging total -->
-    @sectionHeading("submit-return.check-your-answers.packaging-total.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.packaging-total.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("packaging-total.row1", taxReturn.manufacturedYesNo),
@@ -123,7 +120,7 @@
     @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalMiniCya)
 
     <!-- Exported packaging -->
-    @sectionHeading("submit-return.check-your-answers.exported-packaging.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.exported-packaging.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
@@ -137,7 +134,7 @@
     }
 
     <!-- Non-exported packaging -->
-    @sectionHeading("submit-return.check-your-answers.nonexported-packaging.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.nonexported-packaging.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
@@ -153,7 +150,7 @@
     }
 
     <!-- Deductions -->
-    @sectionHeading("submit-return.check-your-answers.deductions.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.deductions.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
@@ -164,7 +161,7 @@
     ))
 
     <!-- Tax calculation -->
-    @sectionHeading("submit-return.check-your-answers.tax-calc.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.tax-calc.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
@@ -176,7 +173,7 @@
     @para("tax-calc.footnote")
 
     <!-- Credits -->
-    @sectionHeading("submit-return.check-your-answers.credits.heading")
+    @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"))
     @para("credits.line1")
     @para("credits.line2")
     @bullets("credits.line3", "credits.line4")
@@ -184,7 +181,7 @@
 
     <!-- Submit -->
     @if(taxReturn.isSubmittable) {
-        @sectionHeading("submit-return.check-your-answers.now-send.heading")
+        @sectionH2Heading(messages("submit-return.check-your-answers.now-send.heading"))
         @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
 
         @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
@@ -194,7 +191,7 @@
         }
     } else {
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        @sectionHeading("submit-return.check-your-answers.error.heading")
+        @sectionH2Heading(messages("submit-return.check-your-answers.error.heading"))
         @para("error.line1")
     }
 }

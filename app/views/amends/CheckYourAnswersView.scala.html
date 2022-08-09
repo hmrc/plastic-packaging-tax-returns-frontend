@@ -18,6 +18,8 @@
 @import components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.amends.AmendSummaryRow
+@import models.returns.AmendsCalculations
+@import viewmodels._
 
 @this(
     layout: templates.Layout,
@@ -26,10 +28,12 @@
     sectionHeader: ReturnQuarterHeading,
     header: SectionHeader,
     cyaTable: AmendsCyaTable,
-    govukTable : GovukTable
+    govukTable : GovukTable,
+    paragraphBody: paragraphBody,
+    sectionH2Heading: SectionH2Heading
 )
 
-@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], calculations: Seq[AmendSummaryRow])(implicit request: Request[_], messages: Messages)
+@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], calculations: AmendsCalculations)(implicit request: Request[_], messages: Messages)
 
 @link(url: String) = {<a href=@url>@messages("site.change")</a>}
 
@@ -54,22 +58,23 @@
     <!--calculations-->
     @govukTable(
         Table(
-            rows = calculations.map{ case AmendSummaryRow(label, oldAnswer, newAnswer, _)  =>
+            rows = Seq(
                 Seq(
-                    TableRow(
-                        content = Text(messages(label)),
-                        format = Some("text")
-                    ),
-                    TableRow(
-                        content =  Text(oldAnswer),
-                        format = Some("text")
-                    ),
-                    TableRow(
-                        content =  newAnswer.fold[Content](HtmlContent(hiddenContent("newAnswer")))(Text(_)),
-                        format = Some("text")
-                    )
+                    TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.1")),format = Some("text")),
+                    TableRow(content =  Text(calculations.original.packagingTotal.asKg),format = Some("text")),
+                    TableRow(content =  Text(calculations.amend.packagingTotal.asKg),format = Some("text"))
+                ),
+                Seq(
+                    TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.2")),format = Some("text")),
+                    TableRow(content =  Text(calculations.original.deductionsTotal.asKg),format = Some("text")),
+                    TableRow(content =  Text(calculations.amend.deductionsTotal.asKg),format = Some("text"))
+                ),
+                Seq(
+                    TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.3")),format = Some("text")),
+                    TableRow(content =  Text(calculations.original.taxDue.asPounds),format = Some("text")),
+                    TableRow(content =  Text(calculations.amend.taxDue.asPounds),format = Some("text"))
                 )
-            },
+            ),
             head = Some(
                 Seq(
                     HeadCell(
@@ -97,8 +102,16 @@
         <h2 class="govuk-heading-m">@messages("AmendsCheckYourAnswers.nowSend.heading")</h2>
         <p class="govuk-body">@messages("AmendsCheckYourAnswers.nowSend.para")</p>
 
-        @govukButton(
-            ButtonViewModel(messages("AmendsCheckYourAnswers.submit"))
-        )
+        @if(calculations.amend.isSubmittable) {
+            @govukButton(
+                ButtonViewModel(messages("AmendsCheckYourAnswers.submit"))
+            )
+        } else {
+            @sectionH2Heading(message = messages("AmendsCheckYourAnswers.error.heading"), id = Some("submit-amend-return-header-error"))
+            @paragraphBody(
+                message = messages("AmendsCheckYourAnswers.error.line"),
+                id = Some("submit-amend-return-error-line")
+            )
+        }
     }
 }

@@ -78,28 +78,7 @@ class CheckYourAnswersController @Inject() (
                   )
                 )
 
-                val calculationRows: Seq[AmendSummaryRow] = Seq(
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.1",
-                    calculations.original.packagingTotal.asKg,
-                    Some(calculations.amend.packagingTotal.asKg),
-                    None
-                  ),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.2",
-                    calculations.original.deductionsTotal.asKg,
-                    Some(calculations.amend.deductionsTotal.asKg),
-                    None
-                  ),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.calculation.row.3",
-                    calculations.original.taxDue.asPounds,
-                    Some(calculations.amend.taxDue.asPounds),
-                    None
-                  )
-                )
-
-                Ok(view(obligation, totalRows, deductionsRows, calculationRows))
+                Ok(view(obligation, totalRows, deductionsRows, calculations))
               case Left(error) => throw error
             }
           case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))

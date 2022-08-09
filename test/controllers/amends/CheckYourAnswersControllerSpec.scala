@@ -113,15 +113,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
         )
 
-        val calculationsRows: Seq[AmendSummaryRow] = Seq(
-          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.1", "4kg", Some("4kg"),None),
-          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.2", "3kg", Some("3kg"), None),
-          AmendSummaryRow("AmendsCheckYourAnswers.calculation.row.3", "£1.00", Some("£1.00"), None),
+        val calculationsRows = AmendsCalculations(
+          Calculations(1, 2, 3, 4, true),
+          Calculations(1, 2, 3, 4, true)
         )
 
         status(result) mustEqual OK
         contentAsString(result) mustBe expectedHtml.toString()
-        verify(mockView).apply(refEq(taxReturnOb), refEq(totalRows), refEq(deductionsRows), refEq(calculationsRows))(any(), any())
+        verify(mockView).apply(
+          refEq(taxReturnOb),
+          refEq(totalRows),
+          refEq(deductionsRows),
+          refEq(calculationsRows))(any(), any())
 
       }
     }
