@@ -16,10 +16,10 @@
 
 package controllers.amends
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector
+import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.amends.AmendSummaryRow
 import models.requests.DataRequest
@@ -44,7 +44,8 @@ class CheckYourAnswersController @Inject() (
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
-  view: CheckYourAnswersView
+  view: CheckYourAnswersView,
+  cacheConnector: CacheConnector
 ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
@@ -128,11 +129,28 @@ class CheckYourAnswersController @Inject() (
 
         returnsConnector.amend(pptId, submissionId).flatMap {
           case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
+            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
           case Left(error) =>
             throw error
         }
+    }
+
+  def cancel(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        val pptReference: String = request.request.pptReference
+        val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
+        val futureNextPage = request.userAnswers
+          .reset
+          .save(cacheConnector.saveUserAnswerFunc(pptReference))
+          .map { _ =>
+            maybePeriodKey match {
+              case Some(periodKey) => routes.ViewReturnSummaryController.onPageLoad(periodKey)
+              case _ => routes.SubmittedReturnsController.onPageLoad()
+            }
+          }
+        futureNextPage.map(Redirect)
     }
 }

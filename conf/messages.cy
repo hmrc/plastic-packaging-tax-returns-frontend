@@ -79,6 +79,7 @@ AmendsCheckYourAnswers.title = Amend your return for {0}
 AmendsCheckYourAnswers.hiddenCell.action = no action here
 AmendsCheckYourAnswers.hiddenCell.newAnswer = you've not made an amend here
 AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
+AmendsCheckYourAnswers.cancel.link.text = Cancel this amendment
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
