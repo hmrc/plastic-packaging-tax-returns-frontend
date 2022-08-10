@@ -42,10 +42,15 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
-    obligationsConnector.getFulfilled(pptId) map { obligations =>
-      obligations.filter(o => o.periodKey == periodKey)
-    }
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
+    obligationsConnector.getFulfilled(pptId)
+      .map { obligations => obligations.filter(o => o.periodKey == periodKey) }
+      .flatMap { sequence: Seq[TaxReturnObligation] => 
+        if (sequence.length == 1)
+          Future.successful(sequence.head)
+        else
+          Future.failed(new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}"))
+      }
   }
 
   def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[ReturnDisplayApi] = {

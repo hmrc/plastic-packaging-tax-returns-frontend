@@ -72,7 +72,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel, Call("", "/plastic-packaging-tax/check-your-answers"))(
+        contentAsString(result) mustEqual view("April to June 2022", viewModel, Call("", "/plastic-packaging-tax/viewReturnSummary/00XX/amend"))(
           request,
           messages(application)
         ).toString

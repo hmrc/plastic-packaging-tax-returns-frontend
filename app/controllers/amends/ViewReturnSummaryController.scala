@@ -20,15 +20,17 @@ import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApi
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
+import models.requests.OptionalDataRequest
 import models.returns.{ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
@@ -45,26 +47,45 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
 
-        val pptReference: String = request.pptReference
-
-        if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
-
-        val submittedReturnF: Future[ReturnDisplayApi]             = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
-        val fulfilledObligationF: Future[Seq[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
-
-        for {
-          submittedReturn <- submittedReturnF
-          obligation <- fulfilledObligationF
-          updatedAnswers <- Future.fromTry(
-            request.userAnswers.set(AmendSelectedPeriodKey, periodKey).get
-              .set(ObligationCacheable, obligation.head).get
-              .set(ReturnDisplayApiCacheable, submittedReturn))
-          _ <- cacheConnector.set(pptReference, updatedAnswers)
-        } yield {
-          val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation.head)
-          val amendCall: Call = controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+        fetchData(periodKey).map { case (_, submittedReturn, obligation) =>
+          val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
+          val amendCall: Call = controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
         }
     }
+    
+  def amendReturn(periodKey: String): Action[AnyContent] =
+    (identify andThen getData).async {
+      implicit request =>
 
+      fetchData(periodKey).map { case (pptReference, submittedReturn, obligation) => 
+          if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
+            reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
+          Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad())
+        }
+    }
+    
+  private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_]) = {
+    val pptReference: String = request.pptReference
+    if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
+
+    val futureReturn = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
+    val futureObligation = taxReturnHelper.getObligation(pptReference, periodKey)
+    for {
+      submittedReturn <- futureReturn
+      obligation <- futureObligation
+    } yield {
+      (pptReference, submittedReturn, obligation)
+    }
+  }
+
+  private def reinitialiseCache(periodKey: String, request: OptionalDataRequest[_], pptReference: String, 
+    submittedReturn: ReturnDisplayApi, obligation: TaxReturnObligation) (implicit hc: HeaderCarrier) = {
+    request.userAnswers
+      .reset
+      .setSafe(AmendSelectedPeriodKey, periodKey)
+      .setSafe(ObligationCacheable, obligation)
+      .setSafe(ReturnDisplayApiCacheable, submittedReturn)
+      .save(cacheConnector.saveUserAnswerFunc(pptReference))
+  }
 }
