@@ -27,42 +27,32 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
 
-GET         /check-your-answers                          controllers.amends.CheckYourAnswersController.onPageLoad()
-POST        /check-your-answers                          controllers.amends.CheckYourAnswersController.onSubmit()
-GET         /check-your-answers/cancel                   controllers.amends.CheckYourAnswersController.cancel()
+GET         /amend-return                          controllers.amends.CheckYourAnswersController.onPageLoad()
+POST        /amend-return                          controllers.amends.CheckYourAnswersController.onSubmit()
+GET         /amend-return/cancel                   controllers.amends.CheckYourAnswersController.cancel()
 
 GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
 
-GET        /amendConfirmation                            controllers.amends.AmendConfirmationController.onPageLoad()
+GET        /return-amended                            controllers.amends.AmendConfirmationController.onPageLoad()
 
 GET       /viewReturnSummary/:periodKey                 controllers.amends.ViewReturnSummaryController.onPageLoad(periodKey: String)
 GET       /viewReturnSummary/:periodKey/amend                 controllers.amends.ViewReturnSummaryController.amendReturn(periodKey: String)
 
-GET        /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
-POST       /amendDirectExportPlasticPackaging                  controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
-GET        /changeAmendDirectExportPlasticPackaging                        controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
-POST       /changeAmendDirectExportPlasticPackaging                        controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
+GET        /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
+POST       /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
 
-GET        /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-POST       /amendHumanMedicinePlasticPackaging                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
-GET        /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-POST       /changeAmendHumanMedicinePlasticPackaging                        controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
+GET        /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
+POST       /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
 
-GET        /amendImportedPlasticPackaging                  controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
-POST       /amendImportedPlasticPackaging                  controllers.amends.AmendImportedPlasticPackagingController.onSubmit()
-GET        /changeAmendImportedPlasticPackaging                        controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
-POST       /changeAmendImportedPlasticPackaging                        controllers.amends.AmendImportedPlasticPackagingController.onSubmit()
+GET        /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
+POST       /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onSubmit()
 
-GET        /amendManufacturedPlasticPackaging                  controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad()
-POST       /amendManufacturedPlasticPackaging                  controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit()
-GET        /changeAmendManufacturedPlasticPackaging                        controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad()
-POST       /changeAmendManufacturedPlasticPackaging                        controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit()
+GET        /amend-manufactured-weight                  controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad()
+POST       /amend-manufactured-weight                  controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit()
 
-GET        /amendRecycledPlasticPackaging                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
-POST       /amendRecycledPlasticPackaging                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
-GET        /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
-POST       /changeAmendRecycledPlasticPackaging                        controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
+GET        /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
+POST       /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
 GET        /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 POST       /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)

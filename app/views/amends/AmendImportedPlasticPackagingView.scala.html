@@ -15,9 +15,8 @@
  *@
 
 @import viewmodels.InputWidth._
-@import components.SectionHeader
+@import templates.WeightInputLayout
 @import models.returns.TaxReturnObligation
-@import components.ReturnQuarterHeading
 
 @this(
     layout: templates.Layout,
@@ -25,44 +24,37 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    sectionHeader: ReturnQuarterHeading
+    weightInputLayout: WeightInputLayout
 )
 
 
-@(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@hintContent = {
-<p class="govuk-body">@messages("amendImportedPlasticPackaging.hint")</p>
+@paragraphContent = {
+<p class="govuk-body">@messages("amendImportedPlasticPackaging.para.include")</p>
 <ul class="govuk-list govuk-list--bullet">
-    <li>@messages("amendImportedPlasticPackaging.hint.list.1")</li>
-    <li>@messages("amendImportedPlasticPackaging.hint.list.2")</li>
-    <li>@messages("amendImportedPlasticPackaging.hint.list.3")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.1")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.2")</li>
 </ul>
-<p class="govuk-body">See <a href="https://google.co.uk" class="govuk-link">@messages("help.not.include")</a>.</p>
+<p class="govuk-body">@messages("amendImportedPlasticPackaging.para.exclude")</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>@messages("amendImportedPlasticPackaging.para.list.3")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.4")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.5")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.6")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.7")</li>
+    <li>@messages("amendImportedPlasticPackaging.para.list.8")</li>
+</ul>
 }
 
-@layout(pageTitle = title(form, messages("amendImportedPlasticPackaging.title"))) {
-
-    @sectionHeader(obligation)
+@layout(pageTitle = title(form, messages("amendImportedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.amends.routes.AmendImportedPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("amendImportedPlasticPackaging.heading")).asPageHeading()
-            )
-            .asKg()
-            .withWidth(Fixed10)
-            .withHint(Hint(content = HtmlContent(hintContent)))
-        )
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @weightInputLayout(None,
+            messages("amendImportedPlasticPackaging.heading"),
+            paragraphText = paragraphContent,
+            hintText = Some(messages("amendImportedPlasticPackaging.hint")),
+            form = form)
     }
 }
