@@ -91,11 +91,15 @@
         )
     )
 
+    <br>
+    <br>
+
     @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+        <h2 class="govuk-heading-m">@messages("AmendsCheckYourAnswers.nowSend.heading")</h2>
+        <p class="govuk-body">@messages("AmendsCheckYourAnswers.nowSend.para")</p>
         @govukButton(ButtonViewModel(messages("AmendsCheckYourAnswers.submit")))
-        @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"), 
-            call = controllers.amends.routes.CheckYourAnswersController.cancel()))
-    }
+        @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"),
+            call = controllers.amends.routes.CheckYourAnswersController.cancel()))    }
     
     <br /><!--bottom margin-->
 }
