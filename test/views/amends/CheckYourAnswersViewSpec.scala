@@ -38,8 +38,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     page(obligation, Seq.empty, Seq.empty, calculation)(request, messages)
   }
   "View" should {
-    "not submit return" when {
-      "deduction greater than accretion" in {
+    "not allow to submit return when deduction greater than accretion" in {
         val view = createView(createCalculations(false))
 
         view.getElementsByClass("govuk-button") mustBe empty
@@ -48,11 +47,26 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
         view.getElementById("submit-amend-return-error-line").text() mustBe "You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions."
         view.getElementById("submit-amend-return-error-line").text() mustBe messages("AmendsCheckYourAnswers.error.line")
       }
+
+    "not display send your amended return message when deduction greater than accretion" in {
+      val view = createView(createCalculations(false))
+
+      view.getElementById("now-send-heading") mustBe null
+      view.getElementById("now-send-paragraph") mustBe null
     }
 
     "display the Confirm and Continue button" in {
       createView(createCalculations(true))
         .getElementsByClass("govuk-button") must not be empty
+    }
+
+    "display send now message when deduction less equal then accretion" in {
+      val view = createView(createCalculations(true))
+
+      view.getElementById("now-send-heading").text() mustBe "Now send your amended return"
+      view.getElementById("now-send-heading").text() mustBe messages("AmendsCheckYourAnswers.nowSend.heading")
+      view.getElementById("now-send-paragraph").text() mustBe "By submitting this amended return you are confirming that, to the best of your knowledge, the details you are providing are correct."
+      view.getElementById("now-send-paragraph").text() mustBe messages("AmendsCheckYourAnswers.nowSend.para")
     }
   }
 
