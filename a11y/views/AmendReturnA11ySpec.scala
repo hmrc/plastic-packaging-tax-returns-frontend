@@ -17,35 +17,25 @@
 package views
 
 import base.ViewSpecBase
-import forms.amends.AmendDirectExportPlasticPackagingFormProvider
-import forms.returns._
-import models.Mode.NormalMode
-import models.UserAnswers
-import models.returns.TaxReturnObligation
-import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.returns.ManufacturedPlasticPackagingPage
+import forms.amends._
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
 import play.api.data.Form
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
-import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.ConfirmManufacturedPlasticPackaging
-import viewmodels.govuk.summarylist._
-import views.html.amends.{AmendConfirmation, AmendDirectExportPlasticPackagingView}
-import views.html.returns._
+import viewmodels.checkAnswers.ViewReturnSummaryViewModel
+import views.html.amends._
 
 import java.time.LocalDate
 
-class AmendReturnA11ySpec
-  extends ViewSpecBase
-    with AccessibilityMatchers {
+class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
   val amount = 321L
 
   "AmendDirectExportPlasticPackagingView" should {
-    val form = new AmendDirectExportPlasticPackagingFormProvider()()
-    val page = inject[AmendDirectExportPlasticPackagingView]
+    val form: Form[Long] = new AmendDirectExportPlasticPackagingFormProvider()()
+    val page: AmendDirectExportPlasticPackagingView = inject[AmendDirectExportPlasticPackagingView]
 
     def render(form: Form[Long]): String =
       page(form, aTaxObligation)(request, messages).toString()
@@ -57,7 +47,70 @@ class AmendReturnA11ySpec
     "pass accessibility checks with error" in {
       render(form.withError("test", "message")) must passAccessibilityChecks
     }
+  }
 
+  "AmendRecycledPlasticPackagingView" should {
+    val form: Form[Long] = new AmendRecycledPlasticPackagingFormProvider()()
+    val page: AmendRecycledPlasticPackagingView = inject[AmendRecycledPlasticPackagingView]
+
+    def render(form: Form[Long] = form): String =
+      page(form, aTaxObligation)(request, messages).toString()
+
+    "pass accessibility checks without error" in {
+      render(form) must passAccessibilityChecks
+    }
+
+    "pass accessibility checks with error" in {
+      render(form.withError("test", "message")) must passAccessibilityChecks
+    }
+  }
+
+  "AmendHumanMedicinePlasticPackagingView" should {
+    val form: Form[Long] = new AmendHumanMedicinePlasticPackagingFormProvider()()
+    val page: AmendHumanMedicinePlasticPackagingView = inject[AmendHumanMedicinePlasticPackagingView]
+
+    def render(form: Form[Long]): String =
+      page(form, aTaxObligation)(request, messages).toString()
+
+    "pass accessibility checks without error" in {
+      render(form) must passAccessibilityChecks
+    }
+
+    "pass accessibility checks with error" in {
+      render(form.withError("test", "message")) must passAccessibilityChecks
+    }
+  }
+
+  "AmendManufacturedPlasticPackagingView" should {
+    val form: Form[Long] = new AmendManufacturedPlasticPackagingFormProvider()()
+    val page: AmendManufacturedPlasticPackagingView = inject[AmendManufacturedPlasticPackagingView]
+
+    def render(form: Form[Long] = form): String =
+      page(form, aTaxObligation)(request, messages).toString()
+
+    "pass accessibility checks without error" in {
+      render(form) must passAccessibilityChecks
+    }
+
+    "pass accessibility checks with error" in {
+      render(form.withError("test", "message")) must passAccessibilityChecks(OutputFormat.Verbose)
+    }
+  }
+
+  "AmendImportedPlasticPackagingView" should {
+    val form: Form[Long] = new AmendImportedPlasticPackagingFormProvider()()
+    val page: AmendImportedPlasticPackagingView = inject[AmendImportedPlasticPackagingView]
+
+    def render(form: Form[Long] = form): String =
+      page(form, aTaxObligation)(request, messages).toString()
+
+    "pass accessibility checks without error" in {
+      render(form) must passAccessibilityChecks
+    }
+
+    "pass accessibility checks with error" in {
+      render(form.withError("test", "message")) must passAccessibilityChecks
+    }
   }
 
   "AmendConfirmationView" should {
@@ -71,175 +124,25 @@ class AmendReturnA11ySpec
     }
   }
 
-//  "NotStartOtherReturnsView" should {
-//    "pass accessibility checks" in {
-//      val page: NotStartOtherReturnsView = inject[NotStartOtherReturnsView]
-//
-//      def render: Html =
-//        page()(request, messages)
-//
-//      render.toString() must passAccessibilityChecks
-//    }
-//  }
-
-  "NonExportedRecycledPlasticPackagingWeightView" should {
-    val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
-    val page: NonExportedRecycledPlasticPackagingWeightView = inject[NonExportedRecycledPlasticPackagingWeightView]
-
-    def render(form: Form[Long] = form): String =
-      page(form, NormalMode, amount)(request, messages).toString()
-        
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-    
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "NonExportedRecycledPlasticPackagingView" should {
+  "ViewReturnSummaryView" should {
     "pass accessibility checks" in {
-      val form = new NonExportedRecycledPlasticPackagingFormProvider()()
-      val page = inject[NonExportedRecycledPlasticPackagingView]
+      val page: ViewReturnSummaryView = inject[ViewReturnSummaryView]
+      val vm = ViewReturnSummaryViewModel(
+        ReturnDisplayApi(
+          "2019-08-28T09:30:47Z",
+          IdDetails.apply("XMPPT0000000001", "00-11-submission-id"),
+          None,
+          ReturnDisplayDetails.apply(500, 400, 0, 0, 0, 0, 0, 0, 900, 300)
+        )
+      )
 
-      def render: Html =
-        page(form, NormalMode, amount)(request, messages)
+      def render(returnPeriod: String): Html =
+        page(returnPeriod, vm)(request, messages)
 
-      render.toString() must passAccessibilityChecks
+      render("PK1").toString() must passAccessibilityChecks
     }
   }
 
-  "NonExportedHumanMedicinesPlasticPackagingWeightView" should {
-    val form = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
-    val page = inject[NonExportedHumanMedicinesPlasticPackagingWeightView]
-
-    def render(form: Form[Long]): String =
-      page(amount, form, NormalMode)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "NonExportedHumanMedicinesPlasticPackagingView" should {
-    val form = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
-    val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
-
-    def render(form: Form[Boolean]): String =
-      page(amount, form, NormalMode)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "ManufacturedPlasticPackagingWeightView" should {
-    val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()
-    val page: ManufacturedPlasticPackagingWeightView = inject[ManufacturedPlasticPackagingWeightView]
-
-    def render(form: Form[Long] = form): String =
-      page(form, NormalMode, aTaxObligation)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks(OutputFormat.Verbose)
-    }
-  }
-
-  "ManufacturedPlasticPackagingView" should {
-    val form = new ManufacturedPlasticPackagingFormProvider()()
-    val page = inject[ManufacturedPlasticPackagingView]
-
-    def render(form: Form[Boolean]): String =
-      page(form, NormalMode, aTaxObligation)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "ImportedPlasticPackagingWeightView" should {
-    val form: Form[Long]                         = new ManufacturedPlasticPackagingWeightFormProvider()()
-    val page: ImportedPlasticPackagingWeightView = inject[ImportedPlasticPackagingWeightView]
-
-    def render(form: Form[Long] = form): String =
-      page(form, NormalMode, aTaxObligation)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "ImportedPlasticPackagingView" should {
-    val form = new ImportedPlasticPackagingFormProvider()()
-    val page = inject[ImportedPlasticPackagingView]
-
-    def render(form: Form[Boolean]): String =
-      page(form, NormalMode, aTaxObligation)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "DirectlyExportedComponentsView" should {
-    val form = new DirectlyExportedComponentsFormProvider()()
-    val page = inject[DirectlyExportedComponentsView]
-
-    def render(form: Form[Boolean]): String =
-      page(form, NormalMode, amount)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
-  "ConfirmPlasticPackagingTotalView" should {
-    "pass accessibility checks" in {
-      val page: ConfirmPlasticPackagingTotalView = inject[ConfirmPlasticPackagingTotalView]
-
-      def render(list: SummaryList): Html =
-        page(list)(request, messages)
-
-      render(createSummaryList).toString() must passAccessibilityChecks
-    }
-  }
-
-  def createSummaryList: SummaryList = {
-    val answer = UserAnswers("123").set(ManufacturedPlasticPackagingPage, true).success.value
-    SummaryListViewModel(
-      Seq(ConfirmManufacturedPlasticPackaging).flatMap(_.row(answer))
-    )
-  }
-
-  //TODO: Add spec for ReturnsCheckYourAnswersView once refactored
+  //TODO: Add spec for Heart Page (CheckYourAnswersView)
 
 }
