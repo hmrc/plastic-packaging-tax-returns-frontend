@@ -182,11 +182,10 @@ amendRecycledPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dun
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
-amend.confirmation.panel = Your reference number is {0}
-amend.confirmation.panel.empty = Nothing to pay
+amend.confirmation.panel = Your reference for this amendment is {0}
 amend.confirmation.check.account = Check your PPT account
 amend.confirmation.subheading  = What happens next
-amend.confirmation.paragraph.1 = his may take up to 24 hours to show on your Plastic Packaging Tax account
+amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Plastic Packaging Tax account.
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
