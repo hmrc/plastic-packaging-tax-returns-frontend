@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import forms.amends._
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import play.api.data.Form
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
@@ -26,11 +26,8 @@ import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends._
 
-import java.time.LocalDate
-
 class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
   val amount = 321L
 
   "AmendDirectExportPlasticPackagingView" should {
@@ -38,7 +35,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val page: AmendDirectExportPlasticPackagingView = inject[AmendDirectExportPlasticPackagingView]
 
     def render(form: Form[Long]): String =
-      page(form, aTaxObligation)(request, messages).toString()
+      page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
@@ -54,7 +51,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val page: AmendRecycledPlasticPackagingView = inject[AmendRecycledPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =
-      page(form, aTaxObligation)(request, messages).toString()
+      page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
@@ -70,7 +67,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val page: AmendHumanMedicinePlasticPackagingView = inject[AmendHumanMedicinePlasticPackagingView]
 
     def render(form: Form[Long]): String =
-      page(form, aTaxObligation)(request, messages).toString()
+      page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
@@ -86,7 +83,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val page: AmendManufacturedPlasticPackagingView = inject[AmendManufacturedPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =
-      page(form, aTaxObligation)(request, messages).toString()
+      page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
@@ -102,7 +99,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val page: AmendImportedPlasticPackagingView = inject[AmendImportedPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =
-      page(form, aTaxObligation)(request, messages).toString()
+      page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
