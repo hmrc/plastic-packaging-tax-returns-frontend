@@ -22,7 +22,7 @@ import models.returns.{AmendsCalculations, Calculations, ReturnDisplayApi}
 import play.api.Logger
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
