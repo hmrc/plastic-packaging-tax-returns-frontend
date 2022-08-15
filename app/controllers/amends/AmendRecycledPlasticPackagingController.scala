@@ -16,9 +16,11 @@
 
 package controllers.amends
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendRecycledPlasticPackagingFormProvider
+import models.returns.TaxReturnObligation
 import pages.amends.AmendRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,7 +49,11 @@ class AmendRecycledPlasticPackagingController @Inject() (
           case None        => form()
           case Some(value) => form().fill(value)
         }
-        Ok(view(preparedForm))
+        if (request.userAnswers.get[TaxReturnObligation](ObligationCacheable).isDefined) {
+          Ok(view(preparedForm))
+        } else {
+          Redirect(routes.SubmittedReturnsController.onPageLoad())
+        }
 
     }
 

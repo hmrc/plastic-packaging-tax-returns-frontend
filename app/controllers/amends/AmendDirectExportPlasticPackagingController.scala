@@ -16,12 +16,14 @@
 
 package controllers.amends
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
+import models.returns.TaxReturnObligation
 import pages.amends.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
@@ -44,10 +46,15 @@ class AmendDirectExportPlasticPackagingController @Inject() (
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
-          case None        => form()
+          case None => form()
           case Some(value) => form().fill(value)
         }
-        Ok(view(preparedForm))
+        if (request.userAnswers.get[TaxReturnObligation](ObligationCacheable).isDefined) {
+          Ok(view(preparedForm))
+        } else {
+          Redirect(routes.SubmittedReturnsController.onPageLoad())
+        }
+
     }
 
   def onSubmit: Action[AnyContent] =
