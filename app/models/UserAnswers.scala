@@ -24,7 +24,7 @@ import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -55,6 +55,30 @@ case class UserAnswers(
     }
   }
 
+    /**
+    * Sets the answer (value) to the given question (settable), and returns a failed future  if something goes 
+    * wrong - unlike set() which returns a failed Try
+    * @param settable - question we're setting the answer / data for
+    * @param value - value to set
+    * @param cleanup - true to call the question's cleanup method
+    * @tparam A - type of 'value'
+    * @return Future of updated UserAnswers
+    */
+  def setSafe[A](settable: Settable[A], value: A, cleanup: Boolean = true) 
+    (implicit writes: Writes[A]): UserAnswers = 
+    set(settable, value, cleanup).get
+
+  /**
+    * Saves this UserAnswers using the given function
+    * @param saveUserAnswerFunc - function called to save user answers
+    * @return Future of updated UserAnswers
+    */
+  def save(saveUserAnswerFunc: SaveUserAnswerFunc) (implicit ec: ExecutionContext): Future[UserAnswers] = {
+    saveUserAnswerFunc
+      .apply(this, true)
+      .map(_ => this)
+  }
+
   /** If user's answer has changed, passes updated user-answers object to given save function  
     *
     * @param questionPage       - the user-answer we might be changing
@@ -75,7 +99,14 @@ case class UserAnswers(
       saveUserAnswerFunc.apply(updatedUserAnswers, true)
     }
   }
-  
+
+  /**
+    * Removes all answers, preserves id, updates timestamp  
+    * @return UserAnswers with all answers removed
+    */
+  def reset: UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
+
+
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {

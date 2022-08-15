@@ -16,19 +16,20 @@
 
 package controllers.amends
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector
+import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.amends.AmendSummaryRow
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.requests.DataRequest
+import models.returns.{AmendsCalculations, ReturnDisplayApi, TaxReturnObligation}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.{PrintBigDecimal, PrintLong}
 import viewmodels.checkAnswers.amends._
+import viewmodels.{PrintBigDecimal, PrintLong}
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,50 +44,56 @@ class CheckYourAnswersController @Inject() (
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
-  view: CheckYourAnswersView
+  view: CheckYourAnswersView,
+  cacheConnector: CacheConnector
 ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        if (appConfig.isAmendsFeatureEnabled) {
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) =>
-
-            returnsConnector.getCalculationAmends(request.pptReference).map {
-              case Right(calculations) =>
-                val totalRows: Seq[AmendSummaryRow] = Seq(
-                  AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.packagingTotal",
-                    calculations.original.packagingTotal.asKg,
-                    Some(calculations.amend.packagingTotal.asKg),
-                    None
-                  )
-                )
-
-                val deductionsRows: Seq[AmendSummaryRow] = Seq(
-                  AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
-                  AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-                  AmendSummaryRow(
-                    "AmendsCheckYourAnswers.deductionsTotal",
-                    calculations.original.deductionsTotal.asKg,
-                    Some(calculations.amend.deductionsTotal.asKg),
-                    None
-                  )
-                )
-
-                Ok(view(obligation, totalRows, deductionsRows, calculations))
-              case Left(error) => throw error
-            }
-          case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
-        }
-      } else {
+        if (!appConfig.isAmendsFeatureEnabled) {
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        } 
+        else {
+          request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+            case Some(obligation) =>
+              returnsConnector.getCalculationAmends(request.pptReference).map {
+                case Right(calculations) => displayPage(request, obligation, calculations)
+                case Left(error)         => throw error
+              }
+            case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
+          }
         }
     }
+
+  private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation, 
+    calculations: AmendsCalculations) (implicit r: DataRequest[_]) = {
+    
+    val totalRows: Seq[AmendSummaryRow] = Seq(
+      AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
+      AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.packagingTotal",
+        calculations.original.packagingTotal.asKg,
+        Some(calculations.amend.packagingTotal.asKg),
+        None
+      )
+    )
+
+    val deductionsRows: Seq[AmendSummaryRow] = Seq(
+      AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
+      AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
+      AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
+      AmendSummaryRow(
+        "AmendsCheckYourAnswers.deductionsTotal",
+        calculations.original.deductionsTotal.asKg,
+        Some(calculations.amend.deductionsTotal.asKg),
+        None
+      )
+    )
+
+    Ok(view(obligation, totalRows, deductionsRows, calculations))
+  }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -101,11 +108,28 @@ class CheckYourAnswersController @Inject() (
 
         returnsConnector.amend(pptId, submissionId).flatMap {
           case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
+            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
           case Left(error) =>
             throw error
         }
+    }
+
+  def cancel(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        val pptReference: String = request.request.pptReference
+        val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
+        val futureNextPage = request.userAnswers
+          .reset
+          .save(cacheConnector.saveUserAnswerFunc(pptReference))
+          .map { _ =>
+            maybePeriodKey match {
+              case Some(periodKey) => routes.ViewReturnSummaryController.onPageLoad(periodKey)
+              case _ => routes.SubmittedReturnsController.onPageLoad()
+            }
+          }
+        futureNextPage.map(Redirect)
     }
 }

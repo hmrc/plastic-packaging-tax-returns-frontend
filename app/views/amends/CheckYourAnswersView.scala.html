@@ -29,13 +29,17 @@
     header: SectionHeader,
     cyaTable: AmendsCyaTable,
     govukTable : GovukTable,
+    link: Link,
+    paragraph: paragraph,
     paragraphBody: paragraphBody,
     sectionH2Heading: SectionH2Heading
 )
 
-@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], calculations: AmendsCalculations)(implicit request: Request[_], messages: Messages)
+@(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], 
+        calculations: AmendsCalculations)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation)))) {
+@layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))), 
+    showBackLink = false) {
 
     <h1 class="govuk-heading-xl">@messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))</h1>
 
@@ -109,4 +113,10 @@
             classes = "govuk-body govuk-!-margin-bottom-6"
         )
     }
+
+    @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"),
+        call = controllers.amends.routes.CheckYourAnswersController.cancel()))
+
+    <br /><!--bottom margin-->
+
 }

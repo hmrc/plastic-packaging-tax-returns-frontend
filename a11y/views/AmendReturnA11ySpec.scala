@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.amends._
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
@@ -137,7 +138,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
       )
 
       def render(returnPeriod: String): Html =
-        page(returnPeriod, vm)(request, messages)
+        page(returnPeriod, vm, Call("", ""))(request, messages)
 
       render("PK1").toString() must passAccessibilityChecks
     }
