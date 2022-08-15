@@ -23,37 +23,38 @@ import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.returns.TaxReturnObligation
 import pages.amends.AmendDirectExportPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendDirectExportPlasticPackagingController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  form: AmendDirectExportPlasticPackagingFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: AmendDirectExportPlasticPackagingView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class AmendDirectExportPlasticPackagingController @Inject()(
+   override val messagesApi: MessagesApi,
+   cacheConnector: CacheConnector,
+   identify: IdentifierAction,
+   getData: DataRetrievalAction,
+   requireData: DataRequiredAction,
+   form: AmendDirectExportPlasticPackagingFormProvider,
+   val controllerComponents: MessagesControllerComponents,
+   view: AmendDirectExportPlasticPackagingView
+ )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
-          case None        => form()
+          case None => form()
           case Some(value) => form().fill(value)
         }
-
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Ok(view(preparedForm, obligation))
-          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
+        if (request.userAnswers.get[TaxReturnObligation](ObligationCacheable).isDefined) {
+          Ok(view(preparedForm))
+        } else {
+          Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
+
     }
 
   def onSubmit: Action[AnyContent] =
@@ -61,12 +62,8 @@ class AmendDirectExportPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.pptReference
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have a tax return against which to amend")
-        )
-
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

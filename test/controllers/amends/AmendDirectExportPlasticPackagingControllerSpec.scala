@@ -55,7 +55,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider())(request,
                                                                  messages(application)
         ).toString
       }
@@ -75,7 +75,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer))(
           request,
           messages(application)
         ).toString
@@ -136,7 +136,7 @@ class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm)(request,
           messages(application)
         ).toString
       }
