@@ -64,7 +64,7 @@ case class UserAnswers(
     * @tparam A - type of 'value'
     * @return Future of updated UserAnswers
     */
-  def setSafe[A](settable: Settable[A], value: A, cleanup: Boolean = true) 
+  def setUnsafe[A](settable: Settable[A], value: A, cleanup: Boolean = true) 
     (implicit writes: Writes[A]): UserAnswers = 
     set(settable, value, cleanup).get
 
