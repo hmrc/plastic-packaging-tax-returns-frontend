@@ -486,3 +486,9 @@ submit-return.check-your-answers.now-send.button-text = Submit return
 
 submit-return.check-your-answers.error.heading = Submitting your return
 submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
+
+cancelAmend.title = cancelAmend
+cancelAmend.heading = cancelAmend
+cancelAmend.checkYourAnswersLabel = cancelAmend
+cancelAmend.error.required = Select yes if cancelAmend
+cancelAmend.change.hidden = CancelAmend
