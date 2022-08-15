@@ -83,6 +83,8 @@ AmendsCheckYourAnswers.submit = Submit amended return
 AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
 AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
 AmendsCheckYourAnswers.cancel.link.text = Cancel this amendment
+AmendsCheckYourAnswers.error.heading = Submitting your amended return
+AmendsCheckYourAnswers.error.line = You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
 
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service

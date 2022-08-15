@@ -81,7 +81,9 @@ AmendsCheckYourAnswers.hiddenCell.action = [NEEDS WELSH] You cannot amend this f
 AmendsCheckYourAnswers.hiddenCell.newAnswer = [NEEDS WELSH] Not yet amended
 AmendsCheckYourAnswers.submit = [NEEDS WELSH] Submit amended return
 AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
-AmendsCheckYourAnswers.cancel.link.text = Cancel this amendment
+AmendsCheckYourAnswers.error.heading = [NEEDS WELSH] Submitting your amended return
+AmendsCheckYourAnswers.error.line = [NEEDS WELSH] You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
+AmendsCheckYourAnswers.cancel.link.text = [NEEDS WELSH] Cancel this amendment
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
