@@ -30,7 +30,7 @@ import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
@@ -57,11 +57,13 @@ class ViewReturnSummaryController @Inject() (
   def amendReturn(periodKey: String): Action[AnyContent] =
     (identify andThen getData).async {
       implicit request =>
-
-      fetchData(periodKey).map { case (pptReference, submittedReturn, obligation) => 
-          if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
+        
+      fetchData(periodKey).flatMap { case (pptReference, submittedReturn, obligation) => 
+          val future = if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
             reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
-          Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad())
+          else
+            Future.unit
+          future.map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
         }
     }
     
@@ -83,9 +85,9 @@ class ViewReturnSummaryController @Inject() (
     submittedReturn: ReturnDisplayApi, obligation: TaxReturnObligation) (implicit hc: HeaderCarrier) = {
     request.userAnswers
       .reset
-      .setSafe(AmendSelectedPeriodKey, periodKey)
-      .setSafe(ObligationCacheable, obligation)
-      .setSafe(ReturnDisplayApiCacheable, submittedReturn)
+      .setUnsafe(AmendSelectedPeriodKey, periodKey)
+      .setUnsafe(ObligationCacheable, obligation)
+      .setUnsafe(ReturnDisplayApiCacheable, submittedReturn)
       .save(cacheConnector.saveUserAnswerFunc(pptReference))
   }
 }
