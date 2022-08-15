@@ -30,17 +30,17 @@ import views.html.amends.AmendDirectExportPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendDirectExportPlasticPackagingController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  form: AmendDirectExportPlasticPackagingFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: AmendDirectExportPlasticPackagingView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+class AmendDirectExportPlasticPackagingController @Inject()(
+   override val messagesApi: MessagesApi,
+   cacheConnector: CacheConnector,
+   identify: IdentifierAction,
+   getData: DataRetrievalAction,
+   requireData: DataRequiredAction,
+   form: AmendDirectExportPlasticPackagingFormProvider,
+   val controllerComponents: MessagesControllerComponents,
+   view: AmendDirectExportPlasticPackagingView
+ )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) {

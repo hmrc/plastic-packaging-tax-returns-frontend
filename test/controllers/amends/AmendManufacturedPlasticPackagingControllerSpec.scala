@@ -106,6 +106,19 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
       }
     }
 
+    "must redirect when previous tax return is not in user answers" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, amendManufacturedPlasticPackagingRoute)
+
+        val result = route(application, request).value
+
+        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
