@@ -1,4 +1,4 @@
-service.name = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
+service.name = Treth Deunydd Pacio Plastig
 
 site.back = Yn ôl
 site.remove = Tynnu
@@ -180,14 +180,14 @@ amendRecycledPlasticPackaging.change.hidden = AmendRecycledPlasticPackaging
 amendRecycledPlasticPackaging.para = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
 amendRecycledPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amend.confirmation.title = Your return will be amended
-amend.confirmation.submitted = Your return will be amended
-amend.confirmation.panel = Your reference for this amendment is {0}
-amend.confirmation.check.account = Check your PPT account
-amend.confirmation.subheading  = What happens next
-amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Plastic Packaging Tax account.
-amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
-amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
+amend.confirmation.title = Bydd eich Ffurflen Dreth yn cael ei diwygio
+amend.confirmation.submitted = Bydd eich Ffurflen Dreth yn cael ei diwygio
+amend.confirmation.panel = Eich cyfeirnod ar gyfer y diwygiad hwn yw {0}
+amend.confirmation.check.account = Gwiriwch eich cyfrif Treth Deunydd Pacio Plastig
+amend.confirmation.subheading  = Yr hyn sy’n digwydd nesaf
+amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar eich cyfrif Treth Deunydd Pacio Plastig.
+amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
+amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
 convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 convertedPackagingCredit.heading = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
