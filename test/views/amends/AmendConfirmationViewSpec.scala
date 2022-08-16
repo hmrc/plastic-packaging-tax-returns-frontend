@@ -47,7 +47,7 @@ class AmendConfirmationViewSpec extends ViewSpecBase with ViewAssertions with Vi
     "contain reference charge in the header" in {
       val view = createView()
 
-      view.getElementsByClass("govuk-panel__body").text() mustBe "Your reference for this amendment is 1234"
+      view.getElementsByClass("govuk-panel__body").text() mustBe "Your charge reference for this amendment is 1234"
       view.getElementsByClass("govuk-panel__body").text() mustBe messages("amend.confirmation.panel", "1234")
     }
 
