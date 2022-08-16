@@ -16,7 +16,6 @@
 
 @import viewmodels.InputWidth._
 @import templates.WeightInputLayout
-@import models.returns.TaxReturnObligation
 
 @this(
     layout: templates.Layout,
@@ -27,7 +26,7 @@
     weightInputLayout: WeightInputLayout
 )
 
-@(form: Form[Long], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long])(implicit request: Request[_], messages: Messages)
 
 @paragraphContent = {
     <p class="govuk-body">@messages("amendDirectExportPlasticPackaging.para")</p>

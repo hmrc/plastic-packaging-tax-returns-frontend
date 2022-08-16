@@ -56,7 +56,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[AmendHumanMedicinePlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider())(request,
           messages(application)
         ).toString
       }
@@ -77,7 +77,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), taxReturnOb)(
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer))(
           request,
           messages(application)
         ).toString
@@ -137,7 +137,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm)(request,
           messages(application)
         ).toString
       }

@@ -49,10 +49,10 @@ class AmendRecycledPlasticPackagingController @Inject() (
           case None        => form()
           case Some(value) => form().fill(value)
         }
-
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) => Ok(view(preparedForm, obligation))
-          case None             => Redirect(routes.SubmittedReturnsController.onPageLoad())
+        if (request.userAnswers.get[TaxReturnObligation](ObligationCacheable).isDefined) {
+          Ok(view(preparedForm))
+        } else {
+          Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
 
     }
@@ -62,12 +62,8 @@ class AmendRecycledPlasticPackagingController @Inject() (
       implicit request =>
         val pptId: String = request.pptReference
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have a tax return against which to amend")
-        )
-
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

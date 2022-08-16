@@ -18,24 +18,19 @@ package views.amends
 
 import base.ViewSpecBase
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
-import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
-import java.time.LocalDate
-
 class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
 
   val page: AmendDirectExportPlasticPackagingView = inject[AmendDirectExportPlasticPackagingView]
   val form: Form[Long] = new AmendDirectExportPlasticPackagingFormProvider()()
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-
   private def createView(form: Form[Long] = form): Html =
-    page(form, aTaxObligation)(request, messages)
+    page(form)(request, messages)
 
   "Amend Direct Export packaging page" should {
 

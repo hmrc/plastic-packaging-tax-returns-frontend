@@ -22,13 +22,13 @@ govukPanel: GovukPanel
 @(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("amend.confirmation.title")),
+pageTitle    = titleNoForm(messages("amend.confirmation.title"), Some(messages("return.title.tail"))),
 showBackLink = false
 ) {
 
    @govukPanel(Panel(
                     title = Text(messages("amend.confirmation.submitted")),
-                    content = Text(chargeReference.fold(messages("amend.confirmation.panel.empty"))(ref => messages("amend.confirmation.panel", ref)))
+                    content = Text(chargeReference.fold("")(ref => messages("amend.confirmation.panel", ref)))
                     )
    )
 <p class="govuk-heading-m">@messages("amend.confirmation.subheading")</p>
