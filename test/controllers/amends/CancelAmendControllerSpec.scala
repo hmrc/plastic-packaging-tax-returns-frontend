@@ -19,7 +19,8 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.CancelAmendFormProvider
-import models.{UserAnswers}
+import models.UserAnswers
+import models.returns.TaxReturnObligation
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,6 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.amends.CancelAmendView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
@@ -39,6 +41,8 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new CancelAmendFormProvider()
   val form = formProvider()
+  val aTaxObligation: TaxReturnObligation      = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+
 
   lazy val cancelAmendRoute = controllers.amends.routes.CancelAmendController.onPageLoad.url
 
@@ -46,35 +50,17 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, cancelAmendRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CancelAmendView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(CancelAmendPage, true).success.value
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, cancelAmendRoute)
 
-        val view = application.injector.instanceOf[CancelAmendView]
-
         val result = route(application, request).value
 
+        val view = application.injector.instanceOf[CancelAmendView]
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, aTaxObligation)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +106,7 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, aTaxObligation)(request, messages(application)).toString
       }
     }
 

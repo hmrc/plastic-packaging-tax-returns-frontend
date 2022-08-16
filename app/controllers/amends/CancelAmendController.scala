@@ -16,8 +16,10 @@
 
 package controllers.amends
 
+import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
 import controllers.actions._
 import forms.amends.CancelAmendFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -25,6 +27,8 @@ import pages.amends.CancelAmendPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.CacheConnector
+import models.returns.TaxReturnObligation
+import org.bouncycastle.asn1.ocsp.ResponseData
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.CancelAmendView
 
@@ -39,33 +43,28 @@ class CancelAmendController @Inject()(
                                        formProvider: CancelAmendFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: CancelAmendView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )() extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(CancelAmendPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+        throw new IllegalStateException("Must have an obligation to Submit against")
+      )
 
-      Ok(view(preparedForm))
+      Ok(view(form, obligation))
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors => BadRequest(view(formWithErrors)),
+      formProvider().bindFromRequest().get match {
+        case true => Redirect(routes.CheckYourAnswersController.cancel())
+        case _ => Redirect(routes.CheckYourAnswersController.onPageLoad())
+      }
 
-        value => if (value) {
-          Redirect(routes.SubmittedReturnsController.onPageLoad())
-        }
-        else {
-          Redirect(routes.CheckYourAnswersController.onPageLoad())
-        }
-      )
   }
+
 }

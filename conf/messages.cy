@@ -103,6 +103,10 @@ unauthorised.paragraph.1.link = gofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 unauthorised.paragraph.2 = wch i’r {0} i gael rhagor o wybodaeth.
 unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
+cancelAmend.title = Are you sure you want to cancel amending your return for {0} to {1}?
+cancelAmend.heading = Are you sure you want to cancel amending your return for {0} to {1}?
+cancelAmend.error.required = Select yes to cancel amendment [NEEDS CONTENT]
+
 amendDirectExportPlasticPackaging.title = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.heading = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd gennych

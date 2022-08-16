@@ -131,6 +131,6 @@ POST       /non-exported-medicines-packaging-weight                  controllers
 GET        /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /cancelAmend                        controllers.amends.CancelAmendController.onPageLoad
-POST       /cancelAmend                        controllers.amends.CancelAmendController.onSubmit
+GET        /cancel-amend                        controllers.amends.CancelAmendController.onPageLoad
+POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit
 
