@@ -17,37 +17,33 @@
 package controllers.amends
 
 import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
+import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.CancelAmendFormProvider
-
-import javax.inject.Inject
-import models.Mode
-import navigation.Navigator
-import pages.amends.CancelAmendPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.CacheConnector
+import models.requests.DataRequest
 import models.returns.TaxReturnObligation
-import org.bouncycastle.asn1.ocsp.ResponseData
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.CancelAmendView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancelAmendController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       cacheConnector: CacheConnector,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: CancelAmendFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: CancelAmendView
-                                     )() extends FrontendBaseController with I18nSupport {
+class CancelAmendController @Inject()
+(override val messagesApi: MessagesApi,
+ cacheConnector: CacheConnector,
+ identify: IdentifierAction,
+ getData: DataRetrievalAction,
+ requireData: DataRequiredAction,
+ formProvider: CancelAmendFormProvider,
+ val controllerComponents: MessagesControllerComponents,
+ view: CancelAmendView
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
@@ -57,14 +53,36 @@ class CancelAmendController @Inject()(
       Ok(view(form, obligation))
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      formProvider().bindFromRequest().get match {
-        case true => Redirect(routes.CheckYourAnswersController.cancel())
-        case _ => Redirect(routes.CheckYourAnswersController.onPageLoad())
-      }
+      val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+        throw new IllegalStateException("Must have an obligation to Submit against")
+      )
 
+      formProvider().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
+        value => if (value) {
+          cancel(request)
+        } else {
+          Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
+        }
+      )
+  }
+
+  def cancel(implicit request: DataRequest[_]): Future[Result] = {
+    val pptReference: String = request.request.pptReference
+    val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
+    val futureNextPage = request.userAnswers
+      .reset
+      .save(cacheConnector.saveUserAnswerFunc(pptReference))
+      .map { _ =>
+        maybePeriodKey match {
+          case Some(periodKey) => routes.ViewReturnSummaryController.onPageLoad(periodKey)
+          case _ => routes.SubmittedReturnsController.onPageLoad()
+        }
+      }
+    futureNextPage.map(Redirect)
   }
 
 }

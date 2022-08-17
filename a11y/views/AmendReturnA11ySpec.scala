@@ -140,7 +140,4 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
       render("PK1").toString() must passAccessibilityChecks
     }
   }
-
-  //TODO: Add spec for Heart Page (CheckYourAnswersView)
-
 }

@@ -19,20 +19,15 @@ package controllers.amends
 import base.SpecBase
 import connectors.CacheConnector
 import forms.amends.CancelAmendFormProvider
-import models.UserAnswers
 import models.returns.TaxReturnObligation
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.amends.CancelAmendPage
-import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.amends.CancelAmendView
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
@@ -41,8 +36,7 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new CancelAmendFormProvider()
   val form = formProvider()
-  val aTaxObligation: TaxReturnObligation      = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-
+  val aTaxObligation: TaxReturnObligation      = taxReturnOb
 
   lazy val cancelAmendRoute = controllers.amends.routes.CancelAmendController.onPageLoad.url
 
@@ -64,18 +58,14 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to ViewReturnSummary page when yes" in {
 
       val mockCacheConnector = mock[CacheConnector]
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
+        applicationBuilder(userAnswers = Some(userAnswers))
           .build()
 
       running(application) {
@@ -86,13 +76,34 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.SubmittedReturnsController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ViewReturnSummaryController.onPageLoad("00XX").url
+      }
+    }
+    "must redirect back to amend heart page when no" in {
+
+      val mockCacheConnector = mock[CacheConnector]
+
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, cancelAmendRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
