@@ -17,34 +17,39 @@
 package controllers.amends
 
 import base.SpecBase
+import cacheables.AmendSelectedPeriodKey
 import connectors.CacheConnector
 import forms.amends.CancelAmendFormProvider
-import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.Call
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.amends.CancelAmendView
 
 import scala.concurrent.Future
 
-class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
+class CancelAmendControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val formProvider = new CancelAmendFormProvider()
   val form = formProvider()
-  val aTaxObligation: TaxReturnObligation      = taxReturnOb
 
   lazy val cancelAmendRoute = controllers.amends.routes.CancelAmendController.onPageLoad.url
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(cacheConnector)
+  }
 
   "CancelAmend Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, cancelAmendRoute)
@@ -54,18 +59,17 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[CancelAmendView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, aTaxObligation)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, taxReturnOb)(request, messages(application)).toString
       }
     }
 
-    "must redirect to ViewReturnSummary page when yes" in {
+    "must redirect to SubmittedReturns page when yes (will have no amended period key)" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      when(cacheConnector.saveUserAnswerFunc(any())(any())) thenReturn ((_, _) => Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
           .build()
 
       running(application) {
@@ -74,19 +78,15 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ViewReturnSummaryController.onPageLoad("00XX").url
+        redirectLocation(result).value mustEqual routes.SubmittedReturnsController.onPageLoad().url
       }
     }
     "must redirect back to amend heart page when no" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
           .build()
 
       running(application) {
@@ -98,12 +98,15 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
+        .build()
 
       running(application) {
         val request =
@@ -117,7 +120,7 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, aTaxObligation)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request, messages(application)).toString
       }
     }
 
