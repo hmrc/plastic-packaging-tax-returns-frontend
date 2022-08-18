@@ -105,7 +105,7 @@ unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 cancelAmend.title = Ydych chi’n siŵr eich bod am ganslo diwygio eich datganiad ar gyfer mis {0} i fis {1} {2}?
 cancelAmend.heading = Are you sure you want to cancel amending your return for {0} to {1} {2}?
-cancelAmend.error.required = Select yes if you want to cancel amending your return
+cancelAmend.error.required = Select yes if you want to cancel amending your return [NEEDS WELSH]
 
 amendDirectExportPlasticPackaging.title = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
 amendDirectExportPlasticPackaging.heading = [NEEDS WELSH] How much of your finished plastic packaging components did you directly export?
