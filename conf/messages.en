@@ -102,6 +102,10 @@ unauthorised.paragraph.1.link = register for Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
+cancelAmend.title = Are you sure you want to cancel amending your return for {0} to {1}?
+cancelAmend.heading = Are you sure you want to cancel amending your return for {0} to {1}?
+cancelAmend.error.required = Select yes to cancel amendment [NEEDS CONTENT]
+
 amendDirectExportPlasticPackaging.title = How much of your finished plastic packaging components did you export, or do you intend to export within 12 months?
 amendDirectExportPlasticPackaging.heading = How much of your finished plastic packaging components did you export, or do you intend to export within 12 months?
 amendDirectExportPlasticPackaging.checkYourAnswersLabel = Plastic packaging exported by you
@@ -487,3 +491,4 @@ submit-return.check-your-answers.now-send.button-text = Submit return
 
 submit-return.check-your-answers.error.heading = Submitting your return
 submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
+

@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
@@ -28,24 +28,23 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
-import viewmodels.{PrintBigDecimal, PrintLong}
 import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  returnsConnector: TaxReturnsConnector,
-  appConfig: FrontendAppConfig,
-  val controllerComponents: MessagesControllerComponents,
-  sessionRepository: SessionRepository,
-  view: CheckYourAnswersView,
-  cacheConnector: CacheConnector
+class CheckYourAnswersController @Inject()
+(override val messagesApi: MessagesApi,
+ identify: IdentifierAction,
+ getData: DataRetrievalAction,
+ requireData: DataRequiredAction,
+ returnsConnector: TaxReturnsConnector,
+ appConfig: FrontendAppConfig,
+ val controllerComponents: MessagesControllerComponents,
+ sessionRepository: SessionRepository,
+ view: CheckYourAnswersView,
 ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
@@ -53,22 +52,22 @@ class CheckYourAnswersController @Inject() (
       implicit request =>
         if (!appConfig.isAmendsFeatureEnabled) {
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-        } 
+        }
         else {
           request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
             case Some(obligation) =>
               returnsConnector.getCalculationAmends(request.pptReference).map {
                 case Right(calculations) => displayPage(request, obligation, calculations)
-                case Left(error)         => throw error
+                case Left(error) => throw error
               }
             case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
           }
         }
     }
 
-  private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation, 
-    calculations: AmendsCalculations) (implicit r: DataRequest[_]) = {
-    
+  private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation,
+                          calculations: AmendsCalculations)(implicit r: DataRequest[_]) = {
+
     val totalRows: Seq[AmendSummaryRow] = Seq(
       AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
       AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
@@ -115,21 +114,5 @@ class CheckYourAnswersController @Inject() (
             throw error
         }
     }
-
-  def cancel(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptReference: String = request.request.pptReference
-        val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
-        val futureNextPage = request.userAnswers
-          .reset
-          .save(cacheConnector.saveUserAnswerFunc(pptReference))
-          .map { _ =>
-            maybePeriodKey match {
-              case Some(periodKey) => routes.ViewReturnSummaryController.onPageLoad(periodKey)
-              case _ => routes.SubmittedReturnsController.onPageLoad()
-            }
-          }
-        futureNextPage.map(Redirect)
-    }
+  
 }

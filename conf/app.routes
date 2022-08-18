@@ -29,7 +29,6 @@ GET         /problem-with-service                          controllers.JourneyRe
 
 GET         /amend-return                          controllers.amends.CheckYourAnswersController.onPageLoad()
 POST        /amend-return                          controllers.amends.CheckYourAnswersController.onSubmit()
-GET         /amend-return/cancel                   controllers.amends.CheckYourAnswersController.cancel()
 
 GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
@@ -130,3 +129,8 @@ GET        /non-exported-medicines-packaging-weight                  controllers
 POST       /non-exported-medicines-packaging-weight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /cancel-amend                        controllers.amends.CancelAmendController.onPageLoad()
+POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit()
+
+
