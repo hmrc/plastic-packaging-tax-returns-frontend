@@ -90,8 +90,8 @@ class CheckYourAnswersController @Inject()
         None
       )
     )
-
-    Ok(view(obligation, totalRows, deductionsRows, calculations))
+//todo: logic to discern whether an amendment has been made
+    Ok(view(obligation, totalRows, deductionsRows, calculations, amendmentMade = false))
   }
 
   def onSubmit(): Action[AnyContent] =
