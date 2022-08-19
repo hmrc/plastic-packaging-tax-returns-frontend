@@ -27,9 +27,9 @@
 @(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @pageHeading =  @{messages("cancelAmend.title",
-               messages(s"month.${obligation.fromDate.getMonthValue}"),
-               messages(s"month.${obligation.toDate.getMonthValue}")
-                            )
+                messages(s"month.${obligation.fromDate.getMonthValue}"),
+                messages(s"month.${obligation.toDate.getMonthValue}"),
+                obligation.toDate.getYear.toString)
                 }
 
 

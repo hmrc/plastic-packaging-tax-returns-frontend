@@ -45,13 +45,13 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
     "have a title" in {
 
       view.select("title").text mustBe
-        "Are you sure you want to cancel amending your return for July to October? - Plastic Packaging Tax - GOV.UK"
+        "Are you sure you want to cancel amending your return for July to October 2022? - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a heading" in{
 
       view.select("h1").text mustBe
-        "Are you sure you want to cancel amending your return for July to October?"
+        "Are you sure you want to cancel amending your return for July to October 2022?"
 
     }
 
