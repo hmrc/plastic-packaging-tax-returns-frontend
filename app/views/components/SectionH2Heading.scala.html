@@ -16,6 +16,6 @@
 
 @this()
 
-@(message: String, id: Option[String] = Some("submitted-return-section-header"))
+@(message: String, id: Option[String] = None)
 
 <h2 class="govuk-heading-m govuk-!-margin-top-6" @id.map{id => id="@id"}>@message</h2>
