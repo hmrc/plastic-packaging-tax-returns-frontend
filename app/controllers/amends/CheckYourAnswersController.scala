@@ -27,6 +27,7 @@ import models.returns.{AmendsCalculations, ReturnDisplayApi, TaxReturnObligation
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}
+import services.AmendReturnAnswerComparisonService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
@@ -42,6 +43,7 @@ class CheckYourAnswersController @Inject()
  requireData: DataRequiredAction,
  returnsConnector: TaxReturnsConnector,
  appConfig: FrontendAppConfig,
+ comparisonService: AmendReturnAnswerComparisonService,
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
@@ -91,7 +93,9 @@ class CheckYourAnswersController @Inject()
       )
     )
 
-    Ok(view(obligation, totalRows, deductionsRows, calculations))
+    val amendmentMade = comparisonService.hasMadeChangesOnAmend(request.userAnswers)
+
+    Ok(view(obligation, totalRows, deductionsRows, calculations, amendmentMade))
   }
 
   def onSubmit(): Action[AnyContent] =

@@ -34,12 +34,12 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "PK1")
 
 
-  private def createView(calculation: AmendsCalculations): Html = {
-    page(obligation, Seq.empty, Seq.empty, calculation)(request, messages)
+  private def createView(calculation: AmendsCalculations, amendmentMade: Boolean): Html = {
+    page(obligation, Seq.empty, Seq.empty, calculation, amendmentMade)(request, messages)
   }
   "View" should {
     "not allow to submit return when deduction greater than accretion" in {
-        val view = createView(createCalculations(false))
+        val view = createView(createCalculations(false), true)
 
         view.getElementsByClass("govuk-button") mustBe empty
         view.getElementById("submit-amend-return-header-error").text() mustBe "Submitting your amended return"
@@ -49,24 +49,30 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
       }
 
     "not display send your amended return message when deduction greater than accretion" in {
-      val view = createView(createCalculations(false))
+      val view = createView(createCalculations(false), true)
 
       view.getElementById("now-send-heading") mustBe null
       view.getElementById("now-send-paragraph") mustBe null
     }
 
     "display the Confirm and Continue button" in {
-      createView(createCalculations(true))
+      createView(createCalculations(true), true)
         .getElementsByClass("govuk-button") must not be empty
     }
 
     "display send now message when deduction less equal then accretion" in {
-      val view = createView(createCalculations(true))
+      val view = createView(createCalculations(true), true)
 
       view.getElementById("now-send-heading").text() mustBe "Now send your amended return"
       view.getElementById("now-send-heading").text() mustBe messages("AmendsCheckYourAnswers.nowSend.heading")
       view.getElementById("now-send-paragraph").text() mustBe "By submitting this amended return you are confirming that, to the best of your knowledge, the details you are providing are correct."
       view.getElementById("now-send-paragraph").text() mustBe messages("AmendsCheckYourAnswers.nowSend.para")
+    }
+
+    "hide submit button and show message when no amendments have been made" in {
+      val view = createView(createCalculations(true), false)
+
+      view.text() must include("You cannot submit this amended return as you have not made any changes.")
     }
   }
 

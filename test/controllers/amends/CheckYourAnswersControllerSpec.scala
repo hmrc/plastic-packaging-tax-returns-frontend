@@ -43,7 +43,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockView = mock[CheckYourAnswersView]
   val expectedHtml = Html("correct view")
-  when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(expectedHtml)
+  when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(expectedHtml)
 
   override def applicationBuilder(userAnswers: Option[UserAnswers]): GuiceApplicationBuilder =
     super.applicationBuilder(userAnswers)
@@ -124,7 +124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           refEq(taxReturnOb),
           refEq(totalRows),
           refEq(deductionsRows),
-          refEq(calculationsRows))(any(), any())
+          refEq(calculationsRows),any())(any(), any())
 
       }
     }

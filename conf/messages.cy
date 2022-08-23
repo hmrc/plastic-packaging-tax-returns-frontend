@@ -79,11 +79,13 @@ AmendsCheckYourAnswers.deductionsTotal = Cyfanswm y didyniadau
 AmendsCheckYourAnswers.title = [NEEDS WELSH] Amend your return for {0}
 AmendsCheckYourAnswers.hiddenCell.action = [NEEDS WELSH] You cannot amend this field
 AmendsCheckYourAnswers.hiddenCell.newAnswer = [NEEDS WELSH] Not yet amended
-AmendsCheckYourAnswers.submit = [NEEDS WELSH] Submit amended return
+AmendsCheckYourAnswers.submit = Cyflwynwch Ffurflen Dreth ddiwygiedig
 AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
-AmendsCheckYourAnswers.error.heading = [NEEDS WELSH] Submitting your amended return
-AmendsCheckYourAnswers.error.line = [NEEDS WELSH] You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
-AmendsCheckYourAnswers.cancel.link.text = [NEEDS WELSH] Cancel this amendment
+AmendsCheckYourAnswers.error.heading = Cyflwyno’ch Ffurflen Dreth diwygiedig
+AmendsCheckYourAnswers.error.line = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
+AmendsCheckYourAnswers.cancel.link.text = Canslo’r diwygiad hwn
+AmendsCheckYourAnswers.error.noAmendments = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon gan nad ydych wedi gwneud unrhyw newidiadau.
+
 
 journeyRecovery.continue.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 journeyRecovery.continue.heading = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth

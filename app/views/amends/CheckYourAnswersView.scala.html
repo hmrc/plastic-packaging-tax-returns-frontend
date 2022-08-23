@@ -36,7 +36,36 @@
 )
 
 @(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], 
-        calculations: AmendsCalculations)(implicit request: Request[_], messages: Messages)
+        calculations: AmendsCalculations, amendmentMade: Boolean)(implicit request: Request[_], messages: Messages)
+
+@noAmendmentsMadeContent = {@sectionH2Heading(message = messages("AmendsCheckYourAnswers.error.heading"), id = Some("submit-amend-return-header-error"))
+                            @paragraphBody(
+                                message = messages("AmendsCheckYourAnswers.error.noAmendments"),
+                                id = Some("submit-amend-return-error-no-amendment"),
+                                classes = "govuk-body govuk-!-margin-bottom-6"
+                            )
+                            }
+
+@submitContent = {@if(calculations.amend.isSubmittable) {
+                        @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+                            @sectionH2Heading(message = messages("AmendsCheckYourAnswers.nowSend.heading"), id = Some("now-send-heading"))
+                            @paragraphBody(
+                                message = messages("AmendsCheckYourAnswers.nowSend.para"),
+                                id = Some("now-send-paragraph")
+                            )
+
+                            @govukButton(ButtonViewModel(messages("AmendsCheckYourAnswers.submit")))
+                        }
+                    } else {
+                        @sectionH2Heading(message = messages("AmendsCheckYourAnswers.error.heading"), id = Some("submit-amend-return-header-error"))
+                        @paragraphBody(
+                            message = messages("AmendsCheckYourAnswers.error.line"),
+                            id = Some("submit-amend-return-error-line"),
+                            classes = "govuk-body govuk-!-margin-bottom-6"
+                        )
+                }}
+
+
 
 @layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))), 
     showBackLink = false) {
@@ -95,24 +124,9 @@
 
     <br>
 
-    @if(calculations.amend.isSubmittable) {
-        @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
-            @sectionH2Heading(message = messages("AmendsCheckYourAnswers.nowSend.heading"), id = Some("now-send-heading"))
-            @paragraphBody(
-                message = messages("AmendsCheckYourAnswers.nowSend.para"),
-                id = Some("now-send-paragraph")
-            )
+    @if(amendmentMade){ @submitContent }else{ @noAmendmentsMadeContent }
 
-            @govukButton(ButtonViewModel(messages("AmendsCheckYourAnswers.submit")))
-        }
-    } else {
-        @sectionH2Heading(message = messages("AmendsCheckYourAnswers.error.heading"), id = Some("submit-amend-return-header-error"))
-        @paragraphBody(
-            message = messages("AmendsCheckYourAnswers.error.line"),
-            id = Some("submit-amend-return-error-line"),
-            classes = "govuk-body govuk-!-margin-bottom-6"
-        )
-    }
+
 
     @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"),
         call = controllers.amends.routes.CancelAmendController.onPageLoad))

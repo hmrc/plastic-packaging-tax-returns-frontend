@@ -42,17 +42,20 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
   val deductionsRows = createDeductionTable
   val calculations = createCalculationTable
 
-  private def render(isSubmittable: Boolean): String = {
-    page(obligation, totalRows, deductionsRows, calculations)(request, messages).toString()
+  private def render(isSubmittable: Boolean, amendmentMade: Boolean): String = {
+    page(obligation, totalRows, deductionsRows, calculations, amendmentMade)(request, messages).toString()
   }
 
   "pass accessibility checks" when {
     "no error" in {
-      render(true) must passAccessibilityChecks
+      render(true, true) must passAccessibilityChecks
     }
 
     "calculation grater than accretion" in {
-      render(false) must passAccessibilityChecks
+      render(false, true) must passAccessibilityChecks
+    }
+    "no amendments made" in {
+      render(true, false)
     }
   }
 
