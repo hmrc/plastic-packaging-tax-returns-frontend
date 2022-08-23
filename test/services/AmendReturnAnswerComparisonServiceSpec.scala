@@ -20,7 +20,7 @@ import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.scalatestplus.play.PlaySpec
-import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendHumanMedicinePlasticPackagingPage, AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.amends._
 
 class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
 
@@ -80,6 +80,14 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
       "directExports has been amended" in {
         val userAnswersWithOneChange = userAnswersNoChanges.set(AmendDirectExportPlasticPackagingPage, 333L)
         service.hasMadeChangesOnAmend(userAnswersWithOneChange.get) mustBe true
+      }
+      "we have a pointless change as well as useful ones" in {
+        val userAnswersWithOneUsefulAndOnePointlessChange: UserAnswers = userAnswersNoChanges
+          .set(AmendDirectExportPlasticPackagingPage, 220L).get
+          .set(AmendRecycledPlasticPackagingPage, 20L).get
+
+        service.hasMadeChangesOnAmend(userAnswersWithOneUsefulAndOnePointlessChange) mustBe true
+
       }
     }
     "throws exception" when {

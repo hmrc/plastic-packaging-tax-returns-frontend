@@ -18,6 +18,8 @@ package services
 
 import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
+import models.returns.ReturnDisplayDetails
+import pages.QuestionPage
 import pages.amends._
 
 class AmendReturnAnswerComparisonService {
@@ -28,16 +30,16 @@ class AmendReturnAnswerComparisonService {
 
       case Some(original) =>
 
-        val manufacturedHasChanged: Boolean = !userAnswers.get(AmendManufacturedPlasticPackagingPage)
-        .contains(original.returnDetails.manufacturedWeight)
-        val importedHasChanged: Boolean = !userAnswers.get(AmendImportedPlasticPackagingPage)
-          .contains(original.returnDetails.importedWeight)
-        val directExportHasChanged: Boolean = !userAnswers.get(AmendDirectExportPlasticPackagingPage)
-          .contains(original.returnDetails.directExports)
-        val recycledHasChanged: Boolean = !userAnswers.get(AmendRecycledPlasticPackagingPage)
-          .contains(original.returnDetails.recycledPlastic)
-        val humanMedicinesHasChanged: Boolean = !userAnswers.get(AmendHumanMedicinePlasticPackagingPage)
-          .contains(original.returnDetails.humanMedicines)
+        val manufacturedHasChanged: Boolean = userAnswers.get(AmendManufacturedPlasticPackagingPage)
+          .exists(_ != original.returnDetails.manufacturedWeight)
+        val importedHasChanged: Boolean = userAnswers.get(AmendImportedPlasticPackagingPage)
+          .exists(_ != original.returnDetails.importedWeight)
+        val directExportHasChanged: Boolean = userAnswers.get(AmendDirectExportPlasticPackagingPage)
+          .exists(_ != original.returnDetails.directExports)
+        val recycledHasChanged: Boolean = userAnswers.get(AmendRecycledPlasticPackagingPage)
+          .exists(_ != original.returnDetails.recycledPlastic)
+        val humanMedicinesHasChanged: Boolean = userAnswers.get(AmendHumanMedicinePlasticPackagingPage)
+          .exists(_ != original.returnDetails.humanMedicines)
 
         val anAmendmentHasBeenMade: Boolean =
           userAnswers.get(AmendManufacturedPlasticPackagingPage).isDefined ||
@@ -52,7 +54,7 @@ class AmendReturnAnswerComparisonService {
             directExportHasChanged,
             recycledHasChanged,
             humanMedicinesHasChanged)
-            .forall(identity)
+            .contains(true)
 
         anAmendmentHasBeenMade && aUsefulAmendHasBeenMade
 
