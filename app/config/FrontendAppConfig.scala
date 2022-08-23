@@ -129,6 +129,9 @@ class FrontendAppConfig @Inject() (
   def pptFinancialsUrl(pptReference: String): String =
     s"$pptServiceHost/financials/open/$pptReference"
 
+  def pptDDInProgress(pptReference: String, periodKey: String): String =
+    s"$pptServiceHost/financials/dd-in-progress/$pptReference/$periodKey"
+
   def makePaymentUrl: String =
     servicesConfig.baseUrl("pay-api") + "/pay-api/plastic-packaging-tax/journey/start"
 

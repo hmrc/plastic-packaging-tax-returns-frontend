@@ -18,7 +18,7 @@ package controllers
 
 import base.{MockObligationsConnector, SpecBase}
 import connectors.{CacheConnector, ObligationsConnector, TaxReturnsConnector}
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import models.returns.{DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{verify, when}
@@ -52,6 +52,8 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
         Future.successful(Right(submittedReturn))
       )
 
+      when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+
       when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -72,7 +74,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel, Call("", "/plastic-packaging-tax/viewReturnSummary/00XX/amend"))(
+        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/00XX/amend")))(
           request,
           messages(application)
         ).toString

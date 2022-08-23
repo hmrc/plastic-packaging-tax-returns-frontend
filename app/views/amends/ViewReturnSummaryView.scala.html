@@ -29,7 +29,7 @@
     paragraphBody: paragraphBody
 )
 
-@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Call)(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call])(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
@@ -45,7 +45,12 @@
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
 
     @if(appConfig.isAmendsFeatureEnabled){
-        <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall)</p>
+        @amendCall.fold{
+            <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
+            <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
+        }{ amendCall =>
+            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall)</p>
+        }
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>
         <div class="govuk-inset-text">

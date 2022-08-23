@@ -298,6 +298,8 @@ NonExportRecycledPlasticPackagingWeight.paragraph = Bydd hyn yn dangos fel didyn
 
 viewReturnSummary.sectionHeader = Cyflwynwyd Ffurflen Dreth ar gyfer
 viewReturnSummary.amendLink = Diwygio’r Ffurflen Dreth hon
+viewReturnSummary.amend.notamendable.h2 = Ni allwch ddiwygio’r Ffurflen Dreth hon eto
+viewReturnSummary.amend.notamendable.p1 = Mae gennych daliad Debyd Uniongyrchol sy’n ddyledus cyn pen 3 diwrnod. Gallwch ddiwygio’r Ffurflen Dreth hon ar ôl i’r taliad hwn gael ei wneud.
 viewReturnSummary.amend.inset.text = Os oes angen i chi wneud newidiadau i’ch Ffurflen Dreth, bydd angen i chi {0}.
 viewReturnSummary.amend.inset.link = gyflwyno Ffurflen Dreth newydd gan ddefnyddio’r ffurflen ar-lein hon
 viewReturnSummary.viewReturnsLink = Bwrw golwg dros Ffurflenni Treth a gyflwynwyd o gyfnodau eraill
