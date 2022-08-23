@@ -45,13 +45,13 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
 
       "a field has been amended to the same value" in {
         val userAnswersWithPointlessChange: UserAnswers = userAnswersNoChanges
-          .set(AmendManufacturedPlasticPackagingPage,500L).get
+          .set(AmendManufacturedPlasticPackagingPage, 500L).get
 
         service.hasMadeChangesOnAmend(userAnswersWithPointlessChange) mustBe false
       }
       "multiple fields have pointless amendments" in {
         val userAnswersWithPointlessChange: UserAnswers = userAnswersNoChanges
-          .set(AmendManufacturedPlasticPackagingPage,500L).get
+          .set(AmendManufacturedPlasticPackagingPage, 500L).get
           .set(AmendImportedPlasticPackagingPage, 400L).get
 
         service.hasMadeChangesOnAmend(userAnswersWithPointlessChange) mustBe false
@@ -83,7 +83,11 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
       }
     }
     "throws exception" when {
-      "when returnDisplayAPI is missing"in{
+      "when returnDisplayAPI is missing" in {
+        val userAnswersNoRDA = UserAnswers("userAnswersId")
+        val exception = intercept[Exception](service.hasMadeChangesOnAmend(userAnswersNoRDA))
+
+        exception.getMessage mustBe "Original return missing from user answers"
 
       }
 

@@ -23,31 +23,42 @@ import pages.amends._
 class AmendReturnAnswerComparisonService {
 
   def hasMadeChangesOnAmend(userAnswers: UserAnswers): Boolean = {
-    val original = userAnswers.get(ReturnDisplayApiCacheable).get
+    userAnswers.get(ReturnDisplayApiCacheable) match {
+      case None => throw new Exception("Original return missing from user answers")
 
-    val manufacturedHasChanged: Boolean = !userAnswers.get(AmendManufacturedPlasticPackagingPage).contains(original.returnDetails.manufacturedWeight)
-    val importedHasChanged: Boolean = !userAnswers.get(AmendImportedPlasticPackagingPage).contains(original.returnDetails.importedWeight)
-    val directExportHasChanged: Boolean = !userAnswers.get(AmendDirectExportPlasticPackagingPage).contains(original.returnDetails.directExports)
-    val recycledHasChanged: Boolean = !userAnswers.get(AmendRecycledPlasticPackagingPage).contains(original.returnDetails.recycledPlastic)
-    val humanMedicinesHasChanged: Boolean = !userAnswers.get(AmendHumanMedicinePlasticPackagingPage).contains(original.returnDetails.humanMedicines)
+      case Some(original) =>
 
-    val amendmentHasBeenMade: Boolean = userAnswers.get(AmendManufacturedPlasticPackagingPage).isDefined ||
-      userAnswers.get(AmendImportedPlasticPackagingPage).isDefined ||
-      userAnswers.get(AmendDirectExportPlasticPackagingPage).isDefined ||
-      userAnswers.get(AmendRecycledPlasticPackagingPage).isDefined ||
-      userAnswers.get(AmendHumanMedicinePlasticPackagingPage).isDefined
+        val manufacturedHasChanged: Boolean = !userAnswers.get(AmendManufacturedPlasticPackagingPage)
+        .contains(original.returnDetails.manufacturedWeight)
+        val importedHasChanged: Boolean = !userAnswers.get(AmendImportedPlasticPackagingPage)
+          .contains(original.returnDetails.importedWeight)
+        val directExportHasChanged: Boolean = !userAnswers.get(AmendDirectExportPlasticPackagingPage)
+          .contains(original.returnDetails.directExports)
+        val recycledHasChanged: Boolean = !userAnswers.get(AmendRecycledPlasticPackagingPage)
+          .contains(original.returnDetails.recycledPlastic)
+        val humanMedicinesHasChanged: Boolean = !userAnswers.get(AmendHumanMedicinePlasticPackagingPage)
+          .contains(original.returnDetails.humanMedicines)
 
-    val aUsefulAmendHasBeenMade: Boolean =
-      Seq(manufacturedHasChanged,
-        importedHasChanged,
-        directExportHasChanged,
-        recycledHasChanged,
-        humanMedicinesHasChanged)
-        .forall(identity)
+        val anAmendmentHasBeenMade: Boolean =
+          userAnswers.get(AmendManufacturedPlasticPackagingPage).isDefined ||
+            userAnswers.get(AmendImportedPlasticPackagingPage).isDefined ||
+            userAnswers.get(AmendDirectExportPlasticPackagingPage).isDefined ||
+            userAnswers.get(AmendRecycledPlasticPackagingPage).isDefined ||
+            userAnswers.get(AmendHumanMedicinePlasticPackagingPage).isDefined
 
-//println("amendmentHasBeenMade: " + amendmentHasBeenMade + "| aUsefulAmendHasBeenMade: " + aUsefulAmendHasBeenMade)
+        val aUsefulAmendHasBeenMade: Boolean =
+          Seq(manufacturedHasChanged,
+            importedHasChanged,
+            directExportHasChanged,
+            recycledHasChanged,
+            humanMedicinesHasChanged)
+            .forall(identity)
 
-    amendmentHasBeenMade && aUsefulAmendHasBeenMade
+        anAmendmentHasBeenMade && aUsefulAmendHasBeenMade
+
+    }
+
+
 
   }
 
