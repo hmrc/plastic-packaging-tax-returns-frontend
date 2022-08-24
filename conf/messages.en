@@ -186,7 +186,7 @@ amendRecycledPlasticPackaging.hint = Enter the weight, in kilograms. 1 tonne is 
 
 amend.confirmation.title = Your return will be amended
 amend.confirmation.submitted = Your return will be amended
-amend.confirmation.panel = Your charge reference for this amendment is {0}
+amend.confirmation.panel = Your charge reference for this amendment is
 amend.confirmation.check.account = Check your Plastic Packaging Tax account
 amend.confirmation.subheading  = What happens next
 amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Plastic Packaging Tax account.

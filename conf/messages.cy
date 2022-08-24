@@ -191,7 +191,7 @@ amendRecycledPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dun
 
 amend.confirmation.title = Bydd eich Ffurflen Dreth yn cael ei diwygio
 amend.confirmation.submitted = Bydd eich Ffurflen Dreth yn cael ei diwygio
-amend.confirmation.panel = Eich cyfeirnod tâl ar gyfer y diwygiad hwn yw {0}
+amend.confirmation.panel = Eich cyfeirnod tâl ar gyfer y diwygiad hwn yw
 amend.confirmation.check.account = Gwiriwch eich cyfrif Treth Deunydd Pacio Plastig
 amend.confirmation.subheading  = Yr hyn sy’n digwydd nesaf
 amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar eich cyfrif Treth Deunydd Pacio Plastig.
