@@ -106,11 +106,10 @@ class TaxReturnsConnectorSpec
 
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
-          body = """{"chargeDetails": {"chargeReference": "SOMEREF"}}""",
-          subId = "submission-214"
+          body = """{"chargeDetails": {"chargeReference": "SOMEREF"}}"""
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
 
         res.isRight mustBe true
         res.value mustBe Some("SOMEREF")
@@ -122,10 +121,9 @@ class TaxReturnsConnectorSpec
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
           body = """{"chargeDetails": null}""",
-          subId = "submission-214"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
 
         res.isRight mustBe true
         res.value mustBe None
@@ -165,11 +163,10 @@ class TaxReturnsConnectorSpec
 
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
-          body = "{",
-          subId = "submission-214"
+          body = "{"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference, "submission-214"))
+        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
 
         assert(res.left.get.isInstanceOf[DownstreamServiceError])
 
@@ -209,10 +206,9 @@ class TaxReturnsConnectorSpec
                                                     status: Int,
                                                     pptReference: String,
                                                     body: String = "",
-                                                    subId: String
                                                   ): StubMapping =
     stubFor(
-      WireMock.get(s"/returns-amend/$pptReference/$subId")
+      WireMock.get(s"/returns-amend/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)

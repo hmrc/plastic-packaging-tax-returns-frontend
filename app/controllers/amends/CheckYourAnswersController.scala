@@ -105,7 +105,7 @@ class CheckYourAnswersController @Inject()
           .idDetails
           .submissionId
 
-        returnsConnector.amend(pptId, submissionId).flatMap {
+        returnsConnector.amend(pptId).flatMap {
           case Right(optChargeRef) =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
