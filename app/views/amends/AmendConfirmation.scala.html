@@ -21,6 +21,17 @@ govukPanel: GovukPanel
 
 @(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
 
+@chargeRefMsg = @{
+    chargeReference.fold(HtmlFormat.empty)(ref => {
+        Html(s"""<div class="govuk-panel__body">
+                ${messages("amend.confirmation.panel")}
+                    <strong>$ref</strong>
+            </div>"""
+        )
+    })
+}
+
+
 @layout(
 pageTitle    = titleNoForm(messages("amend.confirmation.title"), Some(messages("return.title.tail"))),
 showBackLink = false
@@ -28,7 +39,7 @@ showBackLink = false
 
    @govukPanel(Panel(
                     title = Text(messages("amend.confirmation.submitted")),
-                    content = Text(chargeReference.fold("")(ref => messages("amend.confirmation.panel", ref)))
+                    content = HtmlContent(chargeRefMsg)
                     )
    )
 <p class="govuk-heading-m">@messages("amend.confirmation.subheading")</p>
