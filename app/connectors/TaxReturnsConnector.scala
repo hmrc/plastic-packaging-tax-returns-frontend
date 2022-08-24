@@ -18,7 +18,7 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import models.returns.{AmendsCalculations, Calculations, ReturnDisplayApi}
+import models.returns.{AmendsCalculations, Calculations, ReturnDisplayApi, DDInProgressApi}
 import play.api.Logger
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
@@ -49,6 +49,9 @@ class TaxReturnsConnector @Inject()(
           Left(DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex))
       }
   }
+
+  def ddInProgress(pptReference: String, periodKey: String)(implicit hc: HeaderCarrier): Future[DDInProgressApi] =
+    httpClient.GET[DDInProgressApi](appConfig.pptDDInProgress(pptReference, periodKey))
 
   def getCalculationAmends(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, AmendsCalculations]] =
     httpClient.GET[AmendsCalculations](appConfig.pptAmendsCalculationUrl(pptReference)).
@@ -82,10 +85,10 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-  def amend(pptReference: String, submissionId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+  def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](appConfig.pptReturnAmendUrl(pptReference, submissionId))
+    httpClient.GET[JsValue](appConfig.pptReturnAmendUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)

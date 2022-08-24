@@ -17,7 +17,7 @@
 package controllers.amends
 
 import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
-import connectors.CacheConnector
+import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import models.requests.OptionalDataRequest
@@ -39,7 +39,8 @@ class ViewReturnSummaryController @Inject() (
   getData: DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
-  taxReturnHelper: TaxReturnHelper
+  taxReturnHelper: TaxReturnHelper,
+  returnsConnector: TaxReturnsConnector
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -47,9 +48,9 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
 
-        fetchData(periodKey).map { case (_, submittedReturn, obligation) =>
+        fetchData(periodKey).map { case (_, submittedReturn, obligation, ddInProgress) =>
           val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
-          val amendCall: Call = controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)
+          val amendCall: Option[Call] = Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)).filter(_ => !ddInProgress)
           Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
         }
     }
@@ -58,13 +59,15 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
         
-      fetchData(periodKey).flatMap { case (pptReference, submittedReturn, obligation) => 
+      fetchData(periodKey).flatMap { case (pptReference, submittedReturn, obligation, ddInProgress) =>
+        if (ddInProgress) throw new Exception("Can not amend a return that has a Direct Debit collection in progress") else {
           val future = if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
-            reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
-          else
-            Future.unit
+              reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
+            else
+              Future.unit
           future.map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
         }
+      }
     }
     
   private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_]) = {
@@ -73,11 +76,13 @@ class ViewReturnSummaryController @Inject() (
 
     val futureReturn = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
     val futureObligation = taxReturnHelper.getObligation(pptReference, periodKey)
+    val futureDDInProgress = returnsConnector.ddInProgress(pptReference, periodKey)
     for {
       submittedReturn <- futureReturn
       obligation <- futureObligation
+      ddInProgress <- futureDDInProgress
     } yield {
-      (pptReference, submittedReturn, obligation)
+      (pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress)
     }
   }
 
