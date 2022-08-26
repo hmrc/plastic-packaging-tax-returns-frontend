@@ -64,7 +64,6 @@ object ViewReturnSummaryViewModel {
   def apply(submittedReturn: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        "liability" -> submittedReturn.returnDetails.taxDue.asPounds,
         "processed" -> ViewUtils.displayLocalDate(toLocalDate(submittedReturn.processingDate)),
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),

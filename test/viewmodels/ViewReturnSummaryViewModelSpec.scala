@@ -52,26 +52,22 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
       summarySection.titleKey mustBe "viewReturnSummary.summary.heading"
     }
 
-    "have 3 entries" in {
-      summarySection.fields must have size 3
-    }
-
-    "have the liability field" in {
-      summarySection.fields.head mustBe Field("viewReturnSummary.summary.field.liability", "£10.00")
+    "have 2 entries" in {
+      summarySection.fields must have size 2
     }
 
     "have the processed field" in {
-      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.processed", "28 August 2019")
+      summarySection.fields(0) mustBe Field("viewReturnSummary.summary.field.processed", "28 August 2019")
     }
 
     "have the reference field" in {
-      summarySection.fields(2) mustBe Field("viewReturnSummary.summary.field.reference", "charge-ref-no")
+      summarySection.fields(1) mustBe Field("viewReturnSummary.summary.field.reference", "charge-ref-no")
     }
 
     "say 'n/a' when the charge reference number is not available" in {
       val anotherReturn = submittedReturn.copy(chargeDetails = Some(returnDisplayChargeDetails.copy(chargeReference = None)))
       val section = ViewReturnSummaryViewModel(anotherReturn)(mockMessages).summarySection
-      section.fields(2) mustBe Field("viewReturnSummary.summary.field.reference", "n/a")
+      section.fields(1) mustBe Field("viewReturnSummary.summary.field.reference", "n/a")
     }
 
   }
