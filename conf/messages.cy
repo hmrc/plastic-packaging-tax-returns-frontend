@@ -106,12 +106,11 @@ unauthorised.paragraph.2 = wch i’r {0} i gael rhagor o wybodaeth.
 unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 cancelAmend.title = Ydych chi’n siŵr eich bod am ganslo diwygio eich datganiad ar gyfer mis {0} i fis {1} {2}?
-cancelAmend.heading = Are you sure you want to cancel amending your return for {0} to {1} {2}?
 cancelAmend.error.required = Select yes if you want to cancel amending your return [NEEDS WELSH]
 
 amendDirectExportPlasticPackaging.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
-amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd gennych
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd
 amendDirectExportPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendDirectExportPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendDirectExportPlasticPackaging.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
@@ -473,7 +472,7 @@ submit-return.check-your-answers.tax-calc.row3 = Cyfanswm y deunydd pacio plasti
 submit-return.check-your-answers.tax-calc.row4 = Treth sy’n ddyledus ar y Ffurflen Dreth hon
 submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
 
-submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig a allforiwyd gennych
