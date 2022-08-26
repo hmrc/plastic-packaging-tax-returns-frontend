@@ -110,7 +110,7 @@ cancelAmend.error.required = Select yes if you want to cancel amending your retu
 
 amendDirectExportPlasticPackaging.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
-amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd gennych
+amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd
 amendDirectExportPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendDirectExportPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendDirectExportPlasticPackaging.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
