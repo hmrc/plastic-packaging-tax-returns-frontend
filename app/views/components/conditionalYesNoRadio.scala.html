@@ -18,16 +18,16 @@
 
 @this(
       radios: GovukRadios
-        )
+      )
 
-@(  form: Form[_],
-    maybeHeadingKey: Option[String],
-    ifYes: Option[Html] = None,
-    ifNo: Option[Html] = None,
-    hint: Option[Html] = None,
-    headingMessageArgs: Seq[String] = Seq(),
-    isPageHeading: Boolean = true,
-    classes: String = "govuk-fieldset__legend--l"
+@(form: Form[_],
+  maybeHeadingKey: Option[String],
+  ifYes: Option[Html] = None,
+  ifNo: Option[Html] = None,
+  hint: Option[Html] = None,
+  headingMessageArgs: Seq[String] = Seq(),
+  isPageHeading: Boolean = true,
+  classes: String = "govuk-fieldset__legend--l"
 )(implicit messages: Messages)
 
 @radios(Radios(
