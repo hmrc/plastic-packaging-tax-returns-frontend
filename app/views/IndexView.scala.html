@@ -195,26 +195,17 @@
 
     <div class="govuk-grid-row govuk-!-grid-column-full govuk-!-margin-top-6 ">
 
-        @if(appConfig.isFeatureEnabled(Features.returnsEnabled)){
-            @card(header = messages("account.homePage.card.makeReturn.header"),
-                lines = Seq[Option[String]](
-                    returnsLine1,
-                    returnsLine2,
-                    returnsError
-                ).filter(_.isDefined).flatten,
-                links = Seq[Option[Html]](
-                    returnsLink,
-                    Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
-                ).filter(_.isDefined).flatten
-            )
-        } else {
-            @card(header = messages("account.homePage.card.makeReturn.header"),
-                lines = Seq(
-                    messages("account.homePage.card.makeReturn.failure")
-                ),
-                links = Seq.empty
-            )
-        }
+        @card(header = messages("account.homePage.card.makeReturn.header"),
+            lines = Seq[Option[String]](
+                returnsLine1,
+                returnsLine2,
+                returnsError
+            ).filter(_.isDefined).flatten,
+            links = Seq[Option[Html]](
+                returnsLink,
+                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
+            ).filter(_.isDefined).flatten
+        )
 
         @* <!-- todo should the link always show? --> *@
         @card(header = messages("account.homePage.card.payments.header"),

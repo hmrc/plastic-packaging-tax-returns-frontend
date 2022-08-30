@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -49,36 +49,26 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        if (!appConfig.isFeatureEnabled(Features.returnsEnabled)){
-          logger.info("Returns disabled. Redirecting to account homepage.")
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-        } else {
-          request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-            case Some(obligation) => displayPage(request, obligation)
-            case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-          }
+        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          case Some(obligation) => displayPage(request, obligation)
+          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
 
   private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
-                         (implicit messages: Messages, hc: HeaderCarrier) = {
-
-    returnsConnector.getCalculationReturns(request.pptReference).flatMap {
+                         (implicit messages: Messages, hc: HeaderCarrier): Future[Result] =
+    returnsConnector.getCalculationReturns(request.pptReference).map {
       case Right(calculations) =>
         val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
-        Future.successful(Ok(view(returnViewModel)(request, messages)))
+        Ok(view(returnViewModel, appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled))(request, messages))
       case Left(error) => throw error
     }
 
-  }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-
-        val pptId: String = request.pptReference
-
-        returnsConnector.submit(pptId).flatMap {
+        returnsConnector.submit(request.pptReference).flatMap {
           case Right(optChargeRef) =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
               _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
