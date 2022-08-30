@@ -46,7 +46,6 @@ import scala.concurrent.Future
 class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
 
   val mockTaxReturnHelper: TaxReturnHelper      = mock[TaxReturnHelper]
-  def onwardRoute: Call                         = Call("GET", "/foo")
   val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
   val mockAuditConnector: AuditConnector        = mock[AuditConnector]
 
@@ -124,7 +123,6 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
             bind[AuditConnector].toInstance(mockAuditConnector)
@@ -139,7 +137,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).toString
 
       }
     }
@@ -155,7 +153,6 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
             bind[AuditConnector].toInstance(mockAuditConnector)
@@ -188,7 +185,6 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
             bind[AuditConnector].toInstance(mockAuditConnector)

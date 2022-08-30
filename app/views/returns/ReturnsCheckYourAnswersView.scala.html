@@ -34,7 +34,7 @@
     sectionH2Heading: SectionH2Heading
 )
 
-@(taxReturn: TaxReturnViewModel)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, creditsEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @hiddenText(key: String) = @{
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
@@ -174,10 +174,14 @@
 
     <!-- Credits -->
     @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"))
-    @para("credits.line1")
-    @para("credits.line2")
-    @bullets("credits.line3", "credits.line4")
-    @paraLink("credits.line5", "credits.line5.link-text", appConfig.creditsGuidanceUrl)
+    @if(creditsEnabled){
+        <p>Credits is turned on </p>
+    } else {
+        @para("credits.line1")
+        @para("credits.line2")
+        @bullets("credits.line3", "credits.line4")
+        @paraLink("credits.line5", "credits.line5.link-text", appConfig.creditsGuidanceUrl)
+    }
 
     <!-- Submit -->
     @if(taxReturn.isSubmittable) {

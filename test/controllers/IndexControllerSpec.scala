@@ -109,34 +109,6 @@ class IndexControllerSpec
       }
     }
 
-    "avoid calling Obligation Api" - {
-
-      "when return is not enabled" in {
-
-        setUpMocks()
-        when(config.isFeatureEnabled(eqTo(Features.returnsEnabled))).thenReturn(false)
-
-        val application = applicationBuilder(userAnswers = None).overrides(
-          bind[FrontendAppConfig].toInstance(config),
-          bind[CacheConnector].toInstance(cacheConnector),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[FinancialsConnector].toInstance(mockFinancialsConnector),
-          bind[ObligationsConnector].toInstance(mockObligationsConnector),
-          bind[IndexView].toInstance(page)
-        ).build()
-
-        val futureResult: Future[Result] = running(application) {
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
-          route(application, request).value
-        }
-
-        await(futureResult)
-        verifyNoInteractions(mockObligationsConnector)
-        verifyResults(PPTObligations(None, None, 0, false, false))
-
-      }
-    }
-
     "calls Obligation Api" - {
 
       "when return is enabled" in {

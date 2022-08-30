@@ -87,12 +87,8 @@ class IndexController @Inject() (
   private def getObligationsDetail(
     pptReference: String
   )(implicit hc: HeaderCarrier): Future[Option[PPTObligations]] =
-    if (appConfig.isFeatureEnabled(Features.returnsEnabled)) {
-      obligationsConnector.getOpen(pptReference).map(response => Some(response)).recoverWith {
-        case _ => Future(None)
-      }
-    } else {
-      Future.successful(Some(PPTObligations(None, None, 0, false, false)))
+    obligationsConnector.getOpen(pptReference).map(response => Some(response)).recoverWith {
+      case _ => Future(None)
     }
 
 }
