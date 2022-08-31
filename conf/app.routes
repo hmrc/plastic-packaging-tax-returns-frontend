@@ -105,6 +105,11 @@ POST       /startYourReturn                        controllers.returns.StartYour
 GET        /changeStartYourReturn                  controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeStartYourReturn                  controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
+GET        /whatDoYouWantToDo                  controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
+POST       /whatDoYouWantToDo                  controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
+GET        /changeWhatDoYouWantToDo            controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeWhatDoYouWantToDo            controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+
 GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
 GET        /return-submitted                       controllers.returns.ReturnConfirmationController.onPageLoad()

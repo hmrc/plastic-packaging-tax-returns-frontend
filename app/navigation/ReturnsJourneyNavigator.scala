@@ -75,6 +75,16 @@ class ReturnsJourneyNavigator {
       case Some(false) => routes.NotStartOtherReturnsController.onPageLoad()
       case _ => throw new Exception("Unable to navigate to page")
     }
+    
+  def whatDoYouWantDoRoute(mode: Mode, newAnswer: Boolean): Call = {
+    if (mode.equals(CheckMode))
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else if (newAnswer)
+      routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    else
+      routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+  }
+
 
   def manufacturedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
     if (mode.equals(NormalMode))
