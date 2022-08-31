@@ -18,9 +18,10 @@ package controllers.returns.credits
 
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
+
 import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.{Navigator, ReturnsJourneyNavigator}
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +35,7 @@ class ConvertedCreditsController @Inject()
 (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
+  navigator: ReturnsJourneyNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -67,7 +68,7 @@ class ConvertedCreditsController @Inject()
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
             _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(ConvertedCreditsPage, mode, updatedAnswers))
+          } yield Redirect(navigator.ConvertedCreditsRoute(mode))
       )
   }
 }

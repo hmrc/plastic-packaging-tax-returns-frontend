@@ -16,15 +16,18 @@
 
 package controllers.returns.credits
 
+import akka.actor.FSM.Normal
 import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
+
 import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.{Navigator, ReturnsJourneyNavigator}
 import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.CacheConnector
+import models.Mode.NormalMode
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.ExportedCreditsView
 
@@ -34,7 +37,7 @@ class ExportedCreditsController @Inject()
 (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
+  navigator: ReturnsJourneyNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -67,7 +70,7 @@ class ExportedCreditsController @Inject()
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
             _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExportedCreditsPage, mode, updatedAnswers))
+          } yield Redirect(navigator.ExportedCreditsRoute(mode))
       )
   }
 }
