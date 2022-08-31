@@ -493,14 +493,16 @@ submit-return.check-your-answers.now-send.button-text = Submit return
 submit-return.check-your-answers.error.heading = Submitting your return
 submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
 
-exportedCredits.title = exportedCredits
-exportedCredits.heading = exportedCredits
+credits.caption = Credits
+
+exportedCredits.title = Plastic packaging you’ve paid tax on that has since been exported
+exportedCredits.heading = Plastic packaging you’ve paid tax on that has since been exported
 exportedCredits.checkYourAnswersLabel = exportedCredits
 exportedCredits.error.required = Select yes if exportedCredits
 exportedCredits.change.hidden = ExportedCredits
 
-convertedCredits.title = convertedCredits
-convertedCredits.heading = convertedCredits
+convertedCredits.title = Plastic packaging you’ve paid tax on that has since been converted
+convertedCredits.heading = Plastic packaging you’ve paid tax on that has since been converted
 convertedCredits.checkYourAnswersLabel = convertedCredits
 convertedCredits.error.required = Select yes if convertedCredits
 convertedCredits.change.hidden = ConvertedCredits

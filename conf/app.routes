@@ -133,9 +133,8 @@ POST       /change-non-exported-medicines-packaging-weight           controllers
 GET        /cancel-amend                        controllers.amends.CancelAmendController.onPageLoad()
 POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit()
 
-
-GET        /exportedCredits                        controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST       /exportedCredits                        controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET        /exportedCredits                       controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST       /exportedCredits                       controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.conditionalYesNoRadio
+@import components._
 @import viewmodels.InputWidth._
 
 @this(
@@ -24,6 +24,7 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     govukInput: GovukInput,
+    sectionHeader: SectionHeader,
     conditionalYesNo: conditionalYesNoRadio
 )
 
@@ -42,6 +43,8 @@
 @layout(pageTitle = title(form, messages("exportedCredits.title"))) {
 
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
+
+    @sectionHeader(messages("credits.caption"))
 
      @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

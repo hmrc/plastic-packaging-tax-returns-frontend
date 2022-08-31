@@ -14,30 +14,42 @@
  * limitations under the License.
  *@
 
+@import components._
+@import viewmodels.InputWidth._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukInput: GovukInput,
+    sectionHeader: SectionHeader,
+    conditionalYesNo: conditionalYesNoRadio
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@ifYes = {
+    @govukInput(
+        InputViewModel(field = form("value"))
+            .asKg()
+            .withWidth(Fixed10)
+            .withId("value")
+    )
+}
 
 @layout(pageTitle = title(form, messages("convertedCredits.title"))) {
 
     @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
+    @sectionHeader(messages("credits.caption"))
+
+       @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("convertedCredits.heading")).asPageHeading()
-            )
-        )
+        @conditionalYesNo(form, Some(messages("convertedCredits.heading")), Some(ifYes))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
