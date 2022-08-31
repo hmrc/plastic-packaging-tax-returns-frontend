@@ -134,3 +134,13 @@ GET        /cancel-amend                        controllers.amends.CancelAmendCo
 POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit()
 
 
+GET        /exportedCredits                        controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST       /exportedCredits                        controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /convertedCredits                        controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST       /convertedCredits                        controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeConvertedCredits                  controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeConvertedCredits                  controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+
