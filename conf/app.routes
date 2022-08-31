@@ -53,6 +53,8 @@ POST       /amend-manufactured-weight                  controllers.amends.AmendM
 GET        /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST       /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
+GET        /too-much-credit-claimed                   controllers.returns.credits.TooMuchCreditClaimedController.onPageLoad()
+
 GET        /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 POST       /convertedPackagingCredit                  controllers.returns.ConvertedPackagingCreditController.onSubmit(mode: Mode = NormalMode)
 GET        /changeConvertedPackagingCredit                        controllers.returns.ConvertedPackagingCreditController.onPageLoad(mode: Mode = CheckMode)

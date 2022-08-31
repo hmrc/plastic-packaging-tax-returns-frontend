@@ -98,16 +98,17 @@
     <div class="govuk-grid-row">
         <div class=@mainTemplateCass>
             @contentBlock
+            <div>
+                @hmrcReportTechnicalIssue(
 
-            @hmrcReportTechnicalIssue(
-
-                ReportTechnicalIssue(
-                    language = lang,
-                    serviceCode = "plastic-packaging-tax",
-                    baseUrl = Some(appConfig.contactFrontEnd),
-                    referrerUrl = Some(s"${request.uri}")
+                    ReportTechnicalIssue(
+                        language = lang,
+                        serviceCode = "plastic-packaging-tax",
+                        baseUrl = Some(appConfig.contactFrontEnd),
+                        referrerUrl = Some(s"${request.uri}")
+                    )
                 )
-            )
+            </div>
         </div>
     </div>
 }
