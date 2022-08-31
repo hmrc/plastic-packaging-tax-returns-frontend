@@ -49,9 +49,6 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
           ).url
         )
           .withAttribute("id" -> "confirm-pp-total-imported-plastic-weight")
-          .withVisuallyHiddenText(
-            messages("importedPlasticPackagingWeight.change.hidden")
-          )
       )
     )
 
