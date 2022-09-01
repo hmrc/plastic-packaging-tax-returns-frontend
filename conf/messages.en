@@ -192,14 +192,15 @@ amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Pl
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
-convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.heading = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.error.nonNumeric = Enter a value using numbers
-convertedPackagingCredit.error.required = Enter a value
-convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
-convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
-convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
-convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
+confirmPackagingCredit.title = Confirm £{0} credit
+confirmPackagingCredit.heading = Confirm £{0} credit
+confirmPackagingCredit.error.nonNumeric = Enter a value using numbers
+confirmPackagingCredit.error.required = Enter a value
+confirmPackagingCredit.error.wholeNumber = Enter a value using whole numbers
+confirmPackagingCredit.error.outOfRange = Value must be between {0} and {1}
+confirmPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
+confirmPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
+site.confirm.credit = Confirm credit amount
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?

@@ -48,10 +48,6 @@ trait PageGenerators {
   implicit lazy val arbitraryStartYourReturnPage: Arbitrary[StartYourReturnPage.type] =
     Arbitrary(StartYourReturnPage)
 
-  implicit lazy val arbitraryConvertedPackagingCreditPage
-    : Arbitrary[ConvertedPackagingCreditPage.type] =
-    Arbitrary(ConvertedPackagingCreditPage)
-
   implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
     : Arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type] =
     Arbitrary(NonExportedRecycledPlasticPackagingWeightPage)
