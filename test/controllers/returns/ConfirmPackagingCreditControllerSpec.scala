@@ -19,6 +19,7 @@ package controllers.returns
 import base.SpecBase
 import cacheables.ObligationCacheable
 import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
+import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import models.{ExportCreditBalance, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -128,7 +129,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
       }
     }
 

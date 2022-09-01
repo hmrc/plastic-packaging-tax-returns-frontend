@@ -16,10 +16,11 @@
 
 package pages.returns.credits
 
+import forms.returns.credits.ExportedCreditsAnswer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ExportedCreditsPage extends QuestionPage[Boolean] {
+case object ExportedCreditsPage extends QuestionPage[ExportedCreditsAnswer] {
 
   override def path: JsPath = JsPath \ toString
 

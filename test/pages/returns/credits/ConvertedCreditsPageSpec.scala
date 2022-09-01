@@ -20,12 +20,12 @@ import pages.behaviours.PageBehaviours
 
 class ConvertedCreditsPageSpec extends PageBehaviours {
 
-  "ConvertedCreditsPage" - {
-
-    beRetrievable[Boolean](ConvertedCreditsPage)
-
-    beSettable[Boolean](ConvertedCreditsPage)
-
-    beRemovable[Boolean](ConvertedCreditsPage)
-  }
+//  "ConvertedCreditsPage" - {
+//
+//    beRetrievable[Boolean](ConvertedCreditsPage)
+//
+//    beSettable[Boolean](ConvertedCreditsPage)
+//
+//    beRemovable[Boolean](ConvertedCreditsPage)
+//  }
 }

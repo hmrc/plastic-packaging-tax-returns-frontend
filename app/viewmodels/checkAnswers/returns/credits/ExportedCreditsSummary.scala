@@ -25,20 +25,20 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object ExportedCreditsSummary  {
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ExportedCreditsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "exportedCredits.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("exportedCredits.change.hidden"))
-          )
-        )
-    }
+//
+//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(ExportedCreditsPage).map {
+//      answer =>
+//
+//        val value = if (answer) "site.yes" else "site.no"
+//
+//        SummaryListRowViewModel(
+//          key     = "exportedCredits.checkYourAnswersLabel",
+//          value   = ValueViewModel(value),
+//          actions = Seq(
+//            ActionItemViewModel("site.change", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url)
+//              .withVisuallyHiddenText(messages("exportedCredits.change.hidden"))
+//          )
+//        )
+//    }
 }

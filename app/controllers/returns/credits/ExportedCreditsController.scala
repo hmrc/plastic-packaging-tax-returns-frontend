@@ -16,22 +16,18 @@
 
 package controllers.returns.credits
 
-import akka.actor.FSM.Normal
+import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
-
-import javax.inject.Inject
 import models.Mode
-import navigation.{Navigator, ReturnsJourneyNavigator}
-import pages.returns.credits.ExportedCreditsPage
+import navigation.ReturnsJourneyNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.CacheConnector
-import models.Mode.NormalMode
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.ExportedCreditsView
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class ExportedCreditsController @Inject()
 (
@@ -50,27 +46,23 @@ class ExportedCreditsController @Inject()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(ExportedCreditsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, mode))
+      Ok(view(form, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      Redirect(navigator.ExportedCreditsRoute(mode))
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
-            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.ExportedCreditsRoute(mode))
-      )
+    //      form.bindFromRequest().fold(
+    //        formWithErrors =>
+    //          Future.successful(BadRequest(view(formWithErrors, mode))),
+    //
+    //        value =>
+    //          for {
+    //            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
+    //            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+    //          } yield Redirect(navigator.ExportedCreditsRoute(mode))
+    //      )
   }
 }

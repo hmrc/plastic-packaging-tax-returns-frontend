@@ -18,6 +18,7 @@ package controllers.returns
 
 import connectors.ExportCreditsConnector
 import controllers.actions._
+import models.Mode.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -49,6 +50,6 @@ class ConfirmPackagingCreditController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
 
-        Future.successful(Ok(view(Some("200"))))
+        Future.successful(Redirect(routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)))
     }
 }

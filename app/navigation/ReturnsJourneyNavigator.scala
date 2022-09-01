@@ -97,8 +97,7 @@ class ReturnsJourneyNavigator {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     } else {
-      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(NormalMode)
-      //controllers.returns.credits.routes.ConfirmPackagingCreditController .onPageLoad(NormalMode)
+      routes.ConfirmPackagingCreditController .onPageLoad
     }
   }
 

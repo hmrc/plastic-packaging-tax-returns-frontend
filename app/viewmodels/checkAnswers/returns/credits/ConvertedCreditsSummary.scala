@@ -26,19 +26,19 @@ import viewmodels.implicits._
 
 object ConvertedCreditsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ConvertedCreditsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "convertedCredits.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("convertedCredits.change.hidden"))
-          )
-        )
-    }
+//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(ConvertedCreditsPage).map {
+//      answer =>
+//
+//        val value = if (answer.yesNo) "site.yes" else "site.no"
+//
+//        SummaryListRowViewModel(
+//          key     = "convertedCredits.checkYourAnswersLabel",
+//          value   = ValueViewModel(value),
+//          actions = Seq(
+//            ActionItemViewModel("site.change", controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url)
+//              .withVisuallyHiddenText(messages("convertedCredits.change.hidden"))
+//          )
+//        )
+//    }
 }

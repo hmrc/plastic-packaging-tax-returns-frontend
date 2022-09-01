@@ -17,14 +17,24 @@
 package forms.returns.credits
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+
+case class ExportedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
 
 class ExportedCreditsFormProvider @Inject() extends Mappings {
+  val requiredKey = "convertedCredits.error.required"
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[ExportedCreditsAnswer] = {
     Form(
-      "value" -> boolean("exportedCredits.error.required")
-  )
+      mapping(
+        "value" -> boolean(requiredKey),
+        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "yes"), long(requiredKey)
+          .verifying(minimumValue(0L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
+          .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
+        ))(ExportedCreditsAnswer.apply)(ExportedCreditsAnswer.unapply)
+    )
+  }
 }

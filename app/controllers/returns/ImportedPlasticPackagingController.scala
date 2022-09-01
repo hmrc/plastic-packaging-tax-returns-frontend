@@ -33,7 +33,8 @@ import views.html.returns.ImportedPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ImportedPlasticPackagingController @Inject() (
+class ImportedPlasticPackagingController @Inject()
+(
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   identify: IdentifierAction,
@@ -44,13 +45,13 @@ class ImportedPlasticPackagingController @Inject() (
   view: ImportedPlasticPackagingView,
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+  extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
-        
+
         request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
           case Some(obligation) => Ok(view(preparedForm, mode, obligation))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)
@@ -74,11 +75,11 @@ class ImportedPlasticPackagingController @Inject() (
     }
 
   private def updateAnswerAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
-    (implicit hc: HeaderCarrier) : Future[Result] = {
-    
+                                         (implicit hc: HeaderCarrier): Future[Result] = {
+
     previousAnswers
       .change(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
   }
-  
+
 }
