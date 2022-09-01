@@ -192,16 +192,17 @@ amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar 
 amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
 amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
-convertedPackagingCredit.title = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.heading = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.checkYourAnswersLabel = Conversion credit
-convertedPackagingCredit.error.nonNumeric = Enter a value using numbers
-convertedPackagingCredit.error.required = Enter a value
-convertedPackagingCredit.error.wholeNumber = Enter a value using whole numbers
-convertedPackagingCredit.error.outOfRange = Value must be between {0} and {1}
-convertedPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
-convertedPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
-convertedPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
+confirmPackagingCredit.title = Confirm £{0} credit
+confirmPackagingCredit.heading = Confirm £{0} credit
+confirmPackagingCredit.checkYourAnswersLabel = Conversion credit
+confirmPackagingCredit.error.nonNumeric = Enter a value using numbers
+confirmPackagingCredit.error.required = Enter a value
+confirmPackagingCredit.error.wholeNumber = Enter a value using whole numbers
+confirmPackagingCredit.error.outOfRange = Value must be between {0} and {1}
+confirmPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
+confirmPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
+confirmPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
+site.confirm.credit = Confirm credit amount
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?

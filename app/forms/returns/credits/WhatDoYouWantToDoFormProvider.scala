@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package forms.returns
+package forms.returns.credits
 
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class ConvertedPackagingCreditFormProvider extends Mappings {
+import javax.inject.Inject
 
-  private val defaultMaximum = BigDecimal(99999999.99)
+class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
 
-  def apply(maximumAllowed: Option[BigDecimal]): Form[BigDecimal] =
-    Form(
-      "value" -> currency("convertedPackagingCredit.error.required",
-                          "convertedPackagingCredit.error.wholeNumber",
-                          "convertedPackagingCredit.error.nonNumeric"
-      ).verifying(
-        inRange[BigDecimal](0, maximumAllowed.getOrElse(defaultMaximum), "convertedPackagingCredit.error.outOfRange")
-      )
-    )
+  def apply(): Form[Boolean] = Form("value" -> boolean("what-do-you-want-to-do.error.required"))
 
 }

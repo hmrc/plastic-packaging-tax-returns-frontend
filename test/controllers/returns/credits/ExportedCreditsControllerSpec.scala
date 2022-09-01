@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package pages.returns
+package controllers.returns.credits
 
-import pages.behaviours.PageBehaviours
+import base.SpecBase
+import forms.returns.credits.ExportedCreditsFormProvider
+import models.Mode.NormalMode
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Call
 
-class ConvertedPackagingCreditPageSpec extends PageBehaviours {
+class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar {
 
-  "ConvertedPackagingCreditPage" - {
+  def onwardRoute = Call("GET", "/foo")
 
-    beRetrievable[BigDecimal](ConvertedPackagingCreditPage)
+  val formProvider = new ExportedCreditsFormProvider()
+  val form = formProvider()
 
-    beSettable[BigDecimal](ConvertedPackagingCreditPage)
+  lazy val exportedCreditsRoute = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url
 
-    beRemovable[BigDecimal](ConvertedPackagingCreditPage)
+  "ExportedCredits Controller" - {
+
   }
 }

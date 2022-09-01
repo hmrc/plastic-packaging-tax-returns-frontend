@@ -21,9 +21,27 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.amends._
 import pages.returns._
+import pages.returns.credits._
+
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryExportedCreditsUserAnswersEntry: Arbitrary[(ExportedCreditsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExportedCreditsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryConvertedCreditsUserAnswersEntry: Arbitrary[(ConvertedCreditsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConvertedCreditsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
@@ -78,15 +96,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[StartYourReturnPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryConvertedPackagingCreditUserAnswersEntry
-    : Arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[ConvertedPackagingCreditPage.type]
-        value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
 

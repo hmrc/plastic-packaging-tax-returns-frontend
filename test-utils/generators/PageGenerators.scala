@@ -20,8 +20,15 @@ import org.scalacheck.Arbitrary
 import pages._
 import pages.amends._
 import pages.returns._
+import pages.returns.credits._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
+    Arbitrary(ExportedCreditsPage)
+
+  implicit lazy val arbitraryConvertedCreditsPage: Arbitrary[ConvertedCreditsPage.type] =
+    Arbitrary(ConvertedCreditsPage)
 
   implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type] =
     Arbitrary(NonExportedHumanMedicinesPlasticPackagingWeightPage)
@@ -40,10 +47,6 @@ trait PageGenerators {
 
   implicit lazy val arbitraryStartYourReturnPage: Arbitrary[StartYourReturnPage.type] =
     Arbitrary(StartYourReturnPage)
-
-  implicit lazy val arbitraryConvertedPackagingCreditPage
-    : Arbitrary[ConvertedPackagingCreditPage.type] =
-    Arbitrary(ConvertedPackagingCreditPage)
 
   implicit lazy val arbitraryRecycledPlasticPackagingWeightPage
     : Arbitrary[NonExportedRecycledPlasticPackagingWeightPage.type] =

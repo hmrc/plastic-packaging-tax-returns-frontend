@@ -34,6 +34,7 @@ class Navigator @Inject()(
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
     returns.checkRoutes
 
+  @deprecated("Just call the method direct, dont come through nextPage")
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
       case NormalMode =>

@@ -32,7 +32,8 @@ import views.html.returns.ManufacturedPlasticPackagingWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManufacturedPlasticPackagingWeightController @Inject() (
+class ManufacturedPlasticPackagingWeightController @Inject()
+(
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,

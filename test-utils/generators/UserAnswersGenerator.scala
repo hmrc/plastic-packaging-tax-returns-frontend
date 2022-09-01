@@ -23,12 +23,16 @@ import org.scalatest.TryValues
 import pages._
 import pages.amends._
 import pages.returns._
+import pages.returns.credits._
+
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ExportedCreditsPage.type, JsValue)] ::
+    arbitrary[(ConvertedCreditsPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
@@ -37,7 +41,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
-      arbitrary[(ConvertedPackagingCreditPage.type, JsValue)] ::
       arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::

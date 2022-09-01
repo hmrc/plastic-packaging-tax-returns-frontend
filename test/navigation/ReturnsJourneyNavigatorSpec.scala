@@ -25,6 +25,8 @@ class ReturnsJourneyNavigatorSpec extends SpecBase {
   private val returnsJourneyNavigator = new ReturnsJourneyNavigator
   val navigator = new Navigator(returns = returnsJourneyNavigator)
 
+  //todo add in credits navigation that is currently tested in controllers
+
   "Manufacturing yes / no page" - {
     "for normal mode" - {
 

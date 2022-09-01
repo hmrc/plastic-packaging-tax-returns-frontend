@@ -35,7 +35,7 @@ class ReturnsJourneyNavigator {
 
     exported >= (manufactured + imported)
   }
-  
+
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
     // TODO - replace with direct calls
@@ -71,10 +71,36 @@ class ReturnsJourneyNavigator {
 
   private def startYourReturnRoute(answers: UserAnswers): Call =
     answers.get(StartYourReturnPage) match {
-      case Some(true) => routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      case Some(true) => controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
       case Some(false) => routes.NotStartOtherReturnsController.onPageLoad()
       case _ => throw new Exception("Unable to navigate to page")
     }
+
+  def whatDoYouWantDoRoute(mode: Mode, newAnswer: Boolean): Call = {
+    if (mode.equals(CheckMode))
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else if (newAnswer)
+      controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
+    else
+      routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+  }
+
+  def ExportedCreditsRoute(mode: Mode): Call = {
+    if (mode.equals(CheckMode)) {
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    } else {
+      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(NormalMode)
+    }
+  }
+
+  def ConvertedCreditsRoute(mode: Mode): Call = {
+    if (mode.equals(CheckMode)) {
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    } else {
+      controllers.returns.credits.routes.ConfirmPackagingCreditController .onPageLoad
+    }
+  }
+
 
   def manufacturedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
     if (mode.equals(NormalMode))
@@ -104,9 +130,9 @@ class ReturnsJourneyNavigator {
     }
 
   def importedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call =
-    if (mode.equals(NormalMode)) 
+    if (mode.equals(NormalMode))
       importedPlasticPackagingRouteNormalMode(mode, usersAnswer)
-    else 
+    else
       importedPlasticPackagingRouteCheckMode(mode, hasAnswerChanged, usersAnswer)
 
   private def importedPlasticPackagingRouteCheckMode(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean) =

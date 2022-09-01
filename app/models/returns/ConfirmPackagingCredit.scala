@@ -18,8 +18,8 @@ package models.returns
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ConvertedPackagingCredit(totalInPounds: BigDecimal)
+case class ConfirmPackagingCredit(totalInPounds: BigDecimal)
 
-object ConvertedPackagingCredit {
-  implicit val format: OFormat[ConvertedPackagingCredit] = Json.format[ConvertedPackagingCredit]
+object ConfirmPackagingCredit {
+  implicit val format: OFormat[ConfirmPackagingCredit] = Json.format[ConfirmPackagingCredit]
 }

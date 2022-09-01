@@ -39,7 +39,7 @@ import pages.returns._
  * how-much-credit
  * check-your-return
  * *********************************************************** */
-
+//todo duplicated tests? check if can be removed
 class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator(returns = new ReturnsJourneyNavigator)
@@ -59,7 +59,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(StartYourReturnPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+            ) mustBe controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
 
           }
 

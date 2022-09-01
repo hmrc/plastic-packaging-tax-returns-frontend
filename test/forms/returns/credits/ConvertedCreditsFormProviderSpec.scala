@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package pages.returns
+package forms.returns.credits
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+class ConvertedCreditsFormProviderSpec {
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "convertedPackagingCredit"
 }
