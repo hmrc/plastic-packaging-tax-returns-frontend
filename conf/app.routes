@@ -53,8 +53,8 @@ POST       /amend-manufactured-weight                  controllers.amends.AmendM
 GET        /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST       /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET        /confirm-credit                  controllers.returns.ConfirmPackagingCreditController.onPageLoad
-POST       /confirm-credit                  controllers.returns.ConfirmPackagingCreditController.onSubmit
+GET        /confirm-credit                  controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad
+POST       /confirm-credit                  controllers.returns.credits.ConfirmPackagingCreditController.onSubmit
 
 GET        /directly-exported-components                        controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
 POST       /directly-exported-components                        controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
@@ -103,10 +103,10 @@ POST       /startYourReturn                        controllers.returns.StartYour
 GET        /changeStartYourReturn                  controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeStartYourReturn                  controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
-GET        /submit-return-or-claim-credit                  controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
-POST       /submit-return-or-claim-credit                  controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
-GET        /change-submit-return-or-claim-credit            controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-submit-return-or-claim-credit            controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+GET        /submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
+POST       /submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
+GET        /change-submit-return-or-claim-credit            controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-submit-return-or-claim-credit            controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
 
 GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
 

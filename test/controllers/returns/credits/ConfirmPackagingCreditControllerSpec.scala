@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.returns
+package controllers.returns.credits
 
 import base.SpecBase
 import cacheables.ObligationCacheable

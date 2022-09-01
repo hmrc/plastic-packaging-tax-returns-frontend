@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package views.returns
+package views.returns.credits
 
 import base.ViewSpecBase
-import models.Mode.NormalMode
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.ConfirmPackagingCreditView

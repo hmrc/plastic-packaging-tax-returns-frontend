@@ -40,7 +40,7 @@
 
     <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", possibleCreditBalanceAvailable.getOrElse(0))</h1>
 
-    @formHelper(action = controllers.returns.routes.ConfirmPackagingCreditController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ConfirmPackagingCreditController.onSubmit, 'autoComplete -> "off") {
         @govukButton(
             ButtonViewModel(messages("site.confirm.credit"))
         )

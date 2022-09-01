@@ -101,7 +101,7 @@ class StartYourReturnController @Inject()(
     if (value) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
       if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled))
-        routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+        controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
       else
         routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     } else routes.NotStartOtherReturnsController.onPageLoad()

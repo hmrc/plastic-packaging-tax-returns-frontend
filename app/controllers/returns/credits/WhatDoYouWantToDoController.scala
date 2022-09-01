@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.returns
+package controllers.returns.credits
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.WhatDoYouWantToDoFormProvider
 import models.{Mode, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.WhatDoYouWantToDoPage
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.WhatDoYouWantToDoView
+import views.html.returns.credits.WhatDoYouWantToDoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pages.returns
+package forms.returns.credits
 
-import models.UserAnswers
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-import scala.util.Try
+import javax.inject.Inject
 
-case object WhatDoYouWantToDoPage extends QuestionPage[Boolean] {
+class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
+  def apply(): Form[Boolean] = Form("value" -> boolean("what-do-you-want-to-do.error.required"))
 
-  override def toString: String = "whatDoYouWantToDo"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = 
-    super.cleanup(value, userAnswers)
 }

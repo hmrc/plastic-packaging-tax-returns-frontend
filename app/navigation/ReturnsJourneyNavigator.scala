@@ -71,7 +71,7 @@ class ReturnsJourneyNavigator {
 
   private def startYourReturnRoute(answers: UserAnswers): Call =
     answers.get(StartYourReturnPage) match {
-      case Some(true) => routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+      case Some(true) => controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
       case Some(false) => routes.NotStartOtherReturnsController.onPageLoad()
       case _ => throw new Exception("Unable to navigate to page")
     }
@@ -97,7 +97,7 @@ class ReturnsJourneyNavigator {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     } else {
-      routes.ConfirmPackagingCreditController .onPageLoad
+      controllers.returns.credits.routes.ConfirmPackagingCreditController .onPageLoad
     }
   }
 

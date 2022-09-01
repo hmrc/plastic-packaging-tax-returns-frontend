@@ -33,7 +33,7 @@
 
 @layout(pageTitle = title(form, messages("what-do-you-want-to-do.title"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.WhatDoYouWantToDoController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.WhatDoYouWantToDoController.onSubmit(mode), 'autoComplete -> "off") {
 
         @yesNoLayout(Some(messages("what-do-you-want-to-do.caption")),
             messages("what-do-you-want-to-do.title"),

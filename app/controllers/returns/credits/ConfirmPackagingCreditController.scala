@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.returns
+package controllers.returns.credits
 
 import connectors.ExportCreditsConnector
 import controllers.actions._
@@ -22,7 +22,7 @@ import models.Mode.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.ConfirmPackagingCreditView
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,6 +50,6 @@ class ConfirmPackagingCreditController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
 
-        Future.successful(Redirect(routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)))
+        Future.successful(Redirect(controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)))
     }
 }
