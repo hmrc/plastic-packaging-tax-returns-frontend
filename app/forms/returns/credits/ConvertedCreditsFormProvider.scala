@@ -24,7 +24,7 @@ import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
 case class ConvertedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
 
-class ConvertedCreditsFormProvider @Inject() extends Mappings {
+class ConvertedCreditsFormProvider extends Mappings {
   val requiredKey = "convertedCredits.error.required"
 
   def apply(): Form[ConvertedCreditsAnswer] = {
@@ -32,7 +32,7 @@ class ConvertedCreditsFormProvider @Inject() extends Mappings {
       mapping(
         "value" -> boolean(requiredKey),
         "converted-credits-weight" -> mandatoryIf(isEqual("answer", "yes"), long(requiredKey)
-          .verifying(minimumValue(0L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
+          .verifying(minimumValue(1L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
           .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
         ))(ConvertedCreditsAnswer.apply)(ConvertedCreditsAnswer.unapply)
     )
