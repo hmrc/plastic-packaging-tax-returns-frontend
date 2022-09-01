@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pages.returns
+package models.returns
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object ConvertedPackagingCreditPage extends QuestionPage[BigDecimal] {
+case class ConfirmPackagingCredit(totalInPounds: BigDecimal)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "convertedPackagingCredit"
+object ConfirmPackagingCredit {
+  implicit val format: OFormat[ConfirmPackagingCredit] = Json.format[ConfirmPackagingCredit]
 }
