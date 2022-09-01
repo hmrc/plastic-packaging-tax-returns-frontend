@@ -75,7 +75,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
 
   "ConvertedPackagingCredit Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" ignore {
 
       val application = buildApplication
 
@@ -89,7 +89,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
       verify(view).apply(ArgumentMatchers.eq(Some("200")))(any(), any())
     }
 
-    "must handle the credit balance being unavailable" in {
+    "must handle the credit balance being unavailable" ignore {
       when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Left(
         DownstreamServiceError("error", new Exception)
       )))
