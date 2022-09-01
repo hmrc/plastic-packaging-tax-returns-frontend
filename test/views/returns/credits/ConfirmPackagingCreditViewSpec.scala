@@ -19,7 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.html.returns.ConfirmPackagingCreditView
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 

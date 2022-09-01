@@ -59,7 +59,7 @@ class NavigatorSpec extends SpecBase {
             navigator.nextPage(StartYourReturnPage,
               NormalMode,
               answers.get
-            ) mustBe returnsRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+            ) mustBe controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
 
           }
 

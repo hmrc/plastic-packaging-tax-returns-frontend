@@ -33,7 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import views.html.returns.ConfirmPackagingCreditView
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -46,7 +46,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
   val validAnswer: BigDecimal = 1.25
 
   lazy val convertedPackagingCreditRoute =
-    controllers.returns.routes.ConfirmPackagingCreditController.onPageLoad.url
+    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad.url
 
   private val aDate = LocalDate.ofEpochDay(0)
   private val test = UserAnswers("1").set(ObligationCacheable, TaxReturnObligation(
@@ -129,7 +129,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
       }
     }
 
