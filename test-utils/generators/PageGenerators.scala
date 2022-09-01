@@ -20,6 +20,7 @@ import org.scalacheck.Arbitrary
 import pages._
 import pages.amends._
 import pages.returns._
+import pages.returns.credits._
 
 trait PageGenerators {
 

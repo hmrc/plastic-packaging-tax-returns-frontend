@@ -14,32 +14,21 @@
  * limitations under the License.
  */
 
-package forms.returns.credits
+package views.returns.credits
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import base.ViewSpecBase
+import forms.returns.credits.ExportedCreditsFormProvider
+import models.Mode.NormalMode
+import play.api.data.Form
+import play.twirl.api.Html
+import views.html.returns.credits.ExportedCreditsView
 
-class ConvertedCreditsFormProviderSpec extends BooleanFieldBehaviours {
+class ConvertedCreditsViewSpec extends ViewSpecBase {
 
-  val requiredKey = "convertedCredits.error.required"
-  val invalidKey = "error.boolean"
+  val page: ExportedCreditsView = inject[ExportedCreditsView]
+  val form = new ExportedCreditsFormProvider()
 
-  val form = new ConvertedCreditsFormProvider()()
+  private def createView(form: Form[ExportedCreditsFormProvider]): Html =
+    page(form, NormalMode)(request, messages)
 
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }
