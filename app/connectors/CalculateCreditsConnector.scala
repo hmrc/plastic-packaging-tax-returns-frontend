@@ -17,24 +17,23 @@
 package connectors
 
 import com.kenshoo.play.metrics.Metrics
+import config.FrontendAppConfig
+import models.CreditBalance
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import config.FrontendAppConfig
-import models.ExportCreditBalance
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExportCreditsConnector @Inject() (httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit ec: ExecutionContext) extends Logging {
+class CalculateCreditsConnector @Inject()(httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit ec: ExecutionContext) extends Logging {
 
-  def get(pptReferenceNumber: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[Either[ServiceError, ExportCreditBalance]] = {
+  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, CreditBalance]] = {
 
     val timer = metrics.defaultRegistry.timer("ppt.exportcredits.open.get.timer").time()
-    httpClient.GET[ExportCreditBalance](appConfig.pptExportCreditsUrl(pptReferenceNumber, fromDate, toDate))
+    httpClient.GET[CreditBalance](appConfig.pptCalculateCreditsUrl(pptReferenceNumber))
       .map {
         response =>
-          logger.info(s"Retrieved export credits for ppt reference number [$pptReferenceNumber] with fromDate $fromDate and toDate $toDate")
+          logger.info(s"Calculate credits for ppt reference number [$pptReferenceNumber]")
           Right(response)
       }
       .andThen { case _ => timer.stop() }
@@ -42,7 +41,7 @@ class ExportCreditsConnector @Inject() (httpClient: HttpClient, appConfig: Front
         case ex: Exception =>
           Left(
             DownstreamServiceError(
-              s"Failed to retrieve export credits for ppt reference number [$pptReferenceNumber] with fromDate $fromDate and toDate $toDate, error: [${ex.getMessage}]",
+              s"Failed to calculate credits for ppt reference number [$pptReferenceNumber]",
               ex
             )
           )

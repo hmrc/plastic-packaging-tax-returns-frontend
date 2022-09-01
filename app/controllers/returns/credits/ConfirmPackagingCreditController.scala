@@ -16,37 +16,52 @@
 
 package controllers.returns.credits
 
-import connectors.ExportCreditsConnector
+import connectors.CalculateCreditsConnector
 import controllers.actions._
-import models.Mode
-import models.Mode.NormalMode
-import navigation.ReturnsJourneyNavigator
+import models.CreditBalance
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.credits.ConfirmPackagingCreditView
+import viewmodels.{PrintBigDecimal, PrintLong}
+import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmPackagingCreditController @Inject()(
-                                                  override val messagesApi: MessagesApi,
-                                                  exportCreditsConnector: ExportCreditsConnector,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view: ConfirmPackagingCreditView,
-  returnsNavigator: ReturnsJourneyNavigator
+  override val messagesApi: MessagesApi,
+  creditConnector: CalculateCreditsConnector,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ConfirmPackagingCreditView,
+  tooMuchCreditView: TooMuchCreditClaimedView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = {
-
     (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val buttonLink = returnsNavigator.confirmCreditRoute(NormalMode)
-        Future.successful(Ok(view(Some("200"), buttonLink)))
+      implicit request: DataRequest[AnyContent] =>
+        creditConnector.get(request.pptReference).map {
+          case Right(response) => displayView(response)
+          case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
+        }
     }
+  }
+
+  private def displayView(
+    response: CreditBalance
+  )(implicit request: DataRequest[_]): Result = {
+    if (response.canBeClaimed)
+      Ok(
+        view(
+          response.totalRequestedCreditInPounds.asPounds,
+          response.totalRequestedCreditInKilograms.asKg
+        )
+      )
+    else
+      Ok(tooMuchCreditView())
   }
 }

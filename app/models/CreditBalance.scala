@@ -18,15 +18,16 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ExportCreditBalance(
-  totalPPTCharges: BigDecimal,
-  totalExportCreditClaimed: BigDecimal,
-  totalExportCreditAvailable: BigDecimal
+case class CreditBalance(
+  availableCreditInPounds: BigDecimal,
+  totalRequestedCreditInPounds: BigDecimal,
+  totalRequestedCreditInKilograms: Long,
+  canBeClaimed: Boolean
 )
 
-object ExportCreditBalance {
+object CreditBalance {
 
-  implicit val format: OFormat[ExportCreditBalance] =
-    Json.format[ExportCreditBalance]
+  implicit val format: OFormat[CreditBalance] =
+    Json.format[CreditBalance]
 
 }

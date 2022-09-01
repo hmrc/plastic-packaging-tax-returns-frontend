@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package connectors
+package views
 
-import base.utils.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
+import base.ViewSpecBase
+import play.twirl.api.Html
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import views.html.returns.credits.ConfirmPackagingCreditView
 
-class DirectDebitConnectorSpec extends ConnectorISpec {
+class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  lazy val connector: DirectDebitConnector = app.injector.instanceOf[DirectDebitConnector]
+  "ConfirmPackagingCreditView" should {
+    "pass accessibility checks" in {
 
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    stopWireMockServer
+      val page = inject[ConfirmPackagingCreditView]
+
+      def render: Html = page("£200", "1200kg")(request, messages)
+
+      render.toString() must passAccessibilityChecks
+    }
   }
-
-  override protected def afterAll(): Unit = {
-    stopWireMockServer
-    super.afterAll()
-  }
-
-  //TODO: Reimplement unit tests for DD
-
 }

@@ -14,37 +14,68 @@
  * limitations under the License.
  *@
 
-@import components.ReturnQuarterHeading
-@import viewmodels.InputWidth._
-@import views.html.components.LinkButton
+@import components.{SectionHeader, paragraph, Link, LinkButton}
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton, 
-        linkButton: LinkButton, 
+    govukButton: GovukButton,
+    sectionHeader: SectionHeader,
+    paragraph: paragraph,
+    link: Link,
+    linkButton: LinkButton
 )
 
-@(possibleCreditBalanceAvailable: Option[String], buttonLink: Call)(implicit request: Request[_], messages: Messages)
+@(requestedCredit: String, weight: String)(implicit request: Request[_], messages: Messages)
 
-@creditBalance = @{
-    possibleCreditBalanceAvailable match {
-        case Some(creditBalanceAvailable) => messages("confirmPackagingCredit.balanceAvailable", creditBalanceAvailable)
-        case None => messages("confirmPackagingCredit.balanceUnavailable")
-    }
+
+@paragraphContent = @{
+    Html(s"""${messages("confirmPackagingCredit.hint.p3")}
+            <strong>${requestedCredit}.</strong>"""
+    )
+}
+
+@paragraphHint = {
+    @paragraph(
+        content = Html(messages("confirmPackagingCredit.hint.p1", weight)),
+        id = Some("paragraph-body-1")
+    )
+
+    @paragraph(
+        content = Html(messages("confirmPackagingCredit.hint.p2", weight)),
+        id = Some("paragraph-body-2")
+    )
+
+    @paragraph(content = paragraphContent, id = Some("paragraph-body-3"))
+
+    @paragraph(
+        content = Html(messages("confirmPackagingCredit.hint.p4")),
+        id = Some("paragraph-body-4")
+    )
+}
+
+@changeCreditLink = @{
+    link(
+        id = "change-credit-amount",
+        text = messages("confirmPackagingCredit.change.credit.paragraph"),
+        call = Call("GET", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
+    )
 }
 
 @layout(pageTitle = titleNoForm(
-                        messages("confirmPackagingCredit.title", possibleCreditBalanceAvailable.getOrElse(0)),
+                        messages("confirmPackagingCredit.title", requestedCredit),
                         Some(messages("return.title.tail")))) {
 
-    <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", possibleCreditBalanceAvailable.getOrElse(0))</h1>
+    <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", requestedCredit)</h1>
+
+    @sectionHeader(messages("confirmPackagingCredit.subHeading"))
+
+    @paragraphHint
 
     @linkButton(
-        messageKey = "confirmPackagingCredit.button-text",
-        linkUrl = buttonLink.url
+        messageKey = "confirmPackagingCredit.confirm.credit.button",
+        linkUrl = controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
     )
 
+    @paragraph(changeCreditLink)
 }
