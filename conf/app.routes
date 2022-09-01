@@ -103,10 +103,10 @@ POST       /startYourReturn                        controllers.returns.StartYour
 GET        /changeStartYourReturn                  controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeStartYourReturn                  controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
-GET        /whatDoYouWantToDo                  controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
-POST       /whatDoYouWantToDo                  controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
-GET        /changeWhatDoYouWantToDo            controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeWhatDoYouWantToDo            controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+GET        /submit-return-or-claim-credit                  controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
+POST       /submit-return-or-claim-credit                  controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
+GET        /change-submit-return-or-claim-credit            controllers.returns.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-submit-return-or-claim-credit            controllers.returns.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
 
 GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
@@ -136,13 +136,13 @@ POST       /change-non-exported-medicines-packaging-weight           controllers
 GET        /cancel-amend                        controllers.amends.CancelAmendController.onPageLoad()
 POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit()
 
-GET        /exportedCredits                       controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST       /exportedCredits                       controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeExportedCredits                  controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET        /redit-for-exported                       controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST       /credit-for-exported                     controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credit-for-exported                  controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credit-for-exported                 controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /convertedCredits                        controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST       /convertedCredits                        controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeConvertedCredits                  controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeConvertedCredits                  controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET        /credit-for-converted                        controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST       /credit-for-converted                        controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credit-for-converted                  controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credit-for-converted                  controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
 
