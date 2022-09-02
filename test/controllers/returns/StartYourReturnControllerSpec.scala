@@ -120,13 +120,15 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
       val mockCacheConnector = mock[CacheConnector]
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
-            bind[AuditConnector].toInstance(mockAuditConnector)
+            bind[AuditConnector].toInstance(mockAuditConnector),
+            bind[FrontendAppConfig].toInstance(config)
           )
           .build()
 
@@ -137,10 +139,10 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
+        println(config.isFeatureEnabled(Features.creditsForReturnsEnabled))
+
         status(result) mustEqual SEE_OTHER
-        assert(redirectLocation(result).value == controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString ||
-          redirectLocation(result).value == routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).toString)
-      }
+        redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString}
     }
 
     "must audit started event when user answers yes" in {
