@@ -26,17 +26,17 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDate
 
 @Singleton
-class FrontendAppConfig @Inject() (
-  configuration: Configuration,
-  val servicesConfig: ServicesConfig
-) {
+class FrontendAppConfig @Inject()(
+                                   configuration: Configuration,
+                                   val servicesConfig: ServicesConfig
+                                 ) {
 
-  val host: String           = configuration.get[String]("host")
-  val appName: String        = configuration.get[String]("appName")
-  lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
+  val host: String = configuration.get[String]("host")
+  val appName: String = configuration.get[String]("appName")
+  lazy val mfaUpliftUrl = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  private val contactHost                  = configuration.get[String]("contact-frontend.host")
+  private val contactHost = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
@@ -44,12 +44,12 @@ class FrontendAppConfig @Inject() (
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String         = configuration.get[String]("urls.login")
+  val loginUrl: String = configuration.get[String]("urls.login")
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  val signOutUrl: String = configuration.get[String]("urls.signOut")
 
   val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
-  val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
+  val signedOutUrl: String = configuration.get[String]("urls.signedOut")
 
   val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
@@ -58,7 +58,7 @@ class FrontendAppConfig @Inject() (
 
   def contactFrontEnd = contactHost
 
-  val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
+  val timeout: Int = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
@@ -68,9 +68,11 @@ class FrontendAppConfig @Inject() (
 
   def returnUrl(relative: String) = s"$host$relative"
 
-  private lazy val pptReturnsSubmissionUrl: String   = s"$pptServiceHost/returns-submission"
-  private lazy val pptReturnsAmendUrl: String        = s"$pptServiceHost/returns-amend"
+  private lazy val pptReturnsSubmissionUrl: String = s"$pptServiceHost/returns-submission"
+  private lazy val pptReturnsAmendUrl: String = s"$pptServiceHost/returns-amend"
+
   def pptReturnsCalculationUrl(pptReference: String): String = s"$pptServiceHost/returns-calculate/$pptReference"
+
   def pptAmendsCalculationUrl(pptReference: String): String = s"$pptServiceHost/amends-calculate/$pptReference"
 
   lazy val pptRegistrationFrontEnd =
@@ -78,11 +80,11 @@ class FrontendAppConfig @Inject() (
       servicesConfig.baseUrl("ppt-registration-frontend")
     )
 
-  
+
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
   lazy val pptRecycledPlasticGuidanceLink: String = configuration.get[String]("urls.pptRecycledPlasticGuidanceLink")
-  
+
 
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
@@ -104,6 +106,9 @@ class FrontendAppConfig @Inject() (
 
   def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
     s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
+
+  def isCreditsFeatureEnabled: Boolean =
+    isFeatureEnabled(Features.creditsForReturnsEnabled)
 
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)
@@ -143,7 +148,7 @@ class FrontendAppConfig @Inject() (
 
   val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
 
-  def pptStartDirectDebit : String =
+  def pptStartDirectDebit: String =
     s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
 
   def creditsGuidanceUrl: String =

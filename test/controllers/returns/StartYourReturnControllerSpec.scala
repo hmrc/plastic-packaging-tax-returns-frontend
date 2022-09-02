@@ -19,6 +19,7 @@ package controllers.returns
 import audit.returns.ReturnStarted
 import base.SpecBase
 import cacheables.ObligationCacheable
+import config.Features
 import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
@@ -137,7 +138,11 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar  {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString
+        if (config.isCreditsFeatureEnabled) {
+          redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString
+        } else {
+          redirectLocation(result).value mustEqual routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).toString
+        }
 
       }
     }
