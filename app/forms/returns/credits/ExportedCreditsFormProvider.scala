@@ -21,7 +21,6 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.libs.json.{Json, OWrites}
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-import views.html.helper.form
 
 case class ExportedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
 
