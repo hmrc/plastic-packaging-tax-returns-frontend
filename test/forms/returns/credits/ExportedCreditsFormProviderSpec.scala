@@ -16,6 +16,29 @@
 
 package forms.returns.credits
 
-class ExportedCreditsFormProviderSpec {
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
 
+class ExportedCreditsFormProviderSpec extends PlaySpec {
+
+  val sut: Form[ExportedCreditsAnswer] = new ExportedCreditsFormProvider().apply()
+
+  "The form" must {
+
+    "bind correctly" when {
+      "yes is provided" in {
+
+        val boundForm = sut.bind(Map("answer" -> "true" , "converted-credits-weight" -> "20"))
+println(boundForm)
+        boundForm.value mustBe Some(ExportedCreditsAnswer(yesNo = true, Some(20)))
+        boundForm.errors mustBe Nil
+      }
+      "no is provided with no weight" in {
+        val boundForm = sut.bind(Map("answer" -> "false"))
+        boundForm.value mustBe Some(ExportedCreditsAnswer(yesNo = false, None))
+        boundForm.errors mustBe Nil
+      }
+    }
+
+  }
 }
