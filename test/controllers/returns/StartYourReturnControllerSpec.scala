@@ -139,7 +139,6 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        println(config.isFeatureEnabled(Features.creditsForReturnsEnabled))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString}
