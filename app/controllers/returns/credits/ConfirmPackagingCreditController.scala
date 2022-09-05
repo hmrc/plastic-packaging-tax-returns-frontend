@@ -18,6 +18,7 @@ package controllers.returns.credits
 
 import connectors.ExportCreditsConnector
 import controllers.actions._
+import models.Mode
 import models.Mode.NormalMode
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,17 +41,12 @@ class ConfirmPackagingCreditController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = {
+  def onPageLoad(mode: Mode): Action[AnyContent] = {
 
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(Some("200"))))
+        val buttonLink = returnsNavigator.confirmCreditRoute(NormalMode)
+        Future.successful(Ok(view(Some("200"), buttonLink)))
     }
   }
-
-  def onSubmit: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        Future.successful(Redirect(returnsNavigator.confirmCreditRoute(NormalMode))) // TODO need a mode here?
-    }
 }

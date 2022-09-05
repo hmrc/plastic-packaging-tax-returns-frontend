@@ -16,16 +16,18 @@
 
 @import components.ReturnQuarterHeading
 @import viewmodels.InputWidth._
+@import views.html.components.LinkButton
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton, 
+        linkButton: LinkButton, 
 )
 
-@(possibleCreditBalanceAvailable: Option[String])(implicit request: Request[_], messages: Messages)
+@(possibleCreditBalanceAvailable: Option[String], buttonLink: Call)(implicit request: Request[_], messages: Messages)
 
 @creditBalance = @{
     possibleCreditBalanceAvailable match {
@@ -40,9 +42,9 @@
 
     <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", possibleCreditBalanceAvailable.getOrElse(0))</h1>
 
-    @formHelper(action = controllers.returns.credits.routes.ConfirmPackagingCreditController.onSubmit, 'autoComplete -> "off") {
-        @govukButton(
-            ButtonViewModel(messages("site.confirm.credit"))
-        )
-    }
+    @linkButton(
+        messageKey = "confirmPackagingCredit.button-text",
+        linkUrl = buttonLink.url
+    )
+
 }
