@@ -16,25 +16,20 @@
 
 package controllers.returns.credits
 
-import base.{FakeIdentifierActionWithEnrolment, SpecBase}
+import base.SpecBase
 import connectors.CacheConnector
-import controllers.actions._
-import forms.returns.credits.{ExportedCreditsAnswer, ExportedCreditsFormProvider}
+import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
-import models.UserAnswers
+import models.returns.ExportedCreditsAnswer
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ExportedCreditsPage
-import play.api.Application
 import play.api.http.Status._
-import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, running, status}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, running, status}
 import views.html.returns.credits.ExportedCreditsView
 
 class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -71,6 +66,26 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
           status(result) mustEqual OK
         }
       }
+    }
+    "must redirect to the next page when No is submitted" in {
+      val ans = userAnswers.set(ExportedCreditsPage, validNoAnswer).success.value
+      val mockCacheConnector = mock[CacheConnector]
+
+      val application = applicationBuilder(userAnswers = Some(ans))
+        .overrides(
+          bind[CacheConnector].toInstance(mockCacheConnector))
+        .build()
+
+      running(application) {
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, exportedCreditsRoute)
+        val controller = application.injector.instanceOf[ExportedCreditsController]
+        val result = controller.onSubmit(NormalMode)(request)
+        println("request: " + request + "\n" + "result: " + result)
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+    "must redirect to the next page when Yes and weight is submitted" ignore {
+      ???
     }
   }
 

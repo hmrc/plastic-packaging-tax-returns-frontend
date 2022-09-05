@@ -17,16 +17,10 @@
 package forms.returns.credits
 
 import forms.mappings.Mappings
+import models.returns.ExportedCreditsAnswer
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import play.api.libs.json.{Json, OWrites}
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-
-case class ExportedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
-
-private object ExportedCreditsAnswer {
-  implicit val writes: OWrites[ExportedCreditsAnswer] = Json.writes[ExportedCreditsAnswer]
-}
 
 class ExportedCreditsFormProvider extends Mappings {
   val requiredKey = "convertedCredits.error.required"
@@ -34,8 +28,8 @@ class ExportedCreditsFormProvider extends Mappings {
   def apply(): Form[ExportedCreditsAnswer] = {
     Form(
       mapping(
-        "answer" -> boolean(requiredKey),
-        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long(requiredKey)
+        "answer" -> boolean("convertedCredits.error.required"),
+        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long("convertedCredits.error.weightRequired")
           .verifying(minimumValue(1L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
           .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
         ))(ExportedCreditsAnswer.apply)(ExportedCreditsAnswer.unapply)

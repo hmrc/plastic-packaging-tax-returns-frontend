@@ -16,6 +16,7 @@
 
 package forms.returns.credits
 
+import models.returns.ExportedCreditsAnswer
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 
@@ -28,9 +29,9 @@ class ExportedCreditsFormProviderSpec extends PlaySpec {
     "bind correctly" when {
       "yes is provided" in {
 
-        val boundForm = sut.bind(Map("answer" -> "true" , "converted-credits-weight" -> "20"))
-println(boundForm)
+        val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "20"))
         boundForm.value mustBe Some(ExportedCreditsAnswer(yesNo = true, Some(20)))
+
         boundForm.errors mustBe Nil
       }
       "no is provided with no weight" in {
@@ -38,6 +39,18 @@ println(boundForm)
         boundForm.value mustBe Some(ExportedCreditsAnswer(yesNo = false, None))
         boundForm.errors mustBe Nil
       }
+    }
+    "error" when {
+      "answer is none boolean" in {
+        val boundForm = sut.bind(Map("answer" -> "porridge", "converted-credits-weight" -> "20"))
+        boundForm.value mustBe None
+      }
+
+      "answer is empty" in {
+        val boundForm = sut.bind(Map.empty[String, String])
+        boundForm.value mustBe None
+      }
+
     }
 
   }
