@@ -97,10 +97,18 @@ class ReturnsJourneyNavigator {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     } else {
-      controllers.returns.credits.routes.ConfirmPackagingCreditController .onPageLoad
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad
     }
   }
 
+  def confirmCreditRoute(mode: Mode): Call =
+    if (mode.equals(CheckMode)) 
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else 
+      controllers.returns.routes.NowStartYourReturnController.onPageLoad
+
+  def nowStartYourReturnRoute: Call =
+    controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
   def manufacturedPlasticPackagingRoute(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
     if (mode.equals(NormalMode))

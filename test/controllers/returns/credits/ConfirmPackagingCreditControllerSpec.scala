@@ -17,14 +17,12 @@
 package controllers.returns.credits
 
 import base.SpecBase
-import cacheables.ObligationCacheable
 import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
+import models.ExportCreditBalance
 import models.Mode.NormalMode
-import models.returns.TaxReturnObligation
-import models.{ExportCreditBalance, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -35,22 +33,17 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConfirmPackagingCreditView
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
 
-  def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: BigDecimal = 1.25
 
-  lazy val convertedPackagingCreditRoute =
-    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad.url
-
-  private val aDate = LocalDate.ofEpochDay(0)
-  private val test = UserAnswers("1").set(ObligationCacheable, TaxReturnObligation(
-    fromDate = aDate, toDate = aDate, dueDate = aDate, periodKey = "bla")).get
+  private lazy val convertedPackagingCreditRoute =
+    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad().url
 
   private val exportCreditConnector = mock[ExportCreditsConnector]
 
@@ -63,7 +56,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
     when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Right(ExportCreditBalance(
       totalPPTCharges = 0.0, totalExportCreditClaimed = 0.0, totalExportCreditAvailable = 123.45))))
 
-    when(view.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(view.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   private def buildApplication = {
@@ -83,11 +76,11 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
       running(application) {
         val request = FakeRequest(GET, convertedPackagingCreditRoute)
         val controller = application.injector.instanceOf[ConfirmPackagingCreditController]
-        val result = controller.onPageLoad(request)
+        val result = controller.onPageLoad(NormalMode)(request)
         status(result) mustEqual OK
       }
 
-      verify(view).apply(ArgumentMatchers.eq(Some("200")))(any(), any())
+      verify(view).apply(ArgumentMatchers.eq(Some("200")), any())(any(), any())
     }
 
     "must handle the credit balance being unavailable" ignore {
@@ -99,11 +92,11 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
       running(application) {
         val request = FakeRequest(GET, convertedPackagingCreditRoute)
         val controller = application.injector.instanceOf[ConfirmPackagingCreditController]
-        val result = controller.onPageLoad(request)
+        val result = controller.onPageLoad(NormalMode)(request)
         status(result) mustEqual OK
       }
 
-      verify(view).apply(ArgumentMatchers.eq(Some("200")))(any(), any())
+      verify(view).apply(ArgumentMatchers.eq(Some("200")), any())(any(), any())
     }
 
     // TODO reword tests below...
@@ -148,7 +141,7 @@ class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(Some("balance"))(request,
+        contentAsString(result) mustEqual view(meq(Some("balance")), any())(request,
           messages(application)
         ).toString
       }

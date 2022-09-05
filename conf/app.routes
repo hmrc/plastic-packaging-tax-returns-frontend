@@ -1,148 +1,149 @@
 # microservice specific routes
 
-->          /hmrc-frontend                               hmrcfrontend.Routes
+->          /hmrc-frontend                                         hmrcfrontend.Routes
 
 # BTA entry points
-GET        /submit-return                                controllers.Default.redirect(to = "/plastic-packaging-tax/startYourReturn")
-GET        /submitted-returns                            controllers.amends.SubmittedReturnsController.onPageLoad()
+GET         /submit-return                                         controllers.Default.redirect(to = "/plastic-packaging-tax/startYourReturn")
+GET         /submitted-returns                                     controllers.amends.SubmittedReturnsController.onPageLoad()
 
 # Returns endpoints
-GET        /                                             controllers.Default.redirect(to = "/plastic-packaging-tax/account")
+GET         /                                                      controllers.Default.redirect(to = "/plastic-packaging-tax/account")
 
-GET        /account                                      controllers.IndexController.onPageLoad
+GET         /account                                               controllers.IndexController.onPageLoad
 
-GET        /account/sign-out                             controllers.auth.AuthController.signOut
-GET        /account/signed-out                           controllers.auth.SignedOutController.onPageLoad
+GET         /account/sign-out                                      controllers.auth.AuthController.signOut
+GET         /account/signed-out                                    controllers.auth.SignedOutController.onPageLoad
 
-GET        /account/sign-out-no-survey                   controllers.auth.AuthController.signOutNoSurvey
+GET         /account/sign-out-no-survey                            controllers.auth.AuthController.signOutNoSurvey
 
-GET        /account/user-unauthorised                    controllers.home.UnauthorisedController.unauthorised()
-GET        /account/not-enrolled                         controllers.home.UnauthorisedController.notEnrolled()
+GET         /account/user-unauthorised                             controllers.home.UnauthorisedController.unauthorised()
+GET         /account/not-enrolled                                  controllers.home.UnauthorisedController.notEnrolled()
 
-GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                          controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /language/:lang                                        controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive
+GET         /refresh-session                                       controllers.KeepAliveController.keepAlive
 
-GET         /problem-with-service                          controllers.JourneyRecoveryController.onPageLoad
+GET         /problem-with-service                                  controllers.JourneyRecoveryController.onPageLoad
 
-GET         /amend-return                          controllers.amends.CheckYourAnswersController.onPageLoad()
-POST        /amend-return                          controllers.amends.CheckYourAnswersController.onSubmit()
+GET         /amend-return                                          controllers.amends.CheckYourAnswersController.onPageLoad()
+POST        /amend-return                                          controllers.amends.CheckYourAnswersController.onSubmit()
 
-GET         /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
-POST        /returns-check-your-answers                          controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
+GET         /returns-check-your-answers                            controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
+POST        /returns-check-your-answers                            controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
 
-GET        /return-amended                            controllers.amends.AmendConfirmationController.onPageLoad()
+GET         /return-amended                                        controllers.amends.AmendConfirmationController.onPageLoad()
 
-GET       /viewReturnSummary/:periodKey                 controllers.amends.ViewReturnSummaryController.onPageLoad(periodKey: String)
-GET       /viewReturnSummary/:periodKey/amend                 controllers.amends.ViewReturnSummaryController.amendReturn(periodKey: String)
+GET         /viewReturnSummary/:periodKey                          controllers.amends.ViewReturnSummaryController.onPageLoad(periodKey: String)
+GET         /viewReturnSummary/:periodKey/amend                    controllers.amends.ViewReturnSummaryController.amendReturn(periodKey: String)
 
-GET        /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
-POST       /amend-exported-weight                 controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
+GET         /amend-exported-weight                                 controllers.amends.AmendDirectExportPlasticPackagingController.onPageLoad()
+POST        /amend-exported-weight                                 controllers.amends.AmendDirectExportPlasticPackagingController.onSubmit()
 
-GET        /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
-POST       /amend-medicines-packaging-weight                  controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
+GET         /amend-medicines-packaging-weight                      controllers.amends.AmendHumanMedicinePlasticPackagingController.onPageLoad()
+POST        /amend-medicines-packaging-weight                      controllers.amends.AmendHumanMedicinePlasticPackagingController.onSubmit()
 
-GET        /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
-POST       /amend-imported-weight               controllers.amends.AmendImportedPlasticPackagingController.onSubmit()
+GET         /amend-imported-weight                                 controllers.amends.AmendImportedPlasticPackagingController.onPageLoad()
+POST        /amend-imported-weight                                 controllers.amends.AmendImportedPlasticPackagingController.onSubmit()
 
-GET        /amend-manufactured-weight                  controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad()
-POST       /amend-manufactured-weight                  controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit()
+GET         /amend-manufactured-weight                             controllers.amends.AmendManufacturedPlasticPackagingController.onPageLoad()
+POST        /amend-manufactured-weight                             controllers.amends.AmendManufacturedPlasticPackagingController.onSubmit()
 
-GET        /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
-POST       /amend-recycled-weight                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
+GET         /amend-recycled-weight                                 controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
+POST        /amend-recycled-weight                                 controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET        /confirm-credit                  controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad
-POST       /confirm-credit                  controllers.returns.credits.ConfirmPackagingCreditController.onSubmit
+GET         /confirm-credit                                        controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 
-GET        /directly-exported-components                        controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
-POST       /directly-exported-components                        controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-directly-exported-components                  controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-directly-exported-components                  controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
+GET         /now-start-your-return                                 controllers.returns.NowStartYourReturnController.onPageLoad
 
-GET        /directly-exported-weight                                 controllers.returns.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /directly-exported-weight                                 controllers.returns.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-directly-exported-weight                          controllers.returns.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-directly-exported-weight                          controllers.returns.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET         /directly-exported-components                          controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
+POST        /directly-exported-components                          controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-directly-exported-components                   controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-directly-exported-components                   controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /imported-components                        controllers.returns.ImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /imported-components                        controllers.returns.ImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-imported-components                  controllers.returns.ImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-imported-components                  controllers.returns.ImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET         /directly-exported-weight                              controllers.returns.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /directly-exported-weight                              controllers.returns.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-directly-exported-weight                       controllers.returns.ExportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-directly-exported-weight                       controllers.returns.ExportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /imported-weight                  controllers.returns.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /imported-weight                  controllers.returns.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-imported-weight                        controllers.returns.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-imported-weight                        controllers.returns.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET         /imported-components                                   controllers.returns.ImportedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST        /imported-components                                   controllers.returns.ImportedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET         /change-imported-components                            controllers.returns.ImportedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-imported-components                            controllers.returns.ImportedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manufactured-components                        controllers.returns.ManufacturedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /manufactured-components                        controllers.returns.ManufacturedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-manufactured-components                  controllers.returns.ManufacturedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-manufactured-components                  controllers.returns.ManufacturedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET         /imported-weight                                       controllers.returns.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /imported-weight                                       controllers.returns.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-imported-weight                                controllers.returns.ImportedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-imported-weight                                controllers.returns.ImportedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manufactured-weight                             controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /manufactured-weight                             controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-manufactured-weight        controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET         /manufactured-components                               controllers.returns.ManufacturedPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST        /manufactured-components                               controllers.returns.ManufacturedPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET         /change-manufactured-components                        controllers.returns.ManufacturedPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-manufactured-components                        controllers.returns.ManufacturedPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /non-exported-recycled                      controllers.returns.NonExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /non-exported-recycled                       controllers.returns.NonExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-non-exported-recycled                 controllers.returns.NonExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-non-exported-recycled                 controllers.returns.NonExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET         /manufactured-weight                                   controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /manufactured-weight                                   controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-manufactured-weight                            controllers.returns.ManufacturedPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-manufactured-weight                            controllers.returns.ManufacturedPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /non-exported-recycled-weight                  controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /non-exported-recycled-weight                   controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-non-exported-recycled-weight             controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-non-exported-recycled-weight             controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET         /non-exported-recycled                                 controllers.returns.NonExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST        /non-exported-recycled                                 controllers.returns.NonExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET         /change-non-exported-recycled                          controllers.returns.NonExportedRecycledPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-non-exported-recycled                          controllers.returns.NonExportedRecycledPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /deregistered                                    controllers.DeregisteredController.onPageLoad()
+GET         /non-exported-recycled-weight                          controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /non-exported-recycled-weight                          controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-non-exported-recycled-weight                   controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-non-exported-recycled-weight                   controllers.returns.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /startYourReturn                        controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
-POST       /startYourReturn                        controllers.returns.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
-GET        /changeStartYourReturn                  controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeStartYourReturn                  controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
+GET         /deregistered                                          controllers.DeregisteredController.onPageLoad()
 
-GET        /submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
-POST       /submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
-GET        /change-submit-return-or-claim-credit            controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-submit-return-or-claim-credit            controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+GET         /startYourReturn                                       controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
+POST        /startYourReturn                                       controllers.returns.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
+GET         /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
+POST        /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
 
-GET        /start-date-not-recognised                       controllers.returns.NotStartOtherReturnsController.onPageLoad()
+GET         /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
+POST        /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
+GET         /change-submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-submit-return-or-claim-credit                  controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
 
-GET        /return-submitted                       controllers.returns.ReturnConfirmationController.onPageLoad()
+GET         /start-date-not-recognised                             controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
-GET        /agents                        controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
-POST       /agents                        controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAgents                  controllers.AgentsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAgents                  controllers.AgentsController.onSubmit(mode: Mode = CheckMode)
+GET         /return-submitted                                      controllers.returns.ReturnConfirmationController.onPageLoad()
 
-GET        /make-a-payment                controllers.MakePaymentController.redirectLink()
-GET        /direct-debit                  controllers.payments.DirectDebitController.redirectLink()
+GET         /agents                                                controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
+POST        /agents                                                controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
+GET         /changeAgents                                          controllers.AgentsController.onPageLoad(mode: Mode = CheckMode)
+POST        /changeAgents                                          controllers.AgentsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /confirm-plastic-packaging-total                       controllers.returns.ConfirmPlasticPackagingTotalController.onPageLoad
-GET        /confirm-plastic-packaging-total-routing               controllers.returns.ConfirmPlasticPackagingTotalController.onwardRouting()
+GET         /make-a-payment                                        controllers.MakePaymentController.redirectLink()
+GET         /direct-debit                                          controllers.payments.DirectDebitController.redirectLink()
 
-GET        /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
-POST       /non-exported-medicines-packaging                               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
-GET        /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-non-exported-medicines-packaging                        controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
+GET         /confirm-plastic-packaging-total                       controllers.returns.ConfirmPlasticPackagingTotalController.onPageLoad
+GET         /confirm-plastic-packaging-total-routing               controllers.returns.ConfirmPlasticPackagingTotalController.onwardRouting()
 
-GET        /non-exported-medicines-packaging-weight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
-POST       /non-exported-medicines-packaging-weight                  controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
-GET        /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-non-exported-medicines-packaging-weight           controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
+GET         /non-exported-medicines-packaging                      controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
+POST        /non-exported-medicines-packaging                      controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
+GET         /change-non-exported-medicines-packaging               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-non-exported-medicines-packaging               controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = CheckMode)
 
-GET        /cancel-amend                        controllers.amends.CancelAmendController.onPageLoad()
-POST       /cancel-amend                        controllers.amends.CancelAmendController.onSubmit()
+GET         /non-exported-medicines-packaging-weight               controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /non-exported-medicines-packaging-weight               controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-non-exported-medicines-packaging-weight        controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-non-exported-medicines-packaging-weight        controllers.returns.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET        /redit-for-exported                       controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST       /credit-for-exported                     controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-credit-for-exported                  controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-credit-for-exported                 controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /cancel-amend                                          controllers.amends.CancelAmendController.onPageLoad()
+POST        /cancel-amend                                          controllers.amends.CancelAmendController.onSubmit()
 
-GET        /credit-for-converted                        controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST       /credit-for-converted                        controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-credit-for-converted                  controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-credit-for-converted                  controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /redit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-exported                                   controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-exported                            controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-exported                            controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /credit-for-converted                                  controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-converted                                  controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
 

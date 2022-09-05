@@ -17,6 +17,7 @@
 package views.returns.credits
 
 import base.ViewSpecBase
+import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ConfirmPackagingCreditView
@@ -26,7 +27,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   val page: ConfirmPackagingCreditView   = inject[ConfirmPackagingCreditView]
 
   private def createView: Html =
-    page(Some("200"))(request, messages)
+    page(Some("200"), Call("GET", "a-link"))(request, messages)
 
   "View" should {
 
@@ -42,8 +43,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "have a confirm button" in {
-      view.getElementsByClass("govuk-button").text() mustBe  "Confirm credit amount"
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.confirm.credit")
+      view.getElementsByClass("govuk-button").text() mustBe messages("confirmPackagingCredit.button-text")
     }
   }
 }
