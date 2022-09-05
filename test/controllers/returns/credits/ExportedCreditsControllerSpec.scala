@@ -19,7 +19,7 @@ package controllers.returns.credits
 import base.{FakeIdentifierActionWithEnrolment, SpecBase}
 import connectors.CacheConnector
 import controllers.actions._
-import forms.returns.credits.ExportedCreditsFormProvider
+import forms.returns.credits.{ExportedCreditsAnswer, ExportedCreditsFormProvider}
 import models.Mode.NormalMode
 import models.UserAnswers
 import org.mockito.Mockito.reset
@@ -50,6 +50,8 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
     reset(view)
   }
 
+  val validYesAnswer: ExportedCreditsAnswer = new ExportedCreditsAnswer(yesNo = true, weight = Some(30L))
+  val validNoAnswer: ExportedCreditsAnswer = new ExportedCreditsAnswer(yesNo = false, weight = None)
 
   "ExportedCredits Controller" - {
 
@@ -57,7 +59,7 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
 
       "a GET is made" in {
 
-        val ans = userAnswers.set(ExportedCreditsPage, 20L).success.value
+        val ans = userAnswers.set(ExportedCreditsPage, validYesAnswer).success.value
 
         val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -70,14 +72,6 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
         }
       }
     }
-  }
-
-
-  private def buildApplication = {
-    applicationBuilder(userAnswers = None).overrides(
-      bind[ExportedCreditsView].toInstance(view),
-      bind[CacheConnector].toInstance(cacheConnector),
-    ).build()
   }
 
 
