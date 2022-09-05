@@ -18,7 +18,6 @@ package controllers.returns.credits
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.returns.ExportedCreditsAnswer
 import org.mockito.Mockito.reset
@@ -36,7 +35,6 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
 
   def onwardRoute = Call("GET", "/foo")
 
-  private val form = new ExportedCreditsFormProvider()
   private val view = mock[ExportedCreditsView]
   lazy val exportedCreditsRoute = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url
 
@@ -80,7 +78,6 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, exportedCreditsRoute)
         val controller = application.injector.instanceOf[ExportedCreditsController]
         val result = controller.onSubmit(NormalMode)(request)
-        println("request: " + request + "\n" + "result: " + result)
         status(result) mustEqual SEE_OTHER
       }
     }

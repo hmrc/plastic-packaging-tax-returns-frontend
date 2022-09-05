@@ -23,13 +23,12 @@ import play.api.data.Forms.mapping
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
 class ExportedCreditsFormProvider extends Mappings {
-  val requiredKey = "convertedCredits.error.required"
 
   def apply(): Form[ExportedCreditsAnswer] = {
     Form(
       mapping(
-        "answer" -> boolean("convertedCredits.error.required"),
-        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long("convertedCredits.error.weightRequired")
+        "answer" -> boolean("exportedCredits.error.required"),
+        "exported-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long("ExportedCredits.error.weightRequired")
           .verifying(minimumValue(1L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
           .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
         ))(ExportedCreditsAnswer.apply)(ExportedCreditsAnswer.unapply)

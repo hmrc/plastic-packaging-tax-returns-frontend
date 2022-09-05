@@ -16,6 +16,56 @@
 
 package forms.returns.credits
 
-class ConvertedCreditsFormProviderSpec {
+import models.returns.ConvertedCreditsAnswer
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
+
+class ConvertedCreditsFormProviderSpec extends PlaySpec {
+
+  val sut: Form[ConvertedCreditsAnswer] = new ConvertedCreditsFormProvider().apply()
+
+
+  "bind correctly" when {
+    "yes is provided" in {
+
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "20"))
+      boundForm.value mustBe Some(ConvertedCreditsAnswer(yesNo = true, Some(20)))
+      boundForm.errors mustBe Nil
+    }
+    "no is provided with no weight" in {
+      val boundForm = sut.bind(Map("answer" -> "false"))
+      boundForm.value mustBe Some(ConvertedCreditsAnswer(yesNo = false, None))
+      boundForm.errors mustBe Nil
+    }
+  }
+  "radio errors" when {
+    "answer is none boolean" in {
+      val boundForm = sut.bind(Map("answer" -> "porridge", "converted-credits-weight" -> "20"))
+      boundForm.value mustBe None
+    }
+
+    "answer is empty" in {
+      val boundForm = sut.bind(Map.empty[String, String])
+      boundForm.value mustBe None
+    }
+  }
+
+  "weight input errors" when {
+    "nothing entered in weight field" in {
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> ""))
+      boundForm.value mustBe None
+    }
+
+    "entered weight is below 1" in {
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "-1"))
+      boundForm.value mustBe None
+    }
+
+    "entered weight is below above max" in {
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "100000000000"))
+      boundForm.value mustBe None
+    }
+
+  }
 
 }
