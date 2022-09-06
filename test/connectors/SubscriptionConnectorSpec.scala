@@ -37,12 +37,11 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    WireMock.configureFor(wireHost, wirePort)
-    wireMockServer.start()
+    startWireMockServer
   }
 
   override protected def afterAll(): Unit = {
-    wireMockServer.stop()
+    stopWireMockServer
     super.afterAll()
   }
 

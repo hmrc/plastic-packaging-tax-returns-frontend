@@ -192,17 +192,18 @@ amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar 
 amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
 amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
-confirmPackagingCredit.title = Confirm £{0} credit
-confirmPackagingCredit.heading = Confirm £{0} credit
+confirmPackagingCredit.title = Confirm credit amount
+confirmPackagingCredit.heading = Confirm {0} credit
+confirmPackagingCredit.subHeading = Credits
+confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
+confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
+confirmPackagingCredit.hint.p3 = This means the amount of tax you'll get back as credit will be {0}.
+confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
+confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
 confirmPackagingCredit.checkYourAnswersLabel = Conversion credit
-confirmPackagingCredit.error.nonNumeric = Enter a value using numbers
-confirmPackagingCredit.error.required = Enter a value
-confirmPackagingCredit.error.wholeNumber = Enter a value using whole numbers
-confirmPackagingCredit.error.outOfRange = Value must be between {0} and {1}
-confirmPackagingCredit.change.hidden = How much credit would you like to claim for finished plastic packaging components declared in a previous return?
 confirmPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
 confirmPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
-site.confirm.credit = Confirm credit amount
+confirmPackagingCredit.confirm.credit.button = Confirm credit amount
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?

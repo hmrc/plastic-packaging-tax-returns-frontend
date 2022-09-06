@@ -19,9 +19,15 @@ package forms.returns.credits
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
 case class ExportedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
+
+object ExportedCreditsAnswer {
+
+  implicit val format: OFormat[ExportedCreditsAnswer] = Json.format[ExportedCreditsAnswer]
+}
 
 class ExportedCreditsFormProvider extends Mappings {
   val requiredKey = "convertedCredits.error.required"

@@ -102,8 +102,8 @@ class FrontendAppConfig @Inject() (
   lazy val pptRegistrationDeregisterUrl =
     s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/deregister"
 
-  def pptExportCreditsUrl(pptReference: String, fromDate: LocalDate, toDate: LocalDate): String =
-    s"$pptServiceHost/export-credits/$pptReference?fromDate=$fromDate&toDate=$toDate"
+  def pptCalculateCreditsUrl(pptReference: String): String =
+    s"$pptServiceHost/credits/calculate/$pptReference"
 
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)

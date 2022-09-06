@@ -17,7 +17,7 @@
 package base.utils
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.MappingBuilder
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.must.Matchers
@@ -29,10 +29,19 @@ trait WiremockTestServer
 
   val wireHost = "localhost"
 
-  val wirePort       = 20001
-  val wireMockServer = new WireMockServer(wirePort)
+  lazy val wirePort       = wireMockServer.port()
+  private val wireMockServer = new WireMockServer(0)
 
   protected def stubFor(mappingBuilder: MappingBuilder): StubMapping =
     wireMockServer.stubFor(mappingBuilder)
 
+  protected def startWireMockServer = {
+    if(!wireMockServer.isRunning) wireMockServer.start
+
+    WireMock.configureFor(wireHost, wirePort)
+  }
+
+  protected def stopWireMockServer = wireMockServer.stop()
+
+  protected def resetWireMockServer = wireMockServer.resetAll()
 }
