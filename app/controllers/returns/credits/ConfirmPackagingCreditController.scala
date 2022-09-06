@@ -41,7 +41,7 @@ class ConfirmPackagingCreditController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = {
+  def onPageLoad: Action[AnyContent] = {
     (identify andThen getData andThen requireData).async {
       implicit request: DataRequest[AnyContent] =>
         creditConnector.get(request.pptReference).map {
