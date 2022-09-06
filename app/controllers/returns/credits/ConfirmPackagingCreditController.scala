@@ -36,7 +36,7 @@ class ConfirmPackagingCreditController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: ConfirmPackagingCreditView,
+  confirmCreditView: ConfirmPackagingCreditView,
   tooMuchCreditView: TooMuchCreditClaimedView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
@@ -56,7 +56,7 @@ class ConfirmPackagingCreditController @Inject()(
   )(implicit request: DataRequest[_]): Result = {
     if (response.canBeClaimed)
       Ok(
-        view(
+        confirmCreditView(
           response.totalRequestedCreditInPounds.asPounds,
           response.totalRequestedCreditInKilograms.asKg
         )
