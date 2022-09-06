@@ -25,7 +25,10 @@
     govukButton: GovukButton,
     govukInput: GovukInput,
     sectionHeader: SectionHeader,
-    conditionalYesNo: conditionalYesNoRadio
+    conditionalYesNo: conditionalYesNoRadio,
+    para: paragraph,
+    heading: heading,
+    h2heading: SectionH2Heading
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -36,20 +39,34 @@
             .asKg()
             .withWidth(Fixed10)
             .withId("exported-credits-weight")
+            .withHint(Hint(content = "exported.credits.weight.hint"))
+
     )
 }
 
-@layout(pageTitle = title(form, messages("exportedCredits.title"))) {
+@paraContent = {
+    <div>
+        <p>@messages("exported.credits.paragraph.1")</p>
+        <p>@messages("exported.credits.paragraph.2")</p>
+        <p>@messages("exported.credits.paragraph.3")</p>
+    </div>
+}
+
+
+@layout(pageTitle = title(form, messages("exported.credits.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
 
     @sectionHeader(messages("credits.caption"))
+    @heading("exported.credits.heading")
+    @para(paraContent)
+    @h2heading(messages("exported.credits.heading.2"), Some("exported-credits-h2"))
 
      @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @conditionalYesNo(form, Some(messages("exportedCredits.heading")), Some(ifYes))
+        @conditionalYesNo(form, None, Some(ifYes))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

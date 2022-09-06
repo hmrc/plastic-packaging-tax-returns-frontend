@@ -28,7 +28,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, running, status}
+import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, running, status}
 import views.html.returns.credits.ConvertedCreditsView
 
 class ConvertedCreditsControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -76,7 +76,7 @@ class ConvertedCreditsControllerSpec extends SpecBase with MockitoSugar with Bef
         .build()
 
       running(application) {
-        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, ConvertedCreditsRoute)
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, ConvertedCreditsRoute)
         val controller = application.injector.instanceOf[ConvertedCreditsController]
         val result = controller.onSubmit(NormalMode)(request)
 

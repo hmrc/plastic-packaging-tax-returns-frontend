@@ -28,7 +28,7 @@ import play.api.http.Status._
 import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, running, status}
+import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, running, status}
 import views.html.returns.credits.ExportedCreditsView
 
 class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -75,10 +75,12 @@ class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar with Befo
         .build()
 
       running(application) {
-        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, exportedCreditsRoute)
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, exportedCreditsRoute)
         val controller = application.injector.instanceOf[ExportedCreditsController]
         val result = controller.onSubmit(NormalMode)(request)
         status(result) mustEqual SEE_OTHER
+
+        println(result)
       }
     }
     "must redirect to the next page when Yes and weight is submitted" ignore {

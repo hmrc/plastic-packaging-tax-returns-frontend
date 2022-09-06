@@ -502,3 +502,27 @@ submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
 
 submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
 submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
+
+credits.caption = Credits
+
+exported.credits.title = Plastic packaging you’ve paid tax on that has since been exported [NEEDS WELSH]
+exported.credits.heading = Plastic packaging you’ve paid tax on that has since been exported [NEEDS WELSH]
+exported.credits.heading.2 = Have you already paid tax on plastic packaging that has since been exported? [NEEDS WELSH]
+exported.credits.paragraph.1 = If you've paid tax on plastic packaging and you later export it, you can claim tax back as credit. [NEEDS WELSH]
+exported.credits.paragraph.2 = You can also claim tax back as credit if another business exports it. [NEEDS WELSH]
+exported.credits.paragraph.3 = You must have evidence the export has taken place. [NEEDS WELSH]
+exported.credits.weight.hint = 1 tonne is 1,000kg. [NEEDS WELSH]
+exported.credits.checkYourAnswersLabel = exportedCredits
+exported.credits.error.required = Select yes if exportedCredits  [NEEDS CONTENT/WELSH]
+exported.credits.change.hidden = ExportedCredits
+
+converted.credits.title = Plastic packaging you’ve paid tax on that has since been converted [NEEDS WELSH]
+converted.credits.heading = Plastic packaging you’ve paid tax on that has since been converted [NEEDS WELSH]
+converted.credits.heading.2 = Have you already paid tax on plastic packaging that has since been converted? [NEEDS WELSH]
+converted.credits.paragraph.1 = If you've paid tax on plastic packaging and you later export it, you can claim tax back as credit. [NEEDS WELSH]
+converted.credits.paragraph.2 = You can also claim tax back as credit if another business exports it. [NEEDS WELSH]
+converted.credits.paragraph.3 = You must have evidence the export has taken place. [NEEDS WELSH]
+converted.credits.weight.hint = 1 tonne is 1,000kg. [NEEDS WELSH]
+converted.credits.checkYourAnswersLabel = convertedCredits
+converted.credits.error.required = Select yes if convertedCredits [NEEDS CONTENT/WELSH]
+converted.credits.change.hidden = ConvertedCredits

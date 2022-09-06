@@ -20,10 +20,8 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
-import models.returns.ConvertedCreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,7 +43,7 @@ class ConvertedCreditsController @Inject()
   view: ConvertedCreditsView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[ConvertedCreditsAnswer] = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
