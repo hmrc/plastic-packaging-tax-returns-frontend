@@ -45,7 +45,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec {
   "ConvertedCreditsRoute" ignore {
     "in normalmode" in {
       val call = returnsJourneyNavigator.ConvertedCreditsRoute(NormalMode)
-      call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad()
+      call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad
     }
     "in checkmode" in {
       val call = returnsJourneyNavigator.ConvertedCreditsRoute(CheckMode)
