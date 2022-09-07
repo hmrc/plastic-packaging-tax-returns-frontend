@@ -45,18 +45,16 @@ class ExportedCreditsController @Inject()
   view: ExportedCreditsView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[ExportedCreditsAnswer] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(form, mode))
+      Ok(view(formProvider(), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form
+      formProvider()
         .bindFromRequest()
         .fold(
         formWithErrors =>

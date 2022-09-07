@@ -25,8 +25,9 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.ExportedCreditsAnswer
 import navigation.ReturnsJourneyNavigator
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, verify}
 import org.mockito.MockitoSugar.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -38,9 +39,11 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
 import play.twirl.api.Html
+import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ExportedCreditsView
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -69,11 +72,11 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockForm)
+
   }
 
   val validAnswer: ExportedCreditsAnswer = new ExportedCreditsAnswer(yesNo = true, weight = Some(30L))
-  val x = mock[Form[ExportedCreditsAnswer]]
-  val realFormWithError = new ExportedCreditsFormProvider()().withError("exportedCredits.error.required", "err")
+
 
   "ExportedCredits Controller" must {
 
@@ -87,22 +90,34 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
       }
     }
     "must redirect to the next page when No is submitted" in {
+
       when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(x)
+      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockNavigator.ExportedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
 
-      val value1 = mock[Form[ExportedCreditsAnswer]]
-      when(x.bindFromRequest()(any(),any())).thenReturn(value1)
-
-      val result = sut.onSubmit(NormalMode)(FakeRequest(POST, "/foo"))
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "false")))
 
       status(result) mustEqual SEE_OTHER
-
-
     }
 
-    "return 400 on error" ignore {
-      ???
+    "return 400 on error" in {
+      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
+
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "true")))
+
+      status(result) mustEqual BAD_REQUEST
+      formVerifyAndCapture.hasErrors mustBe true
     }
+  }
+
+  private def formVerifyAndCapture: Form[ExportedCreditsAnswer] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[ExportedCreditsAnswer]])
+    verify(mockView).apply(captor.capture(), any())(any(), any())
+    captor.getValue
   }
 
 }
