@@ -53,7 +53,7 @@ POST        /amend-manufactured-weight                             controllers.a
 GET         /amend-recycled-weight                                 controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST        /amend-recycled-weight                                 controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET         /confirm-credit                                        controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
+GET        /confirm-or-correct-credit                  controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad
 
 GET         /now-start-your-return                                 controllers.returns.NowStartYourReturnController.onPageLoad
 

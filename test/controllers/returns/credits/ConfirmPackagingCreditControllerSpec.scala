@@ -16,167 +16,125 @@
 
 package controllers.returns.credits
 
-import base.SpecBase
-import connectors.{CacheConnector, DownstreamServiceError, ExportCreditsConnector}
-import models.ExportCreditBalance
-import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
+import connectors.{CalculateCreditsConnector, DownstreamServiceError}
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import models.{CreditBalance, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject.bind
-import play.api.mvc.Call
+import org.scalatestplus.play.PlaySpec
+import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
-import views.html.returns.credits.ConfirmPackagingCreditView
+import play.twirl.api.Html
+import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConfirmPackagingCreditControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
+
+  private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
+  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockView = mock[ConfirmPackagingCreditView]
+  private val tooMuchCreditView = mock[TooMuchCreditClaimedView]
 
 
-  private def onwardRoute = Call("GET", "/foo")
-
-  val validAnswer: BigDecimal = 1.25
-
-  private lazy val convertedPackagingCreditRoute =
-    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad().url
-
-  private val exportCreditConnector = mock[ExportCreditsConnector]
-
-  private val view = mock[ConfirmPackagingCreditView]
+  private val sut = new ConfirmPackagingCreditController(
+    mockMessagesApi,
+    mockCalculateCreditConnector,
+    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+    new FakeDataRetrievalAction(Some(UserAnswers("123"))),
+    new DataRequiredActionImpl(),
+    controllerComponents,
+    mockView,
+    tooMuchCreditView
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(exportCreditConnector, view)
-
-    when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Right(ExportCreditBalance(
-      totalPPTCharges = 0.0, totalExportCreditClaimed = 0.0, totalExportCreditAvailable = 123.45))))
-
-    when(view.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    reset(mockCalculateCreditConnector, mockView, tooMuchCreditView)
   }
 
-  private def buildApplication = {
-    applicationBuilder(userAnswers = None).overrides(
-      bind[ExportCreditsConnector].toInstance(exportCreditConnector),
-      bind[ConfirmPackagingCreditView].toInstance(view),
-      bind[CacheConnector].toInstance(cacheConnector),
-    ).build()
-  }
 
-  "ConvertedPackagingCredit Controller" - {
+  "ConfirmPackagingCreditController" should {
+    "return OK on pageLoading" in {
+      setUpMockForConfirmCreditsView()
 
-    "must return OK and the correct view for a GET" ignore {
+      val result = sut.onPageLoad(FakeRequest("GET", ""))
 
-      val application = buildApplication
-
-      running(application) {
-        val request = FakeRequest(GET, convertedPackagingCreditRoute)
-        val controller = application.injector.instanceOf[ConfirmPackagingCreditController]
-        val result = controller.onPageLoad(NormalMode)(request)
-        status(result) mustEqual OK
-      }
-
-      verify(view).apply(ArgumentMatchers.eq(Some("200")), any())(any(), any())
+      status(result) mustBe OK
     }
 
-    "must handle the credit balance being unavailable" ignore {
-      when(exportCreditConnector.get(any(), any(), any())(any())).thenReturn(Future.successful(Left(
-        DownstreamServiceError("error", new Exception)
-      )))
-      val application = buildApplication
+    "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
+      "total requested credit is less than available credit" in {
+        setUpMockForConfirmCreditsView()
 
-      running(application) {
-        val request = FakeRequest(GET, convertedPackagingCreditRoute)
-        val controller = application.injector.instanceOf[ConfirmPackagingCreditController]
-        val result = controller.onPageLoad(NormalMode)(request)
-        status(result) mustEqual OK
-      }
+        await(sut.onPageLoad(FakeRequest("GET", "")))
 
-      verify(view).apply(ArgumentMatchers.eq(Some("200")), any())(any(), any())
-    }
-
-    // TODO reword tests below...
-
-    "must redirect to the next page when valid data is submitted" ignore {
-
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, convertedPackagingCreditRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.returns.routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+        verify(mockView).apply(ArgumentMatchers.eq("£5.00"), any())(any(),any())
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" ignore {
+    "return too muchCreditView" when {
+      "total requested credit is grater than available credit" in {
+        when(tooMuchCreditView.apply()(any(),any())).thenReturn(Html("too much credit view"))
+        when(mockCalculateCreditConnector.get(any())(any()))
+          .thenReturn(Future.successful(Right(CreditBalance(10, 20, 500L, false))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        await(sut.onPageLoad(FakeRequest("GET", "")))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, convertedPackagingCreditRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-
-        val view = application.injector.instanceOf[ConfirmPackagingCreditView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(meq(Some("balance")), any())(request,
-          messages(application)
-        ).toString
+        verify(tooMuchCreditView).apply()(any(),any())
+        verify(mockView, never()).apply(any(), any())(any(),any())
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" ignore {
+    "display the exported and converted weight" when {
+      "total requested credit is less than available credit" in {
+        setUpMockForConfirmCreditsView()
 
-      val application = applicationBuilder(userAnswers = None).build()
+        await(sut.onPageLoad(FakeRequest("GET", "")))
 
-      running(application) {
-        val request = FakeRequest(GET, convertedPackagingCreditRoute)
+        verify(mockView).apply(ArgumentMatchers.eq("£5.00"), ArgumentMatchers.eq("500kg"))(any(),any())
+        verify(tooMuchCreditView, never()).apply()(any(),any())
+      }
 
-        val result = route(application, request).value
+      "only exported weight is Available" in {
+        setUpMockForConfirmCreditsView()
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+        await(sut.onPageLoad(FakeRequest("GET", "")))
+
+        verify(mockView).apply(ArgumentMatchers.eq("£5.00"), ArgumentMatchers.eq("500kg"))(any(),any())
+      }
+
+      "only converted weight is Available" in {
+        setUpMockForConfirmCreditsView()
+
+        await(sut.onPageLoad(FakeRequest("GET", "")))
+
+        verify(mockView).apply(ArgumentMatchers.eq("£5.00"), ArgumentMatchers.eq("500kg"))(any(),any())
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" ignore {
+    "return an error page" in {
+      when(mockCalculateCreditConnector.get(any())(any()))
+        .thenReturn(Future.successful(Left(DownstreamServiceError("Error", new Exception("error")))))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = sut.onPageLoad(FakeRequest("GET", ""))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, convertedPackagingCreditRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
   }
 
+  private def setUpMockForConfirmCreditsView(): Unit = {
+    when(mockView.apply(any(), any())(any(),any())).thenReturn(Html("correct view"))
+    when(mockCalculateCreditConnector.get(any())(any()))
+      .thenReturn(Future.successful(Right(CreditBalance(10, 5, 500, true))))
+  }
 }
