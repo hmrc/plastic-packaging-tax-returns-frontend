@@ -16,77 +16,101 @@
 
 package controllers.returns.credits
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
 import connectors.CacheConnector
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.ConvertedCreditsAnswer
-import org.mockito.Mockito.reset
+import models.UserAnswers
+import models.returns.{ConvertedCreditsAnswer}
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify}
+import org.mockito.MockitoSugar.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.credits.ConvertedCreditsPage
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, Call}
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
+import play.api.http.Status._
+import play.api.i18n.MessagesApi
+import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, running, status}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ConvertedCreditsView
 
-class ConvertedCreditsControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-  def onwardRoute = Call("GET", "/foo")
+class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val view = mock[ConvertedCreditsView]
-  lazy val ConvertedCreditsRoute = controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(NormalMode).url
+
+  private val mockMessages: MessagesApi = mock[MessagesApi]
+  private val mockCacheConnector: CacheConnector = mock[CacheConnector]
+  private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockView = mock[ConvertedCreditsView]
+  private val mockForm = mock[ConvertedCreditsFormProvider]
+
+  val sut: ConvertedCreditsController = new ConvertedCreditsController(
+    mockMessages,
+    mockCacheConnector,
+    mockNavigator,
+    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+    new FakeDataRetrievalAction(Some(UserAnswers("123"))),
+    new DataRequiredActionImpl(),
+    mockForm,
+    controllerComponents,
+    mockView)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(view)
+    reset(mockView, mockCacheConnector, mockForm)
   }
 
-  val validYesAnswer: ConvertedCreditsAnswer = new ConvertedCreditsAnswer(yesNo = true, weight = Some(30L))
-  val validNoAnswer: ConvertedCreditsAnswer = new ConvertedCreditsAnswer(yesNo = false, weight = None)
+  "ConvertedCredits Controller" must {
 
-
-  "ConvertedCredits Controller" - {
-
-    "must return OK and the correct view" - {
+    "return OK and the correct view" when {
 
       "a GET is made" in {
+        when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+        val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
 
-        val ans = userAnswers.set(ConvertedCreditsPage, validYesAnswer).success.value
-
-        val application = applicationBuilder(userAnswers = Some(ans)).build()
-
-        running(application) {
-          val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, ConvertedCreditsRoute)
-          val controller = application.injector.instanceOf[ConvertedCreditsController]
-          val result = controller.onPageLoad(NormalMode)(request)
-
-          status(result) mustEqual OK
-        }
+        status(result) mustEqual OK
       }
     }
     "must redirect to the next page when No is submitted" in {
-      val ans = userAnswers.set(ConvertedCreditsPage, validNoAnswer).success.value
-      val mockCacheConnector = mock[CacheConnector]
 
-      val application = applicationBuilder(userAnswers = Some(ans))
-        .overrides(
-          bind[CacheConnector].toInstance(mockCacheConnector))
-        .build()
+      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+      when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockNavigator.ConvertedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
 
-      running(application) {
-        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, ConvertedCreditsRoute)
-        val controller = application.injector.instanceOf[ConvertedCreditsController]
-        val result = controller.onSubmit(NormalMode)(request)
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "false")))
 
-        println(result)
-
-        status(result) mustEqual SEE_OTHER
-      }
+      status(result) mustEqual SEE_OTHER
     }
-    "must redirect to the next page when Yes and weight is submitted" ignore {
-      ???
+
+    "return 400 on error" in {
+      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+      when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
+
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "true")))
+
+      status(result) mustEqual BAD_REQUEST
+      formVerifyAndCapture.hasErrors mustBe true
     }
   }
+
+  private def formVerifyAndCapture: Form[ConvertedCreditsAnswer] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedCreditsAnswer]])
+    verify(mockView).apply(captor.capture(), any())(any(), any())
+    captor.getValue
+  }
+
 }

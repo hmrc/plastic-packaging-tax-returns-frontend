@@ -52,19 +52,19 @@ class ExportedCreditsController @Inject()
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
-    implicit request =>
+      implicit request =>
 
-      formProvider()
-        .bindFromRequest()
-        .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
-            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.ExportedCreditsRoute(mode))
-      )
-  }
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
+                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+              } yield Redirect(navigator.ExportedCreditsRoute(mode))
+          )
+    }
 }

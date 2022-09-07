@@ -25,7 +25,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.ExportedCreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.MockitoSugar.when
@@ -37,7 +37,7 @@ import play.api.http.Status._
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ExportedCreditsView
@@ -46,10 +46,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
-
-  def onwardRoute = Call("GET", "/foo")
-
-  lazy val exportedCreditsRoute = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url
 
   private val mockMessages: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector: CacheConnector = mock[CacheConnector]
@@ -72,11 +68,7 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockForm)
-
   }
-
-  val validAnswer: ExportedCreditsAnswer = new ExportedCreditsAnswer(yesNo = true, weight = Some(30L))
-
 
   "ExportedCredits Controller" must {
 

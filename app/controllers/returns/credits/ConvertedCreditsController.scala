@@ -43,18 +43,18 @@ class ConvertedCreditsController @Inject()
   view: ConvertedCreditsView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(form, mode))
+      Ok(view(formProvider(), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
-    implicit request =>
+      implicit request =>
 
-          form.bindFromRequest().fold(
+        formProvider()
+          .bindFromRequest()
+          .fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode))),
 
@@ -64,5 +64,5 @@ class ConvertedCreditsController @Inject()
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
               } yield Redirect(navigator.ConvertedCreditsRoute(mode))
           )
-  }
+    }
 }
