@@ -23,15 +23,16 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import models.returns.{ConvertedCreditsAnswer}
+import models.returns.ConvertedCreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.MockitoSugar.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.http.Status._
 import play.api.i18n.MessagesApi
@@ -71,23 +72,48 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     reset(mockView, mockCacheConnector, mockForm)
   }
 
-  "ConvertedCredits Controller" must {
+  "onPageLoad" must {
 
-    "return OK and the correct view" when {
-
-      "a GET is made" in {
-        when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-        val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
-
-        status(result) mustEqual OK
-      }
-    }
-    "must redirect to the next page when No is submitted" in {
+    "return OK" in {
 
       when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
-      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-      when(mockNavigator.ConvertedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
+      val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
+
+      status(result) mustEqual OK
+    }
+
+  }
+
+  "onSumbit" must {
+
+    "redirect to newStartReturn page if no credits" in {
+      setUpMocks
+
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "false")))
+
+      status(result) mustEqual SEE_OTHER
+      verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some(false)))
+
+    }
+    "redirect to confirmCredits page if credits claimed" when {
+      "ConvertedCredits is claimed" in {
+        setUpMocks
+        val answers = UserAnswers("123").set(ConvertedCreditsPage, ConvertedCreditsAnswer(true,Some(20))).get
+        val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
+          .withFormUrlEncodedBody(
+            "answer" -> "true",
+            "converted-credits-weight" -> "20"))
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some(true)))
+      }
+
+    }
+
+    "redirect to the next page" in {
+
+      setUpMocks
 
       val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
         .withFormUrlEncodedBody(("answer" -> "false")))
@@ -105,6 +131,28 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       status(result) mustEqual BAD_REQUEST
       formVerifyAndCapture.hasErrors mustBe true
     }
+
+  }
+
+  private def createSut(userAnswers: UserAnswers): ConvertedCreditsController = {
+    new ConvertedCreditsController(
+      mockMessages,
+      mockCacheConnector,
+      mockNavigator,
+      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+      new FakeDataRetrievalAction(Some(userAnswers)),
+      new DataRequiredActionImpl(),
+      mockForm,
+      controllerComponents,
+      mockView)
+  }
+
+
+  private def setUpMocks = {
+    when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+    when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
+    when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+    when(mockNavigator.convertedCreditsRoute(any(), any())).thenReturn(Call("GET", "/foo"))
   }
 
   private def formVerifyAndCapture: Form[ConvertedCreditsAnswer] = {

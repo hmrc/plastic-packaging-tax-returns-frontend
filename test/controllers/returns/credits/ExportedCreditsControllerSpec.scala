@@ -86,7 +86,7 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
       when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
       when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
       when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-      when(mockNavigator.ExportedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
+      when(mockNavigator.exportedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
 
       val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
         .withFormUrlEncodedBody(("answer" -> "false")))

@@ -20,8 +20,9 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.ConvertedCreditsPage
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,6 +44,7 @@ class ConvertedCreditsController @Inject()
   view: ConvertedCreditsView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       Ok(view(formProvider(), mode))
@@ -62,7 +64,17 @@ class ConvertedCreditsController @Inject()
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.ConvertedCreditsRoute(mode))
+              } yield Redirect(navigator.convertedCreditsRoute(mode, Some(hasClaimedCredits)))
           )
     }
+
+  private def hasClaimedCredits(implicit request: DataRequest[_]) = {
+    request.userAnswers.get(ExportedCreditsPage).fold(false)(_.yesNo) ||
+      request.userAnswers.get(ConvertedCreditsPage).fold(false)(_.yesNo)
+
+    //    for {e <- request.userAnswers.get(ExportedCreditsPage)
+    //         c <- request.userAnswers.get(ConvertedCreditsPage)
+    //         } yield e.yesNo || c.yesNo
+  }
+
 }
