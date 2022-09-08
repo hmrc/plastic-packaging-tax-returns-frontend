@@ -17,12 +17,20 @@
 package controllers.returns.credits
 
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+
+case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
+
+  def hasMadeClaim: Boolean =
+    exported.yesNo || converted.yesNo
+
+}
 
 object ClaimedCredits {
 
-  def check(userAnswers: UserAnswers) : Boolean =
-    userAnswers.get(ExportedCreditsPage).fold(false)(_.yesNo) ||
-      userAnswers.get(ConvertedCreditsPage).fold(false)(_.yesNo)
+  def apply(userAnswers: UserAnswers): ClaimedCredits = {
+    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
 
+  }
 }

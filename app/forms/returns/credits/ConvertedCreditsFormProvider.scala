@@ -17,21 +17,21 @@
 package forms.returns.credits
 
 import forms.mappings.Mappings
-import models.returns.ConvertedCreditsAnswer
+import models.returns.CreditsAnswer
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
 class ConvertedCreditsFormProvider extends Mappings {
 
-  def apply(): Form[ConvertedCreditsAnswer] = {
+  def apply(): Form[CreditsAnswer] = {
     Form(
       mapping(
         "answer" -> boolean("convertedCredits.error.required"),
         "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long("ConvertedCredits.error.weightRequired")
           .verifying(minimumValue(1L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
           .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
-        ))(ConvertedCreditsAnswer.apply)(ConvertedCreditsAnswer.unapply)
+        ))(CreditsAnswer.apply)(CreditsAnswer.unapply)
     )
   }
 }

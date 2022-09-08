@@ -96,11 +96,10 @@ class ReturnsJourneyNavigator {
     }
   }
 
-  def convertedCreditsRoute(mode: Mode, userAnswers: UserAnswers): Call = {
-
+  def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else if (ClaimedCredits.check(userAnswers)) {
+    } else if (claimedCredits.hasMadeClaim) {
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad
     } else {
       controllers.returns.routes.NowStartYourReturnController.onPageLoad

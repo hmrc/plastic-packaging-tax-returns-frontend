@@ -23,7 +23,7 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import models.returns.{ConvertedCreditsAnswer, ExportedCreditsAnswer}
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
@@ -32,7 +32,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.ExportedCreditsPage
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.data.Form
 import play.api.http.Status._
 import play.api.i18n.MessagesApi
@@ -88,13 +88,18 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "set the cache with user answers" in {
       setUpMocks
-      val answers = UserAnswers("ppt12543").set(ExportedCreditsPage, ExportedCreditsAnswer(true, Some(20))).get
+
+      val answers = UserAnswers("ppt12543").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
+      val expectedUserAnswer = answers.copy(data = answers.data)
+        .set(ConvertedCreditsPage, CreditsAnswer(true, Some(40))).get
 
       val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody("answer" -> "false"))
+        .withFormUrlEncodedBody(
+          "answer" -> "false",
+          "converted-credits-weight" -> "40"))
 
       status(result) mustEqual SEE_OTHER
-      verify(mockCacheConnector).set(ArgumentMatchers.eq("ppt12763"), ArgumentMatchers.eq(answers))(any())
+      verify(mockCacheConnector.set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any()))
 
     }
 
@@ -103,14 +108,14 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
       "credit is claimed" in {
         setUpMocks
-        val answers = UserAnswers("123").set(ExportedCreditsPage, ExportedCreditsAnswer(true, Some(20))).get
+        val answers = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
 
         val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
           .withFormUrlEncodedBody(
             "answer" -> "false"))
 
         status(result) mustEqual SEE_OTHER
-        verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(answers))
+//        verify(mockCacheConnector.).set(ArgumentMatchers.eq("ppt12763"), ArgumentMatchers.eq(answers))(any())
       }
 
     }
@@ -150,8 +155,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     when(mockNavigator.convertedCreditsRoute(any(), any())).thenReturn(Call("GET", "/foo"))
   }
 
-  private def formVerifyAndCapture: Form[ConvertedCreditsAnswer] = {
-    val captor = ArgumentCaptor.forClass(classOf[Form[ConvertedCreditsAnswer]])
+  private def formVerifyAndCapture: Form[CreditsAnswer] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[CreditsAnswer]])
     verify(mockView).apply(captor.capture(), any())(any(), any())
     captor.getValue
   }

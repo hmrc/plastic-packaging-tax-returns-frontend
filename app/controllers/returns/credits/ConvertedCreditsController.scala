@@ -20,9 +20,8 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -64,7 +63,7 @@ class ConvertedCreditsController @Inject()
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.convertedCreditsRoute(mode, request.userAnswers))
+              } yield Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers)))
           )
     }
 

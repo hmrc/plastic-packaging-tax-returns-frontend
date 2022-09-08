@@ -23,7 +23,7 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import models.returns.ExportedCreditsAnswer
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -106,8 +106,8 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
     }
   }
 
-  private def formVerifyAndCapture: Form[ExportedCreditsAnswer] = {
-    val captor = ArgumentCaptor.forClass(classOf[Form[ExportedCreditsAnswer]])
+  private def formVerifyAndCapture: Form[CreditsAnswer] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[CreditsAnswer]])
     verify(mockView).apply(captor.capture(), any())(any(), any())
     captor.getValue
   }

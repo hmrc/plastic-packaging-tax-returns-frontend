@@ -18,9 +18,17 @@ package models.returns
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ExportedCreditsAnswer(yesNo: Boolean, weight: Option[Long])
+case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
+  def value: Long = (yesNo, weight) match {
+    case (true, Some(x)) => x
+    case (true, None) => 0
+    case (false, _) => 0
 
-object ExportedCreditsAnswer {
+  }
 
-  implicit val formats: OFormat[ExportedCreditsAnswer] = Json.format[ExportedCreditsAnswer]
+}
+
+object CreditsAnswer {
+
+  implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
 }
