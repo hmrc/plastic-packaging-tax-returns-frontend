@@ -19,6 +19,7 @@ package navigation
 import controllers.returns.credits.{routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
+import models.UserAnswers
 import org.scalatestplus.play.PlaySpec
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec {
@@ -47,19 +48,25 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec {
 
     "redirect to NowStartYourReturn page" when {
       "the user does not claim any credits" in {
-        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, Some(false))
+        val ans: UserAnswers = UserAnswers("123")
+
+        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, ans)
         call mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
       }
     }
     "redirect to confirmCredit page" when {
       "the user does claim credits" in {
-        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, Some(true))
+        val ans: UserAnswers = UserAnswers("123")
+
+        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, ans)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad
       }
     }
     "redirect to check your answers page" when {
       "in checkmode" in {
-        val call = returnsJourneyNavigator.convertedCreditsRoute(CheckMode)
+        val ans: UserAnswers = UserAnswers("123")
+
+        val call = returnsJourneyNavigator.convertedCreditsRoute(CheckMode, ans)
         call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       }
     }

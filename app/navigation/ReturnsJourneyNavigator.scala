@@ -16,11 +16,14 @@
 
 package navigation
 
+import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
+import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -93,10 +96,11 @@ class ReturnsJourneyNavigator {
     }
   }
 
-  def convertedCreditsRoute(mode: Mode, hasClaimedCredits: Option[Boolean] = None): Call = {
+  def convertedCreditsRoute(mode: Mode, userAnswers: UserAnswers): Call = {
+
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else if (hasClaimedCredits.exists(_.equals(true))) {
+    } else if (ClaimedCredits.check(userAnswers)) {
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad
     } else {
       controllers.returns.routes.NowStartYourReturnController.onPageLoad

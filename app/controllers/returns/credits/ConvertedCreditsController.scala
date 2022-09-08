@@ -64,17 +64,9 @@ class ConvertedCreditsController @Inject()
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.convertedCreditsRoute(mode, Some(hasClaimedCredits)))
+              } yield Redirect(navigator.convertedCreditsRoute(mode, request.userAnswers))
           )
     }
 
-  private def hasClaimedCredits(implicit request: DataRequest[_]) = {
-    request.userAnswers.get(ExportedCreditsPage).fold(false)(_.yesNo) ||
-      request.userAnswers.get(ConvertedCreditsPage).fold(false)(_.yesNo)
-
-    //    for {e <- request.userAnswers.get(ExportedCreditsPage)
-    //         c <- request.userAnswers.get(ConvertedCreditsPage)
-    //         } yield e.yesNo || c.yesNo
-  }
 
 }

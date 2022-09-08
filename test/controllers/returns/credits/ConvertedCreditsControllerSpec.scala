@@ -23,16 +23,16 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import models.returns.ConvertedCreditsAnswer
+import models.returns.{ConvertedCreditsAnswer, ExportedCreditsAnswer}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
 import org.mockito.MockitoSugar.when
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.ConvertedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.data.Form
 import play.api.http.Status._
 import play.api.i18n.MessagesApi
@@ -69,7 +69,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockForm)
+    reset(mockView, mockCacheConnector, mockForm, mockNavigator)
   }
 
   "onPageLoad" must {
@@ -86,39 +86,33 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
   "onSumbit" must {
 
-    "redirect to newStartReturn page if no credits" in {
+    "set the cache with user answers" in {
       setUpMocks
+      val answers = UserAnswers("ppt12543").set(ExportedCreditsPage, ExportedCreditsAnswer(true, Some(20))).get
 
-      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody(("answer" -> "false")))
+      val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody("answer" -> "false"))
 
       status(result) mustEqual SEE_OTHER
-      verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some(false)))
+      verify(mockCacheConnector).set(ArgumentMatchers.eq("ppt12763"), ArgumentMatchers.eq(answers))(any())
 
     }
-    "redirect to confirmCredits page if credits claimed" when {
-      "ConvertedCredits is claimed" in {
+
+
+    "redirects" when {
+
+      "credit is claimed" in {
         setUpMocks
-        val answers = UserAnswers("123").set(ConvertedCreditsPage, ConvertedCreditsAnswer(true,Some(20))).get
+        val answers = UserAnswers("123").set(ExportedCreditsPage, ExportedCreditsAnswer(true, Some(20))).get
+
         val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
           .withFormUrlEncodedBody(
-            "answer" -> "true",
-            "converted-credits-weight" -> "20"))
+            "answer" -> "false"))
 
         status(result) mustEqual SEE_OTHER
-        verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(Some(true)))
+        verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(answers))
       }
 
-    }
-
-    "redirect to the next page" in {
-
-      setUpMocks
-
-      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody(("answer" -> "false")))
-
-      status(result) mustEqual SEE_OTHER
     }
 
     "return 400 on error" in {
@@ -130,6 +124,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
       status(result) mustEqual BAD_REQUEST
       formVerifyAndCapture.hasErrors mustBe true
+      verifyNoInteractions(mockCacheConnector)
     }
 
   }
