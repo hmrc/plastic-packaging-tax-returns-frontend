@@ -14,30 +14,60 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraphBody, headingLabel}
-@import viewmodels.LegendSize
-@import templates.YesNoLayout
+@import components.{SectionHeader, paragraphBody, headingLabel, heading, Link}
+@import models.returns.TaxReturnObligation
+@import views.ViewUtils
+@import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    yesNoLayout: YesNoLayout,
     formHelper: FormWithCSRF,
-    paragraphBody: paragraphBody
+    govukErrorSummary: GovukErrorSummary,
+    headingLabel: heading,
+    layout: templates.Layout,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    link: Link,
+    appConfig: FrontendAppConfig
 )
 
-@(form: Form[Boolean], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], obligation: TaxReturnObligation, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@paragraphContent ={
-    @paragraphBody(messages("what-to-you-want-to-do.paragraph.1"))
-}
+@obligationPrettyPrint = {@ViewUtils.displayReturnQuarter(obligation)}
 
 @layout(pageTitle = title(form, messages("what-do-you-want-to-do.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.WhatDoYouWantToDoController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @yesNoLayout(Some(messages("what-do-you-want-to-do.caption")),
-            messages("what-do-you-want-to-do.title"),
-            paragraphText = paragraphContent,
-            form = form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @headingLabel(messages("what-do-you-want-to-do.title"))
+
+        @paragraphBody(messages("what-do-you-want-to-do.paragraph.1"))
+
+        @govukRadios(
+            RadiosViewModel.apply(
+                field = form("value"),
+                items = Seq(
+                    RadioItem(id = Some(""), value = Some("true"), content = Text(messages("what-do-you-want-to-do.credit-and-return", obligationPrettyPrint))),
+                    RadioItem(id = Some(""), value = Some("false"), content = Text(messages("what-do-you-want-to-do.just-return", obligationPrettyPrint)))
+                )
+            )
+        )
+
+        @paragraphBody(
+            messages(
+                "what-do-you-want-to-do.paragraph.2",
+                link(id = "guidance-link",
+                     text = messages("what-do-you-want-to-do.paragraph.2.link"),
+                     call = Call("GET", appConfig.claimingCreditGuidanceUrl)
+                )
+            )
+        )
+
+        @govukButton(ButtonViewModel(messages("site.continue")))
+
     }
 }
