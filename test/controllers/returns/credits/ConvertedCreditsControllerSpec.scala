@@ -95,11 +95,11 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
       val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
         .withFormUrlEncodedBody(
-          "answer" -> "false",
+          "answer" -> "true",
           "converted-credits-weight" -> "40"))
 
       status(result) mustEqual SEE_OTHER
-      verify(mockCacheConnector.set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any()))
+      verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any())
 
     }
 
