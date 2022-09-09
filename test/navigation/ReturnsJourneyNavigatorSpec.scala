@@ -84,7 +84,9 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "redirect to confirmCredit page" when {
       "the user claims credits" in {
 
-        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, any())
+        when(mockClaimedCreds.hasMadeClaim).thenReturn(true)
+
+        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCreds)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad
       }
     }
