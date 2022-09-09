@@ -56,16 +56,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   private val mockView = mock[ConvertedCreditsView]
   private val mockForm = mock[ConvertedCreditsFormProvider]
 
-  val sut: ConvertedCreditsController = new ConvertedCreditsController(
-    mockMessages,
-    mockCacheConnector,
-    mockNavigator,
-    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
-    new FakeDataRetrievalAction(Some(UserAnswers("123"))),
-    new DataRequiredActionImpl(),
-    mockForm,
-    controllerComponents,
-    mockView)
+  val sut: ConvertedCreditsController = createSut(UserAnswers("123"))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,7 +66,6 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   "onPageLoad" must {
 
     "return OK" in {
-
       when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
       val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
 
@@ -104,19 +94,15 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     }
 
 
-    "redirects" when {
+    "redirects" in {
+      setUpMocks
+      val answers = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
 
-      "credit is claimed" in {
-        setUpMocks
-        val answers = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
+      val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody("answer" -> "false"))
 
-        val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
-          .withFormUrlEncodedBody(
-            "answer" -> "false"))
-
-        status(result) mustEqual SEE_OTHER
-//        verify(mockCacheConnector.).set(ArgumentMatchers.eq("ppt12763"), ArgumentMatchers.eq(answers))(any())
-      }
+      status(result) mustEqual SEE_OTHER
+      verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), any[ClaimedCredits])
 
     }
 
@@ -148,7 +134,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   }
 
 
-  private def setUpMocks = {
+  private def setUpMocks: Unit = {
     when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
     when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
     when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
