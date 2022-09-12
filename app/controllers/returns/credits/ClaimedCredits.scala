@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package pages.returns.credits
+package controllers.returns.credits
 
+import models.UserAnswers
 import models.returns.CreditsAnswer
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 
-case object ExportedCreditsPage extends QuestionPage[CreditsAnswer] {
+case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
-  override def path: JsPath = JsPath \ toString
+  def hasMadeClaim: Boolean =
+    exported.yesNo || converted.yesNo
 
-  override def toString: String = "exportedCredits"
+}
+
+object ClaimedCredits {
+
+  def apply(userAnswers: UserAnswers): ClaimedCredits = {
+    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
+
+  }
 }

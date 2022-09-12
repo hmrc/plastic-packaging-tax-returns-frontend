@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package pages.returns.credits
+package models.returns
 
-import models.returns.CreditsAnswer
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object ExportedCreditsPage extends QuestionPage[CreditsAnswer] {
+case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
+  def value: Long = (yesNo, weight) match {
+    case (true, Some(x)) => x
+    case (true, None) => 0
+    case (false, _) => 0
 
-  override def path: JsPath = JsPath \ toString
+  }
 
-  override def toString: String = "exportedCredits"
+}
+
+object CreditsAnswer {
+
+  implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
 }
