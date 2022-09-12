@@ -149,4 +149,7 @@ class FrontendAppConfig @Inject() (
   def creditsGuidanceUrl: String =
     configuration.get[String]("urls.pptCreditsGuidanceLink")
 
+  def claimingCreditGuidanceUrl: String =
+    configuration.get[String]("urls.claimingCreditGuidanceUrl")
+
 }
