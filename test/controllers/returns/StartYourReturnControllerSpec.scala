@@ -23,18 +23,18 @@ import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.returns.TaxReturnObligation
-import models.UserAnswers
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import models.UserAnswers
+import models.returns.TaxReturnObligation
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito
-import org.mockito.Mockito.{atLeastOnce, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.mockito.MockitoSugar.mock
+import org.mockito.{ArgumentMatchers, Mockito}
+import org.scalatest.BeforeAndAfterEach
 import pages.returns.StartYourReturnPage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
@@ -44,38 +44,47 @@ import views.html.returns.StartYourReturnView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
+class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
-  val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
-  val mockAuditConnector: AuditConnector = mock[AuditConnector]
+  private val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
+  private val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
+  private val mockAuditConnector: AuditConnector = mock[AuditConnector]
+  private val mockCacheConnector = mock[CacheConnector]
+  private val navigator = mock[ReturnsJourneyNavigator]
+  private val isFirst = true
+  private lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
 
-  lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
-
-  val obligation: TaxReturnObligation = TaxReturnObligation(
+  private val obligation: TaxReturnObligation = TaxReturnObligation(
     fromDate = LocalDate.parse("2022-04-01"),
     toDate = LocalDate.parse("2022-06-30"),
     dueDate = LocalDate.parse("2022-09-30"),
     periodKey = "22AC"
   )
-  val isFirst = true
 
-  val mockCacheConnector = mock[CacheConnector]
+  private def any[T] = ArgumentMatchers.any[T]()
+  
+  override protected def beforeEach(): Unit = {
+    super.beforeEach
+    reset(mockTaxReturnHelper, mockAuditConnector, mockCacheConnector, navigator)
+    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(true))
+  }
 
   "StartYourReturn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation, isFirst))))
-      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
+      when(mockCacheConnector.set(any, any)(any)).thenReturn(Future.successful(HttpResponse.apply(200, "")))
 
       val pptId = "123"
       val userAnswers = UserAnswers(pptId).set(ObligationCacheable, obligation).get
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
-        bind[CacheConnector].toInstance(mockCacheConnector)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .overrides(
+          bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+          bind[CacheConnector].toInstance(mockCacheConnector))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, startYourReturnRoute)
@@ -87,21 +96,23 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, obligation, isFirst)(request, messages(application)).toString
 
-        verify(mockCacheConnector, atLeastOnce).set(refEq(pptId), refEq(userAnswers))(any())
+        verify(mockCacheConnector, atLeastOnce).saveUserAnswerFunc(refEq(pptId))(any)
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation, isFirst))))
-      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
+      when(mockCacheConnector.set(any, any)(any)).thenReturn(Future.successful(HttpResponse.apply(200, "")))
 
       val userAnswers = UserAnswers(userAnswersId).set(StartYourReturnPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
-        bind[CacheConnector].toInstance(mockCacheConnector)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .overrides(
+          bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
+          bind[CacheConnector].toInstance(mockCacheConnector)
+        ).build()
 
       running(application) {
         val request = FakeRequest(GET, startYourReturnRoute)
@@ -117,13 +128,15 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
+      val userAnswers = UserAnswers(userAnswersId)
+        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail("isFirstReturn", true)
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      when(mockCacheConnector.set(any, any)(any)) thenReturn Future.successful(mockResponse)
       when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
@@ -148,12 +161,12 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
       Mockito.reset(mockAuditConnector)
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      val userAnswers = UserAnswers(userAnswersId)
+        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail("isFirstReturn", true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
@@ -171,7 +184,7 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         verify(mockAuditConnector, times(1)).
-          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
+          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any, any, any)
 
       }
     }
@@ -180,12 +193,12 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
       Mockito.reset(mockAuditConnector)
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      val userAnswers = UserAnswers(userAnswersId)
+        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail("isFirstReturn", true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
@@ -203,16 +216,20 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         verify(mockAuditConnector, times(0)).
-          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any(), any(), any())
+          sendExplicitAudit(eqTo(ReturnStarted.eventType), any[ReturnStarted])(any, any, any)
 
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(Some((obligation, isFirst))))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+      val userAnswers = UserAnswers(userAnswersId)
+        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail("isFirstReturn", true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)
       ).build()
 
@@ -235,8 +252,8 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to account home when no obligation to start a return" in {
 
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(Future.successful(None))
-      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(None))
+      when(mockCacheConnector.set(any, any)(any)).thenReturn(Future.successful(HttpResponse.apply(200, "")))
 
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
@@ -253,4 +270,5 @@ class StartYourReturnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
 }
