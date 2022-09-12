@@ -496,6 +496,8 @@ submit-return.check-your-answers.credits.line3 = wedi’i allforio
 submit-return.check-your-answers.credits.line4 = wedi’i drosi’n ddeunydd pacio gwahanol
 submit-return.check-your-answers.credits.line5 = Dysgwch ragor am {0}.
 submit-return.check-your-answers.credits.line5.link-text = hawlio credydau (yn agor tab newydd)
+submit-return.check-your-answers.credits.not.claimed.hint = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.
+submit-return.check-your-answers.credits.not.claimed.link = Hawlio treth yn ôl fel credyd
 
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
@@ -503,6 +505,14 @@ submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
 
 submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
 submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
+submit-return.check-your-answers.credits.exported.answer = Treth a dalwyd ar ddeunydd pacio plastig sydd bellach wedi’i allforio
+submit-return.check-your-answers.credits.exported.weight = Pwysau’r deunydd pacio plastig a allforiwyd
+submit-return.check-your-answers.credits.converted.answer = Treth a dalwyd ar ddeunydd pacio plastig sydd bellach wedi’i drosi
+submit-return.check-your-answers.credits.converted.weight = Pwysau’r deunydd pacio plastig a droswyd
+submit-return.check-your-answers.credits.total.weight = Cyfanswm y pwysau
+submit-return.check-your-answers.credits.total = Cyfanswm y credyd
+submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o’r adran credydau
+submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
 credits.caption = Credits
 

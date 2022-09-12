@@ -483,6 +483,8 @@ submit-return.check-your-answers.credits.line3 = exported
 submit-return.check-your-answers.credits.line4 = converted into different packaging
 submit-return.check-your-answers.credits.line5 = Find out more about {0}.
 submit-return.check-your-answers.credits.line5.link-text = claiming credits (opens in new tab)
+submit-return.check-your-answers.credits.not.claimed.hint = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
+submit-return.check-your-answers.credits.not.claimed.link = Claim tax back as credit
 
 submit-return.check-your-answers.now-send.heading = Now send your return
 submit-return.check-your-answers.now-send.line1 = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
@@ -490,7 +492,14 @@ submit-return.check-your-answers.now-send.button-text = Submit return
 
 submit-return.check-your-answers.error.heading = Submitting your return
 submit-return.check-your-answers.error.line1 = You cannot submit this return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions.
-
+submit-return.check-your-answers.credits.exported.answer = Tax paid on plastic packaging that has since been exported
+submit-return.check-your-answers.credits.exported.weight = Weight of exported plastic packaging
+submit-return.check-your-answers.credits.converted.answer = Tax paid on plastic packaging that has since been converted
+submit-return.check-your-answers.credits.converted.weight = Weight of converted plastic packaging
+submit-return.check-your-answers.credits.total.weight = Total weight
+submit-return.check-your-answers.credits.total = Credit total
+submit-return.check-your-answers.credits.change.text.link = Change any answer from credits
+submit-return.check-your-answers.credits.remove.text.link = Remove credits
 credits.caption = Credits
 
 exported.credits.title = Plastic packaging you’ve paid tax on that has since been exported

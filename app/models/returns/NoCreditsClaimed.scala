@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package forms.returns.credits
+package models.returns
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
-import javax.inject.Inject
-
-//todo: We may want something different from a boolean. Maubt a enum with
-// StartReturn and ClaimTaxBack
-class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] = Form("value" -> boolean("what-do-you-want-to-do.error.required"))
-
+case object NoCreditsClaimed extends Credits{
+  override val isClaimingTaxBack: Boolean = false
+  override def summaryList: Seq[(String, String)] = Seq.empty
 }

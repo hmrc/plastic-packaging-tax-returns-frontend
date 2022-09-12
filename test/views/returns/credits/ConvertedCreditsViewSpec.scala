@@ -26,7 +26,7 @@ import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ConvertedCreditsView
 
 class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-
+  //todo add tests
 
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
   val form = new ConvertedCreditsFormProvider()()

@@ -15,11 +15,14 @@
  *@
 
 @import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading}
-@import viewmodels.InputWidth
+@import components.returns.checkYourAnswer.CreditsSection
+@import viewmodels._
 @import controllers.helpers.TaxReturnViewModel
 @import views.ViewUtils.RichSummaryListRow
 @import controllers.helpers.RowInfo
 @import config.FrontendAppConfig
+@import models.returns.Credits
+@import models.Mode.CheckMode
 
 @this(
     layout: templates.Layout,
@@ -31,10 +34,11 @@
     bulletList: bulletList,
     appConfig: FrontendAppConfig,
     link: Link,
-    sectionH2Heading: SectionH2Heading
+    sectionH2Heading: SectionH2Heading,
+    creditsSection: CreditsSection
 )
 
-@(taxReturn: TaxReturnViewModel, creditsEnabled: Boolean)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
 
 @hiddenText(key: String) = @{
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
@@ -65,23 +69,28 @@
     summaryRow(row.key, row.value, "govuk-!-width-one-quarter govuk-table__cell--numeric")
 }
 
-@para(shortKey: String, classes: String = "govuk-body") = @{
+@para(shortKey: String, classes: String = "govuk-body", id: Option[String] = None) = @{
     val text = messages("submit-return.check-your-answers." + shortKey)
-    paragraphBody(message = text, classes=classes)
+    paragraphBody(message = text, classes=classes, id=id)
 }
 
-@bullets(shortKeys: String*) = @{
-    bulletList(shortKeys.map { shortKey => Html(messages("submit-return.check-your-answers." + shortKey)) })
+@bullets(shortKeys: Seq[String], id: Option[String] = None) = @{
+    bulletList(
+        elements = shortKeys.map { shortKey => Html(messages("submit-return.check-your-answers." + shortKey)) },
+        id = id
+    )
 }
 
-@paraLink(paraShortKey: String, linkShortKey: String, url: String) = @{
+@paraLink(paraShortKey: String, linkShortKey: String, url: String, paragraphId: Option[String] = None) = @{
     def text(shortKey: String) = messages(toLongKey(shortKey))
     paragraph(content = Html(messages(toLongKey(paraShortKey), link(
         id = toLongKey(linkShortKey),
         text = text(linkShortKey),
         call = Call("GET", url),
         newTab = true
-    ))))
+    ))),
+        id = paragraphId
+    )
 }
 
 @changeLink(linkTextShortKey: String, url: String) = @{
@@ -105,6 +114,9 @@
             summaryRowWithWideValue("business-details.row2", taxReturn.obligation.toReturnQuarter),
         )
     ))
+
+    <!-- Credits -->
+    @creditsSection(credits)
 
     <!-- Packaging total -->
     @sectionH2Heading(messages("submit-return.check-your-answers.packaging-total.heading"))
@@ -171,17 +183,6 @@
         )
     ))
     @para("tax-calc.footnote")
-
-    <!-- Credits -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"))
-    @if(creditsEnabled){
-        <p>Credits is turned on </p>
-    } else {
-        @para("credits.line1")
-        @para("credits.line2")
-        @bullets("credits.line3", "credits.line4")
-        @paraLink("credits.line5", "credits.line5.link-text", appConfig.creditsGuidanceUrl)
-    }
 
     <!-- Submit -->
     @if(taxReturn.isSubmittable) {
