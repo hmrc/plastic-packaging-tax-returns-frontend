@@ -24,6 +24,8 @@
   maybeHeadingKey: Option[String],
   ifYes: Option[Html] = None,
   ifNo: Option[Html] = None,
+  yesValue: String = "true",
+  noValue: String = "false",
   hint: Option[Html] = None,
   headingMessageArgs: Seq[String] = Seq(),
   isPageHeading: Boolean = true,
@@ -46,15 +48,15 @@
         )},
             items = Seq(
                 RadioItem(id = Some("value-yes"),
-                value = Some("yes"),
+                value = Some(yesValue),
                 content = Text(messages("site.yes")),
-                checked = form("answer").value.contains("yes"),
+                checked = form("answer").value.contains(yesValue),
                 conditionalHtml = ifYes
                 ),
                 RadioItem(id = Some("value-no"),
-                value = Some("no"),
+                value = Some(noValue),
                 content = Text(messages("site.no")),
-                checked = form("answer").value.contains("no"),
+                checked = form("answer").value.contains(noValue),
                 conditionalHtml = ifNo
                 )),
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))

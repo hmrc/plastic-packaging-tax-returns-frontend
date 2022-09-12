@@ -21,13 +21,14 @@ import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.ExportedCreditsView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ExportedCreditsController @Inject()
 (
@@ -42,27 +43,26 @@ class ExportedCreditsController @Inject()
   view: ExportedCreditsView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(form, mode))
+      Ok(view(formProvider(), mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
 
-      Redirect(navigator.ExportedCreditsRoute(mode))
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode))),
 
-    //      form.bindFromRequest().fold(
-    //        formWithErrors =>
-    //          Future.successful(BadRequest(view(formWithErrors, mode))),
-    //
-    //        value =>
-    //          for {
-    //            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
-    //            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-    //          } yield Redirect(navigator.ExportedCreditsRoute(mode))
-    //      )
-  }
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
+                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+              } yield Redirect(navigator.exportedCreditsRoute(mode))
+          )
+    }
 }

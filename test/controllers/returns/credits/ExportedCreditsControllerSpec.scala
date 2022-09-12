@@ -16,22 +16,100 @@
 
 package controllers.returns.credits
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
+import connectors.CacheConnector
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers
+import models.returns.CreditsAnswer
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify}
+import org.mockito.MockitoSugar.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
+import play.api.http.Status._
+import play.api.i18n.MessagesApi
 import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HttpResponse
+import views.html.returns.credits.ExportedCreditsView
 
-class ExportedCreditsControllerSpec extends SpecBase with MockitoSugar {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-  def onwardRoute = Call("GET", "/foo")
+class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  val formProvider = new ExportedCreditsFormProvider()
-  val form = formProvider()
+  private val mockMessages: MessagesApi = mock[MessagesApi]
+  private val mockCacheConnector: CacheConnector = mock[CacheConnector]
+  private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockView = mock[ExportedCreditsView]
+  private val mockForm = mock[ExportedCreditsFormProvider]
 
-  lazy val exportedCreditsRoute = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url
+  val sut: ExportedCreditsController = new ExportedCreditsController(
+    mockMessages,
+    mockCacheConnector,
+    mockNavigator,
+    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+    new FakeDataRetrievalAction(Some(UserAnswers("123"))),
+    new DataRequiredActionImpl(),
+    mockForm,
+    controllerComponents,
+    mockView)
 
-  "ExportedCredits Controller" - {
-
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockView, mockCacheConnector, mockForm)
   }
+
+  "ExportedCredits Controller" must {
+
+    "return OK and the correct view" when {
+
+      "a GET is made" in {
+        when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+        val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
+
+        status(result) mustEqual OK
+      }
+    }
+    "must redirect to the next page when No is submitted" in {
+
+      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+      when(mockNavigator.exportedCreditsRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
+
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "false")))
+
+      status(result) mustEqual SEE_OTHER
+    }
+
+    "return 400 on error" in {
+      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
+
+      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
+        .withFormUrlEncodedBody(("answer" -> "true")))
+
+      status(result) mustEqual BAD_REQUEST
+      formVerifyAndCapture.hasErrors mustBe true
+    }
+  }
+
+  private def formVerifyAndCapture: Form[CreditsAnswer] = {
+    val captor = ArgumentCaptor.forClass(classOf[Form[CreditsAnswer]])
+    verify(mockView).apply(captor.capture(), any())(any(), any())
+    captor.getValue
+  }
+
 }

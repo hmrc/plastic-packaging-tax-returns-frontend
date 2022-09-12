@@ -493,17 +493,27 @@ submit-return.check-your-answers.error.line1 = You cannot submit this return unl
 
 credits.caption = Credits
 
-exportedCredits.title = Plastic packaging you’ve paid tax on that has since been exported
-exportedCredits.heading = Plastic packaging you’ve paid tax on that has since been exported
-exportedCredits.checkYourAnswersLabel = exportedCredits
-exportedCredits.error.required = Select yes if exportedCredits
-exportedCredits.change.hidden = ExportedCredits
+exported.credits.title = Plastic packaging you’ve paid tax on that has since been exported
+exported.credits.heading = Plastic packaging you’ve paid tax on that has since been exported
+exported.credits.heading.2 = Have you already paid tax on plastic packaging that has since been exported?
+exported.credits.paragraph.1 = If you've paid tax on plastic packaging and you later export it, you can claim tax back as credit.
+exported.credits.paragraph.2 = You can also claim tax back as credit if another business exports it.
+exported.credits.paragraph.3 = You must have evidence the export has taken place.
+exported.credits.weight.hint = 1 tonne is 1,000kg.
+exported.credits.checkYourAnswersLabel = exportedCredits
+exported.credits.error.required = Select yes if exportedCredits
+exported.credits.change.hidden = ExportedCredits
 
-convertedCredits.title = Plastic packaging you’ve paid tax on that has since been converted
-convertedCredits.heading = Plastic packaging you’ve paid tax on that has since been converted
-convertedCredits.checkYourAnswersLabel = convertedCredits
-convertedCredits.error.required = Select yes if convertedCredits
-convertedCredits.change.hidden = ConvertedCredits
+converted.credits.title = Plastic packaging you’ve paid tax on that has since been converted
+converted.credits.heading = Plastic packaging you’ve paid tax on that has since been converted
+converted.credits.heading.2 = Have you already paid tax on plastic packaging that has since been converted?
+converted.credits.paragraph.1 = If you've paid tax on plastic packaging and you later export it, you can claim tax back as credit.
+converted.credits.paragraph.2 = You can also claim tax back as credit if another business exports it.
+converted.credits.paragraph.3 = You must have evidence the export has taken place.
+converted.credits.weight.hint = 1 tonne is 1,000kg.
+converted.credits.checkYourAnswersLabel = convertedCredits
+converted.credits.error.required = Select yes if convertedCredits
+converted.credits.change.hidden = ConvertedCredits
 
 what-do-you-want-to-do.title = What do you want to do?
 what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.

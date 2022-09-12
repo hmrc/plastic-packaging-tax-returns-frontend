@@ -16,11 +16,14 @@
 
 package navigation
 
+import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
+import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -85,7 +88,7 @@ class ReturnsJourneyNavigator {
       routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
   }
 
-  def ExportedCreditsRoute(mode: Mode): Call = {
+  def exportedCreditsRoute(mode: Mode): Call = {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     } else {
@@ -93,18 +96,20 @@ class ReturnsJourneyNavigator {
     }
   }
 
-  def ConvertedCreditsRoute(mode: Mode): Call = {
+  def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
     if (mode.equals(CheckMode)) {
       routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else {
+    } else if (claimedCredits.hasMadeClaim) {
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad
+    } else {
+      controllers.returns.routes.NowStartYourReturnController.onPageLoad
     }
   }
 
   def confirmCreditRoute(mode: Mode): Call =
-    if (mode.equals(CheckMode)) 
+    if (mode.equals(CheckMode))
       routes.ReturnsCheckYourAnswersController.onPageLoad()
-    else 
+    else
       controllers.returns.routes.NowStartYourReturnController.onPageLoad
 
   def nowStartYourReturnRoute: Call =
