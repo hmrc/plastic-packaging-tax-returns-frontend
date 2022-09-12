@@ -527,3 +527,11 @@ converted.credits.weight.hint = 1 tonne is 1,000kg. [NEEDS WELSH]
 converted.credits.checkYourAnswersLabel = convertedCredits
 converted.credits.error.required = Select yes if convertedCredits [NEEDS CONTENT/WELSH]
 converted.credits.change.hidden = ConvertedCredits
+
+what-do-you-want-to-do.title = Beth hoffech ei wneud?
+what-do-you-want-to-do.paragraph.1 = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.
+what-do-you-want-to-do.error.required = Dewiswch yr hyn yr hoffech ei wneud
+what-do-you-want-to-do.credit-and-return = Hawlio treth yn ôl o Ffurflenni Treth blaenorol fel credyd, yna dechrau Ffurflen Dreth {0}
+what-do-you-want-to-do.just-return = Dechrau Ffurflen Dreth {0}
+what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
+what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno

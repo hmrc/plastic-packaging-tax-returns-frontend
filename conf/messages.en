@@ -515,3 +515,10 @@ converted.credits.checkYourAnswersLabel = convertedCredits
 converted.credits.error.required = Select yes if convertedCredits
 converted.credits.change.hidden = ConvertedCredits
 
+what-do-you-want-to-do.title = What do you want to do?
+what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
+what-do-you-want-to-do.error.required = Select what you want to do
+what-do-you-want-to-do.credit-and-return = Claim tax back from previous returns as credit, then start {0} return
+what-do-you-want-to-do.just-return = Start {0} return
+what-do-you-want-to-do.paragraph.2 = Find out about {0}.
+what-do-you-want-to-do.paragraph.2.link = claiming tax back as credit for packaging you’ve paid tax on

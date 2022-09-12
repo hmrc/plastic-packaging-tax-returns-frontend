@@ -16,8 +16,10 @@
 
 package controllers.returns.credits
 
+import cacheables.ObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.TaxReturnHelper
 import forms.returns.credits.WhatDoYouWantToDoFormProvider
 import models.{Mode, UserAnswers}
 import navigation.ReturnsJourneyNavigator
@@ -40,21 +42,28 @@ class WhatDoYouWantToDoController @Inject() (
   formProvider: WhatDoYouWantToDoFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: WhatDoYouWantToDoView,
+  taxReturnHelper: TaxReturnHelper,
   returnsNavigator: ReturnsJourneyNavigator
 ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
+        val obligation = request.userAnswers.get(ObligationCacheable)
+          .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
+
         val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
-        Ok(view(preparedForm, mode))
+        Ok(view(preparedForm, obligation, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
+        val obligation = request.userAnswers.get(ObligationCacheable)
+          .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
+
         formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation, mode))),
           newAnswer => updateAnswersAndGotoNextPage(mode, request.pptReference, request.userAnswers, newAnswer)
         )
     }
