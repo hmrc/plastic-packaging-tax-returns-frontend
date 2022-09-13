@@ -35,6 +35,7 @@ import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.BeforeAndAfterEach
 import pages.returns.StartYourReturnPage
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
@@ -134,6 +135,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       when(mockCacheConnector.set(any, any)(any)) thenReturn Future.successful(mockResponse)
       when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
+      when(navigator.startYourReturnRoute(any, any)) thenReturn Call("GET", "/toast")
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -141,20 +143,19 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
             bind[CacheConnector].toInstance(mockCacheConnector),
             bind[TaxReturnHelper].toInstance(mockTaxReturnHelper),
             bind[AuditConnector].toInstance(mockAuditConnector),
-            bind[FrontendAppConfig].toInstance(config)
+            bind[FrontendAppConfig].toInstance(config),
+            bind[ReturnsJourneyNavigator] to navigator
           )
           .build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, startYourReturnRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+      val result = running(application) {
+        val request = FakeRequest(POST, startYourReturnRoute).withFormUrlEncodedBody(("value", "true"))
+        route(application, request).value
+      }
 
-        val result = route(application, request).value
-
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).toString}
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual "/toast"
+      verify(navigator).startYourReturnRoute(true, true)
     }
 
     "must audit started event when user answers yes" in {

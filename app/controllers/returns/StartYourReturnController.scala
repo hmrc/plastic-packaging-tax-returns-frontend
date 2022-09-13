@@ -39,9 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class StartYourReturnController @Inject()(
   override val messagesApi: MessagesApi,
-  appConfig: FrontendAppConfig,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   form: StartYourReturnFormProvider,
@@ -98,16 +96,7 @@ class StartYourReturnController @Inject()(
     if (formValue) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
     }
-    Redirect(nextPage(formValue, isFirstReturn))
+    Redirect(returnsNavigator.startYourReturnRoute(formValue, isFirstReturn))
   }
-
-  def nextPage(formValue: Boolean, isFirstReturn: Boolean): Call =
-    if (formValue) {
-      if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled) && !isFirstReturn)
-        controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-      else
-        routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-    } else 
-      routes.NotStartOtherReturnsController.onPageLoad()
 
 }

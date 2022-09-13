@@ -18,9 +18,11 @@ package navigation
 
 import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
+import config.FrontendAppConfig
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
+import org.mockito.MockitoSugar.mock
 import pages.returns._
 
 /** ***********************************************************
@@ -42,7 +44,8 @@ import pages.returns._
 //todo duplicated tests? check if can be removed
 class NavigatorSpec extends SpecBase {
 
-  val navigator = new Navigator(returns = new ReturnsJourneyNavigator)
+  private val frontendConfig = mock[FrontendAppConfig]
+  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig))
 
   "Navigator" - {
 

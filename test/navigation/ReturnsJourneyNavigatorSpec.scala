@@ -32,6 +32,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
@@ -45,7 +46,8 @@ import org.scalatestplus.play.PlaySpec
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val returnsJourneyNavigator = new ReturnsJourneyNavigator
+  private val frontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  private val returnsJourneyNavigator = new ReturnsJourneyNavigator(frontendConfig)
   val navigator = new Navigator(returns = returnsJourneyNavigator)
   val mockClaimedCreds: ClaimedCredits = mock[ClaimedCredits]
 
