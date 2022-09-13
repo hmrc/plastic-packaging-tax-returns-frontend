@@ -53,31 +53,6 @@ class NavigatorSpec extends SpecBase {
 
       "for the returns journey" - {
 
-        "for the StartYourReturnPage" - {
-
-          "navigate to ManufacturedPlasticPackagingController when answer is Yes" in {
-
-            val answers = UserAnswers("id").set(StartYourReturnPage, true)
-
-            navigator.nextPage(StartYourReturnPage,
-              NormalMode,
-              answers.get
-            ) mustBe controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-
-          }
-
-          "navigate to Homepage when answer is No" in {
-
-            val answers = UserAnswers("id").set(StartYourReturnPage, false)
-
-            navigator.nextPage(StartYourReturnPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.NotStartOtherReturnsController.onPageLoad
-
-          }
-        }
-
         "for the ManufacturedPlasticPackagingWeightPage" - {
 
           "navigate to ImportedPlasticPackagingPage" in {

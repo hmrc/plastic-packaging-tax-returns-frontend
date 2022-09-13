@@ -21,11 +21,9 @@ import config.{Features, FrontendAppConfig}
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
-import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
