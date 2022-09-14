@@ -48,6 +48,7 @@ class ManufacturedPlasticPackagingWeightSummary private(key: String) extends Sum
             CheckMode
           ).url
         ).withAttribute(("id", "confirm-pp-total-weight-manufactured"))
+          .withVisuallyHiddenText(messages("manufacturedPlasticPackagingWeight.change.hidden"))
       )
     )
 
