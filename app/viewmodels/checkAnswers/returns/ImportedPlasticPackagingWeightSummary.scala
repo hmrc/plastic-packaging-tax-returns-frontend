@@ -47,8 +47,8 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
           routes.ImportedPlasticPackagingWeightController.onPageLoad(
             CheckMode
           ).url
-        )
-          .withAttribute("id" -> "confirm-pp-total-imported-plastic-weight")
+        ).withAttribute("id" -> "confirm-pp-total-imported-plastic-weight")
+          .withVisuallyHiddenText(messages("importedPlasticPackagingWeight.change.hidden"))
       )
     )
 
