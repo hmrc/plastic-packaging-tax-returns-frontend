@@ -82,14 +82,16 @@ class StartYourReturnController @Inject()(
       val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
 
       form().bindFromRequest().fold(
-        formWithErrors => Future.successful(
-          BadRequest(view(formWithErrors, mode, obligation, isFirstReturn))),
-        formValue =>
+        formWithErrors => {
+          Future.successful(
+            BadRequest(view(formWithErrors, mode, obligation, isFirstReturn)))
+        },
+        formValue => {
           userAnswers
             .setOrFail(StartYourReturnPage, formValue)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
             .map(_ => act(formValue, isFirstReturn))
-      )
+        }      )
   }
 
   private def act(formValue: Boolean, isFirstReturn: Boolean) (implicit request: OptionalDataRequest[_]) = {

@@ -49,15 +49,16 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   val navigator = new Navigator(returns = returnsJourneyNavigator)
   val mockClaimedCredits: ClaimedCredits = mock[ClaimedCredits]
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockClaimedCredits, frontendConfig)
-    when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+  }
 
   //todo add in credits navigation that is currently tested in controllers
   
   "The start your return page" must {
     "goto the what do you want to do page" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(true, false) mustBe 
         creditsRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
     }
@@ -67,10 +68,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
     "except when it is the users first return" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(true, isFirstReturn = true) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
     "go back to the account home page" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(doesUserWantToStartReturn = false, false) mustBe
         returnsRoutes.NotStartOtherReturnsController.onPageLoad()
     }
