@@ -55,20 +55,14 @@
 @layout(pageTitle = title(form, messages("converted.credits.title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
-
-    @sectionHeader(messages("credits.caption"))
-    @heading("converted.credits.heading")
-    @para(paraContent)
-    @h2heading(messages("converted.credits.heading.2"), Some("converted-credits-h2"))
-
-       @if(form.errors.nonEmpty) {
+        @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+        @sectionHeader(messages("credits.caption"))
+        @heading("converted.credits.heading")
+        @para(paraContent)
+        @h2heading(messages("converted.credits.heading.2"), Some("converted-credits-h2"))
         @conditionalYesNo(form, None, Some(ifYes))
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @govukButton(ButtonViewModel(messages("site.continue")))
     }
 }
