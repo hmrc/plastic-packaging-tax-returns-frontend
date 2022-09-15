@@ -17,7 +17,7 @@
 package controllers.returns
 
 import audit.Auditor
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.actions._
@@ -63,7 +63,7 @@ class StartYourReturnController @Inject()(
       taxReturnHelper.nextOpenObligationAndIfFirst(pptReference).flatMap {
         case Some((taxReturnObligation, isFirst)) =>
           userAnswers
-            .setOrFail(ObligationCacheable, taxReturnObligation)
+            .setOrFail(ReturnObligationCacheable, taxReturnObligation)
             .setOrFail("isFirstReturn", isFirst)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
             .map(_ => Ok(view(preparedForm, mode, taxReturnObligation, isFirst)))
@@ -78,7 +78,7 @@ class StartYourReturnController @Inject()(
 
       val userAnswers = request.userAnswers
       val pptReference = request.pptReference
-      val obligation = userAnswers.getOrFail(ObligationCacheable)
+      val obligation = userAnswers.getOrFail(ReturnObligationCacheable)
       val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
 
       form().bindFromRequest().fold(

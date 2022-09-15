@@ -17,7 +17,7 @@
 package controllers.returns
 
 import base.SpecBase
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import controllers.returns.{routes => returnsRoutes}
 import models.UserAnswers
 import models.Mode.CheckMode
@@ -135,7 +135,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
     manufacturedPlastic: (Boolean, Long),
     importedPlastic: (Boolean, Long)
   ): Try[UserAnswers] = {
-    UserAnswers("123").set(ObligationCacheable, taxReturnOb).get
+    UserAnswers("123").set(ReturnObligationCacheable, taxReturnOb).get
       .set(ManufacturedPlasticPackagingPage, manufacturedPlastic._1).get
       .set(ManufacturedPlasticPackagingWeightPage, manufacturedPlastic._2).get
       .set(ImportedPlasticPackagingPage, importedPlastic._1).get
@@ -143,7 +143,7 @@ class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAnd
   }
 
   private def createUserNoAnswer: UserAnswers = {
-    UserAnswers("123").set(ObligationCacheable, taxReturnOb).get
+    UserAnswers("123").set(ReturnObligationCacheable, taxReturnOb).get
       .set(ManufacturedPlasticPackagingPage, false).get
       .set(ImportedPlasticPackagingPage, false).get
   }

@@ -16,7 +16,7 @@
 
 package controllers.returns
 
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingFormProvider
@@ -52,7 +52,7 @@ class ImportedPlasticPackagingController @Inject()
       implicit request =>
         val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
 
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
           case Some(obligation) => Ok(view(preparedForm, mode, obligation))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
@@ -64,7 +64,7 @@ class ImportedPlasticPackagingController @Inject()
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
 
-        val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+        val obligation = request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable).getOrElse(
           throw new IllegalStateException("Must have an obligation to Submit against")
         )
 

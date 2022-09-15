@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.ObligationCacheable
+import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendRecycledPlasticPackagingFormProvider
@@ -49,7 +49,7 @@ class AmendRecycledPlasticPackagingController @Inject() (
           case None        => form()
           case Some(value) => form().fill(value)
         }
-        if (request.userAnswers.get[TaxReturnObligation](ObligationCacheable).isDefined) {
+        if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
           Ok(view(preparedForm))
         } else {
           Redirect(routes.SubmittedReturnsController.onPageLoad())

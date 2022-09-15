@@ -16,7 +16,7 @@
 
 package controllers.returns.credits
 
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -49,7 +49,7 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val obligation = request.userAnswers.get(ObligationCacheable)
+        val obligation = request.userAnswers.get(ReturnObligationCacheable)
           .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
 
         val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
@@ -59,7 +59,7 @@ class WhatDoYouWantToDoController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val obligation = request.userAnswers.get(ObligationCacheable)
+        val obligation = request.userAnswers.get(ReturnObligationCacheable)
           .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
 
         formProvider().bindFromRequest().fold(

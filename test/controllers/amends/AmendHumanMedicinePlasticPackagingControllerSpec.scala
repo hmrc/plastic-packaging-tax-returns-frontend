@@ -17,8 +17,10 @@
 package controllers.amends
 
 import base.SpecBase
+import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,6 +34,10 @@ import views.html.amends.AmendHumanMedicinePlasticPackagingView
 import scala.concurrent.Future
 
 class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+
+  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+    .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendHumanMedicinePlasticPackagingFormProvider()
   def onwardRoute = Call("GET", "/foo")

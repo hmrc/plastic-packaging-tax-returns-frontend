@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ReturnObligationCacheable, AmendObligationCacheable}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
         else {
-          request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
+          request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
             case Some(obligation) =>
               returnsConnector.getCalculationAmends(request.pptReference).map {
                 case Right(calculations) => displayPage(request, obligation, calculations)
@@ -101,13 +101,7 @@ class CheckYourAnswersController @Inject()
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-
         val pptId: String = request.request.pptReference
-
-        val submissionId: String = request.userAnswers.get[ReturnDisplayApi](ReturnDisplayApiCacheable)
-          .getOrElse(throw new IllegalStateException("must have a submission id to amend a return"))
-          .idDetails
-          .submissionId
 
         returnsConnector.amend(pptId).flatMap {
           case Right(optChargeRef) =>
