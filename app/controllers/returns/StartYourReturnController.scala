@@ -26,11 +26,11 @@ import forms.returns.StartYourReturnFormProvider
 import models.Mode
 import models.Mode.NormalMode
 import models.requests.OptionalDataRequest
-import navigation.Navigator
+import navigation.{Navigator, ReturnsJourneyNavigator}
 import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
 
@@ -39,34 +39,34 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class StartYourReturnController @Inject()(
   override val messagesApi: MessagesApi,
-  appConfig: FrontendAppConfig,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   form: StartYourReturnFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: StartYourReturnView,
   taxReturnHelper: TaxReturnHelper,
-  auditor: Auditor
+  auditor: Auditor,
+  returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      val pptId: String = request.pptReference
+      val pptReference: String = request.pptReference
+      val userAnswers = request.userAnswers
 
-      val preparedForm = request.userAnswers.get(StartYourReturnPage) match {
+      val preparedForm = userAnswers.get(StartYourReturnPage) match {
         case None => form()
         case Some(value) => form().fill(value)
       }
 
-      taxReturnHelper.nextOpenObligationAndIfFirst(pptId).flatMap {
+      taxReturnHelper.nextOpenObligationAndIfFirst(pptReference).flatMap {
         case Some((taxReturnObligation, isFirst)) =>
-          for {
-            ans <- Future.fromTry(request.userAnswers.set(ObligationCacheable, taxReturnObligation))
-            _ <- cacheConnector.set(pptId, ans)
-          } yield
-            Ok(view(preparedForm, mode, taxReturnObligation, isFirst))
+          userAnswers
+            .setOrFail(ObligationCacheable, taxReturnObligation)
+            .setOrFail("isFirstReturn", isFirst)
+            .save(cacheConnector.saveUserAnswerFunc(pptReference))
+            .map(_ => Ok(view(preparedForm, mode, taxReturnObligation, isFirst)))
         case None =>
           logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
@@ -76,34 +76,29 @@ class StartYourReturnController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
+      val userAnswers = request.userAnswers
+      val pptReference = request.pptReference
+      val obligation = userAnswers.getOrFail(ObligationCacheable)
+      val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
+
       form().bindFromRequest().fold(
-        formWithErrors =>
-          taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference).map {
-            case Some((taxReturnObligation, isFirst)) =>
-              BadRequest(view(formWithErrors, mode, taxReturnObligation, isFirst))
-            case None =>
-              logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
-              Redirect(controllers.routes.IndexController.onPageLoad)
-          },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(StartYourReturnPage, value)
-            )
-            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield {
-            Redirect(navigation(value))
-          }
-      )
+        formWithErrors => {
+          Future.successful(
+            BadRequest(view(formWithErrors, mode, obligation, isFirstReturn)))
+        },
+        formValue => {
+          userAnswers
+            .setOrFail(StartYourReturnPage, formValue)
+            .save(cacheConnector.saveUserAnswerFunc(pptReference))
+            .map(_ => act(formValue, isFirstReturn))
+        }      )
   }
 
-  def navigation(value: Boolean)(implicit request: OptionalDataRequest[_]): Call =
-    if (value) {
+  private def act(formValue: Boolean, isFirstReturn: Boolean) (implicit request: OptionalDataRequest[_]) = {
+    if (formValue) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
-      if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled))
-        controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-      else
-        routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-    } else routes.NotStartOtherReturnsController.onPageLoad()
+    }
+    Redirect(returnsNavigator.startYourReturnRoute(formValue, isFirstReturn))
+  }
 
 }

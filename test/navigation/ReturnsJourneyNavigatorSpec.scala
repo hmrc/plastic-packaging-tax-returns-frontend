@@ -32,11 +32,10 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
-import models.UserAnswers
-import models.returns.CreditsAnswer
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.MockitoSugar.mock
@@ -45,15 +44,40 @@ import org.scalatestplus.play.PlaySpec
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val returnsJourneyNavigator = new ReturnsJourneyNavigator
+  private val frontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  private val returnsJourneyNavigator = new ReturnsJourneyNavigator(frontendConfig)
   val navigator = new Navigator(returns = returnsJourneyNavigator)
-  val mockClaimedCreds: ClaimedCredits = mock[ClaimedCredits]
+  val mockClaimedCredits: ClaimedCredits = mock[ClaimedCredits]
 
-  override def beforeEach() = {
-    reset(mockClaimedCreds)
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockClaimedCredits, frontendConfig)
   }
 
   //todo add in credits navigation that is currently tested in controllers
+  
+  "The start your return page" must {
+    "goto the what do you want to do page" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      returnsJourneyNavigator.startYourReturnRoute(true, false) mustBe 
+        creditsRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+    }
+    "except when the credits feature is disabled" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn false
+      returnsJourneyNavigator.startYourReturnRoute(true, false) mustBe
+        returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    }
+    "except when it is the users first return" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      returnsJourneyNavigator.startYourReturnRoute(true, isFirstReturn = true) mustBe
+        returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    }
+    "go back to the account home page" in {
+      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      returnsJourneyNavigator.startYourReturnRoute(doesUserWantToStartReturn = false, false) mustBe
+        returnsRoutes.NotStartOtherReturnsController.onPageLoad()
+    }
+  }
 
   "ExportedCreditsRoute" must {
     "redirect to ConvertedCredits page" when {
@@ -75,24 +99,24 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "redirect to NowStartYourReturn page" when {
       "the user does not claim any credits" in {
 
-        when(mockClaimedCreds.hasMadeClaim).thenReturn(false)
+        when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
 
-        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCreds)
+        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCredits)
         call mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
       }
     }
     "redirect to confirmCredit page" when {
       "the user claims credits" in {
 
-        when(mockClaimedCreds.hasMadeClaim).thenReturn(true)
+        when(mockClaimedCredits.hasMadeClaim).thenReturn(true)
 
-        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCreds)
+        val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCredits)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad
       }
     }
     "redirect to check your answers page" when {
       "in checkmode" in {
-        val call = returnsJourneyNavigator.convertedCreditsRoute(CheckMode, mockClaimedCreds)
+        val call = returnsJourneyNavigator.convertedCreditsRoute(CheckMode, mockClaimedCredits)
         call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       }
     }

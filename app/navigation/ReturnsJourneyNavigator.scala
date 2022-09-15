@@ -16,20 +16,22 @@
 
 package navigation
 
+import com.google.inject.Inject
+import config.{Features, FrontendAppConfig}
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
-import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.mvc.Call
 
 import javax.inject.Singleton
 
 @Singleton
-class ReturnsJourneyNavigator {
+class ReturnsJourneyNavigator @Inject()(
+  appConfig: FrontendAppConfig,
+) {
 
   private def exportedAllPlastic(answers: UserAnswers): Boolean = {
     val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
@@ -42,9 +44,6 @@ class ReturnsJourneyNavigator {
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
     // TODO - replace with direct calls
-    // case ManufacturedPlasticPackagingPage => instead call manufacturedPlasticPackagingRoute
-    // case ImportedPlasticPackagingPage => instead call importedPlasticPackagingRoute
-    case StartYourReturnPage => startYourReturnRoute
     case ManufacturedPlasticPackagingWeightPage =>
       _ => routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     case ImportedPlasticPackagingWeightPage =>
@@ -60,8 +59,6 @@ class ReturnsJourneyNavigator {
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
   val checkRoutes: PartialFunction[Page, UserAnswers => Call] = {
     // TODO - replace with direct calls
-    // case ManufacturedPlasticPackagingPage => instead call manufacturedPlasticPackagingRoute
-    // case ImportedPlasticPackagingPage => instead call importedPlasticPackagingRoute(answers, mode = CheckMode, answersChanged)
     case ManufacturedPlasticPackagingWeightPage => answers => manufacturedPlasticPackagingWeightRoute(answers)
     case ImportedPlasticPackagingWeightPage => _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
     case DirectlyExportedComponentsPage => answers => directlyExportedComponentsRoute(answers, mode = CheckMode)
@@ -72,12 +69,15 @@ class ReturnsJourneyNavigator {
     case _ => _ => routes.ReturnsCheckYourAnswersController.onPageLoad()
   }
 
-  private def startYourReturnRoute(answers: UserAnswers): Call =
-    answers.get(StartYourReturnPage) match {
-      case Some(true) => controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-      case Some(false) => routes.NotStartOtherReturnsController.onPageLoad()
-      case _ => throw new Exception("Unable to navigate to page")
-    }
+  def startYourReturnRoute(doesUserWantToStartReturn: Boolean, isFirstReturn: Boolean): Call =
+    if (doesUserWantToStartReturn) {
+      if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled) && !isFirstReturn)
+        controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+      else
+        routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    } else
+      routes.NotStartOtherReturnsController.onPageLoad()
+
 
   def whatDoYouWantDoRoute(mode: Mode, newAnswer: Boolean): Call = {
     if (mode.equals(CheckMode))

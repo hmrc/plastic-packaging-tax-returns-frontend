@@ -18,9 +18,11 @@ package navigation
 
 import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
+import config.FrontendAppConfig
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
+import org.mockito.MockitoSugar.mock
 import pages.returns._
 
 /** ***********************************************************
@@ -42,38 +44,14 @@ import pages.returns._
 //todo duplicated tests? check if can be removed
 class NavigatorSpec extends SpecBase {
 
-  val navigator = new Navigator(returns = new ReturnsJourneyNavigator)
+  private val frontendConfig = mock[FrontendAppConfig]
+  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig))
 
   "Navigator" - {
 
     "in Normal mode" - {
 
       "for the returns journey" - {
-
-        "for the StartYourReturnPage" - {
-
-          "navigate to ManufacturedPlasticPackagingController when answer is Yes" in {
-
-            val answers = UserAnswers("id").set(StartYourReturnPage, true)
-
-            navigator.nextPage(StartYourReturnPage,
-              NormalMode,
-              answers.get
-            ) mustBe controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-
-          }
-
-          "navigate to Homepage when answer is No" in {
-
-            val answers = UserAnswers("id").set(StartYourReturnPage, false)
-
-            navigator.nextPage(StartYourReturnPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.NotStartOtherReturnsController.onPageLoad
-
-          }
-        }
 
         "for the ManufacturedPlasticPackagingWeightPage" - {
 

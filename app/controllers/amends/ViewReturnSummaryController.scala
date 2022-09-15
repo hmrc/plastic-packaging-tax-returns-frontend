@@ -90,9 +90,9 @@ class ViewReturnSummaryController @Inject() (
     submittedReturn: ReturnDisplayApi, obligation: TaxReturnObligation) (implicit hc: HeaderCarrier) = {
     request.userAnswers
       .reset
-      .setUnsafe(AmendSelectedPeriodKey, periodKey)
-      .setUnsafe(ObligationCacheable, obligation)
-      .setUnsafe(ReturnDisplayApiCacheable, submittedReturn)
+      .setOrFail(AmendSelectedPeriodKey, periodKey)
+      .setOrFail(ObligationCacheable, obligation)
+      .setOrFail(ReturnDisplayApiCacheable, submittedReturn)
       .save(cacheConnector.saveUserAnswerFunc(pptReference))
   }
 }

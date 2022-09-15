@@ -42,6 +42,9 @@ case class UserAnswers(
   def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A =
     Reads.at(page.path).reads(data).get
 
+  def getOrFail[A](answerPath: String)(implicit rds: Reads[A]): A =
+    Reads.at(JsPath \ answerPath).reads(data).get
+    
   def set[A](page: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
@@ -59,7 +62,7 @@ case class UserAnswers(
   }
 
     /**
-    * Sets the answer (value) to the given question (settable), and returns a failed future  if something goes 
+    * Sets the answer (value) to the given question (settable), or fails if something goes 
     * wrong - unlike set() which returns a failed Try
     * @param settable - question we're setting the answer / data for
     * @param value - value to set
@@ -67,9 +70,11 @@ case class UserAnswers(
     * @tparam A - type of 'value'
     * @return Future of updated UserAnswers
     */
-  def setUnsafe[A](settable: Settable[A], value: A, cleanup: Boolean = true) 
-    (implicit writes: Writes[A]): UserAnswers = 
+  def setOrFail[A](settable: Settable[A], value: A, cleanup: Boolean = true) (implicit writes: Writes[A]): UserAnswers = 
     set(settable, value, cleanup).get
+
+  def setOrFail[A](answerPath: String, value: A) (implicit writes: Writes[A]): UserAnswers =
+    copy(data = data.setObject(JsPath \ answerPath, Json.toJson(value)).get)
 
   /**
     * Saves this UserAnswers using the given function
