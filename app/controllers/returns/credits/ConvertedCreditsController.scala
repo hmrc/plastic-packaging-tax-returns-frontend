@@ -46,7 +46,8 @@ class ConvertedCreditsController @Inject()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(formProvider(), mode))
+      val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =

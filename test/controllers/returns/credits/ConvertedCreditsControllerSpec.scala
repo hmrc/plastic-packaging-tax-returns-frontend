@@ -25,10 +25,10 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoInteractions}
 import org.mockito.MockitoSugar.when
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers.{eq => meq}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -38,7 +38,7 @@ import play.api.http.Status._
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.api.test.Helpers.{GET, await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ConvertedCreditsView
@@ -52,29 +52,49 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   private val mockMessages: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector: CacheConnector = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val controllerComponents = stubMessagesControllerComponents()
   private val mockView = mock[ConvertedCreditsView]
-  private val mockForm = mock[ConvertedCreditsFormProvider]
+  private val formProvider = mock[ConvertedCreditsFormProvider]
+  private val form = mock[Form[CreditsAnswer]]
+  val userAnswers = mock[UserAnswers]
 
-  val sut: ConvertedCreditsController = createSut(UserAnswers("123"))
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val sut: ConvertedCreditsController = createSut(UserAnswers("123"))
+  
+  private def any[T] = ArgumentMatchers.any[T]()
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockForm, mockNavigator)
+    reset(
+      mockMessages,
+      mockCacheConnector,
+      mockNavigator, 
+      mockView,
+      formProvider,
+      form,
+      userAnswers
+    )
+    when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(formProvider.apply()).thenReturn(form)
+    when(userAnswers.fill[CreditsAnswer](any, any)(any)) thenReturn form
   }
 
   "onPageLoad" must {
-
-    "return OK" in {
-      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
+    
+    "render the page" in {
       val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
-
       status(result) mustEqual OK
+      contentAsString(result) mustEqual "correct view"
     }
 
+    "create the form from user answers" in {
+      val sut: ConvertedCreditsController = createSut(userAnswers)
+      await(sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo")))
+      verify(userAnswers).fill[CreditsAnswer](meq(ConvertedCreditsPage), meq(form))(any)
+      verify(mockView).apply(meq(form), meq(NormalMode))(any, any)
+    }
   }
 
-  "onSumbit" must {
+  "onSubmit" must {
 
     "set the cache with user answers" in {
       setUpMocks
@@ -89,7 +109,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
           "converted-credits-weight" -> "40"))
 
       status(result) mustEqual SEE_OTHER
-      verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any())
+      verify(mockCacheConnector).set(any, ArgumentMatchers.eq(expectedUserAnswer))(any)
 
     }
 
@@ -107,8 +127,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     }
 
     "return 400 on error" in {
-      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
+      when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+      when(formProvider.apply()).thenReturn(new ConvertedCreditsFormProvider()())
 
       val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
         .withFormUrlEncodedBody(("answer" -> "true")))
@@ -128,22 +148,23 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
       new FakeDataRetrievalAction(Some(userAnswers)),
       new DataRequiredActionImpl(),
-      mockForm,
+      formProvider,
       controllerComponents,
       mockView)
   }
 
 
-  private def setUpMocks: Unit = {
-    when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-    when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
-    when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-    when(mockNavigator.convertedCreditsRoute(any(), any())).thenReturn(Call("GET", "/foo"))
+  //noinspection MutatorLikeMethodIsParameterless
+  private def setUpMocks = {
+    when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(formProvider.apply()).thenReturn(new ConvertedCreditsFormProvider()())
+    when(mockCacheConnector.set(any, any)(any)).thenReturn(Future.successful(HttpResponse.apply(200, "")))
+    when(mockNavigator.convertedCreditsRoute(any, any)).thenReturn(Call("GET", "/foo"))
   }
 
   private def formVerifyAndCapture: Form[CreditsAnswer] = {
     val captor = ArgumentCaptor.forClass(classOf[Form[CreditsAnswer]])
-    verify(mockView).apply(captor.capture(), any())(any(), any())
+    verify(mockView).apply(captor.capture(), any)(any, any)
     captor.getValue
   }
 
