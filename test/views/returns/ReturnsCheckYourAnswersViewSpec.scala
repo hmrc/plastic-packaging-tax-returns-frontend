@@ -20,11 +20,11 @@ import base.ViewSpecBase
 import config.FrontendAppConfig
 import controllers.helpers.TaxReturnViewModel
 import models.Mode.CheckMode
-import models.{CreditBalance, UserAnswers}
 import models.requests.{DataRequest, IdentifiedRequest}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
+import models.{CreditBalance, UserAnswers}
+import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
 import org.mockito.MockitoSugar.mock
 import pages.returns._
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
@@ -41,13 +41,9 @@ import java.time.LocalDate
 class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
-  private val appConfig = mock[FrontendAppConfig]
+  private val appConfig                      = mock[FrontendAppConfig]
 
-  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(12),
-    LocalDate.now().plusWeeks(16),
-    "PK1")
+  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
   private val userAnswer = UserAnswers("123")
     .set(ManufacturedPlasticPackagingPage, false).get
@@ -59,30 +55,21 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0))).get
     .set(WhatDoYouWantToDoPage, true).get
 
-  private val dataRequest: DataRequest[_] = DataRequest(identifiedRequest, userAnswer)
-  private val calculations = Calculations(1, 2L, 3L, 5L, true)
+  private val calculations    = Calculations(1, 2L, 3L, 5L, true)
   private val returnViewModel = createViewModel(userAnswer)
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .overrides(bind[FrontendAppConfig].toInstance(appConfig)
-  ).build()
+      .overrides(bind[FrontendAppConfig].toInstance(appConfig)).build()
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(
-      request,
-      PptTestData.newUser(),
-      Some("123")
-    )
-    val dataRequest: DataRequest[_] = DataRequest(identifiedRequest, answers)
+    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("123"))
+    val dataRequest: DataRequest[_]             = DataRequest(identifiedRequest, answers)
 
     TaxReturnViewModel(dataRequest, aTaxObligation, calculations)
   }
 
-  private def createView(
-                          credits: CreditsClaimedDetails = CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true)),
-                          taxReturn: TaxReturnViewModel = returnViewModel
-                        ): Html =
+  private def createView(credits: CreditsClaimedDetails = CreditsClaimedDetails(userAnswer, CreditBalance(0, 0, 0L, true)), taxReturn: TaxReturnViewModel = returnViewModel): Html =
     page(taxReturn, credits)(request, messages)
 
   "View" should {
@@ -106,7 +93,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
         val view = createView()
 
-        println(view.getElementById("credits-line-1").text())
         getText(view, "credits-line-1") mustBe
           "You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return."
         getText(view, "credits-line-1") mustBe messages("submit-return.check-your-answers.credits.line1")
@@ -124,45 +110,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
         getText(view, "credits-line-5") must include("Find out more about claiming credits (opens in new tab)")
         getText(view, "credits-line-5") must include(
-          messages("submit-return.check-your-answers.credits.line5",
-            messages("submit-return.check-your-answers.credits.line5.link-text")
-          ))
-
-        view.getElementById("credits-line-5").select("a").first() must haveHref(
-          appConfig.creditsGuidanceUrl
+          messages("submit-return.check-your-answers.credits.line5", messages("submit-return.check-your-answers.credits.line5.link-text"))
         )
-      }
 
-    }
-  }
-  "Credits section" should {
-    "display guidance" when {
-      "credits feature is toggled off" in {
-
-        val view = createView(creditsEnabled = false)
-
-        getText(view, "credits-line-1") mustBe
-          "You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return."
-        getText(view, "credits-line-1") mustBe messages("submit-return.check-your-answers.credits.line1")
-
-        getText(view, "credits-line-2") mustBe
-          messages("submit-return.check-your-answers.credits.line2")
-
-        getText(view, "credits-bullet-list") must include("exported")
-        getText(view, "credits-bullet-list") must include(messages("submit-return.check-your-answers.credits.line3"))
-
-        getText(view, "credits-bullet-list") must include("converted into different packaging")
-        getText(view, "credits-bullet-list") must include(messages("submit-return.check-your-answers.credits.line4"))
-
-        getText(view, "credits-line-5") must include("Find out more about claiming credits (opens in new tab)")
-        getText(view, "credits-line-5") must include(
-          messages("submit-return.check-your-answers.credits.line5",
-            messages("submit-return.check-your-answers.credits.line5.link-text")
-          ))
-
-        view.getElementById("credits-line-5").select("a").first() must haveHref(
-          appConfig.creditsGuidanceUrl
-        )
+        view.getElementById("credits-line-5").select("a").first() must haveHref(appConfig.creditsGuidanceUrl)
       }
 
     }
@@ -177,10 +128,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     "have no credits claimed" when {
       "both exported and converted answer is no" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val ans = userAnswer.set(WhatDoYouWantToDoPage, false).get
-        val view = createView(
-          credits = CreditsClaimedDetails(ans, CreditBalance(0,0,0, true)),
-          taxReturn = createViewModel(ans))
+        val ans  = userAnswer.set(WhatDoYouWantToDoPage, false).get
+        val view = createView(credits = CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true)), taxReturn = createViewModel(ans))
 
         getText(view, "credit-not-claimed-hint") mustBe "If you want to claim tax back as credit, you must do this when you submit your return. " +
           "If you do not claim it now, you must wait until your next return."
@@ -193,15 +142,12 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     "have claimed credit" when {
       "exported and converted both answered yest" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(credits = CreditsClaimedDetails(
-          createUserAnswerForClaimedCredit,
-          CreditBalance(10, 40, 300L, true)
-        ))
+        val view = createView(credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true)))
 
         view.getElementById("exported-answer").children().size() mustBe 6
         assertExportedCreditsAnswer(view, "Yes", "site.yes")
         assertExportedCreditsWeight(view)
-        assertConvertedCreditsAnswer(view, 2,"Yes", "site.yes")
+        assertConvertedCreditsAnswer(view, 2, "Yes", "site.yes")
         assertConvertedCreditsWeight(view)
         assertCreditsTotalWight(view, 4)
         assertTotalCredits(view, 5)
@@ -214,10 +160,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
           .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
           .set(WhatDoYouWantToDoPage, true).get
 
-        val view = createView(credits = CreditsClaimedDetails(
-          ans,
-          CreditBalance(10, 40, 300L, true)
-        ))
+        val view = createView(credits = CreditsClaimedDetails(ans, CreditBalance(10, 40, 300L, true)))
 
         view.getElementById("exported-answer").children().size() mustBe 4
         assertExportedCreditsAnswer(view, "No", "site.no")
@@ -230,26 +173,18 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     "have change your answer credit link" when {
       "credits is claimed" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(credits = CreditsClaimedDetails(
-          createUserAnswerForClaimedCredit,
-          CreditBalance(10, 40, 300L, true)
-        ))
+        val view = createView(credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true)))
 
         getText(view, "change-credit-link") mustBe "Change any answer from credits"
         getText(view, "change-credit-link") mustBe messages("submit-return.check-your-answers.credits.change.text.link")
-        view.getElementById("change-credit-link").select("a").first() must haveHref(
-          controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode)
-        )
+        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode))
       }
     }
 
     "can remove a credit" when {
       "credit is claimed" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(credits = CreditsClaimedDetails(
-          createUserAnswerForClaimedCredit,
-          CreditBalance(10, 40, 300L, true)
-        ))
+        val view = createView(credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true)))
 
         getText(view, "remove-credit-link") mustBe "Remove credits"
         getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
@@ -261,12 +196,12 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   }
 
-  private def createUserAnswerForClaimedCredit: UserAnswers = {
+  private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
       .set(ExportedCreditsPage, CreditsAnswer(true, Some(100L))).get
       .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
       .set(WhatDoYouWantToDoPage, true).get
-  }
+
   private def assertExportedCreditsAnswer(view: Html, expectedValue: String, expectedKey: String): Unit = {
     getCreditCellText(view, 0, "dt") mustBe "Tax paid on plastic packaging that has since been exported"
     getCreditCellText(view, 0, "dt") mustBe messages("submit-return.check-your-answers.credits.exported.answer")
@@ -286,6 +221,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     getCreditCellText(view, row, "dd") mustBe expectedValue
     getCreditCellText(view, row, "dd") mustBe messages(expectedKey)
   }
+
   private def assertConvertedCreditsWeight(view: Html): Unit = {
     getCreditCellText(view, 3, "dt") mustBe "Weight of converted plastic packaging"
     getCreditCellText(view, 3, "dt") mustBe messages("submit-return.check-your-answers.credits.converted.weight")
@@ -303,13 +239,14 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     getCreditCellText(view, row, "dt") mustBe messages("submit-return.check-your-answers.credits.total")
     getCreditCellText(view, row, "dd") mustBe "£40.00"
   }
-  private def getCreditCellText(view:Html, row: Int, cell: String) =
+
+  private def getCreditCellText(view: Html, row: Int, cell: String) =
     getCreditRow(view, row).select(cell).text()
 
-  private def getCreditRow(view: Html, row: Int): Element = {
+  private def getCreditRow(view: Html, row: Int): Element =
     view.getElementById("exported-answer").child(row)
-  }
-  private def getText(view: Html, id: String): String = {
+
+  private def getText(view: Html, id: String): String =
     view.getElementById(id).text()
-  }
+
 }
