@@ -57,14 +57,13 @@ class ConvertedCreditsController @Inject()
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
-                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers)))
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+            formValue => {
+              request.userAnswers
+                .setOrFail(ConvertedCreditsPage, formValue)
+                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+                .map(updatedAnswers => Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
+            }
           )
     }
 
