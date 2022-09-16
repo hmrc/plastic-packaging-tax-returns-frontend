@@ -44,21 +44,18 @@
         @noCreditsClaimed()
     }
 } else {
-    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line1"), id = Some("credits-line-1"))
-    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line2"), id = Some("credits-line-2"))
+    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line1"))
+    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line2"))
     @bulletList(elements = Seq(
                         Html(messages("submit-return.check-your-answers.credits.line3")),
                         Html(messages("submit-return.check-your-answers.credits.line4"))
-                    ),
-                    id = Some("credits-bullet-list")
+                    )
     )
 
     @paragraph(content = Html(messages("submit-return.check-your-answers.credits.line5", link(
-        id = "submit-return.check-your-answers.credits.line5.link-text",
+        id = "credits-line-5",
         text = messages("submit-return.check-your-answers.credits.line5.link-text"),
         call = Call("GET", appConfig.creditsGuidanceUrl),
         newTab = true
-    ))),
-        id = Some("credits-line-5")
-    )
+    ))))
 }

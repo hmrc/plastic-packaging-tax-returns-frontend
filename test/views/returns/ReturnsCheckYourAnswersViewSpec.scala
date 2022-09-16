@@ -81,7 +81,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       val view = createView()
 
       getText(view, "credit-section-header") mustBe "Credits"
-
       getText(view, "credit-section-header") mustBe
         messages("submit-return.check-your-answers.credits.heading")
     }
@@ -93,27 +92,25 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
         val view = createView()
 
-        getText(view, "credits-line-1") mustBe
-          "You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return."
-        getText(view, "credits-line-1") mustBe messages("submit-return.check-your-answers.credits.line1")
-
-        getText(view, "credits-line-2") mustBe
-          "You may be able to claim credit in future if the packaging is either:"
-        getText(view, "credits-line-2") mustBe
-          messages("submit-return.check-your-answers.credits.line2")
-
-        getText(view, "credits-bullet-list") must include("exported")
-        getText(view, "credits-bullet-list") must include(messages("submit-return.check-your-answers.credits.line3"))
-
-        getText(view, "credits-bullet-list") must include("converted into different packaging")
-        getText(view, "credits-bullet-list") must include(messages("submit-return.check-your-answers.credits.line4"))
-
-        getText(view, "credits-line-5") must include("Find out more about claiming credits (opens in new tab)")
-        getText(view, "credits-line-5") must include(
-          messages("submit-return.check-your-answers.credits.line5", messages("submit-return.check-your-answers.credits.line5.link-text"))
+        val paragraphText = view.getElementsByClass("govuk-body").text()
+        paragraphText must include("You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.")
+        paragraphText must include(messages("submit-return.check-your-answers.credits.line1"))
+        paragraphText must include("You may be able to claim credit in future if the packaging is either:")
+        paragraphText must include(messages("submit-return.check-your-answers.credits.line2"))
+        paragraphText must include("Find out more about claiming credits (opens in new tab)")
+        paragraphText must include(
+          messages("submit-return.check-your-answers.credits.line5",
+            messages("submit-return.check-your-answers.credits.line5.link-text"))
         )
 
-        view.getElementById("credits-line-5").select("a").first() must haveHref(appConfig.creditsGuidanceUrl)
+        val bulletListText = view.getElementsByClass("govuk-list--bullet").text()
+        bulletListText must include("exported")
+        bulletListText must include(messages("submit-return.check-your-answers.credits.line3"))
+        bulletListText must include("converted into different packaging")
+        bulletListText must include(messages("submit-return.check-your-answers.credits.line4"))
+
+        view.getElementById("credits-line-5").select("a").first() must
+          haveHref(appConfig.creditsGuidanceUrl)
       }
 
     }
@@ -131,10 +128,11 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         val ans  = userAnswer.set(WhatDoYouWantToDoPage, false).get
         val view = createView(credits = CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true)), taxReturn = createViewModel(ans))
 
-        getText(view, "credit-not-claimed-hint") mustBe "If you want to claim tax back as credit, you must do this when you submit your return. " +
-          "If you do not claim it now, you must wait until your next return."
-        getText(view, "credit-not-claimed-hint") mustBe messages("submit-return.check-your-answers.credits.not.claimed.hint")
-        getText(view, "credits-change-link") mustBe "Claim tax back as credit"
+        val paragraphText = view.getElementsByClass("govuk-body").text()
+        paragraphText must include("If you want to claim tax back as credit, you must do this when you submit your return. " +
+          "If you do not claim it now, you must wait until your next return.")
+        paragraphText must include(messages("submit-return.check-your-answers.credits.not.claimed.hint"))
+        paragraphText must include("Claim tax back as credit")
 
       }
     }
