@@ -50,8 +50,6 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     LocalDate.now().plusWeeks(16),
     "PK1")
 
-  private val returnViewModel = createViewModel(userAnswer)
-
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
     val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(
       request,
@@ -88,5 +86,4 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       }
     }
   }
-
 }

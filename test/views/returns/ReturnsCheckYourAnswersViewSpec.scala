@@ -86,6 +86,9 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     page(taxReturn, credits)(request, messages)
 
   "View" should {
+
+    when(appConfig.userResearchUrl).thenReturn("/foo")
+
     "have a Credits section" in {
       when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
       val view = createView()

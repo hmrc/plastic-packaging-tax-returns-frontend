@@ -30,7 +30,7 @@
 @govukSummaryList(SummaryList(
     rows = credit.summaryList.map(o => SummaryListRow(
         key = Key(
-            messages("submit-return.check-your-answers" + o._1),
+            messages(o._1),
             classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"
         ),
         value = Value(o._2, classes = "govuk-table__cell--numeric"))

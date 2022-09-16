@@ -58,12 +58,12 @@ case class CreditsClaimedDetails(
 
 object CreditsClaimedDetails {
 
-  val CreditExportedAnswerPartialKey = "credits.exported.answer"
-  val CreditExportedWeightPartialKey = "credits.exported.weight"
-  val CreditConvertedAnswerPartialKey = "credits.converted.answer"
-  val CreditConvertedWeightPartialKey = "credits.converted.weight"
-  val CreditsTotalWeightPartialKey = "credits.total.weight"
-  val CreditTotalPartialKey = "credits.total"
+  val CreditExportedAnswerPartialKey = "submit-return.check-your-answers.credits.exported.answer"
+  val CreditExportedWeightPartialKey = "submit-return.check-your-answers.credits.exported.weight"
+  val CreditConvertedAnswerPartialKey = "submit-return.check-your-answers.credits.converted.answer"
+  val CreditConvertedWeightPartialKey = "submit-return.check-your-answers.credits.converted.weight"
+  val CreditsTotalWeightPartialKey = "submit-return.check-your-answers.credits.total.weight"
+  val CreditTotalPartialKey = "submit-return.check-your-answers.credits.total"
 
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
