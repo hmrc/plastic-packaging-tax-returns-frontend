@@ -27,10 +27,13 @@ class ConvertedCreditsFormProvider extends Mappings {
   def apply(): Form[CreditsAnswer] = {
     Form(
       mapping(
-        "answer" -> boolean("convertedCredits.error.required"),
-        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"), long("ConvertedCredits.error.weightRequired")
-          .verifying(minimumValue(1L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
-          .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
+        "answer" -> boolean("converted.credits.error.required"),
+        "converted-credits-weight" -> mandatoryIf(isEqual("answer", "true"),
+          long("converted.credits.error.weight.required",
+            wholeNumberKey = "converted.credits.error.whole.number",
+            nonNumericKey = "converted.credits.error.non.numeric")
+          .verifying(minimumValue(1L, "converted.credits.error.outOfRange.low"))
+          .verifying(maximumValue(99999999999L, "converted.credits.error.outOfRange.high"))
         ))(CreditsAnswer.apply)(CreditsAnswer.unapply)
     )
   }
