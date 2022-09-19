@@ -22,14 +22,15 @@
         linkButton: LinkButton,
 )
 
-@(obligationPeriod:String, buttonLink: Call)(implicit request: Request[_], messages: Messages)
+@(obligationPeriod:String, claimedCredits: Boolean, buttonLink: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("nowStartYourReturn.heading"))) {
+@layout(pageTitle = titleNoForm(messages("nowStartYourReturn.heading", obligationPeriod), Some(messages("return.title.tail")))) {
 
-    <h1 class="govuk-heading-xl">@messages("nowStartYourReturn.heading")</h1>
+    <h1 class="govuk-heading-xl">@messages("nowStartYourReturn.heading", obligationPeriod)</h1>
 
-    @paragraph(obligationPeriod)
-    @paragraph(messages("nowStartYourReturn.paragraph.1"))
+    @if(claimedCredits) {
+        @paragraph(messages("nowStartYourReturn.paragraph.1"), id = Some("credits-saved-content"))
+    }
 
     @linkButton(
         messageKey = "nowStartYourReturn.button-text",

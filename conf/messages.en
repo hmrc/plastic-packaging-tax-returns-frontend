@@ -528,3 +528,10 @@ what-do-you-want-to-do.credit-and-return = Claim tax back from previous returns 
 what-do-you-want-to-do.just-return = Start {0} return
 what-do-you-want-to-do.paragraph.2 = Find out about {0}.
 what-do-you-want-to-do.paragraph.2.link = claiming tax back as credit for packaging you’ve paid tax on
+
+nowStartYourReturn.heading = Now start your return for {0}
+nowStartYourReturn.paragraph.1 = Your credits have been saved. To submit them, you must complete your return.
+nowStartYourReturn.button-text = Start your return
+
+
+
