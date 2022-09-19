@@ -73,7 +73,7 @@ class ExportedCreditsFormProviderSpec extends PlaySpec {
       }
 
       "entered weight is decimal" in {
-        val boundForm = sut.bind(Map("answer" -> "true", "exported-credits-weight" -> "420"))
+        val boundForm = sut.bind(Map("answer" -> "true", "exported-credits-weight" -> "4.20"))
         boundForm.value mustBe None
       }
 

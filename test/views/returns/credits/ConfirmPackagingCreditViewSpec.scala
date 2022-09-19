@@ -66,7 +66,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "have a confirm button" in {
-      view.getElementById("link-button") must haveHref(controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(NormalMode).url)
+      view.getElementById("link-button") must haveHref(controllers.returns.routes.NowStartYourReturnController.onPageLoad.url)
       view.getElementById("link-button").text() mustBe  "Confirm credit amount"
       view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
     }
