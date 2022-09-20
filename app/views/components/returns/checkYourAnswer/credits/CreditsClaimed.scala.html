@@ -51,6 +51,6 @@
     content = link(
         id = "remove-credit-link",
         text = messages("submit-return.check-your-answers.credits.remove.text.link"),
-        call = Call("GET", "#")
+        call = controllers.returns.routes.ReturnsCheckYourAnswersController.onRemoveCreditsClaim()
     )
 )

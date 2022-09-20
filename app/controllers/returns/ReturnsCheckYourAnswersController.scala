@@ -18,12 +18,13 @@ package controllers.returns
 
 import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
-import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnViewModel
+import models.UserAnswers
 import models.requests.DataRequest
 import models.returns._
-import pages.returns.credits.WhatDoYouWantToDoPage
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -43,7 +44,8 @@ class ReturnsCheckYourAnswersController @Inject()(
   creditsCalculatorConnector: CalculateCreditsConnector,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
-  view: ReturnsCheckYourAnswersView
+  view: ReturnsCheckYourAnswersView, 
+  cacheConnector: CacheConnector
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
@@ -54,18 +56,42 @@ class ReturnsCheckYourAnswersController @Inject()(
           case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
-
+  
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        returnsConnector.submit(request.pptReference).flatMap {
-          case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map{
-              _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
-            }
-          case Left(error) => throw error
+        ensureCreditAnswersConsistency(request.userAnswers, request.pptReference).flatMap { _ =>
+          returnsConnector.submit(request.pptReference).flatMap {
+            case Right(optChargeRef) =>
+              sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
+                _ => Redirect(routes.ReturnConfirmationController.onPageLoad())
+              }
+            case Left(error)         => throw error
+          }
         }
     }
+
+  def onRemoveCreditsClaim(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        request.userAnswers
+          .setOrFail(WhatDoYouWantToDoPage, false)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Redirect(routes.ReturnsCheckYourAnswersController.onPageLoad()))
+    }
+
+
+  // TODO quick fix for user removing previous credit claim
+  private def ensureCreditAnswersConsistency(userAnswers: UserAnswers, pptReference: String) (implicit hc: HeaderCarrier)
+  : Future[UserAnswers] =
+    if (userAnswers.getOrFail(WhatDoYouWantToDoPage))
+      Future.successful(userAnswers)
+    else
+      userAnswers
+        .setOrFail(ExportedCreditsPage, CreditsAnswer.noClaim)
+        .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
+        .save(cacheConnector.saveUserAnswerFunc(pptReference))
+
 
   private def calCalculationAndCreditApi(
                                           request: DataRequest[_]
