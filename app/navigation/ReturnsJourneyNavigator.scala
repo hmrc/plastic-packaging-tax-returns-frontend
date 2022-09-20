@@ -89,11 +89,7 @@ class ReturnsJourneyNavigator @Inject()(
   }
 
   def exportedCreditsRoute(mode: Mode): Call = {
-    if (mode.equals(CheckMode)) {
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else {
-      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(NormalMode)
-    }
+    controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
   }
 
   def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
