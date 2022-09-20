@@ -1,0 +1,56 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.{Link, paragraph}
+@import models.returns.Credits
+@import models.Mode.CheckMode
+@import viewmodels._
+
+@this(
+    govukSummaryList: GovukSummaryList,
+    link: Link,
+    paragraph: paragraph
+)
+
+@(credit: Credits)(implicit request: Request[_], messages: Messages)
+
+@govukSummaryList(SummaryList(
+    rows = credit.summaryList.map(o => SummaryListRow(
+        key = Key(
+            messages(o._1),
+            classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"
+        ),
+        value = Value(o._2, classes = "govuk-table__cell--numeric"))
+    ),
+    attributes = Map("id" -> "exported-answer")
+))
+
+@paragraph(
+    content = link(
+        id = "change-credit-link",
+        text = messages("submit-return.check-your-answers.credits.change.text.link"),
+        call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode)
+    )
+)
+
+<!-- todo: create YesAndNo page and redirect to this  -->
+@paragraph(
+    content = link(
+        id = "remove-credit-link",
+        text = messages("submit-return.check-your-answers.credits.remove.text.link"),
+        call = Call("GET", "#")
+    )
+)

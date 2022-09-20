@@ -111,6 +111,9 @@ class FrontendAppConfig @Inject() (
   def isAmendsFeatureEnabled: Boolean =
     isFeatureEnabled(Features.amendsEnabled)
 
+  def isCreditsForReturnsFeatureEnabled: Boolean =
+    isFeatureEnabled(Features.creditsForReturnsEnabled)
+
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
 
