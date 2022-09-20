@@ -25,9 +25,9 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 
 class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
-  val page: ConfirmPackagingCreditView   = inject[ConfirmPackagingCreditView]
-  val weight = 200L.asKg
-  val requestedCredit = BigDecimal(500).asPounds
+  val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
+  val weight = 200L
+  val requestedCredit = BigDecimal(500)
 
   private def createView: Html =
     page(requestedCredit, weight)(request, messages)
@@ -42,8 +42,8 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "have a header" in {
-      view.select("h1").text mustBe s"Confirm $requestedCredit of credit"
-      view.select("h1").text mustBe messages("confirmPackagingCredit.heading", requestedCredit)
+      view.select("h1").text mustBe s"Confirm ${requestedCredit.asPounds} of credit"
+      view.select("h1").text mustBe messages("confirmPackagingCredit.heading", requestedCredit.asPounds)
     }
 
     "have a caption" in {
@@ -52,21 +52,21 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "have a hint" in {
-      view.getElementById("paragraph-body-1").text() mustBe s"You told us that you paid tax on ${weight} of plastic packaging from a previous return, and it has since been exported or converted."
-      view.getElementById("paragraph-body-1").text() mustBe messages("confirmPackagingCredit.hint.p1", weight)
+      view.getElementById("paragraph-body-1").text() mustBe s"You told us that you paid tax on ${weight.asKg} of plastic packaging from a previous return, and it has since been exported or converted."
+      view.getElementById("paragraph-body-1").text() mustBe messages("confirmPackagingCredit.hint.p1", weight.asKg)
 
       view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
       view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
 
-      view.getElementById("paragraph-body-3").text() mustBe s"This means the amount of tax you’ll get back as credit will be $requestedCredit."
-      view.getElementById("paragraph-body-3").text() must include(messages("confirmPackagingCredit.hint.p3", requestedCredit))
+      view.getElementById("paragraph-body-3").text() mustBe s"This means the amount of tax you’ll get back as credit will be ${requestedCredit.asPounds}."
+      view.getElementById("paragraph-body-3").text() mustBe messages("confirmPackagingCredit.hint.p3", requestedCredit.asPounds)
 
       view.getElementById("paragraph-body-4").text() mustBe s"Your credit will be applied against your total balance in your Plastic Packaging Tax account."
       view.getElementById("paragraph-body-4").text() mustBe messages("confirmPackagingCredit.hint.p4")
     }
 
     "have a confirm button" in {
-      view.getElementById("link-button") must haveHref(controllers.returns.routes.ManufacturedPlasticPackagingController.onSubmit(NormalMode).url)
+      view.getElementById("link-button") must haveHref(controllers.returns.routes.NowStartYourReturnController.onPageLoad.url)
       view.getElementById("link-button").text() mustBe  "Confirm credit amount"
       view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
     }
