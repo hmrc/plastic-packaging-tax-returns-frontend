@@ -45,7 +45,12 @@ class ExportedCreditsController @Inject()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(formProvider(), mode))
+      val userAnswers = request.userAnswers
+      val preparedForm = userAnswers.get(ExportedCreditsPage) match {
+        case None => formProvider()
+        case Some(value) => formProvider().fill(value)
+      }
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =

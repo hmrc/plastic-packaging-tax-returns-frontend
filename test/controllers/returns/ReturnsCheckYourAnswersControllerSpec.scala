@@ -16,14 +16,21 @@
 
 package controllers.returns
 
-import base.SpecBase
-import connectors.TaxReturnsConnector
-import models.returns.Calculations
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
+import cacheables.ObligationCacheable
+import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import models.returns._
+import models.{CreditBalance, UserAnswers}
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.mockito.MockitoSugar.mock
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
-import play.api.inject.bind
+import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -31,81 +38,182 @@ import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView
 
+import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReturnsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfterEach {
+class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFluency with BeforeAndAfterEach {
 
-  private val mockView = mock[ReturnsCheckYourAnswersView]
+  val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.parse("2022-04-01"),
+    LocalDate.parse("2022-06-30"),
+    LocalDate.parse("2022-06-30").plusWeeks(8),
+    "00XX")
+
+  val userAnswers = UserAnswers("123")
+    .set(ObligationCacheable, taxReturnOb).get
+
+  val calculations = Calculations(
+    taxDue = 17,
+    chargeableTotal = 85,
+    deductionsTotal = 15,
+    packagingTotal = 100,
+    isSubmittable = true
+  )
+
+  val mockView = mock[ReturnsCheckYourAnswersView]
+  val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  val controllerComponents = stubMessagesControllerComponents()
+  val mockSessionRepository = mock[SessionRepository]
+  val mockTaxReturnConnector = mock[TaxReturnsConnector]
+  val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(
-      mockSessionRepo,
+      mockSessionRepository,
       mockTaxReturnConnector,
+      mockCalculateCreditConnector,
       mockView
     )
 
     when(mockView.apply(any(), any())(any(), any())).thenReturn(new Html(""))
   }
 
-  "Returns Check Your Answers Controller" - {
+  "Returns Check Your Answers Controller" should {
 
     "return OK and the correct view for a GET" in {
+      setUpMockConnector()
 
-      when(mockTaxReturnConnector.getCalculationReturns(any())(any())).thenReturn(Future.successful(
-        Right(Calculations(taxDue = 17, chargeableTotal = 85, deductionsTotal = 15, packagingTotal = 100, isSubmittable = true)))
-      )
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[ReturnsCheckYourAnswersView].toInstance(mockView),
-          bind[TaxReturnsConnector].toInstance(mockTaxReturnConnector))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        verify(mockView).apply(any(), any())(any(), any())
-      }
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
+      status(result) mustEqual OK
+      verify(mockView).apply(any(), any())(any(), any())
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
+      val result = createSut(None).onPageLoad()(FakeRequest(GET, "/foo"))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+    }
 
-      running(application) {
+    "call tax return API" in {
+      setUpMockConnector()
 
-        val request = FakeRequest(GET, controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad().url)
-        val result  = route(application, request).value
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+      status(result) mustEqual OK
+      verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any())
+    }
 
+    "view claimed credits on pageLoading" in {
+      setUpMockConnector()
+
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
+
+      status(result) mustEqual OK
+      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
+        exported = CreditsAnswer(true, Some(200L)),
+        converted = CreditsAnswer(true, Some(300L)),
+        isClaimingTaxBack = true,
+        totalWeight = 500L,
+        totalCredits = 20L
+      )
+    }
+
+    "handle credits no claimed on pageLoading" in {
+      setUpMockConnector()
+
+      val ans = setUserAnswer.set(WhatDoYouWantToDoPage, false).get
+      val result = createSut(Some(ans)).onPageLoad()(FakeRequest(GET, "/foo"))
+
+      status(result) mustEqual OK
+      verifyNoInteractions(mockCalculateCreditConnector)
+      verifyAndCaptorCreditDetails mustBe NoCreditsClaimed
+    }
+
+
+    "must cache payment ref and redirect for a POST" in {
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
+
+      val result = createSut(Some(setUserAnswer)).onSubmit()(FakeRequest(POST, "/foo"))
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad().url
+      verify(mockSessionRepository).set(any())
+    }
+  }
+
+  "return an error" when {
+    "cannot get credit" in {
+      setUpMockConnector(
+        Right(calculations),
+        Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
+      )
+
+      intercept[RuntimeException] {
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
-    "must cache payment ref and redirect for a POST" in {
+    "cannot get tax return calculation" in {
+      setUpMockConnector(
+        Left(new ServiceError("Tax return calculation error", new Exception("error")))
+      )
 
-      when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
-      when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
+      intercept[RuntimeException] {
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+      }
+    }
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[SessionRepository].toInstance(mockSessionRepo),
-        bind[TaxReturnsConnector].toInstance(mockTaxReturnConnector)
-      ).build()
+    "both api return an error" in {
+      setUpMockConnector(
+        Left(new ServiceError("Tax return calculation error", new Exception("error"))),
+        Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
+      )
 
-      running(application) {
-
-        val request = FakeRequest(POST, controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit().url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad().url
-
-        verify(mockSessionRepo).set(any())
-
+      intercept[RuntimeException] {
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
   }
+
+  private def setUpMockConnector(
+    taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
+    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true))
+  ): Unit = {
+    when(mockTaxReturnConnector.getCalculationReturns(any())(any()))
+      .thenReturn(Future.successful(taxReturnConnectorResult))
+
+    when(mockCalculateCreditConnector.get(any())(any()))
+      .thenReturn(Future.successful(creditConnectorResult))
+  }
+
+  private def verifyAndCaptorCreditDetails: Credits = {
+    val captor = ArgumentCaptor.forClass(classOf[Credits])
+    verify(mockView).apply(any(), captor.capture())(any(), any())
+    captor.getValue
+  }
+  private def createSut(userAnswer: Option[UserAnswers]): ReturnsCheckYourAnswersController = {
+    new ReturnsCheckYourAnswersController(
+      mockMessagesApi,
+      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+      new FakeDataRetrievalAction(userAnswer),
+      new DataRequiredActionImpl(),
+      mockTaxReturnConnector,
+      mockCalculateCreditConnector,
+      mockSessionRepository,
+      controllerComponents,
+      mockView
+    )
+  }
+
+  def setUserAnswer: UserAnswers = {
+    userAnswers
+      .set(ExportedCreditsPage, CreditsAnswer(true, Some(200))).get
+      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(300L))).get
+      .set(WhatDoYouWantToDoPage, true).get
+  }
+
 }

@@ -25,22 +25,20 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
-import org.mockito.MockitoSugar.when
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.data.Form
-import play.api.http.Status._
+import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.mvc.Call
+import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ConvertedCreditsView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,103 +46,110 @@ import scala.concurrent.Future
 
 class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-
   private val mockMessages: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector: CacheConnector = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[ConvertedCreditsView]
-  private val mockForm = mock[ConvertedCreditsFormProvider]
+  private val view = mock[ConvertedCreditsView]
+  private val formProvider = mock[ConvertedCreditsFormProvider]
+  private val form = mock[Form[CreditsAnswer]]
+  private val userAnswers = mock[UserAnswers]
 
-  val sut: ConvertedCreditsController = createSut(UserAnswers("123"))
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val controller: ConvertedCreditsController = new ConvertedCreditsController(
+    mockMessages,
+    mockCacheConnector,
+    mockNavigator,
+    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+    new FakeDataRetrievalAction(Some(userAnswers)),
+    new DataRequiredActionImpl(),
+    formProvider,
+    controllerComponents,
+    view)
+
+  private def any[T] = ArgumentMatchers.any[T]()
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockForm, mockNavigator)
+    reset(
+      mockMessages,
+      mockCacheConnector,
+      mockNavigator, 
+      view,
+      formProvider,
+      form,
+      userAnswers
+    )
+    when(userAnswers.fill[CreditsAnswer](any, any)(any)) thenReturn form
+    when(userAnswers.setOrFail(any, any, any)(any)) thenReturn userAnswers
+    when(userAnswers.save(any)(any)) thenReturn Future.successful(userAnswers)
+
+    when(formProvider.apply()).thenReturn(form)
+    when(form.bindFromRequest()(any, any)).thenReturn(form)
+    when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+
+    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(false))
+    when(mockNavigator.convertedCreditsRoute(any, any)).thenReturn(Call("GET", "/next/page"))
+
   }
 
   "onPageLoad" must {
-
-    "return OK" in {
-      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-      val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
-
-      status(result) mustEqual OK
+    
+    "render the page" in {
+      val result = controller.onPageLoad(NormalMode)(FakeRequest("", ""))
+      status(result) mustEqual Status.OK
+      contentAsString(result) mustEqual "correct view"
     }
 
+    "create the form from user answers" in {
+      await(controller.onPageLoad(NormalMode)(FakeRequest("", "")))
+      verify(userAnswers).fill[CreditsAnswer](meq(ConvertedCreditsPage), meq(form))(any)
+      verify(view).apply(meq(form), meq(NormalMode))(any, any)
+    }
   }
 
-  "onSumbit" must {
+  "onSubmit" must {
 
-    "set the cache with user answers" in {
-      setUpMocks
-
-      val answers = UserAnswers("ppt12543").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
-      val expectedUserAnswer = answers.copy(data = answers.data)
-        .set(ConvertedCreditsPage, CreditsAnswer(true, Some(40))).get
-
-      val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody(
-          "answer" -> "true",
-          "converted-credits-weight" -> "40"))
-
-      status(result) mustEqual SEE_OTHER
-      verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any())
-
+    "remember the user's answers" in {
+      // Invokes the "form is good" side of the fold() call
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(true, Some(20))))
+      await(controller.onSubmit(NormalMode)(FakeRequest("", "")))
+      verify(userAnswers).setOrFail(meq(ConvertedCreditsPage), meq(CreditsAnswer(true, Some(20))), meq(false))(any)
+      verify(userAnswers).save(any)(any)
     }
 
-
-    "redirects" in {
-      setUpMocks
-      val answers = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
-
-      val result = createSut(answers).onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody("answer" -> "false"))
-
+    "redirect to the next page" in {
+      // Invokes the "form is good" side of the fold() call
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
+      val result = controller.onSubmit(NormalMode)(FakeRequest("", ""))
       status(result) mustEqual SEE_OTHER
-      verify(mockNavigator).convertedCreditsRoute(ArgumentMatchers.eq(NormalMode), any[ClaimedCredits])
+      redirectLocation(result) mustBe Some("/next/page")
+      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), any)
+    }
+    
+    "pass the two credit claim answers to the navigator" in {
+      when(userAnswers.getOrFail(meq(ExportedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(11))
+      when(userAnswers.getOrFail(meq(ConvertedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(22))
 
+      // Invokes the "form is good" side of the fold() call
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
+      await(controller.onSubmit(NormalMode)(FakeRequest("", "")))
+
+      val expectedCreditsClaim = ClaimedCredits(CreditsAnswer(true, Some(11)), CreditsAnswer(true, Some(22)))
+      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), meq(expectedCreditsClaim))
     }
 
-    "return 400 on error" in {
-      when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
-
-      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody(("answer" -> "true")))
+    "display any errors" in {
+      // Invokes the "form is bad" side of the fold() call
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Form[CreditsAnswer] => Future[Result]](0).apply(form))
+      val result = controller.onSubmit(NormalMode)(FakeRequest("", ""))
 
       status(result) mustEqual BAD_REQUEST
-      formVerifyAndCapture.hasErrors mustBe true
-      verifyNoInteractions(mockCacheConnector)
+      contentAsString(result) mustBe "correct view"
+      
+      verify(view).apply(meq(form), meq(NormalMode))(any, any)
+      verifyNoInteractions(userAnswers)
     }
 
   }
-
-  private def createSut(userAnswers: UserAnswers): ConvertedCreditsController = {
-    new ConvertedCreditsController(
-      mockMessages,
-      mockCacheConnector,
-      mockNavigator,
-      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
-      new FakeDataRetrievalAction(Some(userAnswers)),
-      new DataRequiredActionImpl(),
-      mockForm,
-      controllerComponents,
-      mockView)
-  }
-
-
-  private def setUpMocks: Unit = {
-    when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
-    when(mockForm.apply()).thenReturn(new ConvertedCreditsFormProvider()())
-    when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-    when(mockNavigator.convertedCreditsRoute(any(), any())).thenReturn(Call("GET", "/foo"))
-  }
-
-  private def formVerifyAndCapture: Form[CreditsAnswer] = {
-    val captor = ArgumentCaptor.forClass(classOf[Form[CreditsAnswer]])
-    verify(mockView).apply(captor.capture(), any())(any(), any())
-    captor.getValue
-  }
-
 }
+
