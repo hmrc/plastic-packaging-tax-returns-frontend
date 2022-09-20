@@ -40,7 +40,7 @@ import java.time.LocalDate
 
 class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
+  private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
   private val appConfig                      = mock[FrontendAppConfig]
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
@@ -188,7 +188,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
 
         view.getElementById("remove-credit-link").select("a").first() must
-          haveHref(Call("GET", "#"))
+          haveHref(controllers.returns.routes.ReturnsCheckYourAnswersController.onRemoveCreditsClaim())
       }
     }
 

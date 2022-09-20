@@ -19,7 +19,7 @@ package controllers.returns
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import cacheables.ObligationCacheable
-import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import models.returns._
 import models.{CreditBalance, UserAnswers}
@@ -44,16 +44,16 @@ import scala.concurrent.Future
 
 class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFluency with BeforeAndAfterEach {
 
-  val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
+  private val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
     LocalDate.parse("2022-04-01"),
     LocalDate.parse("2022-06-30"),
     LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
 
-  val userAnswers = UserAnswers("123")
+  private val userAnswers = UserAnswers("123")
     .set(ObligationCacheable, taxReturnOb).get
 
-  val calculations = Calculations(
+  private val calculations = Calculations(
     taxDue = 17,
     chargeableTotal = 85,
     deductionsTotal = 15,
@@ -61,12 +61,13 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     isSubmittable = true
   )
 
-  val mockView = mock[ReturnsCheckYourAnswersView]
-  val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  val controllerComponents = stubMessagesControllerComponents()
-  val mockSessionRepository = mock[SessionRepository]
-  val mockTaxReturnConnector = mock[TaxReturnsConnector]
-  val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
+  private val mockView = mock[ReturnsCheckYourAnswersView]
+  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockSessionRepository = mock[SessionRepository]
+  private val mockTaxReturnConnector = mock[TaxReturnsConnector]
+  private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
+  private val cacheConnector = mock[CacheConnector]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -205,11 +206,12 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockCalculateCreditConnector,
       mockSessionRepository,
       controllerComponents,
-      mockView
+      mockView,
+      cacheConnector
     )
   }
 
-  def setUserAnswer: UserAnswers = {
+  private def setUserAnswer: UserAnswers = {
     userAnswers
       .set(ExportedCreditsPage, CreditsAnswer(true, Some(200))).get
       .set(ConvertedCreditsPage, CreditsAnswer(true, Some(300L))).get
