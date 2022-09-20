@@ -18,12 +18,12 @@ package controllers.returns.credits
 
 import connectors.CalculateCreditsConnector
 import controllers.actions._
-import models.CreditBalance
+import models.{CreditBalance, Mode}
+import models.Mode.CheckMode
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.{PrintBigDecimal, PrintLong}
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import javax.inject.Inject
@@ -41,26 +41,28 @@ class ConfirmPackagingCreditController @Inject()(
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request: DataRequest[AnyContent] =>
         creditConnector.get(request.pptReference).map {
-          case Right(response) => displayView(response)
+          case Right(response) => displayView(response, mode)
           case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
         }
     }
-  }
 
-  private def displayView(
-    response: CreditBalance
-  )(implicit request: DataRequest[_]): Result = {
-    if (response.canBeClaimed)
+  private def displayView(response: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
+    if (response.canBeClaimed) {
+      val continueCall = if (mode == CheckMode) controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
+        else controllers.returns.routes.NowStartYourReturnController.onPageLoad
+
       Ok(
         confirmCreditView(
           response.totalRequestedCreditInPounds,
-          response.totalRequestedCreditInKilograms
+          response.totalRequestedCreditInKilograms,
+          continueCall
         )
       )
+    }
     else
       Ok(tooMuchCreditView())
   }

@@ -28,7 +28,7 @@
     linkButton: LinkButton
 )
 
-@(requestedCredit: BigDecimal, weight: Long)(implicit request: Request[_], messages: Messages)
+@(requestedCredit: BigDecimal, weight: Long, continueCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(
                         messages("confirmPackagingCredit.title"),
@@ -60,14 +60,14 @@
 
     @linkButton(
         messageKey = "confirmPackagingCredit.confirm.credit.button",
-        linkUrl = controllers.returns.routes.NowStartYourReturnController.onPageLoad.url
+        linkUrl = continueCall.url
     )
 
     <p class="govuk-body">
         @link(
             id = "change-credit-amount",
             text = messages("confirmPackagingCredit.change.credit.paragraph"),
-            call = Call("GET", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
+            call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
         )
     </p>
 }

@@ -20,6 +20,7 @@ import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import connectors.{CalculateCreditsConnector, DownstreamServiceError}
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import models.Mode.{CheckMode, NormalMode}
 import models.{CreditBalance, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -66,18 +67,34 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
     "return OK on pageLoading" in {
       setUpMockForConfirmCreditsView()
 
-      val result = sut.onPageLoad(FakeRequest("GET", ""))
+      val result = sut.onPageLoad(NormalMode)(FakeRequest("GET", ""))
 
       status(result) mustBe OK
     }
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
-      "total requested credit is less than available credit" in {
+      "total requested credit is less than available credit - (NormalMode)" in {
         setUpMockForConfirmCreditsView()
 
-        await(sut.onPageLoad(FakeRequest("GET", "")))
+        await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), any())(any(),any())
+        verify(mockView).apply(
+          ArgumentMatchers.eq(BigDecimal(5)),
+          any(),
+          ArgumentMatchers.eq(controllers.returns.routes.NowStartYourReturnController.onPageLoad)
+        )(any(),any())
+      }
+
+      "total requested credit is less than available credit - (CheckMode)" in {
+        setUpMockForConfirmCreditsView()
+
+        await(sut.onPageLoad(CheckMode)(FakeRequest("GET", "")))
+
+        verify(mockView).apply(
+          ArgumentMatchers.eq(BigDecimal(5)),
+          any(),
+          ArgumentMatchers.eq(controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad())
+        )(any(),any())
       }
     }
 
@@ -87,10 +104,10 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
         when(mockCalculateCreditConnector.get(any())(any()))
           .thenReturn(Future.successful(Right(CreditBalance(10, 20, 500L, false))))
 
-        await(sut.onPageLoad(FakeRequest("GET", "")))
+        await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
         verify(tooMuchCreditView).apply()(any(),any())
-        verify(mockView, never()).apply(any(), any())(any(),any())
+        verify(mockView, never()).apply(any(), any(), any())(any(),any())
       }
     }
 
@@ -98,26 +115,26 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
       "total requested credit is less than available credit" in {
         setUpMockForConfirmCreditsView()
 
-        await(sut.onPageLoad(FakeRequest("GET", "")))
+        await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L), any())(any(),any())
         verify(tooMuchCreditView, never()).apply()(any(),any())
       }
 
       "only exported weight is Available" in {
         setUpMockForConfirmCreditsView()
 
-        await(sut.onPageLoad(FakeRequest("GET", "")))
+        await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L), any())(any(),any())
       }
 
       "only converted weight is Available" in {
         setUpMockForConfirmCreditsView()
 
-        await(sut.onPageLoad(FakeRequest("GET", "")))
+        await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L), any())(any(),any())
       }
     }
 
@@ -125,7 +142,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
       when(mockCalculateCreditConnector.get(any())(any()))
         .thenReturn(Future.successful(Left(DownstreamServiceError("Error", new Exception("error")))))
 
-      val result = sut.onPageLoad(FakeRequest("GET", ""))
+      val result = sut.onPageLoad(NormalMode)(FakeRequest("GET", ""))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
@@ -133,7 +150,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
   }
 
   private def setUpMockForConfirmCreditsView(): Unit = {
-    when(mockView.apply(any(), any())(any(),any())).thenReturn(Html("correct view"))
+    when(mockView.apply(any(), any(), any())(any(),any())).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any())(any()))
       .thenReturn(Future.successful(Right(CreditBalance(10, 5, 500, true))))
   }

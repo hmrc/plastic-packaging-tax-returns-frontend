@@ -18,6 +18,7 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import viewmodels.{PrintBigDecimal, PrintLong}
@@ -28,9 +29,10 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
   val weight = 200L
   val requestedCredit = BigDecimal(500)
+  val continueCall = Call("TEST", "/end-point")
 
   private def createView: Html =
-    page(requestedCredit, weight)(request, messages)
+    page(requestedCredit, weight, continueCall)(request, messages)
 
   "View" should {
 
@@ -66,7 +68,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "have a confirm button" in {
-      view.getElementById("link-button") must haveHref(controllers.returns.routes.NowStartYourReturnController.onPageLoad.url)
+      view.getElementById("link-button") must haveHref(continueCall.url)
       view.getElementById("link-button").text() mustBe  "Confirm credit amount"
       view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
     }

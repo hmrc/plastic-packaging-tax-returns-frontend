@@ -89,22 +89,14 @@ class ReturnsJourneyNavigator @Inject()(
   }
 
   def exportedCreditsRoute(mode: Mode): Call = {
-    if (mode.equals(CheckMode)) {
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else {
-      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(NormalMode)
-    }
+    controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
   }
 
-  def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
-    if (mode.equals(CheckMode)) {
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
-    } else if (claimedCredits.hasMadeClaim) {
-      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad
-    } else {
+  def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call =
+    if (claimedCredits.hasMadeClaim)
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+    else
       controllers.returns.routes.NowStartYourReturnController.onPageLoad
-    }
-  }
 
   def confirmCreditRoute(mode: Mode): Call =
     if (mode.equals(CheckMode))
