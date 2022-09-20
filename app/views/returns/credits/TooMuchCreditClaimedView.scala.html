@@ -30,20 +30,35 @@
 * limitations under the License.
 *@
 
-@import components.heading
+@import components.{Link, LinkButton, SectionHeader, heading, paragraph, paragraphBody}
+@import models.Mode.NormalMode
 
 @this(
   layout: templates.Layout,
-  heading: heading
+  heading: heading,
+        sectionHeader: SectionHeader,
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link: Link,
+        linkButton: LinkButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(changeWeightCall: Call, cancelClaimCall: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("TooMuchCreditClaimed.title"), Some(messages("return.title.tail")))) {
+@layout(pageTitle = titleNoForm(messages("too-much-credit-claimed.heading"), Some(messages("return.title.tail")))) {
 
-    @heading("Page still to be designed.")
-
-    <p class="govuk-body">
-        <a href="@controllers.routes.IndexController.onPageLoad.url">take me home</a>
-    </p>
+    @sectionHeader(messages("too-much-credit-claimed.section-heading"))
+    @heading("too-much-credit-claimed.heading")
+    @paragraphBody(messages("too-much-credit-claimed.para-1"), id = Some("para1"))
+    @paragraphBody(messages("too-much-credit-claimed.para-2"), id = Some("para2"))
+    @linkButton(
+        messageKey = "too-much-credit-claimed.button-text",
+        linkUrl = changeWeightCall.url,
+        id = "change-weight"
+    )
+    @paragraph(link(
+        id = "cancel",
+        text = messages("too-much-credit-claimed.cancel-link-text"),
+        call = cancelClaimCall
+    ))
 }

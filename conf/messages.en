@@ -540,5 +540,9 @@ nowStartYourReturn.heading = Now start your return for {0}
 nowStartYourReturn.paragraph.1 = Your credits have been saved. To submit them, you must complete your return.
 nowStartYourReturn.button-text = Start your return
 
-
-
+too-much-credit-claimed.heading = You cannot claim more tax back as credit than you’ve previously paid
+too-much-credit-claimed.section-heading = Credits
+too-much-credit-claimed.para-1 = The weight you've entered is more than the total weight you’ve paid tax on from your previous returns.
+too-much-credit-claimed.para-2 = To continue, change the weight of plastic packaging that has since been exported or converted.
+too-much-credit-claimed.button-text = Change weight
+too-much-credit-claimed.cancel-link-text = Cancel claiming credit and continue return

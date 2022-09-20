@@ -56,6 +56,8 @@ POST        /amend-recycled-weight                                 controllers.a
 
 GET         /confirm-or-correct-credit                             controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 GET         /change-confirm-or-correct-credit                      controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
+GET         /confirm-or-correct-credit/cancel                      controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = NormalMode)
+GET         /change-confirm-or-correct-credit/cancel                controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = CheckMode)
 
 GET         /now-start-your-return                                 controllers.returns.NowStartYourReturnController.onPageLoad
 
@@ -139,7 +141,7 @@ POST        /change-non-exported-medicines-packaging-weight        controllers.r
 GET         /cancel-amend                                          controllers.amends.CancelAmendController.onPageLoad()
 POST        /cancel-amend                                          controllers.amends.CancelAmendController.onSubmit()
 
-GET         /credit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+GET         /credit-for-exported                                   controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
 POST        /credit-for-exported                                   controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
 GET         /change-credit-for-exported                            controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-credit-for-exported                            controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
