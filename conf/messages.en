@@ -192,11 +192,9 @@ confirmPackagingCredit.heading = Confirm {0} of credit
 confirmPackagingCredit.subHeading = Credits
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
-confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be
+confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
 confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
-confirmPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
-confirmPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
 confirmPackagingCredit.confirm.credit.button = Confirm credit amount
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?

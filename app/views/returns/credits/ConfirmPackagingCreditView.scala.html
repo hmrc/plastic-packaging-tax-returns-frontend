@@ -15,6 +15,7 @@
  *@
 
 @import components.{SectionHeader, paragraph, Link, LinkButton}
+@import viewmodels._
 @import models.Mode.NormalMode
 
 @this(
@@ -27,56 +28,46 @@
     linkButton: LinkButton
 )
 
-@(requestedCredit: String, weight: String)(implicit request: Request[_], messages: Messages)
+@(requestedCredit: BigDecimal, weight: Long)(implicit request: Request[_], messages: Messages)
 
+@layout(pageTitle = titleNoForm(
+                        messages("confirmPackagingCredit.title"),
+                        Some(messages("return.title.tail")))) {
 
-@paragraphContent = @{
-    Html(s"""${messages("confirmPackagingCredit.hint.p3")}
-            <strong>${requestedCredit}.</strong>"""
-    )
-}
+    @sectionHeader(messages("confirmPackagingCredit.subHeading"))
 
-@paragraphHint = {
+    <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", requestedCredit.asPounds)</h1>
+
     @paragraph(
-        content = Html(messages("confirmPackagingCredit.hint.p1", weight)),
+        content = Html(messages("confirmPackagingCredit.hint.p1", weight.asKg)),
         id = Some("paragraph-body-1")
     )
 
     @paragraph(
-        content = Html(messages("confirmPackagingCredit.hint.p2", weight)),
+        content = Html(messages("confirmPackagingCredit.hint.p2")),
         id = Some("paragraph-body-2")
     )
 
-    @paragraph(content = paragraphContent, id = Some("paragraph-body-3"))
+    @paragraph(content = {
+        Html(messages("confirmPackagingCredit.hint.p3", <strong>{requestedCredit.asPounds}</strong>))
+        }, id = Some("paragraph-body-3")
+    )
 
     @paragraph(
         content = Html(messages("confirmPackagingCredit.hint.p4")),
         id = Some("paragraph-body-4")
     )
-}
-
-@changeCreditLink = @{
-    link(
-        id = "change-credit-amount",
-        text = messages("confirmPackagingCredit.change.credit.paragraph"),
-        call = Call("GET", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
-    )
-}
-
-@layout(pageTitle = titleNoForm(
-                        messages("confirmPackagingCredit.title", requestedCredit),
-                        Some(messages("return.title.tail")))) {
-
-    @sectionHeader(messages("confirmPackagingCredit.subHeading"))
-
-    <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", requestedCredit)</h1>
-
-    @paragraphHint
 
     @linkButton(
         messageKey = "confirmPackagingCredit.confirm.credit.button",
         linkUrl = controllers.returns.routes.NowStartYourReturnController.onPageLoad.url
     )
 
-    @paragraph(changeCreditLink)
+    <p class="govuk-body">
+        @link(
+            id = "change-credit-amount",
+            text = messages("confirmPackagingCredit.change.credit.paragraph"),
+            call = Call("GET", controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
+        )
+    </p>
 }

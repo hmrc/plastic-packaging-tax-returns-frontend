@@ -197,12 +197,10 @@ confirmPackagingCredit.heading = Confirm {0} of credit
 confirmPackagingCredit.subHeading = Credits
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
-confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be
+confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
 confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
 confirmPackagingCredit.checkYourAnswersLabel = Conversion credit
-confirmPackagingCredit.balanceAvailable = You have {0} in credit available to claim.
-confirmPackagingCredit.balanceUnavailable = Your credit balance is currently unavailable.
 confirmPackagingCredit.confirm.credit.button = Confirm credit amount
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
@@ -541,3 +539,7 @@ what-do-you-want-to-do.credit-and-return = Hawlio treth yn ôl o Ffurflenni Tret
 what-do-you-want-to-do.just-return = Dechrau Ffurflen Dreth {0}
 what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
 what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
+
+nowStartYourReturn.heading = Now start your return for {0}
+nowStartYourReturn.paragraph.1 = Your credits have been saved. To submit them, you must complete your return.
+nowStartYourReturn.button-text = Start your return
