@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.ConvertedCreditsPage
+import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -61,11 +61,10 @@ class ConvertedCreditsController @Inject()
             formValue => {
               request.userAnswers
                 .setOrFail(ConvertedCreditsPage, formValue)
+                .setOrFail(WhatDoYouWantToDoPage, true)
                 .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
                 .map(updatedAnswers => Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
             }
           )
     }
-
-
 }

@@ -18,7 +18,6 @@ package controllers.returns
 
 import cacheables.ObligationCacheable
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnViewModel
