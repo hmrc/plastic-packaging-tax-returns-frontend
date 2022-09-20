@@ -46,7 +46,8 @@ class ConvertedCreditsController @Inject()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(formProvider(), mode))
+      val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -56,14 +57,13 @@ class ConvertedCreditsController @Inject()
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConvertedCreditsPage, value))
-                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers)))
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+            formValue => {
+              request.userAnswers
+                .setOrFail(ConvertedCreditsPage, formValue)
+                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+                .map(updatedAnswers => Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
+            }
           )
     }
 

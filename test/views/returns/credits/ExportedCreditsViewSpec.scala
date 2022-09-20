@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
+import models.returns.CreditsAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -27,16 +28,16 @@ import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ExportedCreditsView
 
 class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-
+  //todo add tests
   val page: ExportedCreditsView = inject[ExportedCreditsView]
   val form = new ExportedCreditsFormProvider()()
 
-  private def createView: Html =
+  private def createView(form: Form[CreditsAnswer] = form): Html =
     page(form, NormalMode)(request, messages)
 
   "Exported Credits View" should {
 
-    val view = createView
+    val view = createView()
 
     "have a title" in {
       view.select("title").text must include("- Submit return - Plastic Packaging Tax - GOV.UK")
@@ -71,6 +72,27 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
       view.getElementsByClass("govuk-button").text mustBe messages("site.continue")
     }
 
+    "display error" when {
+
+      "nothing has been checked" in {
+        val boundForm = form.withError("requiredKey", "exported.credits.error.required")
+        val view = createView(boundForm)
+        val doc: Document = Jsoup.parse(view.toString())
+
+        doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been exported")
+      }
+      "negative number submitted" in {
+        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(0L))))
+
+        view.getElementById("exported-credits-weight-error").text() must include("Weight must be 1kg or more")
+      }
+
+      "number submitted is greater than maximum" in {
+        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(100000000000L))))
+
+        view.getElementById("exported-credits-weight-error").text() must include("Weight must be between 0kg and 99,999,999,999kg")
+      }
+    }
   }
 
 }

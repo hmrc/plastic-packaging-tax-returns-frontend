@@ -18,12 +18,13 @@ package controllers.returns
 
 import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
-import config.{Features, FrontendAppConfig}
-import connectors.TaxReturnsConnector
+import config.FrontendAppConfig
+import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnViewModel
 import models.requests.DataRequest
-import models.returns.TaxReturnObligation
+import models.returns._
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -40,10 +41,10 @@ class ReturnsCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   returnsConnector: TaxReturnsConnector,
+  creditsCalculatorConnector: CalculateCreditsConnector,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
-  view: ReturnsCheckYourAnswersView,
-  appConfig: FrontendAppConfig
+  view: ReturnsCheckYourAnswersView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
@@ -54,16 +55,6 @@ class ReturnsCheckYourAnswersController @Inject()(
           case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
-
-  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
-                         (implicit messages: Messages, hc: HeaderCarrier): Future[Result] =
-    returnsConnector.getCalculationReturns(request.pptReference).map {
-      case Right(calculations) =>
-        val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
-        Ok(view(returnViewModel, appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled))(request, messages))
-      case Left(error) => throw error
-    }
-
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
@@ -76,5 +67,43 @@ class ReturnsCheckYourAnswersController @Inject()(
           case Left(error) => throw error
         }
     }
+
+  private def calCalculationAndCreditApi(
+                                          request: DataRequest[_]
+                                        )
+                                        (implicit hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+    val fCalculations = returnsConnector.getCalculationReturns(request.pptReference)
+    val fCredits = getCredits(request)
+
+    for {
+      calculations <- fCalculations
+      credits <- fCredits
+    } yield (calculations, credits) match {
+      case (Right(calculations), Right(credits)) => (calculations, credits)
+      case _ => throw new RuntimeException("Error: There was a problem retrieving return calculation or the credits balance")
+    }
+  }
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
+                         (implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
+
+    calCalculationAndCreditApi(request).map {
+      case (calculations, credits) =>
+        val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
+
+        Ok(view(returnViewModel, credits)(request, messages))
+    }
+  }
+
+  private def getCredits(request: DataRequest[_])
+                        (implicit hc: HeaderCarrier): Future[Either[ServiceError, Credits]] = {
+    if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage)) {
+        creditsCalculatorConnector.get(request.pptReference).map {
+          case Right(creditBalance) => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
+          case Left(error) => Left(error)
+        }
+      } else {
+        Future.successful(Right(NoCreditsClaimed))
+      }
+  }
 
 }

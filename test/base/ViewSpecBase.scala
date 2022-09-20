@@ -26,7 +26,7 @@ import play.api.test.{FakeRequest, Injecting}
 trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val request: Request[AnyContent]         = FakeRequest().withCSRFToken
-  protected val realMessagesApi: MessagesApi = inject[MessagesApi]
+  protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   implicit def messages: Messages =
     realMessagesApi.preferred(request)

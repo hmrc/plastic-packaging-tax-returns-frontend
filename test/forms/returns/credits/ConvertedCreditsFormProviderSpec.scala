@@ -66,6 +66,15 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
       boundForm.value mustBe None
     }
 
+    "entered weight is only non numeric" in {
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "porridge"))
+      boundForm.value mustBe None
+    }
+
+    "entered weight is decimal" in {
+      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "4.20"))
+      boundForm.value mustBe None
+    }
   }
 
 }

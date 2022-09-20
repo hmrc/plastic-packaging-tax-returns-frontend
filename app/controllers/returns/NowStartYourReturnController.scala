@@ -21,6 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.returns.credits.ClaimedCredits
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import play.api.Logging
@@ -48,11 +49,14 @@ class NowStartYourReturnController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
+
         request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
           case Some(obligation) => 
             val returnQuarter = obligation.toReturnQuarter
             val nextPage = returnsNavigator.nowStartYourReturnRoute
-            Ok(view(returnQuarter, nextPage))
+            val creditsClaimed: Boolean = ClaimedCredits(request.userAnswers).hasMadeClaim
+
+            Ok(view(returnQuarter, creditsClaimed, nextPage))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
     }
