@@ -57,8 +57,8 @@ class ConfirmPackagingCreditController @Inject()(
     if (response.canBeClaimed)
       Ok(
         confirmCreditView(
-          response.totalRequestedCreditInPounds.asPounds,
-          response.totalRequestedCreditInKilograms.asKg
+          response.totalRequestedCreditInPounds,
+          response.totalRequestedCreditInKilograms
         )
       )
     else

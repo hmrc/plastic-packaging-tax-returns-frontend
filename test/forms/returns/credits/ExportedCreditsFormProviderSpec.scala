@@ -40,7 +40,7 @@ class ExportedCreditsFormProviderSpec extends PlaySpec {
       }
     }
     "radio errors" when {
-      "answer is none boolean" in {
+      "answer is non boolean" in {
         val boundForm = sut.bind(Map("answer" -> "porridge", "exported-credits-weight" -> "20"))
         boundForm.value mustBe None
       }
@@ -64,6 +64,16 @@ class ExportedCreditsFormProviderSpec extends PlaySpec {
 
       "entered weight is below above max" in {
         val boundForm = sut.bind(Map("answer" -> "true", "exported-credits-weight" -> "100000000000"))
+        boundForm.value mustBe None
+      }
+
+      "entered weight is only non numeric" in {
+        val boundForm = sut.bind(Map("answer" -> "true", "exported-credits-weight" -> "porridge"))
+        boundForm.value mustBe None
+      }
+
+      "entered weight is decimal" in {
+        val boundForm = sut.bind(Map("answer" -> "true", "exported-credits-weight" -> "4.20"))
         boundForm.value mustBe None
       }
 
