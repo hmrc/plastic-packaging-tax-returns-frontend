@@ -77,7 +77,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
         await(sut.onPageLoad(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(5), any())(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), any())(any(),any())
       }
     }
 
@@ -100,7 +100,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
         await(sut.onPageLoad(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(5), ArgumentMatchers.eq(500))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
         verify(tooMuchCreditView, never()).apply()(any(),any())
       }
 
@@ -109,7 +109,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
         await(sut.onPageLoad(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(5), ArgumentMatchers.eq(500))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
       }
 
       "only converted weight is Available" in {
@@ -117,7 +117,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
         await(sut.onPageLoad(FakeRequest("GET", "")))
 
-        verify(mockView).apply(ArgumentMatchers.eq(5), ArgumentMatchers.eq(500))(any(),any())
+        verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L))(any(),any())
       }
     }
 
