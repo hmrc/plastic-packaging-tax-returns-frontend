@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{AmendSelectedPeriodKey, AmendObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -91,7 +91,7 @@ class ViewReturnSummaryController @Inject() (
     request.userAnswers
       .reset
       .setOrFail(AmendSelectedPeriodKey, periodKey)
-      .setOrFail(ObligationCacheable, obligation)
+      .setOrFail(AmendObligationCacheable, obligation)
       .setOrFail(ReturnDisplayApiCacheable, submittedReturn)
       .save(cacheConnector.saveUserAnswerFunc(pptReference))
   }

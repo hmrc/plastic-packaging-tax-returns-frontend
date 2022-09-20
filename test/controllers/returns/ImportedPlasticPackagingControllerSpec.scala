@@ -17,7 +17,7 @@
 package controllers.returns
 
 import base.SpecBase
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import forms.returns.ImportedPlasticPackagingFormProvider
 import models.Mode.{CheckMode, NormalMode}
@@ -58,7 +58,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
     val date = LocalDate.ofEpochDay(0)
     val obligation = TaxReturnObligation(date, date, date, "")
-    when(mockUserAnswers.get(eqq(ObligationCacheable))(any)).thenReturn(Some(obligation))
+    when(mockUserAnswers.get(eqq(ReturnObligationCacheable))(any)).thenReturn(Some(obligation))
     
     when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc

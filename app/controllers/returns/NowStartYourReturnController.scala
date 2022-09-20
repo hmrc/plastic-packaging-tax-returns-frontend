@@ -16,7 +16,7 @@
 
 package controllers.returns
 
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
@@ -49,8 +49,9 @@ class NowStartYourReturnController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        request.userAnswers.get[TaxReturnObligation](ObligationCacheable) match {
-          case Some(obligation) =>
+
+        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
+          case Some(obligation) => 
             val returnQuarter = obligation.toReturnQuarter
             val nextPage = returnsNavigator.nowStartYourReturnRoute
             val creditsClaimed: Boolean = ClaimedCredits(request.userAnswers).hasMadeClaim

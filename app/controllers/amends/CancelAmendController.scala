@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, ObligationCacheable}
+import cacheables.{AmendSelectedPeriodKey, AmendObligationCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.CancelAmendFormProvider
@@ -46,7 +46,7 @@ class CancelAmendController @Inject()
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+      val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
         throw new IllegalStateException("Must have an obligation to Submit against")
       )
 
@@ -56,7 +56,7 @@ class CancelAmendController @Inject()
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val obligation = request.userAnswers.get[TaxReturnObligation](ObligationCacheable).getOrElse(
+      val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
         throw new IllegalStateException("Must have an obligation to Submit against")
       )
 

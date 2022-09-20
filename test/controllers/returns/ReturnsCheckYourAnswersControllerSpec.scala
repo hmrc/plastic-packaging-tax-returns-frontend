@@ -18,7 +18,7 @@ package controllers.returns
 
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import connectors.{CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import models.returns._
@@ -51,7 +51,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "00XX")
 
   val userAnswers = UserAnswers("123")
-    .set(ObligationCacheable, taxReturnOb).get
+    .set(ReturnObligationCacheable, taxReturnOb).get
 
   val calculations = Calculations(
     taxDue = 17,

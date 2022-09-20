@@ -17,6 +17,7 @@
 package controllers.amends
 
 import base.SpecBase
+import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import models.Mode.NormalMode
@@ -40,6 +41,10 @@ import views.html.amends.CheckYourAnswersView
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+
+  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+    .set(AmendObligationCacheable, taxReturnOb).get
 
   val mockView = mock[CheckYourAnswersView]
   val expectedHtml = Html("correct view")

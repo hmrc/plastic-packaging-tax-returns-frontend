@@ -20,7 +20,7 @@ import models.returns.TaxReturnObligation
 import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
-case object ObligationCacheable extends Gettable[TaxReturnObligation] with Settable[TaxReturnObligation] {
+case object ReturnObligationCacheable extends Gettable[TaxReturnObligation] with Settable[TaxReturnObligation] {
 
   override def path: JsPath = JsPath \ toString
 

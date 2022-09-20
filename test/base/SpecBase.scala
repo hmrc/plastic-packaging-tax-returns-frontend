@@ -16,7 +16,7 @@
 
 package base
 
-import cacheables.{ObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ReturnObligationCacheable, ReturnDisplayApiCacheable}
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
@@ -51,7 +51,7 @@ trait SpecBase
 
   def userAnswers = UserAnswers(userAnswersId)
     .set(ReturnDisplayApiCacheable, retDisApi).get
-    .set(ObligationCacheable, taxReturnOb).get
+    .set(ReturnObligationCacheable, taxReturnOb).get
 
   val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
     LocalDate.parse("2022-04-01"),

@@ -17,9 +17,10 @@
 package controllers.amends
 
 import base.SpecBase
-import cacheables.AmendSelectedPeriodKey
+import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.amends.CancelAmendFormProvider
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -32,6 +33,10 @@ import views.html.amends.CancelAmendView
 import scala.concurrent.Future
 
 class CancelAmendControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+    .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new CancelAmendFormProvider()
   val form = formProvider()

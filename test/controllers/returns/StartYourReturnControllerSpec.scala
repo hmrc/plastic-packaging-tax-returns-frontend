@@ -18,7 +18,7 @@ package controllers.returns
 
 import audit.returns.ReturnStarted
 import base.SpecBase
-import cacheables.ObligationCacheable
+import cacheables.ReturnObligationCacheable
 import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
@@ -157,7 +157,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
     "must redirect to the next page when valid data is submitted" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail(ReturnObligationCacheable, taxReturnOb)
         .setOrFail("isFirstReturn", true)
 
       when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
@@ -197,7 +197,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
       Mockito.reset(mockAuditConnector)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail(ReturnObligationCacheable, taxReturnOb)
         .setOrFail("isFirstReturn", true)
 
       val application =
@@ -229,7 +229,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
       Mockito.reset(mockAuditConnector)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail(ReturnObligationCacheable, taxReturnOb)
         .setOrFail("isFirstReturn", true)
 
       val application =
@@ -261,7 +261,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setOrFail(ObligationCacheable, taxReturnOb)
+        .setOrFail(ReturnObligationCacheable, taxReturnOb)
         .setOrFail("isFirstReturn", true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(

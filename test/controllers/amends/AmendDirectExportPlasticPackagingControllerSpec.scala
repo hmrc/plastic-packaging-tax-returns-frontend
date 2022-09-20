@@ -17,8 +17,10 @@
 package controllers.amends
 
 import base.SpecBase
+import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,6 +34,10 @@ import views.html.amends.AmendDirectExportPlasticPackagingView
 import scala.concurrent.Future
 
 class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+
+  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(ReturnDisplayApiCacheable, retDisApi).get
+    .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendDirectExportPlasticPackagingFormProvider()
   def onwardRoute = Call("GET", "/foo")
