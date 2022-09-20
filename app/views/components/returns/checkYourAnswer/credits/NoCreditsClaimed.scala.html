@@ -15,6 +15,8 @@
  *@
 
 @import components.{Link, paragraph}
+@import models.Mode.CheckMode
+
 @this(
     paragraph: paragraph,
     link: Link
@@ -29,6 +31,6 @@
 <!-- todo: add a proper link for the credit change -->
 @link(id = "credits-change-link",
     text = messages("submit-return.check-your-answers.credits.not.claimed.link"),
-    call = Call("GET", "/foo"),
+    call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode),
     classes = "govuk-link govuk-body govuk-link--no-visited-state"
 )
