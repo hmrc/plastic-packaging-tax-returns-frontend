@@ -18,10 +18,11 @@ package controllers.returns.credits
 
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
-import connectors.{CalculateCreditsConnector, DownstreamServiceError}
+import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import models.Mode.{CheckMode, NormalMode}
 import models.{CreditBalance, UserAnswers}
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -44,7 +45,8 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
   private val controllerComponents = stubMessagesControllerComponents()
   private val mockView = mock[ConfirmPackagingCreditView]
   private val tooMuchCreditView = mock[TooMuchCreditClaimedView]
-
+  private val cacheConnector = mock[CacheConnector]
+  private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
 
   private val sut = new ConfirmPackagingCreditController(
     mockMessagesApi,
@@ -54,7 +56,9 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
     new DataRequiredActionImpl(),
     controllerComponents,
     mockView,
-    tooMuchCreditView
+    tooMuchCreditView,
+    cacheConnector, 
+    returnsJourneyNavigator
   )
 
   override protected def beforeEach(): Unit = {
@@ -100,13 +104,13 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
     "return too muchCreditView" when {
       "total requested credit is grater than available credit" in {
-        when(tooMuchCreditView.apply()(any(),any())).thenReturn(Html("too much credit view"))
+        when(tooMuchCreditView.apply(any(), any())(any(),any())).thenReturn(Html("too much credit view"))
         when(mockCalculateCreditConnector.get(any())(any()))
           .thenReturn(Future.successful(Right(CreditBalance(10, 20, 500L, false))))
 
         await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
-        verify(tooMuchCreditView).apply()(any(),any())
+        verify(tooMuchCreditView).apply(any(), any())(any(),any())
         verify(mockView, never()).apply(any(), any(), any())(any(),any())
       }
     }
@@ -118,7 +122,7 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
         await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
 
         verify(mockView).apply(ArgumentMatchers.eq(BigDecimal(5)), ArgumentMatchers.eq(500L), any())(any(),any())
-        verify(tooMuchCreditView, never()).apply()(any(),any())
+        verify(tooMuchCreditView, never()).apply(any(), any())(any(),any())
       }
 
       "only exported weight is Available" in {

@@ -23,12 +23,10 @@ case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
     case (true, Some(x)) => x
     case (true, None) => 0
     case (false, _) => 0
-
   }
-
 }
 
 object CreditsAnswer {
-
+  def noClaim: CreditsAnswer = CreditsAnswer(false, None)
   implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
 }

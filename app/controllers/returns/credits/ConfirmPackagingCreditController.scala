@@ -16,13 +16,15 @@
 
 package controllers.returns.credits
 
-import connectors.CalculateCreditsConnector
+import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
 import models.{CreditBalance, Mode}
 import models.Mode.CheckMode
 import models.requests.DataRequest
+import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
@@ -37,7 +39,9 @@ class ConfirmPackagingCreditController @Inject()(
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
-  tooMuchCreditView: TooMuchCreditClaimedView
+  tooMuchCreditView: TooMuchCreditClaimedView,
+  cacheConnector: CacheConnector,
+  returnsJourneyNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -50,20 +54,26 @@ class ConfirmPackagingCreditController @Inject()(
         }
     }
 
-  private def displayView(response: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    if (response.canBeClaimed) {
-      val continueCall = if (mode == CheckMode) controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
-        else controllers.returns.routes.NowStartYourReturnController.onPageLoad
 
-      Ok(
-        confirmCreditView(
-          response.totalRequestedCreditInPounds,
-          response.totalRequestedCreditInKilograms,
-          continueCall
-        )
-      )
-    }
-    else
-      Ok(tooMuchCreditView())
+  private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
+    if (creditBalance.canBeClaimed) {
+      val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
+      Ok(confirmCreditView(creditBalance.totalRequestedCreditInPounds, creditBalance.totalRequestedCreditInKilograms,
+          continueCall))
+    } else {
+      val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
+      val cancelClaimCall: Call = controllers.returns.credits.routes.ConfirmPackagingCreditController.onCancelClaim(mode)
+      Ok(tooMuchCreditView(changeWeightCall, cancelClaimCall))
+    }  
   }
+
+  def onCancelClaim(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        request.userAnswers
+          .setOrFail(WhatDoYouWantToDoPage, false)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
+    }
+
 }

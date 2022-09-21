@@ -553,3 +553,10 @@ what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfe
 nowStartYourReturn.heading = Now start your return for {0}
 nowStartYourReturn.paragraph.1 = Your credits have been saved. To submit them, you must complete your return.
 nowStartYourReturn.button-text = Start your return
+
+too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
+too-much-credit-claimed.section-heading = Credydau
+too-much-credit-claimed.para-1 = Mae’r pwysau rydych wedi’u nodi yn fwy na’r holl bwysau rydych wedi talu treth arnynt o'ch Ffurflenni Treth blaenorol.
+too-much-credit-claimed.para-2 = I fynd yn eich blaen, newidiwch bwysau’r deunydd pacio plastig sydd bellach wedi’i allforio neu wedi’i drosi.
+too-much-credit-claimed.button-text = Newid pwysau
+too-much-credit-claimed.cancel-link-text = Canslo hawlio credyd ac yn eich blaen gyda’r Ffurflen Dreth
