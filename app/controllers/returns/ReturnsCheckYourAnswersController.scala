@@ -18,8 +18,8 @@ package controllers.returns
 
 import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
-import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import config.FrontendAppConfig
+import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
 import models.UserAnswers
@@ -85,16 +85,16 @@ class ReturnsCheckYourAnswersController @Inject()(
 
 
   // TODO quick fix for user removing previous credit claim
-  private def ensureCreditAnswersConsistency(userAnswers: UserAnswers, pptReference: String) (implicit hc: HeaderCarrier)
+  private def ensureCreditAnswersConsistency(userAnswers: UserAnswers, pptReference: String)(implicit hc: HeaderCarrier)
   : Future[UserAnswers] =
-    if (userAnswers.getOrFail(WhatDoYouWantToDoPage))
-      Future.successful(userAnswers)
-    else
-      userAnswers
-        .setOrFail(ExportedCreditsPage, CreditsAnswer.noClaim)
-        .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
-        .save(cacheConnector.saveUserAnswerFunc(pptReference))
-
+    userAnswers.get(WhatDoYouWantToDoPage) match {
+      case Some(true) => Future.successful(userAnswers)
+      case _          =>
+        userAnswers
+          .setOrFail(ExportedCreditsPage, CreditsAnswer.noClaim)
+          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
+          .save(cacheConnector.saveUserAnswerFunc(pptReference))
+    }
 
   private def callCalculationAndCreditApi(
                                           request: DataRequest[_]
