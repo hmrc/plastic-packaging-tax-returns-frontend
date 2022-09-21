@@ -101,6 +101,11 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         val call = returnsJourneyNavigator.convertedCreditsRoute(NormalMode, mockClaimedCredits)
         call mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
       }
+      "in checkmode" in {
+        when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
+        val call = returnsJourneyNavigator.convertedCreditsRoute(CheckMode, mockClaimedCredits)
+        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+      }
     }
     "redirect to confirmCredit page" when {
       "the user claims credits" in {
