@@ -20,7 +20,9 @@ import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import cacheables.ReturnObligationCacheable
 import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import config.FrontendAppConfig
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.TaxReturnHelper
 import models.returns._
 import models.{CreditBalance, UserAnswers}
 import org.mockito.ArgumentMatchers._
@@ -68,6 +70,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val mockTaxReturnConnector = mock[TaxReturnsConnector]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
   private val cacheConnector = mock[CacheConnector]
+  private val mockTaxReturnHelper = mock[TaxReturnHelper]
+  private val appConfig = mock[FrontendAppConfig]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,10 +79,12 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockSessionRepository,
       mockTaxReturnConnector,
       mockCalculateCreditConnector,
+      mockTaxReturnHelper,
       mockView
     )
 
     when(mockView.apply(any(), any())(any(), any())).thenReturn(new Html(""))
+    when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
   }
 
   "Returns Check Your Answers Controller" should {
@@ -113,13 +119,13 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
+      verifyAndCaptorCreditDetails mustBe Some(CreditsClaimedDetails(
         exported = CreditsAnswer(true, Some(200L)),
         converted = CreditsAnswer(true, Some(300L)),
         isClaimingTaxBack = true,
         totalWeight = 500L,
         totalCredits = 20L
-      )
+      ))
     }
 
     "handle credits no claimed on pageLoading" in {
@@ -130,7 +136,17 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       status(result) mustEqual OK
       verifyNoInteractions(mockCalculateCreditConnector)
-      verifyAndCaptorCreditDetails mustBe NoCreditsClaimed
+      verifyAndCaptorCreditDetails mustBe Some(NoCreditsClaimed)
+    }
+
+
+    "handle fist return for credits on pageLoading" in {
+      setUpMockConnector(isFirstReturnResult = true)
+
+      val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
+
+      status(result) mustEqual OK
+      verifyAndCaptorCreditDetails mustBe None
     }
 
 
@@ -146,11 +162,27 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
   }
 
+  "show no credits section on page Load" in {
+    setUpMockConnector()
+    when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
+
+    val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
+
+    status(result) mustEqual OK
+    verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any())
+    verify(mockTaxReturnHelper).nextOpenObligationAndIfFirst(ArgumentMatchers.eq("123"))(any())
+    verifyNoInteractions(mockCalculateCreditConnector)
+    verifyAndCaptorCreditDetails mustBe None
+  }
+
   "return an error" when {
     "cannot get credit" in {
       setUpMockConnector(
-        Right(calculations),
-        Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
+        taxReturnConnectorResult = Right(calculations),
+        creditConnectorResult = Left(
+          new ServiceError("Credit Balance API error",
+            new Exception("Credit Balance API error"))
+        )
       )
 
       intercept[RuntimeException] {
@@ -160,7 +192,10 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "cannot get tax return calculation" in {
       setUpMockConnector(
-        Left(new ServiceError("Tax return calculation error", new Exception("error")))
+        taxReturnConnectorResult = Left(
+          new ServiceError("Tax return calculation error",
+            new Exception("error"))
+        )
       )
 
       intercept[RuntimeException] {
@@ -168,11 +203,21 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       }
     }
 
-    "both api return an error" in {
+    "nextOpenObligationAndIfFirst return an error" in {
+      setUpMockConnector()
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenThrow(new RuntimeException("Error"))
+
+      intercept[RuntimeException] {
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+      }
+    }
+
+    "all api return an error" in {
       setUpMockConnector(
-        Left(new ServiceError("Tax return calculation error", new Exception("error"))),
-        Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
+        taxReturnConnectorResult = Left(new ServiceError("Tax return calculation error", new Exception("error"))),
+        creditConnectorResult = Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
       )
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenThrow(new RuntimeException("Error"))
 
       intercept[RuntimeException] {
         await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
@@ -182,17 +227,22 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
-    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true))
+    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true)),
+    isFirstReturnResult: Boolean = false
   ): Unit = {
     when(mockTaxReturnConnector.getCalculationReturns(any())(any()))
       .thenReturn(Future.successful(taxReturnConnectorResult))
 
     when(mockCalculateCreditConnector.get(any())(any()))
       .thenReturn(Future.successful(creditConnectorResult))
+
+    when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(
+      Future.successful(Some(taxReturnOb, isFirstReturnResult))
+    )
   }
 
-  private def verifyAndCaptorCreditDetails: Credits = {
-    val captor = ArgumentCaptor.forClass(classOf[Credits])
+  private def verifyAndCaptorCreditDetails: Option[Credits] = {
+    val captor = ArgumentCaptor.forClass(classOf[Option[Credits]])
     verify(mockView).apply(any(), captor.capture())(any(), any())
     captor.getValue
   }
@@ -204,8 +254,10 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       new DataRequiredActionImpl(),
       mockTaxReturnConnector,
       mockCalculateCreditConnector,
+      mockTaxReturnHelper,
       mockSessionRepository,
       controllerComponents,
+      appConfig,
       mockView,
       cacheConnector
     )
