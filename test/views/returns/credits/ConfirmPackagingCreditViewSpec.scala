@@ -32,7 +32,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   val continueCall = Call("TEST", "/end-point")
 
   private def createView: Html =
-    page(requestedCredit, weight, continueCall)(request, messages)
+    page(requestedCredit, weight, continueCall, NormalMode)(request, messages)
 
   "View" should {
 

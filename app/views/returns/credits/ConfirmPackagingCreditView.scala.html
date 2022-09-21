@@ -16,7 +16,7 @@
 
 @import components.{SectionHeader, paragraph, Link, LinkButton}
 @import viewmodels._
-@import models.Mode.NormalMode
+@import models.Mode
 
 @this(
     layout: templates.Layout,
@@ -28,7 +28,7 @@
     linkButton: LinkButton
 )
 
-@(requestedCredit: BigDecimal, weight: Long, continueCall: Call)(implicit request: Request[_], messages: Messages)
+@(requestedCredit: BigDecimal, weight: Long, continueCall: Call, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(
                         messages("confirmPackagingCredit.title"),
@@ -67,7 +67,7 @@
         @link(
             id = "change-credit-amount",
             text = messages("confirmPackagingCredit.change.credit.paragraph"),
-            call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
+            call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
         )
     </p>
 }

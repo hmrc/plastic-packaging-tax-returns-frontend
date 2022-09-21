@@ -17,6 +17,7 @@
 package views
 
 import base.ViewSpecBase
+import models.Mode.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
@@ -29,7 +30,7 @@ class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMa
 
       val page = inject[ConfirmPackagingCreditView]
 
-      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"))(request, messages)
+      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"), NormalMode)(request, messages)
 
       render.toString() must passAccessibilityChecks
     }
