@@ -30,6 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -78,26 +79,17 @@ class ConfirmPackagingCreditControllerSpec extends PlaySpec with MockitoSugar wi
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
       "total requested credit is less than available credit - (NormalMode)" in {
+        when(returnsJourneyNavigator.confirmCreditRoute(any())) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
-
         await(sut.onPageLoad(NormalMode)(FakeRequest("GET", "")))
-
-        verify(mockView).apply(
-          ArgumentMatchers.eq(BigDecimal(5)),
-          any(),
-          ArgumentMatchers.eq(controllers.returns.routes.NowStartYourReturnController.onPageLoad)
-        )(any(),any())
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(Call("Hi", "You")))(any(),any())
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
+        when(returnsJourneyNavigator.confirmCreditRoute(any())) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
-
         await(sut.onPageLoad(CheckMode)(FakeRequest("GET", "")))
-
-        verify(mockView).apply(
-          ArgumentMatchers.eq(BigDecimal(5)),
-          any(),
-          ArgumentMatchers.eq(controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad())
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(Call("get", "cheese"))
         )(any(),any())
       }
     }
