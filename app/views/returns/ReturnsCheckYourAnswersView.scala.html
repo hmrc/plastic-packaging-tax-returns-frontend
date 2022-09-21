@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading}
+@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, heading}
 @import components.returns.checkYourAnswer.CreditsSection
 @import viewmodels._
 @import controllers.helpers.TaxReturnViewModel
@@ -35,7 +35,8 @@
     appConfig: FrontendAppConfig,
     link: Link,
     sectionH2Heading: SectionH2Heading,
-    creditsSection: CreditsSection
+    creditsSection: CreditsSection,
+    heading: heading
 )
 
 @(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
@@ -104,7 +105,7 @@
 
 @layout(pageTitle = titleNoForm(messages("submit-return.check-your-answers.heading"))) {
 
-    <h1 class="govuk-heading-xl">@messages("submit-return.check-your-answers.heading")</h1>
+    @heading("submit-return.check-your-answers.heading")
 
     <!-- Business details -->
     @sectionH2Heading(messages("submit-return.check-your-answers.business-details.heading"))

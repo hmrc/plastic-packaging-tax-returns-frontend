@@ -52,8 +52,8 @@ class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase  with ViewAssert
     }
 
     "contain header" in {
-      view.getElementsByClass("govuk-heading-xl").text() mustBe "Confirm your plastic packaging total"
-      view.getElementsByClass("govuk-heading-xl").text() mustBe messages("Confirm your plastic packaging total")
+      view.getElementsByClass("govuk-heading-l").text() mustBe "Confirm your plastic packaging total"
+      view.getElementsByClass("govuk-heading-l").text() mustBe messages("Confirm your plastic packaging total")
     }
 
     "contain a summary" in {

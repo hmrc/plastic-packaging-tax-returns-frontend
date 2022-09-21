@@ -14,19 +14,20 @@
  * limitations under the License.
  *@
 
-@import components.{paragraphBody, LinkButton}
+@import components.{paragraphBody, LinkButton, heading}
 
 @this(
         layout: templates.Layout,
         paragraph: paragraphBody,
         linkButton: LinkButton,
+        heading: heading
 )
 
 @(obligationPeriod:String, claimedCredits: Boolean, buttonLink: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("nowStartYourReturn.heading", obligationPeriod), Some(messages("return.title.tail")))) {
 
-    <h1 class="govuk-heading-xl">@messages("nowStartYourReturn.heading", obligationPeriod)</h1>
+    @heading("nowStartYourReturn.heading", obligationPeriod)
 
     @if(claimedCredits) {
         @paragraph(messages("nowStartYourReturn.paragraph.1"), id = Some("credits-saved-content"))

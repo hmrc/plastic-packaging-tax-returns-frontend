@@ -16,7 +16,7 @@
 
 @import models.returns.TaxReturnObligation
 @import models.obligations.PPTObligations
-@import views.html.components.{TaxReturnLink, Link}
+@import views.html.components.{TaxReturnLink, Link, heading}
 @import components.ReturnsSectionHeading
 @import views.ViewUtils.displayReturnQuarter
 
@@ -24,7 +24,8 @@
         layout: templates.Layout,
         govukButton: GovukButton,
         link: Link,
-        taxReturnLink:TaxReturnLink
+        taxReturnLink:TaxReturnLink,
+        heading: heading
 )
 
 
@@ -45,7 +46,7 @@
 
 @layout(pageTitle = titleNoForm(messages("submittedReturns.title"), Some(messages("return.title.tail"))), showBackLink = false) {
 
-    <h1 class="govuk-heading-xl">@messages("submittedReturns.heading")</h1>
+    @heading("submittedReturns.heading")
 
     <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
 
