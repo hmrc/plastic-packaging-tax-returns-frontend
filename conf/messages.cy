@@ -551,7 +551,7 @@ what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
 what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
 
 nowStartYourReturn.heading = Now start your return for {0}
-nowStartYourReturn.paragraph.1 = Your credits have been saved. To submit them, you must complete your return.
+nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.
 nowStartYourReturn.button-text = Start your return
 
 too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen

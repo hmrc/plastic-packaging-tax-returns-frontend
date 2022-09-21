@@ -22,8 +22,11 @@ import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.returns.credits.ClaimedCredits
+import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
+import org.omg.PortableServer.POAPackage.WrongAdapterHelper
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,11 +57,10 @@ class NowStartYourReturnController @Inject()(
           case Some(obligation) => 
             val returnQuarter = obligation.toReturnQuarter
             val nextPage = returnsNavigator.nowStartYourReturnRoute
-            val creditsClaimed: Boolean = ClaimedCredits(request.userAnswers).hasMadeClaim
 
-            Ok(view(returnQuarter, creditsClaimed, nextPage))
+            Ok(view(returnQuarter, true, nextPage))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)
         }
     }
-
+  
 }
