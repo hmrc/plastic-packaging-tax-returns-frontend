@@ -23,6 +23,7 @@ import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxR
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
+import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
 import models.{CreditBalance, UserAnswers}
 import org.mockito.ArgumentMatchers._
@@ -122,7 +123,6 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       verifyAndCaptorCreditDetails mustBe Some(CreditsClaimedDetails(
         exported = CreditsAnswer(true, Some(200L)),
         converted = CreditsAnswer(true, Some(300L)),
-        isClaimingTaxBack = true,
         totalWeight = 500L,
         totalCredits = 20L
       ))
@@ -146,7 +146,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe None
+      verifyAndCaptorCreditDetails mustBe Some(NoCreditAvailable)
     }
 
 
@@ -241,8 +241,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     )
   }
 
-  private def verifyAndCaptorCreditDetails: Option[Credits] = {
-    val captor = ArgumentCaptor.forClass(classOf[Option[Credits]])
+  private def verifyAndCaptorCreditDetails: Credits = {
+    val captor = ArgumentCaptor.forClass(classOf[Credits])
     verify(mockView).apply(any(), captor.capture())(any(), any())
     captor.getValue
   }

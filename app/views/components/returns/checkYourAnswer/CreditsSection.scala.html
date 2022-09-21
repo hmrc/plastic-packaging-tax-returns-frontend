@@ -18,6 +18,7 @@
 @import components.returns.checkYourAnswer.credits.{CreditsClaimed, NoCreditsClaimed, NoCreditsAvailable}
 @import config.FrontendAppConfig
 @import models.returns.Credits
+@import models.returns.CreditsClaimedDetails
 
 @this(
     appConfig: FrontendAppConfig,
@@ -31,18 +32,16 @@
     noCreditsAvailable: NoCreditsAvailable
 )
 
-@(credits: Option[Credits])(implicit request: Request[_], messages: Messages)
-
+@(credits: Credits)(implicit request: Request[_], messages: Messages)
 
 @selectView = @{
-    credits.fold(noCreditsAvailable())( c =>  {
-        if(c.isClaimingTaxBack){
-            creditsClaimed(c)
-        }else{
-            noCreditsClaimed()
-        }
-    })
+    credits match {
+        case Credits.NoCreditsClaimed => noCreditsClaimed()
+        case Credits.NoCreditAvailable => noCreditsAvailable()
+        case c: CreditsClaimedDetails => creditsClaimed(c)
+    }
 }
+
 @sectionH2Heading(
     messages("submit-return.check-your-answers.credits.heading"),
     id = Some("credit-section-header")

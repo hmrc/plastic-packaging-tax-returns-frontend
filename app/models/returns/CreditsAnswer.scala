@@ -19,6 +19,7 @@ package models.returns
 import play.api.libs.json.{Json, OFormat}
 
 case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
+  def yesNoMsgKey: String = if(yesNo) "site.yes" else "site.no"
   def value: Long = (yesNo, weight) match {
     case (true, Some(x)) => x
     case (true, None) => 0

@@ -31,24 +31,6 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
     .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
     .set(WhatDoYouWantToDoPage, true).get
 
-  "isClaimingCredit" should {
-
-    "be true" when {
-      "there is something to claim" in {
-        val credits = CreditsClaimedDetails(userAnswer, CreditBalance(10, 4, 200, true))
-
-        credits.isClaimingTaxBack mustBe true
-      }
-      "be false" when {
-        "nothing is claimed" in {
-          val credits = CreditsClaimedDetails(userAnswer.set(WhatDoYouWantToDoPage, false).get, CreditBalance(20, 0, 0, true))
-
-          credits.isClaimingTaxBack mustBe false
-        }
-      }
-    }
-  }
-
   "summaryList" should {
     val table = Table(
       ("description", "exported", "converted", "exportedWeight", "convertedWeight"),

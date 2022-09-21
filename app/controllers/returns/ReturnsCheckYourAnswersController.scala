@@ -24,6 +24,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
 import models.UserAnswers
 import models.requests.DataRequest
+import models.returns.Credits._
 import models.returns._
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logging
@@ -99,7 +100,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   private def callCalculationAndCreditApi(
                                           request: DataRequest[_]
                                         )
-                                        (implicit hc: HeaderCarrier): Future[(Calculations, Option[Credits])] = {
+                                        (implicit hc: HeaderCarrier): Future[(Calculations, Credits)] = {
     val fCalculations = returnsConnector.getCalculationReturns(request.pptReference)
     val fIsFirstReturn = taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference)
 
@@ -125,18 +126,15 @@ class ReturnsCheckYourAnswersController @Inject()(
   }
 
   private def getCredits(request: DataRequest[_], isFirstReturn: Boolean)
-                        (implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Credits]]] = {
-    if(isFirstReturn || !appConfig.isCreditsForReturnsFeatureEnabled) {
-      Future.successful(Right(None))
-    }
-    else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage)) {
+                        (implicit hc: HeaderCarrier): Future[Either[ServiceError, Credits]] =
+    if (isFirstReturn || !appConfig.isCreditsForReturnsFeatureEnabled)
+      Future.successful(Right(NoCreditAvailable))
+    else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))
         creditsCalculatorConnector.get(request.pptReference).map {
-          case Right(creditBalance) => Right(Some(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance)))
+          case Right(creditBalance) => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
           case Left(error) => Left(error)
         }
-      } else {
-        Future.successful(Right(Some(NoCreditsClaimed)))
-      }
-  }
+    else
+      Future.successful(Right(NoCreditsClaimed))
 
 }

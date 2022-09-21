@@ -38,7 +38,7 @@
     creditsSection: CreditsSection
 )
 
-@(taxReturn: TaxReturnViewModel, credits: Option[Credits])(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
 
 @hiddenText(key: String) = @{
     HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
