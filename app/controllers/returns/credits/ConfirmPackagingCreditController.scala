@@ -19,7 +19,6 @@ package controllers.returns.credits
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
 import models.{CreditBalance, Mode}
-import models.Mode.CheckMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
@@ -58,8 +57,12 @@ class ConfirmPackagingCreditController @Inject()(
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
-      Ok(confirmCreditView(creditBalance.totalRequestedCreditInPounds, creditBalance.totalRequestedCreditInKilograms,
-          continueCall))
+      Ok(confirmCreditView(
+        creditBalance.totalRequestedCreditInPounds,
+        creditBalance.totalRequestedCreditInKilograms,
+        continueCall,
+        mode)
+      )
     } else {
       val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
       val cancelClaimCall: Call = controllers.returns.credits.routes.ConfirmPackagingCreditController.onCancelClaim(mode)
