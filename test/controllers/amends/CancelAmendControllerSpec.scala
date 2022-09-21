@@ -17,7 +17,7 @@
 package controllers.amends
 
 import base.SpecBase
-import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
+import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import connectors.CacheConnector
 import forms.amends.CancelAmendFormProvider
 import models.UserAnswers

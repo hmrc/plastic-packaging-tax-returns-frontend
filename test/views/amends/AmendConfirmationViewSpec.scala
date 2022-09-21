@@ -18,7 +18,7 @@ package views.amends
 
 import base.ViewSpecBase
 import play.twirl.api.Html
-import support.{ViewAssertions, ViewMatchers}
+import support.ViewMatchers
 import views.html.amends.AmendConfirmation
 
 class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers{

@@ -20,7 +20,6 @@ import base.SpecBase
 import connectors.CacheConnector
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import models.{SignedInUser, UserAnswers}
-import models.Mode.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar

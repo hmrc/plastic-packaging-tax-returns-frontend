@@ -27,7 +27,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{refEq, eq => meq}
+import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito._
 import org.mockito.MockitoSugar.mock

@@ -31,7 +31,6 @@ import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoY
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{PptTestData, ViewAssertions, ViewMatchers}
 import views.html.returns.ReturnsCheckYourAnswersView
@@ -194,10 +193,11 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def assertNoCreditsAvailable(view: Html) = {
     val paragraphText = view.getElementsByClass("govuk-body").text()
-    paragraphText must include("You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.")
+    paragraphText must include(
+      "You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return. " +
+        "You may be able to claim credit in future if the packaging is either:"
+    )
     paragraphText must include(messages("submit-return.check-your-answers.credits.line1"))
-    paragraphText must include("You may be able to claim credit in future if the packaging is either:")
-    paragraphText must include(messages("submit-return.check-your-answers.credits.line2"))
     paragraphText must include("Find out more about claiming credits (opens in new tab)")
     paragraphText must include(
       messages("submit-return.check-your-answers.credits.line5",
