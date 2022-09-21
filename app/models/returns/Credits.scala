@@ -18,5 +18,14 @@ package models.returns
 
 trait Credits {
   def summaryList: Seq[(String, String)]
-  val isClaimingTaxBack: Boolean
+}
+
+object Credits {
+  case object NoCreditsClaimed extends Credits {
+    override def summaryList: Seq[(String, String)] = Seq.empty
+  }
+
+  case object NoCreditAvailable extends Credits {
+    override def summaryList: Seq[(String, String)] = Seq.empty
+  }
 }

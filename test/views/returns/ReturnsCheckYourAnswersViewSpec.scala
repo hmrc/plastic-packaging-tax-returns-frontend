@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.helpers.TaxReturnViewModel
 import models.Mode.CheckMode
 import models.requests.{DataRequest, IdentifiedRequest}
-import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
+import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
+import models.returns.{Calculations, Credits, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import models.{CreditBalance, UserAnswers}
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
@@ -69,7 +70,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   private def createView (
-    credits: Option[CreditsClaimedDetails] = Some(CreditsClaimedDetails(userAnswer, CreditBalance(0, 0, 0L, true))),
+    credits: Credits = CreditsClaimedDetails(userAnswer, CreditBalance(0, 0, 0L, true)),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
     page(taxReturn, credits)(request, messages)
@@ -91,7 +92,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   "display guidance" when {
     "is first return" in {
       when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-      val view = createView(credits = None)
+      val view = createView(credits = NoCreditAvailable)
       assertNoCreditsAvailable(view)
     }
   }
@@ -102,7 +103,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
         val ans  = userAnswer.set(WhatDoYouWantToDoPage, false).get
 
-        val view = createView(Some(CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true))))
+        val view = createView(CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true)))
 
         assertNoCreditsAvailable(view)
       }
@@ -119,7 +120,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
       val ans  = userAnswer.set(WhatDoYouWantToDoPage, false).get
       val view = createView(
-        credits = Some(CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true))),
+        credits = NoCreditsClaimed,
         taxReturn = createViewModel(ans))
 
       val paragraphText = view.getElementsByClass("govuk-body").text()
@@ -134,7 +135,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "exported and converted both answered yes" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val view = createView(
-          credits = Some(CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true))))
+          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true)))
 
         view.getElementById("exported-answer").children().size() mustBe 6
         assertExportedCreditsAnswer(view, "Yes", "site.yes")
@@ -153,7 +154,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
           .set(WhatDoYouWantToDoPage, true).get
 
         val view = createView(
-          credits = Some(CreditsClaimedDetails(ans, CreditBalance(10, 40, 300L, true))))
+          credits = CreditsClaimedDetails(ans, CreditBalance(10, 40, 300L, true)))
 
         view.getElementById("exported-answer").children().size() mustBe 4
         assertExportedCreditsAnswer(view, "No", "site.no")
@@ -167,7 +168,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "credits is claimed" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val view = createView(
-          credits = Some(CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true))))
+          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true)))
 
         getText(view, "change-credit-link") mustBe "Change any answer from credits"
         getText(view, "change-credit-link") mustBe messages("submit-return.check-your-answers.credits.change.text.link")
@@ -179,7 +180,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "credit is claimed" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val view = createView(
-          credits = Some(CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true))))
+          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, CreditBalance(10, 40, 300L, true))
+        )
 
         getText(view, "remove-credit-link") mustBe "Remove credits"
         getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")

@@ -24,36 +24,20 @@ import viewmodels.{PrintBigDecimal, PrintLong}
 case class CreditsClaimedDetails(
                                   exported: CreditsAnswer,
                                   converted: CreditsAnswer,
-                                  override val isClaimingTaxBack: Boolean,
                                   totalWeight: Long,
                                   totalCredits: BigDecimal
 ) extends Credits {
 
-  private def exportedAnswerYesNoAsString: String =
-    if(exported.yesNo) "site.yes" else "site.no"
-
-
-  private def convertedAnswerYesNoAsString: String =
-    if(converted.yesNo) "site.yes" else "site.no"
-
-  override def summaryList: Seq[(String, String)] = {
+  override def summaryList: Seq[(String, String)] =
     Seq(
-      CreditExportedAnswerPartialKey -> exportedAnswerYesNoAsString,
-      CreditExportedWeightPartialKey -> exported.value.asKg,
-      CreditConvertedAnswerPartialKey -> convertedAnswerYesNoAsString,
-      CreditConvertedWeightPartialKey -> converted.value.asKg,
-      CreditsTotalWeightPartialKey -> totalWeight.asKg,
-      CreditTotalPartialKey -> totalCredits.asPounds
-    ).filter(canShowWeight(_))
-  }
+      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
+      CreditExportedWeightPartialKey -> exported.value.asKg -> exported.yesNo,
+      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
+      CreditConvertedWeightPartialKey -> converted.value.asKg -> converted.yesNo,
+      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
+      CreditTotalPartialKey -> totalCredits.asPounds -> true
+    ).collect{case (tuple, show) if show => tuple}
 
-  private def canShowWeight(keyValue: (String,String)): Boolean = {
-    keyValue match {
-      case (CreditExportedWeightPartialKey, _) => exportedAnswerYesNoAsString.equals("site.yes")
-      case (CreditConvertedWeightPartialKey,_) => convertedAnswerYesNoAsString.equals("site.yes")
-      case _ => true
-    }
-  }
 }
 
 object CreditsClaimedDetails {
@@ -69,7 +53,6 @@ object CreditsClaimedDetails {
     CreditsClaimedDetails(
       userAnswer.getOrFail(ExportedCreditsPage),
       userAnswer.getOrFail(ConvertedCreditsPage),
-      userAnswer.getOrFail(WhatDoYouWantToDoPage),
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,
     )
