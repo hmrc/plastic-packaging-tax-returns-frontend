@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import controllers.helpers.TaxReturnViewModel
 import models.{CreditBalance, UserAnswers}
 import models.requests.{DataRequest, IdentifiedRequest}
+import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import pages.returns.{DirectlyExportedComponentsPage, ImportedPlasticPackagingPage, ManufacturedPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedRecycledPlasticPackagingPage}
@@ -69,7 +70,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       "credits is claimed" in {
         def render: Html = page(
           createViewModel(userAnswer),
-          Some(CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true)))
+          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true))
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -79,7 +80,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         val ans = userAnswer.set(WhatDoYouWantToDoPage, false).get
         def render: Html = page(
           createViewModel(ans),
-          Some(CreditsClaimedDetails(ans, CreditBalance(0,0,0L,true))),
+          NoCreditsClaimed,
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -93,7 +94,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 
-        def render: Html = page(createViewModel(ans), None)(request, messages)
+        def render: Html = page(createViewModel(ans), NoCreditAvailable)(request, messages)
 
         render.toString() must passAccessibilityChecks
       }

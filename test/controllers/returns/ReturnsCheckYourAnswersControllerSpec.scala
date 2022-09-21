@@ -120,12 +120,12 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe Some(CreditsClaimedDetails(
+      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         exported = CreditsAnswer(true, Some(200L)),
         converted = CreditsAnswer(true, Some(300L)),
         totalWeight = 500L,
         totalCredits = 20L
-      ))
+      )
     }
 
     "handle credits no claimed on pageLoading" in {
@@ -136,7 +136,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       status(result) mustEqual OK
       verifyNoInteractions(mockCalculateCreditConnector)
-      verifyAndCaptorCreditDetails mustBe Some(NoCreditsClaimed)
+      verifyAndCaptorCreditDetails mustBe NoCreditsClaimed
     }
 
 
@@ -146,7 +146,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe Some(NoCreditAvailable)
+      verifyAndCaptorCreditDetails mustBe NoCreditAvailable
     }
 
 
@@ -172,7 +172,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any())
     verify(mockTaxReturnHelper).nextOpenObligationAndIfFirst(ArgumentMatchers.eq("123"))(any())
     verifyNoInteractions(mockCalculateCreditConnector)
-    verifyAndCaptorCreditDetails mustBe None
+    verifyAndCaptorCreditDetails mustBe NoCreditAvailable
   }
 
   "return an error" when {

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.helpers.TaxReturnViewModel
 import models.Mode.CheckMode
 import models.requests.{DataRequest, IdentifiedRequest}
-import models.returns.Credits.NoCreditAvailable
+import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, Credits, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import models.{CreditBalance, UserAnswers}
 import org.jsoup.nodes.Element
@@ -120,7 +120,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
       val ans  = userAnswer.set(WhatDoYouWantToDoPage, false).get
       val view = createView(
-        credits = CreditsClaimedDetails(ans, CreditBalance(0, 0, 0, true)),
+        credits = NoCreditsClaimed,
         taxReturn = createViewModel(ans))
 
       val paragraphText = view.getElementsByClass("govuk-body").text()
