@@ -48,8 +48,7 @@ class NowStartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with V
     }
 
     "have a paragraph when credits have been claimed" in {
-      view.getElementById("credits-saved-content").text mustBe
-        "Your credits have been saved. To submit them, you must complete your return."
+      view.getElementById("credits-saved-content").text mustBe messages("nowStartYourReturn.paragraph.1")
     }
 
     "not have a paragraph when not credit has been claimed" in {
