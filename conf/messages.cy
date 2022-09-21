@@ -488,8 +488,7 @@ submit-return.check-your-answers.deductions.row3 = Pwysau’r deunydd pacio plas
 submit-return.check-your-answers.deductions.row4 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
-submit-return.check-your-answers.credits.line1 = Ni allwch hawlio credydau eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
-submit-return.check-your-answers.credits.line2 = Mae’n bosibl y gallwch hawlio credyd yn y dyfodol os yw’r deunydd pacio naill ai:
+submit-return.check-your-answers.credits.line1 = Ni allwch hawlio credydau eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf. Mae’n bosibl y gallwch hawlio credyd yn y dyfodol os yw’r deunydd pacio naill ai:
 submit-return.check-your-answers.credits.line3 = wedi’i allforio
 submit-return.check-your-answers.credits.line4 = wedi’i drosi’n ddeunydd pacio gwahanol
 submit-return.check-your-answers.credits.line5 = Dysgwch ragor am {0}.

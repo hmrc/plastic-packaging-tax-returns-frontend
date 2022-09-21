@@ -15,7 +15,7 @@
  *@
 
 @import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading}
-@import components.returns.checkYourAnswer.credits.{CreditsClaimed, NoCreditsClaimed}
+@import components.returns.checkYourAnswer.credits.{CreditsClaimed, NoCreditsClaimed, NoCreditsAvailable}
 @import config.FrontendAppConfig
 @import models.returns.Credits
 
@@ -27,35 +27,29 @@
     link: Link,
     paragraph: paragraph,
     creditsClaimed: CreditsClaimed,
-    noCreditsClaimed: NoCreditsClaimed
+    noCreditsClaimed: NoCreditsClaimed,
+    noCreditsAvailable: NoCreditsAvailable
 )
 
-@(credits: Credits)(implicit request: Request[_], messages: Messages)
+@(credits: Option[Credits])(implicit request: Request[_], messages: Messages)
 
+
+@selectView = @{
+    credits.fold(noCreditsAvailable())( c =>  {
+        if(c.isClaimingTaxBack){
+            creditsClaimed(c)
+        }else{
+            noCreditsClaimed()
+        }
+    })
+}
 @sectionH2Heading(
     messages("submit-return.check-your-answers.credits.heading"),
     id = Some("credit-section-header")
 )
 
 @if(appConfig.isCreditsForReturnsFeatureEnabled) {
-    @if(credits.isClaimingTaxBack){
-        @creditsClaimed(credits)
-    }else{
-        @noCreditsClaimed()
-    }
+    @selectView
 } else {
-    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line1"))
-    @paragraphBody(message = messages("submit-return.check-your-answers.credits.line2"))
-    @bulletList(elements = Seq(
-                        Html(messages("submit-return.check-your-answers.credits.line3")),
-                        Html(messages("submit-return.check-your-answers.credits.line4"))
-                    )
-    )
-
-    @paragraph(content = Html(messages("submit-return.check-your-answers.credits.line5", link(
-        id = "credits-line-5",
-        text = messages("submit-return.check-your-answers.credits.line5.link-text"),
-        call = Call("GET", appConfig.creditsGuidanceUrl),
-        newTab = true
-    ))))
+    @noCreditsAvailable()
 }

@@ -20,7 +20,6 @@ import base.SpecBase
 import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
-import models.Mode.NormalMode
 import models.UserAnswers
 import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
@@ -33,7 +32,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, inject}
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView

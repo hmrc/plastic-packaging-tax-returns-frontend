@@ -69,7 +69,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       "credits is claimed" in {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true))
+          Some(CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true)))
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -79,8 +79,21 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         val ans = userAnswer.set(WhatDoYouWantToDoPage, false).get
         def render: Html = page(
           createViewModel(ans),
-          CreditsClaimedDetails(ans, CreditBalance(0,0,0L,true)),
+          Some(CreditsClaimedDetails(ans, CreditBalance(0,0,0L,true))),
         )(request, messages)
+
+        render.toString() must passAccessibilityChecks
+      }
+
+      "first return" in {
+        val ans = UserAnswers("123")
+          .set(ManufacturedPlasticPackagingPage, false).get
+          .set(ImportedPlasticPackagingPage, false).get
+          .set(DirectlyExportedComponentsPage, false).get
+          .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
+          .set(NonExportedRecycledPlasticPackagingPage, false).get
+
+        def render: Html = page(createViewModel(ans), None)(request, messages)
 
         render.toString() must passAccessibilityChecks
       }

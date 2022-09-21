@@ -17,7 +17,6 @@
 package connectors
 
 import base.utils.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
 
 class DirectDebitConnectorSpec extends ConnectorISpec {
 
