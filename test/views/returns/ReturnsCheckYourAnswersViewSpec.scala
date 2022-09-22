@@ -187,7 +187,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
 
         view.getElementById("remove-credit-link").select("a").first() must
-          haveHref(controllers.returns.routes.ReturnsCheckYourAnswersController.onRemoveCreditsClaim())
+          haveHref(controllers.returns.credits.routes.RemoveCreditController.onPageLoad())
       }
     }
 

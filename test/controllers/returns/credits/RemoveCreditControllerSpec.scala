@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.returns.credits
 
 import base.SpecBase
@@ -40,14 +56,13 @@ class RemoveCreditControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
+      val mockCache = mock[CacheConnector]
+      when(mockCache.saveUserAnswerFunc(any())(any())).thenReturn((_, _) => Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[CacheConnector].toInstance(mockCacheConnector)
+            bind[CacheConnector].toInstance(mockCache)
           )
           .build()
 
