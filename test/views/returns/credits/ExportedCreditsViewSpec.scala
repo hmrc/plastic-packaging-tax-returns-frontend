@@ -65,6 +65,9 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     }
 
     "have a hint" in {
+      view.getElementsByAttributeValue("for", "exported-credits-weight").text() mustBe "How much weight, in kilograms?"
+      view.getElementsByAttributeValue("for", "exported-credits-weight").text() mustBe messages("exported.credits.weight.label")
+      view.getElementById("exported-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
       view.getElementById("exported-credits-weight-hint").text mustBe messages("exported.credits.weight.hint")
     }
 

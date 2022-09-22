@@ -35,7 +35,10 @@
 
 @ifYes = {
     @govukInput(
-        InputViewModel(field = form("exported-credits-weight"))
+        InputViewModel(
+                field = form("exported-credits-weight"),
+                label = LabelViewModel(messages("exported.credits.weight.label"))
+            )
             .asKg()
             .withWidth(Fixed10)
             .withId("exported-credits-weight")
