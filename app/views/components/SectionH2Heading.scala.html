@@ -16,6 +16,6 @@
 
 @this()
 
-@(message: String, id: Option[String] = None)
+@(message: String, id: Option[String] = None, size: String = "m")
 
-<h2 class="govuk-heading-m govuk-!-margin-top-6" @id.map{id => id="@id"}>@message</h2>
+<h2 class="govuk-heading-@size govuk-!-margin-top-6" @id.map{id => id="@id"}>@message</h2>

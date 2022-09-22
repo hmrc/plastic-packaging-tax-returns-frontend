@@ -451,6 +451,7 @@ submit-return.check-your-answers.heading = Gwiriwch eich atebion cyn anfon eich 
 submit-return.check-your-answers.business-details.heading = Manylion y busnes
 submit-return.check-your-answers.business-details.row1 = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 submit-return.check-your-answers.business-details.row2 = Cyfnod y Ffurflen Dreth
+submit-return.check-your-answers.rest-of-return.heading = Eich Ffurflen Dreth
 
 submit-return.check-your-answers.packaging-total.heading = Cyfanswm y deunydd pacio plastig
 submit-return.check-your-answers.packaging-total.row1 = Deunydd pacio plastig a weithgynhyrchwyd
