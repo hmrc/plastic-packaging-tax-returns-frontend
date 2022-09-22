@@ -524,7 +524,7 @@ exported.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
 exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
 exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -538,7 +538,7 @@ converted.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
 converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
 converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
 converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 

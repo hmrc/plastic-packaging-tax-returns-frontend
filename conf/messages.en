@@ -510,7 +510,7 @@ exported.credits.weight.hint = 1 tonne is 1,000kg.
 exported.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been exported
 exported.credits.error.weight.required = Enter the weight, in kilograms
 exported.credits.error.outOfRange.low = Weight must be 1kg or more
-exported.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+exported.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
 exported.credits.error.non.numeric = Weight must be entered as numbers
 exported.credits.error.whole.number = Weight must not include decimals
 
@@ -524,7 +524,7 @@ converted.credits.weight.hint = 1 tonne is 1,000kg.
 converted.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been converted
 converted.credits.error.weight.required = Enter the weight, in kilograms
 converted.credits.error.outOfRange.low = Weight must be 1kg or more
-converted.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+converted.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
 converted.credits.error.non.numeric = Weight must be entered as numbers
 converted.credits.error.whole.number = Weight must not include decimals
 
