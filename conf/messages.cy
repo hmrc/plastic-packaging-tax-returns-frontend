@@ -194,7 +194,7 @@ amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i fa
 
 confirmPackagingCredit.title = Confirm credit amount
 confirmPackagingCredit.heading = Confirm {0} of credit
-confirmPackagingCredit.subHeading = Credits
+confirmPackagingCredit.subHeading = Credydau
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
 confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
@@ -349,6 +349,7 @@ return.confirmation.homePage.link2 = Ewch i’ch cyfrif Treth Deunydd Pacio Plas
 return.confirmation.bulletList.first = gweld cyfanswm y dreth sydd arnoch
 return.confirmation.bulletList.second = gwneud taliad
 return.confirmation.bulletList.third = bwrw golwg dros ddyddiad dyledus y taliad
+return.confirmation.panel.credits-advice = Bydd eich credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
@@ -512,7 +513,7 @@ submit-return.check-your-answers.credits.total = Cyfanswm y credyd
 submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o’r adran credydau
 submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
-credits.caption = Credits
+credits.caption = Credydau
 
 exported.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
 exported.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio

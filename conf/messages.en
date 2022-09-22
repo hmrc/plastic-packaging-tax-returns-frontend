@@ -337,6 +337,7 @@ return.confirmation.checkWhatYouOwe = Check what you owe
 return.confirmation.bulletList.first = see the total tax you owe
 return.confirmation.bulletList.second = make a payment
 return.confirmation.bulletList.third = view payment due date
+return.confirmation.panel.credits-advice = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}

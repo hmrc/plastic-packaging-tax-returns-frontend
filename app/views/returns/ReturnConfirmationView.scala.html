@@ -29,7 +29,7 @@
 )
 
 
-@(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
+@(chargeReference: Option[String], isUserClaimingCredit: Boolean)(implicit request: Request[_], messages: Messages)
 
 
 @chargeRefMsg = @{
@@ -45,6 +45,7 @@
 @homePageLink = @{
     link(id = "account-link", text = messages("return.confirmation.homePage.link2"), call = routes.IndexController.onPageLoad)
 }
+    
 @accountLinkForValidChargeRef = @{
     paragraphBody(
         message = messages("return.confirmation.homePage.link1", homePageLink),
@@ -52,12 +53,19 @@
     )
 }
 
+@creditsAdvice = @{
+    if (isUserClaimingCredit) {
+        paragraphBody(message = messages("return.confirmation.panel.credits-advice"))
+    }
+}
+    
 @homeAccountLink = {
     @if(chargeReference.isEmpty) {
         @paragraphBody(message = messages("return.confirmation.panel.empty"), classes = "govuk-body clear-float", id=Some("nothing-to-pay"))
-
+        @creditsAdvice
         <p class="govuk-body" id="account-link-body">@homePageLink</p>
     } else {
+        @creditsAdvice
         @accountLinkForValidChargeRef
         @bulletList(elements = Seq(
                                     Html(messages("return.confirmation.bulletList.first")),

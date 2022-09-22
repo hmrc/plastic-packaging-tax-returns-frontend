@@ -157,7 +157,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(setUserAnswer)).onSubmit()(FakeRequest(POST, "/foo"))
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(true).url
       verify(mockSessionRepository).set(any())
     }
   }

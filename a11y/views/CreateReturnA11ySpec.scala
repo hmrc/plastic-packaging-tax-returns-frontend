@@ -79,7 +79,7 @@ class CreateReturnA11ySpec
       val page: ReturnConfirmationView = inject[ReturnConfirmationView]
 
       def render(chargeRef: Option[String]): Html =
-        page(chargeRef)(request, messages)
+        page(chargeRef, false)(request, messages)
 
       render(None).toString() must passAccessibilityChecks
     }
