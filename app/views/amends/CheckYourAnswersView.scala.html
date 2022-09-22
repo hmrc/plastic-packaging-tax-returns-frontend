@@ -32,7 +32,8 @@
     link: Link,
     paragraph: paragraph,
     paragraphBody: paragraphBody,
-    sectionH2Heading: SectionH2Heading
+    sectionH2Heading: SectionH2Heading,
+    heading: heading
 )
 
 @(obligation: TaxReturnObligation, totalRows: Seq[AmendSummaryRow], deductionsRows: Seq[AmendSummaryRow], 
@@ -70,7 +71,7 @@
 @layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))), 
     showBackLink = false) {
 
-    <h1 class="govuk-heading-xl">@messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))</h1>
+    @heading("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))
 
     @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 

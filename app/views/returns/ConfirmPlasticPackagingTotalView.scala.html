@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, LinkButton}
+@import components.{SectionHeader, LinkButton, heading}
 @import models.Mode.NormalMode
 
 @this(
@@ -22,7 +22,8 @@
         govukButton: GovukButton,
         sectionHeader: SectionHeader,
         govukSummaryList: GovukSummaryList,
-        button: LinkButton
+        button: LinkButton,
+        heading: heading
 )
 
 @(list: SummaryList)(implicit request: Request[_], messages: Messages)
@@ -31,7 +32,7 @@
 
     @sectionHeader(messages("confirmPlasticPackagingTotal.sectionHeader"))
 
-    <h1 class="govuk-heading-xl">@messages("confirmPlasticPackagingTotal.heading")</h1>
+    @heading("confirmPlasticPackagingTotal.heading")
 
     @govukSummaryList(list)
 

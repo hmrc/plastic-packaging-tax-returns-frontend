@@ -14,19 +14,20 @@
  * limitations under the License.
  *@
 
-@import components.{paragraphBody, LinkButton}
+@import components.{paragraphBody, LinkButton, heading}
 
 @this(
         layout: templates.Layout,
         paragraph: paragraphBody,
         linkButton: LinkButton,
+        heading: heading
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("notStartOtherReturns.heading"))) {
 
-    <h1 class="govuk-heading-xl">@messages("notStartOtherReturns.heading")</h1>
+    @heading("notStartOtherReturns.heading")
 
     @paragraph(messages("notStartOtherReturns.detail"))
 

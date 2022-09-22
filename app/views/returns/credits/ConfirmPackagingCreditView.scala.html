@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraph, Link, LinkButton}
+@import components.{SectionHeader, paragraph, Link, LinkButton, heading}
 @import viewmodels._
 @import models.Mode
 
@@ -25,7 +25,8 @@
     sectionHeader: SectionHeader,
     paragraph: paragraph,
     link: Link,
-    linkButton: LinkButton
+    linkButton: LinkButton,
+    heading: heading
 )
 
 @(requestedCredit: BigDecimal, weight: Long, continueCall: Call, mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -36,7 +37,7 @@
 
     @sectionHeader(messages("confirmPackagingCredit.subHeading"))
 
-    <h1 class="govuk-heading-xl">@messages("confirmPackagingCredit.heading", requestedCredit.asPounds)</h1>
+    @heading("confirmPackagingCredit.heading", requestedCredit.asPounds))
 
     @paragraph(
         content = Html(messages("confirmPackagingCredit.hint.p1", weight.asKg)),

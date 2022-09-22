@@ -18,19 +18,12 @@ package controllers.returns
 
 import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.returns.credits.ClaimedCredits
-import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.omg.PortableServer.POAPackage.WrongAdapterHelper
-import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NowStartYourReturnView
 
@@ -41,11 +34,8 @@ class NowStartYourReturnController @Inject()(
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  returnsConnector: TaxReturnsConnector,
-  sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: NowStartYourReturnView,
-  appConfig: FrontendAppConfig,
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
