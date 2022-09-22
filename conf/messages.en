@@ -545,3 +545,7 @@ too-much-credit-claimed.para-1 = The weight you’ve entered is more than the to
 too-much-credit-claimed.para-2 = To continue, change the weight of plastic packaging that has since been exported or converted.
 too-much-credit-claimed.button-text = Change weight
 too-much-credit-claimed.cancel-link-text = Cancel claiming credit and continue return
+
+removeCredit.title = Are you sure you want to remove this credit?
+removeCredit.heading = Are you sure you want to remove this credit?
+removeCredit.error.required = Select yes if you want to remove this credit

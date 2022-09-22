@@ -32,7 +32,6 @@ POST        /amend-return                                          controllers.a
 
 GET         /returns-check-your-answers                            controllers.returns.ReturnsCheckYourAnswersController.onPageLoad()
 POST        /returns-check-your-answers                            controllers.returns.ReturnsCheckYourAnswersController.onSubmit()
-GET         /returns-check-your-answers/remove-credits-claim       controllers.returns.ReturnsCheckYourAnswersController.onRemoveCreditsClaim()
 
 GET         /return-amended                                        controllers.amends.AmendConfirmationController.onPageLoad()
 
@@ -151,3 +150,5 @@ POST        /credit-for-converted                                  controllers.r
 GET         /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
+POST       /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
