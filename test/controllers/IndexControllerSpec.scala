@@ -48,7 +48,7 @@ class IndexControllerSpec
     reset(page, mockFinancialsConnector)
 
     // Empty html from page.apply
-    when(page.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply(""))
+    when(page.apply(any(), any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply(""))
 
   }
 
@@ -159,7 +159,7 @@ class IndexControllerSpec
         verifyNoInteractions(mockFinancialsConnector)
         val captor: ArgumentCaptor[Option[String]] =
           ArgumentCaptor.forClass(classOf[Option[String]])
-        verify(page, atLeastOnce()).apply(any(), any(), any(), captor.capture(), any(), any())(
+        verify(page, atLeastOnce()).apply(any(), any(), any(), any(), captor.capture(), any(), any())(
           any(),
           any()
         )
@@ -260,12 +260,13 @@ class IndexControllerSpec
       Future.successful(PPTFinancials(None, None, None))
     )
     when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(obligation))
+    when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq.empty))
   }
 
   private def verifyResults(obligation: PPTObligations) = {
     val captor: ArgumentCaptor[Option[PPTObligations]] =
       ArgumentCaptor.forClass(classOf[Option[PPTObligations]])
-    verify(page, atLeastOnce()).apply(any(), any(), captor.capture(), any(), any(), any())(any(),
+    verify(page, atLeastOnce()).apply(any(), any(), captor.capture(), any(), any(), any(), any())(any(),
                                                                                            any()
     )
 

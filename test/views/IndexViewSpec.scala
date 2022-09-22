@@ -71,6 +71,7 @@ class IndexPageViewSpec
       appConfig,
       subscription,
       obligations,
+      true,
       pptFinancials,
       completeReturnUrl,
       "XMPPT0000000001"

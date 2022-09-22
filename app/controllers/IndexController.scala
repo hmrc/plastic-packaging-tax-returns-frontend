@@ -51,11 +51,13 @@ class IndexController @Inject() (
           for {
             paymentStatement <- getPaymentsStatement(pptReference)
             obligations      <- getObligationsDetail(pptReference)
+            isFirstReturn    <- isFirstReturn(pptReference)
           } yield Ok(
             view(
               appConfig,
               subscription,
               obligations,
+              isFirstReturn,
               paymentStatement,
               appConfig.pptCompleteReturnGuidanceUrl,
               pptReference
@@ -82,6 +84,11 @@ class IndexController @Inject() (
       ).recover { case _ => None}
     } else {
       Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
+    }
+
+  private def isFirstReturn(pptReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    obligationsConnector.getFulfilled(pptReference).map(_.isEmpty).recoverWith {
+      case _ => Future.successful(false) //assume not first return
     }
 
   private def getObligationsDetail(
