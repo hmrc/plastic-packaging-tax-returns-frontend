@@ -51,7 +51,7 @@
             RadiosViewModel.apply(
                 field = form("value"),
                 items = Seq(
-                    RadioItem(id = Some("radio-credit-and-return"), value = Some("true"), content = Text(messages("what-do-you-want-to-do.credit-and-return", obligationPrettyPrint))),
+                    RadioItem(id = Some("value"), value = Some("true"), content = Text(messages("what-do-you-want-to-do.credit-and-return", obligationPrettyPrint))),
                     RadioItem(id = Some("radio-just-return"), value = Some("false"), content = Text(messages("what-do-you-want-to-do.just-return", obligationPrettyPrint)))
                 )
             )
