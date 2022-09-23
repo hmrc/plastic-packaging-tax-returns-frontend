@@ -194,7 +194,7 @@ amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i fa
 
 confirmPackagingCredit.title = Confirm credit amount
 confirmPackagingCredit.heading = Confirm {0} of credit
-confirmPackagingCredit.subHeading = Credits
+confirmPackagingCredit.subHeading = Credydau
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
 confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
@@ -349,6 +349,7 @@ return.confirmation.homePage.link2 = Ewch i’ch cyfrif Treth Deunydd Pacio Plas
 return.confirmation.bulletList.first = gweld cyfanswm y dreth sydd arnoch
 return.confirmation.bulletList.second = gwneud taliad
 return.confirmation.bulletList.third = bwrw golwg dros ddyddiad dyledus y taliad
+return.confirmation.panel.credits-advice = Bydd eich credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 
 account.homePage.title = Eich cyfrif Treth Deunydd Pacio Plastig
 account.homePage.registrationNumber = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig: {0}
@@ -451,6 +452,7 @@ submit-return.check-your-answers.heading = Gwiriwch eich atebion cyn anfon eich 
 submit-return.check-your-answers.business-details.heading = Manylion y busnes
 submit-return.check-your-answers.business-details.row1 = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 submit-return.check-your-answers.business-details.row2 = Cyfnod y Ffurflen Dreth
+submit-return.check-your-answers.rest-of-return.heading = Eich Ffurflen Dreth
 
 submit-return.check-your-answers.packaging-total.heading = Cyfanswm y deunydd pacio plastig
 submit-return.check-your-answers.packaging-total.row1 = Deunydd pacio plastig a weithgynhyrchwyd
@@ -511,7 +513,7 @@ submit-return.check-your-answers.credits.total = Cyfanswm y credyd
 submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o’r adran credydau
 submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
-credits.caption = Credits
+credits.caption = Credydau
 
 exported.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
 exported.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
@@ -523,7 +525,7 @@ exported.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
 exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
 exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -537,7 +539,7 @@ converted.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
 converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
 converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
 converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 

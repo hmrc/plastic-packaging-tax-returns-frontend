@@ -29,7 +29,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
   val page: ReturnConfirmationView = inject[ReturnConfirmationView]
 
   private def createView(chargeRef: Option[String]): Html =
-    page(chargeRef)(request, messages)
+    page(chargeRef, false)(request, messages)
 
   "Submitted returns page" should {
 

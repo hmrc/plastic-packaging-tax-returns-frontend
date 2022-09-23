@@ -90,7 +90,7 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
       "number submitted is greater than maximum" in {
         val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(100000000000L))))
 
-        view.getElementById("exported-credits-weight-error").text() must include("Weight must be between 0kg and 99,999,999,999kg")
+        view.getElementById("exported-credits-weight-error").text() mustBe "Error: Weight must be between 1kg and 99,999,999,999kg"
       }
     }
   }

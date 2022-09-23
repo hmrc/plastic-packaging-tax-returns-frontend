@@ -105,7 +105,7 @@
 
 @layout(pageTitle = titleNoForm(messages("submit-return.check-your-answers.heading"))) {
 
-    @heading("submit-return.check-your-answers.heading")
+    <h1 class="govuk-heading-xl">@messages("submit-return.check-your-answers.heading")</h1>
 
     <!-- Business details -->
     @sectionH2Heading(messages("submit-return.check-your-answers.business-details.heading"))
@@ -117,7 +117,12 @@
     ))
 
     <!-- Credits -->
+    @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"), id = Some("credit-section-header"), 
+        size = "l")
     @creditsSection(credits)
+        
+    <!-- Rest of return -->
+    @sectionH2Heading(messages("submit-return.check-your-answers.rest-of-return.heading"), size="l")
 
     <!-- Packaging total -->
     @sectionH2Heading(messages("submit-return.check-your-answers.packaging-total.heading"))

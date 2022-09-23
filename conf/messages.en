@@ -337,6 +337,7 @@ return.confirmation.checkWhatYouOwe = Check what you owe
 return.confirmation.bulletList.first = see the total tax you owe
 return.confirmation.bulletList.second = make a payment
 return.confirmation.bulletList.third = view payment due date
+return.confirmation.panel.credits-advice = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 
 account.homePage.title = Your Plastic Packaging Tax account
 account.homePage.registrationNumber = PPT registration number: {0}
@@ -438,6 +439,7 @@ submit-return.check-your-answers.heading = Check your answers before sending you
 submit-return.check-your-answers.business-details.heading = Business details
 submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
 submit-return.check-your-answers.business-details.row2 = Return period
+submit-return.check-your-answers.rest-of-return.heading = Your return
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging
 submit-return.check-your-answers.packaging-total.row1 = Manufactured plastic packaging
@@ -509,7 +511,7 @@ exported.credits.weight.hint = 1 tonne is 1,000kg.
 exported.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been exported
 exported.credits.error.weight.required = Enter the weight, in kilograms
 exported.credits.error.outOfRange.low = Weight must be 1kg or more
-exported.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+exported.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
 exported.credits.error.non.numeric = Weight must be entered as numbers
 exported.credits.error.whole.number = Weight must not include decimals
 
@@ -523,7 +525,7 @@ converted.credits.weight.hint = 1 tonne is 1,000kg.
 converted.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been converted
 converted.credits.error.weight.required = Enter the weight, in kilograms
 converted.credits.error.outOfRange.low = Weight must be 1kg or more
-converted.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+converted.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
 converted.credits.error.non.numeric = Weight must be entered as numbers
 converted.credits.error.whole.number = Weight must not include decimals
 
