@@ -26,7 +26,7 @@
     govukInput: GovukInput,
     sectionHeader: SectionHeader,
     conditionalYesNo: conditionalYesNoRadio,
-    para: paragraph,
+    paragraphBody: paragraphBody,
     heading: heading,
     h2heading: SectionH2Heading
 )
@@ -48,11 +48,9 @@
 }
 
 @paraContent = {
-    <div>
-        <p>@messages("exported.credits.paragraph.1")</p>
-        <p>@messages("exported.credits.paragraph.2")</p>
-        <p>@messages("exported.credits.paragraph.3")</p>
-    </div>
+    @paragraphBody(messages("exported.credits.paragraph.1"))
+    @paragraphBody(messages("exported.credits.paragraph.2"))
+    @paragraphBody(messages("exported.credits.paragraph.3"))
 }
 
 
@@ -63,7 +61,7 @@
         }
         @sectionHeader(messages("credits.caption"))
         @heading("exported.credits.heading")
-        @para(paraContent)
+        @paraContent
         @h2heading(messages("exported.credits.heading.2"), Some("exported-credits-h2"))
         @conditionalYesNo(form, None, Some(ifYes))
         @govukButton(ButtonViewModel(messages("site.continue")))

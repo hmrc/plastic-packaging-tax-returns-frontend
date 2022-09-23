@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.returns
+package views.returns.credits
 
 import base.ViewSpecBase
 import play.api.mvc.Call
