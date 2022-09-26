@@ -102,10 +102,8 @@ POST        /change-non-exported-recycled-weight                   controllers.r
 
 GET         /deregistered                                          controllers.DeregisteredController.onPageLoad()
 
-GET         /return-account-period                                 controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
-POST        /return-account-period                                 controllers.returns.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
-GET         /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
+GET         /return-accounting-period                              controllers.returns.StartYourReturnController.onPageLoad()
+POST        /return-accounting-period                              controllers.returns.StartYourReturnController.onSubmit()
 
 GET         /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
 POST        /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)

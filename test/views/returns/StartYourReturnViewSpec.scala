@@ -38,7 +38,7 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
     "PK1")
 
   private def createView: Html =
-    page(form, NormalMode, aTaxObligation, true)(request, messages)
+    page(form, aTaxObligation, true)(request, messages)
 
   "StartYourReturnView" should {
     val view = createView
