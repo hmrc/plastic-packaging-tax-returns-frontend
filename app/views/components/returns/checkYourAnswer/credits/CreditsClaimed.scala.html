@@ -56,11 +56,10 @@
     )
 )
 
-<!-- todo: create YesAndNo page and redirect to this  -->
 @paragraph(
     content = link(
         id = "remove-credit-link",
         text = messages("submit-return.check-your-answers.credits.remove.text.link"),
-        call = controllers.returns.routes.ReturnsCheckYourAnswersController.onRemoveCreditsClaim()
+        call = controllers.returns.credits.routes.RemoveCreditController.onPageLoad()
     )
 )
