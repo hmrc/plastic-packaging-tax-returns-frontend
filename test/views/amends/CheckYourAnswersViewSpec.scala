@@ -24,7 +24,7 @@ import views.html.amends.CheckYourAnswersView
 
 import java.time.LocalDate
 
-class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers{
+class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page = inject[CheckYourAnswersView]
   val obligation: TaxReturnObligation = TaxReturnObligation(
@@ -37,16 +37,17 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
   private def createView(calculation: AmendsCalculations, amendmentMade: Boolean): Html = {
     page(obligation, Seq.empty, Seq.empty, calculation, amendmentMade)(request, messages)
   }
+
   "View" should {
     "not allow to submit return when deduction greater than accretion" in {
-        val view = createView(createCalculations(false), true)
+      val view = createView(createCalculations(false), true)
 
-        view.getElementsByClass("govuk-button") mustBe empty
-        view.getElementById("submit-amend-return-header-error").text() mustBe "Submitting your amended return"
-        view.getElementById("submit-amend-return-header-error").text() mustBe messages("AmendsCheckYourAnswers.error.heading")
-        view.getElementById("submit-amend-return-error-line").text() mustBe "You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions."
-        view.getElementById("submit-amend-return-error-line").text() mustBe messages("AmendsCheckYourAnswers.error.line")
-      }
+      view.getElementsByClass("govuk-button") mustBe empty
+      view.getElementById("submit-amend-return-header-error").text() mustBe "Submitting your amended return"
+      view.getElementById("submit-amend-return-header-error").text() mustBe messages("AmendsCheckYourAnswers.error.heading")
+      view.getElementById("submit-amend-return-error-line").text() mustBe "You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions."
+      view.getElementById("submit-amend-return-error-line").text() mustBe messages("AmendsCheckYourAnswers.error.line")
+    }
 
     "not display send your amended return message when deduction greater than accretion" in {
       val view = createView(createCalculations(false), true)
@@ -74,6 +75,28 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
       view.text() must include("You cannot submit this amended return as you have not made any changes.")
     }
+
+    "display calculation section" which {
+
+      "has plastic packaging total row" in{
+        val view = createView(createCalculations(true), false)
+        view.text() must include("Plastic packaging total")
+      }
+      "has deductions total row" in{
+        val view = createView(createCalculations(true), false)
+        view.text() must include("Deductions total")
+      }
+      "has chargeable total row" in{
+        val view = createView(createCalculations(true), false)
+        view.text() must include("Chargeable plastic packaging total")
+      }
+      "has tax due row" in{
+        val view = createView(createCalculations(true), false)
+        view.text() must include("Tax due on this return")
+      }
+
+    }
+
   }
 
   private def createCalculations(isSubmittable: Boolean) = {
