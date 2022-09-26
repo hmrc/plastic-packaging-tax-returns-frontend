@@ -18,7 +18,6 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.StartYourReturnFormProvider
-import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}

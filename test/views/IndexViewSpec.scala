@@ -147,7 +147,7 @@ class IndexPageViewSpec
 
                   val createLink = (
                     messages("account.homePage.card.makeReturn.line3.createLink"),
-                    routes.StartYourReturnController.onPageLoad(NormalMode).url
+                    routes.StartYourReturnController.onPageLoad().url
                   )
 
                   val returnsCreationGuidanceLink =
