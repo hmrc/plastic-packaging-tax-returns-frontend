@@ -257,9 +257,16 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   private def assertTotalCredits(view: Html, row: Int): Unit = {
     getCreditCellText(view, row, "dt") mustBe "Credit total"
     getCreditCellText(view, row, "dt") mustBe messages("submit-return.check-your-answers.credits.total")
+    assertIfCellIsBold(view, row, "dt")
     getCreditCellText(view, row, "dd") mustBe "£40.00"
+    assertIfCellIsBold(view, row, "dd")
   }
 
+  private def assertIfCellIsBold(view: Html, row: Int, cell: String): Unit = {
+    getCreditRow(view, row).select(cell).first().getElementsByClass(
+      "govuk-!-font-weight-bold"
+    ).size() mustBe 1
+  }
   private def getCreditCellText(view: Html, row: Int, cell: String) =
     getCreditRow(view, row).select(cell).text()
 
@@ -268,5 +275,4 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def getText(view: Html, id: String): String =
     view.getElementById(id).text()
-
 }

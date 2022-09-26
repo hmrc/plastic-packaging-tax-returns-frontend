@@ -27,14 +27,24 @@
 
 @(credit: Credits)(implicit request: Request[_], messages: Messages)
 
-@govukSummaryList(SummaryList(
-    rows = credit.summaryList.map(o => SummaryListRow(
+@boldLastRow(list: Seq[SummaryListRow]) = @{
+    list.zipWithIndex.map {
+        case (v, i) => if(i.equals(list.size - 1)) v.bold else v
+    }
+}
+
+@createSummaryListFromCredit = @{
+    credit.summaryList.map(o => SummaryListRow(
         key = Key(
             messages(o._1),
             classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"
         ),
-        value = Value(o._2, classes = "govuk-table__cell--numeric"))
-    ),
+        value = Value(o._2, classes = "govuk-table__cell--numeric")
+    ))
+}
+
+@govukSummaryList(SummaryList(
+    rows = boldLastRow(createSummaryListFromCredit),
     attributes = Map("id" -> "exported-answer")
 ))
 

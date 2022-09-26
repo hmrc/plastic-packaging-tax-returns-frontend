@@ -56,6 +56,13 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.getElementById("converted-credits-h2").text mustBe messages("converted.credits.heading.2")
     }
 
+    "have a hint" in {
+      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe "How much weight, in kilograms?"
+      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe messages("converted.credits.weight.label")
+      view.getElementById("converted-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
+      view.getElementById("converted-credits-weight-hint").text mustBe messages("converted.credits.weight.hint")
+    }
+
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
 
@@ -77,6 +84,16 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been converted")
+      }
+
+      "letters with no numbers" in {
+        val boundForm: Form[CreditsAnswer] = form.bind(Map("answer" -> "true", "converted-credits-weight" -> "agdhjsfvjsw"))
+        val view: Html = createView(boundForm)
+
+        view.getElementById("converted-credits-weight-error").text() must include("Weight must be entered as numbers")
+        view.getElementById("converted-credits-weight-error").text() must include(
+          messages("converted.credits.error.non.numeric")
+        )
       }
       "negative number submitted" in {
         val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(0L))))
