@@ -39,11 +39,14 @@ case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-  def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A =
-    Reads.at(page.path).reads(data).get
+  def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A = 
+    getOrFail(page.path)
 
   def getOrFail[A](answerPath: String)(implicit rds: Reads[A]): A =
-    Reads.at(JsPath \ answerPath).reads(data).get
+    getOrFail[A](JsPath \ answerPath)
+    
+  def getOrFail[A](answerPath: JsPath)(implicit rds: Reads[A]): A =
+    Reads.at(answerPath).reads(data).get
     
   def set[A](page: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
