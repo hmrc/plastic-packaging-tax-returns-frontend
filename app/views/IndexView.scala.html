@@ -34,6 +34,7 @@
     appConfig: FrontendAppConfig,
     subscription: SubscriptionDisplayResponse,
     obligations: Option[PPTObligations],
+    isFirstReturn: Boolean,
     paymentStatement: Option[String],
     completeReturnUrl: String,
     pptReference: String
@@ -167,7 +168,8 @@
 @returnsLink = @{
     obligations.flatMap { obligations =>
         if(obligations.displaySubmitReturnsLink) {
-            Some(link(id = "start-date-return-link", text = messages("account.homePage.card.makeReturn.line3.createLink"), call = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode)))
+            val linkContentKey = "account.homePage.card.makeReturn.line3.createLink" + {if(isFirstReturn) "" else ".andCredits"}
+            Some(link(id = "start-date-return-link", text = messages(linkContentKey), call = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode)))
         } else {
             None
         }

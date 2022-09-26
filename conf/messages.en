@@ -352,6 +352,7 @@ account.homePage.card.makeReturn.line1.singleOverdue = Your return for {0} is ov
 account.homePage.card.makeReturn.line1.none = You have no returns to submit.
 account.homePage.card.makeReturn.line2.due = You must submit your return for {0} between {1} and {2}.
 account.homePage.card.makeReturn.line3.createLink = Submit return
+account.homePage.card.makeReturn.line3.createLink.andCredits = Submit return and do credits stuff
 account.homePage.card.makeReturn.guidance.link = Find out how to complete a return (opens in new tab)
 account.homePage.card.makeReturn.returnDates.link = Return dates
 account.homePage.card.makeReturn.failure = We cannot display tax return details.
