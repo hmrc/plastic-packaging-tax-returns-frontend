@@ -478,7 +478,8 @@ submit-return.check-your-answers.deductions.row3 = Weight of non-exported plasti
 submit-return.check-your-answers.deductions.row4 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
-submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return. You may be able to claim credit in future if the packaging is either:
+submit-return.check-your-answers.credits.line1 = You cannot claim credits yet. This is because this is your first Plastic Packaging Tax return.
+submit-return.check-your-answers.credits.line2 = You may be able to claim credit in future if the packaging is either:
 submit-return.check-your-answers.credits.line3 = exported
 submit-return.check-your-answers.credits.line4 = converted into different packaging
 submit-return.check-your-answers.credits.line5 = Find out more about {0}.

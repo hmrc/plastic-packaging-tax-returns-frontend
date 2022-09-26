@@ -491,7 +491,8 @@ submit-return.check-your-answers.deductions.row3 = Pwysau’r deunydd pacio plas
 submit-return.check-your-answers.deductions.row4 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
-submit-return.check-your-answers.credits.line1 = Ni allwch hawlio credydau eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf. Mae’n bosibl y gallwch hawlio credyd yn y dyfodol os yw’r deunydd pacio naill ai:
+submit-return.check-your-answers.credits.line1 = Ni allwch hawlio credydau eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
+submit-return.check-your-answers.credits.line2 = Mae’n bosibl y gallwch hawlio credyd yn y dyfodol os yw’r deunydd pacio naill ai:
 submit-return.check-your-answers.credits.line3 = wedi’i allforio
 submit-return.check-your-answers.credits.line4 = wedi’i drosi’n ddeunydd pacio gwahanol
 submit-return.check-your-answers.credits.line5 = Dysgwch ragor am {0}.
@@ -554,9 +555,9 @@ what-do-you-want-to-do.just-return = Dechrau Ffurflen Dreth {0}
 what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
 what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
 
-nowStartYourReturn.heading = Now start your return for {0}
-nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.
-nowStartYourReturn.button-text = Start your return
+nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
+nowStartYourReturn.paragraph.1 = Mae eich atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
+nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
 too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
 too-much-credit-claimed.section-heading = Credydau
