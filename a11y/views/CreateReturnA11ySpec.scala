@@ -63,7 +63,7 @@ class CreateReturnA11ySpec
     val page = inject[StartYourReturnView]
 
     def render(form: Form[Boolean]): String =
-      page(form, NormalMode, aTaxObligation, true)(request, messages).toString()
+      page(form, aTaxObligation, true)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks

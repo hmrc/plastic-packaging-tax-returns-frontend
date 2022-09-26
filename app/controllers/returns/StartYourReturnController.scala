@@ -50,7 +50,7 @@ class StartYourReturnController @Inject()(
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val pptReference: String = request.pptReference
       val userAnswers = request.userAnswers
@@ -66,14 +66,14 @@ class StartYourReturnController @Inject()(
             .setOrFail(ReturnObligationCacheable, taxReturnObligation)
             .setOrFail("isFirstReturn", isFirst)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
-            .map(_ => Ok(view(preparedForm, mode, taxReturnObligation, isFirst)))
+            .map(_ => Ok(view(preparedForm, taxReturnObligation, isFirst)))
         case None =>
           logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       val userAnswers = request.userAnswers
@@ -84,7 +84,7 @@ class StartYourReturnController @Inject()(
       form().bindFromRequest().fold(
         formWithErrors => {
           Future.successful(
-            BadRequest(view(formWithErrors, mode, obligation, isFirstReturn)))
+            BadRequest(view(formWithErrors, obligation, isFirstReturn)))
         },
         formValue => {
           userAnswers

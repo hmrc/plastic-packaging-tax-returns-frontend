@@ -56,9 +56,9 @@ POST        /amend-recycled-weight                                 controllers.a
 GET         /confirm-or-correct-credit                             controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 GET         /change-confirm-or-correct-credit                      controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
 GET         /confirm-or-correct-credit/cancel                      controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit/cancel                controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = CheckMode)
+GET         /change-confirm-or-correct-credit/cancel               controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = CheckMode)
 
-GET         /now-start-your-return                                 controllers.returns.NowStartYourReturnController.onPageLoad
+GET         /start-return                                          controllers.returns.NowStartYourReturnController.onPageLoad
 
 GET         /directly-exported-components                          controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
 POST        /directly-exported-components                          controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)
@@ -102,10 +102,8 @@ POST        /change-non-exported-recycled-weight                   controllers.r
 
 GET         /deregistered                                          controllers.DeregisteredController.onPageLoad()
 
-GET         /startYourReturn                                       controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = NormalMode)
-POST        /startYourReturn                                       controllers.returns.StartYourReturnController.onSubmit(mode: Mode = NormalMode)
-GET         /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeStartYourReturn                                 controllers.returns.StartYourReturnController.onSubmit(mode: Mode = CheckMode)
+GET         /return-accounting-period                              controllers.returns.StartYourReturnController.onPageLoad()
+POST        /return-accounting-period                              controllers.returns.StartYourReturnController.onSubmit()
 
 GET         /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
 POST        /submit-return-or-claim-credit                         controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)

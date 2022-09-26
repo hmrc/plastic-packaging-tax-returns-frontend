@@ -169,7 +169,7 @@
     obligations.flatMap { obligations =>
         if(obligations.displaySubmitReturnsLink) {
             val linkContentKey = "account.homePage.card.makeReturn.line3.createLink" + {if(isFirstReturn) "" else ".andCredits"}
-            Some(link(id = "start-date-return-link", text = messages(linkContentKey), call = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode)))
+            Some(link(id = "start-date-return-link", text = messages(linkContentKey), call = controllers.returns.routes.StartYourReturnController.onPageLoad()))
         } else {
             None
         }

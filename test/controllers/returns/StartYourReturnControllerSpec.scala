@@ -48,7 +48,7 @@ import scala.concurrent.Future
 
 class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  private lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad(NormalMode).url
+  private lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad().url
   private val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
   private val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
   private val mockFormProvider = mock[StartYourReturnFormProvider]
@@ -78,7 +78,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
     "show the view if user has obligation" in {
 
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
-      when(view.apply(any, any, any, any)(any, any)) thenReturn HtmlFormat.raw("bake")
+      when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("bake")
       val form = mock[Form[Boolean]]
       when(mockFormProvider.apply()) thenReturn form
       when(form.fill(any)) thenReturn form
@@ -98,7 +98,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
         contentAsString(result) mustEqual "bake"
 
         verify(mockCacheConnector, atLeastOnce).saveUserAnswerFunc(meq("123"))(any)
-        verify(view).apply(any, meq(NormalMode), meq(obligation), meq(true))(any, any)
+        verify(view).apply(any, meq(obligation), meq(true))(any, any)
         verify(form, never()).fill(any)
         verifyNoInteractions(form)
       }
@@ -107,7 +107,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, isFirst))))
-      when(view.apply(any, any, any, any)(any, any)) thenReturn HtmlFormat.raw("bake")
+      when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("bake")
 
       val form = mock[Form[Boolean]]
       when(mockFormProvider.apply()) thenReturn form
@@ -128,7 +128,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        verify(view).apply(meq(form), meq(NormalMode), meq(obligation), meq(true))(any, any)
+        verify(view).apply(meq(form), meq(obligation), meq(true))(any, any)
         verify(form).fill(true)
       }
     }
@@ -280,7 +280,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, obligation, isFirst)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, obligation, isFirst)(request, messages(application)).toString
 
       }
     }
