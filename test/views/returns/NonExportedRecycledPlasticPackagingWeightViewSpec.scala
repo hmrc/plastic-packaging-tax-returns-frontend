@@ -23,21 +23,56 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
-import support.ViewMatchers
+import support.{ViewAssertions, ViewMatchers}
+import viewmodels.PrintLong
 import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 
-class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewMatchers {
+class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: NonExportedRecycledPlasticPackagingWeightView = inject[NonExportedRecycledPlasticPackagingWeightView]
   val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
   val amount = 321L
+  val amountAsKg = amount.asKg
 
-  private def createView(form: Form[Long] = form): Html =
-    page(form, NormalMode, amount)(request, messages)
+  private def createView(form: Form[Long] = form, directlyExportedAnswer: Boolean = true): Html =
+    page(form, NormalMode, amount, directlyExportedAnswer)(request, messages)
 
-  "NonExport Recycled Plastic Packaging Weight page" should {
+  "NonExportedRecycledPlasticPackagingWeightView" should {
     val view: Html = createView()
     val doc: Document = Jsoup.parse(view.toString())
+
+    "have a title" when {
+      "directly exported component answer is Yes" in {
+        view.select("title").text mustBe
+          s"Out of the $amountAsKg of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("NonExportRecycledPlasticPackagingWeight.heading", amountAsKg))
+      }
+
+      "directly exported component answer is No" in {
+        val newView = createView(directlyExportedAnswer = false)
+
+        newView.select("title").text() mustBe
+          s"How much of your $amountAsKg of finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+        newView.select("title").text must include(messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg))
+
+      }
+    }
+
+    "have a heading" when {
+      "directly exported component answer is Yes" in {
+        view.select("h1").text mustBe
+          s"Out of the $amountAsKg of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?"
+        view.select("h1").text mustBe messages("NonExportRecycledPlasticPackagingWeight.heading", amountAsKg)
+      }
+
+      "directly exported component answer is No" in {
+        val newView = createView(directlyExportedAnswer = false)
+
+        newView.select("h1").text mustBe
+          s"How much of your $amountAsKg of finished plastic packaging components contained 30% or more recycled plastic?"
+        newView.select("h1").text must include(messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg))
+      }
+    }
 
     "have a hint" in {
 

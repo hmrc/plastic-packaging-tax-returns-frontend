@@ -47,11 +47,16 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
+
         val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage) match {
           case None => form()
           case Some(value) => form().fill(value)
         }
-        NonExportedAmountHelper.nonExportedAmount.fold(identity, amount => Ok(view(preparedForm, mode, amount)))
+
+        NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
+          Redirect(controllers.routes.IndexController.onPageLoad))(
+          o => Ok(view(preparedForm, mode, o._1, o._2))
+        )
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -60,8 +65,11 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
         val pptId: String = request.pptReference
         form().bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
-              identity, exportedAmount => BadRequest(view(formWithErrors, mode, exportedAmount)))),
+            Future.successful(NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+              o => BadRequest(view(formWithErrors, mode, o._1, o._2 ))
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(

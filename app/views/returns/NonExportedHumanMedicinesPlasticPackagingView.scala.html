@@ -27,7 +27,7 @@
     details: GovukDetails
 )
 
-@(amount: Long, form: Form[Boolean], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[Boolean], mode: Mode, directlyExportedYesNoAnswer: Boolean)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent ={
     @paragraphBody(messages("nonExportedHumanMedicinesPlasticPackaging.detail"))
@@ -40,12 +40,19 @@
 
 }
 
-@layout(pageTitle = title(form, messages("nonExportedHumanMedicinesPlasticPackaging.heading", amount.asKg), Some(messages("return.title.tail")))) {
+@heading = @{
+    if(directlyExportedYesNoAnswer) {
+        "nonExportedHumanMedicinesPlasticPackaging.heading"
+    } else {
+        "nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading"
+    }
+}
+@layout(pageTitle = title(form, messages(heading, amount.asKg), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @yesNoLayout(Some(messages("nonExportedHumanMedicinesPlasticPackaging.caption")),
-            messages("nonExportedHumanMedicinesPlasticPackaging.heading",  amount.asKg),
+            messages(heading,  amount.asKg),
             paragraphText = paragraphContent,
             form = form)
     }
