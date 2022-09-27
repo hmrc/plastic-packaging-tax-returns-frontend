@@ -363,7 +363,7 @@ account.homePage.card.makeReturn.line1.multipleOverdue = Mae gennych {0} o Ffurf
 account.homePage.card.makeReturn.line1.singleOverdue = Mae’ch Ffurflen Dreth ar gyfer {0} yn hwyr.
 account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
 account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer {0} rhwng {1} a {2}.
-account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen TAW
+account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen Dreth
 account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen TAW [CREDITS WELSH]
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
@@ -502,7 +502,7 @@ submit-return.check-your-answers.credits.not.claimed.link = Hawlio treth yn ôl 
 
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
-submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
+submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen Dreth
 
 submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
 submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
