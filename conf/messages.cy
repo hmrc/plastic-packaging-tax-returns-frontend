@@ -193,16 +193,15 @@ amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar 
 amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
 amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
-confirmPackagingCredit.title = Confirm credit amount
-confirmPackagingCredit.heading = Confirm {0} of credit
+confirmPackagingCredit.title = Cadarnhau swm y credyd
+confirmPackagingCredit.heading = Cadarnhau {0} o gredyd
 confirmPackagingCredit.subHeading = Credydau
-confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
-confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
-confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
-confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
-confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
-confirmPackagingCredit.checkYourAnswersLabel = Conversion credit
-confirmPackagingCredit.confirm.credit.button = Confirm credit amount
+confirmPackagingCredit.hint.p1 = Rhoesoch wybod i ni eich bod wedi talu treth ar {0}kg o ddeunydd pacio plastig mewn Ffurflen Dreth flaenorol, a’i fod bellach wedi’i allforio neu ei drosi.
+confirmPackagingCredit.hint.p2 = Caiff y Dreth Deunydd Pacio Plastig ei chyfrifo ar sail £200 y dunnell.
+confirmPackagingCredit.hint.p3 = Mae hyn yn golygu y cewch £{0} o dreth yn ôl fel credyd.
+confirmPackagingCredit.hint.p4 = Bydd eich credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+confirmPackagingCredit.change.credit.paragraph = Newid swm y credyd
+confirmPackagingCredit.confirm.credit.button = Cadarnhau swm y credyd
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
@@ -364,7 +363,7 @@ account.homePage.card.makeReturn.line1.multipleOverdue = Mae gennych {0} o Ffurf
 account.homePage.card.makeReturn.line1.singleOverdue = Mae’ch Ffurflen Dreth ar gyfer {0} yn hwyr.
 account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
 account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer {0} rhwng {1} a {2}.
-account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen TAW
+account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen Dreth
 account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen TAW [CREDITS WELSH]
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
@@ -503,7 +502,7 @@ submit-return.check-your-answers.credits.not.claimed.link = Hawlio treth yn ôl 
 
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
-submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
+submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen Dreth
 
 submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
 submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
