@@ -457,6 +457,8 @@ submit-return.check-your-answers.tax-calc.row2 = Deductions total
 submit-return.check-your-answers.tax-calc.row3 = Chargeable plastic packaging total
 submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
 submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
+submit-return.check-your-answers.tax-calc.footnote.2 = Your {0} will be applied against your total balance in your Plastic Packaging Tax account.
+submit-return.check-your-answers.tax-calc.credit.of = {0} credit
 
 submit-return.check-your-answers.exported-packaging.heading = Exported plastic packaging
 submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
