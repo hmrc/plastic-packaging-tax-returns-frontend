@@ -469,6 +469,9 @@ submit-return.check-your-answers.tax-calc.row2 = Cyfanswm y didyniadau
 submit-return.check-your-answers.tax-calc.row3 = Cyfanswm y deunydd pacio plastig trethadwy
 submit-return.check-your-answers.tax-calc.row4 = Treth sy’n ddyledus ar y Ffurflen Dreth hon
 submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
+submit-return.check-your-answers.tax-calc.footnote.2 = Bydd eich {0} yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
+
 
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd

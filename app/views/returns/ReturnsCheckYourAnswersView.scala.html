@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, heading}
+@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, heading, Strong}
 @import components.returns.checkYourAnswer.CreditsSection
 @import viewmodels._
 @import controllers.helpers.TaxReturnViewModel
@@ -22,6 +22,7 @@
 @import controllers.helpers.RowInfo
 @import config.FrontendAppConfig
 @import models.returns.Credits
+@import models.returns.CreditsClaimedDetails
 @import models.Mode.CheckMode
 
 @this(
@@ -36,6 +37,7 @@
     link: Link,
     sectionH2Heading: SectionH2Heading,
     creditsSection: CreditsSection,
+    strong: Strong,
     heading: heading
 )
 
@@ -180,6 +182,7 @@
 
     <!-- Tax calculation -->
     @sectionH2Heading(messages("submit-return.check-your-answers.tax-calc.heading"))
+    @para("tax-calc.footnote")
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
@@ -188,7 +191,16 @@
             summaryRowFromString("tax-calc.row4", taxReturn.taxDue).bold
         )
     ))
-    @para("tax-calc.footnote")
+
+    @{credits match {
+        case c: CreditsClaimedDetails if c.totalCredits > BigDecimal(0) =>
+            paragraphBody(
+                messages("submit-return.check-your-answers.tax-calc.footnote.2",
+                        strong(messages("submit-return.check-your-answers.tax-calc.credit.of", c.totalCredits.asPounds))
+                )
+            )
+        case _ => ()
+    }}
 
     <!-- Submit -->
     @if(taxReturn.isSubmittable) {
