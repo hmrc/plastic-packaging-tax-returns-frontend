@@ -364,7 +364,7 @@ account.homePage.card.makeReturn.line1.singleOverdue = Mae’ch Ffurflen Dreth a
 account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
 account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer {0} rhwng {1} a {2}.
 account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen Dreth
-account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen TAW [CREDITS WELSH]
+account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen Dreth a hawlio treth yn ôl fel credyd
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure = Ni allwn ddangos manylion y Ffurflen Dreth.
@@ -559,7 +559,7 @@ what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
 what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
 
 nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
-nowStartYourReturn.paragraph.1 = Mae eich atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
+nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
 nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
 too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
