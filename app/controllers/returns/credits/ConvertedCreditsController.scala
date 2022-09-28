@@ -18,16 +18,19 @@ package controllers.returns.credits
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.returns.credits.JourneyAction.{RequestFunction, RequestAsyncFunction}
+import controllers.returns.credits.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.controller.{Utf8MimeTypes, WithJsonBody}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.{FrontendBaseController, FrontendHeaderCarrierProvider}
 import views.html.returns.credits.ConvertedCreditsView
 
 import javax.inject.Inject
@@ -42,8 +45,10 @@ class JourneyAction @Inject()(
   def async(function: RequestAsyncFunction): Action[AnyContent] =
     identify.andThen(getData.andThen(requireData)).async(function)
 
-  def apply(function: RequestFunction): Action[AnyContent] =
-    identify.andThen(getData.andThen(requireData)).apply(function)
+  def apply(function: RequestFunction): Action[AnyContent] = {
+    val value: ActionBuilder[DataRequest, AnyContent] = identify.andThen(getData.andThen(requireData))
+    value.apply(function)
+  }
 }
 
 object JourneyAction {
@@ -60,32 +65,30 @@ class ConvertedCreditsController @Inject()
   formProvider: ConvertedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) 
+  extends I18nSupport {
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
         val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
-        Ok(view(preparedForm, mode))
+        Results.Ok(view(preparedForm, mode))
     }
   }
 
-  implicit private def createHeaderCarrier(implicit request: DataRequest[_]): HeaderCarrier =
-    request.headerCarrier
-
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request: DataRequest[AnyContent] =>
+    implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
           formValue => {
             request.userAnswers
               .setOrFail(ConvertedCreditsPage, formValue)
               .setOrFail(WhatDoYouWantToDoPage, true)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
+              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
           }
         )
   }
