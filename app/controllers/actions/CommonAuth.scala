@@ -28,14 +28,4 @@ trait CommonAuth {
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
       credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
 
-  protected def redirectToSignin[A]: Result =
-    Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-
-  protected def upliftCredentialStrength[A]: Result =
-    Results.Redirect(appConfig.mfaUpliftUrl,
-                     Map("origin"      -> Seq(appConfig.serviceIdentifier),
-                         "continueUrl" -> Seq(appConfig.loginContinueUrl)
-                     )
-    )
-
 }

@@ -132,7 +132,7 @@ class AuthenticatedIdentifierAction @Inject() (
         }
     } recover {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        Redirect(appConfig.loginUrl, Map("continue" -> Seq(request.target.path)))
 
       case _: InsufficientEnrolments =>
         // Redirect to the non enrolled page; this is authed but doesn't need enrolments.
@@ -153,7 +153,7 @@ class AuthenticatedIdentifierAction @Inject() (
   ) =
     if (pptReferenceAllowedList.isAllowed(pptEnrolmentIdentifier)) {
       val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new IdentifiedRequest(request, pptLoggedInUser, Some(pptEnrolmentIdentifier)))
+      block(IdentifiedRequest(request, pptLoggedInUser, Some(pptEnrolmentIdentifier)))
     } else {
       logger.warn("User id is not allowed, access denied")
       Future.successful(Results.Redirect(homeRoutes.UnauthorisedController.unauthorised()))

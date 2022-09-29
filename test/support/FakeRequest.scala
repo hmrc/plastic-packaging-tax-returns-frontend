@@ -31,9 +31,9 @@ trait FakeCustomRequest {
     pptClient: Option[String] = None
   ): IdentifiedRequest[AnyContentAsEmpty.type] = {
     val request = pptClient.map { clientIdentifier =>
-      FakeRequest().withHeaders(headers).withSession(("clientPPT", clientIdentifier))
+      FakeRequest("GET", "login-continue-url").withHeaders(headers).withSession(("clientPPT", clientIdentifier))
     }.getOrElse {
-      FakeRequest().withHeaders(headers)
+      FakeRequest("GET", "login-continue-url").withHeaders(headers)
     }
 
     IdentifiedRequest(request,
