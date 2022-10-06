@@ -17,6 +17,7 @@
 @import views.html.components.{SectionHeader, Link, paragraphBody}
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 @import config.FrontendAppConfig
+@import viewmodels._
 
 @this(
     layout: templates.Layout,
@@ -35,6 +36,13 @@
 
 @paragraphContent ={
     @paragraphBody(messages("viewReturnSummary.amend.inset.text", guidanceLink))
+}
+
+@summaryRow(key: String, value: String) = @{
+    SummaryListRow(
+        key = Key(key, classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"),
+        value = Value(value)
+    )
 }
 
 @layout(pageTitle = titleNoForm(returnPeriod), showBackLink = false) {
@@ -59,9 +67,13 @@
     }
 
     <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>
+
     @govukSummaryList(vm.summarySection.summaryList)
 
     <h2 class="govuk-heading-l">@messages("viewReturnSummary.details.heading")</h2>
+
+    <h3 class="govuk-heading-m">@messages(vm.detailsSection.credit.titleKey)</h3>
+    @govukSummaryList(vm.detailsSection.credit.summaryList)
 
     <h3 class="govuk-heading-m">@messages(vm.detailsSection.liable.titleKey)</h3>
     @govukSummaryList(vm.detailsSection.liable.summaryList)

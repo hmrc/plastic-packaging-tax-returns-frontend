@@ -129,6 +129,10 @@
     )
 
     <br>
+    <br>
+    <h3 class="govuk-heading-m">@messages("AmendsCheckYourAnswers.credits.heading")</h3>
+    @paragraphBody(message = messages("AmendsCheckYourAnswers.credit.paragraph"))
+    <br>
 
     @if(amendmentMade){ @submitContent }else{ @noAmendmentsMadeContent }
 

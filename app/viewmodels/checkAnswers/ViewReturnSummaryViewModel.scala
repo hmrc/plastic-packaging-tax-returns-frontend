@@ -53,7 +53,7 @@ object Section {
     )
 }
 
-final case class DetailsSection(liable: Section, exempt: Section, calculation: Section)
+final case class DetailsSection(credit: Section, liable: Section, exempt: Section, calculation: Section)
 
 final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
 
@@ -68,6 +68,9 @@ object ViewReturnSummaryViewModel {
         "reference" -> submittedReturn.chargeReferenceAsString,
       ),
       DetailsSection(
+        Section("credit", lastBold = false)(
+          "total" -> submittedReturn.returnDetails.creditForPeriod.asPounds
+        ),
         Section("liable")(
           "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKg,
           "imported" -> submittedReturn.returnDetails.importedWeight.asKg,
