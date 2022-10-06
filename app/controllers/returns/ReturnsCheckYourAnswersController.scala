@@ -64,14 +64,18 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        ensureCreditAnswersConsistency(request.userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
+        val userAnswers = request.userAnswers
+        ensureCreditAnswersConsistency(userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
           returnsConnector.submit(request.pptReference).flatMap {
             case Right(optChargeRef) =>
               sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
                 _ => Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
               }
-            case Left(_) => 
-              Future.successful(Redirect(routes.AlreadySubmittedController.onPageLoad()))
+            case Left(_) =>
+              val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable).toReturnQuarter
+              sessionRepository.set(Entry(request.cacheKey, Some(returnQuarter))).map { _ =>
+                Redirect(routes.AlreadySubmittedController.onPageLoad())
+              }
           }
         }
     }

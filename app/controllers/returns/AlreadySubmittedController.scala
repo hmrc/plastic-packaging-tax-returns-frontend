@@ -16,7 +16,6 @@
 
 package controllers.returns
 
-import cacheables.ReturnObligationCacheable
 import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,7 +36,11 @@ class AlreadySubmittedController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
-      Ok(view(request.userAnswers.getOrFail(ReturnObligationCacheable).toReturnQuarter))
+    identify.async { implicit request =>
+      sessionRepository.get(request.cacheKey).map {
+        entry =>
+          val returnQuarter = entry.flatMap(_.data).get
+          Ok(view(returnQuarter))
+      }
     }
 }
