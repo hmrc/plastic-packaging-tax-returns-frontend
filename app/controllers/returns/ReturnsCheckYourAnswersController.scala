@@ -70,7 +70,8 @@ class ReturnsCheckYourAnswersController @Inject()(
               sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
                 _ => Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
               }
-            case Left(error)         => throw error
+            case Left(_) => 
+              Future.successful(Redirect(routes.AlreadySubmittedController.onPageLoad()))
           }
         }
     }

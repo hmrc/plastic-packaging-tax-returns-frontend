@@ -78,7 +78,7 @@ class TaxReturnsConnectorSpec
           body = """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}"""
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
+        val res = await(connector.submit(pptReference))
 
         res.isRight mustBe true
         res.value mustBe Some("PANTESTPAN")
@@ -91,7 +91,7 @@ class TaxReturnsConnectorSpec
           body = """{"chargeDetails": null}"""
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
+        val res = await(connector.submit(pptReference))
 
         res.isRight mustBe true
         res.value mustBe None
@@ -152,9 +152,9 @@ class TaxReturnsConnectorSpec
           body = "{"
         )
 
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
+        val res = await(connector.submit(pptReference))
 
-        assert(res.left.get.isInstanceOf[DownstreamServiceError])
+        assert(res == Left(AlreadySubmitted))
 
       }
 

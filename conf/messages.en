@@ -558,3 +558,9 @@ too-much-credit-claimed.cancel-link-text = Cancel claiming credit and continue r
 removeCredit.title = Are you sure you want to remove this credit?
 removeCredit.heading = Are you sure you want to remove this credit?
 removeCredit.error.required = Select yes if you want to remove this credit
+
+return-already-submitted.heading = Your return has already been submitted
+return-already-submitted.para.1 = Your return for {0} has already been submitted.
+return-already-submitted.para.2 = You can:
+return-already-submitted.list.1 = View or amend submitted returns
+return-already-submitted.list.2 = Check what you owe or make a payment
