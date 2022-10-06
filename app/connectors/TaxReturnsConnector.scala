@@ -41,15 +41,14 @@ class TaxReturnsConnector @Inject()(
 
   def get(userId: String, periodKey: String)(implicit
                                              hc: HeaderCarrier
-  ): Future[Either[ServiceError, ReturnDisplayApi]] = {
+  ): Future[ReturnDisplayApi] = {
     val url = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
     val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
     httpClient.GET[ReturnDisplayApi](url)
       .andThen { case _ => timer.stop() }
-      .map(taxReturn => Right(taxReturn))
       .recover {
         case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex))
+          throw DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex)
       }
   }
 
@@ -90,7 +89,7 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
-  def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+  def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
     httpClient.GET[JsValue](appConfig.pptReturnAmendUrl(pptReference))
@@ -98,14 +97,11 @@ class TaxReturnsConnector @Inject()(
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
         logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
-        Right(chargeReference)
+        chargeReference
       }
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}", ex
-            )
-          )
+          throw DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}", ex)
       }
   }
 

@@ -49,7 +49,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
       mockGetFulfilledObligations(Seq(taxReturnOb))
 
       when(mockConnector.get(any(), any())(any())).thenReturn(
-        Future.successful(Right(submittedReturn))
+        Future.successful(submittedReturn)
       )
 
       when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))

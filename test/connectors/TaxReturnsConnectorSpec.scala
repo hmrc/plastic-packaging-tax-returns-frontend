@@ -65,10 +65,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         Status.OK, pptReference, "00xx", body = Json.toJson(expectedResult).toString
       )
 
-      val res: Either[ServiceError, ReturnDisplayApi] = await(connector.get(pptReference, "00xx"))
-
-      res.right.get mustBe expectedResult
-
+      await(connector.get(pptReference, "00xx")) mustBe expectedResult
     }
 
     "submit correctly" when {
@@ -87,42 +84,39 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         )
         await(connector.submit(pptReference)) mustBe Right(None)
       }
+      
+      "the obligation is no longer open" in {
+        givenReturnsSubmissionEndpointReturns(Status.EXPECTATION_FAILED, pptReference)
+        await(connector.submit(pptReference)) mustBe Left(AlreadySubmitted)
+      }
+
+      "etmp says the return has already been submitted" in {
+        givenReturnsSubmissionEndpointReturns(Status.UNPROCESSABLE_ENTITY, pptReference)
+        await(connector.submit(pptReference)) mustBe Left(AlreadySubmitted)
+      }
     }
 
     "Amend correctly" when {
 
       "there is a charge reference" in {
-
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
           body = """{"chargeDetails": {"chargeReference": "SOMEREF"}}"""
         )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe Some("SOMEREF")
-
+        await(connector.amend(pptReference)) mustBe Some("SOMEREF")
       }
 
       "there is no charge reference" in {
-
         givenReturnsAmendmentEndpointReturns(Status.OK,
           pptReference,
           body = """{"chargeDetails": null}""",
         )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe None
-
+        await(connector.amend(pptReference)) mustBe None
       }
-
     }
 
     "throw" when {
-      "get response cannot be parsed" ignore {
+      "get response cannot be parsed" in {
         givenGetReturnsEndpointReturns(Status.OK, pptReference, "00xx", body = "{")
         a[DownstreamServiceError] mustBe thrownBy(await(connector.get(pptReference, "00xx")))
       }
@@ -132,7 +126,7 @@ class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         a[DownstreamServiceError] mustBe thrownBy(await(connector.submit(pptReference)))
       }
 
-      "amend response cannot be parsed" ignore {
+      "amend response cannot be parsed" in {
         givenReturnsAmendmentEndpointReturns(Status.OK, pptReference, body = "{")
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend(pptReference)))
       }
