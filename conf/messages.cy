@@ -573,8 +573,8 @@ removeCredit.title = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.heading = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.error.required = Dewiswch ‘Iawn’ os ydych am dynnu’r credyd hwn
 
-return-already-submitted.heading = Your return has already been submitted
-return-already-submitted.para.1 = Your return for {0} has already been submitted.
+return-already-submitted.heading = Your return has been submitted
+return-already-submitted.para.1 = Your return for {0} has already been submitted. You do not need to resubmit it.
 return-already-submitted.para.2 = You can:
-return-already-submitted.list.1 = View or amend submitted returns
-return-already-submitted.list.2 = Check what you owe or make a payment
+return-already-submitted.list.1 = view or amend submitted returns
+return-already-submitted.list.2 = check what you owe
