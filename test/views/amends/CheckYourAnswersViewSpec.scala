@@ -100,8 +100,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "display Credit header" in {
       val view = createView(createCalculations(true), true)
 
-      view.select("h3").text() must include("Credits")
-      view.select("h3").text() must include(messages("AmendsCheckYourAnswers.credits.heading"))
+      view.select("h2").text() must include("Credits")
+      view.select("h2").text() must include(messages("AmendsCheckYourAnswers.credits.heading"))
     }
 
     "display credit message" in {
