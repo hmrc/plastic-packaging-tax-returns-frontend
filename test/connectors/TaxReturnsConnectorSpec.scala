@@ -16,35 +16,36 @@
 
 package connectors
 
-import base.utils.ConnectorISpec
 import com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.stubbing.ReturnsDeepStubs
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.verbs.MustVerb
-import org.scalatest.{BeforeAndAfterEach, EitherValues}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.test.Helpers.await
-import uk.gov.hmrc.http.{HttpClient, Upstream4xxResponse, Upstream5xxResponse}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse, Upstream5xxResponse}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnsConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues with BeforeAndAfterEach 
-  with MustVerb {
+class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
   private val httpClient2 = mock[HttpClient]
   private val frontendAppConfig = mock[FrontendAppConfig]
   private val metrics2 = mock[Metrics](ReturnsDeepStubs)
   private val timerContext = mock[Timer.Context]
-  
+
+  protected implicit val ec2: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  protected implicit val hc2: HeaderCarrier = mock[HeaderCarrier]
+
   private val connector = new TaxReturnsConnector(httpClient2, frontendAppConfig, metrics2)
 
-  val aReturnDisplayApi: ReturnDisplayApi = {
+  private val aReturnDisplayApi: ReturnDisplayApi = {
     val bd: BigDecimal = 0.1
     val l: Long = 1
     ReturnDisplayApi(
