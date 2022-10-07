@@ -102,14 +102,11 @@ class CheckYourAnswersController @Inject()
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.request.pptReference
-
         returnsConnector.amend(pptId).flatMap {
-          case Right(optChargeRef) =>
+          optChargeRef =>
             sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
-          case Left(error) =>
-            throw error
         }
     }
   
