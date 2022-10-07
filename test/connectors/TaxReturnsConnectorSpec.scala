@@ -16,9 +16,9 @@
 
 package connectors
 
-import com.codahale.metrics.Timer
+import com.codahale.metrics.Timerimport com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
-import config.FrontendAppConfig
+import config.FrontendAppConfigimport com.codahale.metrics.Timer
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
@@ -33,8 +33,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse, Upstrea
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
+class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
+  private val frontendAppConfig = mock[FrontendAppConfig]
+  private val metrics2 = mock[Metrics](ReturnsDeepStubs)
+  private val timerContext = mock[Timer.Context]
+  
   private val httpClient2 = mock[HttpClient]
   private val frontendAppConfig = mock[FrontendAppConfig]
   private val metrics2 = mock[Metrics](ReturnsDeepStubs)
