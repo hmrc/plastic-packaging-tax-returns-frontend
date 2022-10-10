@@ -97,6 +97,22 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     }
 
+    "display Credit header" in {
+      val view = createView(createCalculations(true), true)
+
+      view.select("h2").text() must include("Credits")
+      view.select("h2").text() must include(messages("AmendsCheckYourAnswers.credits.heading"))
+    }
+
+    "display credit message" in {
+      val view = createView(createCalculations(true), true)
+
+      view.getElementsByClass("govuk-body").text() must include("You cannot amend credits.")
+      view.getElementsByClass("govuk-body").text() must include(messages("AmendsCheckYourAnswers.credit.paragraph"))
+    }
+
+
+
   }
 
   private def createCalculations(isSubmittable: Boolean) = {

@@ -16,14 +16,14 @@
 
 package controllers.amends
 
-import cacheables.{ReturnObligationCacheable, AmendObligationCacheable}
+import cacheables.AmendObligationCacheable
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{CacheConnector, TaxReturnsConnector}
+import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.amends.AmendSummaryRow
 import models.requests.DataRequest
-import models.returns.{AmendsCalculations, ReturnDisplayApi, TaxReturnObligation}
+import models.returns.{AmendsCalculations, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{Entry, SessionRepository}

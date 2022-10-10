@@ -85,6 +85,8 @@ AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
 AmendsCheckYourAnswers.error.heading = Cyflwyno’ch Ffurflen Dreth diwygiedig
 AmendsCheckYourAnswers.error.line = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
 AmendsCheckYourAnswers.cancel.link.text = Canslo’r diwygiad hwn
+AmendsCheckYourAnswers.credits.heading = Credydau
+AmendsCheckYourAnswers.credit.paragraph = You cannot amend credits.
 AmendsCheckYourAnswers.error.noAmendments = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon gan nad ydych wedi gwneud unrhyw newidiadau.
 
 
@@ -329,7 +331,8 @@ viewReturnSummary.calculation.field.paragraph.1 = Mae £200 o dreth am bob tunne
 viewReturnSummary.calculation.field.credit = Credyd a hawliwyd
 viewReturnSummary.calculation.field.debit = Debyd
 viewReturnSummary.calculation.field.liability = Eich rhwymedigaeth treth
-viewReturnSummary.credits.heading = Credydau
+viewReturnSummary.credit.heading = Credydau
+viewReturnSummary.credit.field.total = Cyfanswm y credyd
 viewReturnSummary.credits.field.credit = Credyd a hawliwyd
 viewReturnSummary.credits.field.debit = Debyd credydau treth
 
