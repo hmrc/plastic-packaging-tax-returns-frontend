@@ -19,6 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
+import connectors.SubscriptionConnector
 import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
@@ -41,6 +42,37 @@ object IdentifierAction {
 }
 
 trait IdentifierAction
+  extends ActionBuilder[IdentifiedRequest, AnyContent]
+
+
+//mixing action, used by almost everywhere
+class PanAndLindsay @Inject()(
+                               val parser: BodyParsers.Default,
+                               identifierAction: IdentifierActionOld,
+                               subscriptionFilter: SubscriptionFilter
+                             )(implicit val executionContext: ExecutionContext) extends IdentifierAction {
+  override def invokeBlock[A](request: Request[A], block: IdentifiedRequest[A] => Future[Result]): Future[Result] =
+    identifierAction.andThen(subscriptionFilter).invokeBlock(request, block)
+}
+
+class SubscriptionFilter @Inject()(
+                                    subscriptionConnector: SubscriptionConnector
+                                  )(implicit val executionContext: ExecutionContext)
+  extends ActionFilter[IdentifiedRequest] with HeaderCarrierConverter {
+
+  override protected def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
+    subscriptionConnector.get(request.pptReference)(fromRequestAndSession(request, request.session)).map{
+      case Right(_) => None //session cache goes here
+      case Left(eisFailure) if eisFailure.isDeregistered => Some(Redirect(agentRoutes.DeregisteredController.onPageLoad())) //agent?????
+      case Left(_) => throw new RuntimeException("uh oh") //todo
+    }
+  }
+
+}
+
+
+//this is just auth?
+trait IdentifierActionOld
     extends ActionBuilder[IdentifiedRequest, AnyContent]
     with ActionFunction[Request, IdentifiedRequest]
 
@@ -51,7 +83,7 @@ class AuthenticatedIdentifierAction @Inject() (
   metrics: Metrics,
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends IdentifierAction with AuthorisedFunctions with CommonAuth {
+    extends IdentifierActionOld with AuthorisedFunctions with CommonAuth {
 
   private val authTimer = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
   private val logger    = Logger(this.getClass)

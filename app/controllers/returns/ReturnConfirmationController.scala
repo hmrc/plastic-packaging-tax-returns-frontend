@@ -20,6 +20,7 @@ import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnConfirmationView
 
@@ -37,10 +38,9 @@ class ReturnConfirmationController @Inject()(
 
   def onPageLoad(isUserClaimingCredit: Boolean): Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get(request.cacheKey).map{
-        entry =>
-          val chargeRef = entry.flatMap(_.data)
-          Ok(view(chargeRef, isUserClaimingCredit))
+      sessionRepository.get[String](request.cacheKey, Paths.ReturnChargeRef).map{
+        maybeChargeRef =>
+          Ok(view(maybeChargeRef, isUserClaimingCredit))
       }
     }
 }

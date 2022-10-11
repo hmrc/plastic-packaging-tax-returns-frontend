@@ -20,6 +20,7 @@ import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.AlreadySubmittedView
 
@@ -37,10 +38,9 @@ class AlreadySubmittedController @Inject()(
 
   def onPageLoad(): Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get(request.cacheKey).map {
-        entry =>
-          val returnQuarter = entry.flatMap(_.data).get
-          Ok(view(returnQuarter))
+      sessionRepository.get[String](request.cacheKey, Paths.ReturnObligationPeriod).map {
+        maybeReturnQuarter =>
+          Ok(view(maybeReturnQuarter.get))
       }
     }
 }

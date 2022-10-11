@@ -33,7 +33,7 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.ExecutionContext
 
-class IdentifierActionSpec
+class AuthenticatedIdentifierActionSpec
     extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
@@ -42,7 +42,7 @@ class IdentifierActionSpec
   val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
   val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-  class Harness(authAction: IdentifierAction) {
+  class Harness(authAction: AuthenticatedIdentifierAction) {
     def onPageLoad() = authAction(_ => Results.Ok)
   }
 

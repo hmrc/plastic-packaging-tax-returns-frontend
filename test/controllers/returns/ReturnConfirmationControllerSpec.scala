@@ -19,8 +19,9 @@ package controllers.returns
 import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.libs.json.{JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.{Entry, SessionRepository}
@@ -28,24 +29,22 @@ import views.html.returns.ReturnConfirmationView
 
 import scala.concurrent.Future
 
-class ReturnConfirmationControllerSpec extends SpecBase {
+class ReturnConfirmationControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  def setupMock: OngoingStubbing[Future[Option[Entry]]] = {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockSessionRepo)
-    when(mockSessionRepo.get(any())).thenReturn(Future.successful(Some(Entry("ID", Some("12345")))))
   }
 
   "ReturnConfirmation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      setupMock
+      when(mockSessionRepo.get[Any](any(), any())(any())).thenReturn(Future.successful(Some("12345")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[SessionRepository].toInstance(mockSessionRepo)
       ).build()
-
-      val expected = Some("12345")
 
       running(application) {
         val request = FakeRequest(GET, controllers.returns.routes.ReturnConfirmationController.onPageLoad(false).url)
@@ -55,7 +54,7 @@ class ReturnConfirmationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReturnConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(expected, false)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(Some("12345"), false)(request, messages(application)).toString
       }
     }
   }
