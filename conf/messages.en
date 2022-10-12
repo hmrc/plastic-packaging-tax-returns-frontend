@@ -242,7 +242,7 @@ importedPlasticPackagingWeight.li.3 = permanently set aside for a non-packaging 
 importedPlasticPackagingWeight.li.4 = used in the long-term storage of goods
 importedPlasticPackagingWeight.li.5 = an integral part of the goods
 importedPlasticPackagingWeight.li.6 = reused for the presentation of goods
-importedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+importedPlasticPackagingWeight.paragraph.include = Include in your total, plastic packaging which (either of the following):
 importedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
 importedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 importedPlasticPackagingWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
@@ -271,7 +271,7 @@ manufacturedPlasticPackagingWeight.list.2 = manufactured to be rail, aircraft an
 manufacturedPlasticPackagingWeight.list.3 = used in the long-term storage of goods
 manufacturedPlasticPackagingWeight.list.4 = an integral part of the goods
 manufacturedPlasticPackagingWeight.list.5 = reused for the presentation of goods
-manufacturedPlasticPackagingWeight.paragraph.include = Include plastic packaging which (either of the following):
+manufacturedPlasticPackagingWeight.paragraph.include = Include in your total, plastic packaging which (either of the following):
 manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
 manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 
