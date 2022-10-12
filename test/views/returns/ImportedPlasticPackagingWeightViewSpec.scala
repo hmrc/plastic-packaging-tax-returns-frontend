@@ -44,6 +44,7 @@ class ImportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewMatch
       val view: Html    = createView(form.fillAndValidate(-1))
       val doc: Document = Jsoup.parse(view.toString())
 
+      doc.text() must include("Include in your total, plastic packaging which (either of the following):")
       doc.text() must include(messages("importedPlasticPackagingWeight.paragraph.include"))
       doc.text() must include(messages("importedPlasticPackagingWeight.list.include.1"))
       doc.text() must include(messages("importedPlasticPackagingWeight.list.include.2"))
