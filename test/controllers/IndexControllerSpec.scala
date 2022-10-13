@@ -20,7 +20,8 @@ import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import config.{Features, FrontendAppConfig}
 import connectors.{FinancialsConnector, ObligationsConnector}
-import controllers.actions.{FakeDataRetrievalAction, PPTSubscriptionDetails}
+import controllers.actions.FakeDataRetrievalAction
+import models.PPTSubscriptionDetails
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
@@ -38,7 +39,6 @@ import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
 import views.html.IndexView
 import play.api.test.Helpers.{await, defaultAwaitTimeout, status, stubMessagesControllerComponents}
-
 
 import java.time.LocalDate.now
 import scala.concurrent.ExecutionContext.global

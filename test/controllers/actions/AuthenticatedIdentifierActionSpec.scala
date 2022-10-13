@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.{FakeAuthConnector, MetricsMocks, SpecBase}
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
 import models.SignedInUser

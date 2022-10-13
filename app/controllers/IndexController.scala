@@ -18,7 +18,8 @@ package controllers
 
 import config.{Features, FrontendAppConfig}
 import connectors.{FinancialsConnector, ObligationsConnector}
-import controllers.actions.{DataRetrievalAction, IdentifierAction, PPTSubscriptionDetails}
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.PPTSubscriptionDetails
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}

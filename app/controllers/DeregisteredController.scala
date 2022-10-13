@@ -25,10 +25,10 @@ import views.html.DeregisteredView
 import javax.inject.Inject
 
 class DeregisteredController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierActionOld,
-  val controllerComponents: MessagesControllerComponents,
-  view: DeregisteredView
+                                         override val messagesApi: MessagesApi,
+                                         identify: AuthAction,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         view: DeregisteredView
 ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =

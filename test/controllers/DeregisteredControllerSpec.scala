@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.IdentifierActionOld
+import controllers.actions.AuthAction
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.inject.bind
@@ -31,7 +31,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 //todo mess.
-class FakeIdentifierActionOld @Inject() (bodyParsers: PlayBodyParsers) extends IdentifierActionOld {
+class FakeIdentifierActionOld @Inject() (bodyParsers: PlayBodyParsers) extends AuthAction {
 
   override def invokeBlock[A](
                                request: Request[A],
@@ -54,7 +54,7 @@ class DeregisteredControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[IdentifierActionOld].to[FakeIdentifierActionOld]
+        bind[AuthAction].to[FakeIdentifierActionOld]
       ).build()
 
       running(application) {
