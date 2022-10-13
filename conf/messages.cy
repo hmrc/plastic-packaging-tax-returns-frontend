@@ -284,7 +284,7 @@ manufacturedPlasticPackagingWeight.list.include.1 = yn cynnwys 30% neu fwy o bla
 manufacturedPlasticPackagingWeight.list.include.2 = ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig
 
 NonExportRecycledPlasticPackaging.heading = Ni chafodd cyfanswm o {0} ei allforio. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-NonExportRecycledPlasticPackaging.directly.export.no.heading = A oedd unrhyw faint o’ch {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu? - Cyflwyno Ffurflen Dreth - Treth Deunydd Pacio Plastig - GOV.UK
+NonExportRecycledPlasticPackaging.directly.export.no.heading = A oedd unrhyw faint o’ch {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackaging.error.required = Dewiswch ‘Iawn’ os oedd unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 NonExportRecycledPlasticPackaging.paragraph.line.1 =Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Dysgwch am {0}.
