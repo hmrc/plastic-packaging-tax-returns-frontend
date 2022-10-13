@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import viewmodels.PrintLong
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 
 class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
@@ -30,18 +31,27 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
   val form = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
   val page = inject[NonExportedHumanMedicinesPlasticPackagingWeightView]
   val plastic = 1234L
+  private val plasticAsKg = plastic.asKg
 
-  private def createView: Html =
-    page(plastic, form, NormalMode)(request, messages)
+  private def createView(directlyExportedYesNoAnswer: Boolean = true): Html =
+    page(plastic, form, NormalMode, directlyExportedYesNoAnswer)(request, messages)
 
   "NonExportedHumanMedicinesPlasticPackagingWeightView" should {
-    val view = createView
+    val view = createView()
 
-    "have a title" in {
+    "have a title" when {
+      "directly exported page answer is Yes" in {
+        view.select("title").text mustBe
+          s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
+      }
 
-      view.select("title").text mustBe
-        "Out of the 1,234kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+      "directly exported page answer is No" in {
+        val view = createView(false)
 
+        view.select("title").text mustBe s"How much of your $plasticAsKg of finished plastic packaging components was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading", plastic.asKg))
+      }
     }
     "have a heading" in{
 
@@ -49,6 +59,15 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
         "Out of the 1,234kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
 
     }
+
+    "have a heading when they answer no" in{
+
+      val view = createView(false)
+
+      view.select("h1").text mustBe
+        s"How much of your $plasticAsKg of finished plastic packaging components was used for the immediate packaging of licenced human medicines?"
+    }
+
     "have a caption" in {
 
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption")
@@ -57,7 +76,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
 
     "have a hint" in {
 
-      val view: Html    = createView
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("value-hint").text must include (messages("1 tonne is 1,000kg."))

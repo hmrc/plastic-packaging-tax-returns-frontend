@@ -21,6 +21,7 @@ import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import viewmodels.PrintLong
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
 class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
@@ -28,29 +29,50 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
   val form = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
   val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
   val plastic = 1234L
+  val plasticInKg = plastic.asKg
 
-  private def createView: Html =
-    page(plastic, form, NormalMode)(request, messages)
+  private def createView(yesNoDirectExportedAnswer: Boolean = true): Html =
+    page(plastic, form, NormalMode, yesNoDirectExportedAnswer)(request, messages)
 
   "NonExportedHumanMedicinesPlasticPackagingView" should {
-    val view = createView
+    val view = createView()
 
-    "have a title" in {
+    "have a title" when {
+      "directly exported component answer is yes" in {
+        view.select("title").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
-      view.select("title").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
 
+      }
+
+      "directly exported component answer is No" in {
+        val view = createView(false)
+
+        view.select("title").text mustBe
+          s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg))
+      }
     }
-    "have a heading" in{
+    "have a heading" when {
+      "directly exported component answer is yes" in {
+        view.select("h1").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
 
-      view.select("h1").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+      }
 
+      "directly exported component answer is No" in {
+        val view = createView(false)
+
+        view.select("h1").text mustBe
+          s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg))
+      }
     }
+
     "have a caption" in {
-
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackaging.caption")
-
     }
 
     "contain paragraph content" in{

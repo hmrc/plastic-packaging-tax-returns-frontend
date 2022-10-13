@@ -26,16 +26,24 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[Long], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode, amount: Long, directlyExportedAnswer: Boolean)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent = { @paragraphBody(messages("NonExportRecycledPlasticPackagingWeight.paragraph")) }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackagingWeight.title", amount.asKg), Some(messages("return.title.tail")))) {
+@heading = @{
+    if(directlyExportedAnswer) {
+        "NonExportRecycledPlasticPackagingWeight.heading"
+    } else{
+        "NonExportRecycledPlasticPackagingWeight.directly.export.no.heading"
+    }
+}
+
+@layout(pageTitle = title(form, messages(heading, amount.asKg), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @weightInputLayout(Some(messages("caption.non.exported.plastic")),
-            messages("NonExportedRecycledPlasticPackagingWeight.heading", amount.asKg),
+            messages(heading, amount.asKg),
             paragraphText = paragraphContent,
             hintText = Some(messages("NonExportRecycledPlasticPackagingWeight.hint")),
             form = form)

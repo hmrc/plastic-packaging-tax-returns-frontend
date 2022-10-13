@@ -16,176 +16,198 @@
 
 package controllers.returns
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import models.UserAnswers
+import navigation.Navigator
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
-import play.api.inject.bind
+import org.scalatestplus.play.PlaySpec
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
+class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach{
 
-  val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  private val userAnswers = UserAnswers("123")
+  private val validAnswer = 0L
 
-  val validAnswer = 0L
-  val amount = 8L
+  private val manufacturedAmount = 200L
+  private val importedAmount = 100L
+  private val exportedAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val mockCacheConnector = mock[CacheConnector]
+  private val mockNavigator = mock[Navigator]
+  private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
+  private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
-  val manufacturedAmount = 200L
-  val importedAmount = 100L
-  val exportedAmount = 50L
-  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockView, mockCacheConnector, mockNavigator)
 
-  lazy val nonExportedHumanMedicinesPlasticPackagingWeightRoute = routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode).url
+    when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+  }
 
-  val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = amount).success.value
+  "onPageLoad" should {
+    "return OK and the correct view" in {
+      val result = createSut(Some(nonExportedAnswer))
+        .onPageLoad(NormalMode)(
+          FakeRequest(GET, "")
+        )
 
-  "NonExportedHumanMedicinesPlasticPackagingWeight Controller" - {
-
-    "must return OK and the correct view for a GET" in {
-      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
-
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, formProvider().fill(validAnswer), NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verifyView(formProvider())
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly when the question has previously been answered" in {
 
-      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).get
 
-      val mockCacheConnector = mock[CacheConnector]
+      val result = createSut(Some(ans)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(ans))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-
-        val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(nonExportedAmount, formProvider().fill(validAnswer), NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verifyView(formProvider().bind(Map("value" -> "0")))
     }
 
-    "must redirect GET to home page when exported amount not found" in {
+    "return ok when the directory exported page answer is no" in {
+      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).get
+        .set(DirectlyExportedComponentsPage, false).get
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val result = createSut(Some(ans)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
-      running(application) {
-        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-      }
+      status(result) mustEqual OK
+      verifyView(
+        formProvider().fill(validAnswer),
+        manufacturedAmount + importedAmount,
+        false)
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to home page when exported amount not found" in {
+      val result = createSut(Some(userAnswers))
+        .onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
-      val mockCacheConnector = mock[CacheConnector]
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithExportAmount))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to Journey Recovery if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
+      val result = createSut(None)
+        .onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+    }
+  }
 
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+  "onSubmit" should {
 
-        val view = application.injector.instanceOf[NonExportedHumanMedicinesPlasticPackagingWeightView]
+    "redirect to the next page" in {
+      def onwardRoute = Call("GET", "/foo")
+      val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = 8L).get
+      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
 
-        val result = route(application, request).value
+      val result = createSut(Some(userAnswersWithExportAmount)).onSubmit(NormalMode)(
+        FakeRequest(POST, "").withFormUrlEncodedBody(("value", validAnswer.toString))
+      )
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
+
+    "return a Bad Request and errors" when {
+      "DirectlyExportedPage answer is yes" in {
+
+        val result = createSut(Some(nonExportedAnswer)).onSubmit(NormalMode)(
+          FakeRequest(POST, "").withFormUrlEncodedBody(("value", "invalid value"))
+        )
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(nonExportedAmount, boundForm, NormalMode)(request, messages(application)).toString
+        verifyView(formProvider().bind(Map("value" -> "invalid value")))
+      }
+
+      "DirectlyExportedPage answer is no" in {
+        val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+        val result = createSut(Some(ans)).onSubmit(NormalMode)(
+          FakeRequest(POST, "").withFormUrlEncodedBody(("value", "invalid value"))
+        )
+
+        status(result) mustEqual BAD_REQUEST
+        verifyView(
+          formProvider().bind(Map("value" -> "invalid value")),
+          manufacturedAmount + importedAmount,
+          false
+        )
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "redirect to Journey Recovery if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = createSut(None).onSubmit(NormalMode)(
+        FakeRequest(POST, "").withFormUrlEncodedBody(("value",  validAnswer.toString))
+      )
 
-      running(application) {
-        val request = FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "set the cache" in {
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(Call(GET, "foo"))
+      when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mock[HttpResponse]))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      await(createSut(Some(nonExportedAnswer)).onSubmit(NormalMode)(
+        FakeRequest(POST, "").withFormUrlEncodedBody(("value", "10"))
+      ))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingWeightRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
+      val expectedUserAnswer = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 10L).get
+      verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any())
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
     }
+  }
+
+  private def createSut(userAnswer: Option[UserAnswers]): NonExportedHumanMedicinesPlasticPackagingWeightController = {
+    new NonExportedHumanMedicinesPlasticPackagingWeightController(
+      mock[MessagesApi],
+      mockCacheConnector,
+      mockNavigator,
+      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+      new FakeDataRetrievalAction(userAnswer),
+      new DataRequiredActionImpl(),
+      formProvider,
+      stubMessagesControllerComponents(),
+      mockView
+    )
+  }
+
+  private def verifyView(
+    expectedForm: Form[Long],
+    expectedAmount: Long = nonExportedAmount,
+    expectedDirectlyExportedAnswer: Boolean = true
+  ): HtmlFormat.Appendable = {
+    verify(mockView).apply(
+      ArgumentMatchers.eq(expectedAmount),
+      ArgumentMatchers.eq(expectedForm),
+      ArgumentMatchers.eq(NormalMode),
+      ArgumentMatchers.eq(expectedDirectlyExportedAnswer))(any(), any())
   }
 }

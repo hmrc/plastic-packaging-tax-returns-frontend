@@ -275,15 +275,15 @@ manufacturedPlasticPackagingWeight.paragraph.include = Include in your total, pl
 manufacturedPlasticPackagingWeight.list.include.1 = contains 30% or more recycled plastic
 manufacturedPlasticPackagingWeight.list.include.2 = will be used for the immediate packaging of licenced human medicines
 
-NonExportRecycledPlasticPackaging.title = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
-NonExportRecycledPlasticPackaging.heading = You did not export {0} of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?
-NonExportRecycledPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components contained 30% or more recycled plastic
+NonExportRecycledPlasticPackaging.heading = A total of {0} was not exported. Did any of this contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.directly.export.no.heading = Did any of your {0} of your total finished plastic packaging components contain 30% or more recycled plastic?
+NonExportRecycledPlasticPackaging.error.required = Select yes if any of your finished plastic packaging components contained 30% or more recycled plastic
 NonExportRecycledPlasticPackaging.paragraph.line.1 = You will not be charged tax on these but you must still tell us about them.
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
 
-NonExportRecycledPlasticPackagingWeight.title = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
-NonExportedRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.directly.export.no.heading = How much of your {0} of finished plastic packaging components contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers
 NonExportRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 NonExportRecycledPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
@@ -424,7 +424,8 @@ confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Weight of im
 confirmPlasticPackagingTotal.total.label = Plastic packaging total
 
 nonExportedHumanMedicinesPlasticPackaging.caption = Non-exported plastic packaging
-nonExportedHumanMedicinesPlasticPackaging.heading = You did not export {0} of your total finished plastic packaging components. Was any of this used for the immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackaging.heading = A total of {0} was not exported. Was any of this used for the immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading = Were any of your {0} of finished plastic packaging components used for the immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackaging.detail = You will not be charged tax on these but you must still tell us about them.
 nonExportedHumanMedicinesPlasticPackaging.reveal = What do we mean by immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immediate’ if it comes into direct contact with a licenced medicinal product.
@@ -432,6 +433,7 @@ nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if any of 
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Non-exported plastic packaging
 nonExportedHumanMedicinesPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading = How much of your {0} of finished plastic packaging components was used for the immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1 = This will show as a deduction on your tax calculation.
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers

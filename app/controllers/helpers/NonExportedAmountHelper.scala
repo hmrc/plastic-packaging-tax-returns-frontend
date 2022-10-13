@@ -16,42 +16,43 @@
 
 package controllers.helpers
 
-import models.requests.DataRequest
+import models.UserAnswers
 import pages.QuestionPage
-import pages.returns.{DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
+import pages.returns._
 
 object NonExportedAmountHelper {
 
-  private def getAmount
-  (
+  def nonExportedAmount(userAnswers: UserAnswers):Option[Long] = {
+
+    for {
+      manufacturing <- manufacturingPlasticAmount(userAnswers)
+      imported <- importedPlasticAmount(userAnswers)
+      exported <- exportedAmount(userAnswers)
+    } yield manufacturing + imported - exported
+
+  }
+
+  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean)] = {
+    for {
+      isYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
+      value <- nonExportedAmount(userAnswers)
+    } yield (value, isYesNo)
+  }
+
+  private def getAmount(
+    userAnswer: UserAnswers,
     page: QuestionPage[Boolean],
-    weightPage: QuestionPage[Long])
-  (implicit request: DataRequest[_]): Option[Long] = {
-    request.userAnswers.get(page).flatMap
-      { _  => request.userAnswers.get(weightPage)}
+    weightPage: QuestionPage[Long]
+  ): Option[Long] = {
+    userAnswer.get(page).flatMap { _  => userAnswer.get(weightPage) }
   }
 
-  def manufacturingPlasticAmount(implicit request: DataRequest[_]): Option[Long] =
-    getAmount(ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage)
+  private def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
+    getAmount(userAnswer, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage)
 
-  def importedPlasticAmount(implicit request: DataRequest[_]):Option[Long] =
-    getAmount(ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage)
+  private def importedPlasticAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage)
 
-  def exportedAmount(implicit request: DataRequest[_]):Option[Long] =
-    getAmount(DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
-
-  def nonExportedAmount(implicit request: DataRequest[_]):Either[Result,Long] = {
-
-    (for {
-      manufacturing <- NonExportedAmountHelper.manufacturingPlasticAmount
-      imported <- NonExportedAmountHelper.importedPlasticAmount
-      exported <- NonExportedAmountHelper.exportedAmount
-    } yield manufacturing + imported - exported)
-      .fold[Either[Result, Long]](
-        Left(Redirect(controllers.routes.IndexController.onPageLoad)))(Right(_))
-
-  }
-
+  private def exportedAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
 }
