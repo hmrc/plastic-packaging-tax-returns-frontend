@@ -16,7 +16,6 @@
 
 package models.subscription.subscriptionDisplay
 
-import models.subscription.CustomerType.{Individual, Organisation}
 import models.subscription.group.GroupOrPartnershipSubscription
 import models.subscription.{
   AddressDetails,
@@ -38,27 +37,7 @@ case class SubscriptionDisplayResponse(
   last12MonthTotalTonnageAmt: BigDecimal,
   declaration: Declaration,
   groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
-) {
-
-  val entityName: String = legalEntityDetails.customerDetails.customerType match {
-    case Individual =>
-      legalEntityDetails.customerDetails.individualDetails.map(
-        details =>
-          s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
-      ).getOrElse(throw new IllegalStateException("Individual name absent"))
-    case Organisation =>
-      legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName).getOrElse(
-        throw new IllegalStateException("Organisation name absent")
-      )
-  }
-
-  val organisationType: Option[String] =
-    legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationType)
-
-  val isGroup: Boolean       = legalEntityDetails.groupSubscriptionFlag
-  val isPartnership: Boolean = legalEntityDetails.partnershipSubscriptionFlag
-
-}
+)
 
 object SubscriptionDisplayResponse {
 

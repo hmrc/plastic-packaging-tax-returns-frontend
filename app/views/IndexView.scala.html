@@ -17,6 +17,7 @@
 @import components.{card, cardSection, Link, paragraph, SectionHeader}
 @import config.{Features, FrontendAppConfig}
 @import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+@import models.subscription.LegalEntityDetails
 @import models.obligations.PPTObligations
 @import views.ViewUtils
 @import models.Mode.NormalMode
@@ -27,39 +28,38 @@
     cardSection: cardSection,
     link: Link,
     paragraph: paragraph,
-    card: card
+    card: card,
+    appConfig: FrontendAppConfig
 )
 
 @(
-    appConfig: FrontendAppConfig,
-    subscription: SubscriptionDisplayResponse,
+    legalEntity: LegalEntityDetails,
     obligations: Option[PPTObligations],
     isFirstReturn: Boolean,
     paymentStatement: Option[String],
-    completeReturnUrl: String,
     pptReference: String
 )(implicit request: Request[_], messages: Messages)
 
 @organisationName = @{
-    if(subscription.isGroup)
-      messages("account.homePage.organisation.group", subscription.entityName)
+    if(legalEntity.isGroup)
+      messages("account.homePage.organisation.group", legalEntity.entityName)
     else
-      subscription.entityName
+      legalEntity.entityName
 }
 
 @link1Text = @{
-    if(subscription.isGroup)
+    if(legalEntity.isGroup)
         messages("account.homePage.card.registration.details.1.link.group")
-    else if(subscription.isPartnership)
+    else if(legalEntity.isPartnership)
         messages("account.homePage.card.registration.details.1.link.partnership")
     else
         messages("account.homePage.card.registration.details.1.link.single")
 }
 
 @link2Text = @{
-    if(subscription.isGroup)
+    if(legalEntity.isGroup)
         messages("account.homePage.card.registration.details.2.link.group")
-    else if(subscription.isPartnership)
+    else if(legalEntity.isPartnership)
         messages("account.homePage.card.registration.details.2.link.partnership")
     else
         ""
@@ -114,9 +114,9 @@
 }
 
 @entityManagementCards = @{
-    if(subscription.isGroup) {
+    if(legalEntity.isGroup) {
         groupManagement
-    } else if(subscription.isPartnership) {
+    } else if(legalEntity.isPartnership) {
         partnershipManagement
     } else {
         singleEntityManagement
@@ -205,7 +205,7 @@
             ).filter(_.isDefined).flatten,
             links = Seq[Option[Html]](
                 returnsLink,
-                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", completeReturnUrl), newTab = true))
+                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", appConfig.pptCompleteReturnGuidanceUrl), newTab = true))
             ).filter(_.isDefined).flatten
         )
 

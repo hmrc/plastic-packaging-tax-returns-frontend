@@ -115,6 +115,7 @@ object SessionRepository {
     val AmendChargeRef: JsPath = JsPath \ "AmendChargeRef"
     val ReturnChargeRef: JsPath = JsPath \ "ReturnChargeRef"
     val ReturnObligationPeriod: JsPath = JsPath \ "ReturnObligationPeriod"
+    val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
   }
 
 }

@@ -26,9 +26,13 @@ import controllers.home.{routes => homeRoutes}
 import models.Mode.NormalMode
 import models.requests.{IdentifiedRequest, IdentityData}
 import models.SignedInUser
+import models.subscription.LegalEntityDetails
 import play.api.Logger
+import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Results._
 import play.api.mvc._
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.SubscriptionIsActive
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,16 +59,34 @@ class PanAndLindsay @Inject()(
     identifierAction.andThen(subscriptionFilter).invokeBlock(request, block)
 }
 
+
+case class PPTSubscriptionDetails(legalEntityDetails: LegalEntityDetails)
+object PPTSubscriptionDetails {
+  implicit val format: OFormat[PPTSubscriptionDetails] = Json.format[PPTSubscriptionDetails]
+}
+
 class SubscriptionFilter @Inject()(
-                                    subscriptionConnector: SubscriptionConnector
+                                    subscriptionConnector: SubscriptionConnector,
+                                    sessionRepository: SessionRepository
                                   )(implicit val executionContext: ExecutionContext)
   extends ActionFilter[IdentifiedRequest] with HeaderCarrierConverter {
 
   override protected def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
-    subscriptionConnector.get(request.pptReference)(fromRequestAndSession(request, request.session)).map{
-      case Right(_) => None //session cache goes here
-      case Left(eisFailure) if eisFailure.isDeregistered => Some(Redirect(agentRoutes.DeregisteredController.onPageLoad())) //agent?????
-      case Left(_) => throw new RuntimeException("uh oh") //todo
+    sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive).flatMap{
+      case Some(_) => Future.successful(None)
+      case _ =>
+        subscriptionConnector.get(request.pptReference)(fromRequestAndSession(request, request.session)).flatMap{
+          case Right(subscription) => sessionRepository
+            .set(request.cacheKey, SubscriptionIsActive, PPTSubscriptionDetails(subscription.legalEntityDetails))
+            .map(_ => None)
+          case Left(eisFailure) if eisFailure.isDeregistered =>
+            Future.successful(Some(Redirect(agentRoutes.DeregisteredController.onPageLoad()))) //agent?????
+          case Left(eisFailure) =>
+            throw new RuntimeException(
+              s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
+                .getOrElse("no underlying reason supplied")}"
+            )
+        }
     }
   }
 

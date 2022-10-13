@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import models.subscription.CustomerType.{Individual, Organisation}
 import play.api.libs.json.{Json, OFormat}
 
 case class LegalEntityDetails(
@@ -26,7 +27,25 @@ case class LegalEntityDetails(
   groupSubscriptionFlag: Boolean = false,
   regWithoutIDFlag: Option[Boolean] = None,
   partnershipSubscriptionFlag: Boolean = false
-)
+){
+  val entityName: String = customerDetails.customerType match {
+    case Individual =>
+      customerDetails.individualDetails.map(
+        details =>
+          s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
+      ).getOrElse(throw new IllegalStateException("Individual name absent"))
+    case Organisation =>
+      customerDetails.organisationDetails.flatMap(_.organisationName).getOrElse(
+        throw new IllegalStateException("Organisation name absent")
+      )
+  }
+
+  val organisationType: Option[String] =
+    customerDetails.organisationDetails.flatMap(_.organisationType)
+
+  val isGroup: Boolean       = groupSubscriptionFlag
+  val isPartnership: Boolean = partnershipSubscriptionFlag
+}
 
 object LegalEntityDetails {
 
