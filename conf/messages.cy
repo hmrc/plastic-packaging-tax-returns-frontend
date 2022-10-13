@@ -86,7 +86,7 @@ AmendsCheckYourAnswers.error.heading = Cyflwyno’ch Ffurflen Dreth diwygiedig
 AmendsCheckYourAnswers.error.line = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
 AmendsCheckYourAnswers.cancel.link.text = Canslo’r diwygiad hwn
 AmendsCheckYourAnswers.credits.heading = Credydau
-AmendsCheckYourAnswers.credit.paragraph = You cannot amend credits.
+AmendsCheckYourAnswers.credit.paragraph = Ni allwch ddiwygio credydau.
 AmendsCheckYourAnswers.error.noAmendments = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon gan nad ydych wedi gwneud unrhyw newidiadau.
 
 
