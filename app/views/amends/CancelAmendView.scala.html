@@ -15,41 +15,55 @@
  *@
 
 @import models.returns.TaxReturnObligation
+@import views.html.components.paragraphBody
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody
 )
 
-@(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], maybeObligation: Option[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
-@pageHeading =  @{messages("cancelAmend.title",
+@pageHeading = @{
+    maybeObligation match {
+        case Some(obligation) =>
+            messages("cancelAmend.title",
                 messages(s"month.${obligation.fromDate.getMonthValue}"),
                 messages(s"month.${obligation.toDate.getMonthValue}"),
                 obligation.toDate.getYear.toString)
-                }
-
-
-@layout(pageTitle = title(form, pageHeading)) {
-
-    @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
-
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+        case _ =>
+            "yeah but no"
+    }
+}
+    
+@formContent = @{
+    formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
+        if(form.errors.nonEmpty) {
+            govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
-        @govukRadios(
+        govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(pageHeading).asPageHeading()
             )
         )
-
-        @govukButton(
+        govukButton(
             ButtonViewModel(messages("site.button.continue"))
         )
     }
+}    
+    
+@layout(pageTitle = title(form, pageHeading), showBackLink = false) {
+    
+    @{
+        maybeObligation match {
+            case Some(_) => formContent
+            case _ => paragraphBody("nowt to do")
+        }
+    } 
+
 }
