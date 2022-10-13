@@ -33,12 +33,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse, Upstrea
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
-  private val httpClient2 = mock[HttpClient]
+class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   private val frontendAppConfig = mock[FrontendAppConfig]
   private val metrics2 = mock[Metrics](ReturnsDeepStubs)
   private val timerContext = mock[Timer.Context]
+  private val httpClient2 = mock[HttpClient]
 
   protected implicit val ec2: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   protected implicit val hc2: HeaderCarrier = mock[HeaderCarrier]
