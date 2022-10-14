@@ -17,15 +17,19 @@
 package views
 
 import base.ViewSpecBase
-import config.FrontendAppConfig
+import config.{Features, FrontendAppConfig}
 import controllers.payments.{routes => paymentRoute}
 import controllers.returns.routes
 import models.Mode.NormalMode
 import models.obligations.PPTObligations
+import models.subscription.LegalEntityDetails
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
+import play.api
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import support.ObligationsTestData.{noneDueUpToDate, oneDueOneOverdue, oneDueTwoOverdue, oneDueUpToDate}
 import support.{ViewAssertions, ViewMatchers}
@@ -48,38 +52,49 @@ object SubscriptionTypes extends Enumeration {
 class IndexPageViewSpec
     extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  private val homePage                     = inject[IndexView]
-  private val appConfig                    = inject[FrontendAppConfig]
-  private val singleEntitySubscription     = mock[SubscriptionDisplayResponse]
-  private val groupSubscription            = mock[SubscriptionDisplayResponse]
-  private val partnershipSubscription      = mock[SubscriptionDisplayResponse]
-  val completeReturnUrl                    = "/complete-return-url"
-  val pptFinancials                        = Some("You owe £100")
+
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(api.inject.bind[FrontendAppConfig].toInstance(appConfig))
+    .build()
+
+  lazy val homePage = inject[IndexView]
+  private val appConfig = mock[FrontendAppConfig]
+  private val singleEntitySubscription = mock[LegalEntityDetails]
+  private val groupSubscription = mock[LegalEntityDetails]
+  private val partnershipSubscription = mock[LegalEntityDetails]
+  val completeReturnUrl = "/complete-return-url"
+  val pptFinancials = Some("You owe £100")
 
   when(singleEntitySubscription.entityName).thenReturn("Single entity subscription")
   when(groupSubscription.entityName).thenReturn("Group subscription")
   when(groupSubscription.isGroup).thenReturn(true)
   when(partnershipSubscription.entityName).thenReturn("Partnership subscription")
   when(partnershipSubscription.isPartnership).thenReturn(true)
+  when(appConfig.pptCompleteReturnGuidanceUrl).thenReturn(completeReturnUrl)
+  when(appConfig.pptRegistrationManagePartnersUrl).thenReturn("pptRegistrationManagePartnersUrl")
+  when(appConfig.pptRegistrationDeregisterUrl).thenReturn("pptRegistrationDeregisterUrl")
+  when(appConfig.pptRegistrationAmendUrl).thenReturn("pptRegistrationAmendUrl")
+  when(appConfig.pptRegistrationManageGroupUrl).thenReturn("pptRegistrationManageGroupUrl")
+  when(appConfig.userResearchUrl).thenReturn("ur-url")
+  when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
+  when(appConfig.isFeatureEnabled(Features.paymentsEnabled)).thenReturn(true)
+
 
   private def createView(
-    appConfig: FrontendAppConfig,
-    subscription: SubscriptionDisplayResponse,
+    subscription: LegalEntityDetails,
     obligations: Option[PPTObligations]
   ): Html =
     homePage(
-      appConfig,
       subscription,
       obligations,
       true,
       pptFinancials,
-      completeReturnUrl,
       "XMPPT0000000001"
     )(request, messages)
 
   "Home Page view" should {
 
-    val view: Html = createView(appConfig, singleEntitySubscription, Some(noneDueUpToDate))
+    val view: Html = createView(singleEntitySubscription, Some(noneDueUpToDate))
 
     "contain timeout dialog function" in {
       containTimeoutDialogFunction(view) mustBe true
@@ -130,7 +145,7 @@ class IndexPageViewSpec
         ).foreach {
 
           case (subscriptionType, subscription) =>
-            val view: Html = createView(appConfig, subscription, Some(obligations))
+            val view: Html = createView(subscription, Some(obligations))
 
             s"displaying $subscriptionType subscription" when {
 
@@ -260,7 +275,7 @@ class IndexPageViewSpec
                       )
 
                       coreManagement.select("a").first() must haveHref(
-                        appConfig.pptRegistrationAmendUrl
+                        "pptRegistrationAmendUrl"
                       )
 
                       checkDeregisterCard(deregister)
@@ -275,7 +290,7 @@ class IndexPageViewSpec
                       )
 
                       coreManagement.select("a").first() must haveHref(
-                        appConfig.pptRegistrationAmendUrl
+                        "pptRegistrationAmendUrl"
                       )
 
                       additionalManagement.select("h3").text() must include(
@@ -287,7 +302,7 @@ class IndexPageViewSpec
                       )
 
                       additionalManagement.select("a").first() must haveHref(
-                        appConfig.pptRegistrationManageGroupUrl
+                        "pptRegistrationManageGroupUrl"
                       )
 
                       checkDeregisterCard(deregister)
@@ -302,7 +317,7 @@ class IndexPageViewSpec
                       )
 
                       coreManagement.select("a").first() must haveHref(
-                        appConfig.pptRegistrationAmendUrl
+                        "pptRegistrationAmendUrl"
                       )
 
                       additionalManagement.select("h3").text() must include(
@@ -314,7 +329,7 @@ class IndexPageViewSpec
                       )
 
                       additionalManagement.select("a").first() must haveHref(
-                        appConfig.pptRegistrationManagePartnersUrl
+                        "pptRegistrationManagePartnersUrl"
                       )
 
                       checkDeregisterCard(deregister)
@@ -329,10 +344,9 @@ class IndexPageViewSpec
     "not render the de-registration link" when {
       "deregistration enabled feature flag is false" in {
 
-        val mockAppConfig = mock[FrontendAppConfig]
-        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(false)
+        when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(false)
 
-        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
+        val view: Html = createView(groupSubscription, Some(oneDueOneOverdue))
 
         view.getElementById("deregister") mustBe null
 
@@ -342,10 +356,9 @@ class IndexPageViewSpec
     "render the de-registration link" when {
       "deregistration enabled feature flag is true" in {
 
-        val mockAppConfig = mock[FrontendAppConfig]
-        when(mockAppConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
+        when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
 
-        val view: Html = createView(mockAppConfig, groupSubscription, Some(oneDueOneOverdue))
+        val view: Html = createView(groupSubscription, Some(oneDueOneOverdue))
 
         view.getElementById("deregister") must not be null
 
@@ -357,14 +370,14 @@ class IndexPageViewSpec
 
     deregister.select("h3").text() must include(messages("account.homePage.card.deregister.link"))
     deregister.select("p").text() mustBe messages("account.homePage.card.deregister.body")
-    deregister.select("a").first() must haveHref(appConfig.pptRegistrationDeregisterUrl)
+    deregister.select("a").first() must haveHref("pptRegistrationDeregisterUrl")
 
   }
 
   "get obligations fails" should {
     "inform the user" in {
 
-      val viewWithoutObligations: Html = createView(appConfig, singleEntitySubscription, None)
+      val viewWithoutObligations: Html = createView(singleEntitySubscription, None)
       val card                         = viewWithoutObligations.select(".card .card-body").get(0)
 
       card.select(".govuk-body").first() must containMessage(

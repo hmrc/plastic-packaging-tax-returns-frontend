@@ -17,10 +17,11 @@
 package repositories
 
 import config.FrontendAppConfig
+import models.RichJsObject
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsError, JsObject, JsPath, JsResultException, JsSuccess, Json, Reads, Writes}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -30,18 +31,22 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-final case class Entry(id: String, data: Option[String], lastUpdated: Instant = Instant.now())
+final case class Entry(
+                        id: String,
+                        data: JsObject = JsObject.empty,
+                        lastUpdated: Instant = Instant.now()
+                      )
 
 object Entry {
   implicit val format: Format[Entry] = Format(
     (
       (JsPath \ "_id").read[String] and
-        (JsPath \ "data").readNullable[String] and
+        (JsPath \ "data").read[JsObject] and
         (JsPath \ "lastUpdated").read[Instant](MongoJavatimeFormats.instantFormat)
       )(Entry.apply _),
     (
       (JsPath \ "_id").write[String] and
-        (JsPath \ "data").writeNullable[String] and
+        (JsPath \ "data").write[JsObject] and
         (JsPath \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantFormat)
       )(unlift(Entry.unapply))
   )
@@ -77,31 +82,40 @@ class SessionRepository @Inject()(
       .toFuture
       .map(_ => true)
 
-  def get(id: String): Future[Option[Entry]] =
-    keepAlive(id).flatMap {
-      _ =>
-        collection
-          .find(byId(id))
-          .headOption
-    }
+  private def get(id: String): Future[Option[Entry]] =
+    collection.find(byId(id)).headOption
 
-  def set(entry: Entry): Future[Boolean] = {
+  def get[A](id: String, path: JsPath)(implicit rds: Reads[A]): Future[Option[A]] =
+    get(id).map{_.flatMap{ entry =>
+        Reads.optionNoError(Reads.at(path)(rds)).reads(entry.data).getOrElse(None)
+    }}
 
-    val updatedAnswers = entry copy (lastUpdated = Instant.now(clock))
-
+  private def set(entry: Entry): Future[Boolean] =
     collection
-      .replaceOne(filter = byId(updatedAnswers.id),
-                  replacement = updatedAnswers,
+      .replaceOne(filter = byId(entry.id),
+                  replacement = entry,
                   options = ReplaceOptions().upsert(true)
       )
       .toFuture
       .map(_ => true)
-  }
 
-  def clear(id: String): Future[Boolean] =
-    collection
-      .deleteOne(byId(id))
-      .toFuture
-      .map(_ => true)
+  def set[A](id: String, path: JsPath, value: A)(implicit writes: Writes[A]): Future[Boolean] =
+      get(id).map{_.fold(JsObject.empty)(_.data)}.flatMap {
+        _.setObject(path, Json.toJson(value)) match {
+            case JsSuccess(jsValue, _) => set(Entry(id, jsValue))
+            case JsError(errors) => Future.failed(JsResultException(errors))
+          }
+      }
+
+}
+
+object SessionRepository {
+
+  object Paths {
+    val AmendChargeRef: JsPath = JsPath \ "AmendChargeRef"
+    val ReturnChargeRef: JsPath = JsPath \ "ReturnChargeRef"
+    val ReturnObligationPeriod: JsPath = JsPath \ "ReturnObligationPeriod"
+    val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
+  }
 
 }

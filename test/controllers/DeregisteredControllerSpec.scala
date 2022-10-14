@@ -17,9 +17,35 @@
 package controllers
 
 import base.SpecBase
+import controllers.actions.AuthAction
+import models.SignedInUser
+import models.requests.{IdentifiedRequest, IdentityData}
+import play.api.inject.bind
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.Enrolments
 import views.html.DeregisteredView
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+//todo mess.
+class FakeIdentifierActionOld @Inject() (bodyParsers: PlayBodyParsers) extends AuthAction {
+
+  override def invokeBlock[A](
+                               request: Request[A],
+                               block: IdentifiedRequest[A] => Future[Result]
+                             ): Future[Result] = {
+    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData(internalId = "SomeId"))
+    block(IdentifiedRequest(request, pptLoggedInUser, None))
+  }
+
+  override def parser: BodyParser[AnyContent] =
+    bodyParsers.default
+  override protected def executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
+}
 
 class DeregisteredControllerSpec extends SpecBase {
 
@@ -27,7 +53,9 @@ class DeregisteredControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+        bind[AuthAction].to[FakeIdentifierActionOld]
+      ).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.DeregisteredController.onPageLoad().url)

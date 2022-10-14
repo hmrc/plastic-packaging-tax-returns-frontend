@@ -16,7 +16,7 @@
 
 package support
 
-import controllers.actions.IdentifierAction
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction
 import models.SignedInUser
 import models.requests.IdentifiedRequest
 import play.api.mvc.{AnyContentAsEmpty, Headers}

@@ -38,6 +38,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView
 
@@ -151,14 +152,14 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
 
     "must cache payment ref and redirect for a POST" in {
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.set(any(), any(), any())(any())).thenReturn(Future.successful(true))
       when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
 
       val result = createSut(Some(setUserAnswer)).onSubmit()(FakeRequest(POST, "/foo"))
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(true).url
-      verify(mockSessionRepository).set(any())
+      verify(mockSessionRepository).set(any(), ArgumentMatchers.eq(Paths.ReturnChargeRef), ArgumentMatchers.eq(Some("12345")))(any())
     }
   }
 

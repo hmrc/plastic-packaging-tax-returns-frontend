@@ -16,7 +16,7 @@
 
 package support
 
-import controllers.actions.IdentifierAction
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction
 import models.{subscription, SignedInUser}
 import models.requests.IdentityData
 import models.subscription.subscriptionDisplay.{

@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.auth.core.Enrolment
 

@@ -24,6 +24,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.{JsObject, JsPath, JsString}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.temporal.ChronoUnit
@@ -42,7 +43,8 @@ class SessionRepositorySpec
   private val instant = Instant.now
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
 
-  private val entry = Entry("1234", Some("value"), Instant.ofEpochSecond(1))
+  val entryValue: JsObject = JsObject.apply(Seq("key" -> JsString("value")))
+  private val entry = Entry("1234", JsObject.apply(Seq("path" -> entryValue)), Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1
@@ -59,7 +61,7 @@ class SessionRepositorySpec
 
       val expectedResult = entry copy (lastUpdated = instant.truncatedTo(ChronoUnit.MILLIS))
 
-      val setResult     = repository.set(entry).futureValue
+      val setResult     = repository.set(entry.id, JsPath \ "path", entryValue).futureValue
       val updatedRecord = find(Filters.equal("_id", entry.id)).futureValue.headOption.value
 
       setResult mustEqual true
@@ -68,45 +70,12 @@ class SessionRepositorySpec
   }
 
   ".get" - {
-
-    "when there is a record for this id" - {
-
-      "must update the lastUpdated time and get the record" in {
-
-        insert(entry).futureValue
-
-        val result         = repository.get(entry.id).futureValue
-        val expectedResult = entry copy (lastUpdated = instant)
-
-        verifyUserAnswerResult(result.value, expectedResult)
-      }
-    }
-
     "when there is no record for this id" - {
 
       "must return None" in {
 
-        repository.get("id that does not exist").futureValue must not be defined
+        repository.get[String](entry.id, JsPath).futureValue must not be defined
       }
-    }
-  }
-
-  ".clear" - {
-
-    "must remove a record" in {
-
-      insert(entry).futureValue
-
-      val result = repository.clear(entry.id).futureValue
-
-      result mustEqual true
-      repository.get(entry.id).futureValue must not be defined
-    }
-
-    "must return true when there is no record to remove" in {
-      val result = repository.clear("id that does not exist").futureValue
-
-      result mustEqual true
     }
   }
 
@@ -141,6 +110,6 @@ class SessionRepositorySpec
   def verifyUserAnswerResult(actual: Entry, expected: Entry) = {
     actual.id mustEqual expected.id
     actual.data mustEqual expected.data
-    actual.lastUpdated.truncatedTo(ChronoUnit.MILLIS) mustEqual expected.lastUpdated.truncatedTo(ChronoUnit.MILLIS)
   }
+
 }

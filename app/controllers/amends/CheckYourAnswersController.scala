@@ -26,6 +26,7 @@ import models.requests.DataRequest
 import models.returns.{AmendsCalculations, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository.Paths
 import repositories.{Entry, SessionRepository}
 import services.AmendReturnAnswerComparisonService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -104,7 +105,7 @@ class CheckYourAnswersController @Inject()
         val pptId: String = request.request.pptReference
         returnsConnector.amend(pptId).flatMap {
           optChargeRef =>
-            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
+            sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
         }
