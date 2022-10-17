@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import controllers.{routes => agentRoutes}
 import controllers.home.{routes => homeRoutes}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, internalId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,46 +61,18 @@ class AuthenticatedIdentifierAction @Inject() (
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     // In theory this could be deduplicated with SelectedClientIdentifier by the generic makes it too difficult
-    def getSelectedClientIdentifier() = request.session.get("clientPPT")
 
     val authorisation            = authTimer.time()
-    val selectedClientIdentifier = getSelectedClientIdentifier()
+    val selectedClientIdentifier = request.session.get("clientPPT")
 
-    authorised(AuthPredicate.createWithEnrolment(selectedClientIdentifier)).retrieve(authData) {
-      case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
-        confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
-        credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
+    authorised(AuthPredicate.createWithEnrolment(selectedClientIdentifier))
+      .retrieve(internalId and affinityGroup and allEnrolments) {
+      case internalId ~ affinityGroup ~ allEnrolments =>
         authorisation.stop()
 
-        val id = internalId.getOrElse(
-          throw new IllegalArgumentException(
-            s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
-          )
-        )
+        val id = internalId.getOrElse(throw new IllegalArgumentException("internalId is required"))
 
-        logger.debug(s"AuthenticatedIdentifierAction::invokeBlock - Credentials Provider ID (CredId): ${credentials.map(c => c.providerId)}")
-
-        val identityData = IdentityData(id,
-          externalId,
-          agentCode,
-          credentials,
-          Some(confidenceLevel),
-          authNino,
-          saUtr,
-          name,
-          dateOfBirth,
-          email,
-          Some(agentInformation),
-          groupIdentifier,
-          credentialRole.map(res => res.toJson.toString()),
-          mdtpInformation,
-          itmpName,
-          itmpDateOfBirth,
-          itmpAddress,
-          affinityGroup,
-          credentialStrength,
-          Some(loginTimes)
-        )
+        val identityData = IdentityData(id, affinityGroup)
 
         affinityGroup match {
           case Some(AffinityGroup.Agent) =>

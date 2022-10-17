@@ -22,6 +22,12 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength, Enrolment}
 
 object AuthPredicate {
 
+  def pan(pptRef: String) = {
+    Enrolment(pptEnrolmentKey).withIdentifier(pptEnrolmentIdentifierName,
+      pptRef
+    ).withDelegatedAuthRule("ppt-auth")
+  }
+
   def createWithEnrolment(selectedClientIdentifier: Option[String]): Predicate =
     selectedClientIdentifier.map { clientIdentifier =>
       // If this request is decorated with a selected client identifier this indicates
