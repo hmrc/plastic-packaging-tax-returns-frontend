@@ -114,7 +114,7 @@ object SessionRepository {
   object Paths {
     val AmendChargeRef: JsPath = JsPath \ "AmendChargeRef"
     val ReturnChargeRef: JsPath = JsPath \ "ReturnChargeRef"
-    val ReturnObligationPeriod: JsPath = JsPath \ "ReturnObligationPeriod"
+    val TaxReturnObligation: JsPath = JsPath \ "TaxReturnObligation"
     val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
   }
 

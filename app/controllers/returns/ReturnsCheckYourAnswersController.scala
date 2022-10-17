@@ -73,8 +73,8 @@ class ReturnsCheckYourAnswersController @Inject()(
                 _ => Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
               }
             case Left(_) =>
-              val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable).toReturnQuarter
-              sessionRepository.set(request.cacheKey, Paths.ReturnObligationPeriod, returnQuarter).map { _ =>
+              val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable)
+              sessionRepository.set(request.cacheKey, Paths.TaxReturnObligation, returnQuarter).map { _ =>
                 Redirect(routes.AlreadySubmittedController.onPageLoad())
               }
           }

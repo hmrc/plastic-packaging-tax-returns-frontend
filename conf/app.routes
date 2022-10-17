@@ -114,7 +114,7 @@ GET         /start-date-not-recognised                             controllers.r
 
 GET         /return-submitted/:isUserClaimingCredit                controllers.returns.ReturnConfirmationController.onPageLoad(isUserClaimingCredit: Boolean)
 
-GET         /return-already-submitted                              controllers.returns.AlreadySubmittedController.onPageLoad()
+GET         /return-received                                        controllers.returns.AlreadySubmittedController.onPageLoad()
 
 GET         /agents                                                controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
 POST        /agents                                                controllers.AgentsController.onSubmit(mode: Mode = NormalMode)

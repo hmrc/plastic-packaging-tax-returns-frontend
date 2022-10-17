@@ -578,8 +578,8 @@ removeCredit.title = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.heading = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.error.required = Dewiswch ‘Iawn’ os ydych am dynnu’r credyd hwn
 
-return-already-submitted.heading = Your return has been submitted
-return-already-submitted.para.1 = Your return for {0} has already been submitted. You do not need to resubmit it.
-return-already-submitted.para.2 = You can:
-return-already-submitted.list.1 = view or amend submitted returns
-return-already-submitted.list.2 = check what you owe
+return-already-submitted.heading = Mae’ch Ffurflen Dreth wedi dod i law
+return-already-submitted.para.1 = Mae’ch Ffurflen Dreth ar gyfer {0} wedi dod i law. Does dim angen i chi ei chyflwyno eto.
+return-already-submitted.para.2 = Gallwch wneud y canlynol:
+return-already-submitted.list.1 = bwrw golwg dros neu ddiwygio Ffurflenni a gyflwynwyd
+return-already-submitted.list.2 = gwirio’r hyn sydd arnoch

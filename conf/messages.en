@@ -543,6 +543,7 @@ converted.credits.error.whole.number = Weight must not include decimals
 
 what-do-you-want-to-do.title = What do you want to do?
 what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
+what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
 what-do-you-want-to-do.error.required = Select what you want to do
 what-do-you-want-to-do.credit-and-return = Claim tax back from previous returns as credit, then start {0} return
 what-do-you-want-to-do.just-return = Start {0} return
@@ -564,8 +565,8 @@ removeCredit.title = Are you sure you want to remove this credit?
 removeCredit.heading = Are you sure you want to remove this credit?
 removeCredit.error.required = Select yes if you want to remove this credit
 
-return-already-submitted.heading = Your return has been submitted
-return-already-submitted.para.1 = Your return for {0} has already been submitted. You do not need to resubmit it.
+return-already-submitted.heading = We’ve received your return
+return-already-submitted.para.1 = We’ve received your return for {0}. You do not need to submit it again.
 return-already-submitted.para.2 = You can:
 return-already-submitted.list.1 = view or amend submitted returns
 return-already-submitted.list.2 = check what you owe
