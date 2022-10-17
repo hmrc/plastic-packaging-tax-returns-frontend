@@ -32,7 +32,7 @@
 
 @(returnPeriodDescription: String)(implicit request: Request[_], messages: Messages)
   
-@layout(pageTitle = titleNoForm(messages("return-already-submitted.heading")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("return-already-submitted.heading"), Some(messages("return.title.tail"))), showBackLink = false) {
 
     @heading(messages("return-already-submitted.heading"))
 

@@ -17,6 +17,7 @@
 package controllers.returns
 
 import controllers.actions._
+import models.returns.TaxReturnObligation
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,17 +31,15 @@ import scala.concurrent.ExecutionContext
 class AlreadySubmittedController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
   view: AlreadySubmittedView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get[String](request.cacheKey, Paths.ReturnObligationPeriod).map {
+      sessionRepository.get[TaxReturnObligation](request.cacheKey, Paths.TaxReturnObligation).map {
         maybeReturnQuarter =>
-          Ok(view(maybeReturnQuarter.get))
+          Ok(view(maybeReturnQuarter.get.toReturnQuarter))
       }
     }
 }
