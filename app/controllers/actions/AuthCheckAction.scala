@@ -19,9 +19,11 @@ package controllers.actions
 import com.google.inject.Inject
 import models.requests.IdentifiedRequest
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
+//todo badly named... sign out action
 class AuthCheckActionImpl @Inject() (authorisedFun: AuthFunction, mcc: MessagesControllerComponents)
     extends AuthCheckAction {
 
@@ -30,12 +32,12 @@ class AuthCheckActionImpl @Inject() (authorisedFun: AuthFunction, mcc: MessagesC
 
   override def invokeBlock[A](
     request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
+    block: AuthedUser[A] => Future[Result]
   ): Future[Result] =
-    authorisedFun.authorised(AuthPredicate.acceptableCredentialStrength, request, block)
+    authorisedFun.authorised(EmptyPredicate, request, block) // these are used for sign out let anyone do that!!!!
 
 }
 
 trait AuthCheckAction
-    extends ActionBuilder[IdentifiedRequest, AnyContent]
-    with ActionFunction[Request, IdentifiedRequest]
+    extends ActionBuilder[AuthedUser, AnyContent]
+    with ActionFunction[Request, AuthedUser]

@@ -17,12 +17,12 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import models.requests.IdentifiedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+//todo only used in one controller... Agent Selcted PPTRef
 class AuthAgentActionImpl @Inject() (
   authorisedFun: AuthFunction,
   mcc: MessagesControllerComponents
@@ -34,9 +34,9 @@ class AuthAgentActionImpl @Inject() (
 
   override def invokeBlock[A](
     request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
+    block: AuthedUser[A] => Future[Result]
   ): Future[Result] =
-    authorisedFun.authorised(AffinityGroup.Agent.and(AuthPredicate.acceptableCredentialStrength),
+    authorisedFun.authorised(AffinityGroup.Agent,
                              request,
                              block
     )
@@ -44,5 +44,5 @@ class AuthAgentActionImpl @Inject() (
 }
 
 trait AuthAgentAction
-    extends ActionBuilder[IdentifiedRequest, AnyContent]
-    with ActionFunction[Request, IdentifiedRequest]
+    extends ActionBuilder[AuthedUser, AnyContent]
+    with ActionFunction[Request, AuthedUser]

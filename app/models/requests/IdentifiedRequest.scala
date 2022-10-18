@@ -22,10 +22,9 @@ import play.api.mvc.{Request, WrappedRequest}
 case class IdentifiedRequest[+A](
   request: Request[A],
   user: SignedInUser,
-  private val enrolmentId: Option[String]
+  pptReference: String
 ) extends WrappedRequest[A](request) {
 
-  def pptReference: String = enrolmentId.getOrElse(throw new IllegalStateException("enrolmentId is missing from request"))
-  def cacheKey: String     = s"${user.identityData.internalId}-$pptReference"
+  def cacheKey: String = s"${user.identityData.internalId}-$pptReference"
 
 }

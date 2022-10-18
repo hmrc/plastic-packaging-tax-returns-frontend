@@ -16,7 +16,6 @@ GET         /account/signed-out                                    controllers.a
 
 GET         /account/sign-out-no-survey                            controllers.auth.AuthController.signOutNoSurvey
 
-GET         /account/user-unauthorised                             controllers.home.UnauthorisedController.unauthorised()
 GET         /account/not-enrolled                                  controllers.home.UnauthorisedController.notEnrolled()
 
 GET         /assets/*file                                          controllers.Assets.versioned(path="/public", file: Asset)

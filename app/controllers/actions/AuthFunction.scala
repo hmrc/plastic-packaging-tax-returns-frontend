@@ -19,81 +19,42 @@ package controllers.actions
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
-import models.SignedInUser
-import models.requests.{IdentifiedRequest, IdentityData}
-import play.api.Logger
-import play.api.mvc.{Request, Result, Results}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.~
+import play.api.mvc.{Request, Result, Results, WrappedRequest}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+
+case class AuthedUser[A](internalId: String, request: Request[A]) extends WrappedRequest[A](request)
+
+//VERY BASIC auth function.
 class AuthFunction @Inject() (
   override val authConnector: AuthConnector,
-  override val appConfig: FrontendAppConfig,
+  appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-    extends AuthorisedFunctions with CommonAuth {
-
-  private val logger    = Logger(this.getClass)
-  private val authTimer = metrics.defaultRegistry.timer("ppt.returns.upstream.auth.timer")
+    extends AuthorisedFunctions {
 
   def authorised[A](
     predicate: Predicate,
     request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
+    block: AuthedUser[A] => Future[Result]
   ): Future[Result] = {
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val authorisation = authTimer.time()
     val target = request.target.path
 
     authorised(predicate)
-      .retrieve(authData) {
-        case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
-            confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
-            credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
-          authorisation.stop()
-          logger.info(
-            "Authorised with affinity group " + affinityGroup + " and enrolments " + allEnrolments
-          )
-
-          val maybeInternalId = internalId.getOrElse(
-            throw new IllegalArgumentException(
-              s"AuthenticatedIdentifierAction::invokeBlock -  internalId is required"
-            )
-          )
-
-          val identityData = IdentityData(maybeInternalId,
-                                          externalId,
-                                          agentCode,
-                                          credentials,
-                                          Some(confidenceLevel),
-                                          authNino,
-                                          saUtr,
-                                          name,
-                                          dateOfBirth,
-                                          email,
-                                          Some(agentInformation),
-                                          groupIdentifier,
-                                          credentialRole.map(res => res.toJson.toString()),
-                                          mdtpInformation,
-                                          itmpName,
-                                          itmpDateOfBirth,
-                                          itmpAddress,
-                                          affinityGroup,
-                                          credentialStrength,
-                                          Some(loginTimes)
-          )
-
-          executeRequest(request, block, identityData, allEnrolments)
-
-      } recover {
+      .retrieve(internalId) { maybeInternalId =>
+        val internalId = maybeInternalId.getOrElse(throw new RuntimeException("user must have internalID"))
+        block(AuthedUser(internalId, request))
+    } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(target)))
 
@@ -104,19 +65,9 @@ class AuthFunction @Inject() (
           )
         )
 
-      case _: AuthorisationException =>
-        Results.Redirect(homeRoutes.UnauthorisedController.unauthorised())
+      case _: AuthorisationException => //todo does this happen if auth just fails. cos this is wrong
+        Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
     }
-  }
-
-  private def executeRequest[A](
-    request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result],
-    identityData: IdentityData,
-    allEnrolments: Enrolments
-  ) = {
-    val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-    block(IdentifiedRequest(request, pptLoggedInUser, None))
   }
 
 }
