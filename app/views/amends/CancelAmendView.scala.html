@@ -16,6 +16,8 @@
 
 @import models.returns.TaxReturnObligation
 @import views.html.components.paragraphBody
+@import views.html.components.heading
+@import views.html.components.Link
 
 @this(
     layout: templates.Layout,
@@ -23,9 +25,10 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    heading: heading,
+    link: Link
 )
-
 @(form: Form[_], maybeObligation: Option[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
 @pageHeading = @{
@@ -36,33 +39,40 @@
                 messages(s"month.${obligation.toDate.getMonthValue}"),
                 obligation.toDate.getYear.toString)
         case _ =>
-            "yeah but no"
+            "This amendment was cancelled"
     }
 }
-    
-@formContent = @{
-    formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
-        if(form.errors.nonEmpty) {
-            govukErrorSummary(ErrorSummaryViewModel(form))
+
+@cancelFormContent() = {
+    @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        govukRadios(
+        @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(pageHeading).asPageHeading()
             )
         )
-        govukButton(
+        @govukButton(
             ButtonViewModel(messages("site.button.continue"))
         )
     }
-}    
+}
+    
+@alreadyCancelledContent() = {
+    @heading(pageHeading)
+    <p>
+        @link("homepage-link", "Return to your Plastic Packaging Tax account", controllers.routes.IndexController.onPageLoad)
+    </p>
+}
     
 @layout(pageTitle = title(form, pageHeading), showBackLink = false) {
     
     @{
         maybeObligation match {
-            case Some(_) => formContent
-            case _ => paragraphBody("nowt to do")
+            case Some(_) => cancelFormContent()
+            case _ => alreadyCancelledContent()
         }
     } 
 
