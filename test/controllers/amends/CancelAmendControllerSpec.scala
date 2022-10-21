@@ -64,7 +64,7 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar with BeforeAn
         val view = application.injector.instanceOf[CancelAmendView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, Some(taxReturnOb))(request, messages(application)).toString
       }
     }
 
@@ -125,7 +125,7 @@ class CancelAmendControllerSpec extends SpecBase with MockitoSugar with BeforeAn
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, Some(taxReturnOb))(request, messages(application)).toString
       }
     }
 
