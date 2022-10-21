@@ -16,8 +16,10 @@
 
 @import models.returns.TaxReturnObligation
 @import views.html.components.paragraphBody
+@import views.html.components.paragraph
 @import views.html.components.heading
 @import views.html.components.Link
+@import views.html.components.bulletList
 
 @this(
     layout: templates.Layout,
@@ -26,8 +28,10 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
     heading: heading,
-    link: Link
+    link: Link,
+    bulletList: bulletList
 )
 @(form: Form[_], maybeObligation: Option[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
@@ -39,7 +43,7 @@
                 messages(s"month.${obligation.toDate.getMonthValue}"),
                 obligation.toDate.getYear.toString)
         case _ =>
-            "This amendment was cancelled"
+            messages("cancelAmend.already-cancelled.title")
     }
 }
 
@@ -59,12 +63,16 @@
         )
     }
 }
-    
+
 @alreadyCancelledContent() = {
     @heading(pageHeading)
-    <p>
-        @link("homepage-link", "Return to your Plastic Packaging Tax account", controllers.routes.IndexController.onPageLoad)
-    </p>
+    @paragraphBody(messages("cancelAmend.already-cancelled.para"))
+    @bulletList(elements = Seq(
+        link("account-link", messages("cancelAmend.already-cancelled.link-text.1"), 
+            controllers.routes.IndexController.onPageLoad), 
+        link("view-return-link", messages("cancelAmend.already-cancelled.link-text.2"), 
+            controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+    ))
 }
     
 @layout(pageTitle = title(form, pageHeading), showBackLink = false) {
