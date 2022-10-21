@@ -39,7 +39,7 @@ class CancelAmendViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
       val page = inject[CancelAmendView]
 
       def render: Html =
-        page(form, aTaxObligation)(request, messages)
+        page(form, Some(aTaxObligation))(request, messages)
 
       render.toString() must passAccessibilityChecks
     }
