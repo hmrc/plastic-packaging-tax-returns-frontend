@@ -29,34 +29,25 @@ sm -s
   * To see account page: http://localhost:8505/plastic-packaging-tax/account 
 * Press **Submit**.
 
-### Accessibilities Test
+### Accessibility Tests
 
-The following command will only run the accessibilities test in a11y directory. 
-Please note that to run the accessibilities tests you will need to install 
-Node v12 or above
+The following command will only run the accessibility tests in a11y directory.
+(You will need to install Node v12+ and npm.)
 ```
 sbt a11y:test
 ```
 
-### Precheck
+### Pushing / merging code
 
-Before submitting a commit or pushing code remotely, please run
+Before pushing code for PR / merging, please run
 ```
-./precheck.sh
+sbt all
 ```
-This will execute unit and integration tests, check the Scala style and code coverage
+This runs the unit, integration, and a11y tests
 
 ### Scalastyle
 
-Project contains `scalafmt` plugin.
-
-Commands for code formatting:
-
-```
-sbt scalafmt        # format compile sources
-sbt test:scalafmt   # format test sources
-sbt sbt:scalafmt    # format .sbt source
-```
+We no longer use Scalastyle.
 
 ### License
 
