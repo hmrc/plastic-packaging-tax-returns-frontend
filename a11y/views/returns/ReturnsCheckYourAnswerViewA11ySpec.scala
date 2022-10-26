@@ -55,7 +55,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(
       request,
       PptTestData.newUser(),
-      Some("123")
+      "123"
     )
     val dataRequest: DataRequest[_] = DataRequest(identifiedRequest, answers)
     val calculations = Calculations(1, 2L, 3L, 5L, true)
