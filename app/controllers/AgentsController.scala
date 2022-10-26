@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.AgentSelectedPPTRef
 import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AgentsView
 
@@ -36,16 +36,17 @@ import scala.concurrent.{ExecutionContext, Future}
 //todo rename? AgentSelectPPTRef And auth controller? BLAH
 class AgentsController @Inject()(
                                   override val messagesApi: MessagesApi,
-                                  override val authConnector: AuthConnector,
+                                  authConnector: AuthConnector,
                                   sessionRepository: SessionRepository,
                                   identify: AuthAgentAction,
                                   form: AgentsFormProvider,
                                   val controllerComponents: MessagesControllerComponents,
                                   view: AgentsView
                                 )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with AuthorisedFunctions {
+  extends FrontendBaseController with I18nSupport {
 
 
+  //todo mode????
   def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
       sessionRepository
@@ -65,18 +66,16 @@ class AgentsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         selectedClientIdentifier => {
-
-          authConnector.authorise(
-            Enrolment(pptEnrolmentKey)
-              .withIdentifier(pptEnrolmentIdentifierName, selectedClientIdentifier)
-              .withDelegatedAuthRule("ppt-auth"),
+          for {
+            _ <- authConnector.authorise(
+              Enrolment(pptEnrolmentKey)
+                .withIdentifier(pptEnrolmentIdentifierName, selectedClientIdentifier)
+                .withDelegatedAuthRule("ppt-auth"),
               EmptyRetrieval
-          ).flatMap{ _ =>
-            sessionRepository
-              .set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier)
-              .map(_ =>
-                Redirect(routes.IndexController.onPageLoad)
-              )
+            )
+            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier)
+          } yield
+            Redirect(routes.IndexController.onPageLoad)
           }.recover{
             case _: InsufficientEnrolments =>
               val errorForm = form()
@@ -84,7 +83,6 @@ class AgentsController @Inject()(
                 .withError("identifier", "agents.client.identifier.auth.error")
               BadRequest(view(errorForm, mode))
           }
-        }
       )
   }
 }

@@ -24,7 +24,7 @@ import models.Mode.NormalMode
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.Logging
-import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParsers, Request, Result, Results}
+import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParser, BodyParsers, ControllerComponents, PlayBodyParsers, Request, Result, Results}
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisationException, AuthorisedFunctions, CredentialStrength, Enrolment, Enrolments, InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -48,10 +48,11 @@ class AuthenticatedIdentifierAction @Inject() (
                                                 override val authConnector: AuthConnector,
                                                 appConfig: FrontendAppConfig,
                                                 sessionRepository: SessionRepository,
-                                                metrics: Metrics,
-                                                val parser: BodyParsers.Default
+                                                controllerComponents: ControllerComponents
                                               )(implicit val executionContext: ExecutionContext)
   extends AuthAction with AuthorisedFunctions with Logging {
+
+  override val parser: BodyParser[AnyContent] = controllerComponents.parsers.default
 
   override def invokeBlock[A](
                                request: Request[A],

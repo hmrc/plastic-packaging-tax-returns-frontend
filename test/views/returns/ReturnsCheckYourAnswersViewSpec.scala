@@ -63,7 +63,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       .overrides(bind[FrontendAppConfig].toInstance(appConfig)).build()
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("123"))
+    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), "123")
     val dataRequest: DataRequest[_]             = DataRequest(identifiedRequest, answers)
 
     TaxReturnViewModel(dataRequest, aTaxObligation, calculations)

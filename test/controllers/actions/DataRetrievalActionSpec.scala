@@ -53,7 +53,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val action = new Harness(cacheConnector)
 
         val result =
-          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, "12345")).futureValue
 
         result.userAnswers.id mustBe "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b-12345"
 
@@ -71,7 +71,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val action = new Harness(cacheConnector)
 
         val result =
-          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, Some("12345"))).futureValue
+          action.callTransform(IdentifiedRequest(FakeRequest(), testUser, "12345")).futureValue
 
         result.userAnswers.id mustBe "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b-12345"
 

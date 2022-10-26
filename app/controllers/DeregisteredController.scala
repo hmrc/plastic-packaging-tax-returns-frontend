@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class DeregisteredController @Inject() (
                                          override val messagesApi: MessagesApi,
-                                         identify: AuthAction,
+                                         identify: AuthCheckAction,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: DeregisteredView
 ) extends FrontendBaseController with I18nSupport {
