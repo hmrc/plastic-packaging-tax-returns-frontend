@@ -16,8 +16,9 @@
 
 package models.requests
 
-import play.api.mvc.WrappedRequest
 import models.UserAnswers
+import play.api.mvc.WrappedRequest
+import uk.gov.hmrc.http.HeaderCarrier
 
 case class OptionalDataRequest[A] (
   request: IdentifiedRequest[A],
@@ -36,6 +37,11 @@ case class DataRequest[A](
 ) extends WrappedRequest[A](request) {
 
   def pptReference: String = request.pptReference
-  def cacheKey: String     = request.cacheKey
+  def cacheKey: String = request.cacheKey
+  def headerCarrier: HeaderCarrier = request.headerCarrier
 
+}
+
+object DataRequest {
+  implicit def headerCarrier(implicit request: DataRequest[_]): HeaderCarrier = request.headerCarrier
 }

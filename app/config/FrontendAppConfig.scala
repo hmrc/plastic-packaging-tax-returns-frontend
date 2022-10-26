@@ -23,8 +23,6 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.LocalDate
-
 @Singleton
 class FrontendAppConfig @Inject() (
   configuration: Configuration,
@@ -113,6 +111,9 @@ class FrontendAppConfig @Inject() (
 
   def isCreditsForReturnsFeatureEnabled: Boolean =
     isFeatureEnabled(Features.creditsForReturnsEnabled)
+
+  def isFeatureEnabledChangeOfGroupLead: Boolean =
+    isFeatureEnabled("changeOfGroupLead")
 
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)

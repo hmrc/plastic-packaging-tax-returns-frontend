@@ -36,8 +36,14 @@ case class UserAnswers(
   def fill[A](gettable: Gettable[A], form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(gettable).fold(form)(form.fill)
 
+  def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
+    get(path).fold(form)(form.fill)
+
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
-    Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+    get(page.path)
+
+  def get[A](path: JsPath)(implicit rds: Reads[A]): Option[A] =
+    Reads.optionNoError(Reads.at(path)).reads(data).getOrElse(None)
 
   def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A = 
     getOrFail(page.path)
@@ -78,6 +84,9 @@ case class UserAnswers(
 
   def setOrFail[A](answerPath: String, value: A) (implicit writes: Writes[A]): UserAnswers =
     copy(data = data.setObject(JsPath \ answerPath, Json.toJson(value)).get)
+
+  def setOrFail[A](answerPath: JsPath, value: A) (implicit writes: Writes[A]): UserAnswers =
+    copy(data = data.setObject(answerPath, Json.toJson(value)).get)
 
   /**
     * Saves this UserAnswers using the given function

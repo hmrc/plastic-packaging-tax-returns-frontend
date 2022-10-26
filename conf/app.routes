@@ -152,3 +152,7 @@ POST        /change-credit-for-converted                           controllers.r
 
 GET        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
 POST       /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
+
+# Change group lead
+GET         /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad(mode: Mode = NormalMode)
+POST        /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit(mode: Mode = NormalMode)
