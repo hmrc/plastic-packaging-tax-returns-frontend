@@ -76,6 +76,7 @@ class AgentsController @Inject()(
             _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier)
           } yield
             Redirect(routes.IndexController.onPageLoad)
+              .addingToSession("clientPPT" -> selectedClientIdentifier) //todo we dont want to do this, but reg needs it
           }.recover{
             case _: InsufficientEnrolments =>
               val errorForm = form()
