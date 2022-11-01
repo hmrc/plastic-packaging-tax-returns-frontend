@@ -16,20 +16,21 @@
 
 @import components.{Link, heading, paragraphBody}
 @import config.FrontendAppConfig
+@import controllers.changeGroupLead.Members
 
 @this(
-        formHelper: FormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        headingLabel: heading,
-        layout: templates.Layout,
-        govukRadios: GovukRadios,
-        govukButton: GovukButton,
-        paragraphBody: paragraphBody,
-        link: Link,
-        appConfig: FrontendAppConfig
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    headingLabel: heading,
+    layout: templates.Layout,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    link: Link,
+    appConfig: FrontendAppConfig
 )
 
-@(form: Form[Boolean], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], submitCall: Call, members: Members)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("Title"), Some(messages("Section"))), showBackLink = false) {
 
@@ -46,10 +47,7 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                items = Seq(
-                    RadioItem(id = Some("value"), value = Some("true"), content = Text(messages("Your Life In Plastic"))),
-                    RadioItem(id = Some("radio-just-return"), value = Some("false"), content = Text(messages("Drastic Fantastic Plastic")))
-                )
+                items = members.zipMap {(name, index) => RadioItem(id = Some(index.toString), value = Some(name), content = Text(name))}
             )
         )
 

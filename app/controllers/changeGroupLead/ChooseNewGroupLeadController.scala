@@ -17,16 +17,18 @@
 package controllers.changeGroupLead
 
 import config.FrontendAppConfig
-import connectors.CacheConnector
+import connectors.{CacheConnector, SubscriptionConnector}
 import controllers.actions._
 import forms.mappings.Mappings
 import models.Mode
 import models.requests.DataRequest
+import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc._
 import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
@@ -48,6 +50,25 @@ class FeatureGuard @Inject() (frontendAppConfig: FrontendAppConfig) {
 }
 
 
+
+case class Members(membersNames: Seq[String]) {
+  def zipMap[A](function: (String, Int) => A): Seq[A] =
+    membersNames.zipWithIndex.map(tuple => function(tuple._1, tuple._2))
+}
+
+object Members {
+  def create(response: SubscriptionDisplayResponse): Members = {
+    val membersNames = 
+      response.groupPartnershipSubscription.get
+        .groupPartnershipDetails.map(
+      details => details.organisationDetails.get
+        .organisationName
+    )
+    Members(membersNames)
+  }
+}
+
+
 class ChooseNewGroupLeadController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
@@ -56,6 +77,7 @@ class ChooseNewGroupLeadController @Inject() (
   page: ChooseNewGroupLeadPage, 
   cacheConnector: CacheConnector,
   featureGuard: FeatureGuard,
+  subscriptionConnector: SubscriptionConnector
 )
   (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -65,12 +87,24 @@ class ChooseNewGroupLeadController @Inject() (
       val blankForm = page.createForm()
       val answerPath = page.answerPath()
       val preparedForm = request.userAnswers.fill(answerPath, blankForm)
-      val value = view(preparedForm, controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit())
-      Future.successful(Ok(value))
+      buildView(preparedForm).map(Ok(_))
   }
 
-  private def onError(mode: Mode) (form: Form[Boolean]) (implicit dataRequest: DataRequest[AnyContent]): Html = {
-    view(form, controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit())
+  private def buildView(form: Form[Boolean]) (implicit request: DataRequest[AnyContent]) = {
+    subscriptionConnector
+      .get(request.pptReference)
+      .map {
+        case Left(error) => throw new RuntimeException("failed")
+        case Right(response) => response
+      }
+      .map { response =>
+        val submitCall = controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit()
+        view(form, submitCall, Members.create(response))
+      }
+  }
+
+  private def onError(mode: Mode) (form: Form[Boolean]) (implicit dataRequest: DataRequest[AnyContent]): Future[Html] = {
+    buildView(form)
   }
 
   private def onSuccess(mode: Mode) (newValue: Boolean) (implicit dataRequest: DataRequest[AnyContent]): Future[Call] = {
@@ -86,7 +120,7 @@ class ChooseNewGroupLeadController @Inject() (
       val blankForm = page.createForm()
       val completedForm = blankForm.bindFromRequest()
       completedForm.fold(
-        x => Future.successful(Results.BadRequest(onError(mode)(x))),
+        x => onError(mode)(x).map(x => Results.BadRequest(x)),
         x => onSuccess(mode)(x).map(Results.Redirect)
       )
   }
