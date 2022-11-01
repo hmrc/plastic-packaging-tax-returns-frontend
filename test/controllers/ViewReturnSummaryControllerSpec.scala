@@ -19,7 +19,7 @@ package controllers
 import base.{MockObligationsConnector, SpecBase}
 import connectors.{CacheConnector, ObligationsConnector, TaxReturnsConnector}
 import handlers.ErrorHandler
-import models.returns.{DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import models.returns.{DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{verify, when}
@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
@@ -47,7 +48,13 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
   "onPageLoad" - {
     "must return OK and the correct view" in {
 
-      mockGetFulfilledObligations(Seq(taxReturnOb))
+      val ob: TaxReturnObligation = TaxReturnObligation(
+        LocalDate.parse("2022-04-01"),
+        LocalDate.parse("2022-06-30"),
+        LocalDate.parse("2022-06-30").plusWeeks(8),
+        "90C4")
+
+      mockGetFulfilledObligations(Seq(ob))
 
       when(mockConnector.get(any(), any())(any())).thenReturn(
         Future.successful(submittedReturn)
@@ -68,19 +75,19 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
 
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)(mockMessages)
 
-        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("00XX"))
+        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("90C4"))
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/00XX/amend")))(
+        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/90C4/amend")))(
           request,
           messages(application)
         ).toString
 
-        verify(mockConnector).get(any(), ArgumentMatchers.eq("00XX"))(any())
+        verify(mockConnector).get(any(), ArgumentMatchers.eq("90C4"))(any())
       }
     }
 

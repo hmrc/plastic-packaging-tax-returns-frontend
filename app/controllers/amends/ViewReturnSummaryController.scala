@@ -80,7 +80,7 @@ class ViewReturnSummaryController @Inject() (
   private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_])
   : Future[Either[Result, (String, ReturnDisplayApi, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("[A-Z0-9]{4}")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
+    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
     else {
 
       val futureReturn = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
