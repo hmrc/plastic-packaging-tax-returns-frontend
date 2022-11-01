@@ -21,8 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 
 case class CustomerDetails(
   customerType: CustomerType,
-  individualDetails: Option[IndividualDetails] = None,
-  organisationDetails: Option[OrganisationDetails] = None
+  individualDetails: Option[IndividualDetails],
+  organisationDetails: Option[OrganisationDetails]
 )
 
 object CustomerDetails {

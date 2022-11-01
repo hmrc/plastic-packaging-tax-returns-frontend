@@ -21,10 +21,10 @@ import play.api.libs.json.{Json, OFormat}
 case class AddressDetails(
   addressLine1: String,
   addressLine2: String,
-  addressLine3: Option[String] = None,
-  addressLine4: Option[String] = None,
-  postalCode: Option[String] = None,
-  countryCode: String
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postalCode: Option[String],
+  countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
 )
 
 object AddressDetails {

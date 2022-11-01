@@ -22,26 +22,16 @@ import play.api.libs.json.{Json, OFormat}
 case class LegalEntityDetails(
   dateOfApplication: String,
   customerIdentification1: String,
-  customerIdentification2: Option[String] = None,
+  customerIdentification2: Option[String],
   customerDetails: CustomerDetails,
-  groupSubscriptionFlag: Boolean = false,
-  regWithoutIDFlag: Option[Boolean] = None,
-  partnershipSubscriptionFlag: Boolean = false
+  groupSubscriptionFlag: Boolean,
+  regWithoutIDFlag: Boolean,
+  partnershipSubscriptionFlag: Boolean
 ){
-  val entityName: String = customerDetails.customerType match {
-    case Individual =>
-      customerDetails.individualDetails.map(
-        details =>
-          s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
-      ).getOrElse(throw new IllegalStateException("Individual name absent"))
-    case Organisation =>
-      customerDetails.organisationDetails.flatMap(_.organisationName).getOrElse(
-        throw new IllegalStateException("Organisation name absent")
-      )
+  def entityName: String = customerDetails.customerType match {
+    case Individual => customerDetails.individualDetails.get.toDisplayString
+    case Organisation => customerDetails.organisationDetails.get.organisationName
   }
-
-  val organisationType: Option[String] =
-    customerDetails.organisationDetails.flatMap(_.organisationType)
 
   val isGroup: Boolean       = groupSubscriptionFlag
   val isPartnership: Boolean = partnershipSubscriptionFlag

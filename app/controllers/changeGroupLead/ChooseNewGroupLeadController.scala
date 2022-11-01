@@ -55,7 +55,7 @@ class ChooseNewGroupLeadController @Inject() (
   view: ChooseNewGroupLeadView,
   page: ChooseNewGroupLeadPage, 
   cacheConnector: CacheConnector,
-  featureGuard: FeatureGuard,
+//  featureGuard: FeatureGuard,
 )
   (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 

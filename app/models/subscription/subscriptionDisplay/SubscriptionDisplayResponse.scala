@@ -16,7 +16,7 @@
 
 package models.subscription.subscriptionDisplay
 
-import models.subscription.group.GroupOrPartnershipSubscription
+import models.subscription.group.GroupPartnershipSubscription
 import models.subscription.{
   AddressDetails,
   Declaration,
@@ -27,16 +27,16 @@ import models.subscription.{
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionDisplayResponse(
-  processingDate: String,
   changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
   businessCorrespondenceDetails: AddressDetails,
+  declaration: Declaration,
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: BigDecimal,
-  declaration: Declaration,
-  groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
+  groupPartnershipSubscription: Option[GroupPartnershipSubscription],
+  processingDate: String,
 )
 
 object SubscriptionDisplayResponse {
