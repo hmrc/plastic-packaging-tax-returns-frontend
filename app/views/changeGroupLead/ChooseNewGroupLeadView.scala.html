@@ -16,7 +16,6 @@
 
 @import components.{Link, heading, paragraphBody}
 @import config.FrontendAppConfig
-@import controllers.changeGroupLead.Members
 
 @this(
     formHelper: FormWithCSRF,
@@ -30,11 +29,11 @@
     appConfig: FrontendAppConfig
 )
 
-@(form: Form[Boolean], submitCall: Call, members: Members)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], members: Seq[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("Title"), Some(messages("Section"))), showBackLink = false) {
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -47,7 +46,9 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                items = members.zipMap {(name, index) => RadioItem(id = Some(index.toString), value = Some(name), content = Text(name))}
+                items = members.sorted.zipWithIndex.map{case (name, index) =>
+                    RadioItem(id = Some("radio-member-"+index), value = Some(name), content = Text(name))
+                }
             )
         )
 
