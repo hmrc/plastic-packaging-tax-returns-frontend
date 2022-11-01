@@ -41,9 +41,9 @@ class ChooseNewGroupLeadPage extends Mappings {
 
 
 class FeatureGuard @Inject() (frontendAppConfig: FrontendAppConfig) {
-  val init: Unit = {
+  def check(): Unit = {
     if (!frontendAppConfig.isFeatureEnabledChangeOfGroupLead)
-      throw new RuntimeException("bah!")
+      throw new RuntimeException("Change of group lead feature is not enabled")
   }
 }
 
@@ -55,12 +55,13 @@ class ChooseNewGroupLeadController @Inject() (
   view: ChooseNewGroupLeadView,
   page: ChooseNewGroupLeadPage, 
   cacheConnector: CacheConnector,
-//  featureGuard: FeatureGuard,
+  featureGuard: FeatureGuard,
 )
   (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
+      featureGuard.check()
       val blankForm = page.createForm()
       val answerPath = page.answerPath()
       val preparedForm = request.userAnswers.fill(answerPath, blankForm)
@@ -81,6 +82,7 @@ class ChooseNewGroupLeadController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
+      featureGuard.check()
       val blankForm = page.createForm()
       val completedForm = blankForm.bindFromRequest()
       completedForm.fold(
