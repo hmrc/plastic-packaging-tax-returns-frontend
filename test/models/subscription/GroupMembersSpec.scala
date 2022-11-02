@@ -52,7 +52,15 @@ class GroupMembersSpec extends PlaySpec{
       GroupMembers.create(subscription) mustBe GroupMembers(Seq("Po", "Laa-laa", "Noo-noo"))
     }
     
-}
+  }
+
+  "zipMap" should {
+    "inject member name and a unique index" in {
+      val groupMembers = GroupMembers(Seq("Trotters Independent Traders", "OCP"))
+      val function = (s: String, i: Int) => (s, i)  
+      groupMembers.zipMap(function) mustBe Seq(("Trotters Independent Traders", 0), ("OCP", 1))
+    }
+  }
 
   private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
     GroupPartnershipDetails("", "", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)

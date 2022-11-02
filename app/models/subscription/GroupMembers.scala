@@ -35,7 +35,7 @@ object GroupMembers {
             .getOrElse(throw new NoSuchElementException("SubscriptionDisplayResponse has a groupPartnershipDetails " +
               "entry missing its organisationDetails field"))
             .organisationName
-      )
+        )
     GroupMembers(membersNames)
   }
 }
