@@ -84,12 +84,12 @@ class ChooseNewGroupLeadController @Inject() (
       .flatMap {
         case Left(error) => throw new RuntimeException("failed") //todo
         case Right(subscription) =>
-          val members = Seq("a", "c", "b")
-//            subscription.groupPartnershipSubscription.get
-//            .groupPartnershipDetails.map(
-//            details => details.organisationDetails.get
-//              .organisationName
-//          )
+          val members = 
+            subscription.groupPartnershipSubscription.get
+            .groupPartnershipDetails.map(
+            details => details.organisationDetails.get
+              .organisationName
+          )
           block(members)
       }
 

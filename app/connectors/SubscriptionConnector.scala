@@ -45,9 +45,6 @@ class SubscriptionConnector @Inject() (
       .map {
         response =>
           if (Status.isSuccessful(response.status)) {
-            println("*********************************")
-            println(response.json)
-            println("*********************************")
             Right(response.json.as[SubscriptionDisplayResponse])
           }
           else {
