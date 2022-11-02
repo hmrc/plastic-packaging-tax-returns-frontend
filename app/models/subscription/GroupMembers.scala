@@ -31,7 +31,10 @@ object GroupMembers {
           throw new NoSuchElementException("SubscriptionDisplayResponse has no groupPartnershipSubscription field")
         )
         .groupPartnershipDetails.map(
-          details => details.organisationDetails.get.organisationName
+          details => details.organisationDetails
+            .getOrElse(throw new NoSuchElementException("SubscriptionDisplayResponse has a groupPartnershipDetails " +
+              "entry missing its organisationDetails field"))
+            .organisationName
       )
     GroupMembers(membersNames)
   }

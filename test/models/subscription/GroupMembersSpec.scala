@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import models.subscription.group.{GroupPartnershipDetails, GroupPartnershipSubscription}
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.scalatestplus.play.PlaySpec
 
@@ -24,12 +25,40 @@ class GroupMembersSpec extends PlaySpec{
   "create" should {
     
     "handle missing group subscription" in {
-      val subscription = createSubscriptionDisplayResponse
+      val subscription = createSubscriptionDisplayResponse(groupPartnershipSubscription = None)
       the[NoSuchElementException] thrownBy GroupMembers.create(subscription) must have message "SubscriptionDisplayResponse " +
         "has no groupPartnershipSubscription field"
     }
     
+    "handle empty group details" in {
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq()))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq()) // TODO This may not be what we want, throw instead?
+    }
+    
+    "handle missing org-details within a member" in {
+      val groupDetails = createGroupDetails(maybeOrganisationDetails = None)
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq(groupDetails)))
+      the[NoSuchElementException] thrownBy GroupMembers.create(subscription) must have message "SubscriptionDisplayResponse " +
+        "has a groupPartnershipDetails entry missing its organisationDetails field"
+    }
+    
+    "extract names from group members" in {
+      val groupDetails = createGroupDetails(Some(OrganisationDetails(None, "Po")))
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq(groupDetails)))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Po"))
+    }
+    
 }
+
+  private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
+    GroupPartnershipDetails("", "", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
+  }
+
+  private def createGroupSubscription(groupPartnershipDetails: Seq[GroupPartnershipDetails]) = {
+    Some(
+      GroupPartnershipSubscription(representativeControl = None, allMembersControl = None, groupPartnershipDetails)
+    )
+  }
 
   private val customerDetails: CustomerDetails = CustomerDetails(customerType = CustomerType.Organisation, 
     individualDetails = None, organisationDetails = None)
@@ -48,10 +77,11 @@ class GroupMembersSpec extends PlaySpec{
 
   val declaration: Declaration = Declaration(true)
 
-  private def createSubscriptionDisplayResponse = {
+  private def createSubscriptionDisplayResponse(groupPartnershipSubscription: Option[GroupPartnershipSubscription]) = {
     SubscriptionDisplayResponse(changeOfCircumstanceDetails = None, legalEntityDetails,
       principalPlaceOfBusinessDetails, primaryContactDetails, businessCorrespondenceDetails = addressDetails, 
-      declaration, taxObligationStartDate = "", last12MonthTotalTonnageAmt = 1.0, groupPartnershipSubscription = None, 
-      processingDate = "")
+      declaration, taxObligationStartDate = "", last12MonthTotalTonnageAmt = 1.0, 
+      groupPartnershipSubscription, processingDate = ""
+    )
   }
 }
