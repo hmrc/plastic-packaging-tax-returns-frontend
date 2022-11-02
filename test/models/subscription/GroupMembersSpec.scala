@@ -43,9 +43,13 @@ class GroupMembersSpec extends PlaySpec{
     }
     
     "extract names from group members" in {
-      val groupDetails = createGroupDetails(Some(OrganisationDetails(None, "Po")))
-      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq(groupDetails)))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Po"))
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
+        Seq(
+          createGroupDetails(Some(OrganisationDetails(None, "Po"))), 
+          createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))), 
+          createGroupDetails(Some(OrganisationDetails(None, "Noo-noo"))), 
+      )))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Po", "Laa-laa", "Noo-noo"))
     }
     
 }
