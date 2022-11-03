@@ -46,13 +46,10 @@ class TaxReturnHelper @Inject()(
   def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Option[TaxReturnObligation]] = {
     obligationsConnector.getFulfilled(pptId)
       .map { obligations => obligations.filter(o => o.periodKey == periodKey) }
-      .map { sequence: Seq[TaxReturnObligation] =>
-        if (sequence.length == 1) {
-          Some(sequence.head)
-        } else if (sequence.isEmpty) {
-          None
-        }else
-          throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
+      .map {
+        case Seq(obligation) => Some(obligation)
+        case Nil => None
+        case sequence => throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
       }
   }
 
