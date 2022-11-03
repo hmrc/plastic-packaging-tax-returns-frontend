@@ -19,7 +19,7 @@ package models.subscription
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 
 case class GroupMembers(membersNames: Seq[String]) {
-  def zipMap[A](function: (String, Int) => A): Seq[A] =
+  def map[A](function: (String, Int) => A): Seq[A] =
     membersNames.zipWithIndex.map(tuple => function(tuple._1, tuple._2))
 }
 
@@ -36,6 +36,6 @@ object GroupMembers {
               "entry missing its organisationDetails field"))
             .organisationName
         )
-    GroupMembers(membersNames)
+    GroupMembers(membersNames.sorted)
   }
 }

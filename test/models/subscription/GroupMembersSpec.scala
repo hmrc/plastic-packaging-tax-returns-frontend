@@ -20,7 +20,7 @@ import models.subscription.group.{GroupPartnershipDetails, GroupPartnershipSubsc
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.scalatestplus.play.PlaySpec
 
-class GroupMembersSpec extends PlaySpec{
+class GroupMembersSpec extends PlaySpec {
 
   "create" should {
     
@@ -42,24 +42,26 @@ class GroupMembersSpec extends PlaySpec{
         "has a groupPartnershipDetails entry missing its organisationDetails field"
     }
     
-    "extract names from group members" in {
+    "extract names from group members in sorted order" in {
       val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
         Seq(
           createGroupDetails(Some(OrganisationDetails(None, "Po"))), 
           createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))), 
           createGroupDetails(Some(OrganisationDetails(None, "Noo-noo"))), 
       )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Po", "Laa-laa", "Noo-noo"))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Laa-laa", "Noo-noo", "Po"))
     }
     
   }
 
-  "zipMap" should {
+  "map" should {
+
     "inject member name and a unique index" in {
-      val groupMembers = GroupMembers(Seq("Trotters Independent Traders", "OCP"))
-      val function = (s: String, i: Int) => (s, i)  
-      groupMembers.zipMap(function) mustBe Seq(("Trotters Independent Traders", 0), ("OCP", 1))
+      val groupMembers = GroupMembers(Seq("OCP", "Trotters Independent Traders"))
+      val function = (s: String, i: Int) => (s, i)
+      groupMembers.map(function) mustBe Seq(("OCP", 0), ("Trotters Independent Traders", 1))
     }
+
   }
 
   private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
