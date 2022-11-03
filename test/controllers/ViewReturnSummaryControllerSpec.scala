@@ -52,7 +52,7 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
         LocalDate.parse("2022-04-01"),
         LocalDate.parse("2022-06-30"),
         LocalDate.parse("2022-06-30").plusWeeks(8),
-        "90C4")
+        "22C4")
 
       mockGetFulfilledObligations(Seq(ob))
 
@@ -75,19 +75,19 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
 
         val viewModel = ViewReturnSummaryViewModel(submittedReturn)(mockMessages)
 
-        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("90C4"))
+        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("22C4"))
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ViewReturnSummaryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/90C4/amend")))(
+        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/22C4/amend")))(
           request,
           messages(application)
         ).toString
 
-        verify(mockConnector).get(any(), ArgumentMatchers.eq("90C4"))(any())
+        verify(mockConnector).get(any(), ArgumentMatchers.eq("22C4"))(any())
       }
     }
 
@@ -107,7 +107,72 @@ class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with Mo
           status(result) mustEqual NOT_FOUND
           contentAsString(result) mustEqual errorView
         }
+      }
+      "when the user doesn't have a fulfilled obligation for the requested period" in {
+        val ob: TaxReturnObligation = TaxReturnObligation(
+          LocalDate.parse("2022-04-01"),
+          LocalDate.parse("2022-06-30"),
+          LocalDate.parse("2022-06-30").plusWeeks(8),
+          "21C1")
 
+        mockGetFulfilledObligations(Seq(ob))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            inject.bind[TaxReturnsConnector].toInstance(mockConnector),
+            inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
+            inject.bind[CacheConnector].toInstance(cacheConnector)
+          ).build()
+
+        when(mockConnector.get(any(), any())(any())).thenReturn(
+          Future.successful(submittedReturn)
+        )
+
+        when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+
+        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+
+        running(application) {
+          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("90C4"))
+
+          val result: Future[Result] = (route(application, request).value)
+
+          val errorHandler = application.injector.instanceOf[ErrorHandler]
+          val errorView = errorHandler.notFoundTemplate(request).toString()
+
+          status(result) mustEqual NOT_FOUND
+          contentAsString(result) mustEqual errorView
+        }
+      }
+      "when the user doesn't have any fulfilled obligations" in {
+        mockGetFulfilledObligations(Seq.empty)
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            inject.bind[TaxReturnsConnector].toInstance(mockConnector),
+            inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
+            inject.bind[CacheConnector].toInstance(cacheConnector)
+          ).build()
+
+        when(mockConnector.get(any(), any())(any())).thenReturn(
+          Future.successful(submittedReturn)
+        )
+
+        when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+
+        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+
+        running(application) {
+          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("21C1"))
+
+          val result: Future[Result] = (route(application, request).value)
+
+          val errorHandler = application.injector.instanceOf[ErrorHandler]
+          val errorView = errorHandler.notFoundTemplate(request).toString()
+
+          status(result) mustEqual NOT_FOUND
+          contentAsString(result) mustEqual errorView
+        }
 
       }
     }

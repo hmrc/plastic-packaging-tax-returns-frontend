@@ -20,6 +20,7 @@ import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
 import models.returns._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.util.concurrent.FutureTask
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 //TODO: Multi services in here, break it down now, funk soul brother
@@ -42,14 +43,16 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Option[TaxReturnObligation]] = {
     obligationsConnector.getFulfilled(pptId)
       .map { obligations => obligations.filter(o => o.periodKey == periodKey) }
-      .flatMap { sequence: Seq[TaxReturnObligation] => 
-        if (sequence.length == 1)
-          Future.successful(sequence.head)
-        else
-          Future.failed(new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}"))
+      .map { sequence: Seq[TaxReturnObligation] =>
+        if (sequence.length == 1) {
+          Some(sequence.head)
+        } else if (sequence.isEmpty) {
+          None
+        }else
+          throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
       }
   }
 
