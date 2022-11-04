@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
 import models.requests.OptionalDataRequest
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import models.returns.{DDInProgressApi, ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -80,18 +80,22 @@ class ViewReturnSummaryController @Inject() (
   private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_])
   : Future[Either[Result, (String, ReturnDisplayApi, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("[A-Z0-9]{4}")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
+    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
     else {
 
-      val futureReturn = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
-      val futureObligation = taxReturnHelper.getObligation(pptReference, periodKey)
-      val futureDDInProgress = returnsConnector.ddInProgress(pptReference, periodKey)
+      val futureReturn: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
+      val futureMaybeObligation: Future[Option[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
+      val futureDDInProgress: Future[DDInProgressApi] = returnsConnector.ddInProgress(pptReference, periodKey)
       for {
         submittedReturn <- futureReturn
-        obligation <- futureObligation
+        maybeObligation <- futureMaybeObligation
         ddInProgress <- futureDDInProgress
       } yield {
-        Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
+        maybeObligation match {
+          case Some(obligation) => Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
+          case None => Left(NotFound(errorHandler.notFoundTemplate))
+        }
+
       }
     }
   }
