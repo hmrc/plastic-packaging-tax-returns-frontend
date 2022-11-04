@@ -24,6 +24,7 @@ import models.requests.DataRequest
 import pages.ChooseNewGroupLeadPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
@@ -47,28 +48,28 @@ class ChooseNewGroupLeadController @Inject() (
   form: SelectNewGroupLeadForm,
   cacheConnector: CacheConnector,
   featureGuard: FeatureGuard,
-  subscriptionConnector: SubscriptionConnector
+  subscriptionService: SubscriptionService
 )
   (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
-      getMembers{ members =>
-        val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members))
+      subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
+        val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
 
-        Future.successful(Ok(view(preparedForm, members)))
+        Ok(view(preparedForm, members.membersNames))
       }
   }
 
   def onSubmit(): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
-      getMembers{ members =>
-        form(members)
+      subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap{ members =>
+        form(members.membersNames)
           .bindFromRequest()
           .fold(
-            errorForm => Future.successful(BadRequest(view(errorForm, members))),
+            errorForm => Future.successful(BadRequest(view(errorForm, members.membersNames))),
             selectedMember =>
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)
@@ -77,20 +78,5 @@ class ChooseNewGroupLeadController @Inject() (
           )
       }
   }
-
-  private def getMembers(block: Seq[String] => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
-    subscriptionConnector
-      .get(request.pptReference)
-      .flatMap {
-        case Left(error) => throw new RuntimeException("failed") //todo
-        case Right(subscription) =>
-          val members = 
-            subscription.groupPartnershipSubscription.get
-            .groupPartnershipDetails.map(
-            details => details.organisationDetails.get
-              .organisationName
-          )
-          block(members)
-      }
 
 }
