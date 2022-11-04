@@ -48,21 +48,25 @@ object PptTestData {
                                                            organisationDetails =
                                                              Some(
                                                                subscription.OrganisationDetails(
-                                                                 organisationName =
-                                                                   Some("Plastics Ltd"),
+                                                                 organisationName = "Plastics Ltd", 
                                                                  organisationType =
                                                                    Some("UK Limited Company")
                                                                )
-                                                             )
-                         )
+                                                             ), 
+                           individualDetails = None),
+        groupSubscriptionFlag = false, 
+        regWithoutIDFlag = false,
+        partnershipSubscriptionFlag = false
       ),
     principalPlaceOfBusinessDetails =
       PrincipalPlaceOfBusinessDetails(
         addressDetails = AddressDetails(addressLine1 = "2-3 Scala Street",
                                         addressLine2 = "Soho",
                                         addressLine3 = Some("London"),
+                                        addressLine4 = None,
                                         postalCode = Some("W1T 2HN"),
-                                        countryCode = "GB"
+                                        countryCode = "GB", 
+          
         ),
         contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
       ),
@@ -74,6 +78,8 @@ object PptTestData {
       ),
     businessCorrespondenceDetails = AddressDetails(addressLine1 = "addressLine1",
                                                    addressLine2 = " line2 Town",
+                                                   addressLine3 = None,
+                                                   addressLine4 = None,
                                                    postalCode = Some("PostCode"),
                                                    countryCode = "GB"
     ),
@@ -95,10 +101,15 @@ object PptTestData {
                                              Some(
                                                IndividualDetails(title = Some("MR"),
                                                                  firstName = "James",
-                                                                 lastName = "Bond"
+                                                                 lastName = "Bond",
+                                                 middleName = None
                                                )
-                                             )
-                           )
+                                             ),
+                             organisationDetails = None
+                           ), 
+        regWithoutIDFlag = false, 
+        partnershipSubscriptionFlag = false,
+        groupSubscriptionFlag = false
       )
     )
     subscription
@@ -177,7 +188,7 @@ object PptTestData {
                                   subscription.last12MonthTotalTonnageAmt.longValue(),
                                 declaration =
                                   subscription.declaration,
-                                groupOrPartnershipSubscription =
+                                groupPartnershipSubscription =
                                   subscription.groupSubscription
     )
 
@@ -200,7 +211,7 @@ object PptTestData {
                                 subscription.last12MonthTotalTonnageAmt.longValue(),
                               declaration =
                                 subscription.declaration,
-                              groupOrPartnershipSubscription =
+                              groupPartnershipSubscription =
                                 subscription.groupSubscription
     )
 

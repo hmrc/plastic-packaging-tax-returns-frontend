@@ -19,11 +19,17 @@ package models.subscription
 import play.api.libs.json.{Json, OFormat}
 
 case class IndividualDetails(
-  title: Option[String] = None,
+  title: Option[String],
   firstName: String,
-  middleName: Option[String] = None,
+  middleName: Option[String],
   lastName: String
-)
+) {
+  def toDisplayString:String = {
+    val titleOrNot = title.map(_ + " ").getOrElse("")
+    s"$titleOrNot$firstName $lastName"
+  }
+}
+
 
 object IndividualDetails {
   implicit val format: OFormat[IndividualDetails] = Json.format[IndividualDetails]

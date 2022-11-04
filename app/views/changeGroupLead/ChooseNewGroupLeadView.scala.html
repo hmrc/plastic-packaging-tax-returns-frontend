@@ -1,0 +1,57 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.{Link, heading, paragraphBody}
+@import config.FrontendAppConfig
+
+@this(
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    headingLabel: heading,
+    layout: templates.Layout,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    link: Link,
+    appConfig: FrontendAppConfig
+)
+
+@(form: Form[String], members: Seq[String])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("Title"), Some(messages("Section"))), showBackLink = false) {
+
+    @formHelper(action = controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit(), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @headingLabel(messages("Demang da bosmang?"))
+
+        @paragraphBody(messages("Na inyalowda mowteng"))
+
+        @govukRadios(
+            RadiosViewModel.apply(
+                field = form("value"),
+                items = members.sorted.zipWithIndex.map{case (name, index) =>
+                    RadioItem(id = Some("radio-member-"+index), value = Some(name), content = Text(name))
+                }
+            )
+        )
+
+        @govukButton(ButtonViewModel(messages("site.continue")))
+    }
+}

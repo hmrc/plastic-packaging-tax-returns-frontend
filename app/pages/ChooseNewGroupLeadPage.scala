@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package models.subscription
+package pages
 
-import models.subscription.CustomerType.CustomerType
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
 
-case class CustomerDetails(
-  customerType: CustomerType,
-  individualDetails: Option[IndividualDetails],
-  organisationDetails: Option[OrganisationDetails]
-)
-
-object CustomerDetails {
-  implicit val format: OFormat[CustomerDetails] = Json.format[CustomerDetails]
-
+object ChooseNewGroupLeadPage extends QuestionPage[String] {
+  override def path: JsPath = JsPath \ "chooseNewGroupLead"
 }

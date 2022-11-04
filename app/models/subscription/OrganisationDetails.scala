@@ -19,8 +19,8 @@ package models.subscription
 import play.api.libs.json.{Json, OFormat}
 
 case class OrganisationDetails(
-  organisationType: Option[String] = None,
-  organisationName: Option[String]
+  organisationType: Option[String],
+  organisationName: String
 )
 
 object OrganisationDetails {

@@ -16,20 +16,17 @@
 
 package models.subscription.group
 
-import models.subscription.{AddressDetails, IndividualDetails, OrganisationDetails}
 import play.api.libs.json.{Json, OFormat}
-import models.subscription.ContactDetails
 
-case class GroupOrPartnershipDetails(
-  relationship: String,
-  customerIdentification1: String,
-  customerIdentification2: Option[String],
-  organisationDetails: Option[OrganisationDetails],
-  individualDetails: Option[IndividualDetails],
-  addressDetails: AddressDetails,
-  contactDetails: ContactDetails
+case class GroupPartnershipSubscription(
+  representativeControl: Option[Boolean],
+  allMembersControl: Option[Boolean],
+  groupPartnershipDetails: Seq[GroupPartnershipDetails],
 )
 
-object GroupOrPartnershipDetails {
-  implicit val format: OFormat[GroupOrPartnershipDetails] = Json.format[GroupOrPartnershipDetails]
+object GroupPartnershipSubscription {
+
+  implicit val format: OFormat[GroupPartnershipSubscription] =
+    Json.format[GroupPartnershipSubscription]
+
 }

@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package models.subscription
+package forms.changeGroupLead
 
-import models.subscription.CustomerType.CustomerType
-import play.api.libs.json.{Json, OFormat}
+import play.api.data.Form
+import play.api.data.Forms.{optional, text}
+import SelectNewGroupLeadForm.error
 
-case class CustomerDetails(
-  customerType: CustomerType,
-  individualDetails: Option[IndividualDetails],
-  organisationDetails: Option[OrganisationDetails]
-)
+class SelectNewGroupLeadForm {
 
-object CustomerDetails {
-  implicit val format: OFormat[CustomerDetails] = Json.format[CustomerDetails]
+  def apply(members: Seq[String]): Form[String] =
+    Form("value" -> optional(text)
+      .verifying(error, _.isDefined)
+      .transform[String](_.get, Some(_))
+      .verifying(error, members.contains(_))
+    )
 
+}
+
+object SelectNewGroupLeadForm {
+  val error = "SelectNewGroupLead.error.required"
 }
