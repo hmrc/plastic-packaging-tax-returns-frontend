@@ -19,20 +19,35 @@ package controllers.changeGroupLead
 import config.FrontendAppConfig
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.RequestAsyncFunction
+import controllers.changeGroupLead.Test.BetterMockActionSyntax
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.requests.DataRequest
+import models.subscription.GroupMembers
+import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import queries.Gettable
 import services.SubscriptionService
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
+
+object Test {
+  implicit class BetterMockActionSyntax(action: Action[AnyContent]){
+    def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
+      action.apply(request)
+  }
+}
 
 class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
@@ -45,7 +60,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
   private val mockSubscriptionService = mock[SubscriptionService]
   private val journeyAction = mock[JourneyAction]
   private val featureGuard = mock[FeatureGuard]
-  private val dataRequest = mock[DataRequest[AnyContent]]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[String]]
 
   val sut = new ChooseNewGroupLeadController(
     mockMessagesApi,
@@ -67,9 +83,15 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       mockFormProvider,
       mockCache,
       mockSubscriptionService,
-      featureGuard
+      featureGuard,
+      form
     )
   }
+  
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+      .getMock[Action[AnyContent]]
 
 
   //todo pan wip
@@ -81,11 +103,14 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       verify(journeyAction).async(any)
     }
     
-//    "invoke feature guard" in {
-//      when(journeyAction.async(any)) thenInvokeBlockWith dataRequest
-//      sut.onPageLoad()(FakeRequest())
-//      verify(featureGuard).check()
-//    }
+    "invoke feature guard" in {
+      when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+      when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(GroupMembers(Seq()))
+      when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
+      when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+      await(sut.onPageLoad().skippingJourneyAction(dataRequest))
+      verify(featureGuard).check()
+    }
     
 //    "feature guard" in {
 //      //todo
