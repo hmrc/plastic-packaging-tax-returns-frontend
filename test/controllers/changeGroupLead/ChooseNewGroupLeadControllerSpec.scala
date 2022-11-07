@@ -100,9 +100,5 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 //    }
   }
 
-  "for reasons it" should {
-    "do stuff" in {
-    }
-  } 
 
 }

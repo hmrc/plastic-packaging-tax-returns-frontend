@@ -17,15 +17,15 @@
 package controllers.changeGroupLead
 
 import config.FrontendAppConfig
-import connectors.{CacheConnector, SubscriptionConnector}
+import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.SelectNewGroupLeadForm
-import models.requests.DataRequest
+import models.requests.DataRequest._
 import pages.ChooseNewGroupLeadPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.SubscriptionService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 import javax.inject.Inject
@@ -50,7 +50,7 @@ class ChooseNewGroupLeadController @Inject() (
   featureGuard: FeatureGuard,
   subscriptionService: SubscriptionService
 )
-  (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = journeyAction.async {
     implicit request =>
@@ -58,7 +58,7 @@ class ChooseNewGroupLeadController @Inject() (
       subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
         val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
 
-        Ok(view(preparedForm, members.membersNames))
+        Results.Ok(view(preparedForm, members.membersNames))
       }
   }
 
@@ -69,12 +69,12 @@ class ChooseNewGroupLeadController @Inject() (
         form(members.membersNames)
           .bindFromRequest()
           .fold(
-            errorForm => Future.successful(BadRequest(view(errorForm, members.membersNames))),
+            errorForm => Future.successful(Results.BadRequest(view(errorForm, members.membersNames))),
             selectedMember =>
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)
                 .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Redirect(controllers.routes.IndexController.onPageLoad))
+                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad))
           )
       }
   }
