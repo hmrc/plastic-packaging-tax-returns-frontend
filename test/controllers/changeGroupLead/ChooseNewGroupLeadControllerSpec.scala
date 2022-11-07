@@ -77,6 +77,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     mockSubscriptionService
   )(global)
 
+  private val groupMembers = GroupMembers(Seq())
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(
@@ -92,7 +94,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     )
 
     when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
-    when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(GroupMembers(Seq()))
+    when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(groupMembers)
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
   }
@@ -127,6 +129,11 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       when(mockFormProvider.apply(any)) thenReturn form
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(dataRequest.userAnswers).fill(meq(ChooseNewGroupLeadPage), meq(form))(any)
+    }
+    
+    "create the form" in {
+      await(sut.onPageLoad().skippingJourneyAction(dataRequest))
+      verify(mockFormProvider).apply(groupMembers)
     }
     
 //    "feature guard" in {

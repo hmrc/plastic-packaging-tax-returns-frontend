@@ -56,7 +56,7 @@ class ChooseNewGroupLeadController @Inject() (
     implicit request =>
       featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
-        val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
+        val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members))
 
         Results.Ok(view(preparedForm, members.membersNames))
       }
@@ -66,7 +66,7 @@ class ChooseNewGroupLeadController @Inject() (
     implicit request =>
       featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap{ members =>
-        form(members.membersNames)
+        form(members)
           .bindFromRequest()
           .fold(
             errorForm => Future.successful(Results.BadRequest(view(errorForm, members.membersNames))),
