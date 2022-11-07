@@ -17,62 +17,51 @@
 package controllers
 
 import config.{Features, FrontendAppConfig}
-import connectors.{FinancialsConnector, ObligationsConnector, SubscriptionConnector}
+import connectors.{FinancialsConnector, ObligationsConnector}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.PPTSubscriptionDetails
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
-import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.SubscriptionIsActive
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.{FrontendBaseController, FrontendHeaderCarrierProvider}
 import views.html.IndexView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
+  val messagesApi: MessagesApi,
   identify: IdentifierAction,
   view: IndexView,
   appConfig: FrontendAppConfig,
-  subscriptionConnector: SubscriptionConnector,
+  sessionRepository: SessionRepository,
   financialsConnector: FinancialsConnector,
   obligationsConnector: ObligationsConnector,
   getData: DataRetrievalAction
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends Results with I18nSupport with FrontendHeaderCarrierProvider {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
       val pptReference = request.pptReference
-
-      subscriptionConnector.get(pptReference).flatMap {
-        case Right(subscription) =>
-          for {
-            paymentStatement <- getPaymentsStatement(pptReference)
-            obligations      <- getObligationsDetail(pptReference)
-            isFirstReturn    <- isFirstReturn(pptReference)
-          } yield Ok(
-            view(
-              appConfig,
-              subscription,
-              obligations,
-              isFirstReturn,
-              paymentStatement,
-              appConfig.pptCompleteReturnGuidanceUrl,
-              pptReference
-            )
+        for { //this is not async do we care?
+          legalEntity      <- sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive)
+          paymentStatement <- getPaymentsStatement(pptReference)
+          obligations      <- getObligationsDetail(pptReference)
+          isFirstReturn    <- isFirstReturn(pptReference)
+        } yield Ok(
+          view(
+            legalEntity.get.legalEntityDetails,
+            obligations,
+            isFirstReturn,
+            paymentStatement,
+            pptReference
           )
-        case Left(eisFailure) =>
-          if (eisFailure.isDeregistered) {
-            Future.successful(Redirect(routes.DeregisteredController.onPageLoad()))
-          } else {
-            throw new RuntimeException(
-              s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
-                .getOrElse("no underlying reason supplied")}"
-            )
-          }
-      }
+        )
     }
 
   private def getPaymentsStatement(

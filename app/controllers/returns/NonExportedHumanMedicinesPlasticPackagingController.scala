@@ -21,6 +21,7 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,41 +32,50 @@ import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportedHumanMedicinesPlasticPackagingController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         cacheConnector: CacheConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         form: NonExportedHumanMedicinesPlasticPackagingFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: NonExportedHumanMedicinesPlasticPackagingView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  form: NonExportedHumanMedicinesPlasticPackagingFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: NonExportedHumanMedicinesPlasticPackagingView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData) {
+      implicit request =>
 
-      val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
-        case None => form()
-        case Some(value) => form().fill(value)
-      }
+        val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
+          case None        => form()
+          case Some(value) => form().fill(value)
+        }
 
-      NonExportedAmountHelper.nonExportedAmount.fold(identity, value => Ok(view(value, preparedForm, mode)))
-  }
+        NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+          .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+            o => Ok(view(o._1, preparedForm, mode, o._2))
+        )
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
-            identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value))
-            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+        form().bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(
+              NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+                .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+                  o => BadRequest(view(o._1, formWithErrors, mode, o._2))
+                )
+            ),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value))
+              _              <- cacheConnector.set(request.pptReference, updatedAnswers)
+            } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
+        )
+    }
 }

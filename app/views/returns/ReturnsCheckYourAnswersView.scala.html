@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, heading}
+@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, SectionH3Heading, heading, Strong}
 @import components.returns.checkYourAnswer.CreditsSection
 @import viewmodels._
 @import controllers.helpers.TaxReturnViewModel
@@ -22,6 +22,7 @@
 @import controllers.helpers.RowInfo
 @import config.FrontendAppConfig
 @import models.returns.Credits
+@import models.returns.CreditsClaimedDetails
 @import models.Mode.CheckMode
 
 @this(
@@ -35,7 +36,9 @@
     appConfig: FrontendAppConfig,
     link: Link,
     sectionH2Heading: SectionH2Heading,
+    sectionH3Heading: SectionH3Heading,
     creditsSection: CreditsSection,
+    strong: Strong,
     heading: heading
 )
 
@@ -125,7 +128,7 @@
     @sectionH2Heading(messages("submit-return.check-your-answers.rest-of-return.heading"), size="l")
 
     <!-- Packaging total -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.packaging-total.heading"))
+    @sectionH3Heading(messages("submit-return.check-your-answers.packaging-total.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("packaging-total.row1", taxReturn.manufacturedYesNo),
@@ -138,7 +141,7 @@
     @changeLink("packaging-total.change-link-text", taxReturn.packagingTotalMiniCya)
 
     <!-- Exported packaging -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.exported-packaging.heading"))
+    @sectionH3Heading(messages("submit-return.check-your-answers.exported-packaging.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
@@ -152,7 +155,7 @@
     }
 
     <!-- Non-exported packaging -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.nonexported-packaging.heading"))
+    @sectionH3Heading(messages("submit-return.check-your-answers.nonexported-packaging.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("nonexported-packaging.row1", taxReturn.nonexportedMedicineYesNo),
@@ -168,7 +171,7 @@
     }
 
     <!-- Deductions -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.deductions.heading"))
+    @sectionH3Heading(messages("submit-return.check-your-answers.deductions.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
@@ -179,7 +182,8 @@
     ))
 
     <!-- Tax calculation -->
-    @sectionH2Heading(messages("submit-return.check-your-answers.tax-calc.heading"))
+    @sectionH3Heading(messages("submit-return.check-your-answers.tax-calc.heading"))
+    @para("tax-calc.footnote")
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),
@@ -188,11 +192,20 @@
             summaryRowFromString("tax-calc.row4", taxReturn.taxDue).bold
         )
     ))
-    @para("tax-calc.footnote")
+
+    @{credits match {
+        case c: CreditsClaimedDetails if c.totalCredits > BigDecimal(0) =>
+            paragraphBody(
+                messages("submit-return.check-your-answers.tax-calc.footnote.2",
+                        strong(messages("submit-return.check-your-answers.tax-calc.credit.of", c.totalCredits.asPounds))
+                )
+            )
+        case _ => ()
+    }}
 
     <!-- Submit -->
     @if(taxReturn.isSubmittable) {
-        @sectionH2Heading(messages("submit-return.check-your-answers.now-send.heading"))
+        @sectionH3Heading(messages("submit-return.check-your-answers.now-send.heading"))
         @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
 
         @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {

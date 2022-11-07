@@ -20,16 +20,17 @@ import models.subscription.{AddressDetails, IndividualDetails, OrganisationDetai
 import play.api.libs.json.{Json, OFormat}
 import models.subscription.ContactDetails
 
-case class GroupOrPartnershipDetails(
+case class GroupPartnershipDetails(
   relationship: String,
   customerIdentification1: String,
   customerIdentification2: Option[String],
   organisationDetails: Option[OrganisationDetails],
   individualDetails: Option[IndividualDetails],
   addressDetails: AddressDetails,
-  contactDetails: ContactDetails
+  contactDetails: ContactDetails,
+  regWithoutIDFlag: Boolean
 )
 
-object GroupOrPartnershipDetails {
-  implicit val format: OFormat[GroupOrPartnershipDetails] = Json.format[GroupOrPartnershipDetails]
+object GroupPartnershipDetails {
+  implicit val format: OFormat[GroupPartnershipDetails] = Json.format[GroupPartnershipDetails]
 }

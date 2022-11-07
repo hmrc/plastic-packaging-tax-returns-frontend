@@ -85,6 +85,8 @@ AmendsCheckYourAnswers.hiddenCell.changeLink = {0} {1}
 AmendsCheckYourAnswers.error.heading = Cyflwyno’ch Ffurflen Dreth diwygiedig
 AmendsCheckYourAnswers.error.line = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
 AmendsCheckYourAnswers.cancel.link.text = Canslo’r diwygiad hwn
+AmendsCheckYourAnswers.credits.heading = Credydau
+AmendsCheckYourAnswers.credit.paragraph = Ni allwch ddiwygio credydau.
 AmendsCheckYourAnswers.error.noAmendments = Ni allwch gyflwyno’r Ffurflen Dreth ddiwygiedig hon gan nad ydych wedi gwneud unrhyw newidiadau.
 
 
@@ -108,6 +110,10 @@ unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 cancelAmend.title = Ydych chi’n siŵr eich bod am ganslo diwygio eich datganiad ar gyfer mis {0} i fis {1} {2}?
 cancelAmend.error.required = Dewiswch ‘Iawn’ os hoffech ganslo diwygio’ch Ffurflen Dreth
+cancelAmend.already-cancelled.title = You have cancelled amending this return
+cancelAmend.already-cancelled.para = You can:
+cancelAmend.already-cancelled.link-text.1 = go to your Plastic Packaging Tax account  
+cancelAmend.already-cancelled.link-text.2 = view or amend all submitted returns 
 
 amendDirectExportPlasticPackaging.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
@@ -193,16 +199,15 @@ amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar 
 amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
 amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
-confirmPackagingCredit.title = Confirm credit amount
-confirmPackagingCredit.heading = Confirm {0} of credit
+confirmPackagingCredit.title = Cadarnhau swm y credyd
+confirmPackagingCredit.heading = Cadarnhau {0} o gredyd
 confirmPackagingCredit.subHeading = Credydau
-confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
-confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
-confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
-confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
-confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
-confirmPackagingCredit.checkYourAnswersLabel = Conversion credit
-confirmPackagingCredit.confirm.credit.button = Confirm credit amount
+confirmPackagingCredit.hint.p1 = Rhoesoch wybod i ni eich bod wedi talu treth ar {0} o ddeunydd pacio plastig mewn Ffurflen Dreth flaenorol, a’i fod bellach wedi’i allforio neu ei drosi.
+confirmPackagingCredit.hint.p2 = Caiff y Dreth Deunydd Pacio Plastig ei chyfrifo ar sail £200 y dunnell.
+confirmPackagingCredit.hint.p3 = Mae hyn yn golygu y cewch {0} o dreth yn ôl fel credyd.
+confirmPackagingCredit.hint.p4 = Bydd eich credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+confirmPackagingCredit.change.credit.paragraph = Newid swm y credyd
+confirmPackagingCredit.confirm.credit.button = Cadarnhau swm y credyd
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
@@ -282,15 +287,15 @@ manufacturedPlasticPackagingWeight.paragraph.include = Mae angen i chi gynnwys d
 manufacturedPlasticPackagingWeight.list.include.1 = yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 manufacturedPlasticPackagingWeight.list.include.2 = ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig
 
-NonExportRecycledPlasticPackaging.title = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-NonExportRecycledPlasticPackaging.heading = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-NonExportRecycledPlasticPackaging.error.required = Dewiswch ‘Iawn’ os oedd unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig heb eu hallforio yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+NonExportRecycledPlasticPackaging.heading = Ni chafodd cyfanswm o {0} ei allforio. A oedd unrhyw faint o hyn yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackaging.directly.export.no.heading = A oedd unrhyw faint o’ch {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackaging.error.required = Dewiswch ‘Iawn’ os oedd unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 NonExportRecycledPlasticPackaging.paragraph.line.1 =Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Dysgwch am {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = ystyr deunydd pacio plastig wedi’i ailgylchu
 
-NonExportRecycledPlasticPackagingWeight.title = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-NonExportedRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackagingWeight.directly.export.no.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 
 NonExportRecycledPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
@@ -330,7 +335,8 @@ viewReturnSummary.calculation.field.paragraph.1 = Mae £200 o dreth am bob tunne
 viewReturnSummary.calculation.field.credit = Credyd a hawliwyd
 viewReturnSummary.calculation.field.debit = Debyd
 viewReturnSummary.calculation.field.liability = Eich rhwymedigaeth treth
-viewReturnSummary.credits.heading = Credydau
+viewReturnSummary.credit.heading = Credydau
+viewReturnSummary.credit.field.total = Cyfanswm y credyd
 viewReturnSummary.credits.field.credit = Credyd a hawliwyd
 viewReturnSummary.credits.field.debit = Debyd credydau treth
 
@@ -364,8 +370,8 @@ account.homePage.card.makeReturn.line1.multipleOverdue = Mae gennych {0} o Ffurf
 account.homePage.card.makeReturn.line1.singleOverdue = Mae’ch Ffurflen Dreth ar gyfer {0} yn hwyr.
 account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i’w cyflwyno.
 account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer {0} rhwng {1} a {2}.
-account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen TAW
-account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen TAW [CREDITS WELSH]
+account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen Dreth
+account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen Dreth a hawlio treth yn ôl fel credyd
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure = Ni allwn ddangos manylion y Ffurflen Dreth.
@@ -433,7 +439,8 @@ confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label = Pwysau’r d
 confirmPlasticPackagingTotal.total.label = Cyfanswm y deunydd pacio plastig
 
 nonExportedHumanMedicinesPlasticPackaging.caption = Deunydd pacio plastig heb ei allforio
-nonExportedHumanMedicinesPlasticPackaging.heading = Ni wnaethoch allforio {0} o gyfanswm eich cydrannau deunydd pacio plastig gorffenedig. A oedd unrhyw faint o hyn wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
+nonExportedHumanMedicinesPlasticPackaging.heading =Ni chafodd cyfanswm o {0} ei allforio. A oedd unrhyw faint o hyn wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
+nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading = A oedd unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
 nonExportedHumanMedicinesPlasticPackaging.detail = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 nonExportedHumanMedicinesPlasticPackaging.reveal = Beth yw ystyr deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
 nonExportedHumanMedicinesPlasticPackaging.reveal.content = Mae deunydd pacio’n uniongyrchol os daw i gysylltiad unionsyth â chynnyrch meddyginiaethol trwyddedig.
@@ -441,6 +448,7 @@ nonExportedHumanMedicinesPlasticPackaging.error.required = Dewiswch ‘Iawn’ o
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Deunydd pacio plastig heb ei allforio
 nonExportedHumanMedicinesPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
+nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig a oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
 nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1 = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
@@ -470,6 +478,9 @@ submit-return.check-your-answers.tax-calc.row2 = Cyfanswm y didyniadau
 submit-return.check-your-answers.tax-calc.row3 = Cyfanswm y deunydd pacio plastig trethadwy
 submit-return.check-your-answers.tax-calc.row4 = Treth sy’n ddyledus ar y Ffurflen Dreth hon
 submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
+submit-return.check-your-answers.tax-calc.footnote.2 = Bydd eich {0} yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
+
 
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
@@ -492,17 +503,18 @@ submit-return.check-your-answers.deductions.row3 = Pwysau’r deunydd pacio plas
 submit-return.check-your-answers.deductions.row4 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
-submit-return.check-your-answers.credits.line1 = Ni allwch hawlio credydau eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf. Mae’n bosibl y gallwch hawlio credyd yn y dyfodol os yw’r deunydd pacio naill ai:
+submit-return.check-your-answers.credits.line1 = Ni allwch hawlio treth yn ôl fel credyd eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
+submit-return.check-your-answers.credits.line2 = Mae’n bosibl y gallwch hawlio treth yn ôl fel credyd yn y dyfodol os yw’r deunydd pacio rydych wedi talu treth arno naill ai:
 submit-return.check-your-answers.credits.line3 = wedi’i allforio
 submit-return.check-your-answers.credits.line4 = wedi’i drosi’n ddeunydd pacio gwahanol
 submit-return.check-your-answers.credits.line5 = Dysgwch ragor am {0}.
-submit-return.check-your-answers.credits.line5.link-text = hawlio credydau (yn agor tab newydd)
+submit-return.check-your-answers.credits.line5.link-text = hawlio treth yn ôl fel credyd (yn agor tab newydd)
 submit-return.check-your-answers.credits.not.claimed.hint = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.
 submit-return.check-your-answers.credits.not.claimed.link = Hawlio treth yn ôl fel credyd
 
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
 submit-return.check-your-answers.now-send.line1 = Drwy gyflwyno’r Ffurflen Dreth hon, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a rowch yn gywir.
-submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen TAW
+submit-return.check-your-answers.now-send.button-text = Cyflwyno Ffurflen Dreth
 
 submit-return.check-your-answers.error.heading = Cyflwyno’ch Ffurflen Dreth
 submit-return.check-your-answers.error.line1 = Ni allwch gyflwyno’r Ffurflen Dreth hon oni bai eich bod yn newid eich atebion. Mae’n rhaid i bwysau’ch holl ddeunydd pacio plastig fod yn fwy na phwysau’ch holl ddidyniadau, neu’n hafal iddynt.
@@ -555,9 +567,9 @@ what-do-you-want-to-do.just-return = Dechrau Ffurflen Dreth {0}
 what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
 what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
 
-nowStartYourReturn.heading = Now start your return for {0}
-nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.
-nowStartYourReturn.button-text = Start your return
+nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
+nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
+nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
 too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
 too-much-credit-claimed.section-heading = Credydau
@@ -569,3 +581,9 @@ too-much-credit-claimed.cancel-link-text = Canslo hawlio credyd ac yn eich blaen
 removeCredit.title = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.heading = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.error.required = Dewiswch ‘Iawn’ os ydych am dynnu’r credyd hwn
+
+return-already-submitted.heading = Mae’ch Ffurflen Dreth wedi dod i law
+return-already-submitted.para.1 = Mae’ch Ffurflen Dreth ar gyfer {0} wedi dod i law. Does dim angen i chi ei chyflwyno eto.
+return-already-submitted.para.2 = Gallwch wneud y canlynol:
+return-already-submitted.list.1 = bwrw golwg dros neu ddiwygio Ffurflenni a gyflwynwyd
+return-already-submitted.list.2 = gwirio’r hyn sydd arnoch

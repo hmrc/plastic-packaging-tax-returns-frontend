@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, AmendObligationCacheable}
+import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey}
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.CancelAmendFormProvider
@@ -41,16 +41,10 @@ class CancelAmendController @Inject()
  view: CancelAmendView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = identify.andThen(getData).andThen(requireData) {
     implicit request =>
-
-      val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
-        throw new IllegalStateException("Must have an obligation to Submit against")
-      )
-
-      Ok(view(form, obligation))
+      val maybeObligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
+      Ok(view(formProvider(), maybeObligation))
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +55,7 @@ class CancelAmendController @Inject()
       )
 
       formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, Some(obligation)))),
         value => if (value) {
           cancel(request)
         } else {
@@ -71,7 +65,7 @@ class CancelAmendController @Inject()
   }
 
   def cancel(implicit request: DataRequest[_]): Future[Result] = {
-    val pptReference: String = request.request.pptReference
+    val pptReference = request.request.pptReference
     val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
     val futureNextPage = request.userAnswers
       .reset

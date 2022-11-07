@@ -16,202 +16,160 @@
 
 package connectors
 
-import base.utils.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import com.codahale.metrics.Timer
+import com.kenshoo.play.metrics.Metrics
+import config.FrontendAppConfig
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterEach, EitherValues}
-import play.api.http.Status
-import play.api.libs.json.Json
-import play.api.test.Helpers.await
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.stubbing.ReturnsDeepStubs
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse, Upstream5xxResponse}
 
-class TaxReturnsConnectorSpec
-  extends ConnectorISpec with ScalaFutures with EitherValues with BeforeAndAfterEach {
+import scala.concurrent.{ExecutionContext, Future}
 
-  lazy val connector: TaxReturnsConnector = app.injector.instanceOf[TaxReturnsConnector]
 
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    startWireMockServer
-  }
+class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
+  private val frontendAppConfig = mock[FrontendAppConfig]
+  private val metrics2 = mock[Metrics](ReturnsDeepStubs)
+  private val timerContext = mock[Timer.Context]
+  private val httpClient2 = mock[HttpClient]
 
-  override protected def afterAll(): Unit = {
-    stopWireMockServer
-    super.afterAll()
+  protected implicit val ec2: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  protected implicit val hc2: HeaderCarrier = mock[HeaderCarrier]
+
+  private val connector = new TaxReturnsConnector(httpClient2, frontendAppConfig, metrics2)
+
+  private val aReturnDisplayApi: ReturnDisplayApi = {
+    val bd: BigDecimal = 0.1
+    val l: Long = 1
+    ReturnDisplayApi(
+      "", IdDetails("a-ppt-ref", "subId"), None, ReturnDisplayDetails(l, l, l, l, l, l, bd, bd, l, bd)
+    )
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    resetWireMockServer
+    reset(httpClient2, frontendAppConfig, metrics2, timerContext)
+    when(frontendAppConfig.pptReturnSubmissionUrl(any)) thenReturn "return-submission-url"
+    when(metrics2.defaultRegistry.timer(any).time()) thenReturn timerContext
+    when(httpClient2.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(JsObject.empty)
   }
-
-  private val pptReference = "XMPPT001"
 
   "Tax Returns Connector" should {
+    
+    "use the correct timer" when {
+      "getting a return" in {
+        await(connector.get("id", "period"))
+        verify(metrics2.defaultRegistry).timer("ppt.returns.get.timer")
+        verify(timerContext).stop()
+      }
+      "submitting a return" in {
+        await(connector.submit("id"))
+        verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
+        verify(timerContext).stop()
+      }
+      "amending a return" in {
+        await(connector.amend("id"))
+        verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
+        verify(timerContext).stop()
+      }
+    }
 
     "get correctly" in {
-
-      val bd: BigDecimal = 0.1
-      val l: Long = 1
-      val expectedResult: ReturnDisplayApi =
-        ReturnDisplayApi(
-          "", IdDetails(pptReference, "subId"), None, ReturnDisplayDetails(l, l, l, l, l, l, bd, bd, l, bd)
-        )
-
-      givenGetReturnsEndpointReturns(
-        Status.OK, pptReference, "00xx", body = Json.toJson(expectedResult).toString
-      )
-
-      val res: Either[ServiceError, ReturnDisplayApi] = await(connector.get(pptReference, "00xx"))
-
-      res.right.get mustBe expectedResult
-
+      when(httpClient2.GET[ReturnDisplayApi](any, any, any)(any, any, any)) thenReturn Future.successful(aReturnDisplayApi)
+      await(connector.get("ppt-reference", "period-key")) mustBe aReturnDisplayApi
+      verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
+      verify(httpClient2).GET(meq("return-submission-url/period-key"), any, any)(any, any, any)
     }
 
-    "submit correctly" when {
-      "there is a charge reference" in {
-
-        givenReturnsSubmissionEndpointReturns(Status.OK,
-          pptReference,
-          body = """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}"""
-        )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe Some("PANTESTPAN")
-
+    "submit" when {
+      "in all cases" in {
+        await(connector.submit("ppt-reference"))
+        verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
+        verify(httpClient2).GET(meq("return-submission-url"), any, any)(any, any, any)
       }
-      "there is no charge reference" in {
-
-        givenReturnsSubmissionEndpointReturns(Status.OK,
-          pptReference,
-          body = """{"chargeDetails": null}"""
-        )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe None
-
-      }
-    }
-
-    "Amend correctly" when {
-
+      
       "there is a charge reference" in {
-
-        givenReturnsAmendmentEndpointReturns(Status.OK,
-          pptReference,
-          body = """{"chargeDetails": {"chargeReference": "SOMEREF"}}"""
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
+          Json.parse("""{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
         )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe Some("SOMEREF")
-
+        await(connector.submit("ppt-reference")) mustBe Right(Some("PANTESTPAN"))
       }
 
       "there is no charge reference" in {
-
-        givenReturnsAmendmentEndpointReturns(Status.OK,
-          pptReference,
-          body = """{"chargeDetails": null}""",
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
+          Json.parse("""{"chargeDetails": null}""")
         )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
-
-        res.isRight mustBe true
-        res.value mustBe None
-
+        await(connector.submit("ppt-reference")) mustBe Right(None)
+      }
+      
+      "the obligation is no longer open" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream4xxResponse(
+          message = "exception-message", upstreamResponseCode = 417, reportAs = 417
+        ))
+        await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }
 
+      "ETMP says the return has already been submitted" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream4xxResponse(
+          message = "exception-message", upstreamResponseCode = 422, reportAs = 422
+        ))
+        await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
+      }
     }
 
-    "return a left (error)" when {
-
-      "get response is impassible" in {
-
-        givenGetReturnsEndpointReturns(
-          Status.OK, pptReference, "00xx", body = "{"
-        )
-
-        val res: Either[ServiceError, ReturnDisplayApi] = await(connector.get(pptReference, "00xx"))
-
-        assert(res.left.get.isInstanceOf[DownstreamServiceError])
-
+    "Amend" when {
+      
+      "in all cases" in {
+        when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn "return-amend-url"
+        await(connector.amend("ppt-reference"))
+        verify(frontendAppConfig).pptReturnAmendUrl("ppt-reference")
+        verify(httpClient2).GET(meq("return-amend-url"), any, any)(any, any, any)
       }
 
-      "submit response is impassible" in {
-
-        givenReturnsSubmissionEndpointReturns(Status.OK,
-          pptReference,
-          body = "{"
+      "there is a charge reference" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
+          Json.parse("""{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
         )
-
-        val res: Either[ServiceError, Option[String]] = await(connector.submit(pptReference))
-
-        assert(res.left.get.isInstanceOf[DownstreamServiceError])
-
+        await(connector.amend("ppt-reference")) mustBe Some("SOMEREF")
       }
 
-      "amend response is impassible" in {
-
-        givenReturnsAmendmentEndpointReturns(Status.OK,
-          pptReference,
-          body = "{"
+      "there is no charge reference" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
+          Json.parse("""{"chargeDetails": null}""")
         )
+        await(connector.amend("ppt-reference")) mustBe None
+      }
+    }
 
-        val res: Either[ServiceError, Option[String]] = await(connector.amend(pptReference))
+    "throw" when {
+      "get request fails" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
+          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        ))
+        a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference", "period-key")))
+      }
 
-        assert(res.left.get.isInstanceOf[DownstreamServiceError])
+      "submit response cannot be parsed" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
+          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        ))
+        a[DownstreamServiceError] mustBe thrownBy(await(connector.submit("ppt-reference")))
+      }
 
+      "amend response cannot be parsed" in {
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
+          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        ))
+        a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
       }
     }
   }
 
-  private def givenGetReturnsEndpointReturns(status: Int,
-                                             pptReference: String,
-                                             periodKey: String,
-                                             body: String = ""
-                                            ): StubMapping =
-    stubFor(
-      WireMock.get(s"/returns-submission/$pptReference/$periodKey")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
-
-  private def givenReturnsSubmissionEndpointReturns(
-                                                     status: Int,
-                                                     pptReference: String,
-                                                     body: String = ""
-                                                   ): StubMapping =
-    stubFor(
-      WireMock.get(s"/returns-submission/$pptReference")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
-
-  private def givenReturnsAmendmentEndpointReturns(
-                                                    status: Int,
-                                                    pptReference: String,
-                                                    body: String = "",
-                                                  ): StubMapping =
-    stubFor(
-      WireMock.get(s"/returns-amend/$pptReference")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
 }

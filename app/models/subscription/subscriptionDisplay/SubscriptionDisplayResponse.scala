@@ -16,8 +16,7 @@
 
 package models.subscription.subscriptionDisplay
 
-import models.subscription.CustomerType.{Individual, Organisation}
-import models.subscription.group.GroupOrPartnershipSubscription
+import models.subscription.group.GroupPartnershipSubscription
 import models.subscription.{
   AddressDetails,
   Declaration,
@@ -28,37 +27,17 @@ import models.subscription.{
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionDisplayResponse(
-  processingDate: String,
   changeOfCircumstanceDetails: Option[ChangeOfCircumstanceDetails],
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
   businessCorrespondenceDetails: AddressDetails,
+  declaration: Declaration,
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: BigDecimal,
-  declaration: Declaration,
-  groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
-) {
-
-  val entityName: String = legalEntityDetails.customerDetails.customerType match {
-    case Individual =>
-      legalEntityDetails.customerDetails.individualDetails.map(
-        details =>
-          s"${details.title.map(_ + " ").getOrElse("")}${details.firstName} ${details.lastName}"
-      ).getOrElse(throw new IllegalStateException("Individual name absent"))
-    case Organisation =>
-      legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationName).getOrElse(
-        throw new IllegalStateException("Organisation name absent")
-      )
-  }
-
-  val organisationType: Option[String] =
-    legalEntityDetails.customerDetails.organisationDetails.flatMap(_.organisationType)
-
-  val isGroup: Boolean       = legalEntityDetails.groupSubscriptionFlag
-  val isPartnership: Boolean = legalEntityDetails.partnershipSubscriptionFlag
-
-}
+  groupPartnershipSubscription: Option[GroupPartnershipSubscription],
+  processingDate: String,
+)
 
 object SubscriptionDisplayResponse {
 

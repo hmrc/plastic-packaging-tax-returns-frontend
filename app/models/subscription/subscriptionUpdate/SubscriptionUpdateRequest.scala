@@ -16,7 +16,7 @@
 
 package models.subscription.subscriptionUpdate
 
-import models.subscription.group.GroupOrPartnershipSubscription
+import models.subscription.group.GroupPartnershipSubscription
 import models.subscription.{
   AddressDetails,
   Declaration,
@@ -39,7 +39,7 @@ case class SubscriptionUpdateRequest(
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: BigDecimal,
   declaration: Declaration,
-  groupOrPartnershipSubscription: Option[GroupOrPartnershipSubscription]
+  groupPartnershipSubscription: Option[GroupPartnershipSubscription]
 )
 
 object SubscriptionUpdateRequest {
@@ -57,7 +57,7 @@ object SubscriptionUpdateRequest {
       taxObligationStartDate = subscriptionDisplayResponse.taxObligationStartDate,
       last12MonthTotalTonnageAmt = subscriptionDisplayResponse.last12MonthTotalTonnageAmt,
       declaration = subscriptionDisplayResponse.declaration,
-      groupOrPartnershipSubscription = subscriptionDisplayResponse.groupOrPartnershipSubscription
+      groupPartnershipSubscription = subscriptionDisplayResponse.groupPartnershipSubscription
     )
 
   implicit val format: OFormat[SubscriptionUpdateRequest] = Json.format[SubscriptionUpdateRequest]

@@ -19,8 +19,10 @@ package views.returns
 import base.ViewSpecBase
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
+import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import viewmodels.PrintLong
 import views.html.returns.NonExportedRecycledPlasticPackagingView
 
 class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
@@ -28,44 +30,79 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
   val form = new NonExportedRecycledPlasticPackagingFormProvider()()
   val page = inject[NonExportedRecycledPlasticPackagingView]
   val plastic = 1234L
+  val plasticAsKg = plastic.asKg
 
-  private def createView: Html =
-    page(form, NormalMode, plastic)(request, messages)
+  private def createView(form: Form[Boolean] = form, directlyExportAnswer: Boolean = true): Html =
+    page(form, NormalMode, plastic, directlyExportAnswer)(request, messages)
 
   "NonExportedRecycledPlasticPackagingView" should {
-    val view = createView
+    val view = createView()
 
-    "have a title" in {
+    "have a title" when {
+      "directly exported component answer is yes" in {
+        view.select("title").text mustBe
+          s"A total of $plasticAsKg was not exported. Did any of this contain 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("NonExportRecycledPlasticPackaging.heading", plasticAsKg))
 
-      view.select("title").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+      }
 
+      "directly exported component answer is No" in {
+        val newView = createView(directlyExportAnswer = false)
+
+        newView.select("title").text mustBe
+          s"Did any of your $plasticAsKg of your total finished plastic packaging components contain 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+        newView.select("title").text() must include(messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg))
+      }
     }
-    "have a heading" in{
+    "have a heading" when {
 
-      view.select("h1").text mustBe
-        "You did not export 1,234kg of your total finished plastic packaging components. Did any of this contain 30% or more recycled plastic?"
+      "directly exported component answer is yes" in {
+        view.select("h1").text mustBe
+          s"A total of $plasticAsKg was not exported. Did any of this contain 30% or more recycled plastic?"
+        view.select("h1").text() mustBe messages("NonExportRecycledPlasticPackaging.heading", plasticAsKg)
+      }
 
+      "directly exported component answer is No" in {
+        val newView = createView(directlyExportAnswer = false)
+
+        newView.select("h1").text mustBe
+          s"Did any of your $plasticAsKg of your total finished plastic packaging components contain 30% or more recycled plastic?"
+        newView.select("h1").text() must include(messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg))
+      }
     }
+
     "have a caption" in {
-
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackaging.caption")
-
     }
 
     "contain paragraph content" in{
-
       val text = "You will not be charged tax on these but you must still tell us about them. Find out what we mean by recycled plastic packaging."
-
       view.getElementsByClass("govuk-body").text() must include(text)
-
     }
     "contain save & continue button" in {
-
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
-
     }
 
+    "contain an error" when {
+      "no answer is selected" in {
+        val view = createView(form.bind(Map("value" -> "")))
+
+        assertErrorBoxMsg(view)
+        assertErrorMsg(view)
+      }
+    }
   }
 
+  private def assertErrorBoxMsg(view: Html): Unit = {
+    val actualErrorBoxMsg = view.getElementsByClass("govuk-error-summary__body").text()
+    actualErrorBoxMsg mustBe "Select yes if any of your finished plastic packaging components contained 30% or more recycled plastic"
+    actualErrorBoxMsg mustBe messages("NonExportRecycledPlasticPackaging.error.required")
+  }
+
+  private def assertErrorMsg(view: Html): Unit = {
+    val actualErrorMessage = view.getElementsByClass("govuk-error-message").text()
+
+    actualErrorMessage must include("Select yes if any of your finished plastic packaging components contained 30% or more recycled plastic")
+    actualErrorMessage must include(messages("NonExportRecycledPlasticPackaging.error.required"))
+  }
 }

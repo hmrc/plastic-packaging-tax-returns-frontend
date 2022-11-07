@@ -16,10 +16,10 @@
 
 package models.subscription
 
-import models.subscription.group.GroupOrPartnershipSubscription
+import models.subscription.group.GroupPartnershipSubscription
 import play.api.libs.json.{Json, OFormat}
 
-case class Subscription(
+case class Subscription( //  Duplicate?
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,
@@ -27,7 +27,7 @@ case class Subscription(
   declaration: Declaration,
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: Long,
-  groupSubscription: Option[GroupOrPartnershipSubscription] = None
+  groupSubscription: Option[GroupPartnershipSubscription] = None
 )
 
 object Subscription {

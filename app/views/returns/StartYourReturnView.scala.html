@@ -24,7 +24,7 @@
     formHelper: FormWithCSRF,
 )
 
-@(form: Form[Boolean], mode: Mode, obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
 
 @pageTitle =  @{messages("startYourReturn.title",
                messages(s"month.${obligation.fromDate.getMonthValue}"),
@@ -35,7 +35,7 @@
 
 @layout(pageTitle = title(form, pageTitle, Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.StartYourReturnController.onSubmit(), 'autoComplete -> "off") {
 
        @yesNoLayout(None, pageTitle, hintText = hintText, form = form)
 

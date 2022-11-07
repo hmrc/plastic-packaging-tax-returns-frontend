@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package models.subscription.group
+package models
 
+import models.subscription.LegalEntityDetails
 import play.api.libs.json.{Json, OFormat}
 
-case class GroupOrPartnershipSubscription(
-  representativeControl: Boolean,
-  groupOrPartnershipDetails: GroupOrPartnershipDetails,
-  allMembersControl: Boolean
-)
+final case class PPTSubscriptionDetails(legalEntityDetails: LegalEntityDetails)
 
-object GroupOrPartnershipSubscription {
-
-  implicit val format: OFormat[GroupOrPartnershipSubscription] =
-    Json.format[GroupOrPartnershipSubscription]
-
+object PPTSubscriptionDetails {
+  implicit val format: OFormat[PPTSubscriptionDetails] = Json.format[PPTSubscriptionDetails]
 }

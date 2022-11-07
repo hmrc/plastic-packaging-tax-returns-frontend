@@ -39,10 +39,8 @@ case class DataRequest[A](
   def pptReference: String = request.pptReference
   def cacheKey: String = request.cacheKey
   def headerCarrier: HeaderCarrier = request.headerCarrier
-
 }
 
 object DataRequest {
   implicit def headerCarrier(implicit request: DataRequest[_]): HeaderCarrier = request.headerCarrier
 }
-

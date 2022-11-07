@@ -25,7 +25,7 @@
     paragraphBody: paragraphBody
 )
 
-@(form: Form[Boolean], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode, amount: Long, directlyExportedYesNoAnswer: Boolean)(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.gov.uk/guidance/work-out-which-packaging-is-subject-to-plastic-packaging-tax#recycled-plastic" class="govuk-link" id="govuk-guidance-link">@messages("NonExportRecycledPlasticPackaging.paragraph.link")</a>}
 
@@ -34,12 +34,20 @@
     @paragraphBody(messages("NonExportRecycledPlasticPackaging.paragraph.line.2", guidanceLink))
 }
 
-@layout(pageTitle = title(form, messages("NonExportRecycledPlasticPackaging.title", amount.asKg), Some(messages("return.title.tail")))) {
+@heading = @{
+    if(directlyExportedYesNoAnswer) {
+        "NonExportRecycledPlasticPackaging.heading"
+    } else {
+        "NonExportRecycledPlasticPackaging.directly.export.no.heading"
+    }
+}
+
+@layout(pageTitle = title(form, messages(heading, amount.asKg), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
 
         @yesNoLayout(Some(messages("caption.non.exported.plastic")),
-            messages("NonExportRecycledPlasticPackaging.heading",  amount.asKg),
+            messages(heading,  amount.asKg),
             paragraphText = paragraphContent,
             form = form)
     }

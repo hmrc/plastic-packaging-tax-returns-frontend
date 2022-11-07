@@ -51,7 +51,10 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
         case Some(value) => form().fill(value)
       }
 
-      NonExportedAmountHelper.nonExportedAmount.fold(identity, nonExportedAmount => Ok(view(nonExportedAmount, preparedForm, mode)))
+      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+        .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+          o => Ok(view(o._1, preparedForm, mode, o._2))
+        )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -59,8 +62,12 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
       form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(NonExportedAmountHelper.nonExportedAmount.fold(
-            identity, exportedAmount => BadRequest(view(exportedAmount, formWithErrors, mode)))),
+          Future.successful(
+            NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+                o => BadRequest(view(o._1, formWithErrors, mode, o._2))
+              )
+          ),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))

@@ -16,166 +16,219 @@
 
 package controllers.returns
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
-import models.UserAnswers
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import models.UserAnswers
+import navigation.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
-import play.api.inject.bind
+import org.scalatestplus.play.PlaySpec
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.NonExportedRecycledPlasticPackagingView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NonExportedRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute = Call("GET", "/foo")
-  val formProvider = new NonExportedRecycledPlasticPackagingFormProvider()
+  private val mockMessageApi = mock[MessagesApi]
+  private val mockCacheConnector = mock[CacheConnector]
+  private val mockNavigator = mock[Navigator]
+  private val mockView = mock[NonExportedRecycledPlasticPackagingView]
 
-  val validAnswer = 0L
-  val manufacturedAmount = 200L
-  val importedAmount = 100L
-  val exportedAmount = 50L
-  val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  lazy val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val validAnswer = 0L
+  private val manufacturedAmount = 200L
+  private val importedAmount = 100L
+  private val exportedAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
 
-  lazy val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
+  private val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
-  "RecycledPlasticPackaging Controller" - {
+  override def beforeEach() = {
+    super.beforeEach()
+    reset(mockView, mockCacheConnector, mockNavigator)
 
-    "must return OK and the correct view for a GET" in {
+    when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+  }
+
+  "onPageLoad" should {
+
+    "return OK with an empty form" in {
       val ans = nonExportedAnswer
-        .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).success.value
+        .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).get
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
+        FakeRequest(GET, recycledPlasticPackagingRoute)
+      )
 
-      running(application) {
-        val request = FakeRequest(GET, recycledPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, nonExportedAmount)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verifyView(None, nonExportedAmount)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly when the question has previously been answered" in {
 
-      val userAnswers = nonExportedAnswer.set(NonExportedRecycledPlasticPackagingPage, true).success.value
+      val userAnswers = nonExportedAnswer.set(NonExportedRecycledPlasticPackagingPage, true).get
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val result = createSut(userAnswer = Some(userAnswers)).onPageLoad(NormalMode)(
+        FakeRequest(GET, recycledPlasticPackagingRoute)
+      )
 
-      running(application) {
-        val request = FakeRequest(GET, recycledPlasticPackagingRoute)
-
-        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, nonExportedAmount)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verifyView(Some(true), nonExportedAmount)
     }
 
     "must redirect to home page on GET when amount questions has not been answers" in {
-      val ans = UserAnswers(userAnswersId).set(NonExportedRecycledPlasticPackagingPage, true).success.value
+      val ans = UserAnswers("123").set(NonExportedRecycledPlasticPackagingPage, true).get
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
+      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
+        FakeRequest(GET, recycledPlasticPackagingRoute)
+      )
 
-      running(application) {
-        val request = FakeRequest(GET, recycledPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "calculate total plastic is directly exported is answered No" in {
+      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
 
-      val mockCacheConnector = mock[CacheConnector]
+      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
+        FakeRequest(GET, recycledPlasticPackagingRoute)
+      )
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, recycledPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      status(result) mustEqual OK
+      verifyView(None, manufacturedAmount + importedAmount, false)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to the home page if directly exported answer is missing" in {
+      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
 
-      val application = applicationBuilder(userAnswers = Some(nonExportedAnswer)).build()
+      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
+        FakeRequest(GET, recycledPlasticPackagingRoute)
+      )
 
-      running(application) {
-        val request =
-          FakeRequest(POST, recycledPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", ""))
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+    }
+  }
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+  "onSubmit" should {
+    "redirect to the next page when valid data is submitted" in {
 
-        val view = application.injector.instanceOf[NonExportedRecycledPlasticPackagingView]
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
+      when(mockNavigator.nextPage(any(),any(),any())).thenReturn(onwardRoute)
 
-        val result = route(application, request).value
+      val result = createSut(userAnswer = Some(UserAnswers("123"))).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+      )
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, nonExportedAmount)(request, messages(application)).toString
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = createSut(userAnswer = Some(nonExportedAnswer)).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", ""))
+      )
 
-      running(application) {
-        val request = FakeRequest(GET, recycledPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      status(result) mustEqual BAD_REQUEST
+      verifyView(None, nonExportedAmount)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "return BadRequest with total plastic when directly exported answered no" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+      val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", ""))
+      )
 
-      running(application) {
-        val request =
-          FakeRequest(POST, recycledPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      status(result) mustEqual BAD_REQUEST
+      verifyView(None, manufacturedAmount + importedAmount, false)
     }
+
+    "redirect to home page is directly exported not answered" in {
+      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
+
+      val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", ""))
+      )
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+    }
+
+
+
+    "redirect to Journey Recovery for a GET if no existing data is found" in {
+
+      val result = createSut(userAnswer = None).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+      )
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+    }
+
+    "redirect to Journey Recovery for a POST if no existing data is found" in {
+
+      val result = createSut(userAnswer = None).onSubmit(NormalMode)(
+        FakeRequest(POST, recycledPlasticPackagingRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+      )
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+    }
+  }
+
+  private def verifyView(expectedIsYesNo: Option[Boolean], amount: Long, expectedDirectlyExportedYesNoAnswer: Boolean = true): Unit = {
+    val captor: ArgumentCaptor[Form[Boolean]] = ArgumentCaptor.forClass(classOf[Form[Boolean]])
+
+    verify(mockView).apply(
+      captor.capture(),
+      ArgumentMatchers.eq(NormalMode),
+      ArgumentMatchers.eq(amount),
+      ArgumentMatchers.eq(expectedDirectlyExportedYesNoAnswer)
+    )(any(),any())
+
+    captor.getValue.value mustBe expectedIsYesNo
+  }
+  private def createSut(
+                         formProvider: NonExportedRecycledPlasticPackagingFormProvider = new NonExportedRecycledPlasticPackagingFormProvider(),
+                         userAnswer: Option[UserAnswers] = None
+                       ): NonExportedRecycledPlasticPackagingController = {
+    new NonExportedRecycledPlasticPackagingController(
+      mockMessageApi,
+      mockCacheConnector,
+      mockNavigator,
+      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+      new FakeDataRetrievalAction(userAnswer),
+      new DataRequiredActionImpl(),
+      formProvider,
+      stubMessagesControllerComponents(),
+      mockView
+    )
   }
 }

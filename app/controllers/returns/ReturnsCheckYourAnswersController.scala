@@ -30,7 +30,8 @@ import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoY
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.{Entry, SessionRepository}
+import repositories.SessionRepository.Paths
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnsCheckYourAnswersView
@@ -64,13 +65,18 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        ensureCreditAnswersConsistency(request.userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
+        val userAnswers: UserAnswers = request.userAnswers
+        ensureCreditAnswersConsistency(userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
           returnsConnector.submit(request.pptReference).flatMap {
             case Right(optChargeRef) =>
-              sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
+              sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef).map {
                 _ => Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
               }
-            case Left(error)         => throw error
+            case Left(_) =>
+              val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable)
+              sessionRepository.set(request.cacheKey, Paths.TaxReturnObligation, returnQuarter).map { _ =>
+                Redirect(routes.AlreadySubmittedController.onPageLoad())
+              }
           }
         }
     }

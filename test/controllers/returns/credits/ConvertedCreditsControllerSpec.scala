@@ -38,6 +38,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import queries.Gettable
 import views.html.returns.credits.ConvertedCreditsView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -95,7 +96,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       dataRequest,
       messages
     )
-    when(userAnswers.fill[CreditsAnswer](any, any)(any)) thenReturn form
+    when(userAnswers.fill[CreditsAnswer](any[Gettable[CreditsAnswer]], any)(any)) thenReturn form
     when(userAnswers.setOrFail(any, any, any)(any)) thenReturn userAnswers
     when(userAnswers.save(any)(any)) thenReturn Future.successful(userAnswers)
 

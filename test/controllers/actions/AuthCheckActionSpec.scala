@@ -19,6 +19,7 @@ package controllers.actions
 import base.{FakeAuthConnector, MetricsMocks, SpecBase}
 import config.FrontendAppConfig
 import controllers.home.{routes => homeRoutes}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import play.api.http.Status.SEE_OTHER
@@ -87,7 +88,6 @@ class AuthCheckActionSpec extends SpecBase with FakeCustomRequest with MetricsMo
     "redirect when user not logged in" in {
       running(application) {
         when(appConfig.loginUrl).thenReturn("login-url")
-        when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
         val controller = new Harness(
           createAuthAction(FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken))
         )
@@ -101,7 +101,6 @@ class AuthCheckActionSpec extends SpecBase with FakeCustomRequest with MetricsMo
     "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {
       running(application) {
         when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
-        when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
         when(appConfig.serviceIdentifier).thenReturn("PPT")
         val controller = new Harness(
           createAuthAction(

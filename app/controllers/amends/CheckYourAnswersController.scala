@@ -16,16 +16,17 @@
 
 package controllers.amends
 
-import cacheables.{ReturnObligationCacheable, AmendObligationCacheable}
+import cacheables.AmendObligationCacheable
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{CacheConnector, TaxReturnsConnector}
+import connectors.TaxReturnsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.amends.AmendSummaryRow
 import models.requests.DataRequest
-import models.returns.{AmendsCalculations, ReturnDisplayApi, TaxReturnObligation}
+import models.returns.{AmendsCalculations, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository.Paths
 import repositories.{Entry, SessionRepository}
 import services.AmendReturnAnswerComparisonService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -102,14 +103,11 @@ class CheckYourAnswersController @Inject()
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.request.pptReference
-
         returnsConnector.amend(pptId).flatMap {
-          case Right(optChargeRef) =>
-            sessionRepository.set(Entry(request.cacheKey, optChargeRef)).map {
+          optChargeRef =>
+            sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())
             }
-          case Left(error) =>
-            throw error
         }
     }
   

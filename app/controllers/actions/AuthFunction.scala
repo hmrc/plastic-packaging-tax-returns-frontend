@@ -51,6 +51,7 @@ class AuthFunction @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val authorisation = authTimer.time()
+    val target = request.target.path
 
     authorised(predicate)
       .retrieve(authData) {
@@ -94,10 +95,14 @@ class AuthFunction @Inject() (
 
       } recover {
       case _: NoActiveSession =>
-        redirectToSignin
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(target)))
 
       case _: IncorrectCredentialStrength =>
-        upliftCredentialStrength
+        Results.Redirect(appConfig.mfaUpliftUrl,
+          Map("origin"      -> Seq(appConfig.serviceIdentifier),
+            "continueUrl" -> Seq(target)
+          )
+        )
 
       case _: AuthorisationException =>
         Results.Redirect(homeRoutes.UnauthorisedController.unauthorised())

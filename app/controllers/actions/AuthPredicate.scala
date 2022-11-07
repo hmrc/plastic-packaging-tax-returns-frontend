@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import controllers.actions.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialStrength, Enrolment}
 

@@ -37,7 +37,7 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
     "PK1")
 
   private def createView: Html =
-    page(form, aTaxObligation)(request, messages)
+    page(form, Some(aTaxObligation))(request, messages)
 
   "CancelAmendView" should {
     val view = createView

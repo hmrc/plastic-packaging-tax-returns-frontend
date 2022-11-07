@@ -20,6 +20,7 @@ import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.AmendConfirmation
 
@@ -35,10 +36,8 @@ class AmendConfirmationController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get(request.cacheKey).map{
-        entry =>
-          val chargeRef = entry.flatMap(_.data)
-          Ok(view(chargeRef))
+      sessionRepository.get[String](request.cacheKey, Paths.AmendChargeRef).map{
+        chargeRef => Ok(view(chargeRef))
       }
     }
 }

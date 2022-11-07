@@ -18,43 +18,43 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import models.returns.{AmendsCalculations, Calculations, ReturnDisplayApi, DDInProgressApi}
+import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, ReturnDisplayApi}
 import play.api.Logger
+import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+case object AlreadySubmitted
+
 @Singleton
 class TaxReturnsConnector @Inject()(
-                                     httpClient: HttpClient,
-                                     appConfig: FrontendAppConfig,
-                                     metrics: Metrics
-                                   )(implicit ec: ExecutionContext) {
+  httpClient: HttpClient,
+  frontendAppConfig: FrontendAppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
 
-  def get(userId: String, periodKey: String)(implicit
-                                             hc: HeaderCarrier
-  ): Future[Either[ServiceError, ReturnDisplayApi]] = {
-    val url = appConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
+  def get(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[ReturnDisplayApi] = {
+    val url = frontendAppConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
     val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
     httpClient.GET[ReturnDisplayApi](url)
       .andThen { case _ => timer.stop() }
-      .map(taxReturn => Right(taxReturn))
       .recover {
         case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex))
+          throw DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex)
       }
   }
 
   def ddInProgress(pptReference: String, periodKey: String)(implicit hc: HeaderCarrier): Future[DDInProgressApi] =
-    httpClient.GET[DDInProgressApi](appConfig.pptDDInProgress(pptReference, periodKey))
+    httpClient.GET[DDInProgressApi](frontendAppConfig.pptDDInProgress(pptReference, periodKey))
 
   def getCalculationAmends(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, AmendsCalculations]] =
-    httpClient.GET[AmendsCalculations](appConfig.pptAmendsCalculationUrl(pptReference)).
+    httpClient.GET[AmendsCalculations](frontendAppConfig.pptAmendsCalculationUrl(pptReference)).
       map(Right.apply)
       .recover {
         case ex: Exception =>
@@ -62,17 +62,17 @@ class TaxReturnsConnector @Inject()(
       }
 
   def getCalculationReturns(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Calculations]] =
-    httpClient.GET[Calculations](appConfig.pptReturnsCalculationUrl(pptReference)).
+    httpClient.GET[Calculations](frontendAppConfig.pptReturnsCalculationUrl(pptReference)).
       map(Right.apply)
       .recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
       }
 
-  def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+  def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](appConfig.pptReturnSubmissionUrl(pptReference))
+    httpClient.GET[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
@@ -80,27 +80,26 @@ class TaxReturnsConnector @Inject()(
         Right(chargeReference)
       }
       .recover {
-        case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex))
+        case exception: Upstream4xxResponse if exception.statusCode == Status.EXPECTATION_FAILED 
+            || exception.statusCode == Status.UNPROCESSABLE_ENTITY => Left(AlreadySubmitted)
+        case ex: Exception => 
+          throw DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex)
       }
   }
 
-  def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[String]]] = {
+  def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](appConfig.pptReturnAmendUrl(pptReference))
+    httpClient.GET[JsValue](frontendAppConfig.pptReturnAmendUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
         logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
-        Right(chargeReference)
+        chargeReference
       }
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}", ex
-            )
-          )
+          throw DownstreamServiceError(s"Failed to submit return amendment, error: ${ex.getMessage}", ex)
       }
   }
 

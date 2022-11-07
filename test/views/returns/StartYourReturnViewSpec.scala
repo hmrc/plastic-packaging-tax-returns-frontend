@@ -18,7 +18,6 @@ package views.returns
 
 import base.ViewSpecBase
 import forms.returns.StartYourReturnFormProvider
-import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -38,7 +37,7 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
     "PK1")
 
   private def createView: Html =
-    page(form, NormalMode, aTaxObligation, true)(request, messages)
+    page(form, aTaxObligation, true)(request, messages)
 
   "StartYourReturnView" should {
     val view = createView
