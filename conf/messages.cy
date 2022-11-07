@@ -587,3 +587,5 @@ return-already-submitted.para.1 = Mae’ch Ffurflen Dreth ar gyfer {0} wedi dod 
 return-already-submitted.para.2 = Gallwch wneud y canlynol:
 return-already-submitted.list.1 = bwrw golwg dros neu ddiwygio Ffurflenni a gyflwynwyd
 return-already-submitted.list.2 = gwirio’r hyn sydd arnoch
+
+select-new-representative.link = Add a new member to the group

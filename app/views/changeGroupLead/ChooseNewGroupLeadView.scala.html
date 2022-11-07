@@ -31,7 +31,7 @@
 
 @(form: Form[String], members: Seq[String])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("Title"), Some(messages("Section"))), showBackLink = false) {
+@layout(pageTitle = title(form, messages("select-new-representative.title"), Some(messages("Section"))), showBackLink = false) {
 
     @formHelper(action = controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit(), 'autoComplete -> "off") {
 
@@ -39,9 +39,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @headingLabel(messages("Demang da bosmang?"))
-
-        @paragraphBody(messages("Na inyalowda mowteng"))
+        @headingLabel(messages("select-new-representative.heading"))
 
         @govukRadios(
             RadiosViewModel.apply(
@@ -51,6 +49,15 @@
                 }
             )
         )
+
+        @paragraphBody(messages("select-new-representative.paragraph"), id = Some("paragraph"))
+
+        <p>
+        @link(id = "add-new-member-to-group",
+            text = messages("select-new-representative.link"),
+            call = Call("GET", appConfig.addMemberToGroupUrl))
+        </p>
+
 
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
