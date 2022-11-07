@@ -23,6 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.mvc.Action
 import play.twirl.api.HtmlFormat
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core.Enrolments
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
@@ -37,39 +38,23 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec {
   private val mockView = mock[ChooseNewGroupLeadView]
   private val mockFormProvider = mock[SelectNewGroupLeadForm]
   private val mockCache = mock[CacheConnector]
-  private val mockSubscriptionConnector = mock[SubscriptionConnector]
+  private val mockSubscriptionService = mock[SubscriptionService]
 
-
-//  //todo hmmmmmmmmmmmm mock? but its gross :/
-//  object TestJourneyAction extends JourneyAction {
-//    override def async(function: RequestAsyncFunction): Action[AnyContent] = new Action[AnyContent] {
-//      override def parser: BodyParser[AnyContent] = controllerComponents.parsers.default
-//      override def apply(request: Request[AnyContent]): Future[Result] =
-//        function(
-//          DataRequest(
-//            IdentifiedRequest(FakeRequest(), SignedInUser(Enrolments(Set.empty), IdentityData("")), Some("ppt-ref")),
-//            UserAnswers("useranswersId")
-//          )
-//        )
-//      override def executionContext: ExecutionContext = global
-//    }
-//    override def apply(function: RequestFunction): Action[AnyContent] = ???
-//  }
 
   object TestGuard extends FeatureGuard(mockAppConfig){
     override def check(): Unit = ()
   }
 
-//  val sut = new ChooseNewGroupLeadController(
-//    mockMessagesApi,
-//    ???,
-//    controllerComponents,
-//    mockView,
-//    mockFormProvider,
-//    mockCache,
-//    TestGuard,
-//    ???
-//  )(global)
+  val sut = new ChooseNewGroupLeadController(
+    mockMessagesApi,
+    ???,
+    controllerComponents,
+    mockView,
+    mockFormProvider,
+    mockCache,
+    TestGuard,
+    mockSubscriptionService
+  )(global)
 
   //todo pan wip
 //  "onPageLoad" must {
