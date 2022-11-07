@@ -18,43 +18,18 @@ package controllers.returns.credits
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.returns.credits.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
-import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.{Utf8MimeTypes, WithJsonBody}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.{FrontendBaseController, FrontendHeaderCarrierProvider}
 import views.html.returns.credits.ConvertedCreditsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
-
-class JourneyAction @Inject()(
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-) {
-  def async(function: RequestAsyncFunction): Action[AnyContent] =
-    identify.andThen(getData.andThen(requireData)).async(function)
-
-  def apply(function: RequestFunction): Action[AnyContent] = {
-    val value: ActionBuilder[DataRequest, AnyContent] = identify.andThen(getData.andThen(requireData))
-    value.apply(function)
-  }
-}
-
-object JourneyAction {
-  type RequestFunction = DataRequest[AnyContent] => Result
-  type RequestAsyncFunction = DataRequest[AnyContent] => Future[Result]
-}
 
 class ConvertedCreditsController @Inject()
 (

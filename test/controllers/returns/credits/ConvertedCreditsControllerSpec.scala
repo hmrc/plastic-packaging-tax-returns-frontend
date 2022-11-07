@@ -17,7 +17,8 @@
 package controllers.returns.credits
 
 import connectors.CacheConnector
-import controllers.returns.credits.JourneyAction.{RequestAsyncFunction, RequestFunction}
+import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
