@@ -20,7 +20,6 @@ import base.ViewSpecBase
 import config.FrontendAppConfig
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import play.api.data.Form
-import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.ChooseNewGroupLeadView
