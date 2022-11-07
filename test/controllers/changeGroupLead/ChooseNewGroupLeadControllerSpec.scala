@@ -26,6 +26,7 @@ import models.requests.DataRequest
 import models.subscription.GroupMembers
 import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -41,6 +42,7 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
+import scala.AnyRef.{eq => _}
 
 object Test {
   implicit class BetterMockActionSyntax(action: Action[AnyContent]){
@@ -86,6 +88,11 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       featureGuard,
       form
     )
+
+    when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(GroupMembers(Seq()))
+    when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
+    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
   }
   
   def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
@@ -94,7 +101,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       .getMock[Action[AnyContent]]
 
 
-  //todo pan wip
   "onPageLoad" must {
     
     "invoke the journey action" in {
@@ -104,12 +110,15 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     }
     
     "invoke feature guard" in {
-      when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
-      when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(GroupMembers(Seq()))
-      when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
-      when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(featureGuard).check()
+    }
+    
+    "return a view" in {
+      val result = sut.onPageLoad().skippingJourneyAction(dataRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(form), meq(Seq()))(any, any)
     }
     
 //    "feature guard" in {
