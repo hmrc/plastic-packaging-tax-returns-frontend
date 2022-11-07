@@ -1,36 +1,24 @@
 package controllers.changeGroupLead
 
-import akka.stream.testkit.NoMaterializer
-import base.FakeIdentifierActionWithEnrolment
 import config.FrontendAppConfig
-import connectors.{CacheConnector, DirectDebitConnector, SubscriptionConnector}
+import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import controllers.payments.DirectDebitController
 import forms.changeGroupLead.SelectNewGroupLeadForm
-import models.{SignedInUser, UserAnswers}
-import models.requests.{DataRequest, IdentifiedRequest, IdentityData}
-import models.subscription.group.GroupPartnershipSubscription
-import models.subscription.{CustomerDetails, CustomerType, LegalEntityDetails, PrincipalPlaceOfBusinessDetails}
-import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import models.requests.DataRequest
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, BodyParser, Request, Result}
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.mvc.Action
-import play.twirl.api.HtmlFormat
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core.Enrolments
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.global
 
-class ChooseNewGroupLeadControllerSpec extends PlaySpec {
+class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
@@ -39,25 +27,50 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec {
   private val mockFormProvider = mock[SelectNewGroupLeadForm]
   private val mockCache = mock[CacheConnector]
   private val mockSubscriptionService = mock[SubscriptionService]
-
-
-  object TestGuard extends FeatureGuard(mockAppConfig){
-    override def check(): Unit = ()
-  }
+  private val journeyAction = mock[JourneyAction]
+  private val featureGuard = mock[FeatureGuard]
+  private val dataRequest = mock[DataRequest[AnyContent]]
 
   val sut = new ChooseNewGroupLeadController(
     mockMessagesApi,
-    ???,
+    journeyAction,
     controllerComponents,
     mockView,
     mockFormProvider,
     mockCache,
-    TestGuard,
+    featureGuard,
     mockSubscriptionService
   )(global)
 
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(
+      mockMessagesApi,
+      journeyAction,
+      mockView,
+      mockFormProvider,
+      mockCache,
+      mockSubscriptionService,
+      featureGuard
+    )
+  }
+
+
   //todo pan wip
-//  "onPageLoad" must {
+  "onPageLoad" must {
+    
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      sut.onPageLoad()(FakeRequest())
+      verify(journeyAction).async(any)
+    }
+    
+//    "invoke feature guard" in {
+//      when(journeyAction.async(any)) thenInvokeBlockWith dataRequest
+//      sut.onPageLoad()(FakeRequest())
+//      verify(featureGuard).check()
+//    }
+    
 //    "feature guard" in {
 //      //todo
 //    }
@@ -69,6 +82,11 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec {
 //      status(result) mustBe OK
 //      contentAsString(result) mustBe "test view"
 //    }
-//  }
+  }
+
+  "for reasons it" should {
+    "do stuff" in {
+    }
+  } 
 
 }
