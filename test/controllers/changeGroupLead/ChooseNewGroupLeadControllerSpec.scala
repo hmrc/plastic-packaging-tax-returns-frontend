@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -86,7 +87,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       mockCache,
       mockSubscriptionService,
       featureGuard,
-      form
+      form,
+      dataRequest
     )
 
     when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
@@ -119,6 +121,12 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(form), meq(Seq()))(any, any)
+    }
+    
+    "get any previous user answer" in {
+      when(mockFormProvider.apply(any)) thenReturn form
+      await(sut.onPageLoad().skippingJourneyAction(dataRequest))
+      verify(dataRequest.userAnswers).fill(meq(ChooseNewGroupLeadPage), meq(form))(any)
     }
     
 //    "feature guard" in {
