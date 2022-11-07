@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package config
+package models.changeGroupLead
 
-object Features {
-  val returnsEnabled: String        = "returnsEnabled"
-  val creditsForReturnsEnabled: String = "creditsForReturnsEnabled"
-  val paymentsEnabled: String       = "paymentsEnabled"
-  val deRegistrationEnabled: String = "deRegistrationEnabled"
-  val amendsEnabled: String         = "amendsEnabled"
-  val changeOfGroupLead: String = "changeOfGroupLead"
+import models.UserAnswers
+import pages.ChooseNewGroupLeadPage
 
+case class RepresentativeMemberDetails(member: String)
+
+object RepresentativeMemberDetails {
+
+  def apply(userAnswer: UserAnswers): RepresentativeMemberDetails = {
+    RepresentativeMemberDetails(userAnswer.get(ChooseNewGroupLeadPage).getOrElse(""))
+  }
 }

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package config
+package controllers.changeGroupLead
 
-object Features {
-  val returnsEnabled: String        = "returnsEnabled"
-  val creditsForReturnsEnabled: String = "creditsForReturnsEnabled"
-  val paymentsEnabled: String       = "paymentsEnabled"
-  val deRegistrationEnabled: String = "deRegistrationEnabled"
-  val amendsEnabled: String         = "amendsEnabled"
-  val changeOfGroupLead: String = "changeOfGroupLead"
+import config.FrontendAppConfig
 
+import javax.inject.Inject
+
+class FeatureGuard @Inject() (frontendAppConfig: FrontendAppConfig) {
+  def check(): Unit = {
+    if (!frontendAppConfig.isFeatureEnabledChangeOfGroupLead)
+      throw new RuntimeException("Change of group lead feature is not enabled")
+  }
 }

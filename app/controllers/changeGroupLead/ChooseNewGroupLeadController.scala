@@ -16,7 +16,6 @@
 
 package controllers.changeGroupLead
 
-import config.FrontendAppConfig
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.SelectNewGroupLeadForm
@@ -31,14 +30,6 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
-//todo move
-class FeatureGuard @Inject() (frontendAppConfig: FrontendAppConfig) {
-  def check(): Unit = {
-    if (!frontendAppConfig.isFeatureEnabledChangeOfGroupLead)
-      throw new RuntimeException("Change of group lead feature is not enabled")
-  }
-}
 
 class ChooseNewGroupLeadController @Inject() (
   override val messagesApi: MessagesApi,

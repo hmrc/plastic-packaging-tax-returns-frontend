@@ -17,9 +17,9 @@
 package controllers.changeGroupLead
 
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.RequestAsyncFunction
-import controllers.changeGroupLead.Test.BetterMockActionSyntax
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.requests.DataRequest
 import models.subscription.GroupMembers
@@ -33,7 +33,7 @@ import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
 import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -46,14 +46,6 @@ import scala.AnyRef.{eq => _}
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
-
-//todo this should be shared.
-object Test {
-  implicit class BetterMockActionSyntax(action: Action[AnyContent]){
-    def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
-      action.apply(request)
-  }
-}
 
 class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
