@@ -589,3 +589,6 @@ return-already-submitted.list.1 = bwrw golwg dros neu ddiwygio Ffurflenni a gyfl
 return-already-submitted.list.2 = gwirio’r hyn sydd arnoch
 
 select-new-representative.link = Add a new member to the group
+select-new-representative.title = Select the new representative member
+select-new-representative.heading = Select the new representative member
+select-new-representative.paragraph = If the organisation is not listed above you will need to add them as a new member first.
