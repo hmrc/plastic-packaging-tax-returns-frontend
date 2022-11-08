@@ -22,6 +22,7 @@ import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.RequestAsyncFunction
 import controllers.changeGroupLead.Test.BetterMockActionSyntax
 import forms.changeGroupLead.SelectNewGroupLeadForm
+import models.UserAnswers
 import models.requests.DataRequest
 import models.subscription.GroupMembers
 import org.mockito.Answers
@@ -33,12 +34,13 @@ import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.scalatestplus.play.PlaySpec
 import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
+import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Gettable
+import queries.{Gettable, Settable}
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.changeGroupLead.ChooseNewGroupLeadView
@@ -46,6 +48,7 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.AnyRef.{eq => _}
+import scala.util.Try
 
 object Test {
   implicit class BetterMockActionSyntax(action: Action[AnyContent]){
@@ -108,31 +111,31 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
 
   "onPageLoad" must {
-    
+
     "invoke the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       sut.onPageLoad()(FakeRequest())
       verify(journeyAction).async(any)
     }
-    
+
     "invoke feature guard" in {
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(featureGuard).check()
     }
-    
+
     "return a view" in {
       val result = sut.onPageLoad().skippingJourneyAction(dataRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(form), meq(Seq()))(any, any)
     }
-    
+
     "get any previous user answer" in {
       when(mockFormProvider.apply(any)) thenReturn form
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(dataRequest.userAnswers).fill(meq(ChooseNewGroupLeadPage), meq(form))(any)
     }
-    
+
     "create the form" in {
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(mockFormProvider).apply(groupMembers)
@@ -153,14 +156,59 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
         await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       }
     }
+  }
 
-//    "return the view with the form populated with the returned members" in {
-//      when(mockView.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("test view"))
-//
-//      val result: Future[Result] = sut.onPageLoad()(FakeRequest())
-//      status(result) mustBe OK
-//      contentAsString(result) mustBe "test view"
-//    }
+  "onSubmit" must {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      sut.onSubmit()(FakeRequest())
+      verify(journeyAction).async(any)
+    }
+
+    "invoke feature guard" in {
+      Try(await(sut.onSubmit().skippingJourneyAction(dataRequest)))
+      verify(featureGuard).check()
+    }
+
+    "bind the form and error" in {
+      when(mockFormProvider.apply(any)) thenReturn form
+      val errorForm = Form("value" -> text()).withError("key", "error")
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
+
+      val result = sut.onSubmit().skippingJourneyAction(dataRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(errorForm), meq(Seq()))(any, any)
+      verify(mockFormProvider).apply(groupMembers)
+      verify(form).bindFromRequest()(meq(dataRequest),any)
+    }
+
+    //            selectedMember =>
+    //              request.userAnswers
+    //                .setOrFail(ChooseNewGroupLeadPage, selectedMember)
+    //                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+    //                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad))
+
+    "bind the form and bind a value" in {
+      when(mockFormProvider.apply(any)) thenReturn form
+      val boundForm = Form("value" -> text()).fill("test-member")
+      when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+      when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(mock[UserAnswers])
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+
+      val result = sut.onSubmit().skippingJourneyAction(dataRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe controllers.routes.IndexController.onPageLoad //todo this will be address page
+      verify(mockFormProvider).apply(groupMembers)
+      verify(form).bindFromRequest()(meq(dataRequest),any)
+      withClue("the selected member must be cached"){
+        verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, "test-member")
+        verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
+      }
+    }
   }
 
 
