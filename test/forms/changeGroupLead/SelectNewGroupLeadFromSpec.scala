@@ -16,6 +16,7 @@
 
 package forms.changeGroupLead
 
+import models.subscription.GroupMembers
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 
@@ -23,6 +24,7 @@ class SelectNewGroupLeadFromSpec extends PlaySpec {
 
   val sut: SelectNewGroupLeadForm = new SelectNewGroupLeadForm
 
+  private implicit def toGroupMembers(seqqy: Seq[String]): GroupMembers = GroupMembers(seqqy)
 
   "the form" should {
     "bind" when {

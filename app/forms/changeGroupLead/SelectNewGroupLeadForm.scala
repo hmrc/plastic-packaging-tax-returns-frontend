@@ -19,10 +19,11 @@ package forms.changeGroupLead
 import play.api.data.Form
 import play.api.data.Forms.{optional, text}
 import SelectNewGroupLeadForm.error
+import models.subscription.GroupMembers
 
 class SelectNewGroupLeadForm {
 
-  def apply(members: Seq[String]): Form[String] =
+  def apply(members: GroupMembers): Form[String] =
     Form("value" -> optional(text)
       .verifying(error, _.isDefined)
       .transform[String](_.get, Some(_))

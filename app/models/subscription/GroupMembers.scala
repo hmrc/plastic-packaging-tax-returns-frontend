@@ -19,6 +19,8 @@ package models.subscription
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 
 case class GroupMembers(membersNames: Seq[String]) {
+  def contains: String => Boolean = membersNames.contains
+
   def map[A](function: (String, Int) => A): Seq[A] =
     membersNames.zipWithIndex.map(tuple => function(tuple._1, tuple._2))
 }
