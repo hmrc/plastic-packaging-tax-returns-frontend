@@ -16,21 +16,18 @@
 
 package controllers.changeGroupLead
 
-import config.FrontendAppConfig
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.RequestAsyncFunction
 import controllers.changeGroupLead.Test.BetterMockActionSyntax
 import forms.changeGroupLead.SelectNewGroupLeadForm
-import models.UserAnswers
 import models.requests.DataRequest
 import models.subscription.GroupMembers
 import org.mockito.Answers
-import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.scalatestplus.play.PlaySpec
 import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
@@ -45,11 +42,12 @@ import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
-import scala.concurrent.ExecutionContext.global
-import scala.concurrent.{ExecutionContext, Future}
 import scala.AnyRef.{eq => _}
+import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
 import scala.util.Try
 
+//todo this should be shared.
 object Test {
   implicit class BetterMockActionSyntax(action: Action[AnyContent]){
     def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
@@ -61,7 +59,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
-  private val mockAppConfig = mock[FrontendAppConfig]
   private val mockView = mock[ChooseNewGroupLeadView]
   private val mockFormProvider = mock[SelectNewGroupLeadForm]
   private val mockCache = mock[CacheConnector]
@@ -83,6 +80,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
   )(global)
 
   private val groupMembers = GroupMembers(Seq())
+
+  object TestException extends Exception("test")
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -149,8 +148,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       verify(mockSubscriptionService).fetchGroupMemberNames("test-ppt-ref")(hc)
     }
 
-    "handle the subscription service failing" in {
-      object TestException extends Exception("test")
+    "error when the subscription service fails" in {
       when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.failed(TestException)
       intercept[TestException.type] {
         await(sut.onPageLoad().skippingJourneyAction(dataRequest))
@@ -184,29 +182,54 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }
 
-    //            selectedMember =>
-    //              request.userAnswers
-    //                .setOrFail(ChooseNewGroupLeadPage, selectedMember)
-    //                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-    //                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad))
-
     "bind the form and bind a value" in {
       when(mockFormProvider.apply(any)) thenReturn form
       val boundForm = Form("value" -> text()).fill("test-member")
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
-      when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(mock[UserAnswers])
+      val userAnswers = dataRequest.userAnswers
+      when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
-      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+      when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
 
       val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe controllers.routes.IndexController.onPageLoad //todo this will be address page
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url) //todo this will be address page
       verify(mockFormProvider).apply(groupMembers)
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){
         verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, "test-member")
         verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
+      }
+    }
+
+    "error" when {
+      "the subscription service fails" in {
+        when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.failed(TestException)
+        intercept[TestException.type] {
+          await(sut.onSubmit().skippingJourneyAction(dataRequest))
+        }
+      }
+
+      "the user answers setOrFail fails" in {
+        when(mockFormProvider.apply(any)) thenReturn form
+        val boundForm = Form("value" -> text()).fill("test-member")
+        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+        when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenThrow(TestException)
+
+        intercept[TestException.type](await(sut.onSubmit().skippingJourneyAction(dataRequest)))
+      }
+
+      "the cache save fails" in {
+        when(mockFormProvider.apply(any)) thenReturn form
+        val boundForm = Form("value" -> text()).fill("test-member")
+        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+        val userAnswers = dataRequest.userAnswers
+        when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+
+        intercept[TestException.type](await(sut.onSubmit().skippingJourneyAction(dataRequest)))
       }
     }
   }
