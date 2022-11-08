@@ -40,6 +40,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Gettable
 import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 import scala.concurrent.ExecutionContext.global
@@ -136,20 +137,23 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(mockFormProvider).apply(groupMembers)
     }
-    
-    "handle the subscription service failing" ignore {
-      when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.failed(new RuntimeException("oh no"))
-      implicit val ec: ExecutionContext = global
-      intercept[NoSuchElementException] {
+
+    "call the subscription service" in {
+      val hc = mock[HeaderCarrier]
+      when(dataRequest.headerCarrier).thenReturn(hc)
+      when(dataRequest.pptReference).thenReturn("test-ppt-ref")
+      await(sut.onPageLoad().skippingJourneyAction(dataRequest))
+      verify(mockSubscriptionService).fetchGroupMemberNames("test-ppt-ref")(hc)
+    }
+
+    "handle the subscription service failing" in {
+      object TestException extends Exception("test")
+      when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.failed(TestException)
+      intercept[TestException.type] {
         await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       }
-//      result mustBe Future.failed(new RuntimeException("oh no"))
     }
-    
-//    "feature guard" in {
-//      //todo
-//    }
-//
+
 //    "return the view with the form populated with the returned members" in {
 //      when(mockView.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("test view"))
 //
