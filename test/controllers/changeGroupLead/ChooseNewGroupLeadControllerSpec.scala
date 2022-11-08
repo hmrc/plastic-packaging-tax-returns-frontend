@@ -29,6 +29,7 @@ import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.scalatestplus.play.PlaySpec
 import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
@@ -42,7 +43,7 @@ import services.SubscriptionService
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 import scala.concurrent.ExecutionContext.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.AnyRef.{eq => _}
 
 object Test {
@@ -134,6 +135,15 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     "create the form" in {
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
       verify(mockFormProvider).apply(groupMembers)
+    }
+    
+    "handle the subscription service failing" ignore {
+      when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.failed(new RuntimeException("oh no"))
+      implicit val ec: ExecutionContext = global
+      intercept[NoSuchElementException] {
+        await(sut.onPageLoad().skippingJourneyAction(dataRequest))
+      }
+//      result mustBe Future.failed(new RuntimeException("oh no"))
     }
     
 //    "feature guard" in {
