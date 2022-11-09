@@ -27,7 +27,7 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 class ChooseNewGroupLeadA11ySpec extends ViewSpecBase  with AccessibilityMatchers {
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
   val members: GroupMembers = GroupMembers(Seq("Test Company Ltd Asia", "Test Company Ltd Europe", "Test Company Ltd UK"))
-  val form: Form[String] = new SelectNewGroupLeadForm().apply(members)
+  val form: Form[String] = new SelectNewGroupLeadForm().apply(members.membersNames)
 
   private def createView(form: Form[String]): String =
     page(form, members )(request, messages).toString()
