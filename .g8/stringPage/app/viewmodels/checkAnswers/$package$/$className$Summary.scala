@@ -1,9 +1,9 @@
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.$package$
 
 import controllers.routes
 import models.UserAnswers
 import models.Mode.CheckMode
-import pages.$className$Page
+import pages.$package$.$className$Page
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

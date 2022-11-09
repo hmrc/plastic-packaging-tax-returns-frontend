@@ -1,4 +1,4 @@
-package pages
+package pages.$package$
 
 import pages.behaviours.PageBehaviours
 
