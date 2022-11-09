@@ -24,6 +24,9 @@ import pages.returns.credits._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryMyNewPagePage: Arbitrary[MyNewPagePage.type] =
+    Arbitrary(MyNewPagePage)
+
   implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
     Arbitrary(ExportedCreditsPage)
 
