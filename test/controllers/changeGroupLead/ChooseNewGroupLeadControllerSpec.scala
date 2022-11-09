@@ -126,7 +126,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       val result = sut.onPageLoad().skippingJourneyAction(dataRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(form), meq(Seq()))(any, any)
+      verify(mockView).apply(meq(form), meq(GroupMembers(Seq())))(any, any)
     }
 
     "get any previous user answer" in {
@@ -177,7 +177,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(errorForm), meq(Seq()))(any, any)
+      verify(mockView).apply(meq(errorForm), meq(GroupMembers(Seq())))(any, any)
       verify(mockFormProvider).apply(groupMembers)
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }

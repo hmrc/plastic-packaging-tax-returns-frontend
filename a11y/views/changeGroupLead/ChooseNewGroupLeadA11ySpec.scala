@@ -17,18 +17,16 @@
 package views.changeGroupLead
 
 import base.ViewSpecBase
-import config.FrontendAppConfig
 import forms.changeGroupLead.SelectNewGroupLeadForm
+import models.subscription.GroupMembers
 import play.api.data.Form
-import play.twirl.api.Html
-import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 
 class ChooseNewGroupLeadA11ySpec extends ViewSpecBase  with AccessibilityMatchers {
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
-  val members: Seq[String] = Seq("Test Company Ltd Asia", "Test Company Ltd Europe", "Test Company Ltd UK")
+  val members: GroupMembers = GroupMembers(Seq("Test Company Ltd Asia", "Test Company Ltd Europe", "Test Company Ltd UK"))
   val form: Form[String] = new SelectNewGroupLeadForm().apply(members)
 
   private def createView(form: Form[String]): String =

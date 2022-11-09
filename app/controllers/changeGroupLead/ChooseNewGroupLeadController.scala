@@ -58,7 +58,7 @@ class ChooseNewGroupLeadController @Inject() (
       subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
         val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members))
 
-        Results.Ok(view(preparedForm, members.membersNames))
+        Results.Ok(view(preparedForm, members))
       }
   }
 
@@ -69,7 +69,7 @@ class ChooseNewGroupLeadController @Inject() (
         form(members)
           .bindFromRequest()
           .fold(
-            errorForm => Future.successful(Results.BadRequest(view(errorForm, members.membersNames))),
+            errorForm => Future.successful(Results.BadRequest(view(errorForm, members))),
             selectedMember =>
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)

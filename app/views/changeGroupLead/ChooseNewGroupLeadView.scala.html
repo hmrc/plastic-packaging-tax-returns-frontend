@@ -16,6 +16,7 @@
 
 @import components.{Link, heading, paragraphBody}
 @import config.FrontendAppConfig
+@import models.subscription.GroupMembers
 
 @this(
     formHelper: FormWithCSRF,
@@ -29,7 +30,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(form: Form[String], members: Seq[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[String], members: GroupMembers)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("select-new-representative.title")), showBackLink = true) {
 
@@ -44,7 +45,7 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                items = members.sorted.zipWithIndex.map{case (name, index) =>
+                items = members.membersNames.sorted.zipWithIndex.map{case (name, index) =>
                     RadioItem(id = Some("radio-member-"+index), value = Some(name), content = Text(name))
                 }
             )
