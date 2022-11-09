@@ -17,9 +17,9 @@
 package controllers.changeGroupLead
 
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.RequestAsyncFunction
-import controllers.changeGroupLead.Test.BetterMockActionSyntax
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.requests.DataRequest
 import models.subscription.GroupMembers
@@ -33,7 +33,7 @@ import pages.ChooseNewGroupLeadPage
 import play.api.data.Form
 import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -46,14 +46,6 @@ import scala.AnyRef.{eq => _}
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
-
-//todo this should be shared.
-object Test {
-  implicit class BetterMockActionSyntax(action: Action[AnyContent]){
-    def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
-      action.apply(request)
-  }
-}
 
 class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
@@ -137,7 +129,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     "create the form" in {
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
     }
 
     "call the subscription service" in {
@@ -178,7 +170,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(errorForm), meq(GroupMembers(Seq())))(any, any)
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }
 
@@ -195,7 +187,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url) //todo this will be address page
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){
         verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, "test-member")

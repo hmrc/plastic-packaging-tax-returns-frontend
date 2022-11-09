@@ -23,7 +23,7 @@ import models.subscription.GroupMembers
 
 class SelectNewGroupLeadForm {
 
-  def apply(members: GroupMembers): Form[String] =
+  def apply(members: Seq[String]): Form[String] =
     Form("value" -> optional(text)
       .verifying(error, _.isDefined)
       .transform[String](_.get, Some(_))

@@ -113,7 +113,7 @@ class FrontendAppConfig @Inject() (
     isFeatureEnabled(Features.creditsForReturnsEnabled)
 
   def isFeatureEnabledChangeOfGroupLead: Boolean =
-    isFeatureEnabled("changeOfGroupLead")
+    isFeatureEnabled(Features.changeOfGroupLead)
 
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)

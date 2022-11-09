@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package views.changeGroupLead
 
-object Features {
-  val returnsEnabled: String        = "returnsEnabled"
-  val creditsForReturnsEnabled: String = "creditsForReturnsEnabled"
-  val paymentsEnabled: String       = "paymentsEnabled"
-  val deRegistrationEnabled: String = "deRegistrationEnabled"
-  val amendsEnabled: String         = "amendsEnabled"
-  val changeOfGroupLead: String = "changeOfGroupLead"
+import base.ViewSpecBase
+import support.{ViewAssertions, ViewMatchers}
+import views.html.changeGroupLead.NewGroupLeadConfirmationView
+
+class NewGroupLeadConfirmationViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+
+  private val page: NewGroupLeadConfirmationView = inject[NewGroupLeadConfirmationView]
 
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package config
+import models.requests.DataRequest
+import play.api.mvc.{Action, AnyContent, Result}
 
-object Features {
-  val returnsEnabled: String        = "returnsEnabled"
-  val creditsForReturnsEnabled: String = "creditsForReturnsEnabled"
-  val paymentsEnabled: String       = "paymentsEnabled"
-  val deRegistrationEnabled: String = "deRegistrationEnabled"
-  val amendsEnabled: String         = "amendsEnabled"
-  val changeOfGroupLead: String = "changeOfGroupLead"
+import scala.concurrent.Future
 
+package object controllers {
+    implicit class BetterMockActionSyntax(action: Action[AnyContent]){
+      def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
+        action.apply(request)
+    }
 }

@@ -29,8 +29,9 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
   val members: GroupMembers = GroupMembers(Seq("Test Company Ltd Asia", "Test Company Ltd Europe", "Test Company Ltd UK"))
-  val form: Form[String] = new SelectNewGroupLeadForm().apply(members)
+  val form: Form[String] = new SelectNewGroupLeadForm().apply(members.membersNames)
   val appConfig = inject[FrontendAppConfig]
+
 
   private def createView: Html =
     page(form, members )(request, messages)
