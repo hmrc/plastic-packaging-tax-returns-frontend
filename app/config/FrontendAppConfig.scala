@@ -156,4 +156,8 @@ class FrontendAppConfig @Inject() (
   def claimingCreditGuidanceUrl: String =
     configuration.get[String]("urls.claimingCreditGuidanceUrl")
 
+  def addMemberToGroupUrl: String =
+    configuration.get[String]("urls.addMemberToGroup")
+
+
 }

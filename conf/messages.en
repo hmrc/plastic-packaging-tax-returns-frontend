@@ -574,3 +574,8 @@ return-already-submitted.para.1 = We’ve received your return for {0}. You do n
 return-already-submitted.para.2 = You can:
 return-already-submitted.list.1 = view or amend submitted returns
 return-already-submitted.list.2 = check what you owe
+
+select-new-representative.link = Add a new member to the group
+select-new-representative.title = Select the new representative member
+select-new-representative.heading = Select the new representative member
+select-new-representative.paragraph = If the organisation is not listed above you will need to add them as a new member first.
