@@ -156,8 +156,3 @@ POST       /cancel-credit                                          controllers.r
 # Change group lead
 GET         /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
 POST        /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
-
-GET        /myNewPage                        controllers.changeGroupLead.MyNewPageController.onPageLoad(mode: Mode = NormalMode)
-POST       /myNewPage                        controllers.changeGroupLead.MyNewPageController.onSubmit(mode: Mode = NormalMode)
-GET        /changeMyNewPage                  controllers.changeGroupLead.MyNewPageController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeMyNewPage                  controllers.changeGroupLead.MyNewPageController.onSubmit(mode: Mode = CheckMode)
