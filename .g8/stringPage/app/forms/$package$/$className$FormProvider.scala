@@ -1,4 +1,4 @@
-package forms
+package forms.$package$
 
 import javax.inject.Inject
 

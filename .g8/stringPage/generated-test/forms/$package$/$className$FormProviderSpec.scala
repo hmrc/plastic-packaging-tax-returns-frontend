@@ -1,4 +1,4 @@
-package forms
+package forms.$package$
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
