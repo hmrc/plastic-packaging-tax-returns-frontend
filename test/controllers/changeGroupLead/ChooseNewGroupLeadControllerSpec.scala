@@ -129,7 +129,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     "create the form" in {
       await(sut.onPageLoad().skippingJourneyAction(dataRequest))
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
     }
 
     "call the subscription service" in {
@@ -170,7 +170,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(errorForm), meq(GroupMembers(Seq())))(any, any)
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }
 
@@ -187,7 +187,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url) //todo this will be address page
-      verify(mockFormProvider).apply(groupMembers)
+      verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){
         verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, "test-member")
