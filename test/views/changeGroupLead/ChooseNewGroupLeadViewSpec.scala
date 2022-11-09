@@ -32,6 +32,7 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with 
   val form: Form[String] = new SelectNewGroupLeadForm().apply(members.membersNames)
   val appConfig = inject[FrontendAppConfig]
 
+
   private def createView: Html =
     page(form, members )(request, messages)
 
