@@ -35,6 +35,7 @@ caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio
 return.title.tail = Cyflwyno Ffurflen Dreth
+account.title.tail = Account
 
 timeout.title = Rydych ar fin cael eich allgofnodi
 timeout.message = Er eich diogelwch, cewch eich allgofnodi ymhen.
@@ -598,3 +599,16 @@ newGroupLeadCheckYourAnswers.representative.member.key = New representative memb
 newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
+
+newGroupLeadConfirmation.title = The representative member will be changed
+newGroupLeadConfirmation.heading = The representative member will be changed
+newGroupLeadConfirmation.heading.2 = What you need to do now
+newGroupLeadConfirmation.paragraph.1 = You need to go to your {0}.
+newGroupLeadConfirmation.paragraph.1.link = business tax account and remove Plastic Packaging Tax
+newGroupLeadConfirmation.heading.3 = What the new representative member needs to do next
+newGroupLeadConfirmation.paragraph.2.1 = The new representative member needs to sign in to their business tax account. They need to add Plastic Packaging Tax by choosing ‘get online access to a tax, duty or scheme’ from the home page.
+newGroupLeadConfirmation.paragraph.2.2 = To activate the account they will need the group’s:
+newGroupLeadConfirmation.bulletList.first = Plastic Packaging Tax registration number
+newGroupLeadConfirmation.bulletList.second = date of registration
+newGroupLeadConfirmation.paragraph.2.3 = They will be able to manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+newGroupLeadConfirmation.exitSurvey.link = What did you think of this service?
