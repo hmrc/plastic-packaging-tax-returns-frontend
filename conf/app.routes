@@ -154,10 +154,10 @@ GET        /cancel-credit                                          controllers.r
 POST       /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
 
 # Change group lead
-GET         /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
-POST        /secret-squirrel        controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
+GET         /secret-squirrel                                       controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
+POST        /secret-squirrel                                       controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
 
-GET         /morocco-mole           controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
-POST        /morocco-mole           controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
+GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
+POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
 
-GET         /morocco-mole-confirmation           controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
+GET         /representative-member-changed                         controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
