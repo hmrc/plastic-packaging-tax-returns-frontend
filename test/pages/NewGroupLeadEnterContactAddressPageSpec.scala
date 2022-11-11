@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
 import models.subscription.AddressDetails
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class NewGroupLeadEnterContactAddressPageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[AddressDetails] =
-    Arbitrary {
-      for {
-        addressLine1 <- arbitrary[String]
-        addressLine2 <- arbitrary[String]
-        addressLine3 <- arbitrary[Option[String]]
-        addressLine4 <- arbitrary[Option[String]]
-        postalCode <- arbitrary[Option[String]]
-        countryCode <- arbitrary[String]
+  "NewGroupLeadEnterContactAddressPage" - {
 
-      } yield AddressDetails(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
-    }
+    beRetrievable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+
+    beSettable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+
+    beRemovable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+  }
 }

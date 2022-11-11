@@ -44,16 +44,24 @@ class NewGroupLeadEnterContactAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      val preparedForm = formProvider()
-      Future.successful(Results.Ok(createView(preparedForm)))
+      val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
+      Future.successful(Results.Ok(createView(mode, preparedForm)))
   }
 
-  private def createView(preparedForm: Form[String]) (implicit request: DataRequest[_]) = {
-    view(preparedForm, routes.NewGroupLeadEnterContactAddressController.onSubmit(NormalMode))
+  private def createView(mode: Mode, preparedForm: Form[NewGroupLeadAddressDetails]) (implicit request: DataRequest[_]) = {
+    view(preparedForm, "name", mode)
   }
 
   def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      Future.successful(Results.Redirect(navigator.enterContactAddress))
+
+      formProvider().bindFromRequest().fold(
+        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, "name", mode))),
+        newValue =>
+          request.userAnswers
+            .setOrFail(NewGroupLeadEnterContactAddressPage, newValue)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Results.Redirect(navigator.enterContactAddressNextPage))
+      )
   }
 }

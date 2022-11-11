@@ -16,13 +16,37 @@
 
 package forms.changeGroupLead
 
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
+import forms.mappings.Mappings
+import models.subscription.AddressDetails
 import play.api.data.Form
-import play.api.data.Forms.text
+import play.api.data.Forms._
 
-class NewGroupLeadEnterContactAddressFormProvider {
-  def apply(): Form[String] =
-    Form("value" -> text)
-}
+import javax.inject.Inject
+
+//todo: add more validation: see SoT
+class NewGroupLeadEnterContactAddressFormProvider @Inject() extends Mappings {
+
+   def apply(): Form[AddressDetails] = Form(
+     mapping(
+       addressLine1 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
+        .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine1.length")),
+       addressLine2 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
+        .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine2.length")),
+       addressLine3 -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
+       addressLine4 -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
+       postalCode -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
+       countryCode -> text("newGroupLeadEnterContactAddress.error.AddressLine2.required")
+         .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.AddressLine2.length"))
+    )(AddressDetails.apply)(AddressDetails.unapply)
+   )
+ }
 
 object NewGroupLeadEnterContactAddressFormProvider {
+  val addressLine1 = "addressLine1"
+  val addressLine2 = "addressLine2"
+  val addressLine3 = "addressLine3"
+  val addressLine4 = "addressLine4"
+  val postalCode = "postalCode"
+  val countryCode = "countryCode"
 }

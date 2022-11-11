@@ -16,6 +16,7 @@
 
 package generators
 
+import models.subscription.AddressDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -23,11 +24,18 @@ import pages.amends._
 import pages.returns._
 import pages.returns.credits._
 import pages.changeGroupLead._
-
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+    implicit lazy val arbitraryNewGroupLeadEnterContactAddressUserAnswersEntry: Arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[NewGroupLeadEnterContactAddressPage.type]
+        value <- arbitrary[AddressDetails].map(Json.toJson(_))
+      } yield (page, value)
+    }
+    
   implicit lazy val arbitraryMainContactNameUserAnswersEntry: Arbitrary[(MainContactNamePage.type, JsValue)] =
     Arbitrary {
       for {

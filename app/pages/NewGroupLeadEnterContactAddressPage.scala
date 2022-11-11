@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
 import models.subscription.AddressDetails
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
+import play.api.libs.json.JsPath
 
-trait ModelGenerators {
+case object NewGroupLeadEnterContactAddressPage extends QuestionPage[AddressDetails] {
 
-  implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[AddressDetails] =
-    Arbitrary {
-      for {
-        addressLine1 <- arbitrary[String]
-        addressLine2 <- arbitrary[String]
-        addressLine3 <- arbitrary[Option[String]]
-        addressLine4 <- arbitrary[Option[String]]
-        postalCode <- arbitrary[Option[String]]
-        countryCode <- arbitrary[String]
+  override def path: JsPath = JsPath \ toString
 
-      } yield AddressDetails(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
-    }
+  override def toString: String = "newGroupLeadEnterContactAddress"
 }
