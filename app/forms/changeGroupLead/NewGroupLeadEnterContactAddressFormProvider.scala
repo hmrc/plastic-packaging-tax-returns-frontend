@@ -18,7 +18,7 @@ package forms.changeGroupLead
 
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
 import forms.mappings.Mappings
-import models.subscription.AddressDetails
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -27,18 +27,18 @@ import javax.inject.Inject
 //todo: add more validation: see SoT
 class NewGroupLeadEnterContactAddressFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[AddressDetails] = Form(
+   def apply(): Form[NewGroupLeadAddressDetails] = Form(
      mapping(
        addressLine1 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
         .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine1.length")),
        addressLine2 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
         .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine2.length")),
        addressLine3 -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
-       addressLine4 -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
+       addressLine4 -> text("newGroupLeadEnterContactAddress.error.AddressLine2.required"),
        postalCode -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
        countryCode -> text("newGroupLeadEnterContactAddress.error.AddressLine2.required")
          .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.AddressLine2.length"))
-    )(AddressDetails.apply)(AddressDetails.unapply)
+    )(NewGroupLeadAddressDetails.apply)(NewGroupLeadAddressDetails.unapply)
    )
  }
 

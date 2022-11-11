@@ -16,17 +16,17 @@
 
 package pages
 
-import models.subscription.AddressDetails
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import pages.behaviours.PageBehaviours
 
 class NewGroupLeadEnterContactAddressPageSpec extends PageBehaviours {
 
   "NewGroupLeadEnterContactAddressPage" - {
 
-    beRetrievable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+    beRetrievable[NewGroupLeadAddressDetails](NewGroupLeadEnterContactAddressPage)
 
-    beSettable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+    beSettable[NewGroupLeadAddressDetails](NewGroupLeadEnterContactAddressPage)
 
-    beRemovable[AddressDetails](NewGroupLeadEnterContactAddressPage)
+    beRemovable[NewGroupLeadAddressDetails](NewGroupLeadEnterContactAddressPage)
   }
 }

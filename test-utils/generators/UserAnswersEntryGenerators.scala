@@ -16,7 +16,7 @@
 
 package generators
 
-import models.subscription.AddressDetails
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -32,7 +32,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[NewGroupLeadEnterContactAddressPage.type]
-        value <- arbitrary[AddressDetails].map(Json.toJson(_))
+        value <- arbitrary[NewGroupLeadAddressDetails].map(Json.toJson(_))
       } yield (page, value)
     }
     

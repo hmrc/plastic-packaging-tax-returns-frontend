@@ -16,22 +16,22 @@
 
 package generators
 
-import models.subscription.AddressDetails
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[AddressDetails] =
+  implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[NewGroupLeadAddressDetails] =
     Arbitrary {
       for {
         addressLine1 <- arbitrary[String]
         addressLine2 <- arbitrary[String]
         addressLine3 <- arbitrary[Option[String]]
-        addressLine4 <- arbitrary[Option[String]]
+        addressLine4 <- arbitrary[String]
         postalCode <- arbitrary[Option[String]]
         countryCode <- arbitrary[String]
 
-      } yield AddressDetails(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
+      } yield NewGroupLeadAddressDetails(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
     }
 }

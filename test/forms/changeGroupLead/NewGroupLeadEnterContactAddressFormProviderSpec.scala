@@ -16,8 +16,11 @@
 
 package forms.changeGroupLead
 
+import akka.actor.FSM.->
 import forms.behaviours.StringFieldBehaviours
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine4, countryCode, postalCode}
 import play.api.data.FormError
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.postCode
 
 //todo: add test for other fields validation. see SoT
 class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehaviours {
@@ -49,6 +52,12 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not include special character" in {
+      val formq = form.bind(Map(addressLine1 -> "Ts%t T5est")).apply(addressLine1)
+
+      formq.errors mustEqual Seq(FormError(fieldName, "newGroupLeadEnterContactAddress.error.addressLine.required"))
+    }
   }
 
   ".addressLine2" - {

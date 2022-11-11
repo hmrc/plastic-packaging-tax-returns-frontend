@@ -20,12 +20,12 @@ import base.ViewSpecBase
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
 import models.Mode.NormalMode
-import models.subscription.AddressDetails
+import models.changeGroupLead.NewGroupLeadAddressDetails
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
-import org.scalatest.prop.TableDrivenPropertyChecks._
-import play.api.data.Form
 
 class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
 
@@ -81,11 +81,11 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     "bind form to inputViewModel" in {
 
       val form = formProvider.apply().fillAndValidate(
-        AddressDetails(
+        NewGroupLeadAddressDetails(
           addressLine1 = "v1",
           addressLine2 = "v2",
           addressLine3 = Some("v3"),
-          addressLine4 = Some("v4"),
+          addressLine4 = "v4",
           postalCode = Some("NE5"),
           countryCode = "GB"
         )

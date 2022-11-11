@@ -16,9 +16,9 @@
 
 package models.returns
 
-import models.returns.CreditsClaimedDetails.{CreditConvertedAnswerPartialKey, CreditConvertedWeightPartialKey, CreditExportedAnswerPartialKey, CreditExportedWeightPartialKey, CreditTotalPartialKey, CreditsTotalWeightPartialKey}
+import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(
