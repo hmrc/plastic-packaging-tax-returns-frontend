@@ -85,8 +85,9 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       dataRequest
     )
 
-    when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
+    when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "company-name"
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.mainContactName).thenReturn(_ => Call("GET", "/test-foo"))
@@ -120,7 +121,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(form), meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(form), meq("company-name"), meq(NormalMode))(any, any)
     }
 
     "get any previous user answer" in {
@@ -156,7 +157,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(errorForm), meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(errorForm), meq("company-name"), meq(NormalMode))(any, any)
       verify(mockFormProvider).apply()
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }

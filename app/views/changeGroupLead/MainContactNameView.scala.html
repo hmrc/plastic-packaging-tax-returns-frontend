@@ -26,9 +26,9 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], companyName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("mainContactName.title"))) {
+@layout(pageTitle = title(form, messages("mainContactName.title", companyName), Some(messages("account.title.tail")))) {
 
     @formHelper(action = controllers.changeGroupLead.routes.MainContactNameController.onSubmit(mode)) {
 
@@ -36,13 +36,15 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @headingLabel(messages("mainContactName.heading"))
+        @headingLabel(messages("mainContactName.heading", companyName))
 
         @govukInput(
             InputViewModel(
                 field = form("value")
             )
             .withWidth(Full)
+            .withHint(Hint(content = "mainContactName.hint"))
+
         )
 
         @govukButton(

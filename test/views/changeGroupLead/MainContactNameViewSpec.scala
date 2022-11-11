@@ -34,14 +34,15 @@ class MainContactNameViewSpec extends ViewSpecBase  with ViewAssertions with Vie
 
 
   private def createView: Html =
-    page(form, NormalMode)(request, messages)
+    page(form, "company-name",NormalMode)(request, messages)
 
   "MainContactNameView" should {
     val view = createView
 
     "have a title" in {
       view.select("title").text mustBe
-      "mainContactName - Plastic Packaging Tax - GOV.UK" //todo
+      "Who is the main contact for company-name? - Account - Plastic Packaging Tax - GOV.UK"
+      //todo this shouldnt have the compnay name in
     }
 
     "have a back link" in {
@@ -50,7 +51,7 @@ class MainContactNameViewSpec extends ViewSpecBase  with ViewAssertions with Vie
 
     "have a heading" in {
       view.select("h1").text mustBe
-      "mainContactName" //todo
+      "Who is the main contact for company-name?"
     }
 
     "have string input" in {
