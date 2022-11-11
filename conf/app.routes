@@ -150,12 +150,12 @@ POST        /credit-for-converted                                  controllers.r
 GET         /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-credit-for-converted                           controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
-POST       /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
+GET         /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
+POST        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
 
 # Change group lead
-GET         /secret-squirrel                                       controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
-POST        /secret-squirrel                                       controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
+GET         /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
+POST        /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
 
 GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
 POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
