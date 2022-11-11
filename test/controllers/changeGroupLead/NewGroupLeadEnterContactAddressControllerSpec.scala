@@ -19,7 +19,6 @@ package controllers.changeGroupLead
 import base.SpecBase
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import models.Mode.NormalMode
-import models.changeGroupLead.NewGroupLeadAddressDetails
 import navigation.{FakeNavigator, Navigator}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -62,7 +61,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-     //   contentAsString(result) mustEqual view(form, "name", NormalMode)(request, messages(application)).toString
+//        contentAsString(result) mustEqual view(form, "name", NormalMode)(request, messages(application)).toString
       }
     }
 

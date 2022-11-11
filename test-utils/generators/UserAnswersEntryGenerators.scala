@@ -35,7 +35,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[NewGroupLeadAddressDetails].map(Json.toJson(_))
       } yield (page, value)
     }
-    
+
   implicit lazy val arbitraryMainContactNameUserAnswersEntry: Arbitrary[(MainContactNamePage.type, JsValue)] =
     Arbitrary {
       for {

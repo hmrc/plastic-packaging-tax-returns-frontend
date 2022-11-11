@@ -591,6 +591,7 @@ newGroupLeadCheckYourAnswers.sendYourRequest = Now send your change
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
+
 mainContactName.title = Who is the main contact for {0}?
 mainContactName.heading = Who is the main contact for {0}?
 mainContactName.hint = This is the name of the person who will manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
