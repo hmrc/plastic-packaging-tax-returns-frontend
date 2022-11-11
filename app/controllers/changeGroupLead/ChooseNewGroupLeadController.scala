@@ -65,7 +65,7 @@ class ChooseNewGroupLeadController @Inject() (
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)
                 .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad))
+                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad)) //todo when next page exists
           )
       }
   }

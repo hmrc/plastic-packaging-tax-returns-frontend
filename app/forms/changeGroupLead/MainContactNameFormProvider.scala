@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms.changeGroupLead
 
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ "changeGroupLead" \ "chooseNewGroupLead"
+import forms.mappings.Mappings
+import play.api.data.Form
+
+class MainContactNameFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("mainContactName.error.required")
+        .verifying(maxLength(100, "mainContactName.error.length"))
+    )
 }

@@ -19,10 +19,14 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.amends._
+import pages.changeGroupLead._
 import pages.returns._
 import pages.returns.credits._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryMainContactNamePage: Arbitrary[MainContactNamePage.type] =
+    Arbitrary(MainContactNamePage)
 
   implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
     Arbitrary(ExportedCreditsPage)

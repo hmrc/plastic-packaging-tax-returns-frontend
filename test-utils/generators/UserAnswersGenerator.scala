@@ -22,6 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.amends._
+import pages.changeGroupLead._
 import pages.returns._
 import pages.returns.credits._
 
@@ -31,6 +32,7 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(MainContactNamePage.type, JsValue)] ::
     arbitrary[(ExportedCreditsPage.type, JsValue)] ::
     arbitrary[(ConvertedCreditsPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
