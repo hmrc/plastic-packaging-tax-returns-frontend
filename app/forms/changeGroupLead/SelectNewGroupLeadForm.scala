@@ -19,7 +19,6 @@ package forms.changeGroupLead
 import play.api.data.Form
 import play.api.data.Forms.{optional, text}
 import SelectNewGroupLeadForm.error
-import models.subscription.GroupMembers
 
 class SelectNewGroupLeadForm {
 
