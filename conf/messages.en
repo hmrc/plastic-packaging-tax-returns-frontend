@@ -35,6 +35,7 @@ caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
 caption.non.exported.plastic = Non-exported plastic packaging
 return.title.tail = Submit return
+account.title.tail = Account
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -586,9 +587,24 @@ newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
+
 mainContactName.title = mainContactName
 mainContactName.heading = mainContactName
 mainContactName.checkYourAnswersLabel = mainContactName
 mainContactName.error.required = Enter mainContactName
 mainContactName.error.length = MainContactName must be 100 characters or less
 mainContactName.change.hidden = MainContactName
+
+newGroupLeadConfirmation.title = The representative member will be changed
+newGroupLeadConfirmation.heading = The representative member will be changed
+newGroupLeadConfirmation.heading.2 = What you need to do now
+newGroupLeadConfirmation.paragraph.1 = You need to go to your {0}.
+newGroupLeadConfirmation.paragraph.1.link = business tax account and remove Plastic Packaging Tax
+newGroupLeadConfirmation.heading.3 = What the new representative member needs to do next
+newGroupLeadConfirmation.paragraph.2.1 = The new representative member needs to sign in to their business tax account. They need to add Plastic Packaging Tax by choosing ‘get online access to a tax, duty or scheme’ from the home page.
+newGroupLeadConfirmation.paragraph.2.2 = To activate the account they will need the group’s:
+newGroupLeadConfirmation.bulletList.first = Plastic Packaging Tax registration number
+newGroupLeadConfirmation.bulletList.second = date of registration
+newGroupLeadConfirmation.paragraph.2.3 = They will be able to manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+newGroupLeadConfirmation.exitSurvey.link = What did you think of this service?
+
