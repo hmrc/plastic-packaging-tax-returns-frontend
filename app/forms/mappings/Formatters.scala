@@ -30,15 +30,10 @@ trait Formatters {
                                        ): Formatter[String] =
     new Formatter[String] {
 
-      val matchingString = "^[A-Za-z0-9_-`,.&']*$"
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         data.get(key) match {
           case None => Left(Seq(FormError(key, errorKey, args)))
           case Some(s) if s.trim.isEmpty => Left(Seq(FormError(key, errorKey, args)))
-          case Some(s) if !s.trim.matches(matchingString) => {
-            val t = 1
-            Left(Seq(FormError(key, errorKey, args)))
-          }
           case Some(s) => Right(s)
         }
 
