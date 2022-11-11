@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.data.FormBinding.Implicits.formBinding
 import models.requests.DataRequest._
 import navigation.ChangeGroupLeadNavigator
+import pages.ChooseNewGroupLeadPage
 import views.html.changeGroupLead.MainContactNameView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,18 +48,20 @@ class MainContactNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
+      val companyName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(MainContactNamePage, form())
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, companyName, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
+      val companyName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, companyName, mode))),
 
         mainContactName =>
           request.userAnswers

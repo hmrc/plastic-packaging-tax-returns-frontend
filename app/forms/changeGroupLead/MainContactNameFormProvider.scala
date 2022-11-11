@@ -16,16 +16,28 @@
 
 package forms.changeGroupLead
 
-import javax.inject.Inject
-
-import forms.mappings.Mappings
+import forms.changeGroupLead.MainContactNameFormProvider._
 import play.api.data.Form
+import play.api.data.Forms.{optional, text}
 
-class MainContactNameFormProvider @Inject() extends Mappings {
+class MainContactNameFormProvider {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("mainContactName.error.required")
-        .verifying(maxLength(100, "mainContactName.error.length"))
+      "value" -> optional(text)
+        .verifying(EmptyError, _.isDefined)
+        .transform[String](_.get, Some(_))
+        .transform[String](_.trim, identity)
+        .verifying(EmptyError, _.nonEmpty)
+        .verifying(LengthError, _.length <= MaxLength)
+        .verifying(InvalidError, _.matches(AllowedCharacterRegex))
     )
+}
+
+object MainContactNameFormProvider {
+  private val MaxLength = 160
+  private val AllowedCharacterRegex = "^[A-z '.-]*$"
+  val EmptyError = "mainContactName.error.required"
+  val LengthError = "mainContactName.error.length"
+  val InvalidError = "mainContactName.error.invalid"
 }

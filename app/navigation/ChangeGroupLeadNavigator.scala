@@ -26,7 +26,7 @@ class ChangeGroupLeadNavigator {
     if (mode == CheckMode) controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad
     else call
 
-  val mainContactName: Mode => Call =
+  def mainContactName: Mode => Call =
     returnToCheckYourAnswersOr(
       controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad //todo this will be job title page
     )

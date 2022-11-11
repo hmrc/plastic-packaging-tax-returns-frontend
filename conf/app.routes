@@ -160,10 +160,10 @@ POST        /select-new-representative-member                      controllers.c
 GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
 POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
 
-GET        /mainContactName                        controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /mainContactName                        controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /changeMainContactName                  controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeMainContactName                  controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = CheckMode)
+GET        /main-contact                        controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /main-contact                        controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change-main-contact                  controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-main-contact                  controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = CheckMode)
 
 GET         /representative-member-changed                         controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
 

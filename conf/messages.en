@@ -589,12 +589,14 @@ newGroupLeadCheckYourAnswers.body = By sending this change to the representative
 newGroupLeadCheckYourAnswers.button = Send change
 
 
-mainContactName.title = mainContactName
-mainContactName.heading = mainContactName
-mainContactName.checkYourAnswersLabel = mainContactName
-mainContactName.error.required = Enter mainContactName
-mainContactName.error.length = MainContactName must be 100 characters or less
-mainContactName.change.hidden = MainContactName
+mainContactName.title = Who is the main contact for {0}?
+mainContactName.heading = Who is the main contact for {0}?
+mainContactName.hint = This is the name of the person who will manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+mainContactName.checkYourAnswersLabel = Contact name
+mainContactName.change.hidden = Contact name
+mainContactName.error.required = Enter the name of the main contact
+mainContactName.error.length = Name must be 160 characters or fewer
+mainContactName.error.invalid = Name must only include letters, hyphens, spaces, apostrophes and full stops
 
 newGroupLeadConfirmation.title = The representative member will be changed
 newGroupLeadConfirmation.heading = The representative member will be changed
