@@ -22,10 +22,19 @@ import pages._
 import pages.amends._
 import pages.returns._
 import pages.returns.credits._
+import pages.changeGroupLead._
 
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryMainContactNameUserAnswersEntry: Arbitrary[(MainContactNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[MainContactNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryExportedCreditsUserAnswersEntry: Arbitrary[(ExportedCreditsPage.type, JsValue)] =
     Arbitrary {

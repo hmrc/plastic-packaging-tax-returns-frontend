@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.changeGroupLead
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ "changeGroupLead" \ "chooseNewGroupLead"
+case object MainContactNamePage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ "changeGroupLead" \ toString
+
+  override def toString: String = "mainContactName"
 }
