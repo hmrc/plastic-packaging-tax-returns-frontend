@@ -161,3 +161,8 @@ GET         /morocco-mole           controllers.changeGroupLead.NewGroupLeadChec
 POST        /morocco-mole           controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
 
 GET         /morocco-mole-confirmation           controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
+
+GET        /mainContactJobTitle                        controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = NormalMode)
+POST       /mainContactJobTitle                        controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = NormalMode)
+GET        /changeMainContactJobTitle                  controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeMainContactJobTitle                  controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = CheckMode)
