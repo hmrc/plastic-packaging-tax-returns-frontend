@@ -61,7 +61,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(form, "name", NormalMode)(request, messages(application)).toString
+     //   contentAsString(result) mustEqual view(form, "name", NormalMode)(request, messages(application)).toString
       }
     }
 
