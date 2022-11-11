@@ -41,7 +41,7 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with 
 
     "have a title" in {
       view.select("title").text mustBe
-      "Select the new representative member - Plastic Packaging Tax - GOV.UK"
+      "Select the new representative member - Account - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a back link" in {

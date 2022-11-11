@@ -33,5 +33,5 @@ class SelectNewGroupLeadForm {
 }
 
 object SelectNewGroupLeadForm {
-  val error = "SelectNewGroupLead.error.required"
+  val error = "select-new-representative.error.required"
 }
