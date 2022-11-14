@@ -29,7 +29,7 @@
 
 
 
-@(representativeMember: RepresentativeMemberDetails)(implicit request: Request[_], messages: Messages)
+@(representativeMember: RepresentativeMemberDetails, call: Call)(implicit request: Request[_], messages: Messages)
 
 @representativeMemberRow = @{
     SummaryListRow(
@@ -57,8 +57,5 @@
         id = Some("sent-your-request")
     )
     @paragraphBody(messages("newGroupLeadCheckYourAnswers.body"))
-    @linkButton(
-        "newGroupLeadCheckYourAnswers.button",
-        controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onSubmit.url
-    )
+    @linkButton("newGroupLeadCheckYourAnswers.button", call.url)
 }

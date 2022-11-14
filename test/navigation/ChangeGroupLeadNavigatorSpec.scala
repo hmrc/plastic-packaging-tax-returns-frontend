@@ -34,13 +34,13 @@ class ChangeGroupLeadNavigatorSpec extends PlaySpec {
   }
   
   "enterContactAddressNextPage" in {
-    sut.enterContactAddressNextPage(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
-    sut.enterContactAddressNextPage(CheckMode) mustBe checkYourAnswersPage
+    sut.enterContactAddress(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
+    sut.enterContactAddress(CheckMode) mustBe checkYourAnswersPage
   }
   
   "selectNewGroupRepNextPage" in {
-    sut.selectNewGroupRepNextPage(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode) // todo wrong
-    sut.selectNewGroupRepNextPage(CheckMode) mustBe checkYourAnswersPage
+    sut.selectNewGroupRep(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode) // todo wrong
+    sut.selectNewGroupRep(CheckMode) mustBe checkYourAnswersPage
   }
 
   def aChangeGroupLeadQuestionPage(method: Mode => Call)(nextPage: Call): Unit = {

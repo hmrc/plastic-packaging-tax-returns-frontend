@@ -18,7 +18,6 @@ package controllers.changeGroupLead
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.changeGroupLead._
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode
 import models.requests.DataRequest
@@ -76,7 +75,7 @@ class ChooseNewGroupLeadController @Inject() (
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)
                 .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Results.Redirect(navigator.selectNewGroupRepNextPage(mode)))
+                .map(_ => Results.Redirect(navigator.selectNewGroupRep(mode)))
           )
       }
   }

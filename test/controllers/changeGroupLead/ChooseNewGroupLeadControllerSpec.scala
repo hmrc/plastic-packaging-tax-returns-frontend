@@ -109,7 +109,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     when(dataRequest.userAnswers.setOrFail(any, any, any)(any)) thenReturn answers
     when(answers.save(any)(any)) thenReturn Future.successful(answers)
 
-    when(navigator.selectNewGroupRepNextPage(any)) thenReturn Call("", "some-url")
+    when(navigator.selectNewGroupRep(any)) thenReturn Call("", "some-url")
   }
   
   def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
@@ -193,17 +193,17 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some("some-url")
-      verify(navigator).selectNewGroupRepNextPage(NormalMode)
+      verify(navigator).selectNewGroupRep(NormalMode)
     }
 
     "pass Normal mode to the navigator" in {
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-      verify(navigator).selectNewGroupRepNextPage(NormalMode)
+      verify(navigator).selectNewGroupRep(NormalMode)
     }
 
     "pass Check mode to the navigator" in {
       await(sut.onSubmit(CheckMode).skippingJourneyAction(dataRequest))
-      verify(navigator).selectNewGroupRepNextPage(CheckMode)
+      verify(navigator).selectNewGroupRep(CheckMode)
     }
 
     "bind the form and error" in {

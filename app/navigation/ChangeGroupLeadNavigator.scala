@@ -23,14 +23,16 @@ import play.api.mvc.Call
 
 class ChangeGroupLeadNavigator {
 
-  def selectNewGroupRepNextPage(implicit mode: Mode): Call =
+  def selectNewGroupRep(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad) // todo
   
-  def enterContactAddressNextPage(implicit mode: Mode): Call = 
+  def enterContactAddress(implicit mode: Mode): Call = 
     returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad)
 
   def mainContactName(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr (_ => routes.NewGroupLeadCheckYourAnswerController.onPageLoad) // todo
+
+  def checkYourAnswers: Call = routes.NewGroupLeadConfirmationController.onPageLoad
 
   private def returnToCheckYourAnswersOr(call: Mode => Call)(implicit mode: Mode): Call =
     if (mode == CheckMode) 
