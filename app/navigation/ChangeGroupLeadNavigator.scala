@@ -17,17 +17,18 @@
 package navigation
 
 import controllers.changeGroupLead._
-import models.Mode
 import models.Mode.{CheckMode, NormalMode}
 import play.api.mvc.Call
 
 class ChangeGroupLeadNavigator {
-
+  
   def selectNewGroupRep(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr (routes.NewGroupLeadEnterContactAddressController.onPageLoad)
 
+
   def enterContactAddress(implicit mode: Mode): Call = 
     returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad)
+  }
 
   def mainContactName(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr (routes.MainContactJobTitleController.onPageLoad)
