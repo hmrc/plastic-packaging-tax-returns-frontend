@@ -16,20 +16,26 @@
 
 package navigation
 
+import controllers.changeGroupLead._
 import models.Mode
-import models.Mode.CheckMode
+import models.Mode.{CheckMode, NormalMode}
 import play.api.mvc.Call
 
 class ChangeGroupLeadNavigator {
 
-  private def returnToCheckYourAnswersOr(call: Call)(mode: Mode): Call =
-    if (mode == CheckMode) controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad
-    else call
+  def selectNewGroupRepNextPage(implicit mode: Mode): Call =
+    returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad) // todo
+  
+  def enterContactAddressNextPage(implicit mode: Mode): Call = 
+    returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad)
 
-  def mainContactName: Mode => Call =
-    returnToCheckYourAnswersOr(
-      controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad //todo this will be job title page
-    )
+  def mainContactName(implicit mode: Mode): Call =
+    returnToCheckYourAnswersOr (_ => routes.NewGroupLeadCheckYourAnswerController.onPageLoad) // todo
 
+  private def returnToCheckYourAnswersOr(call: Mode => Call)(implicit mode: Mode): Call =
+    if (mode == CheckMode) 
+      routes.NewGroupLeadCheckYourAnswerController.onPageLoad
+    else 
+      call(NormalMode)
 
 }

@@ -154,8 +154,10 @@ GET         /cancel-credit                                          controllers.
 POST        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
 
 # Change group lead
-GET         /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
-POST        /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
+GET         /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad(mode: Mode = NormalMode)
+POST        /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit(mode: Mode = NormalMode)
+GET         /change-select-new-representative-member               controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-select-new-representative-member               controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit(mode: Mode = CheckMode)
 
 GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
 POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
