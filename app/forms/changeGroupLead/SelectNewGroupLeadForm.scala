@@ -19,7 +19,6 @@ package forms.changeGroupLead
 import play.api.data.Form
 import play.api.data.Forms.{optional, text}
 import SelectNewGroupLeadForm.error
-import models.subscription.GroupMembers
 
 class SelectNewGroupLeadForm {
 
@@ -33,5 +32,5 @@ class SelectNewGroupLeadForm {
 }
 
 object SelectNewGroupLeadForm {
-  val error = "SelectNewGroupLead.error.required"
+  val error = "select-new-representative.error.required"
 }

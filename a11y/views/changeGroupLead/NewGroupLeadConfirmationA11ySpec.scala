@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package pages
+package views.changeGroupLead
 
-import play.api.libs.json.JsPath
+import base.ViewSpecBase
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ "changeGroupLead" \ "chooseNewGroupLead"
+class NewGroupLeadConfirmationA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+
+  private val page: NewGroupLeadConfirmationView = inject[NewGroupLeadConfirmationView]
+
+  private def createView(): String =
+    page()(request, messages).toString()
+
+  "NewGroupLeadConfirmationView" should {
+
+    "pass accessibility checks without error" in {
+      createView() must passAccessibilityChecks
+    }
+  }
 }

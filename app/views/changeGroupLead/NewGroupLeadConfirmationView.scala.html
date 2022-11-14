@@ -14,17 +14,55 @@
  * limitations under the License.
  *@
 
-@import components.heading
+@import components._
 @import viewmodels._
+@import config.FrontendAppConfig
 
 @this(
+  appConfig: FrontendAppConfig,
   layout: templates.Layout,
-  heading: heading
+  govukPanel: GovukPanel,
+  link: Link,
+  paragraph: paragraph,
+  paragraphBody: paragraphBody,
+  bulletList: bulletList,
+  sectionH2Heading: SectionH2Heading
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm("New Group Lead Confirmation Page")) {
 
-    @heading("New Group Lead Confirmation Page")
+@btaPageLink = @{
+link(id = "bta-page-link", text = messages("newGroupLeadConfirmation.paragraph.1.link"), call = Call("GET", appConfig.businessAccountUrl))
+}
+
+@layout(pageTitle = titleNoForm(messages("newGroupLeadConfirmation.title"), Some(messages("account.title.tail"))),showBackLink = false){
+
+    @govukPanel(Panel(
+            title = Text(messages("newGroupLeadConfirmation.heading")),
+        )
+    )
+
+   @sectionH2Heading(messages("newGroupLeadConfirmation.heading.2"))
+
+   @paragraphBody(
+        message = messages("newGroupLeadConfirmation.paragraph.1", btaPageLink))
+
+   @sectionH2Heading(messages("newGroupLeadConfirmation.heading.3"))
+
+   @paragraphBody(messages("newGroupLeadConfirmation.paragraph.2.1"))
+   @paragraphBody(messages("newGroupLeadConfirmation.paragraph.2.2"))
+
+   @bulletList(elements = Seq(
+     Html(messages("newGroupLeadConfirmation.bulletList.first")),
+     Html(messages("newGroupLeadConfirmation.bulletList.second"))
+    )
+   )
+
+   @paragraphBody(messages("newGroupLeadConfirmation.paragraph.2.3"))
+
+   <p class="govuk-body" style="margin-top:2.5em">
+    @link(id = "survey-link", text = messages("newGroupLeadConfirmation.exitSurvey.link"), call = Call("GET", appConfig.exitSurveyUrl))
+   </p>
+
 }

@@ -32,12 +32,12 @@
 
 @(form: Form[String], members: GroupMembers)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("select-new-representative.title")), showBackLink = true) {
+@layout(pageTitle = title(form, messages("select-new-representative.title"), Some(messages("account.title.tail"))), showBackLink = true) {
 
     @formHelper(action = controllers.changeGroupLead.routes.ChooseNewGroupLeadController.onSubmit(), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "radio-member-0")))
         }
 
         @headingLabel(messages("select-new-representative.heading"))

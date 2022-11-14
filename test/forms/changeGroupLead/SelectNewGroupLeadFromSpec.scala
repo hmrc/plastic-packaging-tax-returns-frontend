@@ -23,6 +23,7 @@ import play.api.data.FormError
 class SelectNewGroupLeadFromSpec extends PlaySpec {
 
   val sut: SelectNewGroupLeadForm = new SelectNewGroupLeadForm
+  val requiredKey = "select-new-representative.error.required"
 
   private implicit def toGroupMembers(seqqy: Seq[String]): GroupMembers = GroupMembers(seqqy)
 
@@ -46,26 +47,26 @@ class SelectNewGroupLeadFromSpec extends PlaySpec {
       "the form is empty" in {
         val boundForm = sut.apply(Seq("xyz", "abc")).bind(Map[String, String]())
 
-        boundForm.errors mustBe Seq(FormError("value", "SelectNewGroupLead.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
       "the form has no value" in {
         val boundForm = sut.apply(Seq("xyz", "abc")).bind(Map("cheese" -> "abc"))
 
-        boundForm.errors mustBe Seq(FormError("value", "SelectNewGroupLead.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
       "the form value is empty" in {
         val boundForm = sut.apply(Seq("xyz", "abc")).bind(Map("value" -> ""))
 
-        boundForm.errors mustBe Seq(FormError("value", "SelectNewGroupLead.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
 
       "the value is not in the members list" in {
         val boundForm = sut.apply(Seq("xyz", "abc")).bind(Map("value" -> "pan"))
 
-        boundForm.errors mustBe Seq(FormError("value", "SelectNewGroupLead.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
     }

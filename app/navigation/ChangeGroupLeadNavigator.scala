@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-package pages
+package navigation
 
-import play.api.libs.json.JsPath
+import models.Mode
+import models.Mode.CheckMode
+import play.api.mvc.Call
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ "changeGroupLead" \ "chooseNewGroupLead"
+class ChangeGroupLeadNavigator {
+
+  private def returnToCheckYourAnswersOr(call: Call)(mode: Mode): Call =
+    if (mode == CheckMode) controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad
+    else call
+
+  def mainContactName: Mode => Call =
+    returnToCheckYourAnswersOr(
+      controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad //todo this will be job title page
+    )
+
+
 }

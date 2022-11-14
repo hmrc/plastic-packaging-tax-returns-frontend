@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.changeGroupLead
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ "changeGroupLead" \ "chooseNewGroupLead"
+
+class MainContactNamePageSpec extends PageBehaviours {
+
+  "MainContactNamePage" - {
+
+    beRetrievable[String](MainContactNamePage)
+
+    beSettable[String](MainContactNamePage)
+
+    beRemovable[String](MainContactNamePage)
+  }
 }
