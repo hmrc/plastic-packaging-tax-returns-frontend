@@ -93,7 +93,7 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
-    when(mockNavigator.mainContactJobTitle).thenReturn(_ => Call("GET", "/test-foo"))
+    when(mockNavigator.mainContactJobTitle(any)).thenReturn(Call("GET", "/test-foo"))
   }
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
@@ -184,8 +184,29 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
         verify(dataRequest.userAnswers).setOrFail(MainContactJobTitlePage, "test-name")
         verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
       }
+    }
 
+    "error" when {
+      "the user answers setOrFail fails" in {
+        when(mockFormProvider.apply()) thenReturn form
+        val boundForm = Form("value" -> text()).fill("test-name")
+        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+        when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenThrow(TestException)
 
+        intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+      }
+
+      "the cache save fails" in {
+        when(mockFormProvider.apply()) thenReturn form
+        val boundForm = Form("value" -> text()).fill("test-name")
+        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+        val userAnswers = dataRequest.userAnswers
+        when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+
+        intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+      }
     }
 
   }
