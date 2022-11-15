@@ -21,6 +21,8 @@ import forms.mappings.Mappings
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.Constraint
+import play.api.data.validation.Constraints.pattern
 
 import javax.inject.Inject
 
@@ -30,16 +32,45 @@ class NewGroupLeadEnterContactAddressFormProvider @Inject() extends Mappings {
    def apply(): Form[NewGroupLeadAddressDetails] = Form(
      mapping(
        addressLine1 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
-        .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine1.length")),
+        .verifying(maxLength(maxAddressLineLength, "newGroupLeadEnterContactAddress.error.addressLine1.length"))
+         .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.addressLine1.invalid.line")),
        addressLine2 -> text("newGroupLeadEnterContactAddress.error.addressLine.required")
-        .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.addressLine2.length")),
-       addressLine3 -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
-       addressLine4 -> text("newGroupLeadEnterContactAddress.error.AddressLine2.required"),
-       postalCode -> optional(text("newGroupLeadEnterContactAddress.error.AddressLine2.required")),
-       countryCode -> text("newGroupLeadEnterContactAddress.error.AddressLine2.required")
-         .verifying(maxLength(35, "newGroupLeadEnterContactAddress.error.AddressLine2.length"))
-    )(NewGroupLeadAddressDetails.apply)(NewGroupLeadAddressDetails.unapply)
+        .verifying(maxLength(maxAddressLineLength, "newGroupLeadEnterContactAddress.error.addressLine2.length"))
+         .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.addressLine2.invalid.line")),
+       addressLine3 -> optional(
+         text("newGroupLeadEnterContactAddress.error.AddressLine2.required")
+           .verifying(maxLength(maxAddressLineLength, "newGroupLeadEnterContactAddress.error.addressLine3.length"))
+           .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.addressLine3.invalid.line"))
+       ),
+       addressLine4 -> text("newGroupLeadEnterContactAddress.error.addressLine4.required")
+         .verifying(maxLength(maxAddressLineLength, "newGroupLeadEnterContactAddress.error.addressLine4.length"))
+         .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.addressLine4.invalid.line")),
+       postalCode -> optional(
+         text("newGroupLeadEnterContactAddress.error.postalCode.required ")
+           .verifying(maxLength(8, "newGroupLeadEnterContactAddress.error.postalCode.inRange"))
+           .verifying(minLength(5, "newGroupLeadEnterContactAddress.error.postalCode.inRange"))
+           .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.postalCode.inRange"))
+       ),
+       countryCode -> text("newGroupLeadEnterContactAddress.error.countryCode.required")
+         .verifying(maxLength(maxAddressLineLength, "newGroupLeadEnterContactAddress.error.countryCode.length"))
+         .verifying(isValidAddressLine("newGroupLeadEnterContactAddress.error.countryCode.invalid"))
+    )(NewGroupLeadAddressDetails.apply)(NewGroupLeadAddressDetails.unapply).verifying(
+       "newGroupLeadEnterContactAddress.error.postalCode.required",
+       fields =>
+         fields match {
+           case address => validatePostalCode(address.countryCode, address.postalCode)
+         }
+     )
    )
+
+  private def isValidAddressLine(errorKey: String): Constraint[String] =
+    pattern(addressLineRegExp.r, error = errorKey)
+
+  private def validatePostalCode(countryCode: String, postalCode: Option[String]): Boolean = {
+    if(countryCode.equals("GB") && !postalCode.isDefined) false
+    else true
+
+  }
  }
 
 object NewGroupLeadEnterContactAddressFormProvider {
@@ -49,4 +80,7 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val addressLine4 = "addressLine4"
   val postalCode = "postalCode"
   val countryCode = "countryCode"
+
+  val addressLineRegExp = "^[A-Za-z0-9-`,.&'\\s]*$"
+  val maxAddressLineLength = 35
 }
