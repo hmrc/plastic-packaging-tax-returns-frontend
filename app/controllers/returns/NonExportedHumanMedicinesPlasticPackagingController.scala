@@ -21,7 +21,6 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.Navigator
 import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -16,20 +16,17 @@
 
 package controllers.returns.credits
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.RemoveCreditFormProvider
-
-import javax.inject.Inject
-import models.Mode
 import navigation.Navigator
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.CacheConnector
-import controllers.returns.routes
-import pages.returns.credits.WhatDoYouWantToDoPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.RemoveCreditView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveCreditController @Inject()(

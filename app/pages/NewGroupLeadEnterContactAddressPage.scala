@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package forms.changeGroupLead
+package pages
 
-import forms.changeGroupLead.SelectNewGroupLeadForm.error
-import play.api.data.Form
-import play.api.data.Forms.{optional, text}
+import models.changeGroupLead.NewGroupLeadAddressDetails
+import play.api.libs.json.JsPath
 
-class SelectNewGroupLeadForm {
+case object NewGroupLeadEnterContactAddressPage extends QuestionPage[NewGroupLeadAddressDetails] {
 
-  def apply(members: Seq[String]): Form[String] =
-    Form("value" -> optional(text)
-      .verifying(error, _.isDefined)
-      .transform[String](_.get, Some(_))
-      .verifying(error, members.contains(_))
-    )
+  override def path: JsPath = JsPath \ toString
 
-}
-
-object SelectNewGroupLeadForm {
-  val error = "select-new-representative.error.required"
+  override def toString: String = "newGroupLeadEnterContactAddress"
 }

@@ -18,19 +18,16 @@ package controllers.returns
 
 import audit.Auditor
 import cacheables.ReturnObligationCacheable
-import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.Mode
-import models.Mode.NormalMode
 import models.requests.OptionalDataRequest
-import navigation.{Navigator, ReturnsJourneyNavigator}
+import navigation.ReturnsJourneyNavigator
 import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
 

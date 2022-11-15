@@ -19,12 +19,14 @@ package controllers.changeGroupLead
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
-import forms.mappings.Mappings
 import models.Mode
-import models.Mode.NormalMode
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ChangeGroupLeadNavigator
+import pages.NewGroupLeadEnterContactAddressPage
 import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
@@ -44,16 +46,24 @@ class NewGroupLeadEnterContactAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      val preparedForm = formProvider()
-      Future.successful(Results.Ok(createView(preparedForm)))
+      val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
+      Future.successful(Results.Ok(createView(mode, preparedForm)))
   }
 
-  private def createView(preparedForm: Form[String]) (implicit request: DataRequest[_]) = {
-    view(preparedForm, routes.NewGroupLeadEnterContactAddressController.onSubmit(NormalMode))
+  private def createView(mode: Mode, preparedForm: Form[NewGroupLeadAddressDetails]) (implicit request: DataRequest[_]) = {
+    view(preparedForm, "name", mode)
   }
 
   def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      Future.successful(Results.Redirect(navigator.enterContactAddress))
+
+      formProvider().bindFromRequest().fold(
+        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, "name", mode))),
+        newValue =>
+          request.userAnswers
+            .setOrFail(NewGroupLeadEnterContactAddressPage, newValue)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Results.Redirect(navigator.enterContactAddress))
+      )
   }
 }
