@@ -19,8 +19,13 @@ package controllers.changeGroupLead
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.SelectNewGroupLeadForm
+import models.Mode
+import models.requests.DataRequest
 import models.requests.DataRequest._
+import models.subscription.GroupMembers
+import navigation.ChangeGroupLeadNavigator
 import pages.ChooseNewGroupLeadPage
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -39,33 +44,38 @@ class ChooseNewGroupLeadController @Inject() (
   form: SelectNewGroupLeadForm,
   cacheConnector: CacheConnector,
   featureGuard: FeatureGuard,
-  subscriptionService: SubscriptionService
+  subscriptionService: SubscriptionService,
+  navigator: ChangeGroupLeadNavigator
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = journeyAction.async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
         val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
-
-        Results.Ok(view(preparedForm, members))
+        Results.Ok(createView(preparedForm, members, mode))
       }
   }
 
-  def onSubmit(): Action[AnyContent] = journeyAction.async {
+  private def createView(errorForm: Form[String], members: GroupMembers, mode: Mode)(implicit request: DataRequest[_]) = {
+    val onSubmit = routes.ChooseNewGroupLeadController.onSubmit(mode)
+    view(errorForm, members, onSubmit)
+  }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap{ members =>
         form(members.membersNames)
           .bindFromRequest()
           .fold(
-            errorForm => Future.successful(Results.BadRequest(view(errorForm, members))),
+            errorForm => Future.successful(Results.BadRequest(createView(errorForm, members, mode))),
             selectedMember =>
               request.userAnswers
                 .setOrFail(ChooseNewGroupLeadPage, selectedMember)
                 .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad)) //todo when next page exists
+                .map(_ => Results.Redirect(navigator.selectNewGroupRep(mode)))
           )
       }
   }

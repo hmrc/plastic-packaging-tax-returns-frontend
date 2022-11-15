@@ -18,28 +18,35 @@ package controllers.changeGroupLead
 
 import controllers.actions.JourneyAction
 import models.changeGroupLead.RepresentativeMemberDetails
+import models.requests.DataRequest
+import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NewGroupLeadCheckYourAnswerController @Inject
-(
+class NewGroupLeadCheckYourAnswerController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   featureGuard: FeatureGuard,
   val controllerComponents: MessagesControllerComponents,
-  view: NewGroupLeadCheckYourAnswerView
-)
-(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport{
+  view: NewGroupLeadCheckYourAnswerView,
+  navigator: ChangeGroupLeadNavigator
+) 
+  (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      Ok(view(RepresentativeMemberDetails(request.userAnswers)))
+      Ok(createView(request))
+  }
+
+  private def createView(implicit request: DataRequest[AnyContent]) = {
+    val call = routes.NewGroupLeadConfirmationController.onPageLoad 
+    view(RepresentativeMemberDetails(request.userAnswers), call)
   }
 
   def onSubmit: Action[AnyContent] = journeyAction.async {
@@ -50,7 +57,7 @@ class NewGroupLeadCheckYourAnswerController @Inject
        */
       //otherwise
       featureGuard.check()
-      Future.successful(Redirect(controllers.changeGroupLead.routes.NewGroupLeadConfirmationController.onPageLoad))
+      Future.successful(Redirect(navigator.checkYourAnswers))
   }
 
 }
