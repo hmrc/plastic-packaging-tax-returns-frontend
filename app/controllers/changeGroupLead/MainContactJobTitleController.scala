@@ -19,52 +19,53 @@ package controllers.changeGroupLead
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.MainContactJobTitleFormProvider
-
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
-import pages.changeGroupLead.MainContactJobTitlePage
+import navigation.ChangeGroupLeadNavigator
+import pages.changeGroupLead.{MainContactJobTitlePage, MainContactNamePage}
+import play.api.data.FormBinding.Implicits.formBinding
+import models.requests.DataRequest._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
-import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.changeGroupLead.MainContactJobTitleView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class MainContactJobTitleController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        cacheConnector: CacheConnector,
-                                       navigator: Navigator,
+                                       navigator: ChangeGroupLeadNavigator,
                                        journeyAction: JourneyAction,
                                        featureGuard: FeatureGuard,
-                                       formProvider: MainContactJobTitleFormProvider,
+                                       form: MainContactJobTitleFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: MainContactJobTitleView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+                                     )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form)
+      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
+      val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form())
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, contactName, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
+      featureGuard.check()
+      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
 
-      form.bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
 
         jobTitle =>
           request.userAnswers
             .setOrFail(MainContactJobTitlePage, jobTitle)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Results.Redirect(controllers.routes.IndexController.onPageLoad))
+            .map(_ => Redirect(navigator.mainContactJobTitle(mode)))
       )
   }
 }

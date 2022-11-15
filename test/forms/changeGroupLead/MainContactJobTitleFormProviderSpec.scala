@@ -16,10 +16,10 @@
 
 package forms.changeGroupLead
 
-import forms.behaviours.StringFieldBehaviours
+import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 
-class MainContactJobTitleFormProviderSpec extends StringFieldBehaviours {
+class MainContactJobTitleFormProviderSpec extends PlaySpec {
 
   val requiredKey = "mainContactJobTitle.error.required"
   val lengthKey = "mainContactJobTitle.error.length"
@@ -27,27 +27,54 @@ class MainContactJobTitleFormProviderSpec extends StringFieldBehaviours {
 
   val form = new MainContactJobTitleFormProvider()()
 
-  ".value" - {
+  def error(key: String) =
+    Seq(FormError("value", Seq(key)))
 
-    val fieldName = "value"
+  "form" must {
+    "bind" when {
+      "valid input" in {
+        val bound = form.bind(Map("value" -> "Teacher"))
+        bound.value mustBe Some("Teacher")
+        bound.errors mustBe Seq.empty
+      }
+    }
+    "error" when {
+      "no value" in {
+        val bound = form.bind(Map[String, String]())
+        bound.errors mustBe error("mainContactJobTitle.error.required")
+        bound.value mustBe None
+      }
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
-    )
+      "value is empty" in {
+        val bound = form.bind(Map("value" -> ""))
+        bound.errors mustBe error("mainContactJobTitle.error.required")
+        bound.value mustBe None
+      }
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+      "value is just spaces" in {
+        val bound = form.bind(Map("value" -> "  "))
+        bound.errors mustBe error("mainContactJobTitle.error.required")
+        bound.value mustBe None
+      }
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      "value is above the max length" in {
+        val bound = form.bind(Map("value" -> "a" * 161))
+        bound.errors mustBe error("mainContactJobTitle.error.length")
+        bound.value mustBe None
+      }
+
+      "value contains numbers" in {
+        val bound = form.bind(Map("value" -> "1"))
+        bound.errors mustBe error("mainContactJobTitle.error.invalid")
+        bound.value mustBe None
+      }
+
+      "value contains special chars" in {
+        val bound = form.bind(Map("value" -> "$h!t"))
+        bound.errors mustBe error("mainContactJobTitle.error.invalid")
+        bound.value mustBe None
+      }
+    }
   }
+
 }

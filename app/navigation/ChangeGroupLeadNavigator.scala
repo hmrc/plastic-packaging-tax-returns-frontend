@@ -31,5 +31,10 @@ class ChangeGroupLeadNavigator {
       controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad //todo this will be job title page
     )
 
+  def mainContactJobTitle: Mode => Call =
+    returnToCheckYourAnswersOr(
+      controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad //todo this will be job title page
+    )
+
 
 }

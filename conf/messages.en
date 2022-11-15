@@ -610,9 +610,10 @@ newGroupLeadConfirmation.bulletList.second = date of registration
 newGroupLeadConfirmation.paragraph.2.3 = They will be able to manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
 newGroupLeadConfirmation.exitSurvey.link = What did you think of this service?
 
-mainContactJobTitle.title = mainContactJobTitle
-mainContactJobTitle.heading = mainContactJobTitle
+mainContactJobTitle.title = What is the main contact’s job title?
+mainContactJobTitle.heading = What is {0}’s job title?
 mainContactJobTitle.checkYourAnswersLabel = mainContactJobTitle
-mainContactJobTitle.error.required = Enter mainContactJobTitle
-mainContactJobTitle.error.length = MainContactJobTitle must be 100 characters or less
+mainContactJobTitle.error.required = Enter the job title of the main contact
+mainContactJobTitle.error.length = Job title must be 155 characters or fewer
 mainContactJobTitle.change.hidden = MainContactJobTitle
+mainContactJobTitle.error.invalid = Job title must only include letters and spaces
