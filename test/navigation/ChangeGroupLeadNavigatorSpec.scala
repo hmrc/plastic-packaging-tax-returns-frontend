@@ -51,7 +51,7 @@ class ChangeGroupLeadNavigatorSpec extends PlaySpec {
     "navigate to CYA page" when {
       "in CheckMode" in {
         method(CheckMode) mustBe checkYourAnswersPage
-      }1
+      }
     }
     "navigate to the next page" when {
       "in NormalMode" in {
