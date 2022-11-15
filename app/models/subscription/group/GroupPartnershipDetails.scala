@@ -19,6 +19,7 @@ package models.subscription.group
 import models.subscription.{AddressDetails, IndividualDetails, OrganisationDetails}
 import play.api.libs.json.{Json, OFormat}
 import models.subscription.ContactDetails
+import models.subscription.group.GroupPartnershipDetails.Representative
 
 case class GroupPartnershipDetails(
   relationship: String,
@@ -29,8 +30,11 @@ case class GroupPartnershipDetails(
   addressDetails: AddressDetails,
   contactDetails: ContactDetails,
   regWithoutIDFlag: Boolean
-)
+){
+  def isRepresentative: Boolean = relationship == Representative
+}
 
 object GroupPartnershipDetails {
+  val Representative = "Representative"
   implicit val format: OFormat[GroupPartnershipDetails] = Json.format[GroupPartnershipDetails]
 }
