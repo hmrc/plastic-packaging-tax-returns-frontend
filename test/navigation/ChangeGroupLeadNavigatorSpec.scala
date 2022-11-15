@@ -39,8 +39,13 @@ class ChangeGroupLeadNavigatorSpec extends PlaySpec {
   
   "mainContactName" must {
     behave like aChangeGroupLeadQuestionPage(mode => navigator.mainContactName(mode))(
-      checkYourAnswersPage
+      routes.MainContactJobTitleController.onPageLoad(NormalMode)
     )
+  }
+
+  "mainContactJobTitle" in {
+    navigator.mainContactJobTitle(NormalMode) mustBe checkYourAnswersPage
+    navigator.mainContactJobTitle(CheckMode) mustBe checkYourAnswersPage
   }
   
   "check your answers then goes to" in {

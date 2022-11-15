@@ -30,7 +30,10 @@ class ChangeGroupLeadNavigator {
     returnToCheckYourAnswersOr (routes.MainContactNameController.onPageLoad)
 
   def mainContactName(implicit mode: Mode): Call =
-    returnToCheckYourAnswersOr (_ => routes.NewGroupLeadCheckYourAnswerController.onPageLoad) // todo
+    returnToCheckYourAnswersOr (routes.MainContactJobTitleController.onPageLoad)
+
+  def mainContactJobTitle(implicit mode: Mode): Call =
+    returnToCheckYourAnswersOr (_ => routes.NewGroupLeadCheckYourAnswerController.onPageLoad)
 
   def checkYourAnswers: Call = routes.NewGroupLeadConfirmationController.onPageLoad
 
