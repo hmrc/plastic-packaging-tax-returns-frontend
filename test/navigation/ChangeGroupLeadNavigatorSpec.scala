@@ -24,30 +24,34 @@ import play.api.mvc.Call
 
 class ChangeGroupLeadNavigatorSpec extends PlaySpec {
 
-  private val sut = new ChangeGroupLeadNavigator()
+  private val navigator = new ChangeGroupLeadNavigator()
   private val checkYourAnswersPage: Call = routes.NewGroupLeadCheckYourAnswerController.onPageLoad
+
+  "selectNewGroupRep then goes to" in {
+    navigator.selectNewGroupRep(NormalMode) mustBe routes.NewGroupLeadEnterContactAddressController.onPageLoad(NormalMode)
+    navigator.selectNewGroupRep(CheckMode) mustBe checkYourAnswersPage
+  }
+
+  "enterContactAddress then goes to" in {
+    navigator.enterContactAddress(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
+    navigator.enterContactAddress(CheckMode) mustBe checkYourAnswersPage
+  }
   
   "mainContactName" must {
-    behave like aChangeGroupLeadQuestionPage(mode => sut.mainContactName(mode))(
+    behave like aChangeGroupLeadQuestionPage(mode => navigator.mainContactName(mode))(
       checkYourAnswersPage
     )
   }
   
-  "enterContactAddressNextPage" in {
-    sut.enterContactAddress(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
-    sut.enterContactAddress(CheckMode) mustBe checkYourAnswersPage
-  }
-  
-  "selectNewGroupRepNextPage" in {
-    sut.selectNewGroupRep(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode) // todo wrong
-    sut.selectNewGroupRep(CheckMode) mustBe checkYourAnswersPage
+  "check your answers then goes to" in {
+    navigator.checkYourAnswers mustBe routes.NewGroupLeadConfirmationController.onPageLoad
   }
 
   def aChangeGroupLeadQuestionPage(method: Mode => Call)(nextPage: Call): Unit = {
     "navigate to CYA page" when {
       "in CheckMode" in {
         method(CheckMode) mustBe checkYourAnswersPage
-      }
+      }1
     }
     "navigate to the next page" when {
       "in NormalMode" in {

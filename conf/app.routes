@@ -169,3 +169,7 @@ POST       /change-main-contact                  controllers.changeGroupLead.Mai
 
 GET         /representative-member-changed                         controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
 
+GET        /account/enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /account/enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = CheckMode)
