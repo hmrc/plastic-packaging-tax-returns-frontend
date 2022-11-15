@@ -25,11 +25,10 @@ import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
-  private val representativeMember = "Member 1"
   private val page: NewGroupLeadCheckYourAnswerView = inject[NewGroupLeadCheckYourAnswerView]
 
   private def createView: Html = {
-    page(RepresentativeMemberDetails(representativeMember), Call("get", "away-somewhere"))(request, messages)
+    page(RepresentativeMemberDetails("Member 1", "henry hoover", "chief suction officer"), Call("get", "away-somewhere"))(request, messages)
   }
 
   "view" should {
@@ -53,7 +52,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
 
       getKeyAtRowIndex(view,0).text() mustBe "New representative member"
       getKeyAtRowIndex(view,0).text() mustBe messages("newGroupLeadCheckYourAnswers.representative.member.key")
-      getValueAtRowIndex(view, 0).text() mustBe representativeMember
+      getValueAtRowIndex(view, 0).text() mustBe "Member 1"
     }
 
     "show change link" in {
@@ -62,7 +61,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     }
 
     "have a now send your request header" in {
-      view.getElementById("sent-your-request").text() mustBe "Now send your request"
+      view.getElementById("sent-your-request").text() mustBe "Now send your change"
       view.getElementById("sent-your-request").text() mustBe messages("newGroupLeadCheckYourAnswers.sendYourRequest")
     }
 

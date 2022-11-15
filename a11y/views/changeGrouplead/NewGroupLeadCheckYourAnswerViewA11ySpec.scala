@@ -27,7 +27,7 @@ class NewGroupLeadCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessib
   private val page = inject[NewGroupLeadCheckYourAnswerView]
 
   def render: String =
-    page(RepresentativeMemberDetails("test test"), Call("get", ""))(request, messages).toString()
+    page(RepresentativeMemberDetails("test test", "name", "job"), Call("get", ""))(request, messages).toString()
 
 
   "view" should {
