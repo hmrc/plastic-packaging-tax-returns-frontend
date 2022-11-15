@@ -17,6 +17,7 @@
 @import models.changeGroupLead.RepresentativeMemberDetails
 @import components.{heading, SectionH2Heading, paragraphBody, LinkButton}
 @import viewmodels._
+@import controllers.changeGroupLead.routes
 
 @this(
     layout: templates.Layout,
@@ -44,12 +45,51 @@
     )
 }
 
+@contactAddressRow = @{
+    SummaryListRow(
+        key = Key(messages("newGroupLeadCheckYourAnswers.contact.address.key")),
+        value = Value(representativeMember.member),
+        actions = Some(Actions(items = Seq(
+            ActionItem(
+                "/foo",
+                messages("site.change"),
+            )
+        )))
+    )
+}
+
+@contactNameRow = @{
+    SummaryListRow(
+        key = Key(messages("newGroupLeadCheckYourAnswers.contact.name.key")),
+        value = Value(representativeMember.contactName),
+        actions = Some(Actions(items = Seq(
+            ActionItem(
+                "/plastic-packaging-tax/change-main-contact",
+                messages("site.change"),
+            )
+        )))
+    )
+}
+
+@jobTitleRow = @{
+    SummaryListRow(
+        key = Key(messages("newGroupLeadCheckYourAnswers.job.title.key")),
+        value = Value(representativeMember.jobTitle),
+        actions = Some(Actions(items = Seq(
+            ActionItem(
+                "/foo",
+                messages("site.change"),
+            )
+        )))
+    )
+}
+
 @layout(pageTitle = titleNoForm(messages("newGroupLeadCheckYourAnswers.heading"))) {
 
     @heading("newGroupLeadCheckYourAnswers.heading")
 
     @govukSummaryList(
-        SummaryList(rows = Seq(representativeMemberRow))
+        SummaryList(rows = Seq(representativeMemberRow, contactAddressRow, contactNameRow, jobTitleRow))
     )
 
     @sectionH2Heading(

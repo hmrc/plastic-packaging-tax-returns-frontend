@@ -18,12 +18,17 @@ package models.changeGroupLead
 
 import models.UserAnswers
 import pages.ChooseNewGroupLeadPage
+import pages.changeGroupLead.MainContactNamePage
 
-case class RepresentativeMemberDetails(member: String)
+case class RepresentativeMemberDetails(member: String, contactName: String, jobTitle: String)
 
 object RepresentativeMemberDetails {
 
   def apply(userAnswer: UserAnswers): RepresentativeMemberDetails = {
-    RepresentativeMemberDetails(userAnswer.get(ChooseNewGroupLeadPage).getOrElse(""))
+    RepresentativeMemberDetails(
+      userAnswer.get(ChooseNewGroupLeadPage).getOrElse(""),
+      userAnswer.get(MainContactNamePage).getOrElse(""),
+      "test"
+    )
   }
 }

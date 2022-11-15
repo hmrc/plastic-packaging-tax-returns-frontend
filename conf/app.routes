@@ -157,8 +157,8 @@ POST        /cancel-credit                                          controllers.
 GET         /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad()
 POST        /select-new-representative-member                      controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit()
 
-GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
-POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
+GET         /new-representative-check-answers                      controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
+POST        /new-representative-check-answers                      controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
 
 GET        /main-contact                        controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /main-contact                        controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = NormalMode)

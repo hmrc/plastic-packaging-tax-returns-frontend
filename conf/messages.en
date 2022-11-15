@@ -584,7 +584,10 @@ select-new-representative.error.required = Select the organisation you want as t
 
 newGroupLeadCheckYourAnswers.heading = Check your answers
 newGroupLeadCheckYourAnswers.representative.member.key = New representative member
-newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
+newGroupLeadCheckYourAnswers.contact.address.key = Contact address
+newGroupLeadCheckYourAnswers.contact.name.key = Contact name
+newGroupLeadCheckYourAnswers.job.title.key = Job title
+newGroupLeadCheckYourAnswers.sendYourRequest = Now send your change
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
