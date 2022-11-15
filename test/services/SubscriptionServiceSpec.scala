@@ -70,7 +70,7 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
   private val customerDetails: CustomerDetails = CustomerDetails(customerType = CustomerType.Organisation,
     individualDetails = None, organisationDetails = None)
 
-  private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "")
+  private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "GB")
 
   private val contactDetails: ContactDetails = ContactDetails("", "", None)
 
