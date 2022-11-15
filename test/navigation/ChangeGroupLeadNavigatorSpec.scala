@@ -16,6 +16,7 @@
 
 package navigation
 
+import controllers.changeGroupLead._
 import models.Mode
 import models.Mode.{CheckMode, NormalMode}
 import org.scalatestplus.play.PlaySpec
@@ -23,18 +24,38 @@ import play.api.mvc.Call
 
 class ChangeGroupLeadNavigatorSpec extends PlaySpec {
 
-  val sut = new ChangeGroupLeadNavigator()
+  private val navigator = new ChangeGroupLeadNavigator()
+  private val checkYourAnswersPage: Call = routes.NewGroupLeadCheckYourAnswerController.onPageLoad
 
+  "selectNewGroupRep then goes to" in {
+    navigator.selectNewGroupRep(NormalMode) mustBe routes.NewGroupLeadEnterContactAddressController.onPageLoad(NormalMode)
+    navigator.selectNewGroupRep(CheckMode) mustBe checkYourAnswersPage
+  }
+
+  "enterContactAddress then goes to" in {
+    navigator.enterContactAddress(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
+    navigator.enterContactAddress(CheckMode) mustBe checkYourAnswersPage
+  }
+  
   "mainContactName" must {
-    behave like aChangeGroupLeadQuestionPage(sut.mainContactName)(
-      controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad
+    behave like aChangeGroupLeadQuestionPage(mode => navigator.mainContactName(mode))(
+      routes.MainContactJobTitleController.onPageLoad(NormalMode)
     )
+  }
+
+  "mainContactJobTitle" in {
+    navigator.mainContactJobTitle(NormalMode) mustBe checkYourAnswersPage
+    navigator.mainContactJobTitle(CheckMode) mustBe checkYourAnswersPage
+  }
+  
+  "check your answers then goes to" in {
+    navigator.checkYourAnswers mustBe routes.NewGroupLeadConfirmationController.onPageLoad
   }
 
   def aChangeGroupLeadQuestionPage(method: Mode => Call)(nextPage: Call): Unit = {
     "navigate to CYA page" when {
       "in CheckMode" in {
-        method(CheckMode) mustBe controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onPageLoad
+        method(CheckMode) mustBe checkYourAnswersPage
       }
     }
     "navigate to the next page" when {

@@ -16,6 +16,7 @@
 
 package controllers.changeGroupLead
 
+import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,7 +29,7 @@ class NewGroupLeadConfirmationController @Inject
 (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
-  view: NewGroupLeadConfirmationView
+  view: NewGroupLeadConfirmationView,
 )
 (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 

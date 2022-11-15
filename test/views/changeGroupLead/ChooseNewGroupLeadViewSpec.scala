@@ -21,20 +21,22 @@ import config.FrontendAppConfig
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.subscription.GroupMembers
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
 
 class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+  
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
   val members: GroupMembers = GroupMembers(Seq("Test Company Ltd Asia", "Test Company Ltd Europe", "Test Company Ltd UK"))
   val form: Form[String] = new SelectNewGroupLeadForm().apply(members.membersNames)
-  val appConfig = inject[FrontendAppConfig]
-
+  private val appConfig = inject[FrontendAppConfig]
+  private val call = Call("a", "b")
 
   private def createView: Html =
-    page(form, members )(request, messages)
+    page(form, members, call)(request, messages)
 
   "ChooseNewGroupLeadView" should {
     val view = createView
