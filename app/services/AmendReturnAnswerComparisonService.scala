@@ -18,8 +18,6 @@ package services
 
 import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
-import models.returns.ReturnDisplayDetails
-import pages.QuestionPage
 import pages.amends._
 
 class AmendReturnAnswerComparisonService {

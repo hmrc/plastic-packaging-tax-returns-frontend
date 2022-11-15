@@ -27,18 +27,39 @@
     paragraphBody: paragraphBody
 )
 
-@(form: Form[_], onSubmit: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], organisationName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, "heading")) {
+@input(formName: String, key: String, id: String) = @{
+    govukInput(
+        InputViewModel(
+            field = form(formName),
+            label = LabelViewModel(messages(key))
+        )
+        .withWidth(Full)
+    )
+}
 
-    @formHelper(action = onSubmit, 'autoComplete -> "off") {
+@layout(pageTitle = title(form, messages("newGroupLeadEnterContactAddress.heading", organisationName), Some(messages("account.title.tail")))) {
+
+    @formHelper(action = controllers.changeGroupLead.routes.NewGroupLeadEnterContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading("Contact address page")
+        @heading("newGroupLeadEnterContactAddress.heading", organisationName)
 
-        @govukButton(ButtonViewModel(messages("site.continue")))
+        @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
+
+        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label", "address-line-1")
+        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label", "address-line-2")
+        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label", "address-line-3")
+        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label", "address-line-4")
+        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label", "postal-code")
+        @input("countryCode", "newGroupLeadEnterContactAddress.countryCode.label", "country-code")
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
     }
 }
