@@ -19,12 +19,12 @@ package controllers.changeGroupLead
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
-import forms.mappings.Mappings
 import models.Mode
-import models.Mode.NormalMode
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ChangeGroupLeadNavigator
-import play.api.data.Form
+import pages.NewGroupLeadEnterContactAddressPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -63,7 +63,7 @@ class NewGroupLeadEnterContactAddressController @Inject()(
           request.userAnswers
             .setOrFail(NewGroupLeadEnterContactAddressPage, newValue)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Results.Redirect(navigator.enterContactAddressNextPage))
+            .map(_ => Results.Redirect(navigator.enterContactAddress))
       )
   }
 }
