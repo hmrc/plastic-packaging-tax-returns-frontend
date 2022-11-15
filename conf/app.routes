@@ -174,7 +174,7 @@ POST       /account/enter-contact-address                        controllers.cha
 GET        /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /mainContactJobTitle                        controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = NormalMode)
-POST       /mainContactJobTitle                        controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = NormalMode)
-GET        /changeMainContactJobTitle                  controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeMainContactJobTitle                  controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = CheckMode)
+GET        /main-contact-job-title                       controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = NormalMode)
+POST       /main-contact-job-title                        controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = NormalMode)
+GET        /change-main-contact-job-title                  controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-main-contact-job-title                  controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = CheckMode)

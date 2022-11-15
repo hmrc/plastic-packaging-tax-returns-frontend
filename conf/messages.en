@@ -588,7 +588,6 @@ newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
-
 mainContactName.title = Who is the main contact for {0}?
 mainContactName.heading = Who is the main contact for {0}?
 mainContactName.hint = This is the name of the person who will manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
@@ -637,3 +636,11 @@ newGroupLeadEnterContactAddress.error.countryCode.length = Country must be 35 ch
 newGroupLeadEnterContactAddress.error.countryCode.invalid = Country must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops
 newGroupLeadEnterContactAddress.AddressLine1.change.hidden = AddressLine1
 newGroupLeadEnterContactAddress.AddressLine2.change.hidden = AddressLine2
+
+mainContactJobTitle.title = What is the main contact’s job title?
+mainContactJobTitle.heading = What is {0}’s job title?
+mainContactJobTitle.checkYourAnswersLabel = mainContactJobTitle
+mainContactJobTitle.error.required = Enter the job title of the main contact
+mainContactJobTitle.error.length = Job title must be 155 characters or fewer
+mainContactJobTitle.change.hidden = MainContactJobTitle
+mainContactJobTitle.error.invalid = Job title must only include

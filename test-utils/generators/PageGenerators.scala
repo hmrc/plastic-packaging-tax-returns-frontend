@@ -31,6 +31,9 @@ trait PageGenerators {
   implicit lazy val arbitraryNewGroupLeadEnterContactAddressPage: Arbitrary[NewGroupLeadEnterContactAddressPage.type] =
     Arbitrary(NewGroupLeadEnterContactAddressPage)
 
+  implicit lazy val arbitraryMainContactJobTitlePage: Arbitrary[MainContactJobTitlePage.type] =
+    Arbitrary(MainContactJobTitlePage)
+
   implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
     Arbitrary(ExportedCreditsPage)
 
