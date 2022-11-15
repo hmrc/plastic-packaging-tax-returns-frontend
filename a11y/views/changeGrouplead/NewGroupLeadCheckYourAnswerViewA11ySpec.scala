@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package views.changeGrouplead
+package views.changeGroupLead
 
 import base.ViewSpecBase
-import models.changeGroupLead.RepresentativeMemberDetails
-import play.api.mvc.Call
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
@@ -26,13 +26,15 @@ class NewGroupLeadCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessib
 
   private val page = inject[NewGroupLeadCheckYourAnswerView]
 
-  def render: String =
-    page(RepresentativeMemberDetails("test test", "name", "job"), Call("get", ""))(request, messages).toString()
+  val rows = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
 
+  private def createView: String = {
+    page(rows)(request, messages).toString()
+  }
 
   "view" should {
     "pass accessibility tests" in {
-        render must passAccessibilityChecks
+        createView must passAccessibilityChecks
     }
   }
 }
