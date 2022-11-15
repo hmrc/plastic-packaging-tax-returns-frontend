@@ -58,7 +58,7 @@ class MainContactJobTitleFormProviderSpec extends PlaySpec {
       }
 
       "value is above the max length" in {
-        val bound = form.bind(Map("value" -> "a" * 161))
+        val bound = form.bind(Map("value" -> "a" * (maxLength + 1)))
         bound.errors mustBe error("mainContactJobTitle.error.length")
         bound.value mustBe None
       }
