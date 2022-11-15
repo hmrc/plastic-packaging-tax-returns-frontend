@@ -29,7 +29,6 @@ class ChangeGroupLeadNavigator {
   def enterContactAddress(implicit mode: Mode): Call = 
     returnToCheckYourAnswersOr(routes.MainContactNameController.onPageLoad)
 
-
   def mainContactName(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr (routes.MainContactJobTitleController.onPageLoad)
 
