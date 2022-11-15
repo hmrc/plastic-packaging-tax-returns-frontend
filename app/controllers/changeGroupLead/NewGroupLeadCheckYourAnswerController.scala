@@ -41,11 +41,11 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      Ok(createView(request))
+      Ok(createView)
   }
 
   private def createView(implicit request: DataRequest[AnyContent]) = {
-    val call = routes.NewGroupLeadConfirmationController.onPageLoad 
+    val call = routes.NewGroupLeadCheckYourAnswerController.onSubmit 
     view(RepresentativeMemberDetails(request.userAnswers), call)
   }
 
