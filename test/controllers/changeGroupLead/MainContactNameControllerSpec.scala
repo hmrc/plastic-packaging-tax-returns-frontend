@@ -90,7 +90,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
     when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "company-name"
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
-    when(mockNavigator.mainContactName).thenReturn(_ => Call("GET", "/test-foo"))
+    when(mockNavigator.mainContactName(any)).thenReturn(Call("GET", "/test-foo"))
   }
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
@@ -175,7 +175,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some("/test-foo")
-      verify(mockNavigator).mainContactName
+      verify(mockNavigator).mainContactName(NormalMode)
       verify(mockFormProvider).apply()
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){

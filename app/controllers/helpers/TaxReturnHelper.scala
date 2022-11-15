@@ -16,11 +16,10 @@
 
 package controllers.helpers
 
-import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{ObligationsConnector, TaxReturnsConnector}
 import models.returns._
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.util.concurrent.FutureTask
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 //TODO: Multi services in here, break it down now, funk soul brother

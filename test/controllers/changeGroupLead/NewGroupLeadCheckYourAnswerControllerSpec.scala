@@ -22,6 +22,7 @@ import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.UserAnswers
 import models.changeGroupLead.RepresentativeMemberDetails
 import models.requests.DataRequest
+import navigation.ChangeGroupLeadNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.{never, verifyNoInteractions}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -31,7 +32,7 @@ import org.scalatestplus.play.PlaySpec
 import pages.ChooseNewGroupLeadPage
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, RequestHeader}
+import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -48,24 +49,27 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   private val messagesApi = mock[MessagesApi]
   private val messages = mock[Messages]
   private val featureGuard = mock[FeatureGuard]
+  private val navigator = mock[ChangeGroupLeadNavigator]
 
   private val sut = new NewGroupLeadCheckYourAnswerController(
     messagesApi,
     journeyAction,
     featureGuard,
     controllerComponents = stubMessagesControllerComponents(),
-    view
+    view,
+    navigator
   )
 
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(view, journeyAction, featureGuard, dataRequest)
+    reset(view, journeyAction, featureGuard, dataRequest, navigator)
 
-    when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
+    when(navigator.checkYourAnswers) thenReturn Call("go", "over-there")
   }
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
@@ -80,6 +84,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
         function(request))
       .getMock[Action[AnyContent]]
 
+  
   "onPageLoad" should {
     "return OK" in {
 
@@ -138,32 +143,32 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   }
 
   "onSubmit" should {
+    
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-
       sut.onSubmit(FakeRequest())
-
       verify(journeyAction).async(any)
     }
-
-    "redirect to confirmation page" in {
+    
+    "redirect via the navigator" in {
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
-
+      await(result)
+      verify(navigator).checkYourAnswers
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.changeGroupLead.routes.NewGroupLeadConfirmationController.onPageLoad.url
+      redirectLocation(result).value mustEqual "over-there"
     }
 
     "check feature flag" in {
       await(sut.onSubmit.skippingJourneyAction(dataRequest))
-
       verify(featureGuard).check()
     }
   }
+  
+  
   private def verifyAndCaptureValue:  RepresentativeMemberDetails  = {
     val captor = ArgumentCaptor.forClass(classOf[RepresentativeMemberDetails])
 
-    verify(view).apply(captor.capture())(any, any)
+    verify(view).apply(captor.capture(), any)(any, any)
     captor.getValue
   }
 

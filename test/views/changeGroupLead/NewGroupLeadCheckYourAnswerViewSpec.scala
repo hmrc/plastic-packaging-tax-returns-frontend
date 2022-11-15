@@ -18,6 +18,7 @@ package views.changeGroupLead
 
 import base.ViewSpecBase
 import models.changeGroupLead.RepresentativeMemberDetails
+import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
@@ -28,7 +29,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
   private val page: NewGroupLeadCheckYourAnswerView = inject[NewGroupLeadCheckYourAnswerView]
 
   private def createView: Html = {
-    page(RepresentativeMemberDetails(representativeMember))(request, messages)
+    page(RepresentativeMemberDetails(representativeMember), Call("get", "away-somewhere"))(request, messages)
   }
 
   "view" should {
@@ -73,10 +74,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     "have a Send Change button" in {
       view.getElementsByClass("govuk-button-group").text() mustBe "Send change"
       view.getElementsByClass("govuk-button-group").text() mustBe messages("newGroupLeadCheckYourAnswers.button")
-
-
-      view.getElementsByClass("govuk-button-group").select("a").get(0) must
-        haveHref(controllers.changeGroupLead.routes.NewGroupLeadCheckYourAnswerController.onSubmit)
+      view.getElementsByClass("govuk-button-group").select("a").get(0) must haveHref("away-somewhere")
     }
   }
 

@@ -28,6 +28,9 @@ trait PageGenerators {
   implicit lazy val arbitraryMainContactNamePage: Arbitrary[MainContactNamePage.type] =
     Arbitrary(MainContactNamePage)
 
+  implicit lazy val arbitraryNewGroupLeadEnterContactAddressPage: Arbitrary[NewGroupLeadEnterContactAddressPage.type] =
+    Arbitrary(NewGroupLeadEnterContactAddressPage)
+
   implicit lazy val arbitraryMainContactJobTitlePage: Arbitrary[MainContactJobTitlePage.type] =
     Arbitrary(MainContactJobTitlePage)
 

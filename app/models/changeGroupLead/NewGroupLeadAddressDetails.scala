@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package forms.changeGroupLead
+package models.changeGroupLead
 
-import forms.changeGroupLead.SelectNewGroupLeadForm.error
-import play.api.data.Form
-import play.api.data.Forms.{optional, text}
+import play.api.libs.json.{Json, OFormat}
 
-class SelectNewGroupLeadForm {
+case class NewGroupLeadAddressDetails (
+  addressLine1: String,
+  addressLine2: String,
+  addressLine3: Option[String],
+  addressLine4: String,
+  postalCode: Option[String],
+  countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
+)
 
-  def apply(members: Seq[String]): Form[String] =
-    Form("value" -> optional(text)
-      .verifying(error, _.isDefined)
-      .transform[String](_.get, Some(_))
-      .verifying(error, members.contains(_))
-    )
+object NewGroupLeadAddressDetails {
+  implicit val format: OFormat[NewGroupLeadAddressDetails] = Json.format[NewGroupLeadAddressDetails]
 
-}
-
-object SelectNewGroupLeadForm {
-  val error = "select-new-representative.error.required"
 }
