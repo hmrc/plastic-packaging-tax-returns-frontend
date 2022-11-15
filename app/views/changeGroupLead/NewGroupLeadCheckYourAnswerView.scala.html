@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.changeGroupLead.RepresentativeMemberDetails
 @import components.{heading, SectionH2Heading, paragraphBody, LinkButton}
 @import viewmodels._
 @import controllers.changeGroupLead.routes
@@ -32,12 +31,12 @@
 )
 
 
-@(representativeMember: RepresentativeMemberDetails, call: Call)(implicit request: Request[_], messages: Messages)
+@(summaryRows: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages)
 
 @representativeMemberRow = @{
     SummaryListRow(
         key = Key(messages("newGroupLeadCheckYourAnswers.representative.member.key")),
-        value = Value(representativeMember.member),
+        value = Value("representativeMember.member"),
         actions = Some(Actions(items = Seq(
             ActionItem(
                 routes.ChooseNewGroupLeadController.onPageLoad(CheckMode).url,
@@ -50,7 +49,7 @@
 @contactAddressRow = @{
     SummaryListRow(
         key = Key(messages("newGroupLeadCheckYourAnswers.contact.address.key")),
-        value = Value(representativeMember.member),
+        value = Value("representativeMember.member"),
         actions = Some(Actions(items = Seq(
             ActionItem(
                 routes.NewGroupLeadEnterContactAddressController.onPageLoad(CheckMode).url,
@@ -63,7 +62,7 @@
 @contactNameRow = @{
     SummaryListRow(
         key = Key(messages("newGroupLeadCheckYourAnswers.contact.name.key")),
-        value = Value(representativeMember.contactName),
+        value = Value("representativeMember.contactName"),
         actions = Some(Actions(items = Seq(
             ActionItem(
                 routes.MainContactNameController.onPageLoad(CheckMode).url,
@@ -76,7 +75,7 @@
 @jobTitleRow = @{
     SummaryListRow(
         key = Key(messages("newGroupLeadCheckYourAnswers.job.title.key")),
-        value = Value(representativeMember.jobTitle),
+        value = Value("representativeMember.jobTitle"),
         actions = Some(Actions(items = Seq(
             ActionItem(
                 routes.MainContactJobTitleController.onPageLoad(CheckMode).url,
@@ -91,7 +90,7 @@
     @heading("newGroupLeadCheckYourAnswers.heading")
 
     @govukSummaryList(
-        SummaryList(rows = Seq(representativeMemberRow, contactAddressRow, contactNameRow, jobTitleRow))
+        SummaryList(rows = summaryRows)
     )
 
     @sectionH2Heading(
@@ -100,8 +99,12 @@
     )
     @paragraphBody(messages("newGroupLeadCheckYourAnswers.body"))
 
-    @formHelper(action = call, 'autoComplete -> "off") {
-        @govukButton(ButtonViewModel(messages("newGroupLeadCheckYourAnswers.button")))
+    @formHelper(action = routes.NewGroupLeadCheckYourAnswerController.onSubmit, 'autoComplete -> "off") {
+        @govukButton(
+            ButtonViewModel(
+                messages("newGroupLeadCheckYourAnswers.button")
+            ).withID("submit-button")
+        )
     }
 
 }

@@ -17,12 +17,13 @@
 package controllers.changeGroupLead
 
 import controllers.actions.JourneyAction
-import models.changeGroupLead.RepresentativeMemberDetails
-import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.changeGroupLead.{ChooseNewGroupLeadSummary, MainContactNameSummary, NewGroupLeadEnterContactAddressSummary}
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import javax.inject.Inject
@@ -41,12 +42,13 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      Ok(createView)
-  }
+      val summaryRows = Seq(
+          ChooseNewGroupLeadSummary,
+          MainContactNameSummary,
+          NewGroupLeadEnterContactAddressSummary
+        ).flatMap(_.row(request.userAnswers))
 
-  private def createView(implicit request: DataRequest[AnyContent]) = {
-    val call = routes.NewGroupLeadCheckYourAnswerController.onSubmit 
-    view(RepresentativeMemberDetails(request.userAnswers), call)
+      Ok(view(summaryRows))
   }
 
   def onSubmit: Action[AnyContent] = journeyAction.async {

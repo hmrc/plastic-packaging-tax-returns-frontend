@@ -18,6 +18,7 @@ package pages
 
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import pages.behaviours.PageBehaviours
+import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 
 class NewGroupLeadEnterContactAddressPageSpec extends PageBehaviours {
 

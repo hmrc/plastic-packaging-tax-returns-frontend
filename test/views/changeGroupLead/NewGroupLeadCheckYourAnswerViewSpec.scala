@@ -17,18 +17,20 @@
 package views.changeGroupLead
 
 import base.ViewSpecBase
-import models.changeGroupLead.RepresentativeMemberDetails
-import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
   private val page: NewGroupLeadCheckYourAnswerView = inject[NewGroupLeadCheckYourAnswerView]
 
+  val rows = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
+
   private def createView: Html = {
-    page(RepresentativeMemberDetails("Member 1", "henry hoover", "chief suction officer"), Call("get", "away-somewhere"))(request, messages)
+    page(rows)(request, messages)
   }
 
   "view" should {
@@ -48,16 +50,9 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
       view.getElementsByClass("govuk-summary-list") must not be empty
     }
 
-    "show the representative member" in {
-
-      getKeyAtRowIndex(view,0).text() mustBe "New representative member"
-      getKeyAtRowIndex(view,0).text() mustBe messages("newGroupLeadCheckYourAnswers.representative.member.key")
-      getValueAtRowIndex(view, 0).text() mustBe "Member 1"
-    }
-
-    "show change link" in {
-      getActionAtRowIndex(view, 0).select("a").get(0).text() mustBe "Change"
-      getActionAtRowIndex(view, 0).select("a").get(0).text() mustBe messages("site.change")
+    "show summary rows" in {
+      getKeyAtRowIndex(view,0).text() mustBe "key"
+      getValueAtRowIndex(view, 0).text() mustBe "value"
     }
 
     "have a now send your request header" in {
@@ -71,9 +66,8 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     }
 
     "have a Send Change button" in {
-      view.getElementsByClass("govuk-button-group").text() mustBe "Send change"
-      view.getElementsByClass("govuk-button-group").text() mustBe messages("newGroupLeadCheckYourAnswers.button")
-      view.getElementsByClass("govuk-button-group").select("a").get(0) must haveHref("away-somewhere")
+      view.getElementById("submit-button").text() mustBe "Send change"
+      view.getElementById("submit-button").text() mustBe messages("newGroupLeadCheckYourAnswers.button")
     }
   }
 

@@ -24,7 +24,7 @@ import models.requests.DataRequest
 import models.requests.DataRequest._
 import models.subscription.GroupMembers
 import navigation.ChangeGroupLeadNavigator
-import pages.ChooseNewGroupLeadPage
+import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}

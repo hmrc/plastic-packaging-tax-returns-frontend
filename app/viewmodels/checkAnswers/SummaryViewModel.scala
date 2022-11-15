@@ -23,5 +23,5 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 trait SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow]
-  def answer(answers: UserAnswers): Option[Long] = None
+
 }

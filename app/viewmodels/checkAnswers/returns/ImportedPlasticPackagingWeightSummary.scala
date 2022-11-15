@@ -34,7 +34,7 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
           answer => createSummaryListRow(answer.asKg)
     }
 
-  override def answer(answers: UserAnswers): Option[Long] = {
+  def answer(answers: UserAnswers): Option[Long] = {
     answers.get(ImportedPlasticPackagingWeightPage)
   }
 

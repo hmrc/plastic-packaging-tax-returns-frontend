@@ -34,7 +34,7 @@ class ManufacturedPlasticPackagingWeightSummary private(key: String) extends Sum
       answer => createSummaryListView(answer.asKg)
     }
 
-  override def answer(answers: UserAnswers): Option[Long] = {
+  def answer(answers: UserAnswers): Option[Long] = {
     answers.get(ManufacturedPlasticPackagingWeightPage)
   }
 

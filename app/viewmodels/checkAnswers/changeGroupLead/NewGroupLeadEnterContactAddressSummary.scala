@@ -17,28 +17,30 @@
 package viewmodels.checkAnswers.changeGroupLead
 
 import controllers.changeGroupLead.routes
-import models.UserAnswers
 import models.Mode.CheckMode
-import pages.changeGroupLead.MainContactNamePage
+import models.UserAnswers
+import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object MainContactNameSummary extends SummaryViewModel {
+object NewGroupLeadEnterContactAddressSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(MainContactNamePage).map {
+    answers.get(NewGroupLeadEnterContactAddressPage).map {
       answer =>
+        val content = HtmlContent(answer.definedFields.map(HtmlFormat.escape).mkString("<br>"))
 
         SummaryListRowViewModel(
-          key     = "newGroupLeadCheckYourAnswers.contact.name.key",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          key     = "newGroupLeadCheckYourAnswers.contact.address.key",
+          value   = ValueViewModel(content),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.MainContactNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.name.key"))
+            ActionItemViewModel("site.change", routes.NewGroupLeadEnterContactAddressController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.address.key"))
           )
         )
     }

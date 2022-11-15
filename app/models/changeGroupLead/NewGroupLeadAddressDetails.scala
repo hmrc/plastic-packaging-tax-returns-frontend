@@ -25,7 +25,17 @@ case class NewGroupLeadAddressDetails (
   addressLine4: String,
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
-)
+) {
+  def definedFields =
+    Seq(
+      Some(addressLine1),
+      Some(addressLine2),
+      addressLine3,
+      Some(addressLine4),
+      postalCode,
+      Some(countryCode)
+    ).flatten
+}
 
 object NewGroupLeadAddressDetails {
   implicit val format: OFormat[NewGroupLeadAddressDetails] = Json.format[NewGroupLeadAddressDetails]

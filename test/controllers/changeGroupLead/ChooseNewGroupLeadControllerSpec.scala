@@ -34,7 +34,7 @@ import org.mockito.Mockito.withSettings
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.ChooseNewGroupLeadPage
+import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
 import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
