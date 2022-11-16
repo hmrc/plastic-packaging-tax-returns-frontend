@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.changeGroupLead
 
 import models.changeGroupLead.NewGroupLeadAddressDetails
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object NewGroupLeadEnterContactAddressPage extends QuestionPage[NewGroupLeadAddressDetails] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "changeGroupLead" \ toString
 
   override def toString: String = "newGroupLeadEnterContactAddress"
 }

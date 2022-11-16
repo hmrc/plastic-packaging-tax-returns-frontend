@@ -159,8 +159,8 @@ POST        /select-new-representative-member                      controllers.c
 GET         /change-select-new-representative-member               controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-select-new-representative-member               controllers.changeGroupLead.ChooseNewGroupLeadController.onSubmit(mode: Mode = CheckMode)
 
-GET         /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
-POST        /morocco-mole                                          controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
+GET         /new-representative-check-answers                      controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onPageLoad
+POST        /new-representative-check-answers                      controllers.changeGroupLead.NewGroupLeadCheckYourAnswerController.onSubmit
 
 GET        /main-contact                        controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /main-contact                        controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = NormalMode)
@@ -169,10 +169,10 @@ POST       /change-main-contact                  controllers.changeGroupLead.Mai
 
 GET         /representative-member-changed                         controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
 
-GET        /account/enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /account/enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /account/change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /enter-contact-address                        controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-enter-contact-address                  controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /main-contact-job-title                       controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = NormalMode)
 POST       /main-contact-job-title                        controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = NormalMode)

@@ -19,23 +19,23 @@ package controllers.changeGroupLead
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import models.UserAnswers
-import models.changeGroupLead.RepresentativeMemberDetails
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{never, verifyNoInteractions}
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.ChooseNewGroupLeadPage
+import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
+import queries.Gettable
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -65,7 +65,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     super.beforeEach()
     reset(view, journeyAction, featureGuard, dataRequest, navigator)
 
-    when(view.apply(any, any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
@@ -87,7 +87,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   
   "onPageLoad" should {
     "return OK" in {
-
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
         .thenReturn(None)
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
@@ -103,22 +102,12 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       verify(journeyAction).apply(any)
     }
 
-    "get member from userAnswer" in {
-      when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
-        .thenReturn(Some("test test"))
+    "construct the summary list and pass it to the view" in {
+      //when(dataRequest.userAnswers.get(any[Gettable[_]])(any)).thenReturn(None)
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers).get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any)
-    }
-
-    "show member details" in {
-    when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
-        .thenReturn(Some("test test"))
-
-      await(sut.onPageLoad.skippingJourneyAction(dataRequest))
-
-      verifyAndCaptureValue.member mustBe "test test"
+      verifyAndCaptureValue mustBe Seq()
     }
 
     "check feature flag" in {
@@ -165,10 +154,10 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   }
   
   
-  private def verifyAndCaptureValue:  RepresentativeMemberDetails  = {
-    val captor = ArgumentCaptor.forClass(classOf[RepresentativeMemberDetails])
+  private def verifyAndCaptureValue: Seq[SummaryListRow] = {
+    val captor = ArgumentCaptor.forClass(classOf[Seq[SummaryListRow]])
 
-    verify(view).apply(captor.capture(), any)(any, any)
+    verify(view).apply(captor.capture())(any, any)
     captor.getValue
   }
 

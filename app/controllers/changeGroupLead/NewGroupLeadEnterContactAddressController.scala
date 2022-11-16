@@ -24,7 +24,7 @@ import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ChangeGroupLeadNavigator
-import pages.NewGroupLeadEnterContactAddressPage
+import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}

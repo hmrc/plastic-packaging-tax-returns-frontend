@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import models.changeGroupLead.RepresentativeMemberDetails
-@import components.{heading, SectionH2Heading, paragraphBody, LinkButton}
+@import components.{heading, SectionH2Heading, paragraphBody}
 @import viewmodels._
+@import controllers.changeGroupLead.routes
 
 @this(
     layout: templates.Layout,
@@ -24,32 +24,19 @@
     heading: heading,
     sectionH2Heading: SectionH2Heading,
     paragraphBody: paragraphBody,
-    linkButton: LinkButton
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
 )
 
 
+@(summaryRows: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages)
 
-@(representativeMember: RepresentativeMemberDetails, call: Call)(implicit request: Request[_], messages: Messages)
-
-@representativeMemberRow = @{
-    SummaryListRow(
-        key = Key(messages("newGroupLeadCheckYourAnswers.representative.member.key")),
-        value = Value(representativeMember.member),
-        actions = Some(Actions(items = Seq(
-            ActionItem(
-                "/foo",
-                messages("site.change"),
-            )
-        )))
-    )
-}
-
-@layout(pageTitle = titleNoForm(messages("newGroupLeadCheckYourAnswers.heading"))) {
+@layout(pageTitle = titleNoForm(messages("newGroupLeadCheckYourAnswers.heading"), Some(messages("account.title.tail")))) {
 
     @heading("newGroupLeadCheckYourAnswers.heading")
 
     @govukSummaryList(
-        SummaryList(rows = Seq(representativeMemberRow))
+        SummaryList(rows = summaryRows)
     )
 
     @sectionH2Heading(
@@ -57,5 +44,13 @@
         id = Some("sent-your-request")
     )
     @paragraphBody(messages("newGroupLeadCheckYourAnswers.body"))
-    @linkButton("newGroupLeadCheckYourAnswers.button", call.url)
+
+    @formHelper(action = routes.NewGroupLeadCheckYourAnswerController.onSubmit, 'autoComplete -> "off") {
+        @govukButton(
+            ButtonViewModel(
+                messages("newGroupLeadCheckYourAnswers.button")
+            ).withID("submit-button")
+        )
+    }
+
 }

@@ -584,7 +584,10 @@ select-new-representative.error.required = Select the organisation you want as t
 
 newGroupLeadCheckYourAnswers.heading = Check your answers
 newGroupLeadCheckYourAnswers.representative.member.key = New representative member
-newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
+newGroupLeadCheckYourAnswers.contact.address.key = Contact address
+newGroupLeadCheckYourAnswers.contact.name.key = Contact name
+newGroupLeadCheckYourAnswers.job.title.key = Job title
+newGroupLeadCheckYourAnswers.sendYourRequest = Now send your change
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
@@ -639,8 +642,6 @@ newGroupLeadEnterContactAddress.AddressLine2.change.hidden = AddressLine2
 
 mainContactJobTitle.title = What is the main contact’s job title?
 mainContactJobTitle.heading = What is {0}’s job title?
-mainContactJobTitle.checkYourAnswersLabel = mainContactJobTitle
 mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
-mainContactJobTitle.change.hidden = MainContactJobTitle
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces
