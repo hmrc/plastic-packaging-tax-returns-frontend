@@ -20,10 +20,8 @@ import controllers.actions.JourneyAction
 import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.changeGroupLead.{ChooseNewGroupLeadSummary, MainContactNameSummary, NewGroupLeadEnterContactAddressSummary}
+import viewmodels.checkAnswers.changeGroupLead._
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import javax.inject.Inject
@@ -44,8 +42,9 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
       featureGuard.check()
       val summaryRows = Seq(
           ChooseNewGroupLeadSummary,
+          NewGroupLeadEnterContactAddressSummary,
           MainContactNameSummary,
-          NewGroupLeadEnterContactAddressSummary
+          MainContactJobTitleSummary,
         ).flatMap(_.row(request.userAnswers))
 
       Ok(view(summaryRows))

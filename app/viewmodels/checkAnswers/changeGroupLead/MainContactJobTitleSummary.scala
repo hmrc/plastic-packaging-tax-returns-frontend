@@ -16,28 +16,29 @@
 
 package viewmodels.checkAnswers.changeGroupLead
 
-import controllers.routes
+import controllers.changeGroupLead.routes
 import models.UserAnswers
 import models.Mode.CheckMode
 import pages.changeGroupLead.MainContactJobTitlePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object MainContactJobTitleSummary  {
+object MainContactJobTitleSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(MainContactJobTitlePage).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "mainContactJobTitle.checkYourAnswersLabel",
+          key     = "newGroupLeadCheckYourAnswers.job.title.key",
           value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.changeGroupLead.routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("mainContactJobTitle.change.hidden"))
+            ActionItemViewModel("site.change", routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.job.title.key"))
           )
         )
     }

@@ -642,8 +642,6 @@ newGroupLeadEnterContactAddress.AddressLine2.change.hidden = AddressLine2
 
 mainContactJobTitle.title = What is the main contact’s job title?
 mainContactJobTitle.heading = What is {0}’s job title?
-mainContactJobTitle.checkYourAnswersLabel = mainContactJobTitle
 mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
-mainContactJobTitle.change.hidden = MainContactJobTitle
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces

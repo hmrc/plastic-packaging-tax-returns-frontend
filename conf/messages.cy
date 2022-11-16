@@ -595,8 +595,11 @@ select-new-representative.heading = Select the new representative member
 select-new-representative.paragraph = If the organisation is not listed above you will need to add them as a new member first.
 select-new-representative.error.required = Select the organisation you want as the new representative member or add a new member
 
-newGroupLeadCheckYourAnswers.heading = Check your answers
+newGroupLeadCheckYourAnswers.heading = Gwiriwch eich atebion
 newGroupLeadCheckYourAnswers.representative.member.key = New representative member
+newGroupLeadCheckYourAnswers.contact.address.key = Contact address
+newGroupLeadCheckYourAnswers.contact.name.key = Contact name
+newGroupLeadCheckYourAnswers.job.title.key = Job title
 newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change

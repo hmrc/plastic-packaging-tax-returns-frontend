@@ -38,7 +38,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     val view = createView
 
     "have a title" in {
-      view.select("title").text() mustBe "Check your answers - Plastic Packaging Tax - GOV.UK"
+      view.select("title").text() mustBe "Check your answers - Account - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("newGroupLeadCheckYourAnswers.heading"))
     }
 
