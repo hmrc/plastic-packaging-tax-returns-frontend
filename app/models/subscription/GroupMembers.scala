@@ -32,12 +32,13 @@ object GroupMembers {
         .getOrElse(
           throw new NoSuchElementException("SubscriptionDisplayResponse has no groupPartnershipSubscription field")
         )
-        .groupPartnershipDetails.map(
-          details => details.organisationDetails
+        .groupPartnershipDetails.collect {
+        case details if details.addressDetails.isGB && !details.isRepresentative =>
+          details.organisationDetails
             .getOrElse(throw new NoSuchElementException("SubscriptionDisplayResponse has a groupPartnershipDetails " +
               "entry missing its organisationDetails field"))
             .organisationName
-        )
-    GroupMembers(membersNames.sorted)
+      }
+    GroupMembers(membersNames.sorted) //todo what if this is 1 or empty
   }
 }
