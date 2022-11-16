@@ -21,9 +21,12 @@ import controllers.actions._
 import forms.changeGroupLead.MainContactJobTitleFormProvider
 import models.Mode
 import navigation.ChangeGroupLeadNavigator
+import pages.changeGroupLead.{MainContactJobTitlePage, MainContactNamePage}
+import play.api.data.FormBinding.Implicits.formBinding
+import models.requests.DataRequest._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.changeGroupLead.MainContactJobTitleView
 
 import javax.inject.Inject
@@ -35,21 +38,34 @@ class MainContactJobTitleController @Inject()(
                                        navigator: ChangeGroupLeadNavigator,
                                        journeyAction: JourneyAction,
                                        featureGuard: FeatureGuard,
-                                       formProvider: MainContactJobTitleFormProvider,
+                                       form: MainContactJobTitleFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: MainContactJobTitleView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
+                                     )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      val preparedForm = formProvider()
-      Ok(view(preparedForm, mode))
+      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
+      val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form())
+
+      Ok(view(preparedForm, contactName, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      Future.successful(Results.Redirect(navigator.mainContactJobTitle(mode)))
+      featureGuard.check()
+      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
+
+      form().bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
+
+        jobTitle =>
+          request.userAnswers
+            .setOrFail(MainContactJobTitlePage, jobTitle)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Redirect(navigator.mainContactJobTitle(mode)))
+      )
   }
 }

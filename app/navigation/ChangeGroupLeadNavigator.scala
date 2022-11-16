@@ -22,11 +22,11 @@ import models.Mode.{CheckMode, NormalMode}
 import play.api.mvc.Call
 
 class ChangeGroupLeadNavigator {
-  
+
   def selectNewGroupRep(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr(routes.NewGroupLeadEnterContactAddressController.onPageLoad)
 
-  def enterContactAddress(implicit mode: Mode): Call = 
+  def enterContactAddress(implicit mode: Mode): Call =
     returnToCheckYourAnswersOr(routes.MainContactNameController.onPageLoad)
 
   def mainContactName(implicit mode: Mode): Call =
@@ -38,9 +38,9 @@ class ChangeGroupLeadNavigator {
   def checkYourAnswers: Call = routes.NewGroupLeadConfirmationController.onPageLoad
 
   private def returnToCheckYourAnswersOr(call: Mode => Call)(implicit mode: Mode): Call =
-    if (mode == CheckMode) 
+    if (mode == CheckMode)
       routes.NewGroupLeadCheckYourAnswerController.onPageLoad
-    else 
+    else
       call(NormalMode)
 
 }
