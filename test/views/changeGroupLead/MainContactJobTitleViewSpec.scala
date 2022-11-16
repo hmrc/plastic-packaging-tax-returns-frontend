@@ -38,6 +38,23 @@ class MainContactJobTitleViewSpec extends ViewSpecBase  with ViewAssertions with
     "have a title" in {
       createView.select("title").text must startWith ("What is the main contact’s job title?")
     }
+
+    "have a back link" in {
+      createView.getElementsByClass("govuk-back-link").size() mustBe 1
+    }
+
+    "have a heading" in {
+      createView.select("h1").text mustBe "What is contact-name’s job title?"
+    }
+
+    "have string input" in {
+      val input = createView.getElementById("value")
+      input.attr("type") mustBe "text"
+    }
+
+    "have a save & continue button" in {
+      createView.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
   }
 
 }
