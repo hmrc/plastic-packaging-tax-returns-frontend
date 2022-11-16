@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import models.subscription.AddressDetails.GB
 import play.api.libs.json.{Json, OFormat}
 
 case class AddressDetails(
@@ -25,9 +26,12 @@ case class AddressDetails(
   addressLine4: Option[String],
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
-)
+){
+  def isGB: Boolean = countryCode == GB
+}
 
 object AddressDetails {
+  val GB = "GB"
   implicit val format: OFormat[AddressDetails] = Json.format[AddressDetails]
 
 }

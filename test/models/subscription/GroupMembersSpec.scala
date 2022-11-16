@@ -51,6 +51,26 @@ class GroupMembersSpec extends PlaySpec {
       )))
       GroupMembers.create(subscription) mustBe GroupMembers(Seq("Laa-laa", "Noo-noo", "Po"))
     }
+
+    "filter non GB organisations" in {
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
+        Seq(
+          createGroupDetails(Some(OrganisationDetails(None, "non-gb"))).copy(addressDetails = addressDetails.copy(countryCode = "NONGB")),
+          createGroupDetails(Some(OrganisationDetails(None, "gb-1"))),
+          createGroupDetails(Some(OrganisationDetails(None, "gb-2"))),
+        )))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq("gb-1", "gb-2"))
+    }
+
+    "filter the Representative from the members" in {
+      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
+        Seq(
+          createGroupDetails(Some(OrganisationDetails(None, "rep"))).copy(relationship = "Representative"),
+          createGroupDetails(Some(OrganisationDetails(None, "mem-1"))),
+          createGroupDetails(Some(OrganisationDetails(None, "mem-2"))),
+        )))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq("mem-1", "mem-2"))
+    }
     
   }
 
@@ -80,7 +100,7 @@ class GroupMembersSpec extends PlaySpec {
   private val legalEntityDetails: LegalEntityDetails = LegalEntityDetails("", "", None, customerDetails, 
     groupSubscriptionFlag = true, regWithoutIDFlag = false, partnershipSubscriptionFlag = false)
 
-  private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "")
+  private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "GB")
 
   private val contactDetails: ContactDetails = ContactDetails("", "", None)
 
