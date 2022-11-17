@@ -23,10 +23,8 @@ import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.{Form, Mapping, OptionalMapping}
 import uk.gov.voa.play.form.{Condition, MandatoryOptionalMapping}
 
-//todo: add more validation: see SoT
+
 class NewGroupLeadEnterContactAddressFormProvider {
-
-
 
   def apply(): Form[NewGroupLeadAddressDetails] = Form(
      mapping(
@@ -72,7 +70,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
   private def optionalPostalCodeValidation = {
     optional(text)
       .transform[String](_.get, Some(_))
-      .verifying("newGroupLeadEnterContactAddress.error.postalCode.inRange", _.length <= postalCodMaxLength)
+      .verifying(postalCodeMaxLengthKey, _.length <= postalCodMaxLength)
   }
   private def isInRange(min: Int, max: Int, length: Int) = {
     min <= length && max >= length
@@ -89,11 +87,11 @@ class NewGroupLeadEnterContactAddressFormProvider {
 
   private def gbPostCodeValidation = {
     optional(play.api.data.Forms.text)
-      .verifying("newGroupLeadEnterContactAddress.error.postalCode.required", _.isDefined)
+      .verifying(postalCodeRequiredKey, _.isDefined)
       .transform[String](_.get, Some(_))
-      .verifying("newGroupLeadEnterContactAddress.error.postalCode.required", _.trim.nonEmpty)
-      .verifying("newGroupLeadEnterContactAddress.error.postalCode.inRange", o => isInRange(5,8, o.length))
-      .verifying("newGroupLeadEnterContactAddress.error.postalCode.inRange", _.matches(postcodeRegex))
+      .verifying(postalCodeRequiredKey, _.trim.nonEmpty)
+      .verifying(postalCodeMaxLengthKey, o => isInRange(5,8, o.length))
+      .verifying(postalCodeMaxLengthKey, _.matches(postcodeRegex))
   }
 }
 
@@ -121,6 +119,8 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val addressLine4RequiredKey = "newGroupLeadEnterContactAddress.error.addressLine4.required"
   val addressLine4LengthKey = "newGroupLeadEnterContactAddress.error.addressLine4.length"
   val addressLine4InvalidChar = "newGroupLeadEnterContactAddress.error.addressLine4.invalid.line"
+  val postalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.postalCode.inRange"
+  val postalCodeRequiredKey = "newGroupLeadEnterContactAddress.error.postalCode.required"
   val countryCodeRequiredKey = "newGroupLeadEnterContactAddress.error.countryCode.required"
   val countryCodeLengthKey = "newGroupLeadEnterContactAddress.error.countryCode.length"
   val countryCodeInvalidCharKey = "newGroupLeadEnterContactAddress.error.countryCode.invalid"

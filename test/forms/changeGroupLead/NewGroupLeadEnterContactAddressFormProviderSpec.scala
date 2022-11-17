@@ -17,7 +17,7 @@
 package forms.changeGroupLead
 
 import forms.behaviours.StringFieldBehaviours
-import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{countryCode, postalCode}
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine4RequiredKey, addressLineRequiredKey, countryCode, countryCodeInvalidCharKey, countryCodeLengthKey, countryCodeRequiredKey, postalCode, postalCodeMaxLengthKey, postalCodeRequiredKey}
 import org.scalacheck.Gen
 import play.api.data.FormError
 
@@ -33,14 +33,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
   val notAllowedChar = ('!' to '~').mkString.filter(o => !allowChars.contains(o))
 
   val form = new NewGroupLeadEnterContactAddressFormProvider()()
-  private val requiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
-  private val addressLIneRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine4.required"
   private val maxLengthKey = (n: Int) => s"newGroupLeadEnterContactAddress.error.addressLine${n}.length"
-  private val postalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.postalCode.inRange"
-  private val postalCodeRequiredKey = "newGroupLeadEnterContactAddress.error.postalCode.required"
-  private val countryCodeRequiredKey = "newGroupLeadEnterContactAddress.error.countryCode.required"
-  private val countryCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.countryCode.length"
-  private val countryCodeInvalidKey = "newGroupLeadEnterContactAddress.error.countryCode.invalid"
   private val invalidKey = (n: Int) => s"newGroupLeadEnterContactAddress.error.addressLine${n}.invalid.line"
   private val maxLength = 35
 
@@ -48,11 +41,11 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
   val table = Table(
     ("description", "fieldName", "maxStringLength", "requiresKey", "invalidKey", "maxLengthKey", "optionalOrMandatory"),
-    ("addressLine1 field", "addressLine1", maxLength, requiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
-    ("addressLine2 field", "addressLine2", maxLength, requiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
-    ("addressLine3 field", "addressLine3", maxLength, requiredKey, invalidKey(3), maxLengthKey(3), "optional"),
-    ("addressLine4 field", "addressLine4", maxLength, addressLIneRequiredKey,invalidKey(4), maxLengthKey(4), "mandatory"),
-    ("countryCode field", "countryCode", maxLength, countryCodeRequiredKey, countryCodeInvalidKey, countryCodeMaxLengthKey, "mandatory")
+    ("addressLine1 field", "addressLine1", maxLength, addressLineRequiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
+    ("addressLine2 field", "addressLine2", maxLength, addressLineRequiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
+    ("addressLine3 field", "addressLine3", maxLength, addressLineRequiredKey, invalidKey(3), maxLengthKey(3), "optional"),
+    ("addressLine4 field", "addressLine4", maxLength, addressLine4RequiredKey, invalidKey(4), maxLengthKey(4), "mandatory"),
+    ("countryCode field", "countryCode", maxLength, countryCodeRequiredKey, countryCodeInvalidCharKey, countryCodeLengthKey, "mandatory")
   )
 
   forAll(table) {
@@ -66,7 +59,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
       optionalOrMandatory: String
     ) =>
 
-      s".$fieldName len $maxStringLength" - {
+      s".$fieldName" - {
         behave like fieldThatBindsValidData(
           form,
           fieldName,
@@ -98,6 +91,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
         s"$description must have maximum length of ${maxStringLength}" in {
           val result = form.bind(Map(fieldName -> List.fill(maxStringLength + 1)("b").mkString)).apply(fieldName)
+
           result.errors.head.key mustEqual fieldName
           result.errors.head.message mustEqual maxLengthKey
         }
@@ -138,7 +132,6 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
         }
       }
   }
-
 
   ".postalCode" - {
     val minLength = 5

@@ -117,19 +117,126 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
 
     }
 
-    "display an error message"  in {
 
-      val form = formProvider.apply().bind(
-        Map(
-          "addressLine2" -> "v2",
-          "countryCode" -> "GB"
+    "display error" when {
+
+      val dataTable = Table(
+        ("fieldName", "errorRequiredMsg", "invalidCharMsg", "maxLengthMsg", "isMandatory"),
+        (
+          "addressLine1",
+          "Enter the contact address for your organisation",
+          "Address line 1 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
+          "Address line 1 must be 35 characters or fewer",
+          true
+        ),
+        (
+          "addressLine2",
+          "Enter the contact address for your organisation",
+          "Address line 2 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
+          "Address line 2 must be 35 characters or fewer",
+          true
+        ),
+        (
+          "addressLine3",
+          "Enter the contact address for your organisation",
+          "Address line 3 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
+          "Address line 3 must be 35 characters or fewer",
+          false
+        ),
+        (
+          "addressLine4",
+          "Enter a town or city",
+          "Town or city must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
+          "Town or city must be 35 characters or fewer",
+          true
+        ),
+        (
+          "countryCode",
+          "Enter a country",
+          "Country must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
+          "Country must be 35 characters or fewer",
+          true
         )
       )
-      val view = createView(form)
 
-      view.getElementsByClass("govuk-error-message").text() must
-        include(messages("newGroupLeadEnterContactAddress.error.addressLine.required"))
+      forAll(dataTable) {
+        (
+          fieldName: String,
+          errorRequiredMsg: String,
+          invalidCharMsg: String,
+          maxLengthMsg,
+          isMandatory: Boolean
+        ) =>
+
+          if(isMandatory) { s"$fieldName is required" in {
+              val form = formProvider.apply().bind(createMap().filter(!_._1.equals(fieldName)))
+
+              createView(form).getElementsByClass("govuk-error-message").text() must
+                include(errorRequiredMsg)
+            }
+          }
+
+          s"$fieldName max length is more than 35 character" in {
+            val form = formProvider.apply().bind(
+              createMap().filter(!_._1.equals(fieldName)) ++ Map(fieldName -> List.fill(36)("b").mkString)
+            )
+
+            createView(form).getElementsByClass("govuk-error-message").text() must
+              include(maxLengthMsg)
+          }
+
+          s"$fieldName contain special character" in {
+            val form = formProvider.apply().bind(
+              createMap().filter(!_._1.equals(fieldName)) ++ Map(fieldName -> "This is a £ test2")
+            )
+
+            createView(form).getElementsByClass("govuk-error-message").text() must
+              include(invalidCharMsg)
+          }
+
+          s"$fieldName contain unicode character" in {
+            val form = formProvider.apply().bind(
+              createMap().filter(!_._1.equals(fieldName)) ++ Map(fieldName -> s"Par${162.toChar}k Avenue")
+            )
+
+            createView(form).getElementsByClass("govuk-error-message").text() must
+              include(invalidCharMsg)
+          }
+      }
+
+      "postalCode is required" in {
+        val form = formProvider.apply().bind(createMap(postalCode = ""))
+
+        createView(form).getElementsByClass("govuk-error-message").text() must
+          include("Enter the postcode for your organisation")
+      }
+
+      "postalCode is not less then 5 character" in {
+        val form = formProvider.apply().bind(createMap(postalCode = "NE5"))
+
+        createView(form).getElementsByClass("govuk-error-message").text() must
+          include("Enter a postcode in the correct format, like AB1 2CD")
+      }
+
     }
   }
 
+  private def createMap
+  (
+    addressLine1: String = "line3",
+    addressLine2: String = "line2",
+    addressLine3: String = "",
+    addressLine4: String = "line4",
+    postalCode: String = "NE5 4SF",
+    countryCode: String = "GB"
+  ): Map[String,String] = {
+    Map(
+      "addressLine1" -> addressLine1,
+      "addressLine2" -> addressLine2,
+      "addressLine3" -> addressLine3,
+      "addressLine4" -> addressLine4,
+      "postalCode" -> postalCode,
+      "countryCode" -> countryCode
+    )
+  }
 }
