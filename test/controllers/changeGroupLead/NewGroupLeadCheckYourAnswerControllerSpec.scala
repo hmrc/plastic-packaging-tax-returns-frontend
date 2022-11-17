@@ -19,8 +19,10 @@ package controllers.changeGroupLead
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
+import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -36,6 +38,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, stat
 import play.twirl.api.HtmlFormat
 import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.changeGroupLead.ChooseNewGroupLeadSummary
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -103,11 +106,13 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     }
 
     "construct the summary list and pass it to the view" in {
-      //when(dataRequest.userAnswers.get(any[Gettable[_]])(any)).thenReturn(None)
+      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some("Blah"), None)
+
+      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, "Blah"))(messages).get
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 
-      verifyAndCaptureValue mustBe Seq()
+      verifyAndCaptureValue mustBe Seq(definedRow)
     }
 
     "check feature flag" in {
