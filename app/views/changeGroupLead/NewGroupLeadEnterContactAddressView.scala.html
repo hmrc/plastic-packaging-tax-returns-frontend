@@ -29,7 +29,7 @@
 
 @(form: Form[_], organisationName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@input(formName: String, key: String, id: String) = @{
+@input(formName: String, key: String) = @{
     govukInput(
         InputViewModel(
             field = form(formName),
@@ -51,12 +51,12 @@
 
         @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
 
-        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label", "address-line-1")
-        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label", "address-line-2")
-        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label", "address-line-3")
-        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label", "address-line-4")
-        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label", "postal-code")
-        @input("countryCode", "newGroupLeadEnterContactAddress.countryCode.label", "country-code")
+        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label")
+        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label")
+        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label")
+        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label")
+        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label")
+        @input("countryCode", "newGroupLeadEnterContactAddress.countryCode.label")
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
