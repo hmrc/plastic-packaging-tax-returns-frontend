@@ -17,11 +17,11 @@
 package forms.changeGroupLead
 
 import forms.behaviours.StringFieldBehaviours
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
 import org.scalacheck.Gen
 import play.api.data.FormError
 
 
-//todo: add test for other fields validation. see SoT
 class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehaviours {
 
 
@@ -33,14 +33,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
   val notAllowedChar = ('!' to '~').mkString.filter(o => !allowChars.contains(o))
 
   val form = new NewGroupLeadEnterContactAddressFormProvider()()
-  private val requiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
-  private val addressLIneRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine4.required"
   private val maxLengthKey = (n: Int) => s"newGroupLeadEnterContactAddress.error.addressLine${n}.length"
-  private val postalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.postalCode.inRange"
-  private val postalCodeRequiredKey = "newGroupLeadEnterContactAddress.error.postalCode.required"
-  private val countryCodeRequiredKey = "newGroupLeadEnterContactAddress.error.countryCode.required"
-  private val countryCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.countryCode.length"
-  private val countryCodeInvalidKey = "newGroupLeadEnterContactAddress.error.countryCode.invalid"
   private val invalidKey = (n: Int) => s"newGroupLeadEnterContactAddress.error.addressLine${n}.invalid.line"
   private val maxLength = 35
 
@@ -48,30 +41,29 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
   val table = Table(
     ("description", "fieldName", "maxStringLength", "requiresKey", "invalidKey", "maxLengthKey", "optionalOrMandatory"),
-    ("addressLine1 field", "addressLine1", StrRange(max = maxLength), requiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
-    ("addressLine2 field", "addressLine2", StrRange(max = maxLength), requiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
-    ("addressLine3 field", "addressLine3", StrRange(max = maxLength), requiredKey, invalidKey(3), maxLengthKey(3), "optional"),
-    ("addressLine4 field", "addressLine4", StrRange(max = maxLength), addressLIneRequiredKey,invalidKey(4), maxLengthKey(4), "mandatory"),
-    ("postalCode field", "postalCode", StrRange(5, 8), postalCodeRequiredKey, postalCodeMaxLengthKey, postalCodeMaxLengthKey, "optional"),
-    ("countryCode field", "countryCode", StrRange(max = maxLength), countryCodeRequiredKey, countryCodeInvalidKey, countryCodeMaxLengthKey, "mandatory")
+    ("addressLine1 field", "addressLine1", maxLength, addressLineRequiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
+    ("addressLine2 field", "addressLine2", maxLength, addressLineRequiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
+    ("addressLine3 field", "addressLine3", maxLength, addressLineRequiredKey, invalidKey(3), maxLengthKey(3), "optional"),
+    ("addressLine4 field", "addressLine4", maxLength, addressLine4RequiredKey, invalidKey(4), maxLengthKey(4), "mandatory"),
+    ("countryCode field", "countryCode", maxLength, countryCodeRequiredKey, countryCodeInvalidCharKey, countryCodeLengthKey, "mandatory")
   )
 
   forAll(table) {
     (
       description: String,
       fieldName: String,
-      maxStringLength: StrRange,
+      maxStringLength: Int,
       requiresKey: String,
       invalidKey: String,
       maxLengthKey: String,
       optionalOrMandatory: String
     ) =>
 
-      s".$fieldName len $maxStringLength" - {
+      s".$fieldName" - {
         behave like fieldThatBindsValidData(
           form,
           fieldName,
-          stringsWithMaxLength(maxStringLength.max, maxStringLength.min, Some(Gen.alphaNumChar))
+          stringsWithMaxLength(maxStringLength, 1, Some(Gen.alphaNumChar))
         )
 
         if(optionalOrMandatory.equals("mandatory")) {
@@ -98,80 +90,178 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
         }
 
         s"$description must have maximum length of ${maxStringLength}" in {
-          val result = form.bind(Map(fieldName -> List.fill(maxStringLength.max + 1)("b").mkString)).apply(fieldName)
+          val result = form.bind(Map(fieldName -> List.fill(maxStringLength + 1)("b").mkString)).apply(fieldName)
+
           result.errors.head.key mustEqual fieldName
           result.errors.head.message mustEqual maxLengthKey
         }
 
         s"$description can include space" in {
-          val newForm = form.bind(Map(fieldName -> "ne5 6th")).apply(fieldName)
+          val result = form.bind(Map(fieldName -> "ne5 6th")).apply(fieldName)
 
-          newForm.value.value mustBe "ne5 6th"
-          newForm.errors mustBe empty
+          result.value.value mustBe "ne5 6th"
+          result.errors mustBe empty
         }
 
         notAllowedChar.foreach(o => {
 
           s"$description must not include '$o' character" in {
-            val newForm = form.bind(Map(fieldName -> s"gh${o} Nmh")).apply(fieldName)
+            val result = form.bind(Map(fieldName -> s"gh${o} Nmh")).apply(fieldName)
 
-            newForm.errors.head.key mustEqual fieldName
-            newForm.errors.head.message mustEqual invalidKey
+            result.errors.head.key mustEqual fieldName
+            result.errors.head.message mustEqual invalidKey
           }
         })
 
         s"$description must not include foreign character" in {
-          forAll(stringsWithMaxLength(maxStringLength.max, maxStringLength.min) -> "validDataItem") {
-            dataItem: String =>
-              val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-              result.value.value mustBe dataItem
-              result.errors.head.message mustEqual invalidKey
-          }
+            val result = form.bind(Map(fieldName -> "街道")).apply(fieldName)
+            result.value.value mustBe "街道"
+            result.errors.head.message mustEqual invalidKey
         }
 
         s"$description must not include unicode character" in {
           (161 to 255).map(_.toChar).foreach(o => {
-            val newForm = form.bind(Map(fieldName -> s"Ny${o} JKe")).apply(fieldName)
+            val result = form.bind(Map(fieldName -> s"Ny${o} JKe")).apply(fieldName)
 
-            assertResult(newForm.errors.head.key, s"'${o}' should be an valid character")(fieldName)
-            newForm.errors.head.message mustEqual invalidKey
+            assertResult(result.errors.head.key, s"'${o}' should be an valid character")(fieldName)
+            result.errors.head.message mustEqual invalidKey
           })
         }
       }
   }
 
-
-  "postalCode must have minimum length of 5" in {
+  ".postalCode" - {
+    val minLength = 5
+    val maxLength = 8
     val fieldName = "postalCode"
-    val result = form.bind(Map(fieldName -> List.fill(4)("b").mkString)).apply(fieldName)
 
-    result.errors.head.key mustEqual fieldName
-    result.errors.head.message mustEqual "newGroupLeadEnterContactAddress.error.postalCode.inRange"
-  }
+    "when is mandatory (countryCode is GB)" - {
+      "must bind valid data" in {
+        val result = form.bind(Map(fieldName -> "NE4 7FG")).apply(fieldName)
 
-  "postal code is mandatory if contryCode is GB" ignore {
+        result.value.value mustBe "NE4 7FG"
+        result.errors mustBe empty
+      }
 
-    val fieldName = "countryCode"
+      "must error when empty" in {
+        val result = form.bind(Map(countryCode -> "GB")).apply(fieldName)
 
-    val t= Map(
-      "addressLine1" -> "test",
-      "addressLine2" -> "test1",
-      "addressLine3" -> "",
-      "addressLine4" -> "test2",
-      "postalCode" -> "",
-      "countryCode" -> "GB"
-    )
-    val result = form.bind(t)
+        result.errors.head.key mustEqual fieldName
+        result.errors.head.message mustEqual postalCodeRequiredKey
+      }
 
-    result.errors.head.key mustEqual fieldName
-    result.errors.head.message mustEqual postalCodeRequiredKey
-  }
+      "must error when binding blank values" in {
+        val result = form.bind(Map(fieldName -> "", countryCode -> "GB")).apply(fieldName)
 
-  "countryCode should error if only number input" ignore {
-    val fieldName = "countryCode"
-    val result = form.bind(Map(fieldName -> "12 33")).apply(fieldName)
+        result.errors.head.key mustEqual fieldName
+        result.errors.head.message mustEqual postalCodeRequiredKey
+      }
 
-    result.errors.head.key mustEqual fieldName
-    result.errors.head.message mustEqual countryCodeRequiredKey
+
+      val postalCodeTable = Table(
+        ("description", "postalCode"),
+        ("must have maximum length of 8", "ND4 6TYH"),
+        ("must have minimum length of 5", "N5 1N"),
+        ("must not include lower character", "Ne5 7TH"),
+        ("must not be a whole number", "123456")
+      )
+
+      forAll(postalCodeTable) {
+        (
+          description: String,
+          postalCode: String
+        ) =>
+
+          description in {
+            val result = form.bind(Map(fieldName -> postalCode, countryCode -> "GB"))
+              .apply(fieldName)
+
+            result.errors.head.key mustEqual fieldName
+            result.errors.head.message mustEqual postalCodeMaxLengthKey
+          }
+      }
+
+      notAllowedChar.foreach(o => {
+
+        s"must not include '$o' character" in {
+          val result = form.bind(Map(fieldName -> s"N${o}5 6NM", countryCode -> "GB"))
+            .apply(fieldName)
+
+          result.errors.head.key mustEqual fieldName
+          result.errors.head.message mustEqual postalCodeMaxLengthKey
+        }
+      })
+
+      s"must not include special character" in {
+        val result = form.bind(Map(fieldName -> s"N${notAllowedChar.head}5 6NM", "countryCode" -> "GB"))
+          .apply(fieldName)
+
+        result.errors.head.key mustEqual fieldName
+        result.errors.head.message mustEqual postalCodeMaxLengthKey
+      }
+
+      s"must not include foreign character" in {
+        val result = form.bind(Map(fieldName -> "街道", countryCode -> "GB")).apply(fieldName)
+
+        result.value.value mustBe "街道"
+        result.errors.head.message mustEqual postalCodeMaxLengthKey
+      }
+
+      s"must not include unicode character" in {
+        (161 to 255).map(_.toChar).foreach(o => {
+          val result = form.bind(Map(fieldName -> s"N${o}5 6JK", countryCode -> "GB")).apply(fieldName)
+
+          result.errors.head.key mustEqual fieldName
+          result.errors.head.message mustEqual postalCodeMaxLengthKey
+        })
+      }
+
+    }
+
+    "when is optional (countryCode is not GB or empty)" - {
+
+      val postalCodMaxLength = 35
+
+      val optionalTable = Table(
+        ("description", "countryValue"),
+        ("not GB", "IT"),
+        ("not present", "")
+      )
+
+      forAll(optionalTable) {
+        (
+          description: String,
+          countryCode: String
+        ) =>
+          s"must bind valid data when countryCode is $description" in {
+            val result = form.bind(Map(fieldName -> "NE 123", countryCode -> countryCode)).apply(fieldName)
+
+            result.value.value mustBe "NE 123"
+            result.errors mustBe empty
+          }
+
+          s"must bind empty data when countryCode is $description" in {
+            val result = form.bind(Map(fieldName ->"", countryCode -> countryCode)).apply(fieldName)
+
+            result.value.value mustBe ""
+            result.errors mustBe empty
+          }
+
+          s"must return empty when countryCode is $description" in {
+            val result = form.bind(Map(countryCode -> countryCode)).apply(fieldName)
+
+            result.value mustBe None
+            result.errors mustBe empty
+          }
+
+          s"must have maximum length of 35 when countryCode is $description" in {
+            val result = form.bind(Map(fieldName -> List.fill(postalCodMaxLength + 1)("b").mkString, countryCode -> countryCode))
+              .apply(fieldName)
+
+            result.errors.head.key mustEqual fieldName
+            result.errors.head.message mustEqual postalCodeMaxLengthKey
+          }
+      }
+    }
   }
 }

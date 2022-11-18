@@ -19,7 +19,6 @@ package controllers.changeGroupLead
 import base.SpecBase
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import models.Mode.NormalMode
-import models.changeGroupLead.NewGroupLeadAddressDetails
 import navigation.{FakeNavigator, Navigator}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
