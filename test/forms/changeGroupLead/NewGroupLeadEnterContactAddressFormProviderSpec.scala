@@ -114,12 +114,9 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
         })
 
         s"$description must not include foreign character" in {
-          forAll(stringsWithMaxLength(maxStringLength) -> "validDataItem") {
-            dataItem: String =>
-              val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-              result.value.value mustBe dataItem
-              result.errors.head.message mustEqual invalidKey
-          }
+            val result = form.bind(Map(fieldName -> "街道")).apply(fieldName)
+            result.value.value mustBe "街道"
+            result.errors.head.message mustEqual invalidKey
         }
 
         s"$description must not include unicode character" in {
@@ -204,13 +201,10 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
       }
 
       s"must not include foreign character" in {
-        forAll(stringsWithMaxLength(maxLength, minLength) -> "validDataItem") {
-          dataItem: String =>
-            val result = form.bind(Map(fieldName -> dataItem, countryCode -> "GB")).apply(fieldName)
+        val result = form.bind(Map(fieldName -> "街道", countryCode -> "GB")).apply(fieldName)
 
-            result.value.value mustBe dataItem
-            result.errors.head.message mustEqual postalCodeMaxLengthKey
-        }
+        result.value.value mustBe "街道"
+        result.errors.head.message mustEqual postalCodeMaxLengthKey
       }
 
       s"must not include unicode character" in {
