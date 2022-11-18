@@ -17,7 +17,7 @@
 package forms.changeGroupLead
 
 import forms.behaviours.StringFieldBehaviours
-import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine4RequiredKey, addressLineRequiredKey, countryCode, countryCodeInvalidCharKey, countryCodeLengthKey, countryCodeRequiredKey, postalCode, postalCodeMaxLengthKey, postalCodeRequiredKey}
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
 import org.scalacheck.Gen
 import play.api.data.FormError
 

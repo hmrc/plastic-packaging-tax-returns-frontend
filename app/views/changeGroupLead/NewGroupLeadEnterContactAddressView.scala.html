@@ -16,7 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import views.html.components.{heading, paragraphBody}
-
+@import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode}
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -51,12 +51,12 @@
 
         @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
 
-        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label")
-        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label")
-        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label")
-        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label")
-        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label")
-        @input("countryCode", "newGroupLeadEnterContactAddress.countryCode.label")
+        @input(addressLine1, "newGroupLeadEnterContactAddress.addressLine1.label")
+        @input(addressLine2, "newGroupLeadEnterContactAddress.addressLine2.label")
+        @input(addressLine3, "newGroupLeadEnterContactAddress.addressLine3.label")
+        @input(addressLine4, "newGroupLeadEnterContactAddress.addressLine4.label")
+        @input(postalCode, "newGroupLeadEnterContactAddress.postalCode.label")
+        @input(countryCode, "newGroupLeadEnterContactAddress.countryCode.label")
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
