@@ -16,6 +16,7 @@
 
 package controllers.changeGroupLead
 
+import connectors.SubscriptionConnector
 import controllers.actions.JourneyAction
 import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,6 +32,7 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   featureGuard: FeatureGuard,
+  subscriptionConnector: SubscriptionConnector,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadCheckYourAnswerView,
   navigator: ChangeGroupLeadNavigator
@@ -52,13 +54,10 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
 
   def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
-      /*
-      todo: call sub create api and redirect to confirmation page if Success
-      otherwise a error on page
-       */
-      //otherwise
       featureGuard.check()
-      Future.successful(Redirect(navigator.checkYourAnswers))
+      subscriptionConnector.changeGroupLead(request.pptReference).map{
+        _ => Redirect(navigator.checkYourAnswers)
+      }
   }
 
 }
