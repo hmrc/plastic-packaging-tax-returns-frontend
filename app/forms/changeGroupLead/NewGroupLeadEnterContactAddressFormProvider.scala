@@ -51,10 +51,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
          gbPostCodeValidation,
          optionalPostalCodeValidation
        ),
-       countryCode -> addressLineTextValidation(
-         countryCodeRequiredKey,
-         countryCodeLengthKey,
-         countryCodeInvalidCharKey)
+       countryCode -> countryCodeValidation
     )(NewGroupLeadAddressDetails.apply)(NewGroupLeadAddressDetails.unapply)
    )
 
@@ -83,6 +80,13 @@ class NewGroupLeadEnterContactAddressFormProvider {
       .verifying(requiredKey, _.trim.nonEmpty)
       .verifying(maxLengthKey, _.length <= maxAddressLineLength)
       .verifying(invalidCharacterKey, _.matches(addressLineRegExp))
+  }
+
+  private def countryCodeValidation = {
+    optional(play.api.data.Forms.text)
+      .verifying(countryCodeRequiredKey, _.isDefined)
+      .transform[String](_.get, Some(_))
+      .verifying(countryCodeRequiredKey, _.trim.nonEmpty)
   }
 
   private def gbPostCodeValidation = {
