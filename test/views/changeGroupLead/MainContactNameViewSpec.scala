@@ -41,8 +41,7 @@ class MainContactNameViewSpec extends ViewSpecBase  with ViewAssertions with Vie
 
     "have a title" in {
       view.select("title").text mustBe
-      "Who is the main contact for company-name? - Account - Plastic Packaging Tax - GOV.UK"
-      //todo this shouldnt have the compnay name in
+      "Who is the main contact for the organisation? - Account - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a back link" in {
