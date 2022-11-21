@@ -18,15 +18,16 @@ package controllers.changeGroupLead
 
 import connectors.SubscriptionConnector
 import controllers.actions.JourneyAction
+import models.requests.DataRequest._
 import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.changeGroupLead._
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class NewGroupLeadCheckYourAnswerController @Inject() (
   override val messagesApi: MessagesApi,
@@ -37,7 +38,7 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   view: NewGroupLeadCheckYourAnswerView,
   navigator: ChangeGroupLeadNavigator
 ) 
-  (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
