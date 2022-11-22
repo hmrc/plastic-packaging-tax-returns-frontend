@@ -64,13 +64,7 @@ class SubscriptionConnector @Inject() (
           new Exception()
         )
       }
-    }.recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
-      }
+    }
   }
 
 }
