@@ -15,19 +15,22 @@
  *@
 
 @import viewmodels.InputWidth._
-@import views.html.components.{heading, paragraphBody}
+@import views.html.components.{heading, paragraphBody, CountryCodeAutoComplete}
 @import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode}
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
+    govukSelect: GovukSelect,
+    govukFieldset: GovukFieldset,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
     heading: heading,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    countryCodeAutoComplete: CountryCodeAutoComplete
 )
 
-@(form: Form[_], organisationName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], countryMap: Map[String, String], organisationName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @input(formName: String, key: String) = @{
     govukInput(
@@ -39,6 +42,41 @@
     )
 }
 
+@fieldSetBody = {
+        @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
+
+        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label")
+        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label")
+        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label")
+        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label")
+        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label")
+
+        @govukSelect(
+            Select(
+                id = "countryCode",
+                name = "countryCode",
+                formGroupClasses = "autocomplete-wrapper",
+                attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
+                items =
+                    Seq(SelectItem(value = None, text = "Empty value")) ++
+                        countryMap.map { countryEntry =>
+                            SelectItem(
+                                value = Some(countryEntry._1),
+                                text = countryEntry._2,
+                                selected = form("countryCode").value.contains(countryEntry._1)
+                            )
+                        }.toSeq,
+                label = Label(
+                    content = HtmlContent(messages("newGroupLeadEnterContactAddress.countryCode.label")),
+                    classes = "govuk-label govuk-label--s",
+                    attributes = Map("aria-labelledby"-> "countryCode")
+                ),
+                errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
+            )
+        )
+        @countryCodeAutoComplete()
+}
+
 @layout(pageTitle = title(form, messages("newGroupLeadEnterContactAddress.heading", organisationName), Some(messages("account.title.tail")))) {
 
     @formHelper(action = controllers.changeGroupLead.routes.NewGroupLeadEnterContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
@@ -47,16 +85,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading("newGroupLeadEnterContactAddress.heading", organisationName)
-
-        @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
-
-        @input(addressLine1, "newGroupLeadEnterContactAddress.addressLine1.label")
-        @input(addressLine2, "newGroupLeadEnterContactAddress.addressLine2.label")
-        @input(addressLine3, "newGroupLeadEnterContactAddress.addressLine3.label")
-        @input(addressLine4, "newGroupLeadEnterContactAddress.addressLine4.label")
-        @input(postalCode, "newGroupLeadEnterContactAddress.postalCode.label")
-        @input(countryCode, "newGroupLeadEnterContactAddress.countryCode.label")
+       @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("newGroupLeadEnterContactAddress.heading", organisationName)),
+                classes = "govuk-fieldset__legend--l",
+                isPageHeading = true
+            )),
+            html = fieldSetBody
+        ))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

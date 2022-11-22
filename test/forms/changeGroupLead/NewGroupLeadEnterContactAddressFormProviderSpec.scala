@@ -44,8 +44,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
     ("addressLine1 field", "addressLine1", maxLength, addressLineRequiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
     ("addressLine2 field", "addressLine2", maxLength, addressLineRequiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
     ("addressLine3 field", "addressLine3", maxLength, addressLineRequiredKey, invalidKey(3), maxLengthKey(3), "optional"),
-    ("addressLine4 field", "addressLine4", maxLength, addressLine4RequiredKey, invalidKey(4), maxLengthKey(4), "mandatory"),
-    ("countryCode field", "countryCode", maxLength, countryCodeRequiredKey, countryCodeInvalidCharKey, countryCodeLengthKey, "mandatory")
+    ("addressLine4 field", "addressLine4", maxLength, addressLine4RequiredKey, invalidKey(4), maxLengthKey(4), "mandatory")
   )
 
   forAll(table) {
@@ -131,8 +130,6 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
   }
 
   ".postalCode" - {
-    val minLength = 5
-    val maxLength = 8
     val fieldName = "postalCode"
 
     "when is mandatory (countryCode is GB)" - {
@@ -262,6 +259,31 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
             result.errors.head.message mustEqual postalCodeMaxLengthKey
           }
       }
+    }
+  }
+
+  ".countryCode" - {
+    val fieldName = "countryCode"
+
+    "must bind valid data" in {
+      val result = form.bind(Map(fieldName -> "IT")).apply(fieldName)
+
+      result.value.value mustBe "IT"
+      result.errors mustBe empty
+    }
+
+    "must error when empty" in {
+      val result = form.bind(emptyForm).apply(fieldName)
+
+      result.errors.head.key mustEqual fieldName
+      result.errors.head.message mustEqual countryCodeRequiredKey
+    }
+
+    "must error when binding blank values" in {
+      val result = form.bind(Map(countryCode -> "")).apply(fieldName)
+
+      result.errors.head.key mustEqual fieldName
+      result.errors.head.message mustEqual countryCodeRequiredKey
     }
   }
 }

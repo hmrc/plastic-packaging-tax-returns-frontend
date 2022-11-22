@@ -20,7 +20,6 @@ import base.ViewSpecBase
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
 import models.Mode.NormalMode
-import models.changeGroupLead.NewGroupLeadAddressDetails
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.data.Form
 import play.twirl.api.Html
@@ -33,8 +32,8 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
   private val formProvider = new NewGroupLeadEnterContactAddressFormProvider()
   private val organisationName = "Organisation Name"
 
-  private def createView(form: Form[_] = formProvider.apply()): Html = {
-    page(form, organisationName, NormalMode)(request, messages)
+  private def createView(form: Form[_] = formProvider.apply(), countryMap: Map[String,String] = Map()): Html = {
+    page(form, countryMap, organisationName, NormalMode)(request, messages)
   }
 
   "view" should {
@@ -79,25 +78,17 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
 
 
     "bind form to inputViewModel" in {
+      val mapData = createMap()
+      val form = formProvider.apply().bind(mapData)
 
-      val form = formProvider.apply().fillAndValidate(
-        NewGroupLeadAddressDetails(
-          addressLine1 = "v1",
-          addressLine2 = "v2",
-          addressLine3 = Some("v3"),
-          addressLine4 = "v4",
-          postalCode = Some("NE5"),
-          countryCode = "GB"
-        )
-      )
-      val view = createView(form)
+      val view = createView(form, Map("GB"-> "United Kingdom"))
 
-      view.getElementById(addressLine1).`val`() mustBe "v1"
-      view.getElementById(addressLine2).`val`() mustBe "v2"
-      view.getElementById(addressLine3).`val`() mustBe "v3"
-      view.getElementById(addressLine4).`val`() mustBe "v4"
-      view.getElementById(postalCode).`val`() mustBe "NE5"
-      view.getElementById(countryCode).`val`() mustBe "GB"
+      view.getElementById(addressLine1).`val`() mustBe mapData.get(addressLine1).get
+      view.getElementById(addressLine2).`val`() mustBe mapData.get(addressLine2).get
+      view.getElementById(addressLine3).`val`() mustBe mapData.get(addressLine3).get
+      view.getElementById(addressLine4).`val`() mustBe mapData.get(addressLine4).get
+      view.getElementById(postalCode).`val`() mustBe mapData.get(postalCode).get
+      view.select("select#countryCode option[selected]").text() mustBe "United Kingdom"
 
     }
 
@@ -148,13 +139,6 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
           "Enter a town or city",
           "Town or city must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
           "Town or city must be 35 characters or fewer",
-          true
-        ),
-        (
-          "countryCode",
-          "Enter a country",
-          "Country must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
-          "Country must be 35 characters or fewer",
           true
         )
       )
@@ -217,15 +201,21 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
         createView(form).getElementsByClass("govuk-error-message").text() must
           include("Enter a postcode in the correct format, like AB1 2CD")
       }
+    }
 
+    "countryCode is required" in {
+      val form = formProvider.apply().bind(createMap(countryCode = ""))
+
+      createView(form).getElementsByClass("govuk-error-message").text() must
+        include("Enter a country")
     }
   }
 
   private def createMap
   (
-    addressLine1: String = "line3",
+    addressLine1: String = "line1",
     addressLine2: String = "line2",
-    addressLine3: String = "",
+    addressLine3: String = "line3",
     addressLine4: String = "line4",
     postalCode: String = "NE5 4SF",
     countryCode: String = "GB"
