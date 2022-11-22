@@ -90,6 +90,20 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "organisation-name"
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
+
+    when(mockFormProvider.apply()) thenReturn form
+    val userAnswers = dataRequest.userAnswers
+    when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
+    when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
+    when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
+    val createBindForm = new NewGroupLeadEnterContactAddressFormProvider().apply().bind(
+      Map(
+        addressLine1 -> "1 road",
+        addressLine2 -> "1 road",
+        addressLine4 -> "London",
+        countryCode -> "EN"
+      ))
+    when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
   }
 
   def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
@@ -118,7 +132,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     }
 
     "get any previous user answer" in {
-      when(mockFormProvider.apply()) thenReturn form
       await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
       verify(dataRequest.userAnswers).fill(meq(NewGroupLeadEnterContactAddressPage), meq(form))(any)
     }
@@ -141,7 +154,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     }
 
     "bind the form and error" in {
-      when(mockFormProvider.apply()) thenReturn form
       val newForm = new NewGroupLeadEnterContactAddressFormProvider().apply().withError("error", "error")
       when(form.bindFromRequest()(any, any)).thenReturn(newForm)
 
@@ -155,7 +167,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     }
 
     "redirect to a new page" in {
-      setUpMock
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
@@ -164,7 +175,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     }
 
     "save the user answer to the cache" in {
-      setUpMock
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
@@ -173,7 +183,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     }
 
     "call the navigator" in {
-      setUpMock
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
@@ -184,9 +193,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
     "error" when {
       "the user answers setOrFail fails" in {
-
-        when(mockFormProvider.apply()) thenReturn form
-        when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenThrow(TestException)
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
@@ -195,35 +201,10 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       }
 
       "the cache save fails" in {
-        when(mockFormProvider.apply()) thenReturn form
-        val userAnswers = dataRequest.userAnswers
-        when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
-        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
-        when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
+        when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
         verifyNoInteractions(mockNavigator)
       }
     }
-  }
-
-
-  private def setUpMock() = {
-    when(mockFormProvider.apply()) thenReturn form
-    val userAnswers = dataRequest.userAnswers
-    when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-    when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
-    when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
-    when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
-  }
-
-  private def createBindForm = {
-    new NewGroupLeadEnterContactAddressFormProvider().apply().bind(
-      Map(
-        addressLine1 -> "1 road",
-        addressLine2 -> "1 road",
-        addressLine4 -> "London",
-        countryCode -> "EN"
-      ))
   }
 }
