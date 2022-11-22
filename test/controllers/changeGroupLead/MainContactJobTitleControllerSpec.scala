@@ -92,7 +92,6 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
     when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "job-title"
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
-    when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
     when(mockNavigator.mainContactJobTitle(any)).thenReturn(Call("GET", "/test-foo"))
   }
 

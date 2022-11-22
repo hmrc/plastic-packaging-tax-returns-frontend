@@ -16,141 +16,214 @@
 
 package controllers.changeGroupLead
 
-import base.SpecBase
+import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
+import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine4, countryCode}
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject.bind
-import play.api.mvc.Call
+import models.changeGroupLead.NewGroupLeadAddressDetails
+import models.requests.DataRequest
+import navigation.{ChangeGroupLeadNavigator, FakeNavigator, Navigator}
+import org.mockito.{Answers, Mockito}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.Mockito.{reset, verifyNoInteractions, verifyNoMoreInteractions}
+import org.mockito.MockitoSugar.{mock, verify, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import play.twirl.api.Html
+import queries.{Gettable, Settable}
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
 
-class NewGroupLeadEnterContactAddressControllerSpec extends SpecBase with MockitoSugar {
+import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
+import scala.util.Try
 
-  def onwardRoute = Call("GET", "/foo")
+class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
-  val formProvider = new NewGroupLeadEnterContactAddressFormProvider()
-  val form = formProvider()
+  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockView = mock[NewGroupLeadEnterContactAddressView]
+  private val mockFormProvider = mock[NewGroupLeadEnterContactAddressFormProvider]
+  private val mockCache = mock[CacheConnector]
+  private val journeyAction = mock[JourneyAction]
+  private val featureGuard = mock[FeatureGuard]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[NewGroupLeadAddressDetails]]
+  private val mockNavigator =  mock[ChangeGroupLeadNavigator]
 
-  lazy val newGroupLeadEnterContactAddressRoute = routes.NewGroupLeadEnterContactAddressController.onPageLoad(NormalMode).url
+  val sut = new NewGroupLeadEnterContactAddressController(
+    mockMessagesApi,
+    mockCache,
+    mockNavigator,
+    journeyAction,
+    featureGuard,
+    mockFormProvider,
+    controllerComponents,
+    mockView
+  )(global)
 
-//  val userAnswers = UserAnswers(
-//    userAnswersId,
-//    Json.obj(
-//      NewGroupLeadEnterContactAddressPage.toString -> Json.obj(
-//        "AddressLine1" -> "value 1",
-//        "AddressLine2" -> "value 2"
-//      )
-//    )
-//  )
+  object TestException extends Exception("test")
 
-  "NewGroupLeadEnterContactAddress Controller" - {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockMessagesApi,
+      mockCache,
+      mockNavigator,
+      journeyAction,
+      featureGuard,
+      mockFormProvider,
+      form,
+      mockView,
+      dataRequest.userAnswers)
 
-    "must return OK and the correct view for a GET" in {
+    when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
+    when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "organisation-name"
+    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
+  }
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+      .getMock[Action[AnyContent]]
 
-      running(application) {
-        val request = FakeRequest(GET, newGroupLeadEnterContactAddressRoute)
+  "onPageLoad" must {
 
-        val view = application.injector.instanceOf[NewGroupLeadEnterContactAddressView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-     //   contentAsString(result) mustEqual view(form, "name", NormalMode)(request, messages(application)).toString
-      }
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
+      verify(journeyAction).async(any)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, newGroupLeadEnterContactAddressRoute)
-
-        val view = application.injector.instanceOf[NewGroupLeadEnterContactAddressView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-       // contentAsString(result) mustEqual view(form.fill(NewGroupLeadAddressDetails("value 1", "value 2", None, "any town", None, "IT")), "name", NormalMode)(request, messages(application)).toString
-      }
+    "invoke feature guard" in {
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(featureGuard).check()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-   //   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, newGroupLeadEnterContactAddressRoute)
-            .withFormUrlEncodedBody(("AddressLine1", "value 1"), ("AddressLine2", "value 2"))
-
-        val result = route(application, request).value
-
-        //status(result) mustEqual SEE_OTHER
-     //   redirectLocation(result).value mustEqual onwardRoute.url
-      }
+    "return OK and correct view" in {
+      val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(form), meq("organisation-name"), meq(NormalMode))(any, any)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, newGroupLeadEnterContactAddressRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[NewGroupLeadEnterContactAddressView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, messages(application)).toString
-      }
+    "get any previous user answer" in {
+      when(mockFormProvider.apply()) thenReturn form
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(dataRequest.userAnswers).fill(meq(NewGroupLeadEnterContactAddressPage), meq(form))(any)
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" ignore {
-      val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, newGroupLeadEnterContactAddressRoute)
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
+    "create the form" in {
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(mockFormProvider).apply()
+    }
+  }
+  "onSubmit" must {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
+      verify(journeyAction).async(any)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" ignore {
+    "invoke feature guard" in {
+      Try(await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+      verify(featureGuard).check()
+    }
 
-      val application = applicationBuilder(userAnswers = None).build()
+    "bind the form and error" in {
+      when(mockFormProvider.apply()) thenReturn form
+      val newForm = new NewGroupLeadEnterContactAddressFormProvider().apply().withError("error", "error")
+      when(form.bindFromRequest()(any, any)).thenReturn(newForm)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, newGroupLeadEnterContactAddressRoute)
-            .withFormUrlEncodedBody(("AddressLine1", "value 1"), ("AddressLine2", "value 2"))
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
-        val result = route(application, request).value
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(newForm), meq("organisation-name"),  meq(NormalMode))(any, any)
+      verify(mockFormProvider).apply()
+      verify(form).bindFromRequest()(meq(dataRequest),any)
+    }
 
-        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+    "redirect to a new page" in {
+      setUpMock
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustBe SEE_OTHER
+
+    }
+
+    "save the user answer to the cache" in {
+      setUpMock
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(mockCache).saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier)
+
+    }
+
+    "call the navigator" in {
+      setUpMock
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      redirectLocation(result) mustBe Some("/test-foo")
+      verify(mockNavigator).enterContactAddress(NormalMode)
+
+    }
+
+    "error" when {
+      "the user answers setOrFail fails" in {
+
+        when(mockFormProvider.apply()) thenReturn form
+        when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
+        when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenThrow(TestException)
+
+        intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+
+        verifyNoMoreInteractions(mockCache, mockNavigator)
+      }
+
+      "the cache save fails" in {
+        when(mockFormProvider.apply()) thenReturn form
+        val userAnswers = dataRequest.userAnswers
+        when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
+        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+        when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
+        intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+        verifyNoInteractions(mockNavigator)
       }
     }
+  }
+
+
+  private def setUpMock() = {
+    when(mockFormProvider.apply()) thenReturn form
+    val userAnswers = dataRequest.userAnswers
+    when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
+    when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
+    when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
+    when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
+  }
+
+  private def createBindForm = {
+    new NewGroupLeadEnterContactAddressFormProvider().apply().bind(
+      Map(
+        addressLine1 -> "1 road",
+        addressLine2 -> "1 road",
+        addressLine4 -> "London",
+        countryCode -> "EN"
+      ))
   }
 }
