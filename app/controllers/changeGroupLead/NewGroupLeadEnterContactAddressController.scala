@@ -26,6 +26,7 @@ import pages.changeGroupLead.{ChooseNewGroupLeadPage, NewGroupLeadEnterContactAd
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
+import services.CountryService
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
 
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class NewGroupLeadEnterContactAddressController @Inject()(
   journeyAction: JourneyAction,
   featureGuard: FeatureGuard,
   formProvider: NewGroupLeadEnterContactAddressFormProvider,
+  countryService: CountryService,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadEnterContactAddressView
 )(implicit ec: ExecutionContext) extends I18nSupport {
@@ -56,8 +58,7 @@ class NewGroupLeadEnterContactAddressController @Inject()(
       val organisationName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       formProvider().bindFromRequest().fold(
-        (formWithErrors) => Future.successful(Results.BadRequest(view(formWithErrors, organisationName, mode))),
-
+        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, countryService.getAll, organisationName, mode))),
         contactAddress =>
           request.userAnswers
             .setOrFail(NewGroupLeadEnterContactAddressPage, contactAddress)

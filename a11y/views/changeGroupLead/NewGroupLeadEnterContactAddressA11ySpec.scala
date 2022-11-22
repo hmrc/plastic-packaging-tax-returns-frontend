@@ -33,7 +33,7 @@ class NewGroupLeadEnterContactAddressA11ySpec extends ViewSpecBase with Accessib
   val mode: Mode = NormalMode
 
   private def createView(form: Form[_]): String =
-    page(form, organisationName, mode)(request, messages).toString()
+    page(form, Map(), organisationName, mode)(request, messages).toString()
 
   "NewGroupLeadEnterContactAddressView" should {
 
