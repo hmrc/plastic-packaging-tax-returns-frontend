@@ -41,6 +41,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
+import services.CountryService
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
 
 import scala.concurrent.ExecutionContext.global
@@ -59,6 +60,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[NewGroupLeadAddressDetails]]
   private val mockNavigator =  mock[ChangeGroupLeadNavigator]
+  private val mockCountryService = mock[CountryService]
 
   val sut = new NewGroupLeadEnterContactAddressController(
     mockMessagesApi,
@@ -67,11 +69,14 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     journeyAction,
     featureGuard,
     mockFormProvider,
+    mockCountryService,
     controllerComponents,
     mockView
   )(global)
 
   object TestException extends Exception("test")
+
+  val countryMap = Map("key" -> "value")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -85,11 +90,12 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       mockView,
       dataRequest.userAnswers)
 
-    when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
     when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "organisation-name"
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
+    when(mockCountryService.getAll).thenReturn(countryMap)
 
     when(mockFormProvider.apply()) thenReturn form
     val userAnswers = dataRequest.userAnswers
@@ -104,6 +110,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
         countryCode -> "EN"
       ))
     when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
+
   }
 
   def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
@@ -128,7 +135,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(form), meq("organisation-name"), meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(form), meq(countryMap), meq("organisation-name"), meq(NormalMode))(any, any)
     }
 
     "get any previous user answer" in {
@@ -161,7 +168,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(newForm), meq("organisation-name"),  meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(newForm), meq(countryMap), meq("organisation-name"),  meq(NormalMode))(any, any)
       verify(mockFormProvider).apply()
       verify(form).bindFromRequest()(meq(dataRequest),any)
     }

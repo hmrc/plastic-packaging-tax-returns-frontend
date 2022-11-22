@@ -49,7 +49,7 @@ class NewGroupLeadEnterContactAddressController @Inject()(
       featureGuard.check()
       val organisationName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
-        Future.successful(Results.Ok(view(preparedForm, organisationName, mode)))
+        Future.successful(Results.Ok(view(preparedForm, countryService.getAll, organisationName, mode)))
   }
 
   def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
