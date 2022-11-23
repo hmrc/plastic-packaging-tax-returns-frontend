@@ -15,14 +15,14 @@
  *@
 
 @import viewmodels.InputWidth._
-@import components.{Link, heading, paragraphBody}
+@import components.{Link, headingLabel, paragraphBody}
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    headingLabel: heading,
+    headingLabel: headingLabel,
     govukButton: GovukButton
 )
 
@@ -39,12 +39,9 @@
         @headingLabel(messages("mainContactName.heading", companyName))
 
         @govukInput(
-            InputViewModel(
-                field = form("value")
-            )
+            InputViewModel(field = form("value"))
             .withWidth(Full)
             .withHint(Hint(content = "mainContactName.hint"))
-
         )
 
         @govukButton(
