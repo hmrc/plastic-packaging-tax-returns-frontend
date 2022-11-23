@@ -76,7 +76,7 @@
         @countryCodeAutoComplete()
 }
 
-@layout(pageTitle = title(form, messages("newGroupLeadEnterContactAddress.heading", organisationName), Some(messages("account.title.tail")))) {
+@layout(pageTitle = title(form, messages("newGroupLeadEnterContactAddress.title"), Some(messages("account.title.tail")))) {
 
     @formHelper(action = controllers.changeGroupLead.routes.NewGroupLeadEnterContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
