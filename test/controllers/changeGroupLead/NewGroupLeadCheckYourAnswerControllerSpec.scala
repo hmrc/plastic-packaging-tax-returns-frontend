@@ -24,6 +24,7 @@ import models.UserAnswers
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -125,13 +126,13 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     }
 
     "view display address containing countryCode as value" in {
-      val postalCode = "GB"
-      when(countryService.tryLookupCountryName(postalCode)).thenReturn("United Kingdom")
+      val countryCode = "GB"
+      when(countryService.tryLookupCountryName(countryCode)).thenReturn("United Kingdom")
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
         .thenReturn(Some("Blah"))
 
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(NewGroupLeadEnterContactAddressPage))(any))
-        .thenReturn(Some(createAddressDetails(postalCode)))
+        .thenReturn(Some(createAddressDetails(countryCode)))
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 

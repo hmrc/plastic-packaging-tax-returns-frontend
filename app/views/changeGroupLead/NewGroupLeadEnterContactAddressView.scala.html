@@ -68,7 +68,6 @@
                         }.toSeq,
                 label = Label(
                     content = HtmlContent(messages("newGroupLeadEnterContactAddress.countryCode.label")),
-                    classes = "govuk-label",
                     attributes = Map("aria-labelledby"-> "countryCode")
                 ),
                 errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),

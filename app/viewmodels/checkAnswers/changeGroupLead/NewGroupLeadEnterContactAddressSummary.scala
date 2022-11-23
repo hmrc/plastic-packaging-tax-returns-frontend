@@ -36,7 +36,7 @@ case class NewGroupLeadEnterContactAddressSummary(countryService: CountryService
       answer =>
         val content = HtmlContent(answer.definedFields(countryService).map(HtmlFormat.escape).mkString("<br>"))
 
-        val t = SummaryListRowViewModel(
+        SummaryListRowViewModel(
           key     = "newGroupLeadCheckYourAnswers.contact.address.key",
           value   = ValueViewModel(content),
           actions = Seq(
@@ -44,6 +44,5 @@ case class NewGroupLeadEnterContactAddressSummary(countryService: CountryService
               .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.address.key"))
           )
         )
-        t
     }
 }
