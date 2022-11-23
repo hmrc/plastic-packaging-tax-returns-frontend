@@ -34,7 +34,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
          addressLine1InvalidCharKey
        ),
        addressLine2 -> addressLineTextValidation(
-         addressLine2RequiredKey,
+         addressLineRequiredKey,
          addressLine2LengthKey,
          addressLine2InvalidCharKey
        ),
@@ -113,10 +113,10 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val postalCodMaxLength = 35
   val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
 
+  val addressLineRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
   val addressLine1RequiredKey = "newGroupLeadEnterContactAddress.error.addressLine1.required"
   val addressLine1LengthKey = "newGroupLeadEnterContactAddress.error.addressLine1.length"
   val addressLine1InvalidCharKey = "newGroupLeadEnterContactAddress.error.addressLine1.invalid.line"
-  val addressLine2RequiredKey = "newGroupLeadEnterContactAddress.error.addressLine2.required"
   val addressLine2LengthKey = "newGroupLeadEnterContactAddress.error.addressLine2.length"
   val addressLine2InvalidCharKey = "newGroupLeadEnterContactAddress.error.addressLine2.invalid.line"
   val addressLine3LengthKey = "newGroupLeadEnterContactAddress.error.addressLine3.length"

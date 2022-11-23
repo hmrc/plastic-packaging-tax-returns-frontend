@@ -122,7 +122,7 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
         ),
         (
           "addressLine2",
-          "Enter the second line of the organisation’s contact address",
+          "Enter the contact address for your organisation",
           "Address line 2 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
           "Address line 2 must be 35 characters or fewer",
           true
