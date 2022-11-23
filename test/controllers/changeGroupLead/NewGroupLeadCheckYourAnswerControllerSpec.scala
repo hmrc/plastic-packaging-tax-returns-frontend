@@ -21,16 +21,16 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.UserAnswers
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
-import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.changeGroupLead.ChooseNewGroupLeadPage
+import pages.changeGroupLead.{ChooseNewGroupLeadPage, NewGroupLeadEnterContactAddressPage}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
@@ -38,6 +38,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import queries.Gettable
+import services.CountryService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HttpResponse
 import viewmodels.checkAnswers.changeGroupLead.ChooseNewGroupLeadSummary
@@ -56,11 +57,13 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   private val featureGuard = mock[FeatureGuard]
   private val navigator = mock[ChangeGroupLeadNavigator]
   private val subscriptionConnector = mock[SubscriptionConnector]
+  private val countryService = mock[CountryService]
 
   private val sut = new NewGroupLeadCheckYourAnswerController(
     messagesApi,
     journeyAction,
     featureGuard,
+    countryService,
     subscriptionConnector,
     stubMessagesControllerComponents(),
     view,
@@ -113,11 +116,26 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     "construct the summary list and pass it to the view" in {
       when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some("Blah"), None)
 
-      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, "Blah"))(messages).get
+      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, "Blah")
+      )(messages).get
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 
       verifyAndCaptureValue mustBe Seq(definedRow)
+    }
+
+    "view display address containing countryCode as value" in {
+      val postalCode = "GB"
+      when(countryService.tryLookupCountryName(postalCode)).thenReturn("United Kingdom")
+      when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
+        .thenReturn(Some("Blah"))
+
+      when(dataRequest.userAnswers.get(ArgumentMatchers.eq(NewGroupLeadEnterContactAddressPage))(any))
+        .thenReturn(Some(createAddressDetails(postalCode)))
+
+      await(sut.onPageLoad.skippingJourneyAction(dataRequest))
+
+      verifyAndCaptureValue.last.value.content.asHtml.body must include("United Kingdom")
     }
 
     "check feature flag" in {
@@ -139,6 +157,18 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       verifyNoInteractions(dataRequest)
       verifyNoInteractions(view)
     }
+  }
+
+  private def createAddressDetails(countryCode: String) = {
+    NewGroupLeadAddressDetails(
+      addressLine1 = "line1",
+      addressLine2 = "line1",
+      addressLine3 = None,
+      addressLine4 = "Line4",
+      postalCode = Some("NE5 4DL"),
+      countryCode = countryCode
+    )
+
   }
 
   "onSubmit" should {

@@ -81,9 +81,4 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
       .getElementsByClass("govuk-summary-list__value").get(0)
   }
 
-  private def getActionAtRowIndex(view: Html, index: Int) = {
-    view.getElementsByClass("govuk-summary-list__row").get(index)
-      .getElementsByClass("govuk-summary-list__actions").get(0)
-  }
-
 }

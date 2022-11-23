@@ -23,6 +23,7 @@ import navigation.ChangeGroupLeadNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CountryService
 import viewmodels.checkAnswers.changeGroupLead._
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
@@ -33,6 +34,7 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   featureGuard: FeatureGuard,
+  countryService: CountryService,
   subscriptionConnector: SubscriptionConnector,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadCheckYourAnswerView,
@@ -45,7 +47,7 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
       featureGuard.check()
       val summaryRows = Seq(
           ChooseNewGroupLeadSummary,
-          NewGroupLeadEnterContactAddressSummary,
+          NewGroupLeadEnterContactAddressSummary(countryService),
           MainContactNameSummary,
           MainContactJobTitleSummary,
         ).flatMap(_.row(request.userAnswers))
