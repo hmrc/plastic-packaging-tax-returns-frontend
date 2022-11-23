@@ -40,8 +40,8 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() mustBe s"What is $organisationName’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text() must include(messages("newGroupLeadEnterContactAddress.heading", organisationName))
+      view.select("title").text() mustBe s"What is the organisation’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
+      view.select("title").text() must include(messages("newGroupLeadEnterContactAddress.title"))
     }
 
     "have header" in {
