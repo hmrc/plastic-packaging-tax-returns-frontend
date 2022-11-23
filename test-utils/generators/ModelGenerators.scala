@@ -22,7 +22,6 @@ import org.scalacheck.Arbitrary.arbitrary
 
 trait ModelGenerators {
 
-  //todo delete me?
   implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[NewGroupLeadAddressDetails] =
     Arbitrary {
       for {
