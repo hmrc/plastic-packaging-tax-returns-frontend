@@ -16,6 +16,7 @@
 
 package controllers.changeGroupLead
 
+import connectors.SubscriptionConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
@@ -38,6 +39,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, stat
 import play.twirl.api.HtmlFormat
 import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.http.HttpResponse
 import viewmodels.checkAnswers.changeGroupLead.ChooseNewGroupLeadSummary
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
@@ -53,12 +55,14 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   private val messages = mock[Messages]
   private val featureGuard = mock[FeatureGuard]
   private val navigator = mock[ChangeGroupLeadNavigator]
+  private val subscriptionConnector = mock[SubscriptionConnector]
 
   private val sut = new NewGroupLeadCheckYourAnswerController(
     messagesApi,
     journeyAction,
     featureGuard,
-    controllerComponents = stubMessagesControllerComponents(),
+    subscriptionConnector,
+    stubMessagesControllerComponents(),
     view,
     navigator
   )
@@ -66,13 +70,14 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(view, journeyAction, featureGuard, dataRequest, navigator)
+    reset(view, journeyAction, featureGuard, dataRequest, navigator, subscriptionConnector)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
     when(navigator.checkYourAnswers) thenReturn Call("go", "over-there")
+    when(subscriptionConnector.changeGroupLead(any)(any)).thenReturn(Future.successful(HttpResponse(OK, "done")))
   }
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
@@ -155,6 +160,11 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     "check feature flag" in {
       await(sut.onSubmit.skippingJourneyAction(dataRequest))
       verify(featureGuard).check()
+    }
+
+    "call the subscription change group lead" in {
+      await(sut.onSubmit.skippingJourneyAction(dataRequest))
+      verify(subscriptionConnector).changeGroupLead(refEq(dataRequest.pptReference))(any)
     }
   }
   

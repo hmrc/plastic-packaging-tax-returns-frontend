@@ -17,18 +17,14 @@
 package support
 
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction
-import models.{subscription, SignedInUser}
 import models.requests.IdentityData
-import models.subscription.subscriptionDisplay.{
-  ChangeOfCircumstanceDetails,
-  SubscriptionDisplayResponse
-}
-import models.subscription.subscriptionUpdate.SubscriptionUpdateRequest
 import models.subscription._
+import models.subscription.subscriptionDisplay.{ChangeOfCircumstanceDetails, SubscriptionDisplayResponse}
+import models.{SignedInUser, subscription}
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime.now
@@ -190,29 +186,6 @@ object PptTestData {
                                   subscription.declaration,
                                 groupPartnershipSubscription =
                                   subscription.groupSubscription
-    )
-
-  def createSubscriptionUpdateRequest(
-    subscription: Subscription,
-    changeOfCircumstanceDetails: ChangeOfCircumstanceDetails
-  ) =
-    SubscriptionUpdateRequest(changeOfCircumstanceDetails = changeOfCircumstanceDetails,
-                              legalEntityDetails =
-                                subscription.legalEntityDetails,
-                              principalPlaceOfBusinessDetails =
-                                subscription.principalPlaceOfBusinessDetails,
-                              primaryContactDetails =
-                                subscription.primaryContactDetails,
-                              businessCorrespondenceDetails =
-                                subscription.businessCorrespondenceDetails,
-                              taxObligationStartDate =
-                                subscription.taxObligationStartDate,
-                              last12MonthTotalTonnageAmt =
-                                subscription.last12MonthTotalTonnageAmt.longValue(),
-                              declaration =
-                                subscription.declaration,
-                              groupPartnershipSubscription =
-                                subscription.groupSubscription
     )
 
 }

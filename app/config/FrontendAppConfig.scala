@@ -121,6 +121,9 @@ class FrontendAppConfig @Inject() (
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"
 
+  def pptChangeGroupLeadUrl(pptReference: String): String =
+    s"$pptServiceHost/change-group-lead/$pptReference"
+
   lazy val pptCompleteReturnGuidanceUrl: String =
     configuration.get[String]("urls.pptCompleteReturnGuidanceLink")
 
