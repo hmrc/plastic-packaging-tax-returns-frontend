@@ -29,7 +29,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
   def apply(): Form[NewGroupLeadAddressDetails] = Form(
      mapping(
        addressLine1 -> addressLineTextValidation(
-         addressLineRequiredKey,
+         addressLine1RequiredKey,
          addressLine1LengthKey,
          addressLine1InvalidCharKey
        ),
@@ -114,6 +114,7 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
 
   val addressLineRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
+  val addressLine1RequiredKey = "newGroupLeadEnterContactAddress.error.addressLine1.required"
   val addressLine1LengthKey = "newGroupLeadEnterContactAddress.error.addressLine1.length"
   val addressLine1InvalidCharKey = "newGroupLeadEnterContactAddress.error.addressLine1.invalid.line"
   val addressLine2LengthKey = "newGroupLeadEnterContactAddress.error.addressLine2.length"
