@@ -40,13 +40,10 @@ case class NewGroupLeadAddressDetails(
   def toBuffer: NewGroupLeadAddressDetailsFormBuffer = {
     val defined = Seq(Some(addressLine1), Some(addressLine2), addressLine3, addressLine4).flatten
 
-    defined.drop(1).dropRight(1).headOption // Seq(), Seq(2), Seq(2, 3)
-    defined.drop(2).dropRight(1).headOption // Seq(), Seq(2), Seq(2, 3)
-
     NewGroupLeadAddressDetailsFormBuffer(
       addressLine1 = defined.head,
-      addressLine2 = if(defined.length>2) defined.drop(1).headOption else None,
-      addressLine3 = if(defined.length>3) defined.drop(2).headOption else None,
+      addressLine2 = defined.drop(1).dropRight(1).headOption,
+      addressLine3 = defined.drop(2).dropRight(1).headOption,
       townOrCity = defined.last,
       postalCode = postalCode,
       countryCode = countryCode
