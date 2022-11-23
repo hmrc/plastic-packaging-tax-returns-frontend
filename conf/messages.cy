@@ -604,6 +604,15 @@ newGroupLeadCheckYourAnswers.sendYourRequest = Now send your request
 newGroupLeadCheckYourAnswers.body = By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.
 newGroupLeadCheckYourAnswers.button = Send change
 
+mainContactName.title = Who is the main contact for the organisation?
+mainContactName.heading = Who is the main contact for {0}?
+mainContactName.hint = This is the name of the person who will manage the group’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+mainContactName.checkYourAnswersLabel = Contact name
+mainContactName.change.hidden = Contact name
+mainContactName.error.required = Enter the name of the main contact
+mainContactName.error.length = Name must be 160 characters or fewer
+mainContactName.error.invalid = Name must only include letters, hyphens, spaces, apostrophes and full stops
+
 newGroupLeadConfirmation.title = The representative member will be changed
 newGroupLeadConfirmation.heading = The representative member will be changed
 newGroupLeadConfirmation.heading.2 = What you need to do now
@@ -625,7 +634,8 @@ newGroupLeadEnterContactAddress.addressLine3.label = Address line 3 (optional)
 newGroupLeadEnterContactAddress.addressLine4.label = Town or City
 newGroupLeadEnterContactAddress.postalCode.label = PostCode (required for UK addresses)
 newGroupLeadEnterContactAddress.countryCode.label = Country
-newGroupLeadEnterContactAddress.error.addressLine.required = Enter the contact address for your organisation
+newGroupLeadEnterContactAddress.error.addressLine1.required = Enter the first line of the organisation’s contact address
+newGroupLeadEnterContactAddress.error.addressLine2.required = Enter the second line of the organisation’s contact address
 newGroupLeadEnterContactAddress.error.addressLine4.required = Enter a town or city
 newGroupLeadEnterContactAddress.error.addressLine1.length = Address line 1 must be 35 characters or fewer
 newGroupLeadEnterContactAddress.error.addressLine2.length = Address line 2 must be 35 characters or fewer

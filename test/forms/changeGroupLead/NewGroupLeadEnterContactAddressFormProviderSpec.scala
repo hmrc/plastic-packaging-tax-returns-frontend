@@ -41,9 +41,9 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
   val table = Table(
     ("description", "fieldName", "maxStringLength", "requiresKey", "invalidKey", "maxLengthKey", "optionalOrMandatory"),
-    ("addressLine1 field", "addressLine1", maxLength, addressLineRequiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
-    ("addressLine2 field", "addressLine2", maxLength, addressLineRequiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
-    ("addressLine3 field", "addressLine3", maxLength, addressLineRequiredKey, invalidKey(3), maxLengthKey(3), "optional"),
+    ("addressLine1 field", "addressLine1", maxLength, addressLine1RequiredKey, invalidKey(1), maxLengthKey(1), "mandatory"),
+    ("addressLine2 field", "addressLine2", maxLength, addressLine2RequiredKey, invalidKey(2), maxLengthKey(2), "mandatory"),
+    ("addressLine3 field", "addressLine3", maxLength, "Not required", invalidKey(3), maxLengthKey(3), "optional"),
     ("addressLine4 field", "addressLine4", maxLength, addressLine4RequiredKey, invalidKey(4), maxLengthKey(4), "mandatory")
   )
 

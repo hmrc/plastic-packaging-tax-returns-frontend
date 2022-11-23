@@ -40,8 +40,8 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() mustBe s"What is $organisationName’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text() must include(messages("newGroupLeadEnterContactAddress.heading", organisationName))
+      view.select("title").text() mustBe s"What is the organisation’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
+      view.select("title").text() must include(messages("newGroupLeadEnterContactAddress.title"))
     }
 
     "have header" in {
@@ -115,14 +115,14 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
         ("fieldName", "errorRequiredMsg", "invalidCharMsg", "maxLengthMsg", "isMandatory"),
         (
           "addressLine1",
-          "Enter the contact address for your organisation",
+          "Enter the first line of the organisation’s contact address",
           "Address line 1 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
           "Address line 1 must be 35 characters or fewer",
           true
         ),
         (
           "addressLine2",
-          "Enter the contact address for your organisation",
+          "Enter the second line of the organisation’s contact address",
           "Address line 2 must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops",
           "Address line 2 must be 35 characters or fewer",
           true
