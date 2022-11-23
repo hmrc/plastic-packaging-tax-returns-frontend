@@ -22,13 +22,14 @@ import org.scalacheck.Arbitrary.arbitrary
 
 trait ModelGenerators {
 
+  //todo delete me?
   implicit lazy val arbitraryNewGroupLeadEnterContactAddress: Arbitrary[NewGroupLeadAddressDetails] =
     Arbitrary {
       for {
         addressLine1 <- arbitrary[String]
         addressLine2 <- arbitrary[String]
         addressLine3 <- arbitrary[Option[String]]
-        addressLine4 <- arbitrary[String]
+        addressLine4 <- arbitrary[Option[String]]
         postalCode <- arbitrary[Option[String]]
         countryCode <- arbitrary[String]
 

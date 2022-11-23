@@ -18,7 +18,7 @@ package forms.changeGroupLead
 
 import forms.ConditionalMapping
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider._
-import models.changeGroupLead.NewGroupLeadAddressDetails
+import models.changeGroupLead.{NewGroupLeadAddressDetails, NewGroupLeadAddressDetailsFormBuffer}
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.{Form, Mapping, OptionalMapping}
 import uk.gov.voa.play.form.{Condition, MandatoryOptionalMapping}
@@ -33,10 +33,9 @@ class NewGroupLeadEnterContactAddressFormProvider {
          addressLine1LengthKey,
          addressLine1InvalidCharKey
        ),
-       addressLine2 -> addressLineTextValidation(
-         addressLineRequiredKey,
-         addressLine2LengthKey,
-         addressLine2InvalidCharKey
+       addressLine2 -> optional(play.api.data.Forms.text)
+         .verifying(addressLine2LengthKey, _.forall(_.length <= maxAddressLineLength))
+         .verifying(addressLine2InvalidCharKey, _.forall(_.matches(addressLineRegExp))
        ),
        addressLine3 -> optional(play.api.data.Forms.text)
          .verifying(addressLine3LengthKey, _.forall(_.length <= maxAddressLineLength))
@@ -52,12 +51,13 @@ class NewGroupLeadEnterContactAddressFormProvider {
          optionalPostalCodeValidation
        ),
        countryCode -> countryCodeValidation
-    )(NewGroupLeadAddressDetails.apply)(NewGroupLeadAddressDetails.unapply)
+    )(NewGroupLeadAddressDetailsFormBuffer.apply)(NewGroupLeadAddressDetailsFormBuffer.unapply)
+       .transform[NewGroupLeadAddressDetails](_.toNewGroupLeadAddressDetails, _.toBuffer)
    )
 
   def mandatoryIfEqualOrOptional[T](fieldName: String, value: String, mapping: Mapping[T],
                                     opMapping: Mapping[T]): Mapping[Option[T]] = {
-    val condition: Condition = _.get(fieldName).map(_ == value).getOrElse(false)
+    val condition: Condition = _.get(fieldName).exists(_ == value)
     ConditionalMapping(condition,
       MandatoryOptionalMapping(mapping, Nil),
       OptionalMapping(opMapping,Nil),
@@ -94,7 +94,6 @@ class NewGroupLeadEnterContactAddressFormProvider {
       .verifying(postalCodeRequiredKey, _.isDefined)
       .transform[String](_.get, Some(_))
       .verifying(postalCodeRequiredKey, _.trim.nonEmpty)
-      .verifying(postalCodeMaxLengthKey, o => isInRange(5,8, o.length))
       .verifying(postalCodeMaxLengthKey, _.matches(postcodeRegex))
   }
 }
