@@ -35,7 +35,7 @@ class CountryService {
   val countries = parseCountriesResource()
 
   def tryLookupCountryName(code: String): String =
-    countries.getOrElse(code, code)
+    getAll.getOrElse(code, code)
 
   def getAll: Map[String, String] = countries
 

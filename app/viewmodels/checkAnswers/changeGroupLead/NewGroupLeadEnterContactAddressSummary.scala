@@ -22,18 +22,19 @@ import models.UserAnswers
 import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import services.CountryService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NewGroupLeadEnterContactAddressSummary extends SummaryViewModel {
+case class NewGroupLeadEnterContactAddressSummary(countryService: CountryService) extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NewGroupLeadEnterContactAddressPage).map {
       answer =>
-        val content = HtmlContent(answer.definedFields.map(HtmlFormat.escape).mkString("<br>"))
+        val content = HtmlContent(answer.definedFields(countryService).map(HtmlFormat.escape).mkString("<br>"))
 
         SummaryListRowViewModel(
           key     = "newGroupLeadCheckYourAnswers.contact.address.key",

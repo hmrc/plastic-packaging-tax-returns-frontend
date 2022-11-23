@@ -17,6 +17,7 @@
 package models.changeGroupLead
 
 import play.api.libs.json.{Json, OFormat}
+import services.CountryService
 
 
 case class NewGroupLeadAddressDetails(
@@ -26,15 +27,15 @@ case class NewGroupLeadAddressDetails(
   addressLine4: Option[String],
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
-){
-  def definedFields: Seq[String] =
+) {
+  def definedFields(countryService: CountryService) =
     Seq(
       Some(addressLine1),
       Some(addressLine2),
       addressLine3,
       addressLine4,
       postalCode,
-      Some(countryCode)
+      Some(countryService.tryLookupCountryName(countryCode))
     ).flatten
 
   def toBuffer: NewGroupLeadAddressDetailsFormBuffer = {
