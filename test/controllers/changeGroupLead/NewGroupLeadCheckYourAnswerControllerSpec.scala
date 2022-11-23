@@ -165,7 +165,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       addressLine1 = "line1",
       addressLine2 = "line1",
       addressLine3 = None,
-      addressLine4 = "Line4",
+      addressLine4 = Some("Line4"),
       postalCode = Some("NE5 4DL"),
       countryCode = countryCode
     )
