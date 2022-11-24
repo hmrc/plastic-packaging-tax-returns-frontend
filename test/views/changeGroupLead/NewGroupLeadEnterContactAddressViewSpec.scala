@@ -59,7 +59,7 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
       val table = Table(
         ("description", "id", "message", "key"),
         ("Address Line 1", "addressLine1", "Address line 1", "newGroupLeadEnterContactAddress.addressLine1.label"),
-        ("Address Line 2", "addressLine2", "Address line 2", "newGroupLeadEnterContactAddress.addressLine2.label"),
+        ("Address Line 2", "addressLine2", "Address line 2 (optional)", "newGroupLeadEnterContactAddress.addressLine2.label"),
         ("Address Line 3", "addressLine3", "Address line 3 (optional)", "newGroupLeadEnterContactAddress.addressLine3.label"),
         ("Address Line 4", "addressLine4", "Town or city", "newGroupLeadEnterContactAddress.addressLine4.label"),
         ("Postal Code", "postalCode", "Postcode (required for UK addresses)", "newGroupLeadEnterContactAddress.postalCode.label"),

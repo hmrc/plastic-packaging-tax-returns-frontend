@@ -34,10 +34,12 @@ class NewGroupLeadEnterContactAddressFormProvider {
          addressLine1InvalidCharKey
        ),
        addressLine2 -> optional(play.api.data.Forms.text)
+         .transform[Option[String]](_.map(_.trim).filter(_.nonEmpty), identity)
          .verifying(addressLine2LengthKey, _.forall(_.length <= maxAddressLineLength))
          .verifying(addressLine2InvalidCharKey, _.forall(_.matches(addressLineRegExp))
        ),
        addressLine3 -> optional(play.api.data.Forms.text)
+         .transform[Option[String]](_.map(_.trim).filter(_.nonEmpty), identity)
          .verifying(addressLine3LengthKey, _.forall(_.length <= maxAddressLineLength))
          .verifying(addressLine3InvalidCharKey, _.forall(_.matches(addressLineRegExp))
        ),
@@ -69,14 +71,11 @@ class NewGroupLeadEnterContactAddressFormProvider {
       .transform[String](_.get, Some(_))
       .verifying(postalCodeMaxLengthKey, _.length <= postalCodMaxLength)
   }
-  private def isInRange(min: Int, max: Int, length: Int) = {
-    min <= length && max >= length
-  }
 
   private def addressLineTextValidation(requiredKey: String, maxLengthKey: String, invalidCharacterKey: String) = {
     optional(play.api.data.Forms.text)
       .verifying(requiredKey, _.isDefined)
-      .transform[String](_.get, Some(_))
+      .transform[String](_.get.trim, Some(_).filter(_.nonEmpty))
       .verifying(requiredKey, _.trim.nonEmpty)
       .verifying(maxLengthKey, _.length <= maxAddressLineLength)
       .verifying(invalidCharacterKey, _.matches(addressLineRegExp))
@@ -92,8 +91,8 @@ class NewGroupLeadEnterContactAddressFormProvider {
   private def gbPostCodeValidation = {
     optional(play.api.data.Forms.text)
       .verifying(postalCodeRequiredKey, _.isDefined)
-      .transform[String](_.get, Some(_))
-      .verifying(postalCodeRequiredKey, _.trim.nonEmpty)
+      .transform[String](_.get.trim.toUpperCase, Some(_))
+      .verifying(postalCodeRequiredKey, _.nonEmpty)
       .verifying(postalCodeMaxLengthKey, _.matches(postcodeRegex))
   }
 }
