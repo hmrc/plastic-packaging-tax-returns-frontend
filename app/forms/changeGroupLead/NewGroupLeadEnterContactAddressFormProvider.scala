@@ -28,22 +28,14 @@ class NewGroupLeadEnterContactAddressFormProvider {
 
   def apply(): Form[NewGroupLeadAddressDetails] = Form(
      mapping(
-       addressLine1 -> addressLineTextValidation(
+       addressLine1 -> mandatoryAddressLineTextValidation(
          addressLine1RequiredKey,
          addressLine1LengthKey,
          addressLine1InvalidCharKey
        ),
-       addressLine2 -> optional(play.api.data.Forms.text)
-         .transform[Option[String]](_.map(_.trim).filter(_.nonEmpty), identity)
-         .verifying(addressLine2LengthKey, _.forall(_.length <= maxAddressLineLength))
-         .verifying(addressLine2InvalidCharKey, _.forall(_.matches(addressLineRegExp))
-       ),
-       addressLine3 -> optional(play.api.data.Forms.text)
-         .transform[Option[String]](_.map(_.trim).filter(_.nonEmpty), identity)
-         .verifying(addressLine3LengthKey, _.forall(_.length <= maxAddressLineLength))
-         .verifying(addressLine3InvalidCharKey, _.forall(_.matches(addressLineRegExp))
-       ),
-       addressLine4 -> addressLineTextValidation(
+       addressLine2 -> optionalAddressLineTextValidation(addressLine2LengthKey, addressLine2InvalidCharKey),
+       addressLine3 -> optionalAddressLineTextValidation(addressLine3LengthKey, addressLine3InvalidCharKey),
+       addressLine4 -> mandatoryAddressLineTextValidation(
          addressLine4RequiredKey,
          addressLine4LengthKey,
          addressLine4InvalidChar
@@ -72,7 +64,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
       .verifying(postalCodeMaxLengthKey, _.length <= postalCodMaxLength)
   }
 
-  private def addressLineTextValidation(requiredKey: String, maxLengthKey: String, invalidCharacterKey: String) = {
+  private def mandatoryAddressLineTextValidation(requiredKey: String, maxLengthKey: String, invalidCharacterKey: String) = {
     optional(play.api.data.Forms.text)
       .verifying(requiredKey, _.isDefined)
       .transform[String](_.get.trim, Some(_).filter(_.nonEmpty))
@@ -80,6 +72,12 @@ class NewGroupLeadEnterContactAddressFormProvider {
       .verifying(maxLengthKey, _.length <= maxAddressLineLength)
       .verifying(invalidCharacterKey, _.matches(addressLineRegExp))
   }
+
+  private def optionalAddressLineTextValidation(maxLengthKey: String, invalidCharacterKey: String) =
+    optional(play.api.data.Forms.text)
+      .transform[Option[String]](_.map(_.trim).filter(_.nonEmpty), identity)
+      .verifying(maxLengthKey, _.forall(_.length <= maxAddressLineLength))
+      .verifying(invalidCharacterKey, _.forall(_.matches(addressLineRegExp)))
 
   private def countryCodeValidation = {
     optional(play.api.data.Forms.text)
