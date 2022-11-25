@@ -70,6 +70,12 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
             form,
             fieldName,
             requiredError = FormError(fieldName, requiresKey))
+
+          "not bind white space only values" in {
+
+            val result = form.bind(Map(fieldName -> " \t")).apply(fieldName)
+            result.errors mustEqual Seq(FormError(fieldName, requiresKey))
+          }
         }
 
         if(optionalOrMandatory.equals("optional")) {
@@ -84,7 +90,13 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
             val result = form.bind(Map(fieldName -> "")).apply(fieldName)
 
             result.errors mustEqual Seq()
-            result.value mustBe Some("")
+            result.value mustBe Some("") //this isnt right, it should be None, but the dodgy apply doesn't do the transformations
+          }
+
+          s"$description does not error when binding white space only values" in {
+            val result = form.bind(Map(fieldName -> " \t")).apply(fieldName)
+
+            result.value mustBe Some(" \t") //this isnt right, it should be None, but the dodgy apply doesn't do the transformations
           }
         }
 
@@ -96,9 +108,9 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
         }
 
         s"$description can include space" in {
-          val result = form.bind(Map(fieldName -> "ne5 6th")).apply(fieldName)
+          val result = form.bind(Map(fieldName -> "address line")).apply(fieldName)
 
-          result.value.value mustBe "ne5 6th"
+          result.value.value mustBe "address line"
           result.errors mustBe empty
         }
 
@@ -134,10 +146,24 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
     "when is mandatory (countryCode is GB)" - {
       "must bind valid data" in {
-        val result = form.bind(Map(fieldName -> "NE4 7FG")).apply(fieldName)
+        val result = form.bind(Map(countryCode -> "GB", fieldName -> "NE4 7FG")).apply(fieldName)
 
         result.value.value mustBe "NE4 7FG"
         result.errors mustBe empty
+      }
+
+      "must not error and bind valid data with extra spaces" in {
+        val result = form.bind(Map(countryCode -> "GB", fieldName -> " NE4 7FG")).apply(fieldName)
+
+        result.errors mustBe empty
+        result.value.value mustBe " NE4 7FG" //this isnt right, it should be "NE4 7FG", but the dodgy apply doesn't do the transformations
+      }
+
+      "must not error and bind valid data with lower case" in {
+        val result = form.bind(Map(countryCode -> "GB", fieldName -> "ne4 7fg")).apply(fieldName)
+
+        result.errors mustBe empty
+        result.value.value mustBe "ne4 7fg" //this isnt right, it should be "NE4 7FG", but the dodgy apply doesn't do the transformations
       }
 
       "must error when empty" in {
@@ -159,7 +185,6 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
         ("description", "postalCode"),
         ("must have maximum length of 8", "ND4 6TYH"),
         ("must have minimum length of 5", "N5 1N"),
-        ("must not include lower character", "Ne5 7TH"),
         ("must not be a whole number", "123456")
       )
 
