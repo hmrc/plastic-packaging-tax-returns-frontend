@@ -29,7 +29,7 @@ import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownB
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -75,6 +75,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         verify(timerContext).stop()
       }
       "amending a return" in {
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(mock[HttpResponse])
         await(connector.amend("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
@@ -127,23 +128,23 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     "Amend" when {
       
       "in all cases" in {
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(mock[HttpResponse])
         when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn "return-amend-url"
         await(connector.amend("ppt-reference"))
         verify(frontendAppConfig).pptReturnAmendUrl("ppt-reference")
-        verify(httpClient2).GET(meq("return-amend-url"), any, any)(any, any, any)
+        verify(httpClient2).POSTEmpty(meq("return-amend-url"), any)(any, any, any)
       }
 
       "there is a charge reference" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
-          Json.parse("""{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+          HttpResponse(200, """{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
         )
         await(connector.amend("ppt-reference")) mustBe Some("SOMEREF")
       }
 
       "there is no charge reference" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
-          Json.parse("""{"chargeDetails": null}""")
-        )
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn
+          Future.successful(HttpResponse(200, """{"chargeDetails": null}"""))
         await(connector.amend("ppt-reference")) mustBe None
       }
     }
@@ -164,7 +165,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
 
       "amend response cannot be parsed" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
           message = "exception-message", upstreamResponseCode = 500, reportAs = 500
         ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
