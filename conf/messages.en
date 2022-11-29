@@ -638,6 +638,7 @@ newGroupLeadEnterContactAddress.error.postalCode.required = Enter the postcode f
 newGroupLeadEnterContactAddress.error.countryCode.required = Enter a country
 newGroupLeadEnterContactAddress.error.countryCode.length = Country must be 35 characters or fewer
 newGroupLeadEnterContactAddress.error.countryCode.invalid = Country must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops
+newGroupLeadEnterContactAddress.error.nonUkPostCode.length = Postcode must be 10 characters or fewer
 
 mainContactJobTitle.title = What is the main contact’s job title?
 mainContactJobTitle.heading = What is {0}’s job title?
