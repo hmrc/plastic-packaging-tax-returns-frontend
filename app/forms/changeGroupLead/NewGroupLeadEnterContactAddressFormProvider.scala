@@ -61,7 +61,7 @@ class NewGroupLeadEnterContactAddressFormProvider {
   private def optionalPostalCodeValidation = {
     optional(text)
       .transform[String](_.get, Some(_))
-      .verifying(postalCodeMaxLengthKey, _.length <= postalCodMaxLength)
+      .verifying(nonUkPostalCodeMaxLengthKey, _.length <= postalCodeMaxLength)
   }
 
   private def mandatoryAddressLineTextValidation(requiredKey: String, maxLengthKey: String, invalidCharacterKey: String) = {
@@ -106,7 +106,7 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val addressLineRegExp = "^[A-Za-z0-9-`,.&'\\s]*$"
   val maxAddressLineLength = 35
 
-  val postalCodMaxLength = 35
+  val postalCodeMaxLength = 10
   val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
 
   val addressLineRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
@@ -121,6 +121,7 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val addressLine4LengthKey = "newGroupLeadEnterContactAddress.error.addressLine4.length"
   val addressLine4InvalidChar = "newGroupLeadEnterContactAddress.error.addressLine4.invalid.line"
   val postalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.postalCode.inRange"
+  val nonUkPostalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.nonUkPostCode.length"
   val postalCodeRequiredKey = "newGroupLeadEnterContactAddress.error.postalCode.required"
   val countryCodeRequiredKey = "newGroupLeadEnterContactAddress.error.countryCode.required"
   val countryCodeLengthKey = "newGroupLeadEnterContactAddress.error.countryCode.length"

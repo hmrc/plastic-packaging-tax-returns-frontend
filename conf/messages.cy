@@ -649,6 +649,7 @@ newGroupLeadEnterContactAddress.error.postalCode.required = Nodwch god post eich
 newGroupLeadEnterContactAddress.error.countryCode.required = Nodwch wlad
 newGroupLeadEnterContactAddress.error.countryCode.length = Mae’n rhaid i’r wlad gynnwys 35 o gymeriadau neu lai
 newGroupLeadEnterContactAddress.error.countryCode.invalid = Mae’n rhaid i’r wlad gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.nonUkPostCode.length = Postcode must be 10 characters or fewer
 
 mainContactJobTitle.title = Beth yw teitl swydd y prif gyswllt?
 mainContactJobTitle.heading = Beth yw teitl swydd {0}?

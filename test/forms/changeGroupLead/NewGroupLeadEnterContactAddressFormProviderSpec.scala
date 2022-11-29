@@ -242,7 +242,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
 
     "when is optional (countryCode is not GB or empty)" - {
 
-      val postalCodMaxLength = 35
+      val postalCodeMaxLength = 10
 
       val optionalTable = Table(
         ("description", "countryValue"),
@@ -276,12 +276,12 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
             result.errors mustBe empty
           }
 
-          s"must have maximum length of 35 when countryCode is $description" in {
-            val result = form.bind(Map(fieldName -> List.fill(postalCodMaxLength + 1)("b").mkString, countryCode -> countryCode))
+          s"must have maximum length of 10 when countryCode is $description" in {
+            val result = form.bind(Map(fieldName -> List.fill(postalCodeMaxLength + 1)("b").mkString, countryCode -> countryCode))
               .apply(fieldName)
 
             result.errors.head.key mustEqual fieldName
-            result.errors.head.message mustEqual postalCodeMaxLengthKey
+            result.errors.head.message mustEqual nonUkPostalCodeMaxLengthKey
           }
       }
     }
