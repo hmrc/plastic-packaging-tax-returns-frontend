@@ -72,7 +72,7 @@ class TaxReturnsConnector @Inject()(
   def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
+    httpClient.POSTEmpty[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
