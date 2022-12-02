@@ -23,7 +23,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream4xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream4xxResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,7 +72,7 @@ class TaxReturnsConnector @Inject()(
   def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
+    httpClient.POSTEmpty[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
       .andThen { case _ => timer.stop() }
       .map { returnJson =>
         val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
@@ -90,10 +90,10 @@ class TaxReturnsConnector @Inject()(
   def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.GET[JsValue](frontendAppConfig.pptReturnAmendUrl(pptReference))
+    httpClient.POSTEmpty[HttpResponse](frontendAppConfig.pptReturnAmendUrl(pptReference))
       .andThen { case _ => timer.stop() }
-      .map { returnJson =>
-        val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
+      .map { response =>
+        val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
         logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
         chargeReference
       }
