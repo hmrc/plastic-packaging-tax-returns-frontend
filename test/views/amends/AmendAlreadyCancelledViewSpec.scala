@@ -18,32 +18,36 @@ package views.amends
 
 import base.ViewSpecBase
 import support.ViewMatchers
-import views.html.amends.AmendCancelledView
+import views.html.amends.AmendAlreadyCancelledView
 
 
-class AmendCancelledViewSpec extends ViewSpecBase with ViewMatchers {
+class AmendAlreadyCancelledViewSpec extends ViewSpecBase with ViewMatchers {
 
-  private val page = inject[AmendCancelledView]
+  private val page = inject[AmendAlreadyCancelledView]
 
   "View" should {
     val view = page()(request, messages)
 
     "have a title" in {
       view.select("title").text() mustBe "You have cancelled amending this return - Submit return - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text() must include(messages("amendCancelledView.heading"))
+      view.select("title").text() must include(messages("amendAlreadyCancelledView.heading"))
     }
 
     "have a header" in {
       view.select("h1").text() mustBe "You have cancelled amending this return"
-      view.select("h1").text() mustBe messages("amendCancelledView.heading")
+      view.select("h1").text() mustBe messages("amendAlreadyCancelledView.heading")
     }
 
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text() must include("You can:")
+      view.getElementsByClass("govuk-body").text() must include(messages("amendAlreadyCancelledView.para"))
 
       val listText = view.getElementsByClass("govuk-list").select("a").text()
       listText must include("go to your Plastic Packaging Tax account")
+      listText must include(messages("amendAlreadyCancelledView.link-text.1"))
+
       listText must include("view or amend all submitted returns")
+      listText must include(messages("amendAlreadyCancelledView.link-text.2"))
     }
 
     "have a link to the tax account page" in {

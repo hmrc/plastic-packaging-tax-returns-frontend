@@ -26,15 +26,15 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("amendCancelledView.heading"), Some(messages("return.title.tail"))), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("amendAlreadyCancelledView.heading"), Some(messages("return.title.tail"))), showBackLink = false) {
 
- @heading("amendCancelledView.heading")
+ @heading("amendAlreadyCancelledView.heading")
 
- @paragraphBody(messages("amendCancelledView.para"))
+ @paragraphBody(messages("amendAlreadyCancelledView.para"))
  @bulletList(elements = Seq(
-   link("account-link", messages("amendCancelledView.link-text.1"),
+   link("account-link", messages("amendAlreadyCancelledView.link-text.1"),
    controllers.routes.IndexController.onPageLoad),
-   link("view-return-link", messages("amendCancelledView.link-text.2"),
+   link("view-return-link", messages("amendAlreadyCancelledView.link-text.2"),
    controllers.amends.routes.SubmittedReturnsController.onPageLoad)
  ))
 

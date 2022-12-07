@@ -18,11 +18,11 @@ package views.amends
 
 import base.ViewSpecBase
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.amends.AmendCancelledView
+import views.html.amends.AmendAlreadyCancelledView
 
-class AmendCancelledViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class AmendAlreadyCancelledViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  private val page = inject[AmendCancelledView]
+  private val page = inject[AmendAlreadyCancelledView]
 
   private def render: String = {
     page()(request, messages).toString()

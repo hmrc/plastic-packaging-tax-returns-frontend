@@ -37,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import queries.Gettable
-import views.html.amends.{AmendCancelledView, CancelAmendView}
+import views.html.amends.{AmendAlreadyCancelledView, CancelAmendView}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,7 +60,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
   private val cacheConnector = mock[CacheConnector]
   private val journeyAction = mock[JourneyAction]
   private val cancelAmendView = mock[CancelAmendView]
-  private val amendCancelledView = mock[AmendCancelledView]
+  private val amendAlreadyCancelledView = mock[AmendAlreadyCancelledView]
   private val formProvider = mock[CancelAmendFormProvider]
   private val messages = mock[Messages]
 
@@ -71,7 +71,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     formProvider,
     stubMessagesControllerComponents(),
     cancelAmendView,
-    amendCancelledView
+    amendAlreadyCancelledView
   )
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -80,7 +80,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
       messagesApi,
       journeyAction,
       cancelAmendView,
-      amendCancelledView,
+      amendAlreadyCancelledView,
       dataRequest,
       userAnswer
     )
@@ -129,14 +129,14 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
       verify(cancelAmendView).apply(meq(form), meq(aTaxObligation))(any,any)
     }
 
-    "display the AmendCancelledView page" in {
-      when(amendCancelledView.apply()(any,any)).thenReturn(HtmlFormat.empty)
+    "display the amendAlreadyCancelledView page" in {
+      when(amendAlreadyCancelledView.apply()(any,any)).thenReturn(HtmlFormat.empty)
       when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
       status(result) mustBe OK
-      verify(amendCancelledView).apply()(any,any)
+      verify(amendAlreadyCancelledView).apply()(any,any)
     }
   }
 
@@ -157,7 +157,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
         saveUserAnswerToCache = Some(a)
         Future.successful(true)
       })
-      when(amendCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
+      when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
 
       await(sut.onSubmit(dataRequest))
 
@@ -173,13 +173,13 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
       status(result) mustEqual OK
     }
 
-    "return the amendCancelledView" in {
+    "return the amendAlreadyCancelledView" in {
       setUpMocks
 
       val result = sut.onSubmit(dataRequest)
 
       status(result) mustEqual OK
-      verify(amendCancelledView).apply()(any,any)
+      verify(amendAlreadyCancelledView).apply()(any,any)
     }
 
     "redirect to check your answer page if not cancelled" in {
@@ -220,7 +220,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     when(userAnswer.reset).thenReturn(userAnswer)
     when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
     when(dataRequest.request.pptReference) thenReturn ("123")
-    when(amendCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
+    when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
     when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(true))
     when(formProvider.apply()).thenReturn(form)
   }

@@ -27,7 +27,7 @@ import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Redirect}
 import play.api.mvc._
-import views.html.amends.{AmendCancelledView, CancelAmendView}
+import views.html.amends.{AmendAlreadyCancelledView, CancelAmendView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,13 +39,13 @@ class CancelAmendController @Inject()
  formProvider: CancelAmendFormProvider,
  val controllerComponents: MessagesControllerComponents,
  cancelAmendView: CancelAmendView,
- amendCancelledView: AmendCancelledView
+ amendAlreadyCancelledView: AmendAlreadyCancelledView
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
       request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
-        .fold(Results.Ok(amendCancelledView()))(
+        .fold(Results.Ok(amendAlreadyCancelledView()))(
           o => Results.Ok(cancelAmendView(formProvider(), o))
         )
 
@@ -72,6 +72,6 @@ class CancelAmendController @Inject()
     request.userAnswers
       .reset
       .save(cacheConnector.saveUserAnswerFunc(request.request.pptReference))
-      .map { _ => Results.Ok(amendCancelledView()) }
+      .map { _ => Results.Ok(amendAlreadyCancelledView()) }
   }
 }
