@@ -1,0 +1,41 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import components.{heading, bulletList, Link, paragraphBody}
+
+@this(
+    layout: templates.Layout,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    link: Link,
+    bulletList: bulletList
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("amendCancelledView.heading"), Some(messages("return.title.tail"))), showBackLink = false) {
+
+ @heading("amendCancelledView.heading")
+
+ @paragraphBody(messages("amendCancelledView.para"))
+ @bulletList(elements = Seq(
+   link("account-link", messages("amendCancelledView.link-text.1"),
+   controllers.routes.IndexController.onPageLoad),
+   link("view-return-link", messages("amendCancelledView.link-text.2"),
+   controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+ ))
+
+}

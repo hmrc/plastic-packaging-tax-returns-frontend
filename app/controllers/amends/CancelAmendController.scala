@@ -16,16 +16,18 @@
 
 package controllers.amends
 
-import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey}
+import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.CancelAmendFormProvider
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import models.returns.TaxReturnObligation
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.amends.CancelAmendView
+import play.api.mvc.Results.{BadRequest, Redirect}
+import play.api.mvc._
+import views.html.amends.{AmendCancelledView, CancelAmendView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,21 +35,23 @@ import scala.concurrent.{ExecutionContext, Future}
 class CancelAmendController @Inject()
 (override val messagesApi: MessagesApi,
  cacheConnector: CacheConnector,
- identify: IdentifierAction,
- getData: DataRetrievalAction,
- requireData: DataRequiredAction,
+ journeyAction: JourneyAction,
  formProvider: CancelAmendFormProvider,
  val controllerComponents: MessagesControllerComponents,
- view: CancelAmendView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+ cancelAmendView: CancelAmendView,
+ amendCancelledView: AmendCancelledView
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify.andThen(getData).andThen(requireData) {
+  def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
-      val maybeObligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
-      Ok(view(formProvider(), maybeObligation))
+      request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
+        .fold(Results.Ok(amendCancelledView()))(
+          o => Results.Ok(cancelAmendView(formProvider(), o))
+        )
+
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
 
       val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
@@ -55,7 +59,7 @@ class CancelAmendController @Inject()
       )
 
       formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, Some(obligation)))),
+        formWithErrors => Future.successful(BadRequest(cancelAmendView(formWithErrors, obligation))),
         value => if (value) {
           cancel(request)
         } else {
@@ -65,18 +69,9 @@ class CancelAmendController @Inject()
   }
 
   def cancel(implicit request: DataRequest[_]): Future[Result] = {
-    val pptReference = request.request.pptReference
-    val maybePeriodKey = request.userAnswers.get(AmendSelectedPeriodKey)
-    val futureNextPage = request.userAnswers
+    request.userAnswers
       .reset
-      .save(cacheConnector.saveUserAnswerFunc(pptReference))
-      .map { _ =>
-        maybePeriodKey match {
-          case Some(periodKey) => routes.ViewReturnSummaryController.onPageLoad(periodKey)
-          case _ => routes.SubmittedReturnsController.onPageLoad()
-        }
-      }
-    futureNextPage.map(Redirect)
+      .save(cacheConnector.saveUserAnswerFunc(request.request.pptReference))
+      .map { _ => Results.Ok(amendCancelledView()) }
   }
-
 }

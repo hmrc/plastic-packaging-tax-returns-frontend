@@ -111,10 +111,11 @@ unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 
 cancelAmend.title = Ydych chi’n siŵr eich bod am ganslo diwygio eich datganiad ar gyfer mis {0} i fis {1} {2}?
 cancelAmend.error.required = Dewiswch ‘Iawn’ os hoffech ganslo diwygio’ch Ffurflen Dreth
-cancelAmend.already-cancelled.title = You have cancelled amending this return
-cancelAmend.already-cancelled.para = You can:
-cancelAmend.already-cancelled.link-text.1 = go to your Plastic Packaging Tax account  
-cancelAmend.already-cancelled.link-text.2 = view or amend all submitted returns 
+
+amendCancelledView.heading = You have cancelled amending this return
+amendCancelledView.para = Gallwch wneud y canlynol:
+amendCancelledView.link-text.1 = mynd i’ch cyfrif Treth Deunydd Pacio Plastig
+amendCancelledView.link-text.2 = bwrw golwg dros neu ddiwygio’r holl Ffurflenni Treth a gyflwynwyd
 
 amendDirectExportPlasticPackaging.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?

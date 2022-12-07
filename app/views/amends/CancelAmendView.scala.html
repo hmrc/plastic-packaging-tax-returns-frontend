@@ -33,22 +33,21 @@
     link: Link,
     bulletList: bulletList
 )
-@(form: Form[_], maybeObligation: Option[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
 @pageHeading = @{
-    maybeObligation match {
-        case Some(obligation) =>
-            messages("cancelAmend.title",
-                messages(s"month.${obligation.fromDate.getMonthValue}"),
-                messages(s"month.${obligation.toDate.getMonthValue}"),
-                obligation.toDate.getYear.toString)
-        case _ =>
-            messages("cancelAmend.already-cancelled.title")
-    }
+
+    messages(
+        "cancelAmend.title",
+        messages(s"month.${obligation.fromDate.getMonthValue}"),
+        messages(s"month.${obligation.toDate.getMonthValue}"),
+        obligation.toDate.getYear.toString
+    )
 }
 
-@cancelFormContent() = {
-    @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
+@layout(pageTitle = title(form, pageHeading, Some(messages("return.title.tail"))), showBackLink = false) {
+
+     @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
@@ -62,26 +61,4 @@
             ButtonViewModel(messages("site.button.continue"))
         )
     }
-}
-
-@alreadyCancelledContent() = {
-    @heading(pageHeading)
-    @paragraphBody(messages("cancelAmend.already-cancelled.para"))
-    @bulletList(elements = Seq(
-        link("account-link", messages("cancelAmend.already-cancelled.link-text.1"), 
-            controllers.routes.IndexController.onPageLoad), 
-        link("view-return-link", messages("cancelAmend.already-cancelled.link-text.2"), 
-            controllers.amends.routes.SubmittedReturnsController.onPageLoad)
-    ))
-}
-    
-@layout(pageTitle = title(form, pageHeading), showBackLink = false) {
-    
-    @{
-        maybeObligation match {
-            case Some(_) => cancelFormContent()
-            case _ => alreadyCancelledContent()
-        }
-    } 
-
 }

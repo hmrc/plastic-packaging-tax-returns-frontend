@@ -36,16 +36,16 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
     LocalDate.of(2023,1,5),
     "PK1")
 
-  private def createView: Html =
-    page(form, Some(aTaxObligation))(request, messages)
+  private def createView(taxObligation: TaxReturnObligation): Html =
+    page(form, taxObligation)(request, messages)
 
-  "CancelAmendView" should {
-    val view = createView
+  "CancelAmendView Yes and No page" should {
+    val view = createView(aTaxObligation)
 
     "have a title" in {
 
       view.select("title").text mustBe
-        "Are you sure you want to cancel amending your return for July to October 2022? - Plastic Packaging Tax - GOV.UK"
+        "Are you sure you want to cancel amending your return for July to October 2022? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
     "have a heading" in{
@@ -63,5 +63,4 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
     }
 
   }
-
 }
