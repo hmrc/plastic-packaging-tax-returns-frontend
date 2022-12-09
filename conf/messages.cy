@@ -413,6 +413,7 @@ submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plasti
 help.not.include = enghreifftiau o bethau na ddylech eu cynnwys
 
 startYourReturn.title = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
+tartYourReturn.firstReturn.title = Your tax start date is {0}. Do you want to start your return for {1} to {2} {3} accounting period?
 startYourReturn.heading = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
 startYourReturn.error.required = Dewiswch ‘Iawn’ os hoffech ddechrau’ch Ffurflen Dreth
 startYourReturn.first.obligation.hint = Rhowch fanylion o’ch dyddiad dechrau treth tan ddiwedd y cyfnod cyfrifyddu yn unig.

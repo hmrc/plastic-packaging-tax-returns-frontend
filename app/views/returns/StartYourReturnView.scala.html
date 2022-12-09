@@ -17,6 +17,7 @@
 @import models.returns.TaxReturnObligation
 @import components.heading
 @import templates.YesNoLayout
+@import views.ViewUtils
 
 @this(
     layout: templates.Layout,
@@ -26,12 +27,32 @@
 
 @(form: Form[Boolean], obligation: TaxReturnObligation, isFirst: Boolean)(implicit request: Request[_], messages: Messages)
 
-@pageTitle =  @{messages("startYourReturn.title",
-               messages(s"month.${obligation.fromDate.getMonthValue}"),
-               messages(s"month.${obligation.toDate.getMonthValue}"),
-               obligation.toDate.getYear.toString)}
+@returnPageTitle =  @{
+    messages("startYourReturn.title",
+    messages(s"month.${obligation.fromDate.getMonthValue}"),
+    messages(s"month.${obligation.toDate.getMonthValue}"),
+    obligation.toDate.getYear.toString)
+}
+
+@firstReturnPageTitle = @{
+    messages(
+        "startYourReturn.firstReturn.title",
+        ViewUtils.displayLocalDate(obligation.fromDate),
+        ViewUtils.displayLocalDate(obligation.fromDate),
+        messages(s"month.${obligation.toDate.getMonthValue}"),
+        obligation.toDate.getYear.toString
+    )
+}
 
 @hintText =  @{ if(isFirst) Some(messages("startYourReturn.first.obligation.hint")) else None }
+
+@pageTitle = @{
+    if(isFirst) {
+        firstReturnPageTitle
+    } else {
+        returnPageTitle
+    }
+}
 
 @layout(pageTitle = title(form, pageTitle, Some(messages("return.title.tail")))) {
 

@@ -19,6 +19,7 @@ package views.returns
 import base.ViewSpecBase
 import forms.returns.StartYourReturnFormProvider
 import models.returns.TaxReturnObligation
+import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.StartYourReturnView
@@ -36,29 +37,75 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
     LocalDate.of(2023,1,5),
     "PK1")
 
-  private def createView: Html =
-    page(form, aTaxObligation, true)(request, messages)
+  private def createView(form: Form[Boolean] = form, isFirstReturn: Boolean): Html =
+    page(form, aTaxObligation, isFirstReturn)(request, messages)
 
   "StartYourReturnView" should {
-    val view = createView
 
-    "have a title" in {
+    "when not first return" when {
+      val view = createView(isFirstReturn = false)
 
-      view.select("title").text mustBe
-        "Do you want to start your return for the July to October 2022 accounting period? - Submit return - Plastic Packaging Tax - GOV.UK"
+      "have a title" in {
+        view.select("title").text mustBe
+          "Do you want to start your return for the July to October 2022 accounting period? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("startYourReturn.title", "July", "October", "2022"))
+      }
 
+      "have a heading" in {
+        view.select("h1").text mustBe
+          "Do you want to start your return for the July to October 2022 accounting period?"
+
+      }
     }
-    "have a heading" in{
 
-      view.select("h1").text mustBe
-        "Do you want to start your return for the July to October 2022 accounting period?"
+    "when is first return"  when {
+      val view = createView(isFirstReturn = true)
 
+      "have a title" in {
+        view.select("title").text mustBe
+          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to October 2022 accounting period? - Submit return - Plastic Packaging Tax - GOV.UK"
+
+        view.select("title").text must include(
+          messages(
+            "startYourReturn.firstReturn.title",
+            "5 July 2022",
+            "5 July 2022",
+            "October",
+            "2022"
+          ))
+      }
+
+      "have a heading" in {
+        view.select("h1").text mustBe
+          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to October 2022 accounting period?"
+
+        view.select("h1").text must include(
+          messages(
+            "startYourReturn.firstReturn.title",
+            "5 July 2022",
+            "5 July 2022",
+            "October",
+            "2022"
+          ))
+
+      }
     }
+
 
     "contain save & continue button" in {
+      createView(isFirstReturn = true).getElementsByClass("govuk-button").text() mustBe
+        "Save and continue"
+    }
 
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+    "error" when {
+      "answer not selected" in {
+        val view = createView(form.bind(Map("value" -> "")), true)
 
+        view.getElementsByClass("govuk-error-summary__body").text() must
+          include("Select yes if you want to start your return")
+
+        view.getElementById("value-error").text() must include("Select yes if you want to start your return")
+      }
     }
 
   }
