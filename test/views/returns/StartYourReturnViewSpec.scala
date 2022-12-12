@@ -63,29 +63,27 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
 
       "have a title" in {
         view.select("title").text mustBe
-          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to October 2022 accounting period? - Submit return - Plastic Packaging Tax - GOV.UK"
+          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to 5 October 2022? - Submit return - Plastic Packaging Tax - GOV.UK"
 
         view.select("title").text must include(
           messages(
             "startYourReturn.firstReturn.title",
             "5 July 2022",
             "5 July 2022",
-            "October",
-            "2022"
+            "5 October 2022"
           ))
       }
 
       "have a heading" in {
         view.select("h1").text mustBe
-          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to October 2022 accounting period?"
+          "Your tax start date is 5 July 2022. Do you want to start your return for 5 July 2022 to 5 October 2022?"
 
         view.select("h1").text must include(
           messages(
             "startYourReturn.firstReturn.title",
             "5 July 2022",
             "5 July 2022",
-            "October",
-            "2022"
+            "5 October 2022"
           ))
 
       }

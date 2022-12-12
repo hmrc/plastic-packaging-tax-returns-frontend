@@ -39,8 +39,7 @@
         "startYourReturn.firstReturn.title",
         ViewUtils.displayLocalDate(obligation.fromDate),
         ViewUtils.displayLocalDate(obligation.fromDate),
-        messages(s"month.${obligation.toDate.getMonthValue}"),
-        obligation.toDate.getYear.toString
+        ViewUtils.displayLocalDate(obligation.toDate)
     )
 }
 
