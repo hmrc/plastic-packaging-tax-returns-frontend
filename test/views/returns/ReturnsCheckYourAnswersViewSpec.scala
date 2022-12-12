@@ -43,9 +43,12 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
   private val appConfig                      = mock[FrontendAppConfig]
 
-  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.of(2022, 4, 1),
+    LocalDate.of(2022, 6, 30),
+    LocalDate.of(2022, 8,1), "PK1")
 
-  private val userAnswer = UserAnswers("123")
+  private val userAnswer = UserAnswers("reg-number")
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
     .set(DirectlyExportedComponentsPage, false).get
@@ -63,7 +66,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       .overrides(bind[FrontendAppConfig].toInstance(appConfig)).build()
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("123"))
+    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("reg-number"))
     val dataRequest: DataRequest[_]             = DataRequest(identifiedRequest, answers)
 
     TaxReturnViewModel(dataRequest, aTaxObligation, calculations)
@@ -86,6 +89,36 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       getText(view, "credit-section-header") mustBe "Credits"
       getText(view, "credit-section-header") mustBe
         messages("submit-return.check-your-answers.credits.heading")
+    }
+  }
+
+  "display Business details section" should {
+    val view = createView()
+
+    "display header" in {
+      view.select("h2").get(1).text() mustBe "Business details"
+      view.select("h2").get(1).text() mustBe messages("submit-return.check-your-answers.business-details.heading")
+    }
+
+    "display the registration number" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Plastic Packaging Tax registration number")
+      text must include(messages("submit-return.check-your-answers.business-details.row1"))
+      text must include("reg-number")
+    }
+
+    "display return period start date" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Return period start date")
+      text must include(messages("submit-return.check-your-answers.business-details.periodStartDate"))
+      text must include("1 April 2022")
+    }
+
+    "display return period end date" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Return period end date")
+      text must include(messages("submit-return.check-your-answers.business-details.periodEndDate"))
+      text must include("30 June 2022")
     }
   }
 

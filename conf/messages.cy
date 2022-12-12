@@ -464,7 +464,8 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Mae’n 
 submit-return.check-your-answers.heading = Gwiriwch eich atebion cyn anfon eich Ffurflen Dreth
 submit-return.check-your-answers.business-details.heading = Manylion y busnes
 submit-return.check-your-answers.business-details.row1 = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-submit-return.check-your-answers.business-details.row2 = Cyfnod y Ffurflen Dreth
+submit-return.check-your-answers.business-details.periodStartDate = Return period start date
+submit-return.check-your-answers.business-details.periodEndDate = Return period end date
 submit-return.check-your-answers.rest-of-return.heading = Eich Ffurflen Dreth
 
 submit-return.check-your-answers.packaging-total.heading = Cyfanswm y deunydd pacio plastig

@@ -115,7 +115,8 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowWithWideValue("business-details.row1", taxReturn.request.pptReference),
-            summaryRowWithWideValue("business-details.row2", taxReturn.obligation.toReturnQuarter),
+            summaryRowWithWideValue("business-details.periodStartDate", taxReturn.startDatePrettyPrint),
+            summaryRowWithWideValue("business-details.periodEndDate", taxReturn.endDatePrettyPrint),
         )
     ))
 

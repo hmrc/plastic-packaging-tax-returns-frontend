@@ -452,7 +452,8 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Weight m
 submit-return.check-your-answers.heading = Check your answers before sending your tax return
 submit-return.check-your-answers.business-details.heading = Business details
 submit-return.check-your-answers.business-details.row1 = Plastic Packaging Tax registration number
-submit-return.check-your-answers.business-details.row2 = Return period
+submit-return.check-your-answers.business-details.periodStartDate = Return period start date
+submit-return.check-your-answers.business-details.periodEndDate = Return period end date
 submit-return.check-your-answers.rest-of-return.heading = Your return
 
 submit-return.check-your-answers.packaging-total.heading = Total plastic packaging

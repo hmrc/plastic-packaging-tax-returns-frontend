@@ -216,7 +216,4 @@ class CreateReturnA11ySpec
       Seq(ConfirmManufacturedPlasticPackaging).flatMap(_.row(answer))
     )
   }
-
-  //TODO: Add spec for ReturnsCheckYourAnswersView once refactored
-
 }
