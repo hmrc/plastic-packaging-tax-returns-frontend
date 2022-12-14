@@ -58,22 +58,6 @@ class CreateReturnA11ySpec
 
   }
 
-  "StartYourReturnView" should {
-    val form = new StartYourReturnFormProvider()()
-    val page = inject[StartYourReturnView]
-
-    def render(form: Form[Boolean]): String =
-      page(form, aTaxObligation, true)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
   "ReturnConfirmationView" should {
     "pass accessibility checks" in {
       val page: ReturnConfirmationView = inject[ReturnConfirmationView]
@@ -232,7 +216,4 @@ class CreateReturnA11ySpec
       Seq(ConfirmManufacturedPlasticPackaging).flatMap(_.row(answer))
     )
   }
-
-  //TODO: Add spec for ReturnsCheckYourAnswersView once refactored
-
 }

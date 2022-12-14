@@ -413,6 +413,7 @@ submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plasti
 help.not.include = enghreifftiau o bethau na ddylech eu cynnwys
 
 startYourReturn.title = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
+startYourReturn.firstReturn.title = Your tax start date is {0}. Do you want to start your return for {1} to {2}?
 startYourReturn.heading = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
 startYourReturn.error.required = Dewiswch ‘Iawn’ os hoffech ddechrau’ch Ffurflen Dreth
 startYourReturn.first.obligation.hint = Rhowch fanylion o’ch dyddiad dechrau treth tan ddiwedd y cyfnod cyfrifyddu yn unig.
@@ -463,7 +464,8 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Mae’n 
 submit-return.check-your-answers.heading = Gwiriwch eich atebion cyn anfon eich Ffurflen Dreth
 submit-return.check-your-answers.business-details.heading = Manylion y busnes
 submit-return.check-your-answers.business-details.row1 = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-submit-return.check-your-answers.business-details.row2 = Cyfnod y Ffurflen Dreth
+submit-return.check-your-answers.business-details.periodStartDate = Return period start date
+submit-return.check-your-answers.business-details.periodEndDate = Return period end date
 submit-return.check-your-answers.rest-of-return.heading = Eich Ffurflen Dreth
 
 submit-return.check-your-answers.packaging-total.heading = Cyfanswm y deunydd pacio plastig
