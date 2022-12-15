@@ -25,6 +25,9 @@ import pages.returns.credits._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryManufacturedExportedByAnotherBusinessPage: Arbitrary[ManufacturedExportedByAnotherBusinessPage.type] =
+    Arbitrary(ManufacturedExportedByAnotherBusinessPage)
+
   implicit lazy val arbitraryMainContactNamePage: Arbitrary[MainContactNamePage.type] =
     Arbitrary(MainContactNamePage)
 

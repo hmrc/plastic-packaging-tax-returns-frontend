@@ -79,6 +79,15 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "display error" when {
 
       "nothing has been checked" in {
+        //todo: change to a generic error or bind the form to an empty value to see the proper error.
+        /*
+          If the intent here is to test that we get the converted.credits.error.required error message
+          then we should bind the form to an empty value
+
+          Else if the intent is just to test we get any error message when the form has an error then we
+          should use any generic test error message as using the real one it may make the intent
+          of the test obscured.
+        */
         val boundForm = form.withError("requiredKey", "converted.credits.error.required")
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())

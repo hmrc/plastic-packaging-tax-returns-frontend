@@ -178,3 +178,8 @@ GET        /main-contact-job-title                       controllers.changeGroup
 POST       /main-contact-job-title                        controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = NormalMode)
 GET        /change-main-contact-job-title                  controllers.changeGroupLead.MainContactJobTitleController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-main-contact-job-title                  controllers.changeGroupLead.MainContactJobTitleController.onSubmit(mode: Mode = CheckMode)
+
+GET        /exported-by-another-business                        controllers.returns.ManufacturedExportedByAnotherBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /exported-by-another-business                        controllers.returns.ManufacturedExportedByAnotherBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exported-by-another-business                  controllers.returns.ManufacturedExportedByAnotherBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exported-by-another-business                  controllers.returns.ManufacturedExportedByAnotherBusinessController.onSubmit(mode: Mode = CheckMode)
