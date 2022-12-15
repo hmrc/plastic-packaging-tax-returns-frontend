@@ -18,7 +18,7 @@ package controllers.helpers
 
 import models.UserAnswers
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
+import pages.returns.{AnotherBusinessExportWeightPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
 
 class NonExportedAmountHelperSpec extends PlaySpec {
 
@@ -29,19 +29,26 @@ class NonExportedAmountHelperSpec extends PlaySpec {
     .set(ImportedPlasticPackagingWeightPage, 200L).get
     .set(DirectlyExportedComponentsPage, true).get
     .set(ExportedPlasticPackagingWeightPage, 100L).get
+    .set(PlasticExportedByAnotherBusinessPage, true).get
+    .set(AnotherBusinessExportWeightPage, 100L).get
 
   "nonExportedAmount" should {
-    "return total plastic" in {
+    "return total plastic" when { "" +
+      "plastic is not exported" in {
       val ans = userAnswer.set(DirectlyExportedComponentsPage, false).get
+        .set(PlasticExportedByAnotherBusinessPage, false).get
 
       NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(300L)
     }
 
-    "return total plastic less imported" in {
-      val ans = userAnswer.set(DirectlyExportedComponentsPage, true).get
-        .set(ExportedPlasticPackagingWeightPage, 100L).get
+      "plastic is exported" in {
+        val ans = userAnswer.set(DirectlyExportedComponentsPage, true).get
+          .set(PlasticExportedByAnotherBusinessPage, true).get
+          .set(ExportedPlasticPackagingWeightPage, 100L).get
+          .set(AnotherBusinessExportWeightPage, 100L).get
 
-      NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(200L)
+        NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(100L)
+      }
     }
 
     "return an error" when {
@@ -84,9 +91,15 @@ class NonExportedAmountHelperSpec extends PlaySpec {
     }
   }
 
+  "totalPlasticPackaging" should {
+    "return total plastic" in {
+      NonExportedAmountHelper.totalPlastic(userAnswer) mustBe Some(300)
+    }
+  }
+
   "getAmountAndDirectlyExportedAnswer" should {
-    "return amount and Directly exported answer" in {
-      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(userAnswer) mustBe Some((200L, true))
+    "return amount and Directly exported plus Exported by another business answer" in {
+      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(userAnswer) mustBe Some((100L, true, true))
     }
 
     "should return none" in {

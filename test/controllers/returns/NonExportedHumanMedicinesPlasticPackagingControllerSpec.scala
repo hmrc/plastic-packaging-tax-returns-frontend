@@ -33,7 +33,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingPage}
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingPage, PlasticExportedByAnotherBusinessPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -55,20 +55,21 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
   val manufacturedAmount = 200L
   val importedAmount = 100L
   val exportedAmount = 50L
-  val nonExportedAmount = (manufacturedAmount + importedAmount) - exportedAmount
+  val exportedByAnotherBusinessAmount = 50L
+  val nonExportedAmount = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
 
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(mockView, mockNavigator, mockCacheConnector)
-    when(mockView.apply(any(),any(),any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(),any(),any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
   }
 
 
@@ -97,15 +98,18 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(nonExportedAmount),
         captor.capture(),
         ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(true),
         ArgumentMatchers.eq(true)
       )(any(),any())
 
       captor.getValue.value mustBe Some(true)
     }
 
-    "display total plastic weight if Direct exports answer was no" in {
+    "display total plastic weight if DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer was no" in {
 
-      val result = createSut(userAnswer = Some(nonExportedAnswer.set(DirectlyExportedComponentsPage, false).success.value))
+      val result = createSut(userAnswer = Some(nonExportedAnswer.set(DirectlyExportedComponentsPage, false).success.value
+        .set(PlasticExportedByAnotherBusinessPage, false).success.value
+      ))
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
       status(result) mustBe OK
@@ -114,13 +118,16 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(manufacturedAmount + importedAmount),
         any(),
         ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(false),
         ArgumentMatchers.eq(false)
       )(any(),any())
 
     }
 
-    "redirect GET to home page when Directly exported amount not found" in {
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value))
+    "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
+        .remove(PlasticExportedByAnotherBusinessPage).success.value
+      ))
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
       status(result) mustEqual SEE_OTHER
@@ -166,8 +173,10 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         status(result) mustEqual BAD_REQUEST
     }
 
-    "redirect Post to the home page is Directly exported question no answered" in {
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value))
+    "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
+        .remove(PlasticExportedByAnotherBusinessPage).success.value
+      ))
         .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
           .withFormUrlEncodedBody(("value", "")))
 

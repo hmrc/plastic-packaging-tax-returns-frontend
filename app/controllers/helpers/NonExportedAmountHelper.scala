@@ -22,21 +22,29 @@ import pages.returns._
 
 object NonExportedAmountHelper {
 
+  def totalPlastic(userAnswers: UserAnswers) = {
+    for {
+      manufacturing <- manufacturingPlasticAmount(userAnswers)
+      imported <- importedPlasticAmount(userAnswers)
+    } yield manufacturing + imported
+  }
+
   def nonExportedAmount(userAnswers: UserAnswers):Option[Long] = {
 
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
       exported <- exportedAmount(userAnswers)
-    } yield manufacturing + imported - exported
-
+      exportedByAnotherBusiness <- exportedByAnotherBusinessAmount(userAnswers)
+    } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
   }
 
-  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean)] = {
+  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
     for {
-      isYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
+      isDirectExportYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
+      isAnotherBusinessYesNo <- userAnswers.get(PlasticExportedByAnotherBusinessPage)
       value <- nonExportedAmount(userAnswers)
-    } yield (value, isYesNo)
+    } yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(
@@ -55,4 +63,7 @@ object NonExportedAmountHelper {
 
   private def exportedAmount(userAnswer: UserAnswers):Option[Long] =
     getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
+
+  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
 }

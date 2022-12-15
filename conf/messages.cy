@@ -487,9 +487,11 @@ submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
 
 
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Deunydd pacio plastig sydd wedi’i allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Pwysau’r deunydd pacio plastig a gafodd ei allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.exported-packaging.change-link-text = Newid unrhyw ateb o’r adran deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig a allforiwyd, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio deunydd pacio plastig.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Deunydd pacio plastig heb ei allforio
@@ -501,10 +503,11 @@ submit-return.check-your-answers.nonexported-packaging.change-link-text = Newidi
 submit-return.check-your-answers.nonexported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig heb ei allforio, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio rhywfaint o ddeunydd pacio plastig nad yw wedi’i allforio.
 
 submit-return.check-your-answers.deductions.heading = Didyniadau
-submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.deductions.row2 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
-submit-return.check-your-answers.deductions.row3 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
-submit-return.check-your-answers.deductions.row4 = Cyfanswm y didyniadau
+submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.deductions.row2 = Pwysau’r deunydd pacio plastig a gafodd ei allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.deductions.row3 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
+submit-return.check-your-answers.deductions.row4 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+submit-return.check-your-answers.deductions.row5 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
 submit-return.check-your-answers.credits.line1 = Ni allwch hawlio treth yn ôl fel credyd eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
@@ -659,3 +662,22 @@ mainContactJobTitle.heading = Beth yw teitl swydd {0}?
 mainContactJobTitle.error.required = Nodwch deitl swydd y prif gyswllt
 mainContactJobTitle.error.length = Mae’n rhaid i deitl y swydd fod yn 155 o gymeriadau neu’n llai
 mainContactJobTitle.error.invalid = Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
+
+plasticExportedByAnotherBusiness.title = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.heading = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.caption = Deunydd pacio plastig a allforiwyd
+plasticExportedByAnotherBusiness.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain, ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
+plasticExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.caption = Deunydd pacio plastig a allforiwyd
+anotherBusinessExportWeight.paragraph = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
+anotherBusinessExportWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
+anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight

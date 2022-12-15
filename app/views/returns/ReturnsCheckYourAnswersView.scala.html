@@ -147,6 +147,8 @@
         rows = Seq(
             summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
+            summaryRowFromFunc("exported-packaging-by-another-business-label", taxReturn.exportedByAnotherBusinessYesNo),
+            summaryRowFromFunc("exported-packaging-by-another-business-weight", taxReturn.anotherBusinessExportedWeight)
         )
     ))
     @if(taxReturn.canEditExported) {
@@ -176,9 +178,10 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
-            summaryRowFromFunc("deductions.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowFromFunc("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRowFromString("deductions.row4", taxReturn.deductionsTotal).bold,
+            summaryRowFromFunc("deductions.row2", taxReturn.anotherBusinessExportedWeight),
+            summaryRowFromFunc("deductions.row3", taxReturn.nonexportedMedicineWeight),
+            summaryRowFromFunc("deductions.row4", taxReturn.nonexportedRecycledWeight),
+            summaryRowFromString("deductions.row5", taxReturn.deductionsTotal).bold,
         )
     ))
 

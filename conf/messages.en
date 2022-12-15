@@ -474,9 +474,11 @@ submit-return.check-your-answers.tax-calc.footnote.2 = Your {0} will be applied 
 submit-return.check-your-answers.tax-calc.credit.of = {0} credit
 
 submit-return.check-your-answers.exported-packaging.heading = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
-submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row1 = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row2 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Plastic packaging exported or converted by another business
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Weight of plastic packaging exported or converted by another business
+submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from exported plastic packaging
 submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
@@ -488,10 +490,11 @@ submit-return.check-your-answers.nonexported-packaging.change-link-text = Change
 submit-return.check-your-answers.nonexported-packaging.no-change-reason = To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Deductions
-submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
-submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
-submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
-submit-return.check-your-answers.deductions.row4 = Deductions total
+submit-return.check-your-answers.deductions.row1 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.deductions.row2 = Weight of plastic packaging exported or converted by another business
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row5 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim tax back as credit yet. This is because this is your first return.
@@ -646,3 +649,22 @@ mainContactJobTitle.heading = What is {0}’s job title?
 mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces
+
+plasticExportedByAnotherBusiness.title = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.heading = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.caption = Exported plastic packaging
+plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
+plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = How much of your {0} of finished plastic packaging components did another business export or convert?
+anotherBusinessExportWeight.heading = How much of your {0} of finished plastic packaging components did another business export or convert?
+anotherBusinessExportWeight.caption = Exported plastic packaging
+anotherBusinessExportWeight.paragraph = This will show as a deduction on your tax calculation.
+anotherBusinessExportWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Weight must be entered as numbers
+anotherBusinessExportWeight.error.required = Enter the weight, in kilograms
+anotherBusinessExportWeight.error.wholeNumber = Weight must not include decimals
+anotherBusinessExportWeight.error.outOfRange = Weight must be between 1kg and 99,999,999,999kg
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight

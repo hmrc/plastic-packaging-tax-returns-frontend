@@ -31,7 +31,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage}
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -52,8 +52,9 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private val manufacturedAmount = 200L
   private val importedAmount = 100L
   private val exportedAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val exportedByAnotherBusinessAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
@@ -63,7 +64,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockNavigator)
 
-    when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(), any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
   }
 
   "onPageLoad" should {
@@ -87,9 +88,10 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(formProvider().bind(Map("value" -> "0")))
     }
 
-    "return ok when the directory exported page answer is no" in {
+    "return ok when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is no" in {
       val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).get
         .set(DirectlyExportedComponentsPage, false).get
+        .set(PlasticExportedByAnotherBusinessPage, false).get
 
       val result = createSut(Some(ans)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
@@ -97,7 +99,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(
         formProvider().fill(validAnswer),
         manufacturedAmount + importedAmount,
-        false)
+        false, false)
     }
 
     "redirect to home page when exported amount not found" in {
@@ -145,8 +147,9 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
         verifyView(formProvider().bind(Map("value" -> "invalid value")))
       }
 
-      "DirectlyExportedPage answer is no" in {
+      "DirectlyExportedPage and PlasticExportedByAnotherBusinessPage answer is no" in {
         val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+          .set(PlasticExportedByAnotherBusinessPage, false).get
         val result = createSut(Some(ans)).onSubmit(NormalMode)(
           FakeRequest(POST, "").withFormUrlEncodedBody(("value", "invalid value"))
         )
@@ -155,7 +158,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
         verifyView(
           formProvider().bind(Map("value" -> "invalid value")),
           manufacturedAmount + importedAmount,
-          false
+          false, false
         )
       }
     }
@@ -202,12 +205,15 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private def verifyView(
     expectedForm: Form[Long],
     expectedAmount: Long = nonExportedAmount,
-    expectedDirectlyExportedAnswer: Boolean = true
+    expectedDirectlyExportedAnswer: Boolean = true,
+    expectedAnotherBusinessExportedAnswer: Boolean = true
   ): HtmlFormat.Appendable = {
     verify(mockView).apply(
       ArgumentMatchers.eq(expectedAmount),
       ArgumentMatchers.eq(expectedForm),
       ArgumentMatchers.eq(NormalMode),
-      ArgumentMatchers.eq(expectedDirectlyExportedAnswer))(any(), any())
+      ArgumentMatchers.eq(expectedDirectlyExportedAnswer),
+      ArgumentMatchers.eq(expectedAnotherBusinessExportedAnswer)
+    )(any(), any())
   }
 }
