@@ -22,6 +22,13 @@ import pages.returns._
 
 object NonExportedAmountHelper {
 
+  def totalPlastic(userAnswers: UserAnswers) = {
+    for {
+      manufacturing <- manufacturingPlasticAmount(userAnswers)
+      imported <- importedPlasticAmount(userAnswers)
+    } yield manufacturing + imported
+  }
+
   def nonExportedAmount(userAnswers: UserAnswers):Option[Long] = {
 
     for {

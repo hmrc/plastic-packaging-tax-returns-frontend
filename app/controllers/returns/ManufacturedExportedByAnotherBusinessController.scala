@@ -24,10 +24,13 @@ import models.Mode
 import navigation.Navigator
 import pages.returns.ManufacturedExportedByAnotherBusinessPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.CacheConnector
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import controllers.helpers.NonExportedAmountHelper
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import views.html.returns.ManufacturedExportedByAnotherBusinessView
+import play.api.data.FormBinding.Implicits.formBinding
+import models.requests.DataRequest._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,39 +38,36 @@ class ManufacturedExportedByAnotherBusinessController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          cacheConnector: CacheConnector,
                                          navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
+                                         journeyAction: JourneyAction,
                                          formProvider: ManufacturedExportedByAnotherBusinessFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ManufacturedExportedByAnotherBusinessView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends I18nSupport {
 
-  val form = formProvider()
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ManufacturedExportedByAnotherBusinessPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = request.userAnswers.fill(ManufacturedExportedByAnotherBusinessPage, formProvider())
 
-      Ok(view(preparedForm, mode, 200L))
+      NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        Redirect(controllers.routes.IndexController.onPageLoad))(
+        totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
+      )
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, 200L))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ManufacturedExportedByAnotherBusinessPage, value))
-            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(ManufacturedExportedByAnotherBusinessPage, mode, updatedAnswers))
+            request.userAnswers
+              .setOrFail(ManufacturedExportedByAnotherBusinessPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(_ => Redirect(Call("GET", "/foo")))
+
       )
   }
 }

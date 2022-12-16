@@ -652,6 +652,4 @@ manufacturedExportedByAnotherBusiness.heading = In this period, has another busi
 manufacturedExportedByAnotherBusiness.caption = Exported plastic packaging
 manufacturedExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
 manufacturedExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
-manufacturedExportedByAnotherBusiness.checkYourAnswersLabel = manufacturedExportedByAnotherBusiness
 manufacturedExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
-manufacturedExportedByAnotherBusiness.change.hidden = ManufacturedExportedByAnotherBusiness
