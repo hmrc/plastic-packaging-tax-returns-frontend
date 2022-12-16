@@ -175,6 +175,43 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
 
       verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("123"))(any)
     }
+
+    "should return an error with bad request" in {
+      when(dataRequest.userAnswers) thenReturn createUserAnswer
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.withError("error", "error"))
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustBe BAD_REQUEST
+    }
+
+    "should return a view with error and total plastic" in {
+      when(dataRequest.userAnswers) thenReturn createUserAnswer
+      val errorForm = bindForm.withError("error", "error")
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(view).apply(
+        ArgumentMatchers.eq(errorForm),
+        ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(300L)
+      )(any, any)
+    }
+
+    "should redirect to account page when total plastic cannot be calculated" in {
+      when(dataRequest.userAnswers) thenReturn UserAnswers("123")
+      val errorForm = bindForm.withError("error", "error")
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+    }
   }
 
 

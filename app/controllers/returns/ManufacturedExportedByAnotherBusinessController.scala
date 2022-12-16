@@ -59,9 +59,11 @@ class ManufacturedExportedByAnotherBusinessController @Inject()(
     implicit request =>
 
       formProvider().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, 200L))),
-
+        formWithErrors =>{
+          NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+            Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
+            totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))))
+        },
         value =>
             request.userAnswers
               .setOrFail(ManufacturedExportedByAnotherBusinessPage, value)
