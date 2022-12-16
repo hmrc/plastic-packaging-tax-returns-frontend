@@ -25,7 +25,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.Navigator
-import org.mockito.{ArgumentCaptor, ArgumentMatchers, ArgumentMatchersSugar}
+import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers, ArgumentMatchersSugar}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -56,7 +56,7 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
   private val navigator = mock[Navigator]
   private val journeyAction = mock[JourneyAction]
   private val view = mock[ManufacturedExportedByAnotherBusinessView]
-  private val dataRequest = mock[DataRequest[AnyContent]]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
 
   private val sut = new ManufacturedExportedByAnotherBusinessController(
     messagesApi,
@@ -165,9 +165,15 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
       status(result) mustBe SEE_OTHER
     }
 
-    "should save answer to cache" in {
+    "should save answer to the cache" in {
+      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
+      when(formProvider.apply()).thenReturn(form)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(dataRequest.pptReference).thenReturn("123")
 
-      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("123"))(any)
     }
   }
 
