@@ -653,3 +653,12 @@ plasticExportedByAnotherBusiness.caption = Exported plastic packaging
 plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
 plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
 plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = AnotherBusinessExportWeight
+anotherBusinessExportWeight.heading = AnotherBusinessExportWeight
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Enter your anotherBusinessExportWeight using numbers
+anotherBusinessExportWeight.error.required = Enter your anotherBusinessExportWeight
+anotherBusinessExportWeight.error.wholeNumber = Enter your anotherBusinessExportWeight using whole numbers
+anotherBusinessExportWeight.error.outOfRange = AnotherBusinessExportWeight must be between {0} and {1}
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
