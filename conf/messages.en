@@ -646,3 +646,19 @@ mainContactJobTitle.heading = What is {0}’s job title?
 mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces
+
+plasticExportedByAnotherBusiness.title = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.heading = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.caption = Exported plastic packaging
+plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
+plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = AnotherBusinessExportWeight
+anotherBusinessExportWeight.heading = AnotherBusinessExportWeight
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Enter your anotherBusinessExportWeight using numbers
+anotherBusinessExportWeight.error.required = Enter your anotherBusinessExportWeight
+anotherBusinessExportWeight.error.wholeNumber = Enter your anotherBusinessExportWeight using whole numbers
+anotherBusinessExportWeight.error.outOfRange = AnotherBusinessExportWeight must be between {0} and {1}
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight

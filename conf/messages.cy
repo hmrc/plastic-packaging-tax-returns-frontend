@@ -659,3 +659,10 @@ mainContactJobTitle.heading = Beth yw teitl swydd {0}?
 mainContactJobTitle.error.required = Nodwch deitl swydd y prif gyswllt
 mainContactJobTitle.error.length = Mae’n rhaid i deitl y swydd fod yn 155 o gymeriadau neu’n llai
 mainContactJobTitle.error.invalid = Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
+
+plasticExportedByAnotherBusiness.title = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.heading = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.caption = Deunydd pacio plastig a allforiwyd
+plasticExportedByAnotherBusiness.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain, ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
+plasticExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components

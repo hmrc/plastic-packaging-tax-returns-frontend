@@ -31,17 +31,19 @@ class NonExportedAmountHelperSpec extends PlaySpec {
     .set(ExportedPlasticPackagingWeightPage, 100L).get
 
   "nonExportedAmount" should {
-    "return total plastic" in {
+    "return total plastic" when { "" +
+      "plastic is not exported" in {
       val ans = userAnswer.set(DirectlyExportedComponentsPage, false).get
 
       NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(300L)
     }
 
-    "return total plastic less imported" in {
-      val ans = userAnswer.set(DirectlyExportedComponentsPage, true).get
-        .set(ExportedPlasticPackagingWeightPage, 100L).get
+      "plastic is exported" in {
+        val ans = userAnswer.set(DirectlyExportedComponentsPage, true).get
+          .set(ExportedPlasticPackagingWeightPage, 100L).get
 
-      NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(200L)
+        NonExportedAmountHelper.nonExportedAmount(ans) mustBe Some(200L)
+      }
     }
 
     "return an error" when {
@@ -81,6 +83,12 @@ class NonExportedAmountHelperSpec extends PlaySpec {
 
         NonExportedAmountHelper.nonExportedAmount(ans) mustBe None
       }
+    }
+  }
+
+  "totalPlasticPackaging" should {
+    "return total plastic" in {
+      NonExportedAmountHelper.totalPlastic(userAnswer) mustBe Some(300)
     }
   }
 
