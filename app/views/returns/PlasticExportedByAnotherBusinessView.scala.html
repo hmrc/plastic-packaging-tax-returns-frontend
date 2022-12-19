@@ -30,20 +30,20 @@
 
 
 @paragraphContent ={
-    @paragraphBody(messages("manufacturedExportedByAnotherBusiness.paragraph.1"))
-    @paragraphBody(messages("manufacturedExportedByAnotherBusiness.paragraph.2"))
+    @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.1"))
+    @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.2"))
 }
 
 @layout(pageTitle = title(
     form,
-    messages("manufacturedExportedByAnotherBusiness.title", amount.asKg),
+    messages("plasticExportedByAnotherBusiness.title", amount.asKg),
     Some(messages("return.title.tail")))
 ) {
 
-    @formHelper(action = controllers.returns.routes.ManufacturedExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.PlasticExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @yesNoLayout(sectionHeading = Some(messages("manufacturedExportedByAnotherBusiness.caption")),
-            heading = messages("manufacturedExportedByAnotherBusiness.heading", amount.asKg),
+        @yesNoLayout(sectionHeading = Some(messages("plasticExportedByAnotherBusiness.caption")),
+            heading = messages("plasticExportedByAnotherBusiness.heading", amount.asKg),
             paragraphText = paragraphContent,
             form = form)
     }

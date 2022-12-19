@@ -19,12 +19,12 @@ package forms.returns
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ManufacturedExportedByAnotherBusinessFormProviderSpec extends BooleanFieldBehaviours {
+class PlasticExportedByAnotherBusinessFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "manufacturedExportedByAnotherBusiness.error.required"
+  val requiredKey = "plasticExportedByAnotherBusiness.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new ManufacturedExportedByAnotherBusinessFormProvider()()
+  val form = new PlasticExportedByAnotherBusinessFormProvider()()
 
   ".value" - {
 

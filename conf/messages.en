@@ -647,9 +647,9 @@ mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces
 
-manufacturedExportedByAnotherBusiness.title = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
-manufacturedExportedByAnotherBusiness.heading = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
-manufacturedExportedByAnotherBusiness.caption = Exported plastic packaging
-manufacturedExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
-manufacturedExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
-manufacturedExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+plasticExportedByAnotherBusiness.title = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.heading = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.caption = Exported plastic packaging
+plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
+plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components

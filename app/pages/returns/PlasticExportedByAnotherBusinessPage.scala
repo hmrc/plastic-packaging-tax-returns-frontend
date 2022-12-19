@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package forms.returns
+package pages.returns
 
-import javax.inject.Inject
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case object PlasticExportedByAnotherBusinessPage extends QuestionPage[Boolean] {
 
-class ManufacturedExportedByAnotherBusinessFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("manufacturedExportedByAnotherBusiness.error.required")
-  )
+  override def toString: String = "mplasticExportedByAnotherBusiness"
 }

@@ -17,16 +17,16 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.ManufacturedExportedByAnotherBusinessFormProvider
+import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
 import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.ManufacturedExportedByAnotherBusinessView
+import views.html.returns.PlasticExportedByAnotherBusinessView
 
-class ManufacturedExportedByAnotherBusinessViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class PlasticExportedByAnotherBusinessViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  private val page = inject[ManufacturedExportedByAnotherBusinessView]
-  private val form = new ManufacturedExportedByAnotherBusinessFormProvider()()
+  private val page = inject[PlasticExportedByAnotherBusinessView]
+  private val form = new PlasticExportedByAnotherBusinessFormProvider()()
 
   private def render(form: Form[Boolean] = form): String =
     page(form, NormalMode, 200L)(request, messages).toString()

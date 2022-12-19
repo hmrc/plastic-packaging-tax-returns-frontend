@@ -20,45 +20,45 @@ import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import forms.returns.ManufacturedExportedByAnotherBusinessFormProvider
+import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.Navigator
-import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers, ArgumentMatchersSugar}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedExportedByAnotherBusinessPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
+import pages.returns._
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import views.html.returns.ManufacturedExportedByAnotherBusinessView
+import views.html.returns.PlasticExportedByAnotherBusinessView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ManufacturedExportedByAnotherBusinessControllerSpec
+class PlasticExportedByAnotherBusinessControllerSpec
   extends PlaySpec
     with MockitoSugar
     with BeforeAndAfterEach {
 
   def onwardRoute = Call("GET", "/foo")
 
-  private val formProvider = mock[ManufacturedExportedByAnotherBusinessFormProvider]
-  private val bindForm = new ManufacturedExportedByAnotherBusinessFormProvider()()
+  private val formProvider = mock[PlasticExportedByAnotherBusinessFormProvider]
+  private val bindForm = new PlasticExportedByAnotherBusinessFormProvider()()
   private val messagesApi = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
   private val navigator = mock[Navigator]
   private val journeyAction = mock[JourneyAction]
-  private val view = mock[ManufacturedExportedByAnotherBusinessView]
+  private val view = mock[PlasticExportedByAnotherBusinessView]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
 
-  private val sut = new ManufacturedExportedByAnotherBusinessController(
+  private val sut = new PlasticExportedByAnotherBusinessController(
     messagesApi,
     cacheConnector,
     navigator,
@@ -97,7 +97,7 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
     }
 
     "return OK" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(ManufacturedExportedByAnotherBusinessPage, true).get
+      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -105,7 +105,7 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
     }
 
     "return a view which answer is Yes" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(ManufacturedExportedByAnotherBusinessPage, true).get
+      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
@@ -113,7 +113,7 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
     }
 
     "return a view which answer is No" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(ManufacturedExportedByAnotherBusinessPage, false).get
+      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, false).get
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
@@ -157,7 +157,7 @@ class ManufacturedExportedByAnotherBusinessControllerSpec
     "redirect to account page" in {
       when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
       when(formProvider.apply()).thenReturn(form)
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(ManufacturedExportedByAnotherBusinessPage, true).get
+      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)

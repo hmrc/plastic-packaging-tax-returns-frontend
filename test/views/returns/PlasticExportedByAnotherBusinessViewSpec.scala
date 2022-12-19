@@ -17,18 +17,18 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.ManufacturedExportedByAnotherBusinessFormProvider
+import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.Html
 import support.ViewAssertions
-import views.html.returns.ManufacturedExportedByAnotherBusinessView
+import views.html.returns.PlasticExportedByAnotherBusinessView
 
-class ManufacturedExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAssertions {
+class PlasticExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAssertions {
 
-  private val page = inject[ManufacturedExportedByAnotherBusinessView]
-  private val form = new ManufacturedExportedByAnotherBusinessFormProvider()()
+  private val page = inject[PlasticExportedByAnotherBusinessView]
+  private val form = new PlasticExportedByAnotherBusinessFormProvider()()
 
   private def createView(form: Form[Boolean] = form): Html =
     page(form, NormalMode, 200L)(request, messages)
@@ -37,26 +37,26 @@ class ManufacturedExportedByAnotherBusinessViewSpec extends ViewSpecBase with Vi
     val view = createView()
     "have a title" in {
       view.select("title").text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components? - Submit return - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text() must include(messages("manufacturedExportedByAnotherBusiness.title", "200kg"))
+      view.select("title").text() must include(messages("plasticExportedByAnotherBusiness.title", "200kg"))
     }
 
     "have an header" in {
       view.select("h1").text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components?"
-      view.select("h1").text() mustBe messages("manufacturedExportedByAnotherBusiness.heading", "200kg")
+      view.select("h1").text() mustBe messages("plasticExportedByAnotherBusiness.heading", "200kg")
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text() mustBe "Exported plastic packaging"
-      view.getElementsByClass("govuk-caption-l").text() mustBe messages("manufacturedExportedByAnotherBusiness.caption")
+      view.getElementsByClass("govuk-caption-l").text() mustBe messages("plasticExportedByAnotherBusiness.caption")
     }
 
     "have a paragraph" in {
       val paraText = view.getElementsByClass("govuk-body").text()
 
       paraText must include("You will not be charged tax on these but you must still tell us about them.")
-      paraText must include(messages("manufacturedExportedByAnotherBusiness.paragraph.1"))
+      paraText must include(messages("plasticExportedByAnotherBusiness.paragraph.1"))
       paraText must include("You must have evidence that the export or conversion has taken place.")
-      paraText must include(messages("manufacturedExportedByAnotherBusiness.paragraph.1"))
+      paraText must include(messages("plasticExportedByAnotherBusiness.paragraph.1"))
     }
 
     "contain save & continue button" in {

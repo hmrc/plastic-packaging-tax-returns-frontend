@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package pages.returns
+package forms.returns
 
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class ManufacturedExportedByAnotherBusinessPageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  "ManufacturedExportedByAnotherBusinessPage" - {
+class PlasticExportedByAnotherBusinessFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Boolean](ManufacturedExportedByAnotherBusinessPage)
-
-    beSettable[Boolean](ManufacturedExportedByAnotherBusinessPage)
-
-    beRemovable[Boolean](ManufacturedExportedByAnotherBusinessPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("plasticExportedByAnotherBusiness.error.required")
+  )
 }
