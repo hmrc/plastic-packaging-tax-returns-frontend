@@ -32,7 +32,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedRecycledPlasticPackagingWeightPage}
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedRecycledPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -56,8 +56,9 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
   private val manufacturedAmount = 200L
   private val importedAmount = 100L
   private val exportedAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val exportedByAnotherBusinessAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   private val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
@@ -77,9 +78,10 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
   "onPageLoad" should {
 
     "return OK and correct View" when {
-      "directly exported answer is No" in {
+      "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
 
         val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+          .set(PlasticExportedByAnotherBusinessPage, false).get
           .set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).get
 
         val result = createSut(Some(ans)).onPageLoad(NormalMode)(
@@ -179,8 +181,9 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
 
       }
 
-      "directly exported answer is No" in {
+      "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
         val userAnswer = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+          .set(PlasticExportedByAnotherBusinessPage, false).get
 
         val result = createSut(Some(userAnswer))
           .onSubmit(NormalMode)(fakePostRequestWithBody(("value", "invalid value")))

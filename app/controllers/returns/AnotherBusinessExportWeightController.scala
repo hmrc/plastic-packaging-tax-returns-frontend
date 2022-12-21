@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
+import connectors.CacheConnector
 import controllers.actions._
 import forms.AnotherBusinessExportWeightFormProvider
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
-import pages.AnotherBusinessExportWeightPage
+import navigation.ReturnsJourneyNavigator
+import pages.returns.AnotherBusinessExportWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AnotherBusinessExportWeightView
+import views.html.returns.AnotherBusinessExportWeightView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AnotherBusinessExportWeightController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
+                                        cacheConnector: CacheConnector,
+                                        returnsNavigator: ReturnsJourneyNavigator,
                                         journeyAction: JourneyAction,
                                         formProvider: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
@@ -61,12 +61,10 @@ class AnotherBusinessExportWeightController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          // todo: get answer from userAnswer, save to cache
-          Future.successful(Redirect(navigator.nextPage(AnotherBusinessExportWeightPage, mode, request.userAnswers)))
-//          for {
-//            updatedAnswers <- Future.fromTry(request.userAnswers.set(AnotherBusinessExportWeightPage, value))
-//            _              <- sessionRepository.set(updatedAnswers)
-//          } yield Redirect(navigator.nextPage(AnotherBusinessExportWeightPage, mode, updatedAnswers))
+          request.userAnswers
+            .setOrFail(AnotherBusinessExportWeightPage, value)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(request.userAnswers,mode)))
       )
   }
 }

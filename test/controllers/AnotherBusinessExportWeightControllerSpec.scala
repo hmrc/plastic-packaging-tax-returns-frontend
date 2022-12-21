@@ -24,13 +24,13 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AnotherBusinessExportWeightPage
+import pages.returns.AnotherBusinessExportWeightPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.AnotherBusinessExportWeightView
+import views.html.returns.AnotherBusinessExportWeightView
 
 import scala.concurrent.Future
 
@@ -44,7 +44,7 @@ class AnotherBusinessExportWeightControllerSpec extends SpecBase with MockitoSug
 
   val validAnswer = 0
 
-  lazy val AnotherBusinessExportWeightRoute = routes.AnotherBusinessExportWeightController.onPageLoad(NormalMode).url
+  lazy val AnotherBusinessExportWeightRoute = controllers.returns.routes.AnotherBusinessExportWeightController.onPageLoad(NormalMode).url
 
 //  "AnotherBusinessExportWeight Controller" - {
 //
