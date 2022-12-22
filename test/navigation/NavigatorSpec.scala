@@ -140,6 +140,16 @@ class NavigatorSpec extends SpecBase {
             ) mustBe returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(NormalMode)
           }
 
+          "navigate to NonExportedHumanMedicinesPlasticPackagingController when DirectlyExportedComponentsPage is yes and PlasticExportedByAnotherBusinessPage is no" in {
+            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true).get
+              .set(PlasticExportedByAnotherBusinessPage, false).get
+
+            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+              NormalMode,
+              answers
+            ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+          }
+
           "navigate to NonExportedHumanMedicinesPlasticPackagingController when DirectlyExportedComponentsPage is no and PlasticExportedByAnotherBusinessPage is no" in {
             val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false).get
                 .set(PlasticExportedByAnotherBusinessPage, false).get
