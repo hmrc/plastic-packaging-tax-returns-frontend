@@ -99,7 +99,7 @@ class NonExportedAmountHelperSpec extends PlaySpec {
 
   "getAmountAndDirectlyExportedAnswer" should {
     "return amount and Directly exported plus Exported by another business answer" in {
-      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(userAnswer) mustBe Some((100L, true))
+      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(userAnswer) mustBe Some((100L, true, true))
     }
 
     "should return none" in {

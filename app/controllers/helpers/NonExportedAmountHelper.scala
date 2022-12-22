@@ -39,11 +39,12 @@ object NonExportedAmountHelper {
     } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
   }
 
-  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean)] = {
+  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
     for {
-      isYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
+      isDirectExportYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
+      isAnotherBusinessYesNo <- userAnswers.get(PlasticExportedByAnotherBusinessPage)
       value <- nonExportedAmount(userAnswers)
-    } yield (value, isYesNo)
+    } yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(

@@ -69,7 +69,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     super.beforeEach()
 
     reset(mockView, mockNavigator, mockCacheConnector)
-    when(mockView.apply(any(),any(),any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(),any(),any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
   }
 
 
@@ -98,6 +98,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(nonExportedAmount),
         captor.capture(),
         ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(true),
         ArgumentMatchers.eq(true)
       )(any(),any())
 
@@ -117,6 +118,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(manufacturedAmount + importedAmount),
         any(),
         ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(false),
         ArgumentMatchers.eq(false)
       )(any(),any())
 
