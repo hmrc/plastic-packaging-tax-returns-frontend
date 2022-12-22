@@ -155,14 +155,18 @@ class PlasticExportedByAnotherBusinessControllerSpec
     val form = mock[Form[Boolean]]
 
     "redirect to AnotherBusinessExportWeight page" in {
+      val answer = createUserAnswer
+
       when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
       when(formProvider.apply()).thenReturn(form)
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
+      when(dataRequest.userAnswers) thenReturn answer
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(returnsNavigator.exportedByAnotherBusinessRoute(any, any)) thenReturn Call("", "some-url")
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
-      redirectLocation(result).value mustEqual controllers.returns.routes.AnotherBusinessExportWeightController.onPageLoad(NormalMode).url
+      status(result) mustBe SEE_OTHER
+      verify(returnsNavigator).exportedByAnotherBusinessRoute(answer.set(PlasticExportedByAnotherBusinessPage, true).get, NormalMode)
     }
 
     "should save answer to the cache" in {

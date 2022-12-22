@@ -56,6 +56,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
+      val pptId: String = request.pptReference
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>{
@@ -66,8 +67,8 @@ class PlasticExportedByAnotherBusinessController @Inject()(
         value =>
             request.userAnswers
               .setOrFail(PlasticExportedByAnotherBusinessPage, value)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(request.userAnswers,mode)))
+              .save(cacheConnector.saveUserAnswerFunc(pptId))
+              .map(updatedAnswer => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(updatedAnswer, mode)))
       )
   }
 }
