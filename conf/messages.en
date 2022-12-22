@@ -474,8 +474,10 @@ submit-return.check-your-answers.tax-calc.footnote.2 = Your {0} will be applied 
 submit-return.check-your-answers.tax-calc.credit.of = {0} credit
 
 submit-return.check-your-answers.exported-packaging.heading = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
+submit-return.check-your-answers.exported-packaging.row1 = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row2 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Plastic packaging exported or converted by another business
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Weight of plastic packaging exported or converted by another business
 submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
 submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 

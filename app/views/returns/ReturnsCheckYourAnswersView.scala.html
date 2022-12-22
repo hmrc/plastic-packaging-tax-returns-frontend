@@ -147,6 +147,8 @@
         rows = Seq(
             summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
+            summaryRowFromFunc("exported-packaging-by-another-business-label", taxReturn.exportedByAnotherBusinessYesNo),
+            summaryRowFromFunc("exported-packaging-by-another-business-weight", taxReturn.anotherBusinessExportedWeight)
         )
     ))
     @if(taxReturn.canEditExported) {

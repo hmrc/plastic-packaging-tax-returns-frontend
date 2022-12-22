@@ -487,8 +487,10 @@ submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
 
 
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
+submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Deunydd pacio plastig sydd wedi’i allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Pwysau’r deunydd pacio plastig a gafodd ei allforio neu ei drosi gan fusnes arall
 submit-return.check-your-answers.exported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig a allforiwyd gennych
 submit-return.check-your-answers.exported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig a allforiwyd, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio deunydd pacio plastig.
 

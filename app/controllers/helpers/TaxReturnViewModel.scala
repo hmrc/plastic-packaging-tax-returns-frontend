@@ -83,8 +83,16 @@ case class TaxReturnViewModel (
     createYesNoRow(DirectlyExportedComponentsPage, messageKey)
   }
 
+  def exportedByAnotherBusinessYesNo(messageKey: String) : RowInfo = {
+    createYesNoRow(PlasticExportedByAnotherBusinessPage, messageKey)
+  }
+
   def exportedWeight(messageKey: String): RowInfo = {
     createKgsRow(ExportedPlasticPackagingWeightPage, messageKey)
+  }
+
+  def anotherBusinessExportedWeight(messageKey: String): RowInfo = {
+    createKgsRow(AnotherBusinessExportWeightPage, messageKey)
   }
 
   def nonexportedMedicineYesNo(messageKey: String): RowInfo = {

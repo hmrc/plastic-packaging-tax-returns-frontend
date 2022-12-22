@@ -52,6 +52,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
     .set(DirectlyExportedComponentsPage, false).get
+    .set(PlasticExportedByAnotherBusinessPage, true).get
+    .set(AnotherBusinessExportWeightPage, 150L).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
     .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
@@ -222,6 +224,40 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         view.getElementById("remove-credit-link").select("a").first() must
           haveHref(controllers.returns.credits.routes.RemoveCreditController.onPageLoad())
       }
+    }
+
+  }
+
+  "Exported Plastic Packaging section" should {
+    val view = createView()
+
+    "display header" in {
+      view.select("h3").text() must include("Exported plastic packaging")
+      view.select("h3").text() must include(messages("submit-return.check-your-answers.exported-packaging.heading"))
+    }
+
+    "display 'Plastic packaging exported by you' question and answer" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Plastic packaging exported by you No")
+      text must include(messages("submit-return.check-your-answers.exported-packaging.row1"))
+    }
+
+    "display 'Weight of plastic packaging exported by you' question and answer" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Weight of plastic packaging exported by you 0kg")
+      text must include(messages("submit-return.check-your-answers.exported-packaging.row2"))
+    }
+
+    "display 'Plastic packaging exported or converted by another business' question and answer" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Plastic packaging exported or converted by another business Yes")
+      text must include(messages("submit-return.check-your-answers.exported-packaging-by-another-business-label"))
+    }
+
+    "display 'Weight of plastic packaging exported or converted by another business' question and answer" in {
+      val text = view.getElementsByClass("govuk-summary-list").text()
+      text must include("Weight of plastic packaging exported or converted by another business 150kg")
+      text must include(messages("submit-return.check-your-answers.exported-packaging-by-another-business-weight"))
     }
 
   }
