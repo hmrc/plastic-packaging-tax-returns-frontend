@@ -177,7 +177,7 @@ class ReturnsJourneyNavigator @Inject()(
   def exportedByAnotherBusinessRoute(answers: UserAnswers, mode: Mode): Call =
     (answers.get(DirectlyExportedComponentsPage), answers.get(PlasticExportedByAnotherBusinessPage)) match {
       case (Some(_), Some(true)) => routes.AnotherBusinessExportWeightController.onPageLoad(mode)
-      case (Some(false), Some(false)) => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
+      case (Some(_), Some(false)) => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
       case _ => throw new Exception("Unable to navigate to page")
     }
 
