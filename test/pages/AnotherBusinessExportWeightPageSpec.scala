@@ -17,6 +17,7 @@
 package pages
 
 import pages.behaviours.PageBehaviours
+import pages.returns.AnotherBusinessExportWeightPage
 
 class AnotherBusinessExportWeightPageSpec extends PageBehaviours {
 

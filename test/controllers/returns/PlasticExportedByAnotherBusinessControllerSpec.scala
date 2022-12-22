@@ -21,10 +21,10 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
-import models.Mode.NormalMode
+import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.requests.DataRequest
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
@@ -53,7 +53,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
   private val bindForm = new PlasticExportedByAnotherBusinessFormProvider()()
   private val messagesApi = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[Navigator]
+  private val returnsNavigator = mock[ReturnsJourneyNavigator]
   private val journeyAction = mock[JourneyAction]
   private val view = mock[PlasticExportedByAnotherBusinessView]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
@@ -61,9 +61,9 @@ class PlasticExportedByAnotherBusinessControllerSpec
   private val sut = new PlasticExportedByAnotherBusinessController(
     messagesApi,
     cacheConnector,
-    navigator,
     journeyAction,
     formProvider,
+    returnsNavigator,
     stubMessagesControllerComponents(),
     view
   )
@@ -154,15 +154,19 @@ class PlasticExportedByAnotherBusinessControllerSpec
   "onSubmit" should {
     val form = mock[Form[Boolean]]
 
-    "redirect to account page" in {
+    "redirect to AnotherBusinessExportWeight page" in {
+      val answer = createUserAnswer
+
       when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
       when(formProvider.apply()).thenReturn(form)
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
+      when(dataRequest.userAnswers) thenReturn answer
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(returnsNavigator.exportedByAnotherBusinessRoute(any, any)) thenReturn Call("", "some-url")
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
+      verify(returnsNavigator).exportedByAnotherBusinessRoute(answer.set(PlasticExportedByAnotherBusinessPage, true).get, NormalMode)
     }
 
     "should save answer to the cache" in {

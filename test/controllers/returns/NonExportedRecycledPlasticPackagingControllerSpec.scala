@@ -31,7 +31,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
+import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, PlasticExportedByAnotherBusinessPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -56,8 +56,9 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   private val manufacturedAmount = 200L
   private val importedAmount = 100L
   private val exportedAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val exportedByAnotherBusinessAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   private val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
@@ -105,8 +106,9 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
     }
 
-    "calculate total plastic is directly exported is answered No" in {
+    "calculate total plastic is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage is answered No" in {
       val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+        .set(PlasticExportedByAnotherBusinessPage, false).get
 
       val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
         FakeRequest(GET, recycledPlasticPackagingRoute)
@@ -154,9 +156,10 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       verifyView(None, nonExportedAmount)
     }
 
-    "return BadRequest with total plastic when directly exported answered no" in {
+    "return BadRequest with total plastic when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage is answered no" in {
 
       val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
+        .set(PlasticExportedByAnotherBusinessPage, false).get
       val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
         FakeRequest(POST, recycledPlasticPackagingRoute)
           .withFormUrlEncodedBody(("value", ""))

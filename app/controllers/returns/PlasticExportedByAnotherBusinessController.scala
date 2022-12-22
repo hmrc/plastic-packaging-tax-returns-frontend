@@ -16,30 +16,29 @@
 
 package controllers.returns
 
+import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
+import models.Mode
+import models.requests.DataRequest._
+import navigation.ReturnsJourneyNavigator
+import pages.returns.PlasticExportedByAnotherBusinessPage
+import play.api.data.FormBinding.Implicits.formBinding
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import views.html.returns.PlasticExportedByAnotherBusinessView
 
 import javax.inject.Inject
-import models.Mode
-import navigation.Navigator
-import pages.returns.PlasticExportedByAnotherBusinessPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import connectors.CacheConnector
-import controllers.helpers.NonExportedAmountHelper
-import play.api.mvc.Results.{BadRequest, Ok, Redirect}
-import views.html.returns.PlasticExportedByAnotherBusinessView
-import play.api.data.FormBinding.Implicits.formBinding
-import models.requests.DataRequest._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class PlasticExportedByAnotherBusinessController @Inject()(
                                                             override val messagesApi: MessagesApi,
                                                             cacheConnector: CacheConnector,
-                                                            navigator: Navigator,
                                                             journeyAction: JourneyAction,
                                                             formProvider: PlasticExportedByAnotherBusinessFormProvider,
+                                                            returnsNavigator: ReturnsJourneyNavigator,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             view: PlasticExportedByAnotherBusinessView
                                  )(implicit ec: ExecutionContext) extends I18nSupport {
@@ -57,6 +56,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
+      val pptId: String = request.pptReference
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>{
@@ -67,9 +67,8 @@ class PlasticExportedByAnotherBusinessController @Inject()(
         value =>
             request.userAnswers
               .setOrFail(PlasticExportedByAnotherBusinessPage, value)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Redirect(Call("GET", "/foo")))
-
+              .save(cacheConnector.saveUserAnswerFunc(pptId))
+              .map(updatedAnswer => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(updatedAnswer, mode)))
       )
   }
 }

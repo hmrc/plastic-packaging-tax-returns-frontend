@@ -35,8 +35,8 @@ object NonExportedAmountHelper {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
       exported <- exportedAmount(userAnswers)
-    } yield manufacturing + imported - exported
-
+      exportedByAnotherBusiness <- exportedByAnotherBusinessAmount(userAnswers)
+    } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
   }
 
   def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean)] = {
@@ -62,4 +62,7 @@ object NonExportedAmountHelper {
 
   private def exportedAmount(userAnswer: UserAnswers):Option[Long] =
     getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
+
+  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
 }
