@@ -74,7 +74,12 @@ case class TaxReturnViewModel (
   }
 
   // Show or hide edit links
-  def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
+  private def exportedTotal: Long = {
+    val exported = getMustHave(ExportedPlasticPackagingWeightPage)
+    val exportedByAnotherBusiness = getMustHave(AnotherBusinessExportWeightPage)
+
+    exported + exportedByAnotherBusiness
+  }
 
   def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal

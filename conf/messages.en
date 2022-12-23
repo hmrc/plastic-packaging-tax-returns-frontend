@@ -478,7 +478,7 @@ submit-return.check-your-answers.exported-packaging.row1 = Plastic packaging exp
 submit-return.check-your-answers.exported-packaging.row2 = Weight of plastic packaging exported by you
 submit-return.check-your-answers.exported-packaging-by-another-business-label = Plastic packaging exported or converted by another business
 submit-return.check-your-answers.exported-packaging-by-another-business-weight = Weight of plastic packaging exported or converted by another business
-submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from exported plastic packaging
 submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
@@ -490,10 +490,11 @@ submit-return.check-your-answers.nonexported-packaging.change-link-text = Change
 submit-return.check-your-answers.nonexported-packaging.no-change-reason = To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Deductions
-submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
-submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
-submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
-submit-return.check-your-answers.deductions.row4 = Deductions total
+submit-return.check-your-answers.deductions.row1 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.deductions.row2 = Weight of plastic packaging exported or converted by another business
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row5 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim tax back as credit yet. This is because this is your first return.

@@ -31,12 +31,13 @@ import play.api.mvc.AnyContent
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val calculations = mock[Calculations]
   private val messages = mock[Messages]
 
   private val sut = TaxReturnViewModel(
     dataRequest,
     mock[TaxReturnObligation],
-    mock[Calculations]
+    calculations
     )(messages)
 
   override def beforeEach(): Unit = {
@@ -112,6 +113,45 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       intercept[IllegalStateException] {
         sut.anotherBusinessExportedWeight("any-key")
       }
+    }
+  }
+
+  "canEditExported" should {
+
+    "return true when exported plastic amount is greater tan zero" in {
+      when(dataRequest.userAnswers).thenAnswer(
+        UserAnswers("123")
+          .set(ExportedPlasticPackagingWeightPage, 0L).get
+          .set(AnotherBusinessExportWeightPage, 50L).get
+      )
+
+      when(calculations.packagingTotal).thenReturn(0L)
+
+      sut.canEditExported mustBe true
+    }
+
+    "return true when total plastic greater than exported plastic amount" in {
+      when(dataRequest.userAnswers).thenAnswer(
+        UserAnswers("123")
+          .set(ExportedPlasticPackagingWeightPage, 0L).get
+          .set(AnotherBusinessExportWeightPage, 0L).get
+      )
+
+      when(calculations.packagingTotal).thenReturn(10L)
+
+      sut.canEditExported mustBe true
+    }
+
+    "return false when total plastic and exported plastic are Zero" in {
+      when(dataRequest.userAnswers).thenAnswer(
+        UserAnswers("123")
+          .set(ExportedPlasticPackagingWeightPage, 0L).get
+          .set(AnotherBusinessExportWeightPage, 0L).get
+      )
+
+      when(calculations.packagingTotal).thenReturn(0L)
+
+      sut.canEditExported mustBe false
     }
   }
 }
