@@ -239,6 +239,80 @@ class NavigatorSpec extends SpecBase {
           }
 
         }
+
+        "for the DirectlyExportedPlasticPackagingPage" - {
+
+          "navigate to ExportedPlasticPackagingWeightPage when yes" in {
+            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true)
+
+            navigator.nextPage(DirectlyExportedComponentsPage,
+              CheckMode,
+              answers.get
+            ) mustBe returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode)
+          }
+
+          "navigate to PlasticExportedByAnotherBusinessController when no" in {
+            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false)
+
+            navigator.nextPage(DirectlyExportedComponentsPage,
+              CheckMode,
+              answers.get
+            ) mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
+          }
+        }
+
+        "for the ExportedPlasticPackagingWeightPage" - {
+
+          "navigate to PlasticExportedByAnotherBusiness Page" in {
+              val answers = NonExportedPlasticTestHelper.createUserAnswer(
+                exportedAmount = 1000L,
+                exportedByAnotherBusinessAmount = 40L,
+                manufacturedAmount = 1000L,
+                importedAmount = 50L)
+
+              navigator.nextPage(ExportedPlasticPackagingWeightPage,
+                CheckMode,
+                answers
+              ) mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
+          }
+        }
+
+        "for the PlasticExportedByAnotherBusinessPage" - {
+
+          "navigate to CYA when answer is No" in {
+            val answers = UserAnswers("id").set(PlasticExportedByAnotherBusinessPage, false).get
+
+            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+              CheckMode,
+              answers
+            ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+          }
+
+          "navigate to weight page when answer is Yes" in {
+            val answers = UserAnswers("id").set(PlasticExportedByAnotherBusinessPage, true).get
+
+            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+              CheckMode,
+              answers
+            ) mustBe returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(CheckMode)
+          }
+        }
+
+        "for the AnotherBusinessExportWeightPage" - {
+          "navigate to CYA page" - {
+
+            val answers = NonExportedPlasticTestHelper.createUserAnswer(
+              exportedAmount = 1000L,
+              exportedByAnotherBusinessAmount = 100L,
+              manufacturedAmount = 1100L,
+              importedAmount = 50L)
+
+            navigator.nextPage(AnotherBusinessExportWeightPage,
+              CheckMode,
+              answers
+            ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+          }
+        }
       }
     }
   }
