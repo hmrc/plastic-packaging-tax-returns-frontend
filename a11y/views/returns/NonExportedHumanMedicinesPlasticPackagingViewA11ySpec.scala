@@ -29,30 +29,30 @@ class NonExportedHumanMedicinesPlasticPackagingViewA11ySpec extends ViewSpecBase
   private val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
   private val amount = 321L
 
-  private def createView(form: Form[Boolean], isYesNoDirectlyExported: Boolean): String =
-    page(amount, form, NormalMode, isYesNoDirectlyExported)(request, messages).toString()
+  private def createView(form: Form[Boolean], isYesNoDirectlyExported: Boolean, isYesNoAnotherBusinessExported: Boolean): String =
+    page(amount, form, NormalMode, isYesNoDirectlyExported, isYesNoAnotherBusinessExported)(request, messages).toString()
 
   "NonExportedHumanMedicinesPlasticPackagingView" should {
 
     "pass accessibility checks without error" when {
 
-      "Directly Exported answer is yes" in {
-        createView(form, true) must passAccessibilityChecks
+      "Directly Exported answer is yes and Another Business export is yes" in {
+        createView(form, true, true) must passAccessibilityChecks
       }
 
-      "Directly Exported answer is no" in {
-        createView(form, false) must passAccessibilityChecks
+      "Directly Exported answer is no and Another Business export is no" in {
+        createView(form, false, false) must passAccessibilityChecks
       }
     }
 
     "pass accessibility checks with error" when {
 
-      "Directly Exported answer is yes" in {
-        createView(form.withError("test", "message"), true) must passAccessibilityChecks
+      "Directly Exported answer is yes and Another Business export is yes" in {
+        createView(form.withError("test", "message"), true, true) must passAccessibilityChecks
       }
 
-      "Directly Exported answer is No" in {
-        createView(form.withError("test", "message"), false) must passAccessibilityChecks
+      "Directly Exported answer is no and Another Business export is no" in {
+        createView(form.withError("test", "message"), false, false) must passAccessibilityChecks
       }
     }
   }
