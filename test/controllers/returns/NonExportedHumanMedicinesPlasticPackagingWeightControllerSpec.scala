@@ -64,7 +64,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockNavigator)
 
-    when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(), any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
   }
 
   "onPageLoad" should {
@@ -99,7 +99,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(
         formProvider().fill(validAnswer),
         manufacturedAmount + importedAmount,
-        false)
+        false, false)
     }
 
     "redirect to home page when exported amount not found" in {
@@ -158,7 +158,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
         verifyView(
           formProvider().bind(Map("value" -> "invalid value")),
           manufacturedAmount + importedAmount,
-          false
+          false, false
         )
       }
     }
@@ -205,12 +205,15 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private def verifyView(
     expectedForm: Form[Long],
     expectedAmount: Long = nonExportedAmount,
-    expectedDirectlyExportedAnswer: Boolean = true
+    expectedDirectlyExportedAnswer: Boolean = true,
+    expectedAnotherBusinessExportedAnswer: Boolean = true
   ): HtmlFormat.Appendable = {
     verify(mockView).apply(
       ArgumentMatchers.eq(expectedAmount),
       ArgumentMatchers.eq(expectedForm),
       ArgumentMatchers.eq(NormalMode),
-      ArgumentMatchers.eq(expectedDirectlyExportedAnswer))(any(), any())
+      ArgumentMatchers.eq(expectedDirectlyExportedAnswer),
+      ArgumentMatchers.eq(expectedAnotherBusinessExportedAnswer)
+    )(any(), any())
   }
 }

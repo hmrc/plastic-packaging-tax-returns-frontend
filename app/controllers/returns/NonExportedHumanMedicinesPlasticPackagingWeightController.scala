@@ -53,7 +53,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
 
       NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-          o => Ok(view(o._1, preparedForm, mode, o._2))
+          o => Ok(view(o._1, preparedForm, mode, o._2, o._3))
         )
   }
 
@@ -65,7 +65,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
           Future.successful(
             NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                o => BadRequest(view(o._1, formWithErrors, mode, o._2))
+                o => BadRequest(view(o._1, formWithErrors, mode, o._2, o._3))
               )
           ),
         value =>

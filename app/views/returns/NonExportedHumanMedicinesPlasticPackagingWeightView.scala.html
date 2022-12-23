@@ -26,12 +26,12 @@
     formHelper: FormWithCSRF
 )
 
-@(amount: Long, form: Form[Long], mode: Mode, directlyExportedYesNoAnswer: Boolean)(implicit request: Request[_], messages: Messages)
+@(amount: Long, form: Form[Long], mode: Mode, directlyExportedYesNoAnswer: Boolean, exportedByAnotherBusinessAnswer: Boolean)(implicit request: Request[_], messages: Messages)
 
 @paragraphContent = { @paragraphBody(messages("nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1")) }
 
 @heading = @{
-    if(directlyExportedYesNoAnswer) {
+    if(directlyExportedYesNoAnswer || exportedByAnotherBusinessAnswer) {
         "nonExportedHumanMedicinesPlasticPackagingWeight.heading"
     } else {
         "nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading"
