@@ -26,6 +26,7 @@ import pages.returns.AnotherBusinessExportWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
@@ -36,9 +37,6 @@ class AnotherBusinessExportWeightController @Inject()(
                                         cacheConnector: CacheConnector,
                                         returnsNavigator: ReturnsJourneyNavigator,
                                         journeyAction: JourneyAction,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
                                         formProvider: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnotherBusinessExportWeightView
@@ -46,17 +44,14 @@ class AnotherBusinessExportWeightController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AnotherBusinessExportWeightPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form)
 
-      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+      NonExportedAmountHelper.totalPlastic(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-          o => Ok(view(o._1, preparedForm, mode))
+          totalPlastic => Ok(view(totalPlastic, preparedForm, mode))
         )
   }
 
@@ -66,9 +61,9 @@ class AnotherBusinessExportWeightController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
-            NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+            NonExportedAmountHelper.totalPlastic(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                o => BadRequest(view(o._1, formWithErrors, mode))
+                totalPlastic => BadRequest(view(totalPlastic, formWithErrors, mode))
               )
           ),
 
@@ -76,7 +71,7 @@ class AnotherBusinessExportWeightController @Inject()(
           request.userAnswers
             .setOrFail(AnotherBusinessExportWeightPage, value)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(request.userAnswers,mode)))
+            .map(updatedUserAnswers => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(updatedUserAnswers,mode)))
       )
   }
 }

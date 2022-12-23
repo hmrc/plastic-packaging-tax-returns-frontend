@@ -100,8 +100,8 @@ class CreateReturnA11ySpec
     val form = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
     val page = inject[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
-    def render(form: Form[Long], directlyExportedAnswer: Boolean = true): String =
-      page(amount, form, NormalMode, true)(request, messages).toString()
+    def render(form: Form[Long], directlyExportedAnswer: Boolean = true, anotherBusinessExportedAnswer: Boolean = true): String =
+      page(amount, form, NormalMode, true, true)(request, messages).toString()
 
     "pass accessibility checks pass" when {
       "directly exported page answer is Yes" in {
@@ -109,7 +109,7 @@ class CreateReturnA11ySpec
       }
 
       "directly exported page answer is No" in {
-        render(form, false) must passAccessibilityChecks
+        render(form, false, false) must passAccessibilityChecks
       }
     }
 
