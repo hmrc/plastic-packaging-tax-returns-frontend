@@ -666,3 +666,15 @@ plasticExportedByAnotherBusiness.caption = Deunydd pacio plastig a allforiwyd
 plasticExportedByAnotherBusiness.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain, ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 plasticExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
 plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.caption = Deunydd pacio plastig a allforiwyd
+anotherBusinessExportWeight.paragraph = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
+anotherBusinessExportWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
+anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight

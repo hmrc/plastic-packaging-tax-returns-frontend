@@ -18,6 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
@@ -35,6 +36,9 @@ class AnotherBusinessExportWeightController @Inject()(
                                         cacheConnector: CacheConnector,
                                         returnsNavigator: ReturnsJourneyNavigator,
                                         journeyAction: JourneyAction,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
                                         formProvider: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnotherBusinessExportWeightView
@@ -42,7 +46,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(AnotherBusinessExportWeightPage) match {
@@ -50,7 +54,10 @@ class AnotherBusinessExportWeightController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+        .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+          o => Ok(view(o._1, preparedForm, mode))
+        )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
@@ -58,7 +65,12 @@ class AnotherBusinessExportWeightController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(
+            NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
+                o => BadRequest(view(o._1, formWithErrors, mode))
+              )
+          ),
 
         value =>
           request.userAnswers
