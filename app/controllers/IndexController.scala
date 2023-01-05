@@ -22,7 +22,6 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.PPTSubscriptionDetails
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
-import play.api.{Logger, Logging}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import repositories.SessionRepository
@@ -44,12 +43,11 @@ class IndexController @Inject() (
   obligationsConnector: ObligationsConnector,
   getData: DataRetrievalAction
 )(implicit ec: ExecutionContext)
-    extends Results with I18nSupport with FrontendHeaderCarrierProvider with Logging {
+    extends Results with I18nSupport with FrontendHeaderCarrierProvider {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
       val pptReference = request.pptReference
-      logger.error("PAN_TEST_LOG_MESSAGE_THRESHOLD")
         for { //this is not async do we care?
           legalEntity      <- sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive)
           paymentStatement <- getPaymentsStatement(pptReference)
