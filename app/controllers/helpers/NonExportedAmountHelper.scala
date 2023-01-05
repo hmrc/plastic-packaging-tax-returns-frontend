@@ -22,6 +22,16 @@ import pages.returns._
 
 object NonExportedAmountHelper {
 
+  def isAllPlasticExported(userAnswer: UserAnswers): Boolean = {
+    val manufactured = userAnswer.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported = userAnswer.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported = userAnswer.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exportedByOther = userAnswer.get(AnotherBusinessExportWeightPage).getOrElse(0L)
+
+    exported + exportedByOther >= (manufactured + imported)
+  }
+
+
   def totalPlastic(userAnswers: UserAnswers) = {
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)

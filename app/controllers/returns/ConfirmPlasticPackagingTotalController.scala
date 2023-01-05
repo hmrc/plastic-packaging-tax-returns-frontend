@@ -18,13 +18,15 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import models.Mode.NormalMode
+import controllers.helpers.NonExportedAmountHelper
+import models.requests.DataRequest.headerCarrier
+import navigation.ReturnsJourneyNavigator
 import pages.returns._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.ConfirmImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.ConfirmImportedPlasticPackagingWeightLabel
 import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.ConfirmManufacturedPlasticPackaging
@@ -34,22 +36,21 @@ import viewmodels.govuk.summarylist._
 import views.html.returns.ConfirmPlasticPackagingTotalView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmPlasticPackagingTotalController @Inject()
 (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmPlasticPackagingTotalView,
-  cacheConnector: CacheConnector
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator
 ) (implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with Logging {
+  extends I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    journeyAction {
       implicit request =>
         val summaryList: SummaryList = SummaryListViewModel(rows =
           Seq(
@@ -64,26 +65,12 @@ class ConfirmPlasticPackagingTotalController @Inject()
     }
 
   def onwardRouting: Action[AnyContent] = {
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
-
-        if(totalPlastic <= 0) {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers
-              .set(DirectlyExportedComponentsPage, false).get
-              .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
-              .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
-              .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
-              .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
-              .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
-            )
-            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-
-          } yield Redirect(controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad())
-        } else {
-          Future.successful(Redirect(controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode)))
-        }
+        request.userAnswers
+          .setOrFail(ConfirmPlasticPackagingTotalPage, NonExportedAmountHelper.totalPlastic(request.userAnswers).getOrElse(0L))
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }
   }
 }

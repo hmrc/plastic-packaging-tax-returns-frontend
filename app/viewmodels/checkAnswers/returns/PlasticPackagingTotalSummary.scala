@@ -36,6 +36,7 @@ object PlasticPackagingTotalSummary extends SummaryViewModel {
     ))
 
   //todo if these exceptions get thrown we should redirect the user to the questions to input them
+  //todo: this can be removed when all the call to this function have been replaced by the NonExportedAmountHelper.totalPlastic
   def calculateTotal(answers: UserAnswers): Long = {
     answers.get(ManufacturedPlasticPackagingWeightPage).map(
       value => ManufacturedPlasticWeight(value).totalKg

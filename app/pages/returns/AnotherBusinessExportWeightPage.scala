@@ -16,6 +16,7 @@
 
 package pages.returns
 
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
@@ -24,16 +25,6 @@ import scala.util.Try
 
 case object AnotherBusinessExportWeightPage extends QuestionPage[Long] {
 
-  //TODO this is everywhere!! imported, exported, nextpage, all to use 'helper'
-  private def exportedAllPlastic(answers: UserAnswers): Boolean = {
-    val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported     = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported     = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exporetedByThird = answers.get(AnotherBusinessExportWeightPage).getOrElse(0L)
-
-    (exported + exporetedByThird) >= (manufactured + imported)
-  }
-
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "anotherBusinessExportWeight"
@@ -41,7 +32,7 @@ case object AnotherBusinessExportWeightPage extends QuestionPage[Long] {
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
       if (amount > 0) {
-        if(exportedAllPlastic(userAnswers)) {
+        if(NonExportedAmountHelper.isAllPlasticExported(userAnswers)) {
           userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
             .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
             .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get

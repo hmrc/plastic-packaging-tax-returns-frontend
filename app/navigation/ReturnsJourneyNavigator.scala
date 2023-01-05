@@ -18,6 +18,7 @@ package navigation
 
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
@@ -32,15 +33,6 @@ import javax.inject.Singleton
 class ReturnsJourneyNavigator @Inject()(
   appConfig: FrontendAppConfig,
 ) {
-
-  private def exportedAllPlastic(answers: UserAnswers): Boolean = {
-    val manufactured = answers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported = answers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = answers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exportedByOther = answers.get(AnotherBusinessExportWeightPage).getOrElse(0L)
-
-    exported + exportedByOther >= (manufactured + imported)
-  }
 
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
   val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
@@ -160,6 +152,14 @@ class ReturnsJourneyNavigator @Inject()(
     else
       routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
+  def confirmTotalPlasticPackagingRoute(answers: UserAnswers): Call = {
+    NonExportedAmountHelper.totalPlastic(answers) match {
+      case Some(amount) if amount > 0 => controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
+      case Some(amount) if amount <= 0 => controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad
+      case _ => controllers.routes.IndexController.onPageLoad
+    }
+  }
+
   private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
     answers.get(DirectlyExportedComponentsPage) match {
       case Some(true) => routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
@@ -170,7 +170,7 @@ class ReturnsJourneyNavigator @Inject()(
   private def exportedPlasticPackagingWeightRoute(answers: UserAnswers, mode: Mode): Call =
     if(mode.equals(CheckMode)) {routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)}
     else {
-      exportedAllPlastic(answers) match {
+      NonExportedAmountHelper.isAllPlasticExported(answers) match {
         case true => routes.ReturnsCheckYourAnswersController.onPageLoad()
         case false => routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
       }
@@ -189,7 +189,7 @@ class ReturnsJourneyNavigator @Inject()(
 
     if(mode.equals(CheckMode)) {routes.ReturnsCheckYourAnswersController.onPageLoad()}
     else {
-      exportedAllPlastic(answers) match {
+      NonExportedAmountHelper.isAllPlasticExported(answers) match {
         case true => routes.ReturnsCheckYourAnswersController.onPageLoad()
         case false => routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
       }

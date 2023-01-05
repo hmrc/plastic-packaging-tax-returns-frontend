@@ -36,11 +36,13 @@ import config.FrontendAppConfig
 import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.returns.{ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
@@ -196,6 +198,43 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         val call = returnsJourneyNavigator.importedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
+    }
+  }
+
+  "ConfirmTotalPlasticPackagingRoute" must {
+
+    "redirect to directly exported page page" in {
+      val answer = UserAnswers("123")
+          .set(ManufacturedPlasticPackagingPage, true).get
+          .set(ManufacturedPlasticPackagingWeightPage, 10L).get
+          .set(ImportedPlasticPackagingPage, true).get
+          .set(ImportedPlasticPackagingWeightPage, 1L).get
+
+
+      val call = returnsJourneyNavigator.confirmTotalPlasticPackagingRoute(answer)
+      call mustBe returnsRoutes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
+    }
+
+    "redirect to CYA page" in {
+      val answer = UserAnswers("123")
+        .set(ManufacturedPlasticPackagingPage, true).get
+        .set(ManufacturedPlasticPackagingWeightPage, 0L).get
+        .set(ImportedPlasticPackagingPage, true).get
+        .set(ImportedPlasticPackagingWeightPage, 0L).get
+
+
+      val call = returnsJourneyNavigator.confirmTotalPlasticPackagingRoute(answer)
+      call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+    }
+
+    "redirect to account page" in {
+      val answer = UserAnswers("123")
+        .set(ImportedPlasticPackagingPage, true).get
+        .set(ImportedPlasticPackagingWeightPage, 0L).get
+
+
+      val call = returnsJourneyNavigator.confirmTotalPlasticPackagingRoute(answer)
+      call mustBe controllers.routes.IndexController.onPageLoad
     }
   }
 

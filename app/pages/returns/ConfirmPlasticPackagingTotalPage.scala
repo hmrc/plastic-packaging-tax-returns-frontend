@@ -16,34 +16,32 @@
 
 package pages.returns
 
-import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
-import pages._
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
+case object ConfirmPlasticPackagingTotalPage extends QuestionPage[Long] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "confirmPlasticPackagingTotalPage"
 
-  override def toString: String = "exportedPlasticPackagingWeight"
+  override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] = {
 
-  override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
-      if (amount > 0) {
-        if(NonExportedAmountHelper.isAllPlasticExported(userAnswers)) {
-          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
+      if (amount <= 0) {
+          userAnswers.set(DirectlyExportedComponentsPage, false).get
+            .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
+            .set(PlasticExportedByAnotherBusinessPage, false).get
+            .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
             .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
             .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
             .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
-            .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
-        }
-        else {
-          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
-        }
+            .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false).get
+            .remove(ConfirmPlasticPackagingTotalPage, false)
       } else {
-        super.cleanup(value, userAnswers)
+        super.cleanup(value, userAnswers.remove(ConfirmPlasticPackagingTotalPage, false).get)
       }
-    ).getOrElse(super.cleanup(value, userAnswers))
+    ).getOrElse(super.cleanup(value, userAnswers.remove(ConfirmPlasticPackagingTotalPage, false).get))
+  }
 }

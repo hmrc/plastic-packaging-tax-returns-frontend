@@ -18,7 +18,7 @@ package controllers.helpers
 
 import models.UserAnswers
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{AnotherBusinessExportWeightPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns._
 
 class NonExportedAmountHelperSpec extends PlaySpec {
 
@@ -106,6 +106,28 @@ class NonExportedAmountHelperSpec extends PlaySpec {
       val ans = userAnswer.remove(DirectlyExportedComponentsPage).get
 
       NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(ans) mustBe None
+    }
+  }
+
+  "isExportedAmountValid" should {
+    "return true when exported amount is greater than total plastic" in {
+      val ans = userAnswer.set(AnotherBusinessExportWeightPage, 300L).get
+
+      NonExportedAmountHelper.isAllPlasticExported(ans) mustEqual true
+    }
+
+    "return false when exported amount is less than total plastic" in {
+
+      NonExportedAmountHelper.isAllPlasticExported(userAnswer) mustEqual false
+    }
+
+    "return true when exported amount is equal than total plastic" in {
+
+      val ans = userAnswer
+        .set(ExportedPlasticPackagingWeightPage, 0L).get
+        .set(AnotherBusinessExportWeightPage, 300L).get
+
+      NonExportedAmountHelper.isAllPlasticExported(ans) mustEqual true
     }
   }
 

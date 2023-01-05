@@ -27,5 +27,8 @@ class ExportedPlasticPackagingWeightPageSpec extends PageBehaviours {
     beSettable[Long](ExportedPlasticPackagingWeightPage)
 
     beRemovable[Long](ExportedPlasticPackagingWeightPage)
+
+
   }
+
 }
