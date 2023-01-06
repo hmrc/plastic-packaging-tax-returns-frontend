@@ -668,3 +668,6 @@ anotherBusinessExportWeight.error.required = Enter the weight, in kilograms
 anotherBusinessExportWeight.error.wholeNumber = Weight must not include decimals
 anotherBusinessExportWeight.error.outOfRange = Weight must be between 1kg and 99,999,999,999kg
 anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
+
+amendingExportedPlasticPackaging.title = Amending exported plastic packaging
+amendingExportedPlasticPackaging.heading = Amending exported plastic packaging

@@ -188,3 +188,5 @@ GET        /another-business-exported-weight                 controllers.returns
 POST       /another-business-exported-weight                  controllers.returns.AnotherBusinessExportWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /change-another-business-export-weight                        controllers.returns.AnotherBusinessExportWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-another-business-export-weight                        controllers.returns.AnotherBusinessExportWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /amending-exported-plastic-packaging                       controllers.amends.AmendExportedPlasticPackagingController.onPageLoad()
