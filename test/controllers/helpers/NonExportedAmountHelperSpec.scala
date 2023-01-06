@@ -108,27 +108,4 @@ class NonExportedAmountHelperSpec extends PlaySpec {
       NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(ans) mustBe None
     }
   }
-
-  "isExportedAmountValid" should {
-    "return true when exported amount is greater than total plastic" in {
-      val ans = userAnswer.set(AnotherBusinessExportWeightPage, 300L).get
-
-      NonExportedAmountHelper.isAllPlasticExported(ans) mustEqual true
-    }
-
-    "return false when exported amount is less than total plastic" in {
-
-      NonExportedAmountHelper.isAllPlasticExported(userAnswer) mustEqual false
-    }
-
-    "return true when exported amount is equal than total plastic" in {
-
-      val ans = userAnswer
-        .set(ExportedPlasticPackagingWeightPage, 0L).get
-        .set(AnotherBusinessExportWeightPage, 300L).get
-
-      NonExportedAmountHelper.isAllPlasticExported(ans) mustEqual true
-    }
-  }
-
 }

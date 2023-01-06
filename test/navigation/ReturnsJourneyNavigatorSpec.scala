@@ -201,6 +201,40 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
 
+  "exportedPlasticPackagingWeightRoute" must {
+    "redirect to ReturnsCheckYourAnswersController in NormalMode" in {
+      val call = returnsJourneyNavigator.exportedPlasticPackagingWeightRoute(true, NormalMode)
+      call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    }
+
+    "redirect to PlasticExportedByAnotherBusinessController in NormalMode" in {
+      val call = returnsJourneyNavigator.exportedPlasticPackagingWeightRoute(false, NormalMode)
+      call mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
+    }
+
+    "redirect to PlasticExportedByAnotherBusinessController in CheckMode" in {
+      val call = returnsJourneyNavigator.exportedPlasticPackagingWeightRoute(false, CheckMode)
+      call mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
+    }
+  }
+
+  "exportedByAnotherBusinessWeightRoute" must {
+    "redirect to ReturnsCheckYourAnswersController in NormalMode" in {
+      val call = returnsJourneyNavigator.exportedByAnotherBusinessWeightRoute(true, NormalMode)
+      call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    }
+
+    "redirect to NonExportedHumanMedicinesPlasticPackagingController in NormalMode" in {
+      val call = returnsJourneyNavigator.exportedByAnotherBusinessWeightRoute(false, NormalMode)
+      call mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
+    }
+
+    "redirect to PlasticExportedByAnotherBusinessController in CheckMode" in {
+      val call = returnsJourneyNavigator.exportedByAnotherBusinessWeightRoute(false, CheckMode)
+      call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+    }
+  }
+
   "ConfirmTotalPlasticPackagingRoute" must {
 
     "redirect to directly exported page page" in {

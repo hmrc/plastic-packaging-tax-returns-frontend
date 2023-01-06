@@ -23,13 +23,14 @@ import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest._
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.ExportedPlasticPackagingWeightPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ExportedPlasticAnswer
 import views.html.returns.ExportedPlasticPackagingWeightView
 
 import javax.inject.Inject
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExportedPlasticPackagingWeightController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           cacheConnector: CacheConnector,
-                                                          navigator: Navigator,
+                                                          navigator: ReturnsJourneyNavigator,
                                                           journeyAction: JourneyAction,
                                                           form: ExportedPlasticPackagingWeightFormProvider,
                                                           val controllerComponents: MessagesControllerComponents,
@@ -73,7 +74,10 @@ class ExportedPlasticPackagingWeightController @Inject()(
               .setOrFail(ExportedPlasticPackagingWeightPage, value)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(updatedAnswers =>
-                Redirect(navigator.nextPage(ExportedPlasticPackagingWeightPage, mode, updatedAnswers)))
+                Redirect(navigator.exportedPlasticPackagingWeightRoute(
+                  ExportedPlasticAnswer(updatedAnswers).isAllPlasticExported,
+                  mode))
+              )
         )
     }
 

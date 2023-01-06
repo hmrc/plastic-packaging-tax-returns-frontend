@@ -126,7 +126,6 @@ case class UserAnswers(
     */
   def reset: UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
 
-
   def remove[A](page: Settable[A],  cleanup: Boolean = true): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {

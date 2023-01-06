@@ -24,7 +24,7 @@ import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
-import navigation.Navigator
+import navigation.{Navigator, ReturnsJourneyNavigator}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.never
 import org.mockito.MockitoSugar.{reset, verify, when}
@@ -60,7 +60,7 @@ class ExportedPlasticPackagingWeightControllerSpec
   private val form = mock[Form[Long]]
   private val messagesApi = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[Navigator]
+  private val navigator = mock[ReturnsJourneyNavigator]
   private val journeyAction = mock[JourneyAction]
   private val formProvider = mock[ExportedPlasticPackagingWeightFormProvider]
   private val view = mock[ExportedPlasticPackagingWeightView]
@@ -165,7 +165,7 @@ class ExportedPlasticPackagingWeightControllerSpec
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      verify(navigator).nextPage(ExportedPlasticPackagingWeightPage, NormalMode, expectedAnswer)
+      verify(navigator).exportedPlasticPackagingWeightRoute(false, NormalMode)
     }
 
     "save the value to the cache" in {
@@ -212,6 +212,6 @@ class ExportedPlasticPackagingWeightControllerSpec
     when(dataRequest.userAnswers).thenReturn(ans)
     when(dataRequest.pptReference).thenReturn("123")
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
-    when(navigator.nextPage(any, any, any)).thenReturn(Call("GET", "foo"))
+    when(navigator.exportedPlasticPackagingWeightRoute(any, any)).thenReturn(Call("GET", "foo"))
   }
 }

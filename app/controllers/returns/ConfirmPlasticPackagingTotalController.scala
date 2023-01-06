@@ -18,14 +18,13 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import pages.returns._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ExportedPlasticAnswer
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.ConfirmImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.ConfirmImportedPlasticPackagingWeightLabel
@@ -67,8 +66,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   def onwardRouting: Action[AnyContent] = {
     journeyAction.async {
       implicit request =>
-        request.userAnswers
-          .setOrFail(ConfirmPlasticPackagingTotalPage, NonExportedAmountHelper.totalPlastic(request.userAnswers).getOrElse(0L))
+        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }

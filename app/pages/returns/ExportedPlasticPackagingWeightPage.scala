@@ -16,10 +16,10 @@
 
 package pages.returns
 
-import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import pages._
 import play.api.libs.json.JsPath
+import services.ExportedPlasticAnswer
 
 import scala.util.Try
 
@@ -32,16 +32,9 @@ case object ExportedPlasticPackagingWeightPage extends QuestionPage[Long] {
   override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map(amount =>
       if (amount > 0) {
-        if(NonExportedAmountHelper.isAllPlasticExported(userAnswers)) {
-          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
-            .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
-            .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
-            .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
-            .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
-        }
-        else {
-          userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
-        }
+        ExportedPlasticAnswer(userAnswers)
+          .resetExportedByYouIfAllExportedPlastic.get
+          .set(DirectlyExportedComponentsPage, true, cleanup = false)
       } else {
         super.cleanup(value, userAnswers)
       }

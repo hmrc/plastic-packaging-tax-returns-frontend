@@ -127,18 +127,18 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "set the user answer" in {
+      var saveUserAnswerToCache: Option[UserAnswers] = None
+      val ans = createUserAnswer
 
-      val ans = mock[UserAnswers]
-      when(ans.get(ArgumentMatchers.eq(ManufacturedPlasticPackagingPage))(any)).thenReturn(Some(true))
-      when(ans.get(ArgumentMatchers.eq(ManufacturedPlasticPackagingWeightPage))(any)).thenReturn(Some(10L))
-      when(ans.get(ArgumentMatchers.eq(ImportedPlasticPackagingPage))(any)).thenReturn(Some(true))
-      when(ans.get(ArgumentMatchers.eq(ImportedPlasticPackagingWeightPage))(any)).thenReturn(Some(10L))
-      when(ans.setOrFail(any, any, any)(any)) thenReturn createUserAnswer
       setUpMocks(ans)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((a: UserAnswers, b: Boolean) => {
+        saveUserAnswerToCache = Some(a)
+        Future.successful(true)
+      })
 
       await(sut.onwardRouting.skippingJourneyAction(dataRequest))
 
-      verify(ans).setOrFail(ArgumentMatchers.eq(ConfirmPlasticPackagingTotalPage), ArgumentMatchers.eq(20L), any)(any)
+      saveUserAnswerToCache mustBe Some(ans)
     }
 
     "save userAnswer to cache" in {
