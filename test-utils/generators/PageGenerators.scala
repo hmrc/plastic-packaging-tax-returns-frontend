@@ -25,6 +25,9 @@ import pages.returns.credits._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAmendExportedWeightPage: Arbitrary[AmendExportedWeightPage.type] =
+    Arbitrary(AmendExportedWeightPage)
+
   implicit lazy val arbitraryAnotherBusinessExportWeightPage: Arbitrary[AnotherBusinessExportWeightPage.type] =
     Arbitrary(AnotherBusinessExportWeightPage)
 

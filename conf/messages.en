@@ -676,3 +676,12 @@ amendExportedPlasticPackaging.paragraph.2 = This is the weight of plastic packag
 amendExportedPlasticPackaging.paragraph.3 = To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total.
 amendExportedPlasticPackaging.bulletPoint.1 = you exported or intended to export within 12 months
 amendExportedPlasticPackaging.bulletPoint.2 = another business exported or converted
+
+amendExportedWeight.title = AmendExportedWeight
+amendExportedWeight.heading = AmendExportedWeight
+amendExportedWeight.checkYourAnswersLabel = AmendExportedWeight
+amendExportedWeight.error.nonNumeric = Enter your amendExportedWeight using numbers
+amendExportedWeight.error.required = Enter your amendExportedWeight
+amendExportedWeight.error.wholeNumber = Enter your amendExportedWeight using whole numbers
+amendExportedWeight.error.outOfRange = AmendExportedWeight must be between {0} and {1}
+amendExportedWeight.change.hidden = AmendExportedWeight
