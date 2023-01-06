@@ -14,14 +14,35 @@
  * limitations under the License.
  *@
 
+@import components.{heading, paragraphBody, bulletList, LinkButton}
+
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    govukButton: GovukButton,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    bulletList: bulletList,
+    linkButton: LinkButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("amendingExportedPlasticPackaging.title"), Some(messages("returns.title.tail")))) {
+@layout(pageTitle = titleNoForm(messages("amendExportedPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    <h1 class="govuk-heading-xl">@messages("amendingExportedPlasticPackaging.heading")</h1>
+    @heading("amendExportedPlasticPackaging.heading")
+
+    @paragraphBody(messages("amendExportedPlasticPackaging.paragraph.1"))
+    @paragraphBody(messages("amendExportedPlasticPackaging.paragraph.2"))
+    @bulletList(elements = Seq(
+            Html(messages("amendExportedPlasticPackaging.bulletPoint.1")),
+            Html(messages("amendExportedPlasticPackaging.bulletPoint.2"))
+        )
+    )
+
+    @paragraphBody(messages("amendExportedPlasticPackaging.paragraph.3"))
+
+    @linkButton(
+        messageKey = "site.button.continue",
+        linkUrl = "/amend-exported-weight"
+    )
 }

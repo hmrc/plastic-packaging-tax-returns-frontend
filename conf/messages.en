@@ -669,5 +669,10 @@ anotherBusinessExportWeight.error.wholeNumber = Weight must not include decimals
 anotherBusinessExportWeight.error.outOfRange = Weight must be between 1kg and 99,999,999,999kg
 anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
 
-amendingExportedPlasticPackaging.title = Amending exported plastic packaging
-amendingExportedPlasticPackaging.heading = Amending exported plastic packaging
+amendExportedPlasticPackaging.title = Amending exported plastic packaging
+amendExportedPlasticPackaging.heading = Amending exported plastic packaging
+amendExportedPlasticPackaging.paragraph.1 = Exported plastic packaging total is the sum of 2 weights you entered when you submitted your return.
+amendExportedPlasticPackaging.paragraph.2 = This is the weight of plastic packaging:
+amendExportedPlasticPackaging.paragraph.3 = To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total.
+amendExportedPlasticPackaging.bulletPoint.1 = you exported or intended to export within 12 months
+amendExportedPlasticPackaging.bulletPoint.2 = another business exported or converted

@@ -681,3 +681,11 @@ anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
 anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
 anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
+
+amendExportedPlasticPackaging.title = Diwygio deunydd pacio plastig sydd wedi’i allforio
+amendExportedPlasticPackaging.heading = Diwygio deunydd pacio plastig sydd wedi’i allforio
+amendExportedPlasticPackaging.paragraph.1 = Cyfanswm y deunydd pacio plastig sydd wedi’i allforio yw’r ddau swm a nodwyd gennych ar gyfer y pwysau wrth gyflwyno’ch Ffurflen Treth Deunydd Pacio Plastig.
+amendExportedPlasticPackaging.paragraph.2 = Dyma bwysau’r deunydd pacio plastig:
+amendExportedPlasticPackaging.paragraph.3 = Er mwyn diwygio’r naill neu’r llall o’r pwysau hyn, bydd yn rhaid nodi’r ddau. Byddwn yn eu cyfuno, a bydd hyn yn dangos fel y cyfanswm diwygiedig ar gyfer eich deunydd pacio plastig sydd wedi’i allforio.
+amendExportedPlasticPackaging.bulletPoint.1 = y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio, o fewn 12 mis
+amendExportedPlasticPackaging.bulletPoint.2 = y gwnaeth busnes arall ei allforio neu ei drosi

@@ -16,29 +16,42 @@
 
 package controllers.amends
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeIdentifierActionWithEnrolment
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import views.html.amends.AmendExportedPlasticPackagingView
 
-class AmendExportedPlasticPackagingControllerSpec extends SpecBase {
+class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAndAfterEach{
 
-  "AmendingExportedPlasticPackaging Controller" - {
+  private val messagesApi = mock[MessagesApi]
+  private val view = mock[AmendExportedPlasticPackagingView]
+  private val sut = new AmendExportedPlasticPackagingController(
+    messagesApi,
+    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+    stubMessagesControllerComponents(),
+    view
+  )
 
-    "must return OK and the correct view for a GET" in {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    reset(messagesApi, view)
+    when(view.apply()(any,any)).thenReturn(HtmlFormat.empty)
+  }
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad().url)
+  "onPageLoad" should {
+    "return OK and the correct view" in {
+      val result = sut.onPageLoad(FakeRequest(GET, ""))
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AmendExportedPlasticPackagingView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verify(view).apply()(any, any)
     }
   }
 }
