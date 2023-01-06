@@ -18,14 +18,18 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
+import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.Navigator
 import pages.returns.DirectlyExportedComponentsPage
+import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import views.html.returns.DirectlyExportedComponentsView
 
 import javax.inject.Inject
@@ -35,40 +39,46 @@ class DirectlyExportedComponentsController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   form: DirectlyExportedComponentsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    journeyAction {
       implicit request =>
 
-        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
-
-        val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
-        Ok(view(preparedForm, mode, totalPlastic))
+        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+          Redirect(controllers.routes.IndexController.onPageLoad)
+        )(totalPlastic => {
+          val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
+          Ok(view(preparedForm, mode, totalPlastic))
+        })
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val pptId: String = request.pptReference
-        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
 
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
+          formWithErrors => handleErrorInForm(mode, formWithErrors),
           value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(DirectlyExportedComponentsPage, value))
-              _              <- cacheConnector.set(pptId, updatedAnswers)
-
-            } yield Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers))
+            request.userAnswers
+              .setOrFail(DirectlyExportedComponentsPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(updatedAnswers => Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers)))
         )
     }
 
+  private def handleErrorInForm(
+    mode: Mode,
+    formWithErrors: Form[Boolean]
+  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
+      totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
+    )
+  }
 }

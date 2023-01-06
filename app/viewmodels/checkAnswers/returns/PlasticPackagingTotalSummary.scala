@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers.returns
 
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
-import models.returns.{ImportedPlasticWeight, ManufacturedPlasticWeight}
-import pages.returns.{ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.PrintLong
@@ -31,18 +30,8 @@ object PlasticPackagingTotalSummary extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     Some(SummaryListRowViewModel(
       key = "confirmPlasticPackagingTotal.total.label",
-      value = ValueViewModel(calculateTotal(answers).asKg).withCssClass("total-weight"),
+      value = ValueViewModel(NonExportedAmountHelper.totalPlastic(answers).getOrElse(0L).asKg).withCssClass("total-weight"),
       actions = Seq.empty
     ))
 
-  //todo if these exceptions get thrown we should redirect the user to the questions to input them
-  //todo: this can be removed when all the call to this function have been replaced by the NonExportedAmountHelper.totalPlastic
-  def calculateTotal(answers: UserAnswers): Long = {
-    answers.get(ManufacturedPlasticPackagingWeightPage).map(
-      value => ManufacturedPlasticWeight(value).totalKg
-    ).getOrElse(throw new IllegalStateException("Manufactured Plastic Weight not found.")) +
-      answers.get(ImportedPlasticPackagingWeightPage).map(
-        value => ImportedPlasticWeight(value).totalKg
-      ).getOrElse(throw new IllegalStateException("Imported Plastic Weight not found."))
-  }
 }

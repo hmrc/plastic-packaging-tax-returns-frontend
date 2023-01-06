@@ -108,6 +108,15 @@ class ConfirmPlasticPackagingTotalControllerSpec
       captor.getValue.rows(3).value.content.asHtml.toString() mustEqual "imported weigh"
       captor.getValue.rows(4).value.content.asHtml.toString() mustEqual "total weight"
     }
+
+    "redirect on account page if cannot calculate total plastic" in {
+      when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
+
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(controllers.routes.IndexController.onPageLoad.url)
+    }
   }
 
   "onwardRouting" should {

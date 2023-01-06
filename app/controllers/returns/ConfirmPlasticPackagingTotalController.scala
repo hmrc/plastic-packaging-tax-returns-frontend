@@ -18,14 +18,15 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
+import controllers.helpers.NonExportedAmountHelper
+import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ExportedPlasticAnswer
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingSummary.ConfirmImportedPlasticPackagingSummary
 import viewmodels.checkAnswers.returns.ImportedPlasticPackagingWeightSummary.ConfirmImportedPlasticPackagingWeightLabel
 import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.ConfirmManufacturedPlasticPackaging
@@ -51,16 +52,10 @@ class ConfirmPlasticPackagingTotalController @Inject()
   def onPageLoad: Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val summaryList: SummaryList = SummaryListViewModel(rows =
-          Seq(
-            ConfirmManufacturedPlasticPackaging,
-            ConfirmManufacturedPlasticPackagingSummary,
-            ConfirmImportedPlasticPackagingSummary,
-            ConfirmImportedPlasticPackagingWeightLabel,
-            PlasticPackagingTotalSummary
-          ).flatMap(_.row(request.userAnswers))
-        )
-        Ok(view(summaryList))
+
+        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+          Redirect(controllers.routes.IndexController.onPageLoad)
+        )(_ => Ok(view(createSummaryList(request))))
     }
 
   def onwardRouting: Action[AnyContent] = {
@@ -70,5 +65,17 @@ class ConfirmPlasticPackagingTotalController @Inject()
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }
+  }
+
+  private def createSummaryList(request: DataRequest[AnyContent])(implicit messages: Messages) = {
+    SummaryListViewModel(rows =
+      Seq(
+        ConfirmManufacturedPlasticPackaging,
+        ConfirmManufacturedPlasticPackagingSummary,
+        ConfirmImportedPlasticPackagingSummary,
+        ConfirmImportedPlasticPackagingWeightLabel,
+        PlasticPackagingTotalSummary
+      ).flatMap(_.row(request.userAnswers))
+    )
   }
 }

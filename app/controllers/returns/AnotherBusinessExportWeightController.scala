@@ -27,7 +27,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ExportedPlasticAnswer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
