@@ -685,3 +685,12 @@ amendExportedWeight.error.required = Enter your amendExportedWeight
 amendExportedWeight.error.wholeNumber = Enter your amendExportedWeight using whole numbers
 amendExportedWeight.error.outOfRange = AmendExportedWeight must be between {0} and {1}
 amendExportedWeight.change.hidden = AmendExportedWeight
+
+amendExportedByAnotherBusiness.title = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.heading = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.checkYourAnswersLabel = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.error.nonNumeric = Enter your amendExportedByAnotherBusiness using numbers
+amendExportedByAnotherBusiness.error.required = Enter your amendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.error.wholeNumber = Enter your amendExportedByAnotherBusiness using whole numbers
+amendExportedByAnotherBusiness.error.outOfRange = AmendExportedByAnotherBusiness must be between {0} and {1}
+amendExportedByAnotherBusiness.change.hidden = AmendExportedByAnotherBusiness

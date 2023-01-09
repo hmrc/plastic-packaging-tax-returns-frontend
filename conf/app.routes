@@ -195,3 +195,8 @@ GET        /amend-exported-weight                  controllers.AmendExportedWeig
 POST       /amend-exported-weight                  controllers.AmendExportedWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /change-amend-exported-weight                        controllers.AmendExportedWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-amend-exported-weight                        controllers.AmendExportedWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /amend-exported-by-another-business                  controllers.AmendExportedByAnotherBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /amend-exported-by-another-business                  controllers.AmendExportedByAnotherBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-amend-exported-by-another-business                        controllers.AmendExportedByAnotherBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-amend-exported-by-another-business                        controllers.AmendExportedByAnotherBusinessController.onSubmit(mode: Mode = CheckMode)
