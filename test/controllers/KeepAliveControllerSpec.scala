@@ -26,6 +26,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 
 import scala.concurrent.Future
 
@@ -41,9 +42,10 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
         when(mockCacheConnector.get(any())(any())) thenReturn Future.successful(Some(emptyUserAnswers))
 
         val application = new GuiceApplicationBuilder().overrides(
-            bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          ).build()
+          bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
+          bind[CacheConnector].toInstance(mockCacheConnector),
+          bind[SessionRepository].toInstance(mockSessionRepo)
+        ).build()
 
         running(application) {
 

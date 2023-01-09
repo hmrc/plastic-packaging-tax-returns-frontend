@@ -188,3 +188,15 @@ GET        /another-business-exported-weight                 controllers.returns
 POST       /another-business-exported-weight                  controllers.returns.AnotherBusinessExportWeightController.onSubmit(mode: Mode = NormalMode)
 GET        /change-another-business-export-weight                        controllers.returns.AnotherBusinessExportWeightController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-another-business-export-weight                        controllers.returns.AnotherBusinessExportWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /amending-exported-plastic-packaging                       controllers.amends.AmendExportedPlasticPackagingController.onPageLoad()
+
+GET        /amend-exported-weight                  controllers.amends.AmendExportedWeightController.onPageLoad(mode: Mode = NormalMode)
+POST       /amend-exported-weight                  controllers.amends.AmendExportedWeightController.onSubmit(mode: Mode = NormalMode)
+GET        /change-amend-exported-weight                        controllers.amends.AmendExportedWeightController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-amend-exported-weight                        controllers.amends.AmendExportedWeightController.onSubmit(mode: Mode = CheckMode)
+
+GET        /amend-exported-by-another-business                  controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /amend-exported-by-another-business                  controllers.amends.AmendExportedByAnotherBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-amend-exported-by-another-business                        controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-amend-exported-by-another-business                        controllers.amends.AmendExportedByAnotherBusinessController.onSubmit(mode: Mode = CheckMode)

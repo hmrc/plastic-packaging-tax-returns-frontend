@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages.amends
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class AnotherBusinessExportWeightFormProvider @Inject() extends Mappings {
+case object AmendExportedByAnotherBusinessPage extends QuestionPage[Long] {
 
-  def apply(): Form[Long] =
-    Form(
-      "value" -> long(
-        "anotherBusinessExportWeight.error.required",
-        "anotherBusinessExportWeight.error.wholeNumber",
-        "anotherBusinessExportWeight.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "anotherBusinessExportWeight.error.outOfRange"))
-    )
+  override def path: JsPath = JsPath \ "amend " \ toString
+
+  override def toString: String = "amendExportedByAnotherBusiness"
 }

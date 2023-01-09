@@ -42,9 +42,7 @@ class ReturnConfirmationControllerSpec extends SpecBase with BeforeAndAfterEach 
 
       when(mockSessionRepo.get[Any](any(), any())(any())).thenReturn(Future.successful(Some("12345")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[SessionRepository].toInstance(mockSessionRepo)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.returns.routes.ReturnConfirmationController.onPageLoad(false).url)

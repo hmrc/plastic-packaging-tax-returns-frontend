@@ -73,7 +73,6 @@ case class TaxReturnViewModel (
     createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
-  // Show or hide edit links
   private def exportedTotal: Long = {
     val exported = getMustHave(ExportedPlasticPackagingWeightPage)
     val exportedByAnotherBusiness = getMustHave(AnotherBusinessExportWeightPage)
@@ -81,6 +80,7 @@ case class TaxReturnViewModel (
     exported + exportedByAnotherBusiness
   }
 
+  // Show or hide edit links
   def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
 

@@ -18,8 +18,7 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.AnotherBusinessExportWeightFormProvider
-import forms.returns.ExportedPlasticPackagingWeightFormProvider
+import forms.returns.{AnotherBusinessExportWeightFormProvider, ExportedPlasticPackagingWeightFormProvider}
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator, ReturnsJourneyNavigator}

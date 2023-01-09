@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package pages.returns
 
 import pages.behaviours.PageBehaviours
-import pages.returns.AnotherBusinessExportWeightPage
 
 class AnotherBusinessExportWeightPageSpec extends PageBehaviours {
 
