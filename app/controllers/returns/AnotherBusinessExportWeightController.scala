@@ -18,15 +18,15 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.{InjectableNonExportedAmountHelper, NonExportedAmountHelper}
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.AnotherBusinessExportWeightFormProvider
 import models.Mode
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.AnotherBusinessExportWeightPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
@@ -41,9 +41,7 @@ class AnotherBusinessExportWeightController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnotherBusinessExportWeightView,
                                         nonExportedAmountHelper: InjectableNonExportedAmountHelper
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  //val form = formProvider()
+                                      )(implicit ec: ExecutionContext) extends Results with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
@@ -72,7 +70,7 @@ class AnotherBusinessExportWeightController @Inject()(
           request.userAnswers
             .setOrFail(AnotherBusinessExportWeightPage, value)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(updatedUserAnswers => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(updatedUserAnswers,mode)))
-      )
+            .map(updatedUserAnswers => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(updatedUserAnswers, mode)))
+        )
   }
 }
