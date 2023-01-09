@@ -25,8 +25,8 @@ import navigation.ReturnsJourneyNavigator
 import pages.returns.AnotherBusinessExportWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ExportedPlasticAnswer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
@@ -71,7 +71,11 @@ class AnotherBusinessExportWeightController @Inject()(
           request.userAnswers
             .setOrFail(AnotherBusinessExportWeightPage, value)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(updatedUserAnswers => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(updatedUserAnswers,mode)))
+            .map(updatedUserAnswers =>
+              Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
+                ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
+                mode))
+            )
       )
   }
 }

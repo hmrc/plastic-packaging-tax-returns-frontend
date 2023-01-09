@@ -17,15 +17,20 @@
 package controllers.returns
 
 import connectors.CacheConnector
-import controllers.actions._
+import controllers.actions.JourneyAction
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
-import navigation.Navigator
+import models.requests.DataRequest
+import models.requests.DataRequest._
+import navigation.ReturnsJourneyNavigator
 import pages.returns.ExportedPlasticPackagingWeightPage
+import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.PlasticPackagingTotalSummary
+import services.ExportedPlasticAnswer
 import views.html.returns.ExportedPlasticPackagingWeightView
 
 import javax.inject.Inject
@@ -34,47 +39,54 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExportedPlasticPackagingWeightController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           cacheConnector: CacheConnector,
-                                                          navigator: Navigator,
-                                                          identify: IdentifierAction,
-                                                          getData: DataRetrievalAction,
-                                                          requireData: DataRequiredAction,
+                                                          navigator: ReturnsJourneyNavigator,
+                                                          journeyAction: JourneyAction,
                                                           form: ExportedPlasticPackagingWeightFormProvider,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           view: ExportedPlasticPackagingWeightView
 )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+  extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    journeyAction {
       implicit request =>
-        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
+
         val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
           case None => form()
           case Some(value) => form().fill(value)
         }
-        Ok(view(preparedForm, mode, totalPlastic))
+        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+            Redirect(controllers.routes.IndexController.onPageLoad)
+          )(totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
+        )
 
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val pptId: String = request.pptReference
-        val totalPlastic = PlasticPackagingTotalSummary.calculateTotal(request.userAnswers)
-
 
         form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))),
+          formWithErrors =>
+            Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
           value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ExportedPlasticPackagingWeightPage, value)
+            request.userAnswers
+              .setOrFail(ExportedPlasticPackagingWeightPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(updatedAnswers =>
+                Redirect(navigator.exportedPlasticPackagingWeightRoute(
+                  ExportedPlasticAnswer(updatedAnswers).isAllPlasticExported,
+                  mode))
               )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              navigator.nextPage(ExportedPlasticPackagingWeightPage, mode, updatedAnswers)
-            )
         )
     }
 
+  private def handleTotalPlasticCalculationError(
+    mode: Mode,
+    formWithErrors: Form[Long]
+  )(implicit request: DataRequest[AnyContent]) = {
+    NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+      Redirect(controllers.routes.IndexController.onPageLoad)
+    )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
+  }
 }

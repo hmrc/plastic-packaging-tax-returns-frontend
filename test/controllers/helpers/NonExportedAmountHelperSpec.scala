@@ -18,7 +18,7 @@ package controllers.helpers
 
 import models.UserAnswers
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{AnotherBusinessExportWeightPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns._
 
 class NonExportedAmountHelperSpec extends PlaySpec {
 
@@ -108,5 +108,4 @@ class NonExportedAmountHelperSpec extends PlaySpec {
       NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(ans) mustBe None
     }
   }
-
 }
