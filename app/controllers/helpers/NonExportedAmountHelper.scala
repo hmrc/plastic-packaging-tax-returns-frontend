@@ -16,11 +16,11 @@
 
 package controllers.helpers
 
+import com.sun.xml.internal.bind.v2.TODO
 import models.UserAnswers
 import pages.QuestionPage
 import pages.returns._
-
-object NonExportedAmountHelper {
+class InjectableNonExportedAmountHelper {
 
   def totalPlastic(userAnswers: UserAnswers) = {
     for {
@@ -29,7 +29,7 @@ object NonExportedAmountHelper {
     } yield manufacturing + imported
   }
 
-  def nonExportedAmount(userAnswers: UserAnswers):Option[Long] = {
+  def nonExportedAmount(userAnswers: UserAnswers): Option[Long] = {
 
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
@@ -48,22 +48,26 @@ object NonExportedAmountHelper {
   }
 
   private def getAmount(
-    userAnswer: UserAnswers,
-    page: QuestionPage[Boolean],
-    weightPage: QuestionPage[Long]
-  ): Option[Long] = {
-    userAnswer.get(page).flatMap { _  => userAnswer.get(weightPage) }
+                         userAnswer: UserAnswers,
+                         page: QuestionPage[Boolean],
+                         weightPage: QuestionPage[Long]
+                       ): Option[Long] = {
+    userAnswer.get(page).flatMap { _ => userAnswer.get(weightPage) }
   }
 
   private def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage)
 
-  private def importedPlasticAmount(userAnswer: UserAnswers):Option[Long] =
+  private def importedPlasticAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage)
 
-  private def exportedAmount(userAnswer: UserAnswers):Option[Long] =
+  private def exportedAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
 
-  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers):Option[Long] =
+  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
+}
+@deprecated("use InjectableNonExportedAmountHelper instead")
+object NonExportedAmountHelper extends InjectableNonExportedAmountHelper { //TODO delete when everything is injecting
+
 }

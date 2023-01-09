@@ -21,6 +21,7 @@ import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.changeGroupLead.FeatureGuard
+import controllers.helpers.InjectableNonExportedAmountHelper
 import controllers.returns.AnotherBusinessExportWeightController
 import forms.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
@@ -52,7 +53,6 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
 
-// todo: change this to proper unit test
 class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndAfterEach{
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
@@ -64,7 +64,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[Long]]
   private val mockNavigator = mock[ReturnsJourneyNavigator]
-
+  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
   val sut = new AnotherBusinessExportWeightController(
     mockMessagesApi,
@@ -73,10 +73,9 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
     journeyAction,
     mockFormProvider,
     controllerComponents,
-    mockView
+    mockView,
+    mockNonExportedAmountHelper
   )(global)
-
-  object TestException extends Exception("test")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -87,18 +86,9 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
       mockFormProvider,
       mockView,
       form,
-      dataRequest
+      dataRequest,
+      mockNonExportedAmountHelper
     )
-
-    when(dataRequest.userAnswers.get(meq(ManufacturedPlasticPackagingWeightPage ))(any)).thenReturn(Some(50L))
-    when(dataRequest.userAnswers.get(meq(ManufacturedPlasticPackagingPage))(any)).thenReturn(Some(true))
-    when(dataRequest.userAnswers.get(meq(ImportedPlasticPackagingWeightPage))(any)).thenReturn(Some(50L))
-    when(dataRequest.userAnswers.get(meq(ImportedPlasticPackagingPage))(any)).thenReturn(Some(true))
-    when(dataRequest.userAnswers.get(meq(ExportedPlasticPackagingWeightPage))(any)).thenReturn(Some(20L))
-    when(dataRequest.userAnswers.get(meq(DirectlyExportedComponentsPage))(any)).thenReturn(Some(true))
-    when(dataRequest.userAnswers.get(meq(PlasticExportedByAnotherBusinessPage))(any)).thenReturn(Some(true))
-
-
 
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(mockFormProvider.apply()).thenReturn(form)
@@ -106,8 +96,10 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.exportedByAnotherBusinessWeightRoute(any, any)).thenReturn(Call("GET", "/foo"))
+    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(200L))
   }
 
+  //TODO add helper for defs below shared by lots of specs
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
     when(mock[Action[AnyContent]].apply(any))
       .thenAnswer((request: DataRequest[AnyContent]) =>
@@ -119,10 +111,6 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
       .thenAnswer((request: DataRequest[AnyContent]) => function(request))
       .getMock[Action[AnyContent]]
 
- // def onwardRoute = Call("GET", "/foo")
-
-  //lazy val AnotherBusinessExportWeightRoute = controllers.returns.routes.AnotherBusinessExportWeightController.onPageLoad(NormalMode).url
-
   "onPageLoad" should {
     "invoke the journey action" in {
       Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
@@ -133,7 +121,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
      status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(100L), meq(form), meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(200L), meq(form), meq(NormalMode))(any, any)
     }
 
     "create the form" in {
@@ -147,7 +135,8 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
     }
 
    "redirect to index controller when total plastic cannot be calculated" in {
-     when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
+     reset(mockNonExportedAmountHelper)
+     when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
 
      val result = sut.onPageLoad(NormalMode)(dataRequest)
 

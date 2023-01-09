@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.{InjectableNonExportedAmountHelper, NonExportedAmountHelper}
 import forms.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
@@ -39,7 +39,8 @@ class AnotherBusinessExportWeightController @Inject()(
                                         journeyAction: JourneyAction,
                                         form: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: AnotherBusinessExportWeightView
+                                        view: AnotherBusinessExportWeightView,
+                                        nonExportedAmountHelper: InjectableNonExportedAmountHelper
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   //val form = formProvider()
@@ -49,7 +50,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
       val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form())
 
-      NonExportedAmountHelper.totalPlastic(request.userAnswers)
+      nonExportedAmountHelper.totalPlastic(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
           totalPlastic => Ok(view(totalPlastic, preparedForm, mode))
         )
@@ -61,7 +62,7 @@ class AnotherBusinessExportWeightController @Inject()(
       form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
-            NonExportedAmountHelper.totalPlastic(request.userAnswers)
+            nonExportedAmountHelper.totalPlastic(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
                 totalPlastic => BadRequest(view(totalPlastic, formWithErrors, mode))
               )
