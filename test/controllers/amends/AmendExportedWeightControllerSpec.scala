@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.AmendExportedWeightFormProvider
+import forms.amends.AmendExportedWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AmendExportedWeightPage
+import pages.amends.AmendExportedWeightPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
-import views.html.AmendExportedWeightView
+import views.html.amends.AmendExportedWeightView
 
 import scala.concurrent.Future
 
-// todo: fix tests
+// todo: replace test with proper real test, that do not start the application
 class AmendExportedWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AmendExportedWeightFormProvider()
@@ -139,7 +139,7 @@ class AmendExportedWeightControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -156,7 +156,7 @@ class AmendExportedWeightControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

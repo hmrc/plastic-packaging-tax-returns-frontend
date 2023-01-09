@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("amendExportedByAnotherBusiness.title"))) {
 
-    @formHelper(action = routes.AmendExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

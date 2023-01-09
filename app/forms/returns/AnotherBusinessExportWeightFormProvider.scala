@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package pages
+package forms.returns
 
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import play.api.data.Form
 
-class AmendExportedWeightPageSpec extends PageBehaviours {
+import javax.inject.Inject
 
-  "AmendExportedWeightPage" - {
+class AnotherBusinessExportWeightFormProvider @Inject() extends Mappings {
 
-    beRetrievable[Long](AmendExportedWeightPage)
-
-    beSettable[Long](AmendExportedWeightPage)
-
-    beRemovable[Long](AmendExportedWeightPage)
-  }
+  def apply(): Form[Long] =
+    Form(
+      "value" -> long(
+        "anotherBusinessExportWeight.error.required",
+        "anotherBusinessExportWeight.error.wholeNumber",
+        "anotherBusinessExportWeight.error.nonNumeric")
+          .verifying(inRange(0L, 99999999999L, "anotherBusinessExportWeight.error.outOfRange"))
+    )
 }

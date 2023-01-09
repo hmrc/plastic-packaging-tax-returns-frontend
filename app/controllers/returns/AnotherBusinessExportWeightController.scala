@@ -19,7 +19,7 @@ package controllers.returns
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
-import forms.AnotherBusinessExportWeightFormProvider
+import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
 import pages.returns.AnotherBusinessExportWeightPage

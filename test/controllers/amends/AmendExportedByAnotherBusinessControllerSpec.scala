@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import base.SpecBase
 import connectors.CacheConnector
-import forms.AmendExportedByAnotherBusinessFormProvider
+import forms.amends.AmendExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AmendExportedByAnotherBusinessPage
+import pages.amends.AmendExportedByAnotherBusinessPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.AmendExportedByAnotherBusinessView
+import views.html.amends.AmendExportedByAnotherBusinessView
 
 import scala.concurrent.Future
 
@@ -135,7 +135,7 @@ class AmendExportedByAnotherBusinessControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
 
@@ -152,7 +152,7 @@ class AmendExportedByAnotherBusinessControllerSpec extends SpecBase with Mockito
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
   }

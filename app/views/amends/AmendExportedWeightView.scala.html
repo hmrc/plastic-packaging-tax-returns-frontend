@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("amendExportedWeight.title"))) {
 
-    @formHelper(action = routes.AmendExportedWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendExportedWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

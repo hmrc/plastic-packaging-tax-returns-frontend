@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import controllers.routes
 import models.Mode.CheckMode
 import models.UserAnswers
-import pages.AmendExportedByAnotherBusinessPage
+import pages.amends.AmendExportedByAnotherBusinessPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -35,7 +35,7 @@ object AmendExportedByAnotherBusinessSummary  {
           key     = "amendExportedByAnotherBusiness.checkYourAnswersLabel",
           value   = ValueViewModel(answer.toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.AmendExportedByAnotherBusinessController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.amends.routes.AmendExportedByAnotherBusinessController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("amendExportedByAnotherBusiness.change.hidden"))
           )
         )

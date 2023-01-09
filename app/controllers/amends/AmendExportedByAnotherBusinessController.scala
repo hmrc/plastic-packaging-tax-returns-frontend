@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.amends
 
 import connectors.CacheConnector
 import controllers.actions._
-import forms.AmendExportedWeightFormProvider
+import forms.amends.AmendExportedByAnotherBusinessFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.AmendExportedWeightPage
+import pages.amends.AmendExportedByAnotherBusinessPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AmendExportedWeightView
+import views.html.amends.AmendExportedByAnotherBusinessView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendExportedWeightController @Inject()(
-                                               override val messagesApi: MessagesApi,
-                                               cacheConnector: CacheConnector,
-                                               navigator: Navigator,
-                                               identify: IdentifierAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: AmendExportedWeightFormProvider,
-                                               val controllerComponents: MessagesControllerComponents,
-                                               view: AmendExportedWeightView
+class AmendExportedByAnotherBusinessController @Inject()(
+                                        override val messagesApi: MessagesApi,
+                                        cacheConnector: CacheConnector,
+                                        navigator: Navigator,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: AmendExportedByAnotherBusinessFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        view: AmendExportedByAnotherBusinessView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -47,7 +47,7 @@ class AmendExportedWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AmendExportedWeightPage) match {
+      val preparedForm = request.userAnswers.get(AmendExportedByAnotherBusinessPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,10 +63,10 @@ class AmendExportedWeightController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AmendExportedWeightPage, value))
-            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(AmendExportedWeightPage, mode, updatedAnswers))
+            request.userAnswers
+              .setOrFail(AmendExportedByAnotherBusinessPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(updatedAnswers => Redirect(navigator.nextPage(AmendExportedByAnotherBusinessPage, mode, updatedAnswers)))
       )
   }
 }

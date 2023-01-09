@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.amends
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object AmendExportedByAnotherBusinessPage extends QuestionPage[Long] {
+class AmendExportedWeightPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "AmendExportedWeightPage" - {
 
-  override def toString: String = "amendExportedByAnotherBusiness"
+    beRetrievable[Long](AmendExportedWeightPage)
+
+    beSettable[Long](AmendExportedWeightPage)
+
+    beRemovable[Long](AmendExportedWeightPage)
+  }
 }

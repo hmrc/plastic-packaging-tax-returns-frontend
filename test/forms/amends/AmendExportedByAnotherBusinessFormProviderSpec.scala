@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package forms.amends
 
 import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class AnotherBusinessExportWeightFormProviderSpec extends LongFieldBehaviours {
+class AmendExportedByAnotherBusinessFormProviderSpec extends LongFieldBehaviours {
 
-  val form = new AnotherBusinessExportWeightFormProvider()()
+  val form = new AmendExportedByAnotherBusinessFormProvider()()
 
   ".value" - {
 
@@ -41,8 +41,8 @@ class AnotherBusinessExportWeightFormProviderSpec extends LongFieldBehaviours {
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "anotherBusinessExportWeight.error.nonNumeric"),
-      wholeNumberError = FormError(fieldName, "anotherBusinessExportWeight.error.wholeNumber")
+      nonNumericError  = FormError(fieldName, "amendExportedByAnotherBusiness.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "amendExportedByAnotherBusiness.error.wholeNumber")
     )
 
     behave like longFieldWithRange(
@@ -50,13 +50,13 @@ class AnotherBusinessExportWeightFormProviderSpec extends LongFieldBehaviours {
       fieldName,
       minimum       = minimum,
       maximum       = maximum,
-      expectedError = FormError(fieldName, "anotherBusinessExportWeight.error.outOfRange", Seq(minimum, maximum))
+      expectedError = FormError(fieldName, "amendExportedByAnotherBusiness.error.outOfRange", Seq(minimum, maximum))
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, "anotherBusinessExportWeight.error.required")
+      requiredError = FormError(fieldName, "amendExportedByAnotherBusiness.error.required")
     )
   }
 }

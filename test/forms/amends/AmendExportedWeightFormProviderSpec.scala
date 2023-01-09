@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.amends
 
 import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
