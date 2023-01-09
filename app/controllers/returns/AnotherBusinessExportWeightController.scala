@@ -37,17 +37,17 @@ class AnotherBusinessExportWeightController @Inject()(
                                         cacheConnector: CacheConnector,
                                         returnsNavigator: ReturnsJourneyNavigator,
                                         journeyAction: JourneyAction,
-                                        formProvider: AnotherBusinessExportWeightFormProvider,
+                                        form: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnotherBusinessExportWeightView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  //val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form)
+      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form())
 
       NonExportedAmountHelper.totalPlastic(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
@@ -58,7 +58,7 @@ class AnotherBusinessExportWeightController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
             NonExportedAmountHelper.totalPlastic(request.userAnswers)
