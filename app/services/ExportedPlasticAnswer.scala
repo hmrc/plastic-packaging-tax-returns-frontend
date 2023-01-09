@@ -55,9 +55,8 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
   }
 
   def resetAllIfNoTotalPlastic: UserAnswers = {
-
-    if(NonExportedAmountHelper.totalPlastic(userAnswers).getOrElse(0L) > 0L) {
-      userAnswers.copy()
+    if(NonExportedAmountHelper.totalPlastic(userAnswers).exists(_ > 0L)) {
+      userAnswers
     } else {
       userAnswers.set(DirectlyExportedComponentsPage, false).get
         .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
