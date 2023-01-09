@@ -12,6 +12,6 @@ class $className$FormProvider @Inject() extends Mappings {
         "$className;format="decap"$.error.required",
         "$className;format="decap"$.error.wholeNumber",
         "$className;format="decap"$.error.nonNumeric")
-          .verifying(inRange($minimum$, $maximum$, "$className;format="decap"$.error.outOfRange"""))
+          .verifying(inRange($minimum$L, $maximum$L, "$className;format="decap"$.error.outOfRange"))
     )
 }

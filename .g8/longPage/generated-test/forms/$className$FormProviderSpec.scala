@@ -1,9 +1,9 @@
 package forms
 
-import forms.behaviours.IntFieldBehaviours
+import forms.behaviours.LongFieldBehaviours
 import play.api.data.FormError
 
-class $className$FormProviderSpec extends IntFieldBehaviours {
+class $className$FormProviderSpec extends LongFieldBehaviours {
 
   val form = new $className$FormProvider()()
 
@@ -11,10 +11,10 @@ class $className$FormProviderSpec extends IntFieldBehaviours {
 
     val fieldName = "value"
 
-    val minimum = $minimum$
-    val maximum = $maximum$
+    val minimum = $minimum$L
+    val maximum = $maximum$L
 
-    val validDataGenerator = intsInRangeWithCommas(minimum, maximum)
+    val validDataGenerator = longsInRangeWithCommas(minimum, maximum)
 
     behave like fieldThatBindsValidData(
       form,
@@ -22,14 +22,14 @@ class $className$FormProviderSpec extends IntFieldBehaviours {
       validDataGenerator
     )
 
-    behave like intField(
+    behave like longField(
       form,
       fieldName,
       nonNumericError  = FormError(fieldName, "$className;format="decap"$.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "$className;format="decap"$.error.wholeNumber")
     )
 
-    behave like intFieldWithRange(
+    behave like longFieldWithRange(
       form,
       fieldName,
       minimum       = minimum,
