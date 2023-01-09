@@ -31,9 +31,6 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
   private val page = inject[AmendExportedPlasticPackagingView]
   private def createView: Html = page()(request, messages)
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(api.inject.bind[SessionRepository].toInstance(mock[SessionRepository])).build()
-
   "view" should {
 
     val view = createView

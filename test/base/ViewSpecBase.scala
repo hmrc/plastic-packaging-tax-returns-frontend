@@ -16,12 +16,17 @@
 
 package base
 
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.inject.bind
+import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
+import repositories.SessionRepository
 
 trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
@@ -30,6 +35,9 @@ trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   implicit def messages: Messages =
     realMessagesApi.preferred(request)
+
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[SessionRepository].toInstance(mock[SessionRepository])).build()
 
 }
 

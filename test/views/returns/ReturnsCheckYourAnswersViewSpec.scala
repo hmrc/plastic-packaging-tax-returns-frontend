@@ -34,6 +34,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
+import repositories.SessionRepository
 import support.{PptTestData, ViewAssertions, ViewMatchers}
 import views.html.returns.ReturnsCheckYourAnswersView
 
@@ -56,7 +57,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .overrides(bind[FrontendAppConfig].toInstance(appConfig)).build()
+      .overrides(
+        bind[FrontendAppConfig].toInstance(appConfig),
+        bind[SessionRepository].toInstance(mock[SessionRepository])
+      ).build()
 
   def createViewModel(answers: UserAnswers, calculations: Calculations = calculations): TaxReturnViewModel = {
     val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("reg-number"))
