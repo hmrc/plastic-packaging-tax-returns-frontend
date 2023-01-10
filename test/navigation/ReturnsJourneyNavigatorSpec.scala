@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2022 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package navigation
 
 import config.FrontendAppConfig
@@ -37,19 +21,20 @@ import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import org.mockito.MockitoSugar.mock
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.{ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
+import queries.Gettable
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val frontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  private val frontendConfig = mock[FrontendAppConfig]
+  private val mockClaimedCredits = mock[ClaimedCredits]
+  private val userAnswers = mock[UserAnswers]
+
   private val returnsJourneyNavigator = new ReturnsJourneyNavigator(frontendConfig)
-  val navigator = new Navigator(returns = returnsJourneyNavigator)
-  val mockClaimedCredits: ClaimedCredits = mock[ClaimedCredits]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,22 +45,22 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   
   "The start your return page" must {
     "goto the what do you want to do page" in {
-      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(true, false) mustBe 
         creditsRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
     }
     "except when the credits feature is disabled" in {
-      when(frontendConfig.isFeatureEnabled(any())) thenReturn false
+      when(frontendConfig.isFeatureEnabled(any)) thenReturn false
       returnsJourneyNavigator.startYourReturnRoute(true, false) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
     "except when it is the users first return" in {
-      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(true, isFirstReturn = true) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
     "go back to the account home page" in {
-      when(frontendConfig.isFeatureEnabled(any())) thenReturn true
+      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
       returnsJourneyNavigator.startYourReturnRoute(doesUserWantToStartReturn = false, false) mustBe
         returnsRoutes.NotStartOtherReturnsController.onPageLoad()
     }
@@ -294,6 +279,34 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
 
+  }
+
+  "directlyExportedComponentsRoute" when {
+    
+    "answer is yes in check mode" in {
+      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(true)
+      returnsJourneyNavigator.directlyExportedComponentsRoute(userAnswers, CheckMode) mustBe
+        returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode)
+    }
+
+    "answer is yes in normal mode" in {
+      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(true)
+      returnsJourneyNavigator.directlyExportedComponentsRoute(userAnswers, NormalMode) mustBe
+        returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
+    }
+
+    "answer is no in check mode" in {
+      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(false)
+      returnsJourneyNavigator.directlyExportedComponentsRoute(userAnswers, CheckMode) mustBe
+        returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
+    }
+
+    "answer is no in normal mode" in {
+      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(false)
+      returnsJourneyNavigator.directlyExportedComponentsRoute(userAnswers, NormalMode) mustBe
+        returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
+    }
+    
   }
 }
 

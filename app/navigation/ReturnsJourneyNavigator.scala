@@ -151,12 +151,12 @@ class ReturnsJourneyNavigator @Inject()(
   def confirmTotalPlasticPackagingRoute(answers: UserAnswers): Call = {
     NonExportedAmountHelper.totalPlastic(answers) match {
       case Some(amount) if amount > 0 => controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
-      case Some(amount) if amount <= 0 => controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad
+      case Some(amount) if amount <= 0 => controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
       case _ => controllers.routes.IndexController.onPageLoad
     }
   }
 
-  private def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
+  def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
     answers.get(DirectlyExportedComponentsPage) match {
       case Some(true) => routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
       case Some(false) => routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
