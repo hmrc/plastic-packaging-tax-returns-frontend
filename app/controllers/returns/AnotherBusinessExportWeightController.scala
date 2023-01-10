@@ -19,7 +19,7 @@ package controllers.returns
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.InjectableNonExportedAmountHelper
-import forms.AnotherBusinessExportWeightFormProvider
+import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
@@ -27,6 +27,7 @@ import pages.returns.AnotherBusinessExportWeightPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
+import services.ExportedPlasticAnswer
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
@@ -70,7 +71,11 @@ class AnotherBusinessExportWeightController @Inject()(
           request.userAnswers
             .setOrFail(AnotherBusinessExportWeightPage, value)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(updatedUserAnswers => Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(updatedUserAnswers, mode)))
-        )
+            .map(updatedUserAnswers =>
+              Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
+                ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
+                mode))
+            )
+      )
   }
 }

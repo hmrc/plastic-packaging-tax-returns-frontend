@@ -19,9 +19,10 @@ package base.utils
 import com.codahale.metrics.SharedMetricRegistries
 import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
+import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.DefaultAwaitTimeout
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
@@ -39,7 +40,9 @@ class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with De
   override def fakeApplication(): Application = {
     startWireMockServer
     SharedMetricRegistries.clear()
-    new GuiceApplicationBuilder().configure(overrideConfig).build()
+    new GuiceApplicationBuilder()
+      .overrides(inject.bind[SessionRepository].toInstance(mock[SessionRepository]))
+      .configure(overrideConfig).build()
   }
 
   protected implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global

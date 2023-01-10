@@ -16,38 +16,31 @@
 
 package controllers
 
-import base.SpecBase
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import controllers.changeGroupLead.FeatureGuard
 import controllers.helpers.InjectableNonExportedAmountHelper
 import controllers.returns.AnotherBusinessExportWeightController
-import forms.AnotherBusinessExportWeightFormProvider
+import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
-import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import navigation.{FakeNavigator, Navigator, ReturnsJourneyNavigator}
-import org.mockito.{Answers, Mockito}
-import org.mockito.ArgumentMatchersSugar.any
+import navigation.ReturnsJourneyNavigator
+import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.reset
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{AnotherBusinessExportWeightPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.AnotherBusinessExportWeightPage
 import play.api.data.Form
-import play.api.data.Forms.{longNumber, text}
+import play.api.data.Forms.longNumber
 import play.api.i18n.MessagesApi
-import play.api.inject.bind
-import play.api.mvc.{Action, AnyContent, Call, Result}
+import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Gettable
-import repositories.SessionRepository
 import views.html.returns.AnotherBusinessExportWeightView
 
 import scala.concurrent.ExecutionContext.global

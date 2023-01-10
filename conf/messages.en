@@ -668,3 +668,29 @@ anotherBusinessExportWeight.error.required = Enter the weight, in kilograms
 anotherBusinessExportWeight.error.wholeNumber = Weight must not include decimals
 anotherBusinessExportWeight.error.outOfRange = Weight must be between 1kg and 99,999,999,999kg
 anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
+
+amendExportedPlasticPackaging.title = Amending exported plastic packaging
+amendExportedPlasticPackaging.heading = Amending exported plastic packaging
+amendExportedPlasticPackaging.paragraph.1 = Exported plastic packaging total is the sum of 2 weights you entered when you submitted your return.
+amendExportedPlasticPackaging.paragraph.2 = This is the weight of plastic packaging:
+amendExportedPlasticPackaging.paragraph.3 = To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total.
+amendExportedPlasticPackaging.bulletPoint.1 = you exported or intended to export within 12 months
+amendExportedPlasticPackaging.bulletPoint.2 = another business exported or converted
+
+amendExportedWeight.title = AmendExportedWeight
+amendExportedWeight.heading = AmendExportedWeight
+amendExportedWeight.checkYourAnswersLabel = AmendExportedWeight
+amendExportedWeight.error.nonNumeric = Enter your amendExportedWeight using numbers
+amendExportedWeight.error.required = Enter your amendExportedWeight
+amendExportedWeight.error.wholeNumber = Enter your amendExportedWeight using whole numbers
+amendExportedWeight.error.outOfRange = AmendExportedWeight must be between {0} and {1}
+amendExportedWeight.change.hidden = AmendExportedWeight
+
+amendExportedByAnotherBusiness.title = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.heading = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.checkYourAnswersLabel = AmendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.error.nonNumeric = Enter your amendExportedByAnotherBusiness using numbers
+amendExportedByAnotherBusiness.error.required = Enter your amendExportedByAnotherBusiness
+amendExportedByAnotherBusiness.error.wholeNumber = Enter your amendExportedByAnotherBusiness using whole numbers
+amendExportedByAnotherBusiness.error.outOfRange = AmendExportedByAnotherBusiness must be between {0} and {1}
+amendExportedByAnotherBusiness.change.hidden = AmendExportedByAnotherBusiness

@@ -17,8 +17,7 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.AnotherBusinessExportWeightFormProvider
-import forms.returns.ExportedPlasticPackagingWeightFormProvider
+import forms.returns.{AnotherBusinessExportWeightFormProvider, ExportedPlasticPackagingWeightFormProvider}
 import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
