@@ -23,7 +23,7 @@ import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.DirectlyExportedComponentsPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
@@ -35,17 +35,17 @@ import views.html.returns.DirectlyExportedComponentsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectlyExportedComponentsController @Inject() (
-                                                       override val messagesApi: MessagesApi,
-                                                       cacheConnector: CacheConnector,
-                                                       navigator: Navigator,
-                                                       journeyAction: JourneyAction,
-                                                       nonExportedAmountHelper: NonExportedAmountHelper,
-                                                       form: DirectlyExportedComponentsFormProvider,
-                                                       val controllerComponents: MessagesControllerComponents,
-                                                       view: DirectlyExportedComponentsView
+class DirectlyExportedComponentsController @Inject()(
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  journeyAction: JourneyAction,
+  nonExportedAmountHelper: NonExportedAmountHelper,
+  form: DirectlyExportedComponentsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
-    extends I18nSupport {
+  extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
@@ -69,7 +69,7 @@ class DirectlyExportedComponentsController @Inject() (
             request.userAnswers
               .setOrFail(DirectlyExportedComponentsPage, value)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers)))
+              .map(updatedAnswers => Redirect(navigator.directlyExportedComponentsRoute(updatedAnswers, mode)))
         )
     }
 

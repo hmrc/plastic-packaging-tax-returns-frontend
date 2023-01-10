@@ -125,7 +125,7 @@ class ReturnsJourneyNavigator @Inject()(
       routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
   }
 
-  private def manufacturedPlasticPackagingWeightRoute(answers: UserAnswers): Call =
+  def manufacturedPlasticPackagingWeightRoute(answers: UserAnswers): Call =
     answers.get(ManufacturedPlasticPackagingWeightPage) match {
       case Some(_) => routes.ConfirmPlasticPackagingTotalController.onPageLoad
       case _ => throw new Exception("Unable to navigate to page")

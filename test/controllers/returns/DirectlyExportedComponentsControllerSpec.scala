@@ -25,10 +25,10 @@ import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
-import navigation.Navigator
-import org.mockito.ArgumentMatchersSugar.any
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{reset, verify, when}
-import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
+import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -48,7 +48,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
   private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi    = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
-  private val navigator      = mock[Navigator]
+  private val navigator      = mock[ReturnsJourneyNavigator]
   private val journeyAction  = mock[JourneyAction]
   private val formProvider   = mock[DirectlyExportedComponentsFormProvider]
   private val view           = mock[DirectlyExportedComponentsView]
@@ -63,7 +63,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     stubMessagesControllerComponents(),
     view)
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(journeyAction, view, cacheConnector, dataRequest, navigator, nonExportedAmountHelper)
@@ -95,7 +95,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      verify(view).apply(ArgumentMatchers.eq(form), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(10L))(any, any)
+      verify(view).apply(eqTo(form), eqTo(NormalMode), eqTo(10L))(any, any)
     }
 
     "return a view with question answered YES " in {
@@ -125,7 +125,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.routes.IndexController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
   }
 
@@ -136,13 +136,13 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
       when(dataRequest.userAnswers).thenReturn(createUserAnswer)
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
-      when(navigator.nextPage(any, any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("/foo")
-      verify(navigator).nextPage(ArgumentMatchers.eq(DirectlyExportedComponentsPage), ArgumentMatchers.eq(NormalMode), any[UserAnswers])
+      redirectLocation(result) mustBe Some("/foo")
+      verify(navigator).directlyExportedComponentsRoute(any, eqTo(NormalMode))
     }
 
     "set userAnswer" in {
@@ -156,7 +156,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
         saveUserAnswerToCache = Some(a)
         Future.successful(true)
       }
-      when(navigator.nextPage(any, any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
@@ -170,11 +170,11 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       when(dataRequest.userAnswers).thenReturn(createUserAnswer)
       when(dataRequest.pptReference).thenReturn("123")
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
-      when(navigator.nextPage(any, any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("123"))(any)
+      verify(cacheConnector).saveUserAnswerFunc(eqTo("123"))(any)
     }
 
     "return an error when error on form" in {
@@ -187,7 +187,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustEqual BAD_REQUEST
-      verify(view).apply(ArgumentMatchers.eq(formError), ArgumentMatchers.eq(NormalMode), ArgumentMatchers.eq(10L))(any, any)
+      verify(view).apply(eqTo(formError), eqTo(NormalMode), eqTo(10L))(any, any)
     }
 
     "redirect when total plastic cannot be calculated" in {
@@ -201,7 +201,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.routes.IndexController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
   }
 

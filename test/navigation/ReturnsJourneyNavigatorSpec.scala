@@ -334,7 +334,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       navigator.exportedByAnotherBusinessRoute(userAnswers, CheckMode) mustBe
         returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
-
+  }
+  
+  "manufacturedPlasticPackagingWeightRoute" in {
+    when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(1L)
+    navigator.manufacturedPlasticPackagingWeightRoute(userAnswers) mustBe 
+      returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad     
   }
 }
 
