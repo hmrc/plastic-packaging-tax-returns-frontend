@@ -18,15 +18,16 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.AnotherBusinessExportWeightPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import services.ExportedPlasticAnswer
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.AnotherBusinessExportWeightView
 
 import javax.inject.Inject
@@ -37,19 +38,18 @@ class AnotherBusinessExportWeightController @Inject()(
                                         cacheConnector: CacheConnector,
                                         returnsNavigator: ReturnsJourneyNavigator,
                                         journeyAction: JourneyAction,
-                                        formProvider: AnotherBusinessExportWeightFormProvider,
+                                        form: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: AnotherBusinessExportWeightView
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+                                        view: AnotherBusinessExportWeightView,
+                                        nonExportedAmountHelper: InjectableNonExportedAmountHelper
+                                      )(implicit ec: ExecutionContext) extends Results with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form)
+      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form())
 
-      NonExportedAmountHelper.totalPlastic(request.userAnswers)
+      nonExportedAmountHelper.totalPlastic(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
           totalPlastic => Ok(view(totalPlastic, preparedForm, mode))
         )
@@ -58,10 +58,10 @@ class AnotherBusinessExportWeightController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
-            NonExportedAmountHelper.totalPlastic(request.userAnswers)
+            nonExportedAmountHelper.totalPlastic(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
                 totalPlastic => BadRequest(view(totalPlastic, formWithErrors, mode))
               )
