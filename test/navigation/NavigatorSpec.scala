@@ -209,7 +209,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "for the AnotherBusinessExportWeightPage" - {
-          "navigate to CYA page" - {
+          "navigate to CYA page" in {
 
             val answers = NonExportedPlasticTestHelper.createUserAnswer(
               exportedAmount = 1000L,
