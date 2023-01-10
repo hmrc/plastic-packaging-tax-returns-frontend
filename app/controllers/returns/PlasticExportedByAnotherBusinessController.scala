@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.{InjectableNonExportedAmountHelper, NonExportedAmountHelper}
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode
 import models.requests.DataRequest._
@@ -39,6 +39,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
                                                             journeyAction: JourneyAction,
                                                             formProvider: PlasticExportedByAnotherBusinessFormProvider,
                                                             returnsNavigator: ReturnsJourneyNavigator,
+                                                            nonExportedAmountHelper: InjectableNonExportedAmountHelper,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             view: PlasticExportedByAnotherBusinessView
                                  )(implicit ec: ExecutionContext) extends I18nSupport {
@@ -48,7 +49,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
 
       val preparedForm = request.userAnswers.fill(PlasticExportedByAnotherBusinessPage, formProvider())
 
-      NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+      nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
         Redirect(controllers.routes.IndexController.onPageLoad))(
         totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
       )
@@ -60,7 +61,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>{
-          NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+          nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
             Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
             totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))))
         },
