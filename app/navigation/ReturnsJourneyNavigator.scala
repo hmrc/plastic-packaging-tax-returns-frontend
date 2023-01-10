@@ -164,11 +164,12 @@ class ReturnsJourneyNavigator @Inject()(
     }
 
   def exportedPlasticPackagingWeightRoute(isAllPlasticExported: Boolean, mode: Mode): Call =
-    if(mode.equals(CheckMode)) {routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)}
-    else {
-      if(isAllPlasticExported) routes.ReturnsCheckYourAnswersController.onPageLoad()
-      else routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
-    }
+    if (mode.equals(CheckMode)) 
+      routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
+    else if (isAllPlasticExported) 
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else 
+      routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
 
   def exportedByAnotherBusinessRoute(answers: UserAnswers, mode: Mode): Call =
     (answers.get(PlasticExportedByAnotherBusinessPage), mode) match {

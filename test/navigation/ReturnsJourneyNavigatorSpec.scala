@@ -186,18 +186,24 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
 
-  "exportedPlasticPackagingWeightRoute" must {
-    "redirect to ReturnsCheckYourAnswersController in NormalMode" in {
+  "exportedPlasticPackagingWeightRoute" when {
+    
+    "all plastic is exported  in NormalMode" in {
       val call = navigator.exportedPlasticPackagingWeightRoute(true, NormalMode)
       call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
 
-    "redirect to PlasticExportedByAnotherBusinessController in NormalMode" in {
+    "only some plastic exported in NormalMode" in {
       val call = navigator.exportedPlasticPackagingWeightRoute(false, NormalMode)
       call mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
     }
 
-    "redirect to PlasticExportedByAnotherBusinessController in CheckMode" in {
+    "all plastic exported in CheckMode" in {
+      val call = navigator.exportedPlasticPackagingWeightRoute(true, CheckMode)
+      call mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
+    }
+
+    "only some plastic exported in CheckMode" in {
       val call = navigator.exportedPlasticPackagingWeightRoute(false, CheckMode)
       call mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
     }
