@@ -18,6 +18,7 @@ package controllers.amends
 
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
+import models.Mode.CheckMode
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -52,6 +53,16 @@ class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAn
 
       status(result) mustEqual OK
       verify(view).apply()(any, any)
+    }
+  }
+
+  "onnSubmit" should {
+    "redirect to amend-exported-weight page" in {
+
+      val result = sut.onSubmit(FakeRequest(POST, ""))
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
     }
   }
 }

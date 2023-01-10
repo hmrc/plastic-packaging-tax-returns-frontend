@@ -36,14 +36,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendExportedWeightUserAnswersEntry: Arbitrary[(AmendExportedWeightPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[AmendExportedWeightPage.type]
-        value <- arbitrary[Long].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry: Arbitrary[(AnotherBusinessExportWeightPage.type, JsValue)] =
     Arbitrary {
       for {

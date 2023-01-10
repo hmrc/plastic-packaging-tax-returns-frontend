@@ -16,144 +16,165 @@
 
 package controllers.amends
 
-import base.SpecBase
+import base.utils.JourneyActionAnswer
+import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
 import forms.amends.AmendExportedByAnotherBusinessFormProvider
-import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.{FakeNavigator, Navigator}
+import models.UserAnswers.SaveUserAnswerFunc
+import models.requests.DataRequest
+import models.returns.TaxReturnObligation
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.when
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
 import pages.amends.AmendExportedByAnotherBusinessPage
-import play.api.inject.bind
-import play.api.mvc.Call
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import queries.{Gettable, Settable}
+import support.AmendExportedData
 import views.html.amends.AmendExportedByAnotherBusinessView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
-class AmendExportedByAnotherBusinessControllerSpec extends SpecBase with MockitoSugar {
+class AmendExportedByAnotherBusinessControllerSpec
+  extends PlaySpec
+    with JourneyActionAnswer
+    with MockitoSugar
+    with AmendExportedData
+    with BeforeAndAfterEach {
 
-  val formProvider = new AmendExportedByAnotherBusinessFormProvider()
-  val form = formProvider()
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[Long]]
+  private val saveFunction = mock[SaveUserAnswerFunc]
+  private val formProvider = mock[AmendExportedByAnotherBusinessFormProvider]
+  private val messagesApi = mock[MessagesApi]
+  private val cacheConnector = mock[CacheConnector]
+  private val journeyAction = mock[JourneyAction]
+  private val view = mock[AmendExportedByAnotherBusinessView]
 
-  def onwardRoute = Call("GET", "/foo")
+  private val sut = new AmendExportedByAnotherBusinessController(
+    messagesApi,
+    cacheConnector,
+    journeyAction,
+    formProvider,
+    stubMessagesControllerComponents(),
+    view
+  )
 
-  val validAnswer = 0L
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-  lazy val amendExportedByAnotherBusinessRoute = routes.AmendExportedByAnotherBusinessController.onPageLoad(NormalMode).url
+    reset(messagesApi, cacheConnector, journeyAction, view, dataRequest, form, saveFunction)
 
-  "AmendExportedByAnotherBusiness Controller" - {
+    when(view.apply(any)(any, any)).thenReturn(Html("correct view"))
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
-    "must return OK and the correct view for a GET" in {
+    when(formProvider.apply()).thenReturn(form)
+    when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(form)
+    when(dataRequest.userAnswers.get(any[Gettable[TaxReturnObligation]])(any)).thenReturn(Some(taxReturnOb))
+  }
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendExportedByAnotherBusinessRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AmendExportedByAnotherBusinessView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
+  "onPageLoad" should {
+    "use the journey action" in {
+      sut.onPageLoad
+      verify(journeyAction).apply(any)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "fill the form" in {
+      await(sut.onPageLoad(dataRequest))
 
-      val userAnswers = UserAnswers(userAnswersId).set(AmendExportedByAnotherBusinessPage, validAnswer).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendExportedByAnotherBusinessRoute)
-
-        val view = application.injector.instanceOf[AmendExportedByAnotherBusinessView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
-      }
+      verify(dataRequest.userAnswers).fill(meq(AmendExportedByAnotherBusinessPage), meq(form))(any)
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "get the obligation" in {
+      await(sut.onPageLoad(dataRequest))
 
-      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(cacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, amendExportedByAnotherBusinessRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      verify(dataRequest.userAnswers).get[TaxReturnObligation](meq(AmendObligationCacheable))(any)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return 200 and a view if obligation found" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val result = sut.onPageLoad(dataRequest)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, amendExportedByAnotherBusinessRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[AmendExportedByAnotherBusinessView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      verify(view).apply(meq(form))(any, any)
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "redirect if already submitted" in {
+      when(dataRequest.userAnswers.get(any[Gettable[TaxReturnObligation]])(any)).thenReturn(None)
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = sut.onPageLoad(dataRequest)
 
-      running(application) {
-        val request = FakeRequest(GET, amendExportedByAnotherBusinessRoute)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(routes.SubmittedReturnsController.onPageLoad().url)
+    }
+  }
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+  "onSubmit" should {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onSubmit(FakeRequest())))
+      verify(journeyAction).async(any)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "set UserAnswer" in {
+      setUpMocks()
 
-      val application = applicationBuilder(userAnswers = None).build()
+      await(sut.onSubmit.skippingJourneyAction(dataRequest))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, amendExportedByAnotherBusinessRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      verify(dataRequest.userAnswers).setOrFail(any, any, any)(any)
     }
+
+    "save a userAnswer to cache" in {
+      val ans = createUserAnswers
+
+      setUpMocks()
+      when(dataRequest.userAnswers).thenReturn(ans)
+      when(dataRequest.pptReference).thenReturn("123")
+
+      await(sut.onSubmit(dataRequest))
+
+      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
+      verify(saveFunction).apply(ans.set(AmendExportedByAnotherBusinessPage, 10L).get, true)
+    }
+
+    "redirect to CYA page" in {
+      setUpMocks()
+
+      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(controllers.amends.routes.CheckYourAnswersController.onPageLoad.url)
+    }
+
+    "return a bad request with an error on view" in {
+      val formError = new AmendExportedByAnotherBusinessFormProvider()().withError("error", "error message")
+      when(form.bindFromRequest()(any, any)).thenReturn(formError)
+
+      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual BAD_REQUEST
+      verify(view).apply(meq(formError))(any,any)
+    }
+  }
+
+  private def setUpMocks(): Unit = {
+    when(form.bindFromRequest()(any, any)).thenReturn(new AmendExportedByAnotherBusinessFormProvider()().bind(Map("value" -> "10")))
+    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(UserAnswers("123"))
+    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
+    when(saveFunction.apply(any, any)).thenReturn(Future.successful(true))
   }
 }

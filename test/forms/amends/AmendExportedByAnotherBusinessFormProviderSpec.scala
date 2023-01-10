@@ -45,12 +45,18 @@ class AmendExportedByAnotherBusinessFormProviderSpec extends LongFieldBehaviours
       wholeNumberError = FormError(fieldName, "amendExportedByAnotherBusiness.error.wholeNumber")
     )
 
-    behave like longFieldWithRange(
+    behave like longFieldWithMinimum(
       form,
       fieldName,
       minimum       = minimum,
+      expectedError = FormError(fieldName, "amendExportedByAnotherBusiness.error.outOfRange.low", Seq(minimum))
+    )
+
+    behave like longFieldWithMaximum(
+      form,
+      fieldName,
       maximum       = maximum,
-      expectedError = FormError(fieldName, "amendExportedByAnotherBusiness.error.outOfRange", Seq(minimum, maximum))
+      expectedError = FormError(fieldName, "amendExportedByAnotherBusiness.error.outOfRange.high", Seq(maximum))
     )
 
     behave like mandatoryField(

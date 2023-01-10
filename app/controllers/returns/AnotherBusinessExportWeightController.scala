@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
@@ -76,6 +76,6 @@ class AnotherBusinessExportWeightController @Inject()(
                 ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
                 mode))
             )
-      )
+        )
   }
 }

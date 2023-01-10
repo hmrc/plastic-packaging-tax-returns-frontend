@@ -22,6 +22,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.returns._
 
 class ExportedPlasticAnswerSpec extends PlaySpec {
@@ -131,6 +134,30 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "do not change user answers if total plastic is greater than 0" in {
       when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(1L))
       ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe ans
+    }
+  }
+
+  "totalExportedPlastic" should {
+    "return total exported plastic" when {
+
+      val table = Table(
+        ("description", "amendExported", "amendExportedByAnotherBusiness", "expected result"),
+        ("both value available", Some(10L), Some(5L), Some(15L)),
+        ("amend Exported not available", None, Some(10L), Some(10L)),
+        ("Amend Exported by another business not available", Some(5L), None, Some(5L)),
+        ("bot value are not available", None, None, None)
+      )
+
+      forAll(table) {
+        (description, amendExported, amendExportedByAnotherBusiness, expectedResult) =>
+          description in {
+            val newUserAnswer = createUserAnswer
+            val ans = amendExported.fold[UserAnswers](newUserAnswer)(newUserAnswer.set(AmendDirectExportPlasticPackagingPage, _).get)
+            val ans1 = amendExportedByAnotherBusiness.fold[UserAnswers](ans)(ans.set(AmendExportedByAnotherBusinessPage, _).get)
+
+            ExportedPlasticAnswer(ans1).totalAmendExportedPlastic mustBe expectedResult
+          }
+      }
     }
   }
 

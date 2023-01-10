@@ -14,153 +14,179 @@
  * limitations under the License.
  */
 
-package controllers.returns
+package controllers
 
-import base.SpecBase
 import connectors.CacheConnector
-import forms.returns.{AnotherBusinessExportWeightFormProvider, ExportedPlasticPackagingWeightFormProvider}
+import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
+import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.returns.AnotherBusinessExportWeightController
+import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
-import models.UserAnswers
-import navigation.{FakeNavigator, Navigator, ReturnsJourneyNavigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{AnotherBusinessExportWeightPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
-import play.api.inject.bind
-import play.api.mvc.Call
+import models.UserAnswers.SaveUserAnswerFunc
+import models.requests.DataRequest
+import navigation.ReturnsJourneyNavigator
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.{mock, verify, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import pages.returns.AnotherBusinessExportWeightPage
+import play.api.data.Form
+import play.api.data.Forms.longNumber
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.returns.{AnotherBusinessExportWeightView, ExportedPlasticPackagingWeightView}
+import play.twirl.api.Html
+import views.html.returns.AnotherBusinessExportWeightView
 
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
+import scala.util.Try
 
-class AnotherBusinessExportWeightControllerSpec extends SpecBase with MockitoSugar {
+class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndAfterEach{
 
-  val formProvider = new AnotherBusinessExportWeightFormProvider()
-  private val returnsNavigator = mock[ReturnsJourneyNavigator]
-  def onwardRoute = Call("GET", "/foo")
+  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val controllerComponents = stubMessagesControllerComponents()
+  private val mockView = mock[AnotherBusinessExportWeightView]
+  private val mockFormProvider = mock[AnotherBusinessExportWeightFormProvider]
+  private val mockCache = mock[CacheConnector]
+  private val journeyAction = mock[JourneyAction]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[Long]]
+  private val mockNavigator = mock[ReturnsJourneyNavigator]
+  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
-  val validAnswer = 0L
-  val totalPlastic: Long = 12
+  val sut = new AnotherBusinessExportWeightController(
+    mockMessagesApi,
+    mockCache,
+    mockNavigator,
+    journeyAction,
+    mockFormProvider,
+    controllerComponents,
+    mockView,
+    mockNonExportedAmountHelper
+  )(global)
 
-  lazy val anotherBusinessExportedWeightRoute = controllers.returns.routes.AnotherBusinessExportWeightController.onPageLoad(NormalMode).url
-  val answersWithPreset: UserAnswers = emptyUserAnswers
-    .set(ManufacturedPlasticPackagingWeightPage, 7L).get
-    .set(ImportedPlasticPackagingWeightPage, 5L).get
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockMessagesApi,
+      journeyAction,
+      mockCache,
+      mockNavigator,
+      mockFormProvider,
+      mockView,
+      form,
+      dataRequest,
+      mockNonExportedAmountHelper
+    )
 
-  //TODO: Fix tests
+    when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(mockFormProvider.apply()).thenReturn(form)
+    when(dataRequest.userAnswers.fill(any[AnotherBusinessExportWeightPage.type], any)(any)).thenReturn(form)
+    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(mockNavigator.exportedByAnotherBusinessWeightRoute(any, any)).thenReturn(Call("GET", "/foo"))
+    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(200L))
+  }
 
-  "ExportedPlasticPackagingWeight Controller" - {
-//
-//    "must return OK and the correct view for a GET" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, anotherBusinessExportedWeightRoute)
-//        val result = route(application, request).value
-//
-//        val view = application.injector.instanceOf[AnotherBusinessExportWeightView]
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(totalPlastic, formProvider(), NormalMode)(request, messages(application)
-//        ).toString
-//      }
-//    }
-//
-//    "must populate the view correctly on a GET when the question has previously been answered" in {
-//
-//      val userAnswers = answersWithPreset.set(AnotherBusinessExportWeightPage, validAnswer).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, anotherBusinessExportedWeightRoute)
-//
-//        val view = application.injector.instanceOf[AnotherBusinessExportWeightView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(totalPlastic, formProvider().fill(validAnswer), NormalMode)(request, messages(application)).toString
-//      }
-//    }
-//
-////    "must redirect to the next page when valid data is submitted" in {
-////
-////      val mockCacheConnector = mock[CacheConnector]
-////
-////      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-////
-////      val application =
-////        applicationBuilder(userAnswers = Some(answersWithPreset))
-////          .overrides(
-////            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-////            bind[CacheConnector].toInstance(mockCacheConnector)
-////          )
-////          .build()
-////
-////      running(application) {
-////        val request =
-////          FakeRequest(POST, anotherBusinessExportedWeightRoute)
-////            .withFormUrlEncodedBody(("value", validAnswer.toString))
-////
-////        val result = route(application, request).value
-////
-////        status(result) mustEqual SEE_OTHER
-////        redirectLocation(result).value mustEqual onwardRoute.url
-////      }
-////    }
-//
-//    "must return a Bad Request and errors when invalid data is submitted" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, anotherBusinessExportedWeightRoute)
-//            .withFormUrlEncodedBody(("value", "invalid value"))
-//
-//        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
-//
-//        val view = application.injector.instanceOf[AnotherBusinessExportWeightView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual BAD_REQUEST
-//        contentAsString(result) mustEqual view(totalPlastic, boundForm, NormalMode)(request, messages(application)).toString
-//      }
-//    }
-//
-//    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, anotherBusinessExportedWeightRoute)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-//      }
-//    }
-//
-//    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, anotherBusinessExportedWeightRoute)
-//            .withFormUrlEncodedBody(("value", validAnswer.toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//
-//        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-//      }
-//    }
+  //TODO add helper for defs below shared by lots of specs
+  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) =>
+        Future.successful(function(request)))
+      .getMock[Action[AnyContent]]
+
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+      .getMock[Action[AnyContent]]
+
+  "onPageLoad" should {
+    "invoke the journey action" in {
+      Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
+      verify(journeyAction).apply(any)
+    }
+
+    "return OK and correct view" in {
+      val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
+     status(result) mustBe OK
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(200L), meq(form), meq(NormalMode))(any, any)
+    }
+
+    "create the form" in {
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(mockFormProvider).apply()
+    }
+
+    "prepopulate the form" in {
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportWeightPage), meq(form))(any)
+    }
+
+   "redirect to index controller when total plastic cannot be calculated" in {
+     reset(mockNonExportedAmountHelper)
+     when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+
+     val result = sut.onPageLoad(NormalMode)(dataRequest)
+
+     status(result) mustEqual SEE_OTHER
+     redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+     verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+   }
+  }
+
+  "onSubmit" should {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
+      verify(journeyAction).async(any)
+    }
+
+    "return a BAD REQUEST (400) when the form errors" in {
+      val errorForm = Form("value" -> longNumber()).withError("key", "error")
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustBe "correct view"
+      verify(mockView).apply(meq(200L), meq(errorForm), meq(NormalMode))(any, any)
+    }
+
+    "redirect to index controller when total plastic cannot be calculated" in {
+      val errorForm = Form("value" -> longNumber()).withError("key", "error")
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
+      reset(mockNonExportedAmountHelper)
+      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+    }
+
+    "redirect to exportedByAnotherBusinessWeightRoute" in {
+      val saveFunc:SaveUserAnswerFunc = (_, bool) => Future.successful(bool)
+      val boundForm = Form("value" -> longNumber()).fill(20L)
+      when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+      val answers = dataRequest.userAnswers
+      when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answers)
+      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answers))
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveFunc)
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual "/foo"
+      verify(dataRequest.userAnswers).setOrFail(meq(AnotherBusinessExportWeightPage), meq(20L), any)(any)
+      verify(dataRequest.userAnswers).save(meq(saveFunc))(any)
+      verify(mockCache).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
+    }
   }
 }

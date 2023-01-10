@@ -34,7 +34,7 @@
 
 @layout(pageTitle = title(form, messages("amendDirectExportPlasticPackaging.title"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.amends.routes.AmendDirectExportPlasticPackagingController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendDirectExportPlasticPackagingController.onSubmit, 'autoComplete -> "off") {
 
         @weightInputLayout(None,
             messages("amendDirectExportPlasticPackaging.heading"),

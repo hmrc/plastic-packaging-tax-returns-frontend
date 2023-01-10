@@ -18,6 +18,7 @@ package services
 
 import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
 import pages.returns._
 
 import scala.util.Try
@@ -76,6 +77,22 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
     val exportedByOther = userAnswers.get(AnotherBusinessExportWeightPage).getOrElse(0L)
 
     exported + exportedByOther >= (manufactured + imported)
+  }
+
+  //todo: is there anyway to write this better?
+  def totalAmendExportedPlastic: Option[Long] = {
+
+    val amendExported = userAnswers.get(AmendDirectExportPlasticPackagingPage)
+    val amendExportedByAnotherBusiness = userAnswers.get(AmendExportedByAnotherBusinessPage)
+
+    (amendExported, amendExportedByAnotherBusiness) match {
+      case(Some(exported), Some(byAnotherBusiness)) => Some(exported + byAnotherBusiness)
+      case(None, Some(byAnotherBusiness)) => Some(byAnotherBusiness)
+      case(Some(exported), None) => Some(exported)
+      case(None, None) => None
+    }
+
+
   }
 }
 

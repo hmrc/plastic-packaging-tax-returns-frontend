@@ -187,7 +187,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   }
   private def createSut(
                          formProvider: NonExportedRecycledPlasticPackagingFormProvider = new NonExportedRecycledPlasticPackagingFormProvider(),
-                         userAnswer: Option[UserAnswers] = None
+                         userAnswer: Option[UserAnswers]
                        ): NonExportedRecycledPlasticPackagingController = {
     new NonExportedRecycledPlasticPackagingController(
       mockMessageApi,

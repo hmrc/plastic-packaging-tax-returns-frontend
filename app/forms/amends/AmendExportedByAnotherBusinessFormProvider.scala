@@ -29,6 +29,7 @@ class AmendExportedByAnotherBusinessFormProvider @Inject() extends Mappings {
         "amendExportedByAnotherBusiness.error.required",
         "amendExportedByAnotherBusiness.error.wholeNumber",
         "amendExportedByAnotherBusiness.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "amendExportedByAnotherBusiness.error.outOfRange"))
+          .verifying(minimumValue(0L, "amendExportedByAnotherBusiness.error.outOfRange.low"))
+        .verifying(maximumValue(99999999999L, "amendExportedByAnotherBusiness.error.outOfRange.high"))
     )
 }

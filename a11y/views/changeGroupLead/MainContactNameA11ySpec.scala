@@ -21,8 +21,6 @@ import config.FrontendAppConfig
 import forms.changeGroupLead.MainContactNameFormProvider
 import models.Mode.NormalMode
 import play.api.data.Form
-import play.twirl.api.Html
-import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.MainContactNameView
 
