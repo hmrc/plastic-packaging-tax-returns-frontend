@@ -284,26 +284,22 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "directlyExportedComponentsRoute" when {
     
     "answer is yes in check mode" in {
-      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(true)
-      navigator.directlyExportedComponentsRoute(userAnswers, CheckMode) mustBe
+      navigator.directlyExportedComponentsRoute(true, CheckMode) mustBe
         returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode)
     }
 
     "answer is yes in normal mode" in {
-      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(true)
-      navigator.directlyExportedComponentsRoute(userAnswers, NormalMode) mustBe
+      navigator.directlyExportedComponentsRoute(true, NormalMode) mustBe
         returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
     }
 
     "answer is no in check mode" in {
-      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(false)
-      navigator.directlyExportedComponentsRoute(userAnswers, CheckMode) mustBe
+      navigator.directlyExportedComponentsRoute(false, CheckMode) mustBe
         returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
     }
 
     "answer is no in normal mode" in {
-      when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(false)
-      navigator.directlyExportedComponentsRoute(userAnswers, NormalMode) mustBe
+      navigator.directlyExportedComponentsRoute(false, NormalMode) mustBe
         returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
     }
     

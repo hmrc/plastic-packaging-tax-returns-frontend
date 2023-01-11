@@ -65,11 +65,11 @@ class DirectlyExportedComponentsController @Inject()(
 
         form().bindFromRequest().fold(
           formWithErrors => handleErrorInForm(mode, formWithErrors),
-          value =>
+          newAnswer =>
             request.userAnswers
-              .setOrFail(DirectlyExportedComponentsPage, value)
+              .setOrFail(DirectlyExportedComponentsPage, newAnswer)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Redirect(navigator.directlyExportedComponentsRoute(updatedAnswers, mode)))
+              .map(_ => Redirect(navigator.directlyExportedComponentsRoute(newAnswer, mode)))
         )
     }
 

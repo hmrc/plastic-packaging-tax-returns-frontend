@@ -42,12 +42,12 @@ class ReturnsJourneyNavigator @Inject()(
       _ => routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     case ImportedPlasticPackagingWeightPage =>
       _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case DirectlyExportedComponentsPage => directlyExportedComponentsRoute(_, mode = NormalMode)
     case PlasticExportedByAnotherBusinessPage => exportedByAnotherBusinessRoute(_, mode = NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     case NonExportedRecycledPlasticPackagingPage => nonExportedRecycledPlasticPackagingPageRoute(_, mode = NormalMode)
     case NonExportedRecycledPlasticPackagingWeightPage => _ => routes.ReturnsCheckYourAnswersController.onPageLoad()
+    case x => throw new IllegalStateException(s"Navigation for '$x' not found (normal mode)")
   }
 
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
@@ -55,7 +55,6 @@ class ReturnsJourneyNavigator @Inject()(
     // TODO - replace with direct calls
     case ManufacturedPlasticPackagingWeightPage => answers => manufacturedPlasticPackagingWeightRoute(answers)
     case ImportedPlasticPackagingWeightPage => _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case DirectlyExportedComponentsPage => answers => directlyExportedComponentsRoute(answers, mode = CheckMode)
     case PlasticExportedByAnotherBusinessPage => answers => exportedByAnotherBusinessRoute(answers, mode = CheckMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => answers => nonExportedHumanMedicinesPlasticPackagingRoute(answers, mode = CheckMode)
     case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
@@ -157,11 +156,11 @@ class ReturnsJourneyNavigator @Inject()(
     }
   }
 
-  def directlyExportedComponentsRoute(answers: UserAnswers, mode: Mode): Call =
-    answers.get(DirectlyExportedComponentsPage) match {
-      case Some(true) => routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
-      case Some(false) => routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
-      case _ => throw new Exception("Unable to navigate to page")
+  def directlyExportedComponentsRoute(userAnsweredYes: Boolean, mode: Mode): Call =
+    if (userAnsweredYes) {
+      routes.ExportedPlasticPackagingWeightController.onPageLoad(mode)
+    } else {
+      routes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
     }
 
   def exportedPlasticPackagingWeightRoute(isAllPlasticExported: Boolean, mode: Mode): Call =

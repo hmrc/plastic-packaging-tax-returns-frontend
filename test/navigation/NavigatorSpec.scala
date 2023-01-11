@@ -24,10 +24,13 @@ import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
 import org.mockito.MockitoSugar.mock
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import pages.returns._
 
 //todo duplicated tests? check if can be removed
-class NavigatorSpec extends SpecBase {
+class NavigatorSpec extends AnyFreeSpec with Matchers {
 
   private val frontendConfig = mock[FrontendAppConfig]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
@@ -51,27 +54,6 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-        }
-
-        "for the DirectlyExportedPlasticPackagingPage" - {
-
-          "navigate to ExportedPlasticPackagingWeightPage when yes" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
-          }
-
-          "navigate to PlasticExportedByAnotherBusinessController when no" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
-          }
         }
 
         "for the PlasticExportedByAnotherBusinessPage" - {
@@ -164,27 +146,6 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-        }
-
-        "for the DirectlyExportedPlasticPackagingPage" - {
-
-          "navigate to ExportedPlasticPackagingWeightPage when yes" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode)
-          }
-
-          "navigate to PlasticExportedByAnotherBusinessController when no" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              CheckMode,
-              answers.get
-            ) mustBe returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(CheckMode)
-          }
         }
 
         "for the PlasticExportedByAnotherBusinessPage" - {
