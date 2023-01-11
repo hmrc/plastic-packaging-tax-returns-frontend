@@ -33,7 +33,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedRecycledPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage, AnotherBusinessExportedPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -81,8 +81,8 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return OK and correct View" when {
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
 
-        val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-          .set(PlasticExportedByAnotherBusinessPage, false).get
+        val ans = nonExportedAnswer.set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
           .set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).get
 
         val result = createSut(Some(ans)).onPageLoad(NormalMode)(
@@ -152,8 +152,8 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return a Bad Request and the correct view" when {
 
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
-        val userAnswer = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-          .set(PlasticExportedByAnotherBusinessPage, false).get
+        val userAnswer = nonExportedAnswer.set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
 
         val result = createSut(Some(userAnswer))
           .onSubmit(NormalMode)(fakePostRequestWithBody(("value", "invalid value")))

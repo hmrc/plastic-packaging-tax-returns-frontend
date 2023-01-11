@@ -36,18 +36,18 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry: Arbitrary[(AnotherBusinessExportWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry: Arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AnotherBusinessExportWeightPage.type]
+        page  <- arbitrary[AnotherBusinessExportedWeightPage.type]
         value <- arbitrary[Long].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryPlasticExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(PlasticExportedByAnotherBusinessPage.type, JsValue)] =
+  implicit lazy val arbitraryPlasticExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AnotherBusinessExportedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[PlasticExportedByAnotherBusinessPage.type]
+        page  <- arbitrary[AnotherBusinessExportedPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -116,10 +116,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry: Arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] =
+  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry: Arbitrary[(DirectlyExportedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[DirectlyExportedComponentsPage.type]
+        page  <- arbitrary[DirectlyExportedPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -185,10 +185,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryExportedPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(DirectlyExportedWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ExportedPlasticPackagingWeightPage.type]
+        page  <- arbitrary[DirectlyExportedWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }

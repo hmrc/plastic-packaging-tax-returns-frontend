@@ -92,7 +92,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn mock[Messages]
     when(view.apply(any, any, any)(any,any)).thenReturn(HtmlFormat.empty)
-    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
+    when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -118,7 +118,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
     "prepopulate the form" in {
       await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(dataRequest.userAnswers).fill(meq(PlasticExportedByAnotherBusinessPage),meq(bindForm))(any)
+      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportedPage),meq(bindForm))(any)
     }
 
     "view should show total plastic packaging amount" in {
@@ -130,12 +130,12 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
 
     "redirect to the account page if cannot calculate total plastic" in {
-      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+      verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
     }
   }
 
@@ -192,7 +192,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "should redirect to account page when total plastic cannot be calculated" in {
-      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
@@ -201,7 +201,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+      verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
     }
   }
 }

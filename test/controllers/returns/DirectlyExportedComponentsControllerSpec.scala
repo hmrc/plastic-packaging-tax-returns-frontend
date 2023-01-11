@@ -71,7 +71,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(10L))
+    when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(10L))
   }
 
   "onPageLoad" should {
@@ -99,7 +99,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "return a view with question answered YES " in {
-      setUpForm(createUserAnswer.set(DirectlyExportedComponentsPage, true).get, new DirectlyExportedComponentsFormProvider()())
+      setUpForm(createUserAnswer.set(DirectlyExportedPage, true).get, new DirectlyExportedComponentsFormProvider()())
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
@@ -109,7 +109,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     "return a view with question answered No " in {
       val form = new DirectlyExportedComponentsFormProvider()()
       when(formProvider.apply()).thenReturn(form)
-      when(dataRequest.userAnswers).thenReturn(createUserAnswer.set(DirectlyExportedComponentsPage, false).get)
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer.set(DirectlyExportedPage, false).get)
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
@@ -117,7 +117,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect to account page if total plastic cannot be calculated" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val form = new DirectlyExportedComponentsFormProvider()()
       when(formProvider.apply()).thenReturn(form)
       when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
@@ -160,7 +160,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      saveUserAnswerToCache mustBe Some(ans.set(DirectlyExportedComponentsPage, true).get)
+      saveUserAnswerToCache mustBe Some(ans.set(DirectlyExportedPage, true).get)
     }
 
     "save user answer to the cache" in {
@@ -191,7 +191,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect when total plastic cannot be calculated" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
       val form = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)

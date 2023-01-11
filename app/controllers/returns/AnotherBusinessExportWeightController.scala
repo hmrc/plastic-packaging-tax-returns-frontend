@@ -24,8 +24,8 @@ import models.Mode
 import models.Mode.CheckMode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import pages.returns.AnotherBusinessExportWeightPage
 import play.api.data.FormBinding.Implicits.formBinding
+import pages.returns.AnotherBusinessExportedWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import services.ExportedPlasticAnswer
@@ -48,9 +48,9 @@ class AnotherBusinessExportWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.fill(AnotherBusinessExportWeightPage, form())
+      val preparedForm = request.userAnswers.fill(AnotherBusinessExportedWeightPage, form())
 
-      nonExportedAmountHelper.totalPlastic(request.userAnswers)
+      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
         .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
           totalPlastic => Ok(view(totalPlastic, preparedForm, mode))
         )
@@ -62,7 +62,7 @@ class AnotherBusinessExportWeightController @Inject()(
       form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
-            nonExportedAmountHelper.totalPlastic(request.userAnswers)
+            nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
                 totalPlastic => BadRequest(view(totalPlastic, formWithErrors, mode))
               )
@@ -70,7 +70,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
         value =>
           request.userAnswers
-            .setOrFail(AnotherBusinessExportWeightPage, value, isCleanUp(mode))
+            .setOrFail(AnotherBusinessExportedWeightPage, value, isCleanUp(mode))
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
             .map(updatedUserAnswers =>
               Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(

@@ -59,40 +59,40 @@ class NavigatorSpec extends AnyFreeSpec with Matchers {
         "for the PlasticExportedByAnotherBusinessPage" - {
 
           "navigate to AnotherBusinessExportWeightController when DirectlyExportedComponentsPage is no and PlasticExportedByAnotherBusinessPage is yes" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false).get
-              .set(PlasticExportedByAnotherBusinessPage, true).get
+            val answers = UserAnswers("id").set(DirectlyExportedPage, false).get
+              .set(AnotherBusinessExportedPage, true).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               NormalMode,
               answers
             ) mustBe returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(NormalMode)
           }
 
           "navigate to AnotherBusinessExportWeightController when DirectlyExportedComponentsPage is yes and PlasticExportedByAnotherBusinessPage is yes" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true).get
-              .set(PlasticExportedByAnotherBusinessPage, true).get
+            val answers = UserAnswers("id").set(DirectlyExportedPage, true).get
+              .set(AnotherBusinessExportedPage, true).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               NormalMode,
               answers
             ) mustBe returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(NormalMode)
           }
 
           "navigate to NonExportedHumanMedicinesPlasticPackagingController when DirectlyExportedComponentsPage is yes and PlasticExportedByAnotherBusinessPage is no" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true).get
-              .set(PlasticExportedByAnotherBusinessPage, false).get
+            val answers = UserAnswers("id").set(DirectlyExportedPage, true).get
+              .set(AnotherBusinessExportedPage, false).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               NormalMode,
               answers
             ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
           }
 
           "navigate to NonExportedHumanMedicinesPlasticPackagingController when DirectlyExportedComponentsPage is no and PlasticExportedByAnotherBusinessPage is no" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false).get
-                .set(PlasticExportedByAnotherBusinessPage, false).get
+            val answers = UserAnswers("id").set(DirectlyExportedPage, false).get
+                .set(AnotherBusinessExportedPage, false).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               NormalMode,
               answers
             ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
@@ -151,18 +151,18 @@ class NavigatorSpec extends AnyFreeSpec with Matchers {
         "for the PlasticExportedByAnotherBusinessPage" - {
 
           "navigate to CYA when answer is No" in {
-            val answers = UserAnswers("id").set(PlasticExportedByAnotherBusinessPage, false).get
+            val answers = UserAnswers("id").set(AnotherBusinessExportedPage, false).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               CheckMode,
               answers
             ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
           }
 
           "navigate to weight page when answer is Yes" in {
-            val answers = UserAnswers("id").set(PlasticExportedByAnotherBusinessPage, true).get
+            val answers = UserAnswers("id").set(AnotherBusinessExportedPage, true).get
 
-            navigator.nextPage(PlasticExportedByAnotherBusinessPage,
+            navigator.nextPage(AnotherBusinessExportedPage,
               CheckMode,
               answers
             ) mustBe returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(CheckMode)
@@ -178,7 +178,7 @@ class NavigatorSpec extends AnyFreeSpec with Matchers {
               manufacturedAmount = 1100L,
               importedAmount = 50L)
 
-            navigator.nextPage(AnotherBusinessExportWeightPage,
+            navigator.nextPage(AnotherBusinessExportedWeightPage,
               CheckMode,
               answers
             ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()

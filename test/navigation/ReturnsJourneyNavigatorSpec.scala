@@ -238,20 +238,20 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "ConfirmTotalPlasticPackagingRoute" must {
 
     "redirect to directly exported page page" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(1L))
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(1L))
       val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe returnsRoutes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
-      verify(nonExportedAmountHelper).totalPlastic(userAnswers)
+      verify(nonExportedAmountHelper).totalPlasticAdditions(userAnswers)
     }
 
     "redirect to CYA page" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(0L))
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(0L))
       val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
     }
 
     "redirect to account page" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe controllers.routes.IndexController.onPageLoad
     }

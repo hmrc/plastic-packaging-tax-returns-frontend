@@ -33,7 +33,7 @@ import org.mockito.{Answers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.{DirectlyExportedPage, DirectlyExportedWeightPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
@@ -96,7 +96,7 @@ class ExportedPlasticPackagingWeightControllerSpec
     when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(100L))
+    when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(100L))
     when(formProvider.apply()).thenReturn(form)
     when(dataRequest.pptReference).thenReturn("ppt Ref")
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswersFunc)
@@ -126,11 +126,11 @@ class ExportedPlasticPackagingWeightControllerSpec
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
       verify(view).apply(ArgumentMatchers.eq(form), meq(NormalMode), meq(100L))(any,any)
-      verify(dataRequest.userAnswers).fill(meq(ExportedPlasticPackagingWeightPage), meq(form))(any)
+      verify(dataRequest.userAnswers).fill(meq(DirectlyExportedWeightPage), meq(form))(any)
     }
 
     "redirect to index controller when cannot calculate total plastic" in {
-      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -165,7 +165,7 @@ class ExportedPlasticPackagingWeightControllerSpec
       await(sut.onSubmit(CheckMode).skippingJourneyAction(dataRequest))
 
       verify(dataRequest.userAnswers).setOrFail(
-        meq(ExportedPlasticPackagingWeightPage),
+        meq(DirectlyExportedWeightPage),
         meq(5L),
         meq(false))(any)
     }
@@ -177,7 +177,7 @@ class ExportedPlasticPackagingWeightControllerSpec
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
       verify(dataRequest.userAnswers).setOrFail(
-        meq(ExportedPlasticPackagingWeightPage),
+        meq(DirectlyExportedWeightPage),
         meq(5L),
         meq(true))(any)
     }
@@ -195,7 +195,7 @@ class ExportedPlasticPackagingWeightControllerSpec
       }
 
       "redirect to index controller if cannot calculate total plastic" in {
-        when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+        when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
         when(form.bindFromRequest()(any, any))
           .thenReturn(new ExportedPlasticPackagingWeightFormProvider()().withError("error", "message"))
 

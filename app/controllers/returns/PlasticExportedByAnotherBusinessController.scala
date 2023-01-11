@@ -23,7 +23,7 @@ import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode
 import models.requests.DataRequest._
 import navigation.ReturnsJourneyNavigator
-import pages.returns.PlasticExportedByAnotherBusinessPage
+import pages.returns.AnotherBusinessExportedPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
@@ -47,9 +47,9 @@ class PlasticExportedByAnotherBusinessController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.fill(PlasticExportedByAnotherBusinessPage, formProvider())
+      val preparedForm = request.userAnswers.fill(AnotherBusinessExportedPage, formProvider())
 
-      nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
         Redirect(controllers.routes.IndexController.onPageLoad))(
         totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
       )
@@ -61,13 +61,13 @@ class PlasticExportedByAnotherBusinessController @Inject()(
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>{
-          nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+          nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
             Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
             totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))))
         },
         value =>
             request.userAnswers
-              .setOrFail(PlasticExportedByAnotherBusinessPage, value)
+              .setOrFail(AnotherBusinessExportedPage, value)
               .save(cacheConnector.saveUserAnswerFunc(pptId))
               .map(updatedAnswer => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(updatedAnswer, mode)))
       )

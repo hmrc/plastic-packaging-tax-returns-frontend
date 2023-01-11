@@ -28,41 +28,41 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
 
   def resetExportedByYouIfAllExportedPlastic: Try[UserAnswers] = {
     if(isAllPlasticExported) {
-      userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-        .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
+      userAnswers.set(DirectlyExportedPage, true, cleanup = false).get
+        .set(AnotherBusinessExportedPage, false).get
+        .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
     }
     else {
-      userAnswers.set(DirectlyExportedComponentsPage, true, cleanup = false)
+      userAnswers.set(DirectlyExportedPage, true, cleanup = false)
     }
   }
 
   def resetAnotherBusinessIfAllExportedPlastic: Try[UserAnswers] = {
     if(isAllPlasticExported) {
       userAnswers
-        .set(DirectlyExportedComponentsPage, true, cleanup = false).get
+        .set(DirectlyExportedPage, true, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
     }
     else {
-      userAnswers.set(PlasticExportedByAnotherBusinessPage, true, cleanup = false)
+      userAnswers.set(AnotherBusinessExportedPage, true, cleanup = false)
     }
   }
 
   def resetAllIfNoTotalPlastic(helper: NonExportedAmountHelper): UserAnswers = {
-    if(helper.totalPlastic(userAnswers).exists(_ > 0L)) {
+    if(helper.totalPlasticAdditions(userAnswers).exists(_ > 0L)) {
       userAnswers
     } else {
-      userAnswers.set(DirectlyExportedComponentsPage, false).get
-        .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-        .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
+      userAnswers.set(DirectlyExportedPage, false).get
+        .set(DirectlyExportedWeightPage, 0L, cleanup = false).get
+        .set(AnotherBusinessExportedPage, false).get
+        .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
@@ -73,8 +73,8 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
   def isAllPlasticExported: Boolean = {
     val manufactured = userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
     val imported = userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = userAnswers.get(ExportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exportedByOther = userAnswers.get(AnotherBusinessExportWeightPage).getOrElse(0L)
+    val exported = userAnswers.get(DirectlyExportedWeightPage).getOrElse(0L)
+    val exportedByOther = userAnswers.get(AnotherBusinessExportedWeightPage).getOrElse(0L)
 
     exported + exportedByOther >= (manufactured + imported)
   }

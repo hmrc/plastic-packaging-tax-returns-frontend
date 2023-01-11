@@ -77,7 +77,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
-    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
+    when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -115,7 +115,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "redirect on account page if cannot calculate total plastic" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 

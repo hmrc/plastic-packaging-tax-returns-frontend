@@ -24,7 +24,7 @@ import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import pages.returns.DirectlyExportedComponentsPage
+import pages.returns.DirectlyExportedPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,10 +51,10 @@ class DirectlyExportedComponentsController @Inject()(
     journeyAction {
       implicit request =>
 
-        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(totalPlastic => {
-          val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
+          val preparedForm = request.userAnswers.fill(DirectlyExportedPage, form())
           Ok(view(preparedForm, mode, totalPlastic))
         })
     }
@@ -67,7 +67,7 @@ class DirectlyExportedComponentsController @Inject()(
           formWithErrors => handleErrorInForm(mode, formWithErrors),
           newAnswer =>
             request.userAnswers
-              .setOrFail(DirectlyExportedComponentsPage, newAnswer)
+              .setOrFail(DirectlyExportedPage, newAnswer)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(_ => Redirect(navigator.directlyExportedComponentsRoute(newAnswer, mode)))
         )
@@ -77,7 +77,7 @@ class DirectlyExportedComponentsController @Inject()(
     mode: Mode,
     formWithErrors: Form[Boolean]
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
       Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
       totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
     )

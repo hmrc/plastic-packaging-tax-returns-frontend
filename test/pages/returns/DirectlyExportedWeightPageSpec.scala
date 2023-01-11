@@ -21,52 +21,52 @@ import pages.behaviours.PageBehaviours
 
 import scala.util.Success
 
-class ExportedPlasticPackagingWeightPageSpec extends PageBehaviours {
+class DirectlyExportedWeightPageSpec extends PageBehaviours {
 
   "ExportedPlasticPackagingWeightPage" - {
 
-    beRetrievable[Long](ExportedPlasticPackagingWeightPage)
+    beRetrievable[Long](DirectlyExportedWeightPage)
 
-    beSettable[Long](ExportedPlasticPackagingWeightPage)
+    beSettable[Long](DirectlyExportedWeightPage)
 
-    beRemovable[Long](ExportedPlasticPackagingWeightPage)
+    beRemovable[Long](DirectlyExportedWeightPage)
 
     "cleanup" - {
       "should reset user answers" - {
         "when exported amount is equal totalPlastic" in {
           val userAnswer = createUserAnswer
-            .set(ExportedPlasticPackagingWeightPage, 70L).get
+            .set(DirectlyExportedWeightPage, 70L).get
 
 
-          ExportedPlasticPackagingWeightPage.cleanup(Some(70L), userAnswer) mustBe
+          DirectlyExportedWeightPage.cleanup(Some(70L), userAnswer) mustBe
             Success(expectedResetUserAnswer(userAnswer))
         }
 
         "when exported amount is greater than  totalPlastic" in {
-          val userAnswer = createUserAnswer.set(ExportedPlasticPackagingWeightPage, 200L).get
+          val userAnswer = createUserAnswer.set(DirectlyExportedWeightPage, 200L).get
 
-          ExportedPlasticPackagingWeightPage.cleanup(Some(200L), userAnswer) mustBe
+          DirectlyExportedWeightPage.cleanup(Some(200L), userAnswer) mustBe
             Success(expectedResetUserAnswer(userAnswer))
         }
       }
 
       "should return userAnswer" - {
         "when exported amount is less than total plastic" in {
-          val userAnswer = createUserAnswer.set(ExportedPlasticPackagingWeightPage, 20L).get
+          val userAnswer = createUserAnswer.set(DirectlyExportedWeightPage, 20L).get
 
-          ExportedPlasticPackagingWeightPage.cleanup(Some(20L), userAnswer) mustBe Success(userAnswer)
+          DirectlyExportedWeightPage.cleanup(Some(20L), userAnswer) mustBe Success(userAnswer)
         }
 
         "when exported amount is less than 1" in {
-          val userAnswer = createUserAnswer.set(AnotherBusinessExportWeightPage, 0L).get
+          val userAnswer = createUserAnswer.set(AnotherBusinessExportedWeightPage, 0L).get
 
-          ExportedPlasticPackagingWeightPage.cleanup(Some(0L), userAnswer) mustBe Success(userAnswer)
+          DirectlyExportedWeightPage.cleanup(Some(0L), userAnswer) mustBe Success(userAnswer)
         }
 
         "when exported amount is not Defined" in {
-          val userAnswer = createUserAnswer.remove(ExportedPlasticPackagingWeightPage).get
+          val userAnswer = createUserAnswer.remove(DirectlyExportedWeightPage).get
 
-          ExportedPlasticPackagingWeightPage.cleanup(None, userAnswer) mustBe Success(userAnswer)
+          DirectlyExportedWeightPage.cleanup(None, userAnswer) mustBe Success(userAnswer)
         }
       }
     }
@@ -75,9 +75,9 @@ class ExportedPlasticPackagingWeightPageSpec extends PageBehaviours {
 
   private def expectedResetUserAnswer(userAnswer: UserAnswers) = {
     userAnswer.
-      set(DirectlyExportedComponentsPage, true, cleanup = false).get
-      .set(PlasticExportedByAnotherBusinessPage, false, cleanup = false).get
-      .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
+      set(DirectlyExportedPage, true, cleanup = false).get
+      .set(AnotherBusinessExportedPage, false, cleanup = false).get
+      .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
@@ -88,6 +88,6 @@ class ExportedPlasticPackagingWeightPageSpec extends PageBehaviours {
     .set(ManufacturedPlasticPackagingWeightPage, 20L).get
     .set(ImportedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingWeightPage, 50L).get
-    .set(DirectlyExportedComponentsPage, true).get
-    .set(ExportedPlasticPackagingWeightPage, 0L).get
+    .set(DirectlyExportedPage, true).get
+    .set(DirectlyExportedWeightPage, 0L).get
 }
