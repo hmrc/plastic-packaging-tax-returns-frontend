@@ -59,7 +59,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
         )(_ => Ok(view(createSummaryList(request))))
     }
 
-  def onwardRouting: Action[AnyContent] = {
+  def submit: Action[AnyContent] = {
     journeyAction.async {
       implicit request =>
         ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic(nonExportedAmountHelper)
