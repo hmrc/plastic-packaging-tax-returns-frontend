@@ -42,7 +42,6 @@ class ReturnsJourneyNavigator @Inject()(
       _ => routes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     case ImportedPlasticPackagingWeightPage            =>
       _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case AnotherBusinessExportedPage                   => exportedByAnotherBusinessRoute(_, mode = NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
     case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     case NonExportedRecycledPlasticPackagingPage => nonExportedRecycledPlasticPackagingPageRoute(_, mode = NormalMode)
@@ -55,7 +54,6 @@ class ReturnsJourneyNavigator @Inject()(
     // TODO - replace with direct calls
     case ManufacturedPlasticPackagingWeightPage => answers => manufacturedPlasticPackagingWeightRoute(answers)
     case ImportedPlasticPackagingWeightPage            => _ => routes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case AnotherBusinessExportedPage                   => answers => exportedByAnotherBusinessRoute(answers, mode = CheckMode)
     case NonExportedHumanMedicinesPlasticPackagingPage => answers => nonExportedHumanMedicinesPlasticPackagingRoute(answers, mode = CheckMode)
     case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => routes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
     case NonExportedRecycledPlasticPackagingPage => answers => nonExportedRecycledPlasticPackagingPageRoute(answers, mode = CheckMode)
