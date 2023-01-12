@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
@@ -45,7 +45,8 @@ class ConfirmPlasticPackagingTotalController @Inject()
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmPlasticPackagingTotalView,
   cacheConnector: CacheConnector,
-  navigator: ReturnsJourneyNavigator
+  navigator: ReturnsJourneyNavigator,
+  nonExportedAmountHelper: InjectableNonExportedAmountHelper
 ) (implicit ec: ExecutionContext)
   extends I18nSupport with Logging {
 
@@ -53,7 +54,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
     journeyAction {
       implicit request =>
 
-        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(_ => Ok(view(createSummaryList(request))))
     }

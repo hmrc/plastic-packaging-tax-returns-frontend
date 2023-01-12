@@ -21,6 +21,7 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.helpers.InjectableNonExportedAmountHelper
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -37,6 +38,7 @@ import play.api.test.Helpers.{stubMessagesControllerComponents, _}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.returns.ConfirmPlasticPackagingTotalView
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -54,6 +56,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
   private val view = mock[ConfirmPlasticPackagingTotalView]
   private val cacheConnector = mock[CacheConnector]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
   private val sut = new ConfirmPlasticPackagingTotalController(
     messagesApi,
@@ -61,7 +64,8 @@ class ConfirmPlasticPackagingTotalControllerSpec
     stubMessagesControllerComponents(),
     view,
     cacheConnector,
-    navigator
+    navigator,
+    nonExportedAmountHelper
   )
 
   override def beforeEach() = {
@@ -73,6 +77,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -110,7 +115,8 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "redirect on account page if cannot calculate total plastic" in {
-      when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
