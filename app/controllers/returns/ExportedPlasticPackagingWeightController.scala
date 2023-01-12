@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.{InjectableNonExportedAmountHelper, NonExportedAmountHelper}
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -40,6 +40,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           cacheConnector: CacheConnector,
                                                           navigator: ReturnsJourneyNavigator,
+                                                          nonExportedAmountHelper: InjectableNonExportedAmountHelper,
                                                           journeyAction: JourneyAction,
                                                           form: ExportedPlasticPackagingWeightFormProvider,
                                                           val controllerComponents: MessagesControllerComponents,
@@ -51,11 +52,8 @@ class ExportedPlasticPackagingWeightController @Inject()(
     journeyAction {
       implicit request =>
 
-        val preparedForm = request.userAnswers.get(ExportedPlasticPackagingWeightPage) match {
-          case None => form()
-          case Some(value) => form().fill(value)
-        }
-        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        val preparedForm = request.userAnswers.fill(ExportedPlasticPackagingWeightPage, form())
+        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
             Redirect(controllers.routes.IndexController.onPageLoad)
           )(totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
         )
@@ -85,7 +83,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
     mode: Mode,
     formWithErrors: Form[Long]
   )(implicit request: DataRequest[AnyContent]) = {
-    NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
       Redirect(controllers.routes.IndexController.onPageLoad)
     )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
   }
