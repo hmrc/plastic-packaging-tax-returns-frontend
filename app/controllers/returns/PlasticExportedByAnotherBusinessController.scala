@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode
 import models.requests.DataRequest._
@@ -39,7 +39,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
                                                             journeyAction: JourneyAction,
                                                             formProvider: PlasticExportedByAnotherBusinessFormProvider,
                                                             returnsNavigator: ReturnsJourneyNavigator,
-                                                            nonExportedAmountHelper: InjectableNonExportedAmountHelper,
+                                                            nonExportedAmountHelper: NonExportedAmountHelper,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             view: PlasticExportedByAnotherBusinessView
                                  )(implicit ec: ExecutionContext) extends I18nSupport {

@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
@@ -41,7 +41,7 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
                                                                      form: NonExportedRecycledPlasticPackagingWeightFormProvider,
                                                                      val controllerComponents: MessagesControllerComponents,
                                                                      view: NonExportedRecycledPlasticPackagingWeightView,
-                                                                     nonExportedAmountHelper: InjectableNonExportedAmountHelper
+                                                                     nonExportedAmountHelper: NonExportedAmountHelper
                                                                  )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 

@@ -18,7 +18,7 @@ package navigation
 
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
@@ -32,7 +32,7 @@ import javax.inject.Singleton
 @Singleton
 class ReturnsJourneyNavigator @Inject()(
   appConfig: FrontendAppConfig,
-  nonExportedAmountHelper: InjectableNonExportedAmountHelper
+  nonExportedAmountHelper: NonExportedAmountHelper
 ) {
 
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")

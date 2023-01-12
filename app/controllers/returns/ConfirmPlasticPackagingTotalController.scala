@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
@@ -46,7 +46,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   view: ConfirmPlasticPackagingTotalView,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
-  nonExportedAmountHelper: InjectableNonExportedAmountHelper
+  nonExportedAmountHelper: NonExportedAmountHelper
 ) (implicit ec: ExecutionContext)
   extends I18nSupport with Logging {
 
@@ -75,7 +75,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
         ConfirmManufacturedPlasticPackagingSummary,
         ConfirmImportedPlasticPackagingSummary,
         ConfirmImportedPlasticPackagingWeightLabel,
-        PlasticPackagingTotalSummary
+        new PlasticPackagingTotalSummary(nonExportedAmountHelper)
       ).flatMap(_.row(request.userAnswers))
     )
   }

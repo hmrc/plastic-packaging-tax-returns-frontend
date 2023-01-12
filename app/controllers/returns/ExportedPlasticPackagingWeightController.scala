@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -40,7 +40,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           cacheConnector: CacheConnector,
                                                           navigator: ReturnsJourneyNavigator,
-                                                          nonExportedAmountHelper: InjectableNonExportedAmountHelper,
+                                                          nonExportedAmountHelper: NonExportedAmountHelper,
                                                           journeyAction: JourneyAction,
                                                           form: ExportedPlasticPackagingWeightFormProvider,
                                                           val controllerComponents: MessagesControllerComponents,

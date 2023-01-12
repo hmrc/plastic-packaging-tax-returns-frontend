@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -36,14 +36,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectlyExportedComponentsController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  navigator: Navigator,
-  journeyAction: JourneyAction,
-  nonExportedAmountHelper: InjectableNonExportedAmountHelper,
-  form: DirectlyExportedComponentsFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: DirectlyExportedComponentsView
+                                                       override val messagesApi: MessagesApi,
+                                                       cacheConnector: CacheConnector,
+                                                       navigator: Navigator,
+                                                       journeyAction: JourneyAction,
+                                                       nonExportedAmountHelper: NonExportedAmountHelper,
+                                                       form: DirectlyExportedComponentsFormProvider,
+                                                       val controllerComponents: MessagesControllerComponents,
+                                                       view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
     extends I18nSupport {
 

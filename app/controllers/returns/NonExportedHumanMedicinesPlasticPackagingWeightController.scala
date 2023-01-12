@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
@@ -41,7 +41,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
                                         form: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: NonExportedHumanMedicinesPlasticPackagingWeightView,
-                                        nonExportedAmountHelper: InjectableNonExportedAmountHelper
+                                        nonExportedAmountHelper: NonExportedAmountHelper
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {

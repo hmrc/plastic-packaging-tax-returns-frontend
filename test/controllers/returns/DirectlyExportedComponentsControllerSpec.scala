@@ -20,7 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -52,7 +52,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
   private val journeyAction  = mock[JourneyAction]
   private val formProvider   = mock[DirectlyExportedComponentsFormProvider]
   private val view           = mock[DirectlyExportedComponentsView]
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
   private val sut            = new DirectlyExportedComponentsController(
     messagesApi,
     cacheConnector,

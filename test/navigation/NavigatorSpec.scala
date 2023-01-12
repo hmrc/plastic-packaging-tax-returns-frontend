@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
 import config.FrontendAppConfig
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
@@ -30,7 +30,7 @@ import pages.returns._
 class NavigatorSpec extends SpecBase {
 
   private val frontendConfig = mock[FrontendAppConfig]
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
   val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper))
 
   "Navigator" - {

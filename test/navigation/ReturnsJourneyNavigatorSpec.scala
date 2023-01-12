@@ -17,7 +17,7 @@
 package navigation
 
 import config.FrontendAppConfig
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
@@ -35,7 +35,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   private val frontendConfig = mock[FrontendAppConfig]
   private val mockClaimedCredits = mock[ClaimedCredits]
   private val userAnswers = mock[UserAnswers]
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val navigator = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper)
 

@@ -21,7 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -52,7 +52,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedRecycledPlasticPackagingView]
-  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val validAnswer = 0L
   private val manufacturedAmount = 200L

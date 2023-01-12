@@ -21,7 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import controllers.{routes => appRoutes}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
@@ -63,7 +63,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 

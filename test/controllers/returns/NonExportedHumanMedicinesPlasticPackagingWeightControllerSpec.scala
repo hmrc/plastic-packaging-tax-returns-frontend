@@ -21,7 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -60,7 +60,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private val mockNavigator = mock[Navigator]
   private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

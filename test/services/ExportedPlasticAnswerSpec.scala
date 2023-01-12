@@ -16,7 +16,7 @@
 
 package services
 
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,7 +29,7 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
 
   private val answer = createUserAnswer
 
-  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   "resetExportedByYouIfAllExportedPlastic" should {
     "reset userAnswer when exported amount is greater that total plastic" in {

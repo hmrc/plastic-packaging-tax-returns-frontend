@@ -26,11 +26,11 @@ import viewmodels.govuk.all.FluentValue
 import viewmodels.govuk.summarylist.{SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object PlasticPackagingTotalSummary extends SummaryViewModel {
+class PlasticPackagingTotalSummary(nonExportedAmountHelper: NonExportedAmountHelper) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     Some(SummaryListRowViewModel(
       key = "confirmPlasticPackagingTotal.total.label",
-      value = ValueViewModel(NonExportedAmountHelper.totalPlastic(answers).getOrElse(0L).asKg).withCssClass("total-weight"),
+      value = ValueViewModel(nonExportedAmountHelper.totalPlastic(answers).getOrElse(0L).asKg).withCssClass("total-weight"),
       actions = Seq.empty
     ))
 

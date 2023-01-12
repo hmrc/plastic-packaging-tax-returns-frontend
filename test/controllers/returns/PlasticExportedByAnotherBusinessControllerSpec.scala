@@ -20,7 +20,7 @@ import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
@@ -60,7 +60,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
   private val journeyAction = mock[JourneyAction]
   private val view = mock[PlasticExportedByAnotherBusinessView]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new PlasticExportedByAnotherBusinessController(
     messagesApi,

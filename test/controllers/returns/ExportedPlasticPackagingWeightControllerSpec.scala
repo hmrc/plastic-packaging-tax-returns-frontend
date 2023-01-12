@@ -20,7 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -63,7 +63,7 @@ class ExportedPlasticPackagingWeightControllerSpec
   private val journeyAction = mock[JourneyAction]
   private val formProvider = mock[ExportedPlasticPackagingWeightFormProvider]
   private val view = mock[ExportedPlasticPackagingWeightView]
-  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new ExportedPlasticPackagingWeightController(
     messagesApi,
