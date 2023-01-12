@@ -21,6 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.InjectableNonExportedAmountHelper
 import controllers.{routes => appRoutes}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
@@ -62,14 +63,16 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockView, mockNavigator, mockCacheConnector)
+    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper)
     when(mockView.apply(any(),any(),any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L,true, true)))
   }
 
 
@@ -105,26 +108,9 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
       captor.getValue.value mustBe Some(true)
     }
 
-    "display total plastic weight if DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer was no" in {
-
-      val result = createSut(userAnswer = Some(nonExportedAnswer.set(DirectlyExportedComponentsPage, false).success.value
-        .set(PlasticExportedByAnotherBusinessPage, false).success.value
-      ))
-        .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
-
-      status(result) mustBe OK
-
-      verify(mockView).apply(
-        ArgumentMatchers.eq(manufacturedAmount + importedAmount),
-        any(),
-        ArgumentMatchers.eq(NormalMode),
-        ArgumentMatchers.eq(false),
-        ArgumentMatchers.eq(false)
-      )(any(),any())
-
-    }
-
     "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
         .remove(PlasticExportedByAnotherBusinessPage).success.value
       ))
@@ -132,15 +118,6 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
-    }
-
-    "redirect GET to home page when exported amount not found" in {
-
-      val result = createSut(userAnswer = Some(UserAnswers("123")))
-        .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -174,6 +151,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     }
 
     "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
         .remove(PlasticExportedByAnotherBusinessPage).success.value
       ))
@@ -216,7 +195,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      mockView
+      mockView,
+      nonExportedAmountHelper
     )
   }
 }
