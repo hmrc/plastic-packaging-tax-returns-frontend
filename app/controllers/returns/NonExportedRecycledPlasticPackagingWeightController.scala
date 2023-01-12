@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
@@ -40,7 +40,8 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
                                                                      requireData: DataRequiredAction,
                                                                      form: NonExportedRecycledPlasticPackagingWeightFormProvider,
                                                                      val controllerComponents: MessagesControllerComponents,
-                                                                     view: NonExportedRecycledPlasticPackagingWeightView
+                                                                     view: NonExportedRecycledPlasticPackagingWeightView,
+                                                                     nonExportedAmountHelper: InjectableNonExportedAmountHelper
                                                                  )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
@@ -53,10 +54,11 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
           case Some(value) => form().fill(value)
         }
 
-        NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
-          Redirect(controllers.routes.IndexController.onPageLoad))(
-          o => Ok(view(preparedForm, mode, o._1, o._2))
-        )
+        nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
+          Redirect(controllers.routes.IndexController.onPageLoad)) {
+          case (amount, directlyExported, _) =>
+            Ok(view(preparedForm, mode, amount, directlyExported))
+        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -65,10 +67,10 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
         val pptId: String = request.pptReference
         form().bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-              o => BadRequest(view(formWithErrors, mode, o._1, o._2 ))
-              )
+            Future.successful(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+                case (amount, directlyExported, _) => BadRequest(view(formWithErrors, mode, amount, directlyExported))
+              }
             ),
           value =>
             for {
