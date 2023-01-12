@@ -16,7 +16,7 @@
 
 package services
 
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import models.UserAnswers
 import pages.returns._
 
@@ -54,8 +54,8 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
     }
   }
 
-  def resetAllIfNoTotalPlastic: UserAnswers = {
-    if(NonExportedAmountHelper.totalPlastic(userAnswers).exists(_ > 0L)) {
+  def resetAllIfNoTotalPlastic(helper: InjectableNonExportedAmountHelper): UserAnswers = {
+    if(helper.totalPlastic(userAnswers).exists(_ > 0L)) {
       userAnswers
     } else {
       userAnswers.set(DirectlyExportedComponentsPage, false).get

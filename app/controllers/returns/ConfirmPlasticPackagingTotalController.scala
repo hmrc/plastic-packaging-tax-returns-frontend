@@ -62,7 +62,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   def onwardRouting: Action[AnyContent] = {
     journeyAction.async {
       implicit request =>
-        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic
+        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic(nonExportedAmountHelper)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }

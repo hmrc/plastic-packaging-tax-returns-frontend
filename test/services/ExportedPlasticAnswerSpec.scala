@@ -16,7 +16,11 @@
 
 package services
 
+import controllers.helpers.InjectableNonExportedAmountHelper
 import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns._
 
@@ -24,6 +28,8 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
 
 
   private val answer = createUserAnswer
+
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
   "resetExportedByYouIfAllExportedPlastic" should {
     "reset userAnswer when exported amount is greater that total plastic" in {
@@ -102,48 +108,33 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
   }
 
   "resetAllIfNoTotalPlastic" should {
-    "reset all if total plastic is 0" in {
-      val ans = answer
-        .set(ManufacturedPlasticPackagingWeightPage, 0L).get
-        .set(ImportedPlasticPackagingWeightPage, 0L).get
-
-      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic mustBe exptectdUserAnswer(ans)
-    }
-
-    "reset all if total plastic is less than 0" in {
-      val ans = answer
-        .set(ManufacturedPlasticPackagingWeightPage, -1L).get
-        .set(ImportedPlasticPackagingWeightPage, -1L).get
-
-      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic mustBe exptectdUserAnswer(ans)
-    }
-
-    "reset all if total plastic is equal 0" in {
     val ans = answer
-      .set(ManufacturedPlasticPackagingWeightPage, 0L).get
-      .set(ImportedPlasticPackagingWeightPage, 0L).get
+      .set(ManufacturedPlasticPackagingWeightPage, -1L).get
+      .set(ImportedPlasticPackagingWeightPage, -1L).get
+    "reset all if total plastic is less than 0" in {
+      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(-1L))
 
-      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic mustBe exptectdUserAnswer(ans)
+      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
     }
 
-    "return userAnswers if total plastic is greater than 0" in {
-      val ans = answer
-        .set(ManufacturedPlasticPackagingWeightPage, 10L).get
-        .set(ImportedPlasticPackagingWeightPage, 0L).get
+    "reset all if total plastic is equal to 0" in {
+      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(0L))
 
-      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic mustBe ans
+      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
     }
 
-    "rest all if total plastic return None" in {
-      val ans = answer
-        .remove(ManufacturedPlasticPackagingWeightPage).get
-        .set(ImportedPlasticPackagingWeightPage, 0L).get
+    "reset all if total plastic is not defined" in {
+      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(None)
+      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
+    }
 
-      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic mustBe exptectdUserAnswer(ans)
+    "do not change user answers if total plastic is greater than 0" in {
+      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(1L))
+      ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe ans
     }
   }
 
-  private def exptectdUserAnswer(ans: UserAnswers) = {
+  private def expectedUserAnswer(ans: UserAnswers) = {
     ans
       .set(DirectlyExportedComponentsPage, false).get
       .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
