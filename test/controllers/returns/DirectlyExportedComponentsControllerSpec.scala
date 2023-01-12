@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -51,11 +52,13 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
   private val journeyAction  = mock[JourneyAction]
   private val formProvider   = mock[DirectlyExportedComponentsFormProvider]
   private val view           = mock[DirectlyExportedComponentsView]
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
   private val sut            = new DirectlyExportedComponentsController(
     messagesApi,
     cacheConnector,
     navigator,
     journeyAction,
+    nonExportedAmountHelper,
     formProvider,
     stubMessagesControllerComponents(),
     view)
@@ -63,12 +66,12 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
   override def beforeEach() = {
     super.beforeEach()
 
-    reset(journeyAction, view, cacheConnector, dataRequest, navigator)
+    reset(journeyAction, view, cacheConnector, dataRequest, navigator, nonExportedAmountHelper)
 
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-   // when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(10L))
   }
 
   "onPageLoad" should {
@@ -114,6 +117,8 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect to account page if total plastic cannot be calculated" in {
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val form = new DirectlyExportedComponentsFormProvider()()
       when(formProvider.apply()).thenReturn(form)
       when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
@@ -187,6 +192,8 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect when total plastic cannot be calculated" in {
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
       val form = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)

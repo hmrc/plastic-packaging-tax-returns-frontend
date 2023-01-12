@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
 import models.requests.DataRequest
@@ -40,6 +40,7 @@ class DirectlyExportedComponentsController @Inject() (
   cacheConnector: CacheConnector,
   navigator: Navigator,
   journeyAction: JourneyAction,
+  nonExportedAmountHelper: InjectableNonExportedAmountHelper,
   form: DirectlyExportedComponentsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DirectlyExportedComponentsView
@@ -50,7 +51,7 @@ class DirectlyExportedComponentsController @Inject() (
     journeyAction {
       implicit request =>
 
-        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(totalPlastic => {
           val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
@@ -76,7 +77,7 @@ class DirectlyExportedComponentsController @Inject() (
     mode: Mode,
     formWithErrors: Form[Boolean]
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
       Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
       totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
     )
