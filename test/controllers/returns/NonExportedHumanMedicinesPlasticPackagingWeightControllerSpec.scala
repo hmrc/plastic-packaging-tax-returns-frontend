@@ -21,6 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -59,12 +60,14 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private val mockNavigator = mock[Navigator]
   private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator)
+    reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper)
 
     when(mockView.apply(any(), any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
 
   "onPageLoad" should {
@@ -88,21 +91,9 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(formProvider().bind(Map("value" -> "0")))
     }
 
-    "return ok when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is no" in {
-      val ans = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, validAnswer).get
-        .set(DirectlyExportedComponentsPage, false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-
-      val result = createSut(Some(ans)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
-
-      status(result) mustEqual OK
-      verifyView(
-        formProvider().fill(validAnswer),
-        manufacturedAmount + importedAmount,
-        false, false)
-    }
-
     "redirect to home page when exported amount not found" in {
+      reset(nonExportedAmountHelper)
+      when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(Some(userAnswers))
         .onPageLoad(NormalMode)(FakeRequest(GET, ""))
 
@@ -146,21 +137,6 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
         status(result) mustEqual BAD_REQUEST
         verifyView(formProvider().bind(Map("value" -> "invalid value")))
       }
-
-      "DirectlyExportedPage and PlasticExportedByAnotherBusinessPage answer is no" in {
-        val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-          .set(PlasticExportedByAnotherBusinessPage, false).get
-        val result = createSut(Some(ans)).onSubmit(NormalMode)(
-          FakeRequest(POST, "").withFormUrlEncodedBody(("value", "invalid value"))
-        )
-
-        status(result) mustEqual BAD_REQUEST
-        verifyView(
-          formProvider().bind(Map("value" -> "invalid value")),
-          manufacturedAmount + importedAmount,
-          false, false
-        )
-      }
     }
 
     "redirect to Journey Recovery if no existing data is found" in {
@@ -198,7 +174,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      mockView
+      mockView,
+      nonExportedAmountHelper
     )
   }
 

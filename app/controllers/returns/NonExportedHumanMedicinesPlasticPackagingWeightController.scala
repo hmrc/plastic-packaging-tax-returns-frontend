@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import navigation.Navigator
@@ -40,7 +40,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
                                         requireData: DataRequiredAction,
                                         form: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: NonExportedHumanMedicinesPlasticPackagingWeightView
+                                        view: NonExportedHumanMedicinesPlasticPackagingWeightView,
+                                        nonExportedAmountHelper: InjectableNonExportedAmountHelper
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -51,10 +52,11 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
         case Some(value) => form().fill(value)
       }
 
-      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-        .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-          o => Ok(view(o._1, preparedForm, mode, o._2, o._3))
-        )
+      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+        .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+          case (amount, directlyExported, exportedByThirdParty) =>
+            Ok(view(amount, preparedForm, mode, directlyExported, exportedByThirdParty))
+        }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -63,10 +65,11 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
       form().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
-            NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                o => BadRequest(view(o._1, formWithErrors, mode, o._2, o._3))
-              )
+            nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+                case (amount, directlyExported, exportedByThirdParty) =>
+                  BadRequest(view(amount, formWithErrors, mode, directlyExported, exportedByThirdParty))
+              }
           ),
         value =>
           for {
