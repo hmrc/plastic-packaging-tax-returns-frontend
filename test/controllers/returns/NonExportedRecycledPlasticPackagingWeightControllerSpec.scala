@@ -58,7 +58,6 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
   private val importedAmount = 100L
   private val exportedAmount = 50L
   private val exportedByAnotherBusinessAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   private val recycledPlasticPackagingWeightRoute =

@@ -18,7 +18,7 @@ package navigation
 
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
-import controllers.helpers.NonExportedAmountHelper
+import controllers.helpers.InjectableNonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
@@ -32,6 +32,7 @@ import javax.inject.Singleton
 @Singleton
 class ReturnsJourneyNavigator @Inject()(
   appConfig: FrontendAppConfig,
+  nonExportedAmountHelper: InjectableNonExportedAmountHelper
 ) {
 
   @deprecated("Call direct route method on this class instead", since = "19th July 2022")
@@ -149,7 +150,7 @@ class ReturnsJourneyNavigator @Inject()(
       routes.ConfirmPlasticPackagingTotalController.onPageLoad
 
   def confirmTotalPlasticPackagingRoute(answers: UserAnswers): Call = {
-    NonExportedAmountHelper.totalPlastic(answers) match {
+    nonExportedAmountHelper.totalPlastic(answers) match {
       case Some(amount) if amount > 0 => controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
       case Some(amount) if amount <= 0 => controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
       case _ => controllers.routes.IndexController.onPageLoad

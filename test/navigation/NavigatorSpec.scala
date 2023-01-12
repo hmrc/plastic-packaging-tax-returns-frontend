@@ -19,33 +19,19 @@ package navigation
 import base.SpecBase
 import base.utils.NonExportedPlasticTestHelper
 import config.FrontendAppConfig
+import controllers.helpers.InjectableNonExportedAmountHelper
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
 import org.mockito.MockitoSugar.mock
 import pages.returns._
 
-/** ***********************************************************
- * Returns journey (v1)
- * *************************************************************
- * start-date
- * Yes: continue to manufactured-components (y/n)
- * Yes: continue to manufactured-weight
- * No: imported-components (y/n)
- * Yes: imported-weight
- * No: human-medicines-packaging-weight
- * No: account
- * human-medicines-packaging-weight
- * exported-plastic-packaging-weight
- * recycled-plastic-packaging-weight
- * how-much-credit
- * check-your-return
- * *********************************************************** */
 //todo duplicated tests? check if can be removed
 class NavigatorSpec extends SpecBase {
 
   private val frontendConfig = mock[FrontendAppConfig]
-  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig))
+  private val nonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper))
 
   "Navigator" - {
 
