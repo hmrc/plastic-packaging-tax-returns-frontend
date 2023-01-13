@@ -20,7 +20,7 @@ import com.google.inject.Singleton
 import models.UserAnswers
 import pages.QuestionPage
 import pages.returns._
-class InjectableNonExportedAmountHelper {
+
 @Singleton
 class NonExportedAmountHelper {
 
@@ -68,8 +68,4 @@ class NonExportedAmountHelper {
 
   private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
-}
-@deprecated("use InjectableNonExportedAmountHelper instead")
-object NonExportedAmountHelper extends InjectableNonExportedAmountHelper { //TODO delete when everything is injecting
-
 }

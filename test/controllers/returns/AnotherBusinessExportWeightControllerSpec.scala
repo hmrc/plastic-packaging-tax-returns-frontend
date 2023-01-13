@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.returns
 
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.AnotherBusinessExportWeightController
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
@@ -58,7 +59,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[Long]]
   private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val mockNonExportedAmountHelper = mock[InjectableNonExportedAmountHelper]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   val sut = new AnotherBusinessExportWeightController(
     mockMessagesApi,
@@ -113,7 +114,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
 
     "return OK and correct view" in {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
-     status(result) mustBe OK
+      status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(200L), meq(form), meq(NormalMode))(any, any)
     }

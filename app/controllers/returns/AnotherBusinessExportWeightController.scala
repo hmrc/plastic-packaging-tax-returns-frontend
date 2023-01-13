@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
