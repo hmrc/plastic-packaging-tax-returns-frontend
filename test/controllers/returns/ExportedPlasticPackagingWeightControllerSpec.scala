@@ -130,7 +130,6 @@ class ExportedPlasticPackagingWeightControllerSpec
     }
 
     "redirect to index controller when cannot calculate total plastic" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
@@ -172,7 +171,6 @@ class ExportedPlasticPackagingWeightControllerSpec
       }
 
       "redirect to index controller if cannot calculate total plastic" in {
-        reset(mockNonExportedAmountHelper)
         when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
         when(form.bindFromRequest()(any, any))
           .thenReturn(new ExportedPlasticPackagingWeightFormProvider()().withError("error", "message"))

@@ -100,7 +100,6 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     }
 
     "redirect GET to home page when exported amount not found" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val ans = UserAnswers("123").set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).get
 

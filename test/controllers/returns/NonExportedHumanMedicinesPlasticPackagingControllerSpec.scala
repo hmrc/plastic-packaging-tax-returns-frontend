@@ -109,7 +109,6 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     }
 
     "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
         .remove(PlasticExportedByAnotherBusinessPage).success.value
@@ -151,7 +150,6 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     }
 
     "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
         .remove(PlasticExportedByAnotherBusinessPage).success.value

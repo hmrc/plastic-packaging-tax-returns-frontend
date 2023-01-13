@@ -92,7 +92,6 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     }
 
     "redirect to home page when exported amount not found" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(Some(userAnswers))
         .onPageLoad(NormalMode)(FakeRequest(GET, ""))

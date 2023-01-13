@@ -99,7 +99,6 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
     }
 
     "redirect to the home page if directly exported answer is missing" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
 
@@ -139,7 +138,6 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
     }
 
     "redirect to home page is directly exported not answered" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
 

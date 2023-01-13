@@ -115,7 +115,6 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "redirect on account page if cannot calculate total plastic" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)

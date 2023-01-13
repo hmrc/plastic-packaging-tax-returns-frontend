@@ -117,7 +117,6 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect to account page if total plastic cannot be calculated" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val form = new DirectlyExportedComponentsFormProvider()()
       when(formProvider.apply()).thenReturn(form)
@@ -192,7 +191,6 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "redirect when total plastic cannot be calculated" in {
-      reset(nonExportedAmountHelper)
       when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
       val form = mock[Form[Boolean]]

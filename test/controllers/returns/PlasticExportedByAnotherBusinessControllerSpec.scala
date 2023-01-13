@@ -130,7 +130,6 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
 
     "redirect to the account page if cannot calculate total plastic" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -193,7 +192,6 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "should redirect to account page when total plastic cannot be calculated" in {
-      reset(mockNonExportedAmountHelper)
       when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
