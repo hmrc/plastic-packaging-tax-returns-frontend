@@ -21,6 +21,7 @@ import models.UserAnswers
 import models.amends.AmendSummaryRow
 import models.returns.ReturnDisplayApi
 import pages.amends.AmendDirectExportPlasticPackagingPage
+import services.ExportedPlasticAnswer
 import viewmodels.PrintLong
 
 object AmendDirectExportPlasticPackagingSummary {
@@ -31,14 +32,14 @@ object AmendDirectExportPlasticPackagingSummary {
       throw new IllegalArgumentException("Must have a return display API to do an amend")
     )
 
-    val amended: Option[String] = answers.get(AmendDirectExportPlasticPackagingPage).map(_.asKg)
+    val amended: Option[String] = ExportedPlasticAnswer(answers).totalAmendExportedPlastic.map(_.asKg)
     val existing: String = returnDisplayApi.returnDetails.directExports.asKg
 
     AmendSummaryRow(
       "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
       existing,
       amended,
-      Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
+      Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
     )
   }
 

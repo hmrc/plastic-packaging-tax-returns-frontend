@@ -20,16 +20,17 @@ import cacheables.AmendObligationCacheable
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.JourneyAction
 import models.amends.AmendSummaryRow
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import models.returns.{AmendsCalculations, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import repositories.SessionRepository.Paths
-import repositories.{Entry, SessionRepository}
 import services.AmendReturnAnswerComparisonService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
@@ -39,19 +40,17 @@ import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()
 (override val messagesApi: MessagesApi,
- identify: IdentifierAction,
- getData: DataRetrievalAction,
- requireData: DataRequiredAction,
+ journeyAction: JourneyAction,
  returnsConnector: TaxReturnsConnector,
  appConfig: FrontendAppConfig,
  comparisonService: AmendReturnAnswerComparisonService,
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
-) extends FrontendBaseController with I18nSupport {
+) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
         if (!appConfig.isAmendsFeatureEnabled) {
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
@@ -100,10 +99,9 @@ class CheckYourAnswersController @Inject()
   }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val pptId: String = request.request.pptReference
-        returnsConnector.amend(pptId).flatMap {
+        returnsConnector.amend(request.pptReference).flatMap {
           optChargeRef =>
             sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map {
               _ => Redirect(routes.AmendConfirmationController.onPageLoad())

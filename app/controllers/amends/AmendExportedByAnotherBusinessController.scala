@@ -16,15 +16,17 @@
 
 package controllers.amends
 
+import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendExportedByAnotherBusinessFormProvider
-import models.Mode
-import navigation.Navigator
+import models.requests.DataRequest.headerCarrier
+import models.returns.TaxReturnObligation
 import pages.amends.AmendExportedByAnotherBusinessPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.AmendExportedByAnotherBusinessView
 
 import javax.inject.Inject
@@ -33,40 +35,34 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendExportedByAnotherBusinessController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         cacheConnector: CacheConnector,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AmendExportedByAnotherBusinessFormProvider,
+                                        journeyAction: JourneyAction,
+                                        form: AmendExportedByAnotherBusinessFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AmendExportedByAnotherBusinessView
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                      )(implicit ec: ExecutionContext) extends I18nSupport {
 
-  val form = formProvider()
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AmendExportedByAnotherBusinessPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
+        Ok(view(request.userAnswers.fill(AmendExportedByAnotherBusinessPage, form())))
+      } else {
+        Redirect(routes.SubmittedReturnsController.onPageLoad())
       }
-
-      Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors))),
 
         value =>
             request.userAnswers
               .setOrFail(AmendExportedByAnotherBusinessPage, value)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Redirect(navigator.nextPage(AmendExportedByAnotherBusinessPage, mode, updatedAnswers)))
+              .map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
       )
   }
 }

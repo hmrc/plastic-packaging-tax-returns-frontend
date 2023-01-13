@@ -17,14 +17,14 @@
 package views.returns
 
 import base.ViewSpecBase
-import forms.returns.{AnotherBusinessExportWeightFormProvider, ExportedPlasticPackagingWeightFormProvider}
+import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.{AnotherBusinessExportWeightView, ExportedPlasticPackagingWeightView}
+import views.html.returns.AnotherBusinessExportWeightView
 
 class AnotherBusinessExportWeightViewSpec
   extends ViewSpecBase

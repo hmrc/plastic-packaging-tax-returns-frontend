@@ -76,6 +76,6 @@ class AnotherBusinessExportWeightController @Inject()(
                 ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
                 mode))
             )
-      )
+        )
   }
 }

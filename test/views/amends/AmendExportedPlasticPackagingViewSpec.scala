@@ -17,12 +17,7 @@
 package views.amends
 
 import base.ViewSpecBase
-import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
-import repositories.SessionRepository
 import support.ViewMatchers
 import views.html.amends.AmendExportedPlasticPackagingView
 
@@ -69,7 +64,7 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
 
       buttonElement.text() mustBe "Continue"
       buttonElement.text() mustBe messages("site.button.continue")
-      buttonElement.select("a").first must haveHref("/amend-exported-weight")
+      buttonElement.select("a").first must haveHref(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad)
     }
   }
 

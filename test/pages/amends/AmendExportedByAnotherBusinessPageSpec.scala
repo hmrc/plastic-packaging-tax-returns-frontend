@@ -17,6 +17,7 @@
 package pages.amends
 
 import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
 class AmendExportedByAnotherBusinessPageSpec extends PageBehaviours {
 
@@ -27,5 +28,10 @@ class AmendExportedByAnotherBusinessPageSpec extends PageBehaviours {
     beSettable[Long](AmendExportedByAnotherBusinessPage)
 
     beRemovable[Long](AmendExportedByAnotherBusinessPage)
+
+    "should have the right path" in {
+      AmendExportedByAnotherBusinessPage.path mustEqual JsPath \ "amend" \ "amendExportedByAnotherBusinessPlasticPackaging"
+
+    }
   }
 }

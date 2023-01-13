@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package forms.amends
+package views.amends
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import base.ViewSpecBase
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import views.html.amends.AmendExportedPlasticPackagingView
 
-import javax.inject.Inject
+class AmendExportedPlasticPackagingViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-class AmendExportedWeightFormProvider @Inject() extends Mappings {
+  private val page = inject[AmendExportedPlasticPackagingView]
 
-  def apply(): Form[Long] =
-    Form(
-      "value" -> long(
-        "amendExportedWeight.error.required",
-        "amendExportedWeight.error.wholeNumber",
-        "amendExportedWeight.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "amendExportedWeight.error.outOfRange"))
-    )
+  private def render: String = {
+    page()(request, messages).toString()
+  }
+
+  "view shpould pass accessibility tests" in {
+    render must passAccessibilityChecks
+  }
+
 }

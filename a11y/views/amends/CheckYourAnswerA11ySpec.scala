@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations, TaxReturnObligation}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import viewmodels.{PrintBigDecimal, PrintLong}
+import viewmodels.PrintLong
 import views.html.amends.CheckYourAnswersView
 
 import java.time.LocalDate
@@ -85,7 +85,7 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
         messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
         "20",
         Some("0"),
-        Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
+        Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
       ),
       AmendSummaryRow(
         messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),

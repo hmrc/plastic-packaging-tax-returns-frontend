@@ -16,15 +16,18 @@
 
 package controllers.amends
 
+
 import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
+import models.requests.DataRequest.headerCarrier
 import models.returns.TaxReturnObligation
 import pages.amends.AmendDirectExportPlasticPackagingPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
 import javax.inject.Inject
@@ -33,46 +36,38 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendDirectExportPlasticPackagingController @Inject()(
    override val messagesApi: MessagesApi,
    cacheConnector: CacheConnector,
-   identify: IdentifierAction,
-   getData: DataRetrievalAction,
-   requireData: DataRequiredAction,
+   journeyAction: JourneyAction,
    form: AmendDirectExportPlasticPackagingFormProvider,
    val controllerComponents: MessagesControllerComponents,
    view: AmendDirectExportPlasticPackagingView
  )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+  extends I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.get(AmendDirectExportPlasticPackagingPage) match {
-          case None => form()
-          case Some(value) => form().fill(value)
-        }
+        val preparedForm = request.userAnswers.fill(AmendDirectExportPlasticPackagingPage, form())
+
         if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
           Ok(view(preparedForm))
         } else {
           Redirect(routes.SubmittedReturnsController.onPageLoad())
         }
-
     }
 
   def onSubmit: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val pptId: String = request.pptReference
 
         form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendDirectExportPlasticPackagingPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              controllers.amends.routes.CheckYourAnswersController.onPageLoad
-            )
+          value => {
+              request.userAnswers
+              .setOrFail(AmendDirectExportPlasticPackagingPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(_ => Redirect(controllers.amends.routes.AmendExportedByAnotherBusinessController.onPageLoad))
+          }
+
         )
     }
 
