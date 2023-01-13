@@ -17,11 +17,13 @@
 package navigation
 
 import config.FrontendAppConfig
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.Mockito.verify
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -33,12 +35,13 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   private val frontendConfig = mock[FrontendAppConfig]
   private val mockClaimedCredits = mock[ClaimedCredits]
   private val userAnswers = mock[UserAnswers]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
-  private val navigator = new ReturnsJourneyNavigator(frontendConfig)
+  private val navigator = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockClaimedCredits, frontendConfig)
+    reset(mockClaimedCredits, frontendConfig, nonExportedAmountHelper)
   }
 
   //todo add in credits navigation that is currently tested in controllers
@@ -235,36 +238,21 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "ConfirmTotalPlasticPackagingRoute" must {
 
     "redirect to directly exported page page" in {
-      val answer = UserAnswers("123")
-          .set(ManufacturedPlasticPackagingPage, true).get
-          .set(ManufacturedPlasticPackagingWeightPage, 10L).get
-          .set(ImportedPlasticPackagingPage, true).get
-          .set(ImportedPlasticPackagingWeightPage, 1L).get
-
-
-      val call = navigator.confirmTotalPlasticPackagingRoute(answer)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(1L))
+      val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe returnsRoutes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
+      verify(nonExportedAmountHelper).totalPlastic(userAnswers)
     }
 
     "redirect to CYA page" in {
-      val answer = UserAnswers("123")
-        .set(ManufacturedPlasticPackagingPage, true).get
-        .set(ManufacturedPlasticPackagingWeightPage, 0L).get
-        .set(ImportedPlasticPackagingPage, true).get
-        .set(ImportedPlasticPackagingWeightPage, 0L).get
-
-
-      val call = navigator.confirmTotalPlasticPackagingRoute(answer)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(0L))
+      val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
     }
 
     "redirect to account page" in {
-      val answer = UserAnswers("123")
-        .set(ImportedPlasticPackagingPage, true).get
-        .set(ImportedPlasticPackagingWeightPage, 0L).get
-
-
-      val call = navigator.confirmTotalPlasticPackagingRoute(answer)
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      val call = navigator.confirmTotalPlasticPackagingRoute(userAnswers)
       call mustBe controllers.routes.IndexController.onPageLoad
     }
   }

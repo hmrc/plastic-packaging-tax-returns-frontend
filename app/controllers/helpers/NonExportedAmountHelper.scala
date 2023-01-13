@@ -16,11 +16,13 @@
 
 package controllers.helpers
 
-import com.sun.xml.internal.bind.v2.TODO
+import com.google.inject.Singleton
 import models.UserAnswers
 import pages.QuestionPage
 import pages.returns._
-class InjectableNonExportedAmountHelper {
+
+@Singleton
+class NonExportedAmountHelper {
 
   def totalPlastic(userAnswers: UserAnswers) = {
     for {
@@ -66,8 +68,4 @@ class InjectableNonExportedAmountHelper {
 
   private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
-}
-@deprecated("use InjectableNonExportedAmountHelper instead")
-object NonExportedAmountHelper extends InjectableNonExportedAmountHelper { //TODO delete when everything is injecting
-
 }

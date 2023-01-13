@@ -18,7 +18,7 @@ package controllers.returns
 
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.InjectableNonExportedAmountHelper
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
@@ -41,7 +41,7 @@ class AnotherBusinessExportWeightController @Inject()(
                                         form: AnotherBusinessExportWeightFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnotherBusinessExportWeightView,
-                                        nonExportedAmountHelper: InjectableNonExportedAmountHelper
+                                        nonExportedAmountHelper: NonExportedAmountHelper
                                       )(implicit ec: ExecutionContext) extends Results with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {

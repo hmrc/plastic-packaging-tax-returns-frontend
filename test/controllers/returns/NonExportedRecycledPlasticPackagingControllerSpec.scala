@@ -21,6 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -51,6 +52,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedRecycledPlasticPackagingView]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val validAnswer = 0L
   private val manufacturedAmount = 200L
@@ -64,9 +66,10 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
 
   override def beforeEach() = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator)
+    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper)
 
     when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
 
   "onPageLoad" should {
@@ -95,30 +98,8 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       verifyView(Some(true), nonExportedAmount)
     }
 
-    "must redirect to home page on GET when amount questions has not been answers" in {
-      val ans = UserAnswers("123").set(NonExportedRecycledPlasticPackagingPage, true).get
-
-      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
-        FakeRequest(GET, recycledPlasticPackagingRoute)
-      )
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-    }
-
-    "calculate total plastic is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage is answered No" in {
-      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-
-      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
-        FakeRequest(GET, recycledPlasticPackagingRoute)
-      )
-
-      status(result) mustEqual OK
-      verifyView(None, manufacturedAmount + importedAmount, false)
-    }
-
     "redirect to the home page if directly exported answer is missing" in {
+      when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
 
       val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
@@ -156,20 +137,8 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       verifyView(None, nonExportedAmount)
     }
 
-    "return BadRequest with total plastic when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage is answered no" in {
-
-      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-      val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
-        FakeRequest(POST, recycledPlasticPackagingRoute)
-          .withFormUrlEncodedBody(("value", ""))
-      )
-
-      status(result) mustEqual BAD_REQUEST
-      verifyView(None, manufacturedAmount + importedAmount, false)
-    }
-
     "redirect to home page is directly exported not answered" in {
+      when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
 
       val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
@@ -180,8 +149,6 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
     }
-
-
 
     "redirect to Journey Recovery for a GET if no existing data is found" in {
 
@@ -231,7 +198,8 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      mockView
+      mockView,
+      mockNonExportedAmountHelper
     )
   }
 }

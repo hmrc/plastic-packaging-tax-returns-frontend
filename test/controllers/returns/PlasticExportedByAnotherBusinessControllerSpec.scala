@@ -20,12 +20,14 @@ import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
@@ -37,6 +39,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import queries.Gettable
 import views.html.returns.PlasticExportedByAnotherBusinessView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -57,6 +60,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
   private val journeyAction = mock[JourneyAction]
   private val view = mock[PlasticExportedByAnotherBusinessView]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new PlasticExportedByAnotherBusinessController(
     messagesApi,
@@ -64,6 +68,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     journeyAction,
     formProvider,
     returnsNavigator,
+    mockNonExportedAmountHelper,
     stubMessagesControllerComponents(),
     view
   )
@@ -80,13 +85,14 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(dataRequest, journeyAction, messagesApi, view)
+    reset(dataRequest, journeyAction, messagesApi, view, mockNonExportedAmountHelper)
 
     when(formProvider.apply()).thenReturn(bindForm)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn mock[Messages]
     when(view.apply(any, any, any)(any,any)).thenReturn(HtmlFormat.empty)
+    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -97,57 +103,39 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "return OK" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustBe OK
     }
 
-    "return a view which answer is Yes" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, true).get
-
-      await(sut.onPageLoad(NormalMode)(dataRequest))
-
-      verifyAndCaptorForm.value mustBe Some(true)
-    }
-
-    "return a view which answer is No" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.set(PlasticExportedByAnotherBusinessPage, false).get
-
-      await(sut.onPageLoad(NormalMode)(dataRequest))
-
-      verifyAndCaptorForm.value mustBe Some(false)
-    }
-
     "return a view with no answer" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer
-
+      when(dataRequest.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(bindForm)
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      verifyAndCaptorForm.value mustBe None
+      verify(view).apply(meq(bindForm), meq(NormalMode), meq(50L))(any, any)
+    }
+
+    "prepopulate the form" in {
+      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
+      verify(dataRequest.userAnswers).fill(meq(PlasticExportedByAnotherBusinessPage),meq(bindForm))(any)
     }
 
     "view should show total plastic packaging amount" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      verify(view).apply(any, any, ArgumentMatchers.eq(300L))(any, any)
+      verify(view).apply(any, any, ArgumentMatchers.eq(50L))(any, any)
     }
 
+
     "redirect to the account page if cannot calculate total plastic" in {
-      val userAnswer = UserAnswers("123")
-        .set(ManufacturedPlasticPackagingWeightPage, 100L).get
-        .set(ImportedPlasticPackagingPage, true).get
-        .set(ImportedPlasticPackagingWeightPage, 200L).get
-
-      when(dataRequest.userAnswers) thenReturn createUserAnswer.remove(ImportedPlasticPackagingPage).get
-
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+     val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
     }
   }
 
@@ -155,18 +143,18 @@ class PlasticExportedByAnotherBusinessControllerSpec
     val form = mock[Form[Boolean]]
 
     "redirect to AnotherBusinessExportWeight page" in {
-      val answer = createUserAnswer
-
-      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
+      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.fill(true))
       when(formProvider.apply()).thenReturn(form)
-      when(dataRequest.userAnswers) thenReturn answer
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
       when(returnsNavigator.exportedByAnotherBusinessRoute(any, any)) thenReturn Call("", "some-url")
+      val answer = dataRequest.userAnswers
+      when(dataRequest.userAnswers.setOrFail(any, any,any)(any)).thenReturn(answer)
+      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answer))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      verify(returnsNavigator).exportedByAnotherBusinessRoute(answer.set(PlasticExportedByAnotherBusinessPage, true).get, NormalMode)
+      verify(returnsNavigator).exportedByAnotherBusinessRoute(dataRequest.userAnswers, NormalMode)
     }
 
     "should save answer to the cache" in {
@@ -181,7 +169,6 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "should return an error with bad request" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any,any)).thenReturn(bindForm.withError("error", "error"))
 
@@ -191,7 +178,6 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "should return a view with error and total plastic" in {
-      when(dataRequest.userAnswers) thenReturn createUserAnswer
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
@@ -201,12 +187,12 @@ class PlasticExportedByAnotherBusinessControllerSpec
       verify(view).apply(
         ArgumentMatchers.eq(errorForm),
         ArgumentMatchers.eq(NormalMode),
-        ArgumentMatchers.eq(300L)
+        ArgumentMatchers.eq(50L)
       )(any, any)
     }
 
     "should redirect to account page when total plastic cannot be calculated" in {
-      when(dataRequest.userAnswers) thenReturn UserAnswers("123")
+      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
@@ -215,20 +201,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
     }
-  }
-
-  private def createUserAnswer: UserAnswers = {
-    UserAnswers("123")
-      .set(ManufacturedPlasticPackagingPage, true).get
-      .set(ManufacturedPlasticPackagingWeightPage, 100L).get
-      .set(ImportedPlasticPackagingPage, true).get
-      .set(ImportedPlasticPackagingWeightPage, 200L).get
-  }
-
-  private def verifyAndCaptorForm = {
-    val captor: ArgumentCaptor[Form[Boolean]] = ArgumentCaptor.forClass(classOf[Form[Boolean]])
-    verify(view).apply(captor.capture(), any, any)(any, any)
-    captor.getValue
   }
 }

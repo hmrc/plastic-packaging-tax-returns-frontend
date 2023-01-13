@@ -36,13 +36,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectlyExportedComponentsController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  navigator: Navigator,
-  journeyAction: JourneyAction,
-  form: DirectlyExportedComponentsFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: DirectlyExportedComponentsView
+                                                       override val messagesApi: MessagesApi,
+                                                       cacheConnector: CacheConnector,
+                                                       navigator: Navigator,
+                                                       journeyAction: JourneyAction,
+                                                       nonExportedAmountHelper: NonExportedAmountHelper,
+                                                       form: DirectlyExportedComponentsFormProvider,
+                                                       val controllerComponents: MessagesControllerComponents,
+                                                       view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
     extends I18nSupport {
 
@@ -50,7 +51,7 @@ class DirectlyExportedComponentsController @Inject() (
     journeyAction {
       implicit request =>
 
-        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(totalPlastic => {
           val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
@@ -76,7 +77,7 @@ class DirectlyExportedComponentsController @Inject() (
     mode: Mode,
     formWithErrors: Form[Boolean]
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
       Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
       totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
     )

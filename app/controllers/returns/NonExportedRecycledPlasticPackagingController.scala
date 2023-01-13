@@ -40,22 +40,20 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
                                                                requireData: DataRequiredAction,
                                                                form: NonExportedRecycledPlasticPackagingFormProvider,
                                                                val controllerComponents: MessagesControllerComponents,
-                                                               view: NonExportedRecycledPlasticPackagingView
+                                                               view: NonExportedRecycledPlasticPackagingView,
+                                                               nonExportedAmountHelper: NonExportedAmountHelper
                                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingPage) match {
-        case None => form()
-        case Some(value) => form().fill(value)
-      }
+      val preparedForm = request.userAnswers.fill(NonExportedRecycledPlasticPackagingPage, form())
 
-      NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
         .fold(
-          Redirect(controllers.routes.IndexController.onPageLoad))(
-          o => Ok(view(preparedForm, mode, o._1, o._2))
-        )
+          Redirect(controllers.routes.IndexController.onPageLoad)) {
+          case (amount, directlyExported, _) => Ok(view(preparedForm, mode, amount, directlyExported))
+        }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -63,11 +61,11 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
 
       form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+          Future.successful(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
             .fold(
-              Redirect(controllers.routes.IndexController.onPageLoad))(
-              o => BadRequest(view(formWithErrors, mode, o._1, o._2))
-            )
+              Redirect(controllers.routes.IndexController.onPageLoad)) {
+              case (amount, directlyExported, _) => BadRequest(view(formWithErrors, mode, amount, directlyExported))
+            }
           ),
         value =>
           for {

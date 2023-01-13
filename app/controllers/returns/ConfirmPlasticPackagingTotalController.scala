@@ -45,7 +45,8 @@ class ConfirmPlasticPackagingTotalController @Inject()
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmPlasticPackagingTotalView,
   cacheConnector: CacheConnector,
-  navigator: ReturnsJourneyNavigator
+  navigator: ReturnsJourneyNavigator,
+  nonExportedAmountHelper: NonExportedAmountHelper
 ) (implicit ec: ExecutionContext)
   extends I18nSupport with Logging {
 
@@ -53,7 +54,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
     journeyAction {
       implicit request =>
 
-        NonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(_ => Ok(view(createSummaryList(request))))
     }
@@ -61,7 +62,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
   def onwardRouting: Action[AnyContent] = {
     journeyAction.async {
       implicit request =>
-        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic
+        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic(nonExportedAmountHelper)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }
@@ -74,7 +75,7 @@ class ConfirmPlasticPackagingTotalController @Inject()
         ConfirmManufacturedPlasticPackagingSummary,
         ConfirmImportedPlasticPackagingSummary,
         ConfirmImportedPlasticPackagingWeightLabel,
-        PlasticPackagingTotalSummary
+        new PlasticPackagingTotalSummary(nonExportedAmountHelper)
       ).flatMap(_.row(request.userAnswers))
     )
   }

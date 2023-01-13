@@ -21,6 +21,7 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -33,10 +34,11 @@ import org.scalatestplus.play.PlaySpec
 import pages.returns._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
-import play.api.test.Helpers.{stubMessagesControllerComponents, _}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.returns.ConfirmPlasticPackagingTotalView
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -54,6 +56,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
   private val view = mock[ConfirmPlasticPackagingTotalView]
   private val cacheConnector = mock[CacheConnector]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new ConfirmPlasticPackagingTotalController(
     messagesApi,
@@ -61,7 +64,8 @@ class ConfirmPlasticPackagingTotalControllerSpec
     stubMessagesControllerComponents(),
     view,
     cacheConnector,
-    navigator
+    navigator,
+    nonExportedAmountHelper
   )
 
   override def beforeEach() = {
@@ -73,6 +77,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -95,7 +100,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
       when(messages.apply("site.yes")).thenReturn("Yes")
       when(messages.apply("10kg")).thenReturn("manufacture weight")
       when(messages.apply("1kg")).thenReturn("imported weigh")
-      when(messages.apply("11kg")).thenReturn("total weight")
+      when(messages.apply("50kg")).thenReturn("total weight")
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 
@@ -110,12 +115,12 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "redirect on account page if cannot calculate total plastic" in {
-      when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
+      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.routes.IndexController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
   }
 
