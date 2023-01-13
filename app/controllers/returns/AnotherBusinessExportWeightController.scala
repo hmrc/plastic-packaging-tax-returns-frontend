@@ -21,6 +21,7 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode
+import models.Mode.CheckMode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.AnotherBusinessExportWeightPage
@@ -69,7 +70,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
         value =>
           request.userAnswers
-            .setOrFail(AnotherBusinessExportWeightPage, value)
+            .setOrFail(AnotherBusinessExportWeightPage, value, isCleanUp(mode))
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
             .map(updatedUserAnswers =>
               Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
@@ -78,4 +79,7 @@ class AnotherBusinessExportWeightController @Inject()(
             )
         )
   }
+
+  private def isCleanUp(mode: Mode) =
+    if(mode == CheckMode) false else true
 }

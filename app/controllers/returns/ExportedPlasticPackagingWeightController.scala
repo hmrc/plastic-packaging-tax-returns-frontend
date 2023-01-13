@@ -21,6 +21,7 @@ import controllers.actions.JourneyAction
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode
+import models.Mode._
 import models.requests.DataRequest
 import models.requests.DataRequest._
 import navigation.ReturnsJourneyNavigator
@@ -69,7 +70,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
             Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
           value =>
             request.userAnswers
-              .setOrFail(ExportedPlasticPackagingWeightPage, value)
+              .setOrFail(ExportedPlasticPackagingWeightPage, value, isCleanUp(mode))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(updatedAnswers =>
                 Redirect(navigator.exportedPlasticPackagingWeightRoute(
@@ -87,4 +88,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
       Redirect(controllers.routes.IndexController.onPageLoad)
     )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
   }
+
+  private def isCleanUp(mode: Mode) =
+    if(mode == CheckMode) false else true
 }
