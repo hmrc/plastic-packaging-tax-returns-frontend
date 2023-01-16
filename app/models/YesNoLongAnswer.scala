@@ -44,12 +44,12 @@ case class YesNoLongAnswer(userSaidYes: Option[Boolean], usersValue: Option[Long
   }
 
   /**
-    * @return true if the user answered 'yes'
+    * @return true if the user answered 'no'
     */
   def isUsersAnswerNo: Boolean = userSaidYes.contains(false)
 
   /**
-    * @return true if the user answered 'no'
+    * @return true if the user answered 'yes'
     */
   def isUsersAnswerYes: Boolean = userSaidYes.contains(true)
 
