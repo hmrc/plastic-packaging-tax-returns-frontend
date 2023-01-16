@@ -22,7 +22,7 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
-import models.Mode.NormalMode
+import models.Mode._
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -156,6 +156,30 @@ class ExportedPlasticPackagingWeightControllerSpec
       verify(navigator).exportedPlasticPackagingWeightRoute(true, NormalMode)
       verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("ppt Ref"))(any)
       verify(dataRequest.userAnswers).save(meq(saveUserAnswersFunc))(any)
+    }
+
+    "save userAnswer with clean up equal to false in checkMode" in {
+      when(form.bindFromRequest()(any, any))
+        .thenReturn(new ExportedPlasticPackagingWeightFormProvider()().fill(5))
+
+      await(sut.onSubmit(CheckMode).skippingJourneyAction(dataRequest))
+
+      verify(dataRequest.userAnswers).setOrFail(
+        meq(ExportedPlasticPackagingWeightPage),
+        meq(5L),
+        meq(false))(any)
+    }
+
+    "save userAnswer with clean up equal to true in NormalMode" in {
+      when(form.bindFromRequest()(any, any))
+        .thenReturn(new ExportedPlasticPackagingWeightFormProvider()().fill(5))
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(dataRequest.userAnswers).setOrFail(
+        meq(ExportedPlasticPackagingWeightPage),
+        meq(5L),
+        meq(true))(any)
     }
 
     "return an error" when {
