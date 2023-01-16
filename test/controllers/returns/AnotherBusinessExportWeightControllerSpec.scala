@@ -16,12 +16,11 @@
 
 package controllers.returns
 
+import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.AnotherBusinessExportWeightController
 import forms.returns.AnotherBusinessExportWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers.SaveUserAnswerFunc
@@ -48,7 +47,7 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndAfterEach{
+class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach{
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
@@ -94,18 +93,6 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
     when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(200L))
   }
 
-  //TODO add helper for defs below shared by lots of specs
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) =>
-        Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
-
   "onPageLoad" should {
     "invoke the journey action" in {
       Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
@@ -114,7 +101,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with BeforeAndA
 
     "return OK and correct view" in {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
-      status(result) mustBe OK
+     status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(200L), meq(form), meq(NormalMode))(any, any)
     }
