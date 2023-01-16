@@ -547,7 +547,7 @@ exported.credits.weight.label = Faint o bwysau, mewn cilogramau?
 exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -562,7 +562,7 @@ converted.credits.weight.label = Faint o bwysau, mewn cilogramau?
 converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
 converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -678,7 +678,7 @@ anotherBusinessExportWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunne
 anotherBusinessExportWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
 anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
 amendExportedPlasticPackaging.title = Diwygio deunydd pacio plastig sydd wedi’i allforio
 amendExportedPlasticPackaging.heading = Diwygio deunydd pacio plastig sydd wedi’i allforio
