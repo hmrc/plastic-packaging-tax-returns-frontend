@@ -17,13 +17,14 @@
 package models.subscription
 
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import play.api.libs.json.{Format, Json}
 
-case class GroupMembers(membersNames: Seq[String]) {
-  def contains: String => Boolean = membersNames.contains
-
-  def map[A](function: (String, Int) => A): Seq[A] =
-    membersNames.zipWithIndex.map(tuple => function(tuple._1, tuple._2))
+case class Member(organisationName: String)
+object Member {
+  implicit val formats: Format[Member] = Json.format[Member]
 }
+
+case class GroupMembers(membersNames: Seq[Member])
 
 object GroupMembers {
   def create(response: SubscriptionDisplayResponse): GroupMembers = {
@@ -39,6 +40,6 @@ object GroupMembers {
               "entry missing its organisationDetails field"))
             .organisationName
       }
-    GroupMembers(membersNames.sorted) //todo what if this is 1 or empty
+    GroupMembers(membersNames.sorted.map(organisationName => Member(organisationName))) //todo what if this is 1 or empty
   }
 }

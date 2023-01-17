@@ -17,16 +17,18 @@
 package forms.changeGroupLead
 
 import forms.changeGroupLead.SelectNewGroupLeadForm.error
+import models.subscription.Member
 import play.api.data.Form
 import play.api.data.Forms.{optional, text}
 
 class SelectNewGroupLeadForm {
 
-  def apply(members: Seq[String]): Form[String] =
+  def apply(members: Seq[Member]): Form[Member] =
     Form("value" -> optional(text)
       .verifying(error, _.isDefined)
       .transform[String](_.get, Some(_))
-      .verifying(error, members.contains(_))
+      .verifying(error, a => members.exists(m => m.organisationName == a)) //Todo: use CRN when it's there
+      .transform[Member](a => members.find(m => m.organisationName == a).get, m => m.organisationName)
     )
 
 }

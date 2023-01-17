@@ -16,10 +16,11 @@
 
 package pages.changeGroupLead
 
+import models.subscription.Member
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-object ChooseNewGroupLeadPage extends QuestionPage[String] {
+object ChooseNewGroupLeadPage extends QuestionPage[Member] {
   override def path: JsPath = JsPath \ "changeGroupLead" \ toString
 
   override def toString: String = "chooseNewGroupLead"
