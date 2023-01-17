@@ -43,6 +43,12 @@ case class TaxReturnViewModel (
     }
   }
 
+  def getWithDefault(page: QuestionPage[Boolean]) =
+    userAnswers.get(page).getOrElse(false) // default to "no"
+
+  def getWithDefault(page: QuestionPage[Long]) =
+    userAnswers.get(page).getOrElse(0L) // default to zero kg
+
   private def createYesNoRow(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
     val answer = getMustHave(page)
     val value = if (answer) "site.yes" else "site.no"
@@ -50,7 +56,7 @@ case class TaxReturnViewModel (
   }
 
   private def createYesNoRowWithDefault(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
-    val answer = userAnswers.get(page).getOrElse(false) // default to "no"
+    val answer = getWithDefault(page)
     val value = if (answer) "site.yes" else "site.no"
     RowInfo(key = messages(messageKey), value = messages(value))
   }
@@ -62,7 +68,7 @@ case class TaxReturnViewModel (
   }
 
   private def createKgsRowWithDefault(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
-    val answer = userAnswers.get(page).getOrElse(0L) // default to zero kg
+    val answer = getWithDefault(page)
     val value = answer.asKg
     RowInfo(key = messages(messageKey), value = value)
   }
@@ -85,7 +91,7 @@ case class TaxReturnViewModel (
 
   private def exportedTotal: Long = {
     val exportedDirectly = getMustHave(ExportedPlasticPackagingWeightPage)
-    val exportedByAnotherBusiness = getMustHave(AnotherBusinessExportWeightPage)
+    val exportedByAnotherBusiness = getWithDefault(AnotherBusinessExportWeightPage)
     exportedDirectly + exportedByAnotherBusiness
   }
 

@@ -18,7 +18,6 @@ package controllers.helpers
 
 import models.UserAnswers
 import models.returns.{Calculations, TaxReturnObligation}
-import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -131,5 +130,51 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       when(calculations.packagingTotal) thenReturn 0L
       sut.canEditExported mustBe false
     }
+    
+    "assume zero when AnotherBusinessExportWeightPage is unanswered" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn None
+      when(calculations.packagingTotal) thenReturn 0L
+      sut.canEditExported mustBe false
+    }
+  }
+
+  "canEditNonExported" when {
+
+    "exported-plastic and packaging-total are zero" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(0L)
+      when(calculations.packagingTotal) thenReturn 0L
+      sut.canEditNonExported mustBe false
+    }
+
+    "exported-plastic is equal to total-additions" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(50L)
+      when(calculations.packagingTotal) thenReturn 50L
+      sut.canEditNonExported mustBe false
+    }
+
+    "exported-plastic is less then to total-additions" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(49L)
+      when(calculations.packagingTotal) thenReturn 50L
+      sut.canEditNonExported mustBe true
+    }
+
+    "exported-plastic is more then to total-additions" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(51L)
+      when(calculations.packagingTotal) thenReturn 50L
+      sut.canEditNonExported mustBe false
+    }
+
+    "AnotherBusinessExportWeightPage is unanswered" in {
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn None
+      when(calculations.packagingTotal) thenReturn 50L
+      sut.canEditNonExported mustBe true
+    }
+
   }
 }
