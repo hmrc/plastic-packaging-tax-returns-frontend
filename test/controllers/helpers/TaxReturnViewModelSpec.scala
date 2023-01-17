@@ -95,18 +95,17 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
   
-  "anotherBusinessExportedWeight" should {
-    "return rowInfo" in {
+  "anotherBusinessExportedWeight" when {
+    "question is answered" in {
       when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(200L)
       val result = sut.anotherBusinessExportedWeight("part-of-a-key")
       result mustEqual RowInfo("part-of-a-key", "200kg")
     }
 
-    "throw if page not found" in {
+    "question is unanswered" in {
       when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn None
-      intercept[IllegalStateException] {
-        sut.anotherBusinessExportedWeight("part-of-a-key")
-      }
+      val result = sut.anotherBusinessExportedWeight("part-of-a-key")
+      result mustEqual RowInfo("part-of-a-key", "0kg")
     }
   }
 

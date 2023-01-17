@@ -61,6 +61,12 @@ case class TaxReturnViewModel (
     RowInfo(key = messages(messageKey), value = value)
   }
 
+  private def createKgsRowWithDefault(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
+    val answer = userAnswers.get(page).getOrElse(0L) // default to zero kg
+    val value = answer.asKg
+    RowInfo(key = messages(messageKey), value = value)
+  }
+
   def manufacturedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(ManufacturedPlasticPackagingPage, messageKey)
   }
@@ -78,10 +84,9 @@ case class TaxReturnViewModel (
   }
 
   private def exportedTotal: Long = {
-    val exported = getMustHave(ExportedPlasticPackagingWeightPage)
+    val exportedDirectly = getMustHave(ExportedPlasticPackagingWeightPage)
     val exportedByAnotherBusiness = getMustHave(AnotherBusinessExportWeightPage)
-
-    exported + exportedByAnotherBusiness
+    exportedDirectly + exportedByAnotherBusiness
   }
 
   // Show or hide edit links
@@ -101,7 +106,7 @@ case class TaxReturnViewModel (
   }
 
   def anotherBusinessExportedWeight(messageKey: String): RowInfo = {
-    createKgsRow(AnotherBusinessExportWeightPage, messageKey)
+    createKgsRowWithDefault(AnotherBusinessExportWeightPage, messageKey)
   }
 
   def nonexportedMedicineYesNo(messageKey: String): RowInfo = {
