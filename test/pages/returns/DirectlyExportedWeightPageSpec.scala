@@ -73,21 +73,23 @@ class DirectlyExportedWeightPageSpec extends PageBehaviours {
 
   }
 
-  private def expectedResetUserAnswer(userAnswer: UserAnswers) = {
-    userAnswer.
-      set(DirectlyExportedPage, true, cleanup = false).get
+  private def expectedResetUserAnswer(userAnswer: UserAnswers) = 
+    userAnswer
+      .set(DirectlyExportedPage, true, cleanup = false).get
       .set(AnotherBusinessExportedPage, false, cleanup = false).get
       .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false).get
-  }
-  private def createUserAnswer = UserAnswers("reg-number")
-    .set(ManufacturedPlasticPackagingPage, false).get
-    .set(ManufacturedPlasticPackagingWeightPage, 20L).get
-    .set(ImportedPlasticPackagingPage, false).get
-    .set(ImportedPlasticPackagingWeightPage, 50L).get
-    .set(DirectlyExportedPage, true).get
-    .set(DirectlyExportedWeightPage, 0L).get
+  
+  private def createUserAnswer = 
+    UserAnswers("reg-number")
+      .set(ManufacturedPlasticPackagingPage, false).get
+      .set(ManufacturedPlasticPackagingWeightPage, 20L).get
+      .set(ImportedPlasticPackagingPage, false).get
+      .set(ImportedPlasticPackagingWeightPage, 50L).get
+      .set(DirectlyExportedPage, true).get
+      .set(DirectlyExportedWeightPage, 0L).get
+  
 }

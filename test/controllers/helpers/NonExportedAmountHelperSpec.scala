@@ -31,7 +31,6 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
     .set(ManufacturedPlasticPackagingWeightPage, 100L).get
     .set(ImportedPlasticPackagingPage, true).get
     .set(ImportedPlasticPackagingWeightPage, 200L).get
-    .set(AnotherBusinessExportedPage, true).get
     .set(DirectlyExportedWeightPage, 100L).get
     .set(AnotherBusinessExportedPage, true).get
     .set(AnotherBusinessExportedWeightPage, 100L).get
@@ -54,7 +53,6 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       "plastic is exported" in {
         val ans = userAnswer
-          .set(AnotherBusinessExportedPage, true).get
           .set(AnotherBusinessExportedPage, true).get
           .set(DirectlyExportedWeightPage, 100L).get
           .set(AnotherBusinessExportedWeightPage, 100L).get
@@ -141,10 +139,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn None
       when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn None
       when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
-      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(0) // or
-//      an [IllegalStateException] mustBe thrownBy {
-//        NonExportedAmountHelper.totalPlasticAdditions(mockUserAnswers)
-//      } 
+      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(0)
     }
   }
   
