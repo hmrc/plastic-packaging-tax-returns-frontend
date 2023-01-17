@@ -87,9 +87,11 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
     "question is unanswered" in {
       when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn None
-      intercept[IllegalStateException] {
-        sut.exportedByAnotherBusinessYesNo("part-of-a-key")
-      }
+      val result = sut.exportedByAnotherBusinessYesNo("part-of-a-key")
+
+      result mustBe RowInfo("part-of-a-key", "no-string")
+      verify(messages).apply("site.no")
+      verify(messages).apply("part-of-a-key")
     }
   }
   
