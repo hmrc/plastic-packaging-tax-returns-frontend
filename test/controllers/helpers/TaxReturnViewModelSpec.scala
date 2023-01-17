@@ -42,55 +42,53 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     super.beforeEach()
     reset(calculations, messages, userAnswers)
 
-    when(messages.apply(any[String])).thenReturn("key") // todo ?
-    when(messages.apply("site.yes")).thenReturn("yes-key")
-    when(messages.apply("input-key")).thenReturn("output-key")
+    // expect these to match a message-file entry
+    when(messages.apply("site.yes")).thenReturn("yes-string")
+    when(messages.apply("site.no")).thenReturn("no-string")
+
+    // expect this to not match a message-file entry
+    when(messages.apply("part-of-a-key")).thenReturn("part-of-a-key") 
   }
 
   "exportedWeigh" should {
     "return rowInfo" in {
       when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(200L)
-      val result = sut.exportedWeight("input-key")
-      result mustEqual RowInfo("output-key", "200kg")
+      val result = sut.exportedWeight("part-of-a-key")
+      result mustEqual RowInfo("part-of-a-key", "200kg")
     }
 
     "throw if page not found" in {
       when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn None
       intercept[IllegalStateException] {
-        sut.exportedWeight("any-key")
+        sut.exportedWeight("part-of-a-key")
       }
     }
   }
 
   "exportedByAnotherBusinessYesNo" when {
+
     "answer is 'yes'" in {
       when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn Some(true)
-      when(messages.apply("site.yes")).thenReturn("key2")
-      when(messages.apply("any-key")).thenReturn("key1")
+      val result = sut.exportedByAnotherBusinessYesNo("part-of-a-key")
 
-      val result = sut.exportedByAnotherBusinessYesNo("any-key")
-
-      result mustBe RowInfo("key1", "key2")
+      result mustBe RowInfo("part-of-a-key", "yes-string")
       verify(messages).apply("site.yes")
-      verify(messages).apply("any-key")
+      verify(messages).apply("part-of-a-key")
     }
 
     "answer is 'no'" in {
       when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn Some(false)
-      when(messages.apply("site.no")).thenReturn("No")
-      when(messages.apply("any-key")).thenReturn("key1")
+      val result = sut.exportedByAnotherBusinessYesNo("part-of-a-key")
 
-      val result = sut.exportedByAnotherBusinessYesNo("any-key")
-
-      result mustBe RowInfo("key1", "No")
+      result mustBe RowInfo("part-of-a-key", "no-string")
       verify(messages).apply("site.no")
-      verify(messages).apply("any-key")
+      verify(messages).apply("part-of-a-key")
     }
 
     "question is unanswered" in {
       when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn None
       intercept[IllegalStateException] {
-        sut.exportedByAnotherBusinessYesNo("any-key")
+        sut.exportedByAnotherBusinessYesNo("part-of-a-key")
       }
     }
   }
@@ -98,14 +96,14 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
   "anotherBusinessExportedWeight" should {
     "return rowInfo" in {
       when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(200L)
-      val result = sut.anotherBusinessExportedWeight("input-key")
-      result mustEqual RowInfo("output-key", "200kg")
+      val result = sut.anotherBusinessExportedWeight("part-of-a-key")
+      result mustEqual RowInfo("part-of-a-key", "200kg")
     }
 
     "throw if page not found" in {
       when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn None
       intercept[IllegalStateException] {
-        sut.anotherBusinessExportedWeight("any-key")
+        sut.anotherBusinessExportedWeight("part-of-a-key")
       }
     }
   }
