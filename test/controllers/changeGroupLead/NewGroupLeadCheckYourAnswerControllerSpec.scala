@@ -116,9 +116,9 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     }
 
     "construct the summary list and pass it to the view" in {
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Member("Blah")), None)
+      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Member("Blah", "1")), None)
 
-      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, Member("Blah"))
+      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, Member("Blah", "1"))
       )(messages).get
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
@@ -130,7 +130,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       val countryCode = "GB"
       when(countryService.tryLookupCountryName(countryCode)).thenReturn("United Kingdom")
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
-        .thenReturn(Some(Member("Blah")))
+        .thenReturn(Some(Member("Blah", "1")))
 
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(NewGroupLeadEnterContactAddressPage))(any))
         .thenReturn(Some(createAddressDetails(countryCode)))
@@ -142,7 +142,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
     "check feature flag" in {
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
-        .thenReturn(Some(Member("test test")))
+        .thenReturn(Some(Member("test test", "1")))
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 

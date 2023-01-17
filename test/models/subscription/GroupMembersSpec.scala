@@ -49,7 +49,7 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))), 
           createGroupDetails(Some(OrganisationDetails(None, "Noo-noo"))), 
       )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("Laa-laa"), Member("Noo-noo"), Member("Po")))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("Laa-laa", "crn"), Member("Noo-noo", "crn"), Member("Po", "crn")))
     }
 
     "filter non GB organisations" in {
@@ -59,7 +59,7 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "gb-1"))),
           createGroupDetails(Some(OrganisationDetails(None, "gb-2"))),
         )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("gb-1"), Member("gb-2")))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("gb-1", "crn"), Member("gb-2", "crn")))
     }
 
     "filter the Representative from the members" in {
@@ -69,13 +69,13 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "mem-1"))),
           createGroupDetails(Some(OrganisationDetails(None, "mem-2"))),
         )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("mem-1"), Member("mem-2")))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("mem-1", "crn"), Member("mem-2", "crn")))
     }
     
   }
 
   private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
-    GroupPartnershipDetails("", "", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
+    GroupPartnershipDetails("", "crn", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
   }
 
   private def createGroupSubscription(groupPartnershipDetails: Seq[GroupPartnershipDetails]) = {

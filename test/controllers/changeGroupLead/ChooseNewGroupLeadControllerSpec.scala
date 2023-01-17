@@ -102,7 +102,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(mockFormProvider.apply(any)) thenReturn form
-    val boundForm = Form("value" -> ignored(Member("test-member"))).fill(Member("test-member"))
+    val boundForm = Form("value" -> ignored(Member("test-member", "1"))).fill(Member("test-member", "1"))
     when(form.bindFromRequest()(any, any)) thenReturn boundForm
 
     when(dataRequest.userAnswers.fill(any[Gettable[Member]], any)(any)) thenReturn form
@@ -209,7 +209,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     "bind the form and error" in {
       when(mockFormProvider.apply(any)) thenReturn form
-      val errorForm = Form("value" -> ignored(Member("error"))).withError("key", "error")
+      val errorForm = Form("value" -> ignored(Member("error", "1"))).withError("key", "error")
       when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
@@ -232,7 +232,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){
-        verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, Member("test-member"))
+        verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, Member("test-member", "1"))
         verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
       }
     }

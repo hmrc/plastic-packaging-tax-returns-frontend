@@ -54,7 +54,7 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
     }
     
     "extract the group member names" in {
-      await(service.fetchGroupMemberNames("ppt-ref")(headerCarrier)) mustBe GroupMembers(Seq(Member("Po")))
+      await(service.fetchGroupMemberNames("ppt-ref")(headerCarrier)) mustBe GroupMembers(Seq(Member("Po", "crn")))
     }
     
     "handle connector failure" in {
@@ -86,7 +86,7 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
       last12MonthTotalTonnageAmt = 1.0,
       processingDate = "", 
       groupPartnershipSubscription = Some(GroupPartnershipSubscription(None, None, Seq(
-        GroupPartnershipDetails("", "", None, Some(OrganisationDetails(None, "Po")), None, addressDetails, contactDetails, false)
+        GroupPartnershipDetails("", "crn", None, Some(OrganisationDetails(None, "Po")), None, addressDetails, contactDetails, false)
       ))) 
     )
   }

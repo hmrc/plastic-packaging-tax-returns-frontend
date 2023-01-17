@@ -27,8 +27,8 @@ class SelectNewGroupLeadForm {
     Form("value" -> optional(text)
       .verifying(error, _.isDefined)
       .transform[String](_.get, Some(_))
-      .verifying(error, a => members.exists(m => m.organisationName == a)) //Todo: use CRN when it's there
-      .transform[Member](a => members.find(m => m.organisationName == a).get, m => m.organisationName)
+      .verifying(error, crn => members.exists(_.crn == crn))
+      .transform[Member](crn => members.find(_.crn == crn).get, _.crn)
     )
 
 }

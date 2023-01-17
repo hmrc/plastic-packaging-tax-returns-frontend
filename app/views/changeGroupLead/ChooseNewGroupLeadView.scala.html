@@ -45,8 +45,8 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                items = members.membersNames.map(_.organisationName).sorted.zipWithIndex.map{case (name, index) =>
-                    RadioItem(id = Some("radio-member-"+index), value = Some(name), content = Text(name))
+                items = members.membersNames.sortBy(_.organisationName).zipWithIndex.map{case (member, index) =>
+                    RadioItem(id = Some("radio-member-"+index), value = Some(member.crn), content = Text(member.organisationName))
                 }
             )
         )

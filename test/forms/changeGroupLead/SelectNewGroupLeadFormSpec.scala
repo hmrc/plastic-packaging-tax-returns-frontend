@@ -28,41 +28,41 @@ class SelectNewGroupLeadFormSpec extends PlaySpec {
   "the form" should {
     "bind" when {
       "a value is in the members list" in {
-        val boundForm = sut.apply(Seq(Member("abc"))).bind(Map("value" -> "abc"))
+        val boundForm = sut.apply(Seq(Member("abc", "1"))).bind(Map("value" -> "1"))
 
-        boundForm.value mustBe Some(Member("abc"))
+        boundForm.value mustBe Some(Member("abc", "1"))
         boundForm.errors mustBe empty
       }
 
       "a value is in the members list amoung others " in {
-        val boundForm = sut.apply(Seq(Member("xyz"), Member("abc"))).bind(Map("value" -> "abc"))
+        val boundForm = sut.apply(Seq(Member("xyz", "1"), Member("abc", "2"))).bind(Map("value" -> "2"))
 
-        boundForm.value mustBe Some(Member("abc"))
+        boundForm.value mustBe Some(Member("abc", "2"))
         boundForm.errors mustBe empty
       }
     }
     "error" when {
       "the form is empty" in {
-        val boundForm = sut.apply(Seq(Member("xyz"), Member("abc"))).bind(Map[String, String]())
+        val boundForm = sut.apply(Seq(Member("xyz", "1"), Member("abc", "2"))).bind(Map[String, String]())
 
         boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
       "the form has no value" in {
-        val boundForm = sut.apply(Seq(Member("xyz"), Member("abc"))).bind(Map("cheese" -> "abc"))
+        val boundForm = sut.apply(Seq(Member("xyz", "1"), Member("abc", "2"))).bind(Map("cheese" -> "2"))
 
         boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
       "the form value is empty" in {
-        val boundForm = sut.apply(Seq(Member("xyz"), Member("abc"))).bind(Map("value" -> ""))
+        val boundForm = sut.apply(Seq(Member("xyz", "1"), Member("abc", "2"))).bind(Map("value" -> ""))
 
         boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
       }
 
       "the value is not in the members list" in {
-        val boundForm = sut.apply(Seq(Member("xyz"), Member("abc"))).bind(Map("value" -> "pan"))
+        val boundForm = sut.apply(Seq(Member("xyz", "1"), Member("abc", "2"))).bind(Map("value" -> "4"))
 
         boundForm.errors mustBe Seq(FormError("value", requiredKey))
         boundForm.value mustBe None
