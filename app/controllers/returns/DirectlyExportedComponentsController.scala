@@ -23,8 +23,8 @@ import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import navigation.Navigator
-import pages.returns.DirectlyExportedComponentsPage
+import navigation.ReturnsJourneyNavigator
+import pages.returns.DirectlyExportedPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,26 +35,26 @@ import views.html.returns.DirectlyExportedComponentsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectlyExportedComponentsController @Inject() (
-                                                       override val messagesApi: MessagesApi,
-                                                       cacheConnector: CacheConnector,
-                                                       navigator: Navigator,
-                                                       journeyAction: JourneyAction,
-                                                       nonExportedAmountHelper: NonExportedAmountHelper,
-                                                       form: DirectlyExportedComponentsFormProvider,
-                                                       val controllerComponents: MessagesControllerComponents,
-                                                       view: DirectlyExportedComponentsView
+class DirectlyExportedComponentsController @Inject()(
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  journeyAction: JourneyAction,
+  nonExportedAmountHelper: NonExportedAmountHelper,
+  form: DirectlyExportedComponentsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
-    extends I18nSupport {
+  extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
 
-        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)
         )(totalPlastic => {
-          val preparedForm = request.userAnswers.fill(DirectlyExportedComponentsPage, form())
+          val preparedForm = request.userAnswers.fill(DirectlyExportedPage, form())
           Ok(view(preparedForm, mode, totalPlastic))
         })
     }
@@ -65,11 +65,11 @@ class DirectlyExportedComponentsController @Inject() (
 
         form().bindFromRequest().fold(
           formWithErrors => handleErrorInForm(mode, formWithErrors),
-          value =>
+          newAnswer =>
             request.userAnswers
-              .setOrFail(DirectlyExportedComponentsPage, value)
+              .setOrFail(DirectlyExportedPage, newAnswer)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Redirect(navigator.nextPage(DirectlyExportedComponentsPage, mode, updatedAnswers)))
+              .map(_ => Redirect(navigator.directlyExportedComponentsRoute(newAnswer, mode)))
         )
     }
 
@@ -77,7 +77,7 @@ class DirectlyExportedComponentsController @Inject() (
     mode: Mode,
     formWithErrors: Form[Boolean]
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
       Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
       totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
     )

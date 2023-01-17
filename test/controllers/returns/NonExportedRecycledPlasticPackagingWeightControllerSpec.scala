@@ -34,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedRecycledPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage, AnotherBusinessExportedPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -188,8 +188,8 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
         when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some(300L, false, false))
 
-        val userAnswer = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-          .set(PlasticExportedByAnotherBusinessPage, false).get
+        val userAnswer = nonExportedAnswer.set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
 
         val result = createSut(Some(userAnswer))
           .onSubmit(NormalMode)(fakePostRequestWithBody(("value", "invalid value")))

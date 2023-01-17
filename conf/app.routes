@@ -125,7 +125,7 @@ GET         /make-a-payment                                         controllers.
 GET         /direct-debit                                           controllers.payments.DirectDebitController.redirectLink()
 
 GET         /confirm-plastic-packaging-total                        controllers.returns.ConfirmPlasticPackagingTotalController.onPageLoad
-GET         /confirm-plastic-packaging-total-routing                controllers.returns.ConfirmPlasticPackagingTotalController.onwardRouting()
+GET         /confirm-plastic-packaging-total-routing               controllers.returns.ConfirmPlasticPackagingTotalController.submit()
 
 GET         /non-exported-medicines-packaging                       controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST        /non-exported-medicines-packaging                       controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)

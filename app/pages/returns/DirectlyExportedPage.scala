@@ -16,16 +16,22 @@
 
 package pages.returns
 
-import pages.behaviours.PageBehaviours
+import models.UserAnswers
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class DirectlyExportedComponentsPageSpec extends PageBehaviours {
+import scala.util.Try
 
-  "DirectlyExportedComponentsPage" - {
+case object DirectlyExportedPage extends QuestionPage[Boolean] {
 
-    beRetrievable[Boolean](DirectlyExportedComponentsPage)
+  override def path: JsPath = JsPath \ toString
 
-    beSettable[Boolean](DirectlyExportedComponentsPage)
+  override def toString: String = "directlyExportedComponents"
 
-    beRemovable[Boolean](DirectlyExportedComponentsPage)
-  }
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value.map {
+      case true => super.cleanup(value, userAnswers)
+      case _    => userAnswers.set(DirectlyExportedWeightPage, 0L)
+    }
+  }.getOrElse(super.cleanup(value, userAnswers))
 }

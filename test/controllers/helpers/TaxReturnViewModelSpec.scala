@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{AnotherBusinessExportWeightPage, ExportedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{AnotherBusinessExportedWeightPage, DirectlyExportedWeightPage, AnotherBusinessExportedPage}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 
@@ -49,7 +49,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   "exportedWeigh" should {
     "return rowInfo" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(ExportedPlasticPackagingWeightPage, 200L).get)
+      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(DirectlyExportedWeightPage, 200L).get)
 
       val result = sut.exportedWeight("any-key")
 
@@ -67,7 +67,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   "exportedByAnotherBusinessYesNo" should {
     "return rowInfo with yes as answer" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, true).get)
+      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportedPage, true).get)
       when(messages.apply("site.yes")).thenReturn("key2")
       when(messages.apply("any-key")).thenReturn("key1")
 
@@ -79,7 +79,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "return rowInfo with No as answer" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, false).get)
+      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportedPage, false).get)
       when(messages.apply("site.no")).thenReturn("No")
       when(messages.apply("any-key")).thenReturn("key1")
 
@@ -100,7 +100,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
   }
   "anotherBusinessExportedWeight" should {
     "return rowInfo" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportWeightPage, 200L).get)
+      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportedWeightPage, 200L).get)
 
       val result = sut.anotherBusinessExportedWeight("any-key")
 
@@ -121,8 +121,8 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     "return true when exported plastic amount is greater tan zero" in {
       when(dataRequest.userAnswers).thenAnswer(
         UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 50L).get
+          .set(DirectlyExportedWeightPage, 0L).get
+          .set(AnotherBusinessExportedWeightPage, 50L).get
       )
 
       when(calculations.packagingTotal).thenReturn(0L)
@@ -133,8 +133,8 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     "return true when total plastic greater than exported plastic amount" in {
       when(dataRequest.userAnswers).thenAnswer(
         UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 0L).get
+          .set(DirectlyExportedWeightPage, 0L).get
+          .set(AnotherBusinessExportedWeightPage, 0L).get
       )
 
       when(calculations.packagingTotal).thenReturn(10L)
@@ -145,8 +145,8 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     "return false when total plastic and exported plastic are Zero" in {
       when(dataRequest.userAnswers).thenAnswer(
         UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 0L).get
+          .set(DirectlyExportedWeightPage, 0L).get
+          .set(AnotherBusinessExportedWeightPage, 0L).get
       )
 
       when(calculations.packagingTotal).thenReturn(0L)

@@ -25,7 +25,7 @@ import models.Mode._
 import models.requests.DataRequest
 import models.requests.DataRequest._
 import navigation.ReturnsJourneyNavigator
-import pages.returns.ExportedPlasticPackagingWeightPage
+import pages.returns.DirectlyExportedWeightPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,8 +53,8 @@ class ExportedPlasticPackagingWeightController @Inject()(
     journeyAction {
       implicit request =>
 
-        val preparedForm = request.userAnswers.fill(ExportedPlasticPackagingWeightPage, form())
-        nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+        val preparedForm = request.userAnswers.fill(DirectlyExportedWeightPage, form())
+        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
             Redirect(controllers.routes.IndexController.onPageLoad)
           )(totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
         )
@@ -70,7 +70,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
             Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
           value =>
             request.userAnswers
-              .setOrFail(ExportedPlasticPackagingWeightPage, value, isCleanUp(mode))
+              .setOrFail(DirectlyExportedWeightPage, value, isCleanUp(mode))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(updatedAnswers =>
                 Redirect(navigator.exportedPlasticPackagingWeightRoute(
@@ -84,7 +84,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
     mode: Mode,
     formWithErrors: Form[Long]
   )(implicit request: DataRequest[AnyContent]) = {
-    nonExportedAmountHelper.totalPlastic(request.userAnswers).fold(
+    nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
       Redirect(controllers.routes.IndexController.onPageLoad)
     )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
   }

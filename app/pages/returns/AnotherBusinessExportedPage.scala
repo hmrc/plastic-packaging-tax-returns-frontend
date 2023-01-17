@@ -22,16 +22,16 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
+case object AnotherBusinessExportedPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "directlyExportedComponents"
+  override def toString: String = "plasticExportedByAnotherBusiness"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value.map {
       case true => super.cleanup(value, userAnswers)
-      case _    => userAnswers.set(ExportedPlasticPackagingWeightPage, 0L)
+      case _ => userAnswers.set(AnotherBusinessExportedWeightPage, 0L)
     }
   }.getOrElse(super.cleanup(value, userAnswers))
 }

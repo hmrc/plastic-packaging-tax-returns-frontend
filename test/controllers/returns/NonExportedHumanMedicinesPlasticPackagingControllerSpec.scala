@@ -34,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingPage, AnotherBusinessExportedPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -110,8 +110,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
 
     "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
-        .remove(PlasticExportedByAnotherBusinessPage).success.value
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
+        .remove(AnotherBusinessExportedPage).success.value
       ))
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
@@ -151,8 +151,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
 
     "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value
-        .remove(PlasticExportedByAnotherBusinessPage).success.value
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
+        .remove(AnotherBusinessExportedPage).success.value
       ))
         .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
           .withFormUrlEncodedBody(("value", "")))
