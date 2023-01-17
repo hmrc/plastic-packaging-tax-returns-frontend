@@ -17,47 +17,45 @@
 package controllers.helpers
 
 import models.UserAnswers
-import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
-import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.{AnotherBusinessExportWeightPage, ExportedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
 import play.api.i18n.Messages
-import play.api.mvc.AnyContent
 
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val calculations = mock[Calculations]
   private val messages = mock[Messages]
+  private val userAnswers = mock[UserAnswers]
 
   private val sut = TaxReturnViewModel(
-    dataRequest,
+    userAnswers,
+    "ppt-ref", 
     mock[TaxReturnObligation],
     calculations
     )(messages)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(dataRequest, messages)
+    reset(calculations, messages, userAnswers)
 
-//    when(messages.apply(any[String])).thenReturn("key")
+    when(messages.apply(any[String])).thenReturn("key") // todo ?
     when(messages.apply("site.yes")).thenReturn("yes-key")
     when(messages.apply("input-key")).thenReturn("output-key")
   }
 
   "exportedWeigh" should {
     "return rowInfo" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(ExportedPlasticPackagingWeightPage, 200L).get)
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(200L)
       val result = sut.exportedWeight("input-key")
       result mustEqual RowInfo("output-key", "200kg")
     }
 
     "throw if page not found" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn None
       intercept[IllegalStateException] {
         sut.exportedWeight("any-key")
       }
@@ -66,7 +64,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   "exportedByAnotherBusinessYesNo" when {
     "answer is 'yes'" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, true).get)
+      when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn Some(true)
       when(messages.apply("site.yes")).thenReturn("key2")
       when(messages.apply("any-key")).thenReturn("key1")
 
@@ -78,7 +76,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "answer is 'no'" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, false).get)
+      when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn Some(false)
       when(messages.apply("site.no")).thenReturn("No")
       when(messages.apply("any-key")).thenReturn("key1")
 
@@ -90,8 +88,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "question is unanswered" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
-
+      when(userAnswers.get(PlasticExportedByAnotherBusinessPage)) thenReturn None
       intercept[IllegalStateException] {
         sut.exportedByAnotherBusinessYesNo("any-key")
       }
@@ -100,13 +97,13 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
   
   "anotherBusinessExportedWeight" should {
     "return rowInfo" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportWeightPage, 200L).get)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(200L)
       val result = sut.anotherBusinessExportedWeight("input-key")
       result mustEqual RowInfo("output-key", "200kg")
     }
 
     "throw if page not found" in {
-      when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn None
       intercept[IllegalStateException] {
         sut.anotherBusinessExportedWeight("any-key")
       }
@@ -116,38 +113,23 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
   "canEditExported" should {
 
     "return true when exported plastic amount is greater tan zero" in {
-      when(dataRequest.userAnswers).thenAnswer(
-        UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 50L).get
-      )
-
-      when(calculations.packagingTotal).thenReturn(0L)
-
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(50L)
+      when(calculations.packagingTotal) thenReturn 0L
       sut.canEditExported mustBe true
     }
 
     "return true when total plastic greater than exported plastic amount" in {
-      when(dataRequest.userAnswers).thenAnswer(
-        UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 0L).get
-      )
-
-      when(calculations.packagingTotal).thenReturn(10L)
-
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(0L)
+      when(calculations.packagingTotal) thenReturn 10L
       sut.canEditExported mustBe true
     }
 
     "return false when total plastic and exported plastic are Zero" in {
-      when(dataRequest.userAnswers).thenAnswer(
-        UserAnswers("123")
-          .set(ExportedPlasticPackagingWeightPage, 0L).get
-          .set(AnotherBusinessExportWeightPage, 0L).get
-      )
-
-      when(calculations.packagingTotal).thenReturn(0L)
-
+      when(userAnswers.get(ExportedPlasticPackagingWeightPage)) thenReturn Some(0L)
+      when(userAnswers.get(AnotherBusinessExportWeightPage)) thenReturn Some(0L)
+      when(calculations.packagingTotal) thenReturn 0L
       sut.canEditExported mustBe false
     }
   }

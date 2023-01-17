@@ -53,15 +53,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     "PK1")
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(
-      request,
-      PptTestData.newUser(),
-      Some("123")
-    )
-    val dataRequest: DataRequest[_] = DataRequest(identifiedRequest, answers)
     val calculations = Calculations(1, 2L, 3L, 5L, true)
-
-    TaxReturnViewModel(dataRequest, aTaxObligation, calculations)
+    TaxReturnViewModel(answers, "123", aTaxObligation, calculations)
   }
 
   val credits = CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true))

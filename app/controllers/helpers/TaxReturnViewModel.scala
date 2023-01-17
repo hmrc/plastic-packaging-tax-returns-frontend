@@ -19,7 +19,6 @@ package controllers.helpers
 import controllers.returns.routes
 import models.Mode.CheckMode
 import models.UserAnswers
-import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
 import pages.QuestionPage
 import pages.returns._
@@ -32,12 +31,11 @@ case class RowInfo(key: String, value: String)
 
 //todo move this to viewmodels
 case class TaxReturnViewModel (
-  request: DataRequest[_],
+  userAnswers: UserAnswers,
+  pptReference: String,
   obligation: TaxReturnObligation,
   calculations: Calculations
 ) (implicit messages: Messages) {
-
-  private def userAnswers: UserAnswers = request.userAnswers
 
   private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
     userAnswers.get(page).getOrElse {

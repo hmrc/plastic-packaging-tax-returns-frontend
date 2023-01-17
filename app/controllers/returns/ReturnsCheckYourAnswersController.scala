@@ -128,8 +128,7 @@ class ReturnsCheckYourAnswersController @Inject()(
 
     callCalculationAndCreditApi(request).map {
       case (calculations, credits) =>
-        val returnViewModel = TaxReturnViewModel(request, obligation, calculations)
-
+        val returnViewModel = TaxReturnViewModel(request.userAnswers, request.pptReference, obligation, calculations)
         Ok(view(returnViewModel, credits)(request, messages))
     }
   }

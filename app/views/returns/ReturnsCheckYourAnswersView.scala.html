@@ -114,7 +114,7 @@
     @sectionH2Heading(messages("submit-return.check-your-answers.business-details.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithWideValue("business-details.row1", taxReturn.request.pptReference),
+            summaryRowWithWideValue("business-details.row1", taxReturn.pptReference),
             summaryRowWithWideValue("business-details.periodStartDate", taxReturn.startDatePrettyPrint),
             summaryRowWithWideValue("business-details.periodEndDate", taxReturn.endDatePrettyPrint),
         )
