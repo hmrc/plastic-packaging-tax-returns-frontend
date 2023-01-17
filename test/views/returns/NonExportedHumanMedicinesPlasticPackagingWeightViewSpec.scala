@@ -41,21 +41,21 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
 
     "have a title" when {
       "directly exported component answer is yes and another business exported answer is yes" in {
-        view.select("title").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
       }
 
       "directly exported component answer is yes and another business exported answer is no" in {
         val view = createView(true,false)
 
-        view.select("title").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
       }
 
       "directly exported component answer is no and another business exported answer is yes" in {
         val view = createView(false,true)
 
-        view.select("title").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
       }
 
@@ -69,21 +69,21 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
 
     "have a heading" when {
       "directly exported component answer is yes and another business exported answer is yes" in {
-        view.select("h1").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
         view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
       }
 
       "directly exported component answer is yes and another business exported answer is no" in {
         val view = createView(true,false)
 
-        view.select("h1").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
         view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
       }
 
       "directly exported component answer is no and another business exported answer is yes" in {
         val view = createView(false,true)
 
-        view.select("h1").text mustBe s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
         view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
       }
 

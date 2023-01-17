@@ -100,7 +100,7 @@ class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatch
       "value is less than 0" in {
         val view = createView(form.bind(Map("value" -> "-1")))
 
-        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be 1kg or more"
+        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
       }
 
       "value is greater than 99,999,999,999" in {

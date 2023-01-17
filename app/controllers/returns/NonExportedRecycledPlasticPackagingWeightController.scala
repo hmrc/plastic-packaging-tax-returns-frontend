@@ -56,8 +56,8 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
 
         nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
           Redirect(controllers.routes.IndexController.onPageLoad)) {
-          case (amount, directlyExported, _) =>
-            Ok(view(preparedForm, mode, amount, directlyExported))
+          case (amount, directlyExported, exportedByAnotherBusiness) =>
+            Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
         }
     }
 
@@ -69,7 +69,8 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
           formWithErrors =>
             Future.successful(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
-                case (amount, directlyExported, _) => BadRequest(view(formWithErrors, mode, amount, directlyExported))
+                case (amount, directlyExported, exportedByAnotherBusiness) =>
+                  BadRequest(view(formWithErrors, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
               }
             ),
           value =>
@@ -83,5 +84,4 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
             )
         )
     }
-
 }
