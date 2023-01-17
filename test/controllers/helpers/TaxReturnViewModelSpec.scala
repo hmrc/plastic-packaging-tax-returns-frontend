@@ -20,7 +20,7 @@ import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -44,29 +44,28 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     super.beforeEach()
     reset(dataRequest, messages)
 
-    when(messages.apply(anyString())).thenReturn("key")
+//    when(messages.apply(any[String])).thenReturn("key")
+    when(messages.apply("site.yes")).thenReturn("yes-key")
+    when(messages.apply("input-key")).thenReturn("output-key")
   }
 
   "exportedWeigh" should {
     "return rowInfo" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(ExportedPlasticPackagingWeightPage, 200L).get)
-
-      val result = sut.exportedWeight("any-key")
-
-      result mustEqual RowInfo("key", "200kg")
+      val result = sut.exportedWeight("input-key")
+      result mustEqual RowInfo("output-key", "200kg")
     }
 
     "throw if page not found" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
-
       intercept[IllegalStateException] {
         sut.exportedWeight("any-key")
       }
     }
   }
 
-  "exportedByAnotherBusinessYesNo" should {
-    "return rowInfo with yes as answer" in {
+  "exportedByAnotherBusinessYesNo" when {
+    "answer is 'yes'" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, true).get)
       when(messages.apply("site.yes")).thenReturn("key2")
       when(messages.apply("any-key")).thenReturn("key1")
@@ -78,7 +77,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       verify(messages).apply("any-key")
     }
 
-    "return rowInfo with No as answer" in {
+    "answer is 'no'" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(PlasticExportedByAnotherBusinessPage, false).get)
       when(messages.apply("site.no")).thenReturn("No")
       when(messages.apply("any-key")).thenReturn("key1")
@@ -90,7 +89,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       verify(messages).apply("any-key")
     }
 
-    "throw if page not found" in {
+    "question is unanswered" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
 
       intercept[IllegalStateException] {
@@ -98,18 +97,16 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       }
     }
   }
+  
   "anotherBusinessExportedWeight" should {
     "return rowInfo" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123").set(AnotherBusinessExportWeightPage, 200L).get)
-
-      val result = sut.anotherBusinessExportedWeight("any-key")
-
-      result mustEqual RowInfo("key", "200kg")
+      val result = sut.anotherBusinessExportedWeight("input-key")
+      result mustEqual RowInfo("output-key", "200kg")
     }
 
     "throw if page not found" in {
       when(dataRequest.userAnswers).thenAnswer(UserAnswers("123"))
-
       intercept[IllegalStateException] {
         sut.anotherBusinessExportedWeight("any-key")
       }

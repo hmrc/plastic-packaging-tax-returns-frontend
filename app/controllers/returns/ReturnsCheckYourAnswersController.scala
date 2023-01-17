@@ -34,6 +34,7 @@ import repositories.SessionRepository.Paths
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import util.PurplePrint.purplePrint
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
