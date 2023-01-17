@@ -222,8 +222,7 @@ exportedPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhif
 
 exportedPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
 exportedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-exportedPlasticPackagingWeight.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
-exportedPlasticPackagingWeight.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+exportedPlasticPackagingWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exportedPlasticPackagingWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 
