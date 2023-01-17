@@ -54,14 +54,14 @@ class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
         val view: Html = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange.low"))
+        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))
       }
 
       "number submitted is greater than maximum" in {
         val view: Html = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange.high"))
+        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))
       }
 
     }

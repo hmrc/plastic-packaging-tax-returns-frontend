@@ -44,7 +44,7 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
     "have a title" when {
       "directly exported component answer is Yes" in {
         view.select("title").text mustBe
-          s"Out of the $amountAsKg of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
+          s"Out of the $amountAsKg that was not exported, how much contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("NonExportRecycledPlasticPackagingWeight.heading", amountAsKg))
       }
 
@@ -61,7 +61,7 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
     "have a heading" when {
       "directly exported component answer is Yes" in {
         view.select("h1").text mustBe
-          s"Out of the $amountAsKg of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?"
+          s"Out of the $amountAsKg that was not exported, how much contained 30% or more recycled plastic?"
         view.select("h1").text mustBe messages("NonExportRecycledPlasticPackagingWeight.heading", amountAsKg)
       }
 
