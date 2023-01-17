@@ -39,7 +39,7 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
       minimum = minimum,
       expectedError = FormError(
         fieldName,
-        "amendDirectExportPlasticPackaging.error.outOfRange.low",
+        "amendDirectExportPlasticPackaging.error.outOfRange",
         Seq(minimum)
       )
     )
@@ -49,7 +49,7 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
       maximum = maximum,
       expectedError = FormError(
         fieldName,
-        "amendDirectExportPlasticPackaging.error.outOfRange.high",
+        "amendDirectExportPlasticPackaging.error.outOfRange",
         Seq(maximum)
       )
     )

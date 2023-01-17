@@ -50,7 +50,7 @@ class ExportedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours
       minimum = minimum,
       expectedError = FormError(
         fieldName,
-        "exportedPlasticPackagingWeight.error.outOfRange.low",
+        "exportedPlasticPackagingWeight.error.outOfRange",
         Seq(minimum)
       )
     )
@@ -60,7 +60,7 @@ class ExportedPlasticPackagingWeightFormProviderSpec extends LongFieldBehaviours
       maximum = maximum,
       expectedError = FormError(
         fieldName,
-        "exportedPlasticPackagingWeight.error.outOfRange.high",
+        "exportedPlasticPackagingWeight.error.outOfRange",
         Seq(maximum)
       )
     )
