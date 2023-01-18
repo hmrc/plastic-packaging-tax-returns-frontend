@@ -14,16 +14,12 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, SectionH3Heading, heading, Strong}
 @import components.returns.checkYourAnswer.CreditsSection
-@import viewmodels._
-@import controllers.helpers.TaxReturnViewModel
-@import views.ViewUtils.RichSummaryListRow
-@import controllers.helpers.RowInfo
+@import components.{Link, SectionH2Heading, SectionH3Heading, Strong, bulletList, heading, paragraph, paragraphBody}
 @import config.FrontendAppConfig
-@import models.returns.Credits
-@import models.returns.CreditsClaimedDetails
-@import models.Mode.CheckMode
+@import models.returns.{Credits, CreditsClaimedDetails}
+@import viewmodels._
+@import views.ViewUtils.RichSummaryListRow
 
 @this(
     layout: templates.Layout,

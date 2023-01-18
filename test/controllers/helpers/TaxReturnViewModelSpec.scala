@@ -23,6 +23,7 @@ import org.scalatestplus.play.PlaySpec
 import pages.returns.{AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage, DirectlyExportedWeightPage}
 import play.api.i18n.Messages
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import viewmodels.{RowInfo, TaxReturnViewModel}
 
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 

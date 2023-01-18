@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.helpers.{TaxReturnHelper, TaxReturnViewModel}
+import controllers.helpers.TaxReturnHelper
 import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.Credits._
@@ -30,11 +30,11 @@ import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoY
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository.Paths
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import util.PurplePrint.purplePrint
+import viewmodels.TaxReturnViewModel
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
