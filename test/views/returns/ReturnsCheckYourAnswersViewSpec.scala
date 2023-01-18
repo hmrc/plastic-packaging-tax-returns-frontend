@@ -63,10 +63,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       ).build()
 
   def createViewModel(answers: UserAnswers, calculations: Calculations = calculations): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(request, PptTestData.newUser(), Some("reg-number"))
-    val dataRequest: DataRequest[_]             = DataRequest(identifiedRequest, answers)
-
-    TaxReturnViewModel(dataRequest, aTaxObligation, calculations)
+    TaxReturnViewModel(answers, "reg-number", aTaxObligation, calculations)
   }
 
   private def createView (
