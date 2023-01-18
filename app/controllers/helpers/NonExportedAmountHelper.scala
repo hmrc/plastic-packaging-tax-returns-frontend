@@ -24,7 +24,7 @@ import pages.returns._
 @Singleton
 class NonExportedAmountHelper {
 
-  def totalPlastic(userAnswers: UserAnswers) = {
+  def totalPlasticAdditions(userAnswers: UserAnswers): Option[Long] = {
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
@@ -36,15 +36,15 @@ class NonExportedAmountHelper {
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
-      exported <- exportedAmount(userAnswers)
+      exported <- directlyExportedAmount(userAnswers)
       exportedByAnotherBusiness <- exportedByAnotherBusinessAmount(userAnswers)
     } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
   }
 
   def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
     for {
-      isDirectExportYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
-      isAnotherBusinessYesNo <- userAnswers.get(PlasticExportedByAnotherBusinessPage)
+      isDirectExportYesNo <- userAnswers.get(DirectlyExportedPage)
+      isAnotherBusinessYesNo <- userAnswers.get(AnotherBusinessExportedPage)
       value <- nonExportedAmount(userAnswers)
     } yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
@@ -57,15 +57,15 @@ class NonExportedAmountHelper {
     userAnswer.get(page).flatMap { _ => userAnswer.get(weightPage) }
   }
 
-  private def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
+  def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage)
 
-  private def importedPlasticAmount(userAnswer: UserAnswers): Option[Long] =
+  def importedPlasticAmount(userAnswer: UserAnswers):Option[Long] =
     getAmount(userAnswer, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage)
 
-  private def exportedAmount(userAnswer: UserAnswers): Option[Long] =
-    getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
+  def directlyExportedAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, DirectlyExportedPage, DirectlyExportedWeightPage)
 
-  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Option[Long] =
-    getAmount(userAnswer, PlasticExportedByAnotherBusinessPage, AnotherBusinessExportWeightPage)
+  def exportedByAnotherBusinessAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage)
 }

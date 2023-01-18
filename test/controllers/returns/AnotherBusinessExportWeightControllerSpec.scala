@@ -33,7 +33,7 @@ import org.mockito.Mockito.reset
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.AnotherBusinessExportWeightPage
+import pages.returns.AnotherBusinessExportedWeightPage
 import play.api.data.Form
 import play.api.data.Forms.longNumber
 import play.api.i18n.MessagesApi
@@ -86,11 +86,11 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(mockFormProvider.apply()).thenReturn(form)
-    when(dataRequest.userAnswers.fill(any[AnotherBusinessExportWeightPage.type], any)(any)).thenReturn(form)
+    when(dataRequest.userAnswers.fill(any[AnotherBusinessExportedWeightPage.type], any)(any)).thenReturn(form)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.exportedByAnotherBusinessWeightRoute(any, any)).thenReturn(Call("GET", "/foo"))
-    when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(200L))
+    when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(200L))
   }
 
   "onPageLoad" should {
@@ -113,17 +113,17 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
     "prepopulate the form" in {
       await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportWeightPage), meq(form))(any)
+      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportedWeightPage), meq(form))(any)
     }
 
    "redirect to index controller when total plastic cannot be calculated" in {
-     when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
      status(result) mustEqual SEE_OTHER
      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-     verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+     verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
    }
   }
 
@@ -148,13 +148,13 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
     "redirect to index controller when total plastic cannot be calculated" in {
       val errorForm = Form("value" -> longNumber()).withError("key", "error")
       when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
-      when(mockNonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-      verify(mockNonExportedAmountHelper).totalPlastic(dataRequest.userAnswers)
+      verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
     }
 
     "set userAnswer with clean up false on CheckMode" in {
@@ -162,7 +162,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
       await(sut.onSubmit(CheckMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers).setOrFail(meq(AnotherBusinessExportWeightPage), meq(20L), meq(false))(any)
+      verify(dataRequest.userAnswers).setOrFail(meq(AnotherBusinessExportedWeightPage), meq(20L), meq(false))(any)
     }
 
     "set userAnswer with clean up true in NormalMode" in {
@@ -170,7 +170,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers).setOrFail(meq(AnotherBusinessExportWeightPage), meq(20L), meq(true))(any)
+      verify(dataRequest.userAnswers).setOrFail(meq(AnotherBusinessExportedWeightPage), meq(20L), meq(true))(any)
     }
 
     "save userAnswer to cache" in {

@@ -32,7 +32,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, AnotherBusinessExportedPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -100,7 +100,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
 
     "redirect to the home page if directly exported answer is missing" in {
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
+      val ans = nonExportedAnswer.remove(DirectlyExportedPage).get
 
       val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
         FakeRequest(GET, recycledPlasticPackagingRoute)
@@ -139,7 +139,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
 
     "redirect to home page is directly exported not answered" in {
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
+      val ans = nonExportedAnswer.remove(DirectlyExportedPage).get
 
       val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
         FakeRequest(POST, recycledPlasticPackagingRoute)

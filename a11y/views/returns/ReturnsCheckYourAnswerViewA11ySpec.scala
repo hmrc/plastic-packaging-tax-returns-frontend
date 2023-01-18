@@ -23,7 +23,7 @@ import models.requests.{DataRequest, IdentifiedRequest}
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
-import pages.returns.{DirectlyExportedComponentsPage, ImportedPlasticPackagingPage, ManufacturedPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedRecycledPlasticPackagingPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{DirectlyExportedPage, ImportedPlasticPackagingPage, ManufacturedPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedRecycledPlasticPackagingPage, AnotherBusinessExportedPage}
 import play.twirl.api.Html
 import support.PptTestData
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
@@ -38,8 +38,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
   private val userAnswer = UserAnswers("123")
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
-    .set(DirectlyExportedComponentsPage, false).get
-    .set(PlasticExportedByAnotherBusinessPage, false).get
+    .set(DirectlyExportedPage, false).get
+    .set(AnotherBusinessExportedPage, false).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
     .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
@@ -84,8 +84,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         val ans = UserAnswers("123")
           .set(ManufacturedPlasticPackagingPage, false).get
           .set(ImportedPlasticPackagingPage, false).get
-          .set(DirectlyExportedComponentsPage, false).get
-          .set(PlasticExportedByAnotherBusinessPage, false).get
+          .set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 

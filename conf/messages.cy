@@ -123,13 +123,12 @@ amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig 
 amendDirectExportPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendDirectExportPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendDirectExportPlasticPackaging.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-amendDirectExportPlasticPackaging.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
-amendDirectExportPlasticPackaging.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+amendDirectExportPlasticPackaging.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 amendDirectExportPlasticPackaging.para = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 amendDirectExportPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendHumanMedicinePlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
-amendHumanMedicinePlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
+amendHumanMedicinePlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a ddefnyddiwyd fel deunydd pacio uniongyrchol ar gyfer meddyginiaethau dynol trwyddedig?
+amendHumanMedicinePlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a ddefnyddiwyd fel deunydd pacio uniongyrchol ar gyfer meddyginiaethau dynol trwyddedig?
 amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 amendHumanMedicinePlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendHumanMedicinePlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
@@ -180,8 +179,8 @@ amendManufacturedPlasticPackaging.para.list.6 = yn rhan annatod o’r nwyddau
 amendManufacturedPlasticPackaging.para.list.7 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
 amendManufacturedPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendRecycledPlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-amendRecycledPlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+amendRecycledPlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+amendRecycledPlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 amendRecycledPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 
@@ -214,7 +213,8 @@ confirmPackagingCredit.confirm.credit.button = Cadarnhau swm y credyd
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.error.required = Dewiswch ‘Iawn’ os ydych wedi allforio unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu os ydych yn bwriadu gwneud hynny o fewn y 12 mis nesaf
-directlyExportedComponents.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd. Os nad ydych yn allforio’r deunyddiau plastig hyn cyn pen 12 mis, bydd angen i chi dalu treth arnynt.
+directlyExportedComponents.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
+directlyExportedComponents.paragraph.2 = Os na fyddwch yn allforio’r plastigion hyn cyn pen 12 mis ar ôl eu gweithgynhyrchu neu eu mewnforio, bydd yn rhaid i chi dalu treth arnynt.
 
 exportedPlasticPackagingWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 exportedPlasticPackagingWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
@@ -222,8 +222,7 @@ exportedPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhif
 
 exportedPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
 exportedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-exportedPlasticPackagingWeight.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
-exportedPlasticPackagingWeight.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+exportedPlasticPackagingWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exportedPlasticPackagingWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 
@@ -296,7 +295,7 @@ NonExportRecycledPlasticPackaging.paragraph.line.1 =Ni fydd treth yn cael ei cho
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Dysgwch am {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = ystyr deunydd pacio plastig wedi’i ailgylchu
 
-NonExportRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackagingWeight.directly.export.no.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 
@@ -547,7 +546,7 @@ exported.credits.weight.label = Faint o bwysau, mewn cilogramau?
 exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -562,7 +561,7 @@ converted.credits.weight.label = Faint o bwysau, mewn cilogramau?
 converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
 converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -678,7 +677,7 @@ anotherBusinessExportWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunne
 anotherBusinessExportWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
 anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
 amendExportedPlasticPackaging.title = Diwygio deunydd pacio plastig sydd wedi’i allforio
 amendExportedPlasticPackaging.heading = Diwygio deunydd pacio plastig sydd wedi’i allforio
@@ -696,5 +695,4 @@ amendExportedByAnotherBusiness.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 du
 amendExportedByAnotherBusiness.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendExportedByAnotherBusiness.error.required = Nodwch y pwysau, mewn cilogramau
 amendExportedByAnotherBusiness.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-amendExportedByAnotherBusiness.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-amendExportedByAnotherBusiness.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg

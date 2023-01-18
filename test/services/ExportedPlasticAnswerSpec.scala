@@ -38,9 +38,9 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "reset userAnswer when exported amount is greater that total plastic" in {
 
       val expectedUserAnswer = answer
-        .set(DirectlyExportedComponentsPage, true, cleanup = false).get
-        .set(PlasticExportedByAnotherBusinessPage, false).get
-        .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
+        .set(DirectlyExportedPage, true, cleanup = false).get
+        .set(AnotherBusinessExportedPage, false).get
+        .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
@@ -53,10 +53,10 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "return user answer when exported plastic is less then total plastic" in {
       val ans = answer
         .set(ManufacturedPlasticPackagingWeightPage, 300L).get
-        .remove(DirectlyExportedComponentsPage).get
+        .remove(DirectlyExportedPage).get
 
       ExportedPlasticAnswer(ans).resetExportedByYouIfAllExportedPlastic mustEqual
-        ans.set(DirectlyExportedComponentsPage, true)
+        ans.set(DirectlyExportedPage, true)
     }
 
   }
@@ -65,7 +65,7 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "reset userAnswer when exported amount is greater that total plastic" in {
 
       val expectedUserAnswer = answer
-        .set(DirectlyExportedComponentsPage, true, cleanup = false).get
+        .set(DirectlyExportedPage, true, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
@@ -77,17 +77,17 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "return user answer when exported plastic is less then total plastic" in {
       val ans = answer
         .set(ManufacturedPlasticPackagingWeightPage, 300L).get
-        .remove(AnotherBusinessExportWeightPage).get
-        .remove(PlasticExportedByAnotherBusinessPage).get
+        .remove(AnotherBusinessExportedWeightPage).get
+        .remove(AnotherBusinessExportedPage).get
 
       ExportedPlasticAnswer(ans).resetAnotherBusinessIfAllExportedPlastic mustEqual
-        ans.set(PlasticExportedByAnotherBusinessPage, true)
+        ans.set(AnotherBusinessExportedPage, true)
     }
   }
 
   "isAllPlasticExported" should {
     "return true when exported amount is greater than total plastic" in {
-      val ans = answer.set(AnotherBusinessExportWeightPage, 300L).get
+      val ans = answer.set(AnotherBusinessExportedWeightPage, 300L).get
 
       ExportedPlasticAnswer(ans).isAllPlasticExported mustEqual true
     }
@@ -103,8 +103,8 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
     "return true when exported amount is equal than total plastic" in {
 
       val ans = answer
-        .set(ExportedPlasticPackagingWeightPage, 0L).get
-        .set(AnotherBusinessExportWeightPage, 300L).get
+        .set(DirectlyExportedWeightPage, 0L).get
+        .set(AnotherBusinessExportedWeightPage, 300L).get
 
       ExportedPlasticAnswer(ans).isAllPlasticExported mustEqual true
     }
@@ -115,24 +115,24 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
       .set(ManufacturedPlasticPackagingWeightPage, -1L).get
       .set(ImportedPlasticPackagingWeightPage, -1L).get
     "reset all if total plastic is less than 0" in {
-      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(-1L))
+      when(nonExportedAmountHelper.totalPlasticAdditions(any())).thenReturn(Some(-1L))
 
       ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
     }
 
     "reset all if total plastic is equal to 0" in {
-      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(0L))
+      when(nonExportedAmountHelper.totalPlasticAdditions(any())).thenReturn(Some(0L))
 
       ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
     }
 
     "reset all if total plastic is not defined" in {
-      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any())).thenReturn(None)
       ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe expectedUserAnswer(ans)
     }
 
     "do not change user answers if total plastic is greater than 0" in {
-      when(nonExportedAmountHelper.totalPlastic(any())).thenReturn(Some(1L))
+      when(nonExportedAmountHelper.totalPlasticAdditions(any())).thenReturn(Some(1L))
       ExportedPlasticAnswer(ans).resetAllIfNoTotalPlastic(nonExportedAmountHelper) mustBe ans
     }
   }
@@ -163,10 +163,10 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
 
   private def expectedUserAnswer(ans: UserAnswers) = {
     ans
-      .set(DirectlyExportedComponentsPage, false).get
-      .set(ExportedPlasticPackagingWeightPage, 0L, cleanup = false).get
-      .set(PlasticExportedByAnotherBusinessPage, false).get
-      .set(AnotherBusinessExportWeightPage, 0L, cleanup = false).get
+      .set(DirectlyExportedPage, false).get
+      .set(DirectlyExportedWeightPage, 0L, cleanup = false).get
+      .set(AnotherBusinessExportedPage, false).get
+      .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
@@ -179,7 +179,7 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
       .set(ManufacturedPlasticPackagingWeightPage, 10L).get
       .set(ImportedPlasticPackagingPage, true).get
       .set(ImportedPlasticPackagingWeightPage, 1L).get
-      .set(ExportedPlasticPackagingWeightPage, 5L).get
-      .set(AnotherBusinessExportWeightPage, 200L).get
+      .set(DirectlyExportedWeightPage, 5L).get
+      .set(AnotherBusinessExportedWeightPage, 200L).get
   }
 }

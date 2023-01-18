@@ -77,7 +77,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
-    when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(Some(50L))
+    when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
 
   "onPageLoad" should {
@@ -115,7 +115,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     }
 
     "redirect on account page if cannot calculate total plastic" in {
-      when(nonExportedAmountHelper.totalPlastic(any)).thenReturn(None)
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
       val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
@@ -127,14 +127,14 @@ class ConfirmPlasticPackagingTotalControllerSpec
   "onwardRouting" should {
     "invoke the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      Try(await(sut.onwardRouting(dataRequest)))
+      Try(await(sut.submit(dataRequest)))
       verify(journeyAction).async(any)
     }
 
     "redirect" in {
       setUpMocks(createUserAnswer)
 
-      val result = sut.onwardRouting.skippingJourneyAction(dataRequest)
+      val result = sut.submit.skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustEqual Some(Call("GET", "/foo").url)
@@ -150,7 +150,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
         Future.successful(true)
       })
 
-      await(sut.onwardRouting.skippingJourneyAction(dataRequest))
+      await(sut.submit.skippingJourneyAction(dataRequest))
 
       saveUserAnswerToCache mustBe Some(ans)
     }
@@ -158,7 +158,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     "save userAnswer to cache" in {
       setUpMocks(createUserAnswer)
 
-      await(sut.onwardRouting.skippingJourneyAction(dataRequest))
+      await(sut.submit.skippingJourneyAction(dataRequest))
 
       verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("123"))(any)
     }

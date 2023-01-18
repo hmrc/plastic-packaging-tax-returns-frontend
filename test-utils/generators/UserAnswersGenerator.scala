@@ -33,8 +33,8 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] ::
-    arbitrary[(AnotherBusinessExportWeightPage.type, JsValue)] ::
-    arbitrary[(PlasticExportedByAnotherBusinessPage.type, JsValue)] ::
+    arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] ::
+    arbitrary[(AnotherBusinessExportedPage.type, JsValue)] ::
     arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] ::
     arbitrary[(MainContactNamePage.type, JsValue)] ::
     arbitrary[(MainContactJobTitlePage.type, JsValue)] ::
@@ -43,9 +43,9 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
-    arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
+    arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
-    arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] ::
+    arbitrary[(DirectlyExportedPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
@@ -53,7 +53,7 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] ::
-      arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
       arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] ::

@@ -252,8 +252,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       val ans = createUserAnswer
         .set(ManufacturedPlasticPackagingWeightPage, 20L).get
         .set(ImportedPlasticPackagingWeightPage, 40L).get
-        .set(ExportedPlasticPackagingWeightPage, 0L).get
-        .set(AnotherBusinessExportWeightPage, 0L).get
+        .set(DirectlyExportedWeightPage, 0L).get
+        .set(AnotherBusinessExportedWeightPage, 0L).get
 
       val view = createView(taxReturn = createViewModel(ans, Calculations(1,1,1,0, true)))
       val text = view.select("p").text()
@@ -267,8 +267,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       val ans = createUserAnswer
         .set(ManufacturedPlasticPackagingWeightPage, 20L).get
         .set(ImportedPlasticPackagingWeightPage, 40L).get
-        .set(ExportedPlasticPackagingWeightPage, 0L).get
-        .set(AnotherBusinessExportWeightPage, 50L).get
+        .set(DirectlyExportedWeightPage, 0L).get
+        .set(AnotherBusinessExportedWeightPage, 50L).get
 
       val view = createView(taxReturn = createViewModel(ans))
 
@@ -407,10 +407,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   private def createUserAnswer = UserAnswers("reg-number")
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
-    .set(DirectlyExportedComponentsPage, true).get
-    .set(ExportedPlasticPackagingWeightPage, 50L).get
-    .set(PlasticExportedByAnotherBusinessPage, true).get
-    .set(AnotherBusinessExportWeightPage, 150L).get
+    .set(DirectlyExportedPage, true).get
+    .set(DirectlyExportedWeightPage, 50L).get
+    .set(AnotherBusinessExportedPage, true).get
+    .set(AnotherBusinessExportedWeightPage, 150L).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, true).get
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get

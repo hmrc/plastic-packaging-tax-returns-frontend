@@ -17,7 +17,7 @@
 package base.utils
 
 import models.UserAnswers
-import pages.returns.{AnotherBusinessExportWeightPage, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, PlasticExportedByAnotherBusinessPage}
+import pages.returns.{AnotherBusinessExportedWeightPage, DirectlyExportedPage, DirectlyExportedWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, AnotherBusinessExportedPage}
 
 object NonExportedPlasticTestHelper {
 
@@ -33,9 +33,9 @@ object NonExportedPlasticTestHelper {
       .set(ManufacturedPlasticPackagingWeightPage,manufacturedAmount, cleanup = false).get
       .set(ImportedPlasticPackagingPage,true, cleanup = false).get
       .set(ImportedPlasticPackagingWeightPage,importedAmount, cleanup = false).get
-      .set(DirectlyExportedComponentsPage,true, cleanup = false).get
-      .set(ExportedPlasticPackagingWeightPage,exportedAmount, cleanup = false).get
-      .set(PlasticExportedByAnotherBusinessPage,true, cleanup = false).get
-      .set(AnotherBusinessExportWeightPage,exportedByAnotherBusinessAmount, cleanup = false).get
+      .set(DirectlyExportedPage,true, cleanup = false).get
+      .set(DirectlyExportedWeightPage,exportedAmount, cleanup = false).get
+      .set(AnotherBusinessExportedPage,true, cleanup = false).get
+      .set(AnotherBusinessExportedWeightPage,exportedByAnotherBusinessAmount, cleanup = false).get
   }
 }

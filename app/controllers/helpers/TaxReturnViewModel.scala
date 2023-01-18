@@ -90,8 +90,8 @@ case class TaxReturnViewModel (
   }
 
   private def exportedTotal: Long = {
-    val exportedDirectly = getMustHave(ExportedPlasticPackagingWeightPage)
-    val exportedByAnotherBusiness = getWithDefault(AnotherBusinessExportWeightPage)
+    val exportedDirectly = getMustHave(DirectlyExportedWeightPage)
+    val exportedByAnotherBusiness = getWithDefault(AnotherBusinessExportedWeightPage)
     exportedDirectly + exportedByAnotherBusiness
   }
 
@@ -100,19 +100,19 @@ case class TaxReturnViewModel (
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
 
   def exportedYesNo(messageKey: String): RowInfo = {
-    createYesNoRow(DirectlyExportedComponentsPage, messageKey)
+    createYesNoRow(DirectlyExportedPage, messageKey)
   }
 
   def exportedByAnotherBusinessYesNo(messageKey: String) : RowInfo = {
-    createYesNoRowWithDefault(PlasticExportedByAnotherBusinessPage, messageKey)
+    createYesNoRowWithDefault(AnotherBusinessExportedPage, messageKey)
   }
 
   def exportedWeight(messageKey: String): RowInfo = {
-    createKgsRow(ExportedPlasticPackagingWeightPage, messageKey)
+    createKgsRow(DirectlyExportedWeightPage, messageKey)
   }
 
   def anotherBusinessExportedWeight(messageKey: String): RowInfo = {
-    createKgsRowWithDefault(AnotherBusinessExportWeightPage, messageKey)
+    createKgsRowWithDefault(AnotherBusinessExportedWeightPage, messageKey)
   }
 
   def nonexportedMedicineYesNo(messageKey: String): RowInfo = {
