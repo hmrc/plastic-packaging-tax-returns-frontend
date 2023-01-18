@@ -17,16 +17,14 @@
 package views.returns
 
 import base.ViewSpecBase
-import controllers.helpers.TaxReturnViewModel
-import models.{CreditBalance, UserAnswers}
-import models.requests.{DataRequest, IdentifiedRequest}
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
+import models.{CreditBalance, UserAnswers}
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
-import pages.returns.{DirectlyExportedPage, ImportedPlasticPackagingPage, ManufacturedPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedRecycledPlasticPackagingPage, AnotherBusinessExportedPage}
+import pages.returns._
 import play.twirl.api.Html
-import support.PptTestData
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import viewmodels.TaxReturnViewModel
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import java.time.LocalDate

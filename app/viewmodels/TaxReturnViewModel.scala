@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.helpers
+package viewmodels
 
 import controllers.returns.routes
 import models.Mode.CheckMode
@@ -24,18 +24,16 @@ import pages.QuestionPage
 import pages.returns._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import viewmodels.{PrintBigDecimal, PrintLong}
 import views.ViewUtils
 
 case class RowInfo(key: String, value: String)
 
-//todo move this to viewmodels
-case class TaxReturnViewModel (
+case class TaxReturnViewModel(
   userAnswers: UserAnswers,
   pptReference: String,
   obligation: TaxReturnObligation,
   calculations: Calculations
-) (implicit messages: Messages) {
+)(implicit messages: Messages) {
 
   private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
     userAnswers.get(page).getOrElse {
@@ -96,14 +94,15 @@ case class TaxReturnViewModel (
   }
 
   // Show or hide edit links
-  def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+  def canEditExported: Boolean = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
 
   def exportedYesNo(messageKey: String): RowInfo = {
     createYesNoRow(DirectlyExportedPage, messageKey)
   }
 
-  def exportedByAnotherBusinessYesNo(messageKey: String) : RowInfo = {
+  def exportedByAnotherBusinessYesNo(messageKey: String): RowInfo = {
     createYesNoRowWithDefault(AnotherBusinessExportedPage, messageKey)
   }
 
@@ -146,9 +145,11 @@ case class TaxReturnViewModel (
   def taxDue: String = {
     calculations.taxDue.asPounds
   }
-  
+
   def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
+
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
+
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
 
   def startDatePrettyPrint(implicit messages: Messages): String = {

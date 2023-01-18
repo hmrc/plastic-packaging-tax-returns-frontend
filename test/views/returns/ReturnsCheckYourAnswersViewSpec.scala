@@ -18,10 +18,8 @@ package views.returns
 
 import base.ViewSpecBase
 import config.FrontendAppConfig
-import controllers.helpers.TaxReturnViewModel
 import controllers.returns.routes
 import models.Mode.CheckMode
-import models.requests.{DataRequest, IdentifiedRequest}
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
 import models.{CreditBalance, UserAnswers}
@@ -35,7 +33,8 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import repositories.SessionRepository
-import support.{PptTestData, ViewAssertions, ViewMatchers}
+import support.{ViewAssertions, ViewMatchers}
+import viewmodels.TaxReturnViewModel
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import java.time.LocalDate
