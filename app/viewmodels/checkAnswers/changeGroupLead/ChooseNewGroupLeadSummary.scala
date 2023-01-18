@@ -33,7 +33,7 @@ object ChooseNewGroupLeadSummary extends SummaryViewModel {
       answer =>
         SummaryListRowViewModel(
           key     = "newGroupLeadCheckYourAnswers.representative.member.key",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(HtmlFormat.escape(answer.organisationName).toString),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ChooseNewGroupLeadController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.representative.member.key"))
