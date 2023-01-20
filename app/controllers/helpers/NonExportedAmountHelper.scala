@@ -32,21 +32,19 @@ class NonExportedAmountHelper {
   }
 
   def nonExportedAmount(userAnswers: UserAnswers): Option[Long] = {
-
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
       exported <- directlyExportedAmount(userAnswers)
-      exportedByAnotherBusiness <- exportedByAnotherBusinessAmount(userAnswers)
+      exportedByAnotherBusiness = exportedByAnotherBusinessAmount(userAnswers)
     } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
   }
 
   def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
-    for {
-      isDirectExportYesNo <- userAnswers.get(DirectlyExportedPage)
-      isAnotherBusinessYesNo <- userAnswers.get(AnotherBusinessExportedPage)
-      value <- nonExportedAmount(userAnswers)
-    } yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
+    val value = nonExportedAmount(userAnswers).get
+    val isDirectExportYesNo = userAnswers.get(DirectlyExportedPage).get
+    val isAnotherBusinessYesNo = userAnswers.get(AnotherBusinessExportedPage).getOrElse(false) // default to no if not answered
+    Some(value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(
@@ -66,6 +64,7 @@ class NonExportedAmountHelper {
   def directlyExportedAmount(userAnswer: UserAnswers):Option[Long] =
     getAmount(userAnswer, DirectlyExportedPage, DirectlyExportedWeightPage)
 
-  def exportedByAnotherBusinessAmount(userAnswer: UserAnswers):Option[Long] =
+  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Long =
     getAmount(userAnswer, AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage)
+      .getOrElse(0L) // default to zero kg if unanswered
 }
