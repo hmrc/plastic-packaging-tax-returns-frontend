@@ -21,10 +21,12 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
 import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 
@@ -32,50 +34,44 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        cacheConnector: CacheConnector,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        form: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: NonExportedHumanMedicinesPlasticPackagingWeightView,
-                                        nonExportedAmountHelper: NonExportedAmountHelper
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: NonExportedHumanMedicinesPlasticPackagingWeightFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: NonExportedHumanMedicinesPlasticPackagingWeightView,
+  nonExportedAmountHelper: NonExportedAmountHelper
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage) match {
-        case None => form()
-        case Some(value) => form().fill(value)
-      }
-
-      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-        .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
-          case (amount, directlyExported, exportedByThirdParty) =>
-            Ok(view(amount, preparedForm, mode, directlyExported, exportedByThirdParty))
-        }
+      val preparedForm = request.userAnswers.fill(NonExportedHumanMedicinesPlasticPackagingWeightPage, formProvider())
+      createResponse(Ok, mode, preparedForm)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(
-            nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-              .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
-                case (amount, directlyExported, exportedByThirdParty) =>
-                  BadRequest(view(amount, formWithErrors, mode, directlyExported, exportedByThirdParty))
-              }
-          ),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))
-            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingWeightPage, mode, updatedAnswers))
-      )
+      formProvider()
+        .bindFromRequest()
+        .fold(formWithErrors => Future.successful(createResponse(BadRequest, mode, formWithErrors)),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))
+                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+            } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingWeightPage, mode, updatedAnswers))
+        )
   }
+
+  def createResponse(responseStatus: Status, mode: Mode, form: Form[Long])(implicit request: DataRequest[_]): Result =
+    nonExportedAmountHelper
+      .getAmountAndDirectlyExportedAnswer(request.userAnswers)
+      .map {
+        case (amount, directlyExported, exportedByThirdParty) =>
+          responseStatus(view(amount, form, mode, directlyExported, exportedByThirdParty))
+      }
+      .get // TODO make no longer optional?
+
 }
