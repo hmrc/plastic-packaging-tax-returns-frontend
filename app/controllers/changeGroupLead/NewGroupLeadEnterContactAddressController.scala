@@ -47,18 +47,18 @@ class NewGroupLeadEnterContactAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
-      val organisationName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
-        Future.successful(Results.Ok(view(preparedForm, countryService.getAll, organisationName, mode)))
+        Future.successful(Results.Ok(view(preparedForm, countryService.getAll, selectedMember.organisationName, mode)))
   }
 
   def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
-      val organisationName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, countryService.getAll, organisationName, mode))),
+        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, countryService.getAll, selectedMember.organisationName, mode))),
         contactAddress =>
           request.userAnswers
             .setOrFail(NewGroupLeadEnterContactAddressPage, contactAddress)

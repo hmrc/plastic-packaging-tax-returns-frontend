@@ -23,6 +23,7 @@ import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.changeGroupLead.MainContactNameFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
+import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.any
@@ -87,7 +88,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
-    when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "company-name"
+    when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any)) thenReturn Member("company-name", "1")
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.mainContactName(any)).thenReturn(Call("GET", "/test-foo"))

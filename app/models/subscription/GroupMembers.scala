@@ -17,28 +17,30 @@
 package models.subscription
 
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import play.api.libs.json.{Format, Json}
 
-case class GroupMembers(membersNames: Seq[String]) {
-  def contains: String => Boolean = membersNames.contains
-
-  def map[A](function: (String, Int) => A): Seq[A] =
-    membersNames.zipWithIndex.map(tuple => function(tuple._1, tuple._2))
+case class Member(organisationName: String, crn: String)
+object Member {
+  implicit val formats: Format[Member] = Json.format[Member]
 }
+
+case class GroupMembers(membersNames: Seq[Member])
 
 object GroupMembers {
   def create(response: SubscriptionDisplayResponse): GroupMembers = {
-    val membersNames =
+    val members =
       response.groupPartnershipSubscription
         .getOrElse(
           throw new NoSuchElementException("SubscriptionDisplayResponse has no groupPartnershipSubscription field")
         )
         .groupPartnershipDetails.collect {
         case details if details.addressDetails.isGB && !details.isRepresentative =>
-          details.organisationDetails
+          val orgName = details.organisationDetails
             .getOrElse(throw new NoSuchElementException("SubscriptionDisplayResponse has a groupPartnershipDetails " +
               "entry missing its organisationDetails field"))
             .organisationName
+          Member(orgName, details.customerIdentification1)
       }
-    GroupMembers(membersNames.sorted) //todo what if this is 1 or empty
+    GroupMembers(members.sortBy(_.organisationName)) //todo what if this is 1 or empty
   }
 }

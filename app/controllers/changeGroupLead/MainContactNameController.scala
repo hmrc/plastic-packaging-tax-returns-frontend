@@ -47,20 +47,20 @@ class MainContactNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
       featureGuard.check()
-      val companyName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(MainContactNamePage, form())
 
-      Ok(view(preparedForm, companyName, mode))
+      Ok(view(preparedForm, selectedMember.organisationName, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
       featureGuard.check()
-      val companyName = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, companyName, mode))),
+          Future.successful(BadRequest(view(formWithErrors, selectedMember.organisationName, mode))),
 
         mainContactName =>
           request.userAnswers

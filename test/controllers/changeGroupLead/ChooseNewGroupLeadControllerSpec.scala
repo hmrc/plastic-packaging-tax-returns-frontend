@@ -23,7 +23,7 @@ import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode.{CheckMode, NormalMode}
 import models.requests.DataRequest
-import models.subscription.GroupMembers
+import models.subscription.{GroupMembers, Member}
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -33,7 +33,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
-import play.api.data.Forms.text
+import play.api.data.Forms.{ignored, text}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
@@ -60,7 +60,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
   private val journeyAction = mock[JourneyAction]
   private val featureGuard = mock[FeatureGuard]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[String]]
+  private val form = mock[Form[Member]]
   private val navigator = mock[ChangeGroupLeadNavigator]
 
   val sut = new ChooseNewGroupLeadController(
@@ -99,9 +99,10 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(mockFormProvider.apply(any)) thenReturn form
-    when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> text()).fill("test-member")
+    val boundForm = Form("value" -> ignored(Member("test-member", "1"))).fill(Member("test-member", "1"))
+    when(form.bindFromRequest()(any, any)) thenReturn boundForm
 
-    when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
+    when(dataRequest.userAnswers.fill(any[Gettable[Member]], any)(any)) thenReturn form
     val answers = dataRequest.userAnswers // avoid unfinished stubbing error
     when(dataRequest.userAnswers.setOrFail(any, any, any)(any)) thenReturn answers
     when(answers.save(any)(any)) thenReturn Future.successful(answers)
@@ -205,7 +206,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     "bind the form and error" in {
       when(mockFormProvider.apply(any)) thenReturn form
-      val errorForm = Form("value" -> text()).withError("key", "error")
+      val errorForm = Form("value" -> ignored(Member("error", "1"))).withError("key", "error")
       when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
@@ -218,9 +219,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     }
 
     "bind the form and bind a value" in {
-      when(mockFormProvider.apply(any)) thenReturn form
-      val boundForm = Form("value" -> text()).fill("test-member")
-      when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
@@ -231,7 +229,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       verify(mockFormProvider).apply(groupMembers.membersNames)
       verify(form).bindFromRequest()(meq(dataRequest),any)
       withClue("the selected member must be cached"){
-        verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, "test-member")
+        verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, Member("test-member", "1"))
         verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
       }
     }
@@ -245,18 +243,12 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       }
 
       "the user answers setOrFail fails" in {
-        when(mockFormProvider.apply(any)) thenReturn form
-        val boundForm = Form("value" -> text()).fill("test-member")
-        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenThrow(TestException)
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }
 
       "the cache save fails" in {
-        when(mockFormProvider.apply(any)) thenReturn form
-        val boundForm = Form("value" -> text()).fill("test-member")
-        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
         when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})

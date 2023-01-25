@@ -22,7 +22,7 @@ import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest._
-import models.subscription.GroupMembers
+import models.subscription.{GroupMembers, Member}
 import navigation.ChangeGroupLeadNavigator
 import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
@@ -58,9 +58,9 @@ class ChooseNewGroupLeadController @Inject() (
       }
   }
 
-  private def createView(errorForm: Form[String], members: GroupMembers, mode: Mode)(implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Member], members: GroupMembers, mode: Mode)(implicit request: DataRequest[_]) = {
     val onSubmit = routes.ChooseNewGroupLeadController.onSubmit(mode)
-    view(errorForm, members, onSubmit)
+    view(form, members, onSubmit)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {

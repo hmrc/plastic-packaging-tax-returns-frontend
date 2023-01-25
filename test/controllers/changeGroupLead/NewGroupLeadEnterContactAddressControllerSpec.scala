@@ -25,6 +25,7 @@ import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addres
 import models.Mode.NormalMode
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
+import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -92,7 +93,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
     when(mockView.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
-    when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any)) thenReturn "organisation-name"
+    when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any)) thenReturn Member("organisation-name", "1")
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
     when(mockCountryService.getAll).thenReturn(countryMap)

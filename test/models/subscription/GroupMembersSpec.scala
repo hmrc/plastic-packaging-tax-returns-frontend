@@ -49,7 +49,7 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))), 
           createGroupDetails(Some(OrganisationDetails(None, "Noo-noo"))), 
       )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq("Laa-laa", "Noo-noo", "Po"))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("Laa-laa", "crn"), Member("Noo-noo", "crn"), Member("Po", "crn")))
     }
 
     "filter non GB organisations" in {
@@ -59,7 +59,7 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "gb-1"))),
           createGroupDetails(Some(OrganisationDetails(None, "gb-2"))),
         )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq("gb-1", "gb-2"))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("gb-1", "crn"), Member("gb-2", "crn")))
     }
 
     "filter the Representative from the members" in {
@@ -69,23 +69,13 @@ class GroupMembersSpec extends PlaySpec {
           createGroupDetails(Some(OrganisationDetails(None, "mem-1"))),
           createGroupDetails(Some(OrganisationDetails(None, "mem-2"))),
         )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq("mem-1", "mem-2"))
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("mem-1", "crn"), Member("mem-2", "crn")))
     }
     
   }
 
-  "map" should {
-
-    "inject member name and a unique index" in {
-      val groupMembers = GroupMembers(Seq("OCP", "Trotters Independent Traders"))
-      val function = (s: String, i: Int) => (s, i)
-      groupMembers.map(function) mustBe Seq(("OCP", 0), ("Trotters Independent Traders", 1))
-    }
-
-  }
-
   private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
-    GroupPartnershipDetails("", "", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
+    GroupPartnershipDetails("", "crn", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
   }
 
   private def createGroupSubscription(groupPartnershipDetails: Seq[GroupPartnershipDetails]) = {
