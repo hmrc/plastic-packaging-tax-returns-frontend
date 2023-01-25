@@ -22,15 +22,12 @@ import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode.{CheckMode, NormalMode}
-import models.UserAnswers
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
 import models.subscription.{GroupMembers, Member}
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.withSettings
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

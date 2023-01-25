@@ -19,7 +19,6 @@ package views.returns
 import base.ViewSpecBase
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
-import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.NonExportedRecycledPlasticPackagingView
 

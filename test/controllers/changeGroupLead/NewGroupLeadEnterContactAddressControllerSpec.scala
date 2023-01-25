@@ -26,10 +26,10 @@ import models.Mode.NormalMode
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import models.subscription.Member
-import navigation.{ChangeGroupLeadNavigator, FakeNavigator, Navigator}
-import org.mockito.{Answers, Mockito}
-import org.mockito.ArgumentMatchersSugar.any
+import navigation.ChangeGroupLeadNavigator
+import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, verifyNoMoreInteractions}
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach

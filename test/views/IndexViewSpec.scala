@@ -20,17 +20,16 @@ import base.ViewSpecBase
 import config.{Features, FrontendAppConfig}
 import controllers.payments.{routes => paymentRoute}
 import controllers.returns.routes
-import models.Mode.NormalMode
 import models.obligations.PPTObligations
 import models.subscription.LegalEntityDetails
-import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import play.api
 import play.api.Application
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
+import repositories.SessionRepository
 import support.ObligationsTestData.{noneDueUpToDate, oneDueOneOverdue, oneDueTwoOverdue, oneDueUpToDate}
 import support.{ViewAssertions, ViewMatchers}
 import views.ObligationScenarioTypes.{NoneDueUpToDate, OneDueOneOverdue, OneDueTwoOverdue, OneDueUpToDate}
@@ -53,9 +52,11 @@ class IndexPageViewSpec
     extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(api.inject.bind[FrontendAppConfig].toInstance(appConfig))
-    .build()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[FrontendAppConfig].toInstance(appConfig),
+      bind[SessionRepository].toInstance(mock[SessionRepository])
+   ).build()
 
   lazy val homePage = inject[IndexView]
   private val appConfig = mock[FrontendAppConfig]

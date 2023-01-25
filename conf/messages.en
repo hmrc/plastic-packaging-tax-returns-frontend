@@ -120,13 +120,12 @@ amendDirectExportPlasticPackaging.checkYourAnswersLabel = Exported plastic packa
 amendDirectExportPlasticPackaging.error.nonNumeric = Weight must be entered as numbers
 amendDirectExportPlasticPackaging.error.required = Enter the weight, in kilograms
 amendDirectExportPlasticPackaging.error.wholeNumber = Weight must not include decimals
-amendDirectExportPlasticPackaging.error.outOfRange.low = Weight must be 0kg or more
-amendDirectExportPlasticPackaging.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
+amendDirectExportPlasticPackaging.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 amendDirectExportPlasticPackaging.para = Plastic packaging you export will show as a deduction on your tax calculation.
 amendDirectExportPlasticPackaging.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 
-amendHumanMedicinePlasticPackaging.title = Out of the finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
-amendHumanMedicinePlasticPackaging.heading = Out of the finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
+amendHumanMedicinePlasticPackaging.title = Out of the finished plastic packaging components that were not exported, how much was used for the immediate packaging of licenced human medicines?
+amendHumanMedicinePlasticPackaging.heading = Out of the finished plastic packaging components that were not exported, how much was used for the immediate packaging of licenced human medicines?
 amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging used for licenced human medicines
 amendHumanMedicinePlasticPackaging.error.nonNumeric = Weight must be entered as numbers
 amendHumanMedicinePlasticPackaging.error.required = Enter the weight, in kilograms
@@ -176,8 +175,8 @@ amendManufacturedPlasticPackaging.para.list.6 = an integral part of the goods
 amendManufacturedPlasticPackaging.para.list.7 = reused for the presentation of goods
 amendManufacturedPlasticPackaging.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 
-amendRecycledPlasticPackaging.title = Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
-amendRecycledPlasticPackaging.heading = Out of the finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.title = Out of the finished plastic packaging components that were not exported, how much contained 30% or more recycled plastic?
+amendRecycledPlasticPackaging.heading = Out of the finished plastic packaging components that were not exported, how much contained 30% or more recycled plastic?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Non-exported plastic packaging containing 30% or more recycled plastic
 amendRecycledPlasticPackaging.error.nonNumeric = Weight must be entered as numbers
 amendRecycledPlasticPackaging.error.required = Enter the weight, in kilograms
@@ -209,15 +208,15 @@ confirmPackagingCredit.confirm.credit.button = Confirm credit amount
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.error.required = Select yes if you exported any of your finished plastic packaging components in this period yourself, or if you intend to within the next 12 months
-directlyExportedComponents.paragraph.1 = You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them.
+directlyExportedComponents.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
+directlyExportedComponents.paragraph.2 = If you do not export these plastics within 12 months of manufacture or import, you’ll need to pay tax on them.
 
 exportedPlasticPackagingWeight.title = How much of your {0} of finished plastic packaging components did you export, or do you intend to export within 12 months?
 exportedPlasticPackagingWeight.heading = How much of your {0} of finished plastic packaging components did you export, or do you intend to export within 12 months?
 exportedPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers
 exportedPlasticPackagingWeight.error.required = Enter the weight, in kilograms
 exportedPlasticPackagingWeight.error.wholeNumber = Weight must not include decimals
-exportedPlasticPackagingWeight.error.outOfRange.low = Weight must be 0kg or more
-exportedPlasticPackagingWeight.error.outOfRange.high = Weight must be 99,999,999,999kg or less
+exportedPlasticPackagingWeight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 exportedPlasticPackagingWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Plastic packaging you export will show as a deduction on your tax calculation.
 
@@ -288,7 +287,7 @@ NonExportRecycledPlasticPackaging.paragraph.line.1 = You will not be charged tax
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Find out {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = what we mean by recycled plastic packaging
 
-NonExportRecycledPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much contained 30% or more recycled plastic?
+NonExportRecycledPlasticPackagingWeight.heading = Out of the {0} that was not exported, how much contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.directly.export.no.heading = How much of your {0} of finished plastic packaging components contained 30% or more recycled plastic?
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Weight must be entered as numbers
 NonExportRecycledPlasticPackagingWeight.error.required = Enter the weight, in kilograms
@@ -315,7 +314,7 @@ viewReturnSummary.liable.field.manufactured = Manufactured plastic packaging
 viewReturnSummary.liable.field.imported = Imported plastic packaging
 viewReturnSummary.liable.field.total = Plastic packaging total
 viewReturnSummary.exempt.heading = Deductions
-viewReturnSummary.exempt.field.exported = Plastic packaging exported by you
+viewReturnSummary.exempt.field.exported = Exported plastic packaging
 viewReturnSummary.exempt.field.medicine = Non-exported plastic packaging used for licenced human medicines
 viewReturnSummary.exempt.field.recycled = Non-exported plastic packaging containing 30% or more recycled
 viewReturnSummary.exempt.field.total = Deductions total
@@ -439,7 +438,7 @@ nonExportedHumanMedicinesPlasticPackaging.reveal.content = Packaging is ‘immed
 nonExportedHumanMedicinesPlasticPackaging.error.required = Select yes if any of your non-exported finished plastic packaging components were used for the immediate packaging of licenced human medicines
 
 nonExportedHumanMedicinesPlasticPackagingWeight.caption = Non-exported plastic packaging
-nonExportedHumanMedicinesPlasticPackagingWeight.heading = Out of the {0} of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?
+nonExportedHumanMedicinesPlasticPackagingWeight.heading = Out of the {0} that was not exported, how much was used for the immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading = How much of your {0} of finished plastic packaging components was used for the immediate packaging of licenced human medicines?
 nonExportedHumanMedicinesPlasticPackagingWeight.paragraph.1 = This will show as a deduction on your tax calculation.
 nonExportedHumanMedicinesPlasticPackagingWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
@@ -474,9 +473,11 @@ submit-return.check-your-answers.tax-calc.footnote.2 = Your {0} will be applied 
 submit-return.check-your-answers.tax-calc.credit.of = {0} credit
 
 submit-return.check-your-answers.exported-packaging.heading = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row1 = Exported plastic packaging
-submit-return.check-your-answers.exported-packaging.row2 = Weight of exported plastic packaging
-submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row1 = Plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging.row2 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Plastic packaging exported or converted by another business
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Weight of plastic packaging exported or converted by another business
+submit-return.check-your-answers.exported-packaging.change-link-text = Change any answer from exported plastic packaging
 submit-return.check-your-answers.exported-packaging.no-change-reason = To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Non-exported plastic packaging
@@ -488,10 +489,11 @@ submit-return.check-your-answers.nonexported-packaging.change-link-text = Change
 submit-return.check-your-answers.nonexported-packaging.no-change-reason = To change an answer from non-exported plastic packaging you must have manufactured or imported some plastic packaging that has not been exported.
 
 submit-return.check-your-answers.deductions.heading = Deductions
-submit-return.check-your-answers.deductions.row1 = Weight of exported plastic packaging
-submit-return.check-your-answers.deductions.row2 = Weight of non-exported plastic packaging used for licenced human medicines
-submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging containing 30% or more recycled
-submit-return.check-your-answers.deductions.row4 = Deductions total
+submit-return.check-your-answers.deductions.row1 = Weight of plastic packaging exported by you
+submit-return.check-your-answers.deductions.row2 = Weight of plastic packaging exported or converted by another business
+submit-return.check-your-answers.deductions.row3 = Weight of non-exported plastic packaging used for licenced human medicines
+submit-return.check-your-answers.deductions.row4 = Weight of non-exported plastic packaging containing 30% or more recycled
+submit-return.check-your-answers.deductions.row5 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim tax back as credit yet. This is because this is your first return.
@@ -530,7 +532,7 @@ exported.credits.weight.label = How much weight, in kilograms?
 exported.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been exported
 exported.credits.error.weight.required = Enter the weight, in kilograms
 exported.credits.error.outOfRange.low = Weight must be 1kg or more
-exported.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
+exported.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 exported.credits.error.non.numeric = Weight must be entered as numbers
 exported.credits.error.whole.number = Weight must not include decimals
 
@@ -545,7 +547,7 @@ converted.credits.weight.label = How much weight, in kilograms?
 converted.credits.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been converted
 converted.credits.error.weight.required = Enter the weight, in kilograms
 converted.credits.error.outOfRange.low = Weight must be 1kg or more
-converted.credits.error.outOfRange.high = Weight must be between 1kg and 99,999,999,999kg
+converted.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
 converted.credits.error.non.numeric = Weight must be entered as numbers
 converted.credits.error.whole.number = Weight must not include decimals
 
@@ -646,3 +648,40 @@ mainContactJobTitle.heading = What is {0}’s job title?
 mainContactJobTitle.error.required = Enter the job title of the main contact
 mainContactJobTitle.error.length = Job title must be 155 characters or fewer
 mainContactJobTitle.error.invalid = Job title must only include letters and spaces
+
+plasticExportedByAnotherBusiness.title = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.heading = In this period, has another business exported or converted any of your {0} of manufactured or imported finished plastic packaging components?
+plasticExportedByAnotherBusiness.caption = Exported plastic packaging
+plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
+plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
+plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+
+anotherBusinessExportWeight.title = How much of your {0} of finished plastic packaging components did another business export or convert?
+anotherBusinessExportWeight.heading = How much of your {0} of finished plastic packaging components did another business export or convert?
+anotherBusinessExportWeight.caption = Exported plastic packaging
+anotherBusinessExportWeight.paragraph = This will show as a deduction on your tax calculation.
+anotherBusinessExportWeight.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
+anotherBusinessExportWeight.checkYourAnswersLabel = AnotherBusinessExportWeight
+anotherBusinessExportWeight.error.nonNumeric = Weight must be entered as numbers
+anotherBusinessExportWeight.error.required = Enter the weight, in kilograms
+anotherBusinessExportWeight.error.wholeNumber = Weight must not include decimals
+anotherBusinessExportWeight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
+anotherBusinessExportWeight.change.hidden = AnotherBusinessExportWeight
+
+amendExportedPlasticPackaging.title = Amending exported plastic packaging
+amendExportedPlasticPackaging.heading = Amending exported plastic packaging
+amendExportedPlasticPackaging.paragraph.1 = Exported plastic packaging total is the sum of 2 weights you entered when you submitted your return.
+amendExportedPlasticPackaging.paragraph.2 = This is the weight of plastic packaging:
+amendExportedPlasticPackaging.paragraph.3 = To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total.
+amendExportedPlasticPackaging.bulletPoint.1 = you exported or intended to export within 12 months
+amendExportedPlasticPackaging.bulletPoint.2 = another business exported or converted
+
+amendExportedByAnotherBusiness.title = How much of your finished plastic packaging components did another business export or convert?
+amendExportedByAnotherBusiness.heading = How much of your finished plastic packaging components did another business export or convert?
+amendExportedByAnotherBusiness.paragraph.1 = This will show as a deduction on your tax calculation.
+amendExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
+amendExportedByAnotherBusiness.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
+amendExportedByAnotherBusiness.error.nonNumeric = Weight must be entered as numbers
+amendExportedByAnotherBusiness.error.required = Enter the weight, in kilograms
+amendExportedByAnotherBusiness.error.wholeNumber = Weight must not include decimals
+amendExportedByAnotherBusiness.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg

@@ -16,144 +16,210 @@
 
 package controllers.returns
 
-import base.SpecBase
+import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
-import models.UserAnswers
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.UserAnswers
+import models.requests.DataRequest
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.{Answers, ArgumentCaptor}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.{DirectlyExportedComponentsPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
-import play.api.inject.bind
-import play.api.mvc.Call
-import play.api.test.FakeRequest
+import org.scalatestplus.play.PlaySpec
+import pages.returns._
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import views.html.returns.DirectlyExportedComponentsView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DirectlyExportedComponentsControllerSpec extends SpecBase with MockitoSugar {
+class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSugar with JourneyActionAnswer with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
-  val formProvider = new DirectlyExportedComponentsFormProvider()
+  private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi    = mock[MessagesApi]
+  private val cacheConnector = mock[CacheConnector]
+  private val navigator      = mock[ReturnsJourneyNavigator]
+  private val journeyAction  = mock[JourneyAction]
+  private val formProvider   = mock[DirectlyExportedComponentsFormProvider]
+  private val view           = mock[DirectlyExportedComponentsView]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private val sut            = new DirectlyExportedComponentsController(
+    messagesApi,
+    cacheConnector,
+    navigator,
+    journeyAction,
+    nonExportedAmountHelper,
+    formProvider,
+    stubMessagesControllerComponents(),
+    view)
 
-  val answersWithPreset: UserAnswers = emptyUserAnswers.set(ManufacturedPlasticPackagingWeightPage, 7L).get.set(ImportedPlasticPackagingWeightPage, 5L).get
-  val totalPlastic: Long = 12
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-  lazy val directlyExportedComponentsRoute = controllers.returns.routes.DirectlyExportedComponentsController.onPageLoad(NormalMode).url
+    reset(journeyAction, view, cacheConnector, dataRequest, navigator, nonExportedAmountHelper)
 
-  "DirectlyExportedComponents Controller" - {
+    when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(10L))
+  }
 
-    "must return OK and the correct view for a GET" in {
+  "onPageLoad" should {
 
-      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, directlyExportedComponentsRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, totalPlastic)(request, messages(application)).toString
-      }
+    "use the journey action" in {
+      sut.onPageLoad(NormalMode)
+      verify(journeyAction).apply(any)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "return OK" in {
+      setUpForm(createUserAnswer, new DirectlyExportedComponentsFormProvider()())
 
-      val userAnswers = answersWithPreset.set(DirectlyExportedComponentsPage, true).success.value
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, directlyExportedComponentsRoute)
-
-        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, totalPlastic)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "return a view with an empty form and total plastic" in {
+      val form = new DirectlyExportedComponentsFormProvider()()
+      setUpForm(createUserAnswer, form)
 
-      val mockCacheConnector = mock[CacheConnector]
+      await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(answersWithPreset))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, directlyExportedComponentsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      verify(view).apply(eqTo(form), eqTo(NormalMode), eqTo(10L))(any, any)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a view with question answered YES " in {
+      setUpForm(createUserAnswer.set(DirectlyExportedPage, true).get, new DirectlyExportedComponentsFormProvider()())
 
-      val application = applicationBuilder(userAnswers = Some(answersWithPreset)).build()
+      await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, directlyExportedComponentsRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = formProvider().bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[DirectlyExportedComponentsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, totalPlastic)(request, messages(application)).toString
-      }
+      verifyAndAssertAnswerValue(true)
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "return a view with question answered No " in {
+      val form = new DirectlyExportedComponentsFormProvider()()
+      when(formProvider.apply()).thenReturn(form)
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer.set(DirectlyExportedPage, false).get)
 
-      val application = applicationBuilder(userAnswers = None).build()
+      await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      running(application) {
-        val request = FakeRequest(GET, directlyExportedComponentsRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      verifyAndAssertAnswerValue(false)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "redirect to account page if total plastic cannot be calculated" in {
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
+      val form = new DirectlyExportedComponentsFormProvider()()
+      when(formProvider.apply()).thenReturn(form)
+      when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, directlyExportedComponentsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
   }
+
+  "onSubmit" should {
+    "redirect" in {
+      val form = mock[Form[Boolean]]
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some("/foo")
+      verify(navigator).directlyExportedComponentsRoute(any, eqTo(NormalMode))
+    }
+
+    "set userAnswer" in {
+      var saveUserAnswerToCache: Option[UserAnswers] = Option.empty
+      val ans                                        = createUserAnswer
+      val form                                       = mock[Form[Boolean]]
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(dataRequest.userAnswers).thenReturn(ans)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn { (a: UserAnswers, b: Boolean) =>
+        saveUserAnswerToCache = Some(a)
+        Future.successful(true)
+      }
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      saveUserAnswerToCache mustBe Some(ans.set(DirectlyExportedPage, true).get)
+    }
+
+    "save user answer to the cache" in {
+      val form = mock[Form[Boolean]]
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer)
+      when(dataRequest.pptReference).thenReturn("123")
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(cacheConnector).saveUserAnswerFunc(eqTo("123"))(any)
+    }
+
+    "return an error when error on form" in {
+      val form = mock[Form[Boolean]]
+      val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(formError)
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer)
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual BAD_REQUEST
+      verify(view).apply(eqTo(formError), eqTo(NormalMode), eqTo(10L))(any, any)
+    }
+
+    "redirect when total plastic cannot be calculated" in {
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
+      val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
+      val form = mock[Form[Boolean]]
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(formError)
+      when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+    }
+  }
+
+  private def setUpForm(userAnswer: UserAnswers, form: Form[Boolean]) = {
+    when(formProvider.apply()).thenReturn(form)
+    when(dataRequest.userAnswers).thenReturn(userAnswer)
+  }
+
+  private def verifyAndAssertAnswerValue(answer: Boolean) = {
+    val captor: ArgumentCaptor[Form[Boolean]] = ArgumentCaptor.forClass(classOf[Form[Boolean]])
+    verify(view).apply(captor.capture(), any, any)(any, any)
+    captor.getValue.value mustBe Some(answer)
+  }
+
+  private def createUserAnswer =
+    UserAnswers("123")
+      .set(ManufacturedPlasticPackagingPage, true).get
+      .set(ManufacturedPlasticPackagingWeightPage, 5L).get
+      .set(ImportedPlasticPackagingPage, true).get
+      .set(ImportedPlasticPackagingWeightPage, 5L).get
 }

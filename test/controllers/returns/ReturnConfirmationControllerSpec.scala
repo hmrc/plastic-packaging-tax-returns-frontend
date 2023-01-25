@@ -20,11 +20,8 @@ import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.{Entry, SessionRepository}
 import views.html.returns.ReturnConfirmationView
 
 import scala.concurrent.Future
@@ -42,9 +39,7 @@ class ReturnConfirmationControllerSpec extends SpecBase with BeforeAndAfterEach 
 
       when(mockSessionRepo.get[Any](any(), any())(any())).thenReturn(Future.successful(Some("12345")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[SessionRepository].toInstance(mockSessionRepo)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.returns.routes.ReturnConfirmationController.onPageLoad(false).url)

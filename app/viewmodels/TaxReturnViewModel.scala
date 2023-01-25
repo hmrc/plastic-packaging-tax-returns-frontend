@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.helpers
+package viewmodels
 
 import controllers.returns.routes
 import models.Mode.CheckMode
 import models.UserAnswers
-import models.requests.DataRequest
 import models.returns.{Calculations, TaxReturnObligation}
 import pages.QuestionPage
 import pages.returns._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import viewmodels.{PrintBigDecimal, PrintLong}
 import views.ViewUtils
 
 case class RowInfo(key: String, value: String)
 
-//todo move this to viewmodels
-case class TaxReturnViewModel (
-  request: DataRequest[_],
+case class TaxReturnViewModel(
+  userAnswers: UserAnswers,
+  pptReference: String,
   obligation: TaxReturnObligation,
   calculations: Calculations
-) (implicit messages: Messages) {
-
-  private def userAnswers: UserAnswers = request.userAnswers
+)(implicit messages: Messages) {
 
   private def getMustHave[ValueType](page: QuestionPage[ValueType])(implicit reads: Reads[ValueType]): ValueType = {
     userAnswers.get(page).getOrElse {
@@ -45,14 +41,32 @@ case class TaxReturnViewModel (
     }
   }
 
+  def getWithDefault(page: QuestionPage[Boolean]) =
+    userAnswers.get(page).getOrElse(false) // default to "no"
+
+  def getWithDefault(page: QuestionPage[Long]) =
+    userAnswers.get(page).getOrElse(0L) // default to zero kg
+
   private def createYesNoRow(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
     val answer = getMustHave(page)
     val value = if (answer) "site.yes" else "site.no"
     RowInfo(key = messages(messageKey), value = messages(value))
   }
 
+  private def createYesNoRowWithDefault(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
+    val answer = getWithDefault(page)
+    val value = if (answer) "site.yes" else "site.no"
+    RowInfo(key = messages(messageKey), value = messages(value))
+  }
+
   private def createKgsRow(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
     val answer = getMustHave(page)
+    val value = answer.asKg
+    RowInfo(key = messages(messageKey), value = value)
+  }
+
+  private def createKgsRowWithDefault(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
+    val answer = getWithDefault(page)
     val value = answer.asKg
     RowInfo(key = messages(messageKey), value = value)
   }
@@ -73,18 +87,31 @@ case class TaxReturnViewModel (
     createKgsRow(ImportedPlasticPackagingWeightPage, messageKey)
   }
 
-  // Show or hide edit links
-  def exportedTotal: Long         = getMustHave(ExportedPlasticPackagingWeightPage)
+  private def exportedTotal: Long = {
+    val exportedDirectly = getMustHave(DirectlyExportedWeightPage)
+    val exportedByAnotherBusiness = getWithDefault(AnotherBusinessExportedWeightPage)
+    exportedDirectly + exportedByAnotherBusiness
+  }
 
-  def canEditExported: Boolean    = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+  // Show or hide edit links
+  def canEditExported: Boolean = (calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal) || exportedTotal > 0
+
   def canEditNonExported: Boolean = calculations.packagingTotal > 0 && calculations.packagingTotal > exportedTotal
 
   def exportedYesNo(messageKey: String): RowInfo = {
-    createYesNoRow(DirectlyExportedComponentsPage, messageKey)
+    createYesNoRow(DirectlyExportedPage, messageKey)
+  }
+
+  def exportedByAnotherBusinessYesNo(messageKey: String): RowInfo = {
+    createYesNoRowWithDefault(AnotherBusinessExportedPage, messageKey)
   }
 
   def exportedWeight(messageKey: String): RowInfo = {
-    createKgsRow(ExportedPlasticPackagingWeightPage, messageKey)
+    createKgsRow(DirectlyExportedWeightPage, messageKey)
+  }
+
+  def anotherBusinessExportedWeight(messageKey: String): RowInfo = {
+    createKgsRowWithDefault(AnotherBusinessExportedWeightPage, messageKey)
   }
 
   def nonexportedMedicineYesNo(messageKey: String): RowInfo = {
@@ -118,9 +145,11 @@ case class TaxReturnViewModel (
   def taxDue: String = {
     calculations.taxDue.asPounds
   }
-  
+
   def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
+
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
+
   def nonexportedStartUrl: String = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(CheckMode).url
 
   def startDatePrettyPrint(implicit messages: Messages): String = {

@@ -1,0 +1,50 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels._
+@import components._
+@import templates.YesNoLayout
+@import components.paragraphBody
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    yesNoLayout: YesNoLayout,
+    paragraphBody: paragraphBody
+)
+
+@(form: Form[Boolean], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
+
+
+@paragraphContent ={
+    @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.1"))
+    @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.2"))
+}
+
+@layout(pageTitle = title(
+    form,
+    messages("plasticExportedByAnotherBusiness.title", amount.asKg),
+    Some(messages("return.title.tail")))
+) {
+
+    @formHelper(action = controllers.returns.routes.PlasticExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @yesNoLayout(sectionHeading = Some(messages("plasticExportedByAnotherBusiness.caption")),
+            heading = messages("plasticExportedByAnotherBusiness.heading", amount.asKg),
+            paragraphText = paragraphContent,
+            form = form)
+    }
+}

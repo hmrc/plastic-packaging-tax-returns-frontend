@@ -14,16 +14,12 @@
  * limitations under the License.
  *@
 
-@import components.{Link, bulletList, paragraph, paragraphBody, SectionH2Heading, SectionH3Heading, heading, Strong}
 @import components.returns.checkYourAnswer.CreditsSection
-@import viewmodels._
-@import controllers.helpers.TaxReturnViewModel
-@import views.ViewUtils.RichSummaryListRow
-@import controllers.helpers.RowInfo
+@import components.{Link, SectionH2Heading, SectionH3Heading, Strong, bulletList, heading, paragraph, paragraphBody}
 @import config.FrontendAppConfig
-@import models.returns.Credits
-@import models.returns.CreditsClaimedDetails
-@import models.Mode.CheckMode
+@import models.returns.{Credits, CreditsClaimedDetails}
+@import viewmodels._
+@import views.ViewUtils.RichSummaryListRow
 
 @this(
     layout: templates.Layout,
@@ -114,7 +110,7 @@
     @sectionH2Heading(messages("submit-return.check-your-answers.business-details.heading"))
     @govukSummaryList(SummaryList(
         rows = Seq(
-            summaryRowWithWideValue("business-details.row1", taxReturn.request.pptReference),
+            summaryRowWithWideValue("business-details.row1", taxReturn.pptReference),
             summaryRowWithWideValue("business-details.periodStartDate", taxReturn.startDatePrettyPrint),
             summaryRowWithWideValue("business-details.periodEndDate", taxReturn.endDatePrettyPrint),
         )
@@ -147,6 +143,8 @@
         rows = Seq(
             summaryRowFromFunc("exported-packaging.row1", taxReturn.exportedYesNo),
             summaryRowFromFunc("exported-packaging.row2", taxReturn.exportedWeight),
+            summaryRowFromFunc("exported-packaging-by-another-business-label", taxReturn.exportedByAnotherBusinessYesNo),
+            summaryRowFromFunc("exported-packaging-by-another-business-weight", taxReturn.anotherBusinessExportedWeight)
         )
     ))
     @if(taxReturn.canEditExported) {
@@ -176,9 +174,10 @@
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromFunc("deductions.row1", taxReturn.exportedWeight),
-            summaryRowFromFunc("deductions.row2", taxReturn.nonexportedMedicineWeight),
-            summaryRowFromFunc("deductions.row3", taxReturn.nonexportedRecycledWeight),
-            summaryRowFromString("deductions.row4", taxReturn.deductionsTotal).bold,
+            summaryRowFromFunc("deductions.row2", taxReturn.anotherBusinessExportedWeight),
+            summaryRowFromFunc("deductions.row3", taxReturn.nonexportedMedicineWeight),
+            summaryRowFromFunc("deductions.row4", taxReturn.nonexportedRecycledWeight),
+            summaryRowFromString("deductions.row5", taxReturn.deductionsTotal).bold,
         )
     ))
 

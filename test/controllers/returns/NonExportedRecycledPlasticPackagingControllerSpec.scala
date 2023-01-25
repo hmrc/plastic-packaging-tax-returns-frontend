@@ -21,6 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -31,7 +32,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage}
+import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, AnotherBusinessExportedPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -51,21 +52,24 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedRecycledPlasticPackagingView]
+  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val validAnswer = 0L
   private val manufacturedAmount = 200L
   private val importedAmount = 100L
   private val exportedAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - exportedAmount
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val exportedByAnotherBusinessAmount = 50L
+  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   private val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
   override def beforeEach() = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator)
+    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper)
 
     when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
 
   "onPageLoad" should {
@@ -94,30 +98,9 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       verifyView(Some(true), nonExportedAmount)
     }
 
-    "must redirect to home page on GET when amount questions has not been answers" in {
-      val ans = UserAnswers("123").set(NonExportedRecycledPlasticPackagingPage, true).get
-
-      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
-        FakeRequest(GET, recycledPlasticPackagingRoute)
-      )
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-    }
-
-    "calculate total plastic is directly exported is answered No" in {
-      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-
-      val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
-        FakeRequest(GET, recycledPlasticPackagingRoute)
-      )
-
-      status(result) mustEqual OK
-      verifyView(None, manufacturedAmount + importedAmount, false)
-    }
-
     "redirect to the home page if directly exported answer is missing" in {
-      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
+      when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
+      val ans = nonExportedAnswer.remove(DirectlyExportedPage).get
 
       val result = createSut(userAnswer = Some(ans)).onPageLoad(NormalMode)(
         FakeRequest(GET, recycledPlasticPackagingRoute)
@@ -154,20 +137,9 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       verifyView(None, nonExportedAmount)
     }
 
-    "return BadRequest with total plastic when directly exported answered no" in {
-
-      val ans = nonExportedAnswer.set(DirectlyExportedComponentsPage, false).get
-      val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
-        FakeRequest(POST, recycledPlasticPackagingRoute)
-          .withFormUrlEncodedBody(("value", ""))
-      )
-
-      status(result) mustEqual BAD_REQUEST
-      verifyView(None, manufacturedAmount + importedAmount, false)
-    }
-
     "redirect to home page is directly exported not answered" in {
-      val ans = nonExportedAnswer.remove(DirectlyExportedComponentsPage).get
+      when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
+      val ans = nonExportedAnswer.remove(DirectlyExportedPage).get
 
       val result = createSut(userAnswer = Some(ans)).onSubmit(NormalMode)(
         FakeRequest(POST, recycledPlasticPackagingRoute)
@@ -177,8 +149,6 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
     }
-
-
 
     "redirect to Journey Recovery for a GET if no existing data is found" in {
 
@@ -217,7 +187,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   }
   private def createSut(
                          formProvider: NonExportedRecycledPlasticPackagingFormProvider = new NonExportedRecycledPlasticPackagingFormProvider(),
-                         userAnswer: Option[UserAnswers] = None
+                         userAnswer: Option[UserAnswers]
                        ): NonExportedRecycledPlasticPackagingController = {
     new NonExportedRecycledPlasticPackagingController(
       mockMessageApi,
@@ -228,7 +198,8 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      mockView
+      mockView,
+      mockNonExportedAmountHelper
     )
   }
 }

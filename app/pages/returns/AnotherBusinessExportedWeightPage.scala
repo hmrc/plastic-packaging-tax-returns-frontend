@@ -19,19 +19,25 @@ package pages.returns
 import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+import services.ExportedPlasticAnswer
 
 import scala.util.Try
 
-case object DirectlyExportedComponentsPage extends QuestionPage[Boolean] {
+case object AnotherBusinessExportedWeightPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "directlyExportedComponents"
+  override def toString: String = "anotherBusinessExportWeight"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case true => super.cleanup(value, userAnswers)
-      case _    => userAnswers.set(ExportedPlasticPackagingWeightPage, 0L)
-    }
-  }.getOrElse(super.cleanup(value, userAnswers))
+  override def cleanup(value: Option[Long], userAnswers: UserAnswers): Try[UserAnswers] =
+    value.map(amount =>
+      if (amount > 0) {
+        ExportedPlasticAnswer(userAnswers)
+          .resetAnotherBusinessIfAllExportedPlastic.get
+          .set(AnotherBusinessExportedPage, true, cleanup = false)
+      }
+      else {
+        super.cleanup(value, userAnswers)
+      }
+    ).getOrElse(super.cleanup(value, userAnswers))
 }

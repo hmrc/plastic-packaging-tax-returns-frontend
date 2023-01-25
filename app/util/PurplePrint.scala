@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package pages.returns
+package util
 
-import pages.behaviours.PageBehaviours
-
-class ExportedPlasticPackagingWeightPageSpec extends PageBehaviours {
-
-  "ExportedPlasticPackagingWeightPage" - {
-
-    beRetrievable[Long](ExportedPlasticPackagingWeightPage)
-
-    beSettable[Long](ExportedPlasticPackagingWeightPage)
-
-    beRemovable[Long](ExportedPlasticPackagingWeightPage)
-  }
+object PurplePrint {
+  def purplePrint(string: String): Unit = println(Console.MAGENTA + string + Console.RESET)
 }

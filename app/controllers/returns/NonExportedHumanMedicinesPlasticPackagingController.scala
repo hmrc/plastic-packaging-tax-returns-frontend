@@ -40,7 +40,8 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
   requireData: DataRequiredAction,
   form: NonExportedHumanMedicinesPlasticPackagingFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: NonExportedHumanMedicinesPlasticPackagingView
+  view: NonExportedHumanMedicinesPlasticPackagingView,
+  nonExportedAmountHelper: NonExportedAmountHelper
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -53,10 +54,11 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
           case Some(value) => form().fill(value)
         }
 
-        NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-          .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-            o => Ok(view(o._1, preparedForm, mode, o._2))
-        )
+        nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+          .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+            case (amount, directlyExported, exportedThirdParty) =>
+              Ok(view(amount, preparedForm, mode, directlyExported, exportedThirdParty))
+          }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -65,9 +67,9 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
         form().bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              NonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
                 .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                  o => BadRequest(view(o._1, formWithErrors, mode, o._2))
+                  o => BadRequest(view(o._1, formWithErrors, mode, o._2, o._3))
                 )
             ),
           value =>

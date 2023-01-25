@@ -17,29 +17,25 @@
 package base.utils
 
 import models.UserAnswers
-import pages.returns.{
-  DirectlyExportedComponentsPage,
-  ExportedPlasticPackagingWeightPage,
-  ImportedPlasticPackagingPage,
-  ImportedPlasticPackagingWeightPage,
-  ManufacturedPlasticPackagingPage,
-  ManufacturedPlasticPackagingWeightPage
-}
+import pages.returns.{AnotherBusinessExportedWeightPage, DirectlyExportedPage, DirectlyExportedWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, AnotherBusinessExportedPage}
 
 object NonExportedPlasticTestHelper {
 
   def createUserAnswer
   (
     exportedAmount: Long,
+    exportedByAnotherBusinessAmount: Long,
     manufacturedAmount: Long,
     importedAmount: Long
   ): UserAnswers = {
     UserAnswers("123")
-      .set(DirectlyExportedComponentsPage,true, cleanup = false).get
-      .set(ExportedPlasticPackagingWeightPage,exportedAmount, cleanup = false).get
       .set(ManufacturedPlasticPackagingPage,true, cleanup = false).get
       .set(ManufacturedPlasticPackagingWeightPage,manufacturedAmount, cleanup = false).get
       .set(ImportedPlasticPackagingPage,true, cleanup = false).get
       .set(ImportedPlasticPackagingWeightPage,importedAmount, cleanup = false).get
+      .set(DirectlyExportedPage,true, cleanup = false).get
+      .set(DirectlyExportedWeightPage,exportedAmount, cleanup = false).get
+      .set(AnotherBusinessExportedPage,true, cleanup = false).get
+      .set(AnotherBusinessExportedWeightPage,exportedByAnotherBusinessAmount, cleanup = false).get
   }
 }

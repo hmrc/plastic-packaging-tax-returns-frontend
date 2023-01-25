@@ -18,14 +18,14 @@ package pages.returns
 
 import pages.behaviours.PageBehaviours
 
-class DirectlyExportedComponentsPageSpec extends PageBehaviours {
+class AnotherBusinessExportedPageSpec extends PageBehaviours {
 
-  "DirectlyExportedComponentsPage" - {
+  "PlasticExportedByAnotherBusinessPage" - {
 
-    beRetrievable[Boolean](DirectlyExportedComponentsPage)
+    beRetrievable[Boolean](AnotherBusinessExportedPage)
 
-    beSettable[Boolean](DirectlyExportedComponentsPage)
+    beSettable[Boolean](AnotherBusinessExportedPage)
 
-    beRemovable[Boolean](DirectlyExportedComponentsPage)
+    beRemovable[Boolean](AnotherBusinessExportedPage)
   }
 }

@@ -21,30 +21,29 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.changeGroupLead.MainContactJobTitleFormProvider
+import models.Mode.NormalMode
 import models.requests.DataRequest
-import navigation.{ChangeGroupLeadNavigator, Navigator}
+import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.reset
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.changeGroupLead.MainContactJobTitlePage
 import play.api.data.Form
+import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import queries.{Gettable, Settable}
 import views.html.changeGroupLead.MainContactJobTitleView
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
-import models.Mode.NormalMode
-import pages.changeGroupLead.MainContactJobTitlePage
-import play.api.data.Forms.text
-import queries.{Gettable, Settable}
-
 import scala.util.Try
 
 
