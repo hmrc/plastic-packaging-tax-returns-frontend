@@ -62,7 +62,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     chargeableTotal = 85,
     deductionsTotal = 15,
     packagingTotal = 100,
-    isSubmittable = true
+    isSubmittable = true,
+    taxRate = 200.0
   )
 
   private val mockView = mock[ReturnsCheckYourAnswersView]

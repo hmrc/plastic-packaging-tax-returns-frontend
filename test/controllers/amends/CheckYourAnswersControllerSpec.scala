@@ -106,7 +106,7 @@ class CheckYourAnswersControllerSpec
     }
 
     "return 200" in {
-      val calc = Calculations(1, 2, 3, 4, true)
+      val calc = Calculations(1, 2, 3, 4, true, 200.0)
       when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
 
@@ -116,7 +116,7 @@ class CheckYourAnswersControllerSpec
     }
 
     "return view" in {
-      val calc = Calculations(1, 2, 3, 4, true)
+      val calc = Calculations(1, 2, 3, 4, true, 200.0)
       when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
       when(comparisonService.hasMadeChangesOnAmend(any)).thenReturn(true)
@@ -219,8 +219,8 @@ class CheckYourAnswersControllerSpec
 
   private def createExpectedCalculationsRow = {
     AmendsCalculations(
-      Calculations(1, 2, 3, 4, true),
-      Calculations(1, 2, 3, 4, true)
+      Calculations(1, 2, 3, 4, true, 200.0),
+      Calculations(1, 2, 3, 4, true, 200.0)
     )
   }
 

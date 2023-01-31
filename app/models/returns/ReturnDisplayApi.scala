@@ -71,3 +71,14 @@ case class ReturnDisplayApi(
 object ReturnDisplayApi {
   implicit val format: OFormat[ReturnDisplayApi] = Json.format[ReturnDisplayApi]
 }
+
+case class SubmittedReturn
+(
+  taxRate: Double,
+  displayReturnJson: ReturnDisplayApi
+)
+
+object SubmittedReturn {
+  implicit val format: OFormat[SubmittedReturn] = Json.format[SubmittedReturn]
+}
+

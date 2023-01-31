@@ -28,4 +28,10 @@ package object viewmodels {
   implicit class PrintLong(val amount: Long) extends AnyVal {
     def asKg: String = kgsFormat.format(amount)
   }
+
+  implicit class PrintTaxRate(val amount: Double) extends AnyVal {
+    def asPoundPerTonne: String =
+      poundsFormat.format(BigDecimal(amount * 1000))
+      .replaceAll("\\.0*$", "")
+  }
 }
