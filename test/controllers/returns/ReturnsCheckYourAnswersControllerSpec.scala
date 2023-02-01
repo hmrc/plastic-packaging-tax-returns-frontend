@@ -19,7 +19,7 @@ package controllers.returns
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import cacheables.ReturnObligationCacheable
-import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError, ServiceError, TaxReturnsConnector}
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
@@ -181,7 +181,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       setUpMockConnector(
         taxReturnConnectorResult = Right(calculations),
         creditConnectorResult = Left(
-          new ServiceError("Credit Balance API error",
+          DownstreamServiceError("Credit Balance API error",
             new Exception("Credit Balance API error"))
         )
       )
@@ -194,7 +194,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "cannot get tax return calculation" in {
       setUpMockConnector(
         taxReturnConnectorResult = Left(
-          new ServiceError("Tax return calculation error",
+          DownstreamServiceError("Tax return calculation error",
             new Exception("error"))
         )
       )
@@ -215,8 +215,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "all api return an error" in {
       setUpMockConnector(
-        taxReturnConnectorResult = Left(new ServiceError("Tax return calculation error", new Exception("error"))),
-        creditConnectorResult = Left(new ServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
+        taxReturnConnectorResult = Left(DownstreamServiceError("Tax return calculation error", new Exception("error"))),
+        creditConnectorResult = Left(DownstreamServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
       )
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenThrow(new RuntimeException("Error"))
 

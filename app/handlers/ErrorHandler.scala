@@ -23,6 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
+import uk.gov.hmrc.http.HttpException
 import uk.gov.hmrc.play.bootstrap.frontend.http.{ApplicationException, FrontendErrorHandler}
 import views.html.ErrorTemplate
 
@@ -37,7 +38,7 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)
 
   override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
     case ApplicationException(result, _) => result
-    case _: DownstreamServiceError =>
+    case DownstreamServiceError(_, _: HttpException) =>
       InternalServerError(internalServerErrorTemplate(rh)).withHeaders(CACHE_CONTROL -> "no-cache")
     case _ =>
       logger.error("PPT_ERROR_RAISE_ALERT uncaught exception not from downstream", ex)
