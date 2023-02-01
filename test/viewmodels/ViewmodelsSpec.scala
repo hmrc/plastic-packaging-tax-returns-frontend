@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.play.PlaySpec
 
 class ViewmodelsSpec extends PlaySpec {
@@ -59,6 +60,28 @@ class ViewmodelsSpec extends PlaySpec {
     }
     "work with 0" in {
       0L.asKg mustBe "0kg"
+    }
+  }
+
+  "asPoundPerTonne" should {
+    "return pounds with no decimal place" in {
+      0.3.asPoundPerTonne mustBe "£300"
+    }
+
+    "return pounds in the thousend with comma and no decimal place" in {
+      30.asPoundPerTonne mustBe "£30,000"
+    }
+
+    "return pounds with two decimal places" in {
+      0.322121.asPoundPerTonne mustBe "£322.12"
+    }
+
+    "return pounds whose decimal place contain a 0 at the end" in {
+      0.3221.asPoundPerTonne mustBe "£322.10"
+    }
+
+    "return pounds whose decimal place contain 0 after the point" in {
+      0.3220100.asPoundPerTonne mustBe "£322.01"
     }
   }
 

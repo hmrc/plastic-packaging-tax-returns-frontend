@@ -183,34 +183,10 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "taxRateInPounds" should {
-    "return the taxRate in pounds with no 0 after deciaml point" in {
+    "return the taxRate in pounds per tonne" in {
       when(calculations.taxRate).thenReturn(0.3)
 
       sut.taxRate mustBe "£300"
-    }
-
-    "return the taxRate in pounds with a comma" in {
-      when(calculations.taxRate).thenReturn(30)
-
-      sut.taxRate mustBe "£30,000"
-    }
-
-    "return the taxRate in pounds with decimal point" in {
-      when(calculations.taxRate).thenReturn(0.322121)
-
-      sut.taxRate mustBe "£322.12"
-    }
-
-    "return the taxRate in pounds with decimal point including zero" in {
-      when(calculations.taxRate).thenReturn(0.322100)
-
-      sut.taxRate mustBe "£322.10"
-    }
-
-    "return the taxRate in pounds with decimal point including zero 2" in {
-      when(calculations.taxRate).thenReturn(0.32201)
-
-      sut.taxRate mustBe "£322.01"
     }
   }
 }
