@@ -18,12 +18,14 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
+import connectors.TaxReturnsConnector.ALREADY_REPORTED
 import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, ReturnDisplayApi}
 import play.api.Logger
 import play.api.http.Status
+import play.api.http.Status.OK
 import play.api.libs.json.{JsString, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream4xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, Upstream4xxResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,17 +74,23 @@ class TaxReturnsConnector @Inject()(
   def submit(pptReference: String)(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
 
-    httpClient.POSTEmpty[JsValue](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
+    httpClient.POSTEmpty[HttpResponse](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
       .andThen { case _ => timer.stop() }
-      .map { returnJson =>
-        val chargeReference = (returnJson \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
-        logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
-        Right(chargeReference)
+      .map { response =>
+        response.status match {
+          case OK =>
+            val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
+            logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
+            Right(chargeReference)
+          case ALREADY_REPORTED =>
+            val periodKey = (response.json \ "returnAlreadyReceived").as[String]
+            logger.info(s"Return for period [$periodKey] already submitted for $pptReference")
+            Left(AlreadySubmitted)
+          case _ => throw new HttpException(response.body, response.status)
+        }
       }
       .recover {
-        case exception: Upstream4xxResponse if exception.statusCode == Status.EXPECTATION_FAILED 
-            || exception.statusCode == Status.UNPROCESSABLE_ENTITY => Left(AlreadySubmitted)
-        case ex: Exception => 
+        case ex: Exception =>
           throw DownstreamServiceError(s"Failed to submit return, error: ${ex.getMessage}", ex)
       }
   }
@@ -103,4 +111,8 @@ class TaxReturnsConnector @Inject()(
       }
   }
 
+}
+
+object TaxReturnsConnector {
+  val ALREADY_REPORTED = 208
 }
