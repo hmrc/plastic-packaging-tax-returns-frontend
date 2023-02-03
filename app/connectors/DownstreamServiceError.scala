@@ -16,7 +16,7 @@
 
 package connectors
 
-class ServiceError(private val message: String, private val cause: Throwable)
+sealed abstract class ServiceError(private val message: String, private val cause: Throwable)
     extends RuntimeException(message, cause) {}
 
 case class DownstreamServiceError(private val message: String, private val cause: Throwable)
