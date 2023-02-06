@@ -32,7 +32,7 @@ case class Calculations(taxDue: BigDecimal,
                         deductionsTotal: Long,
                         packagingTotal: Long,
                         isSubmittable: Boolean,
-                        taxRate: Double
+                        taxRate: BigDecimal
                        )
 
 object Calculations {

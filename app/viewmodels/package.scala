@@ -29,9 +29,9 @@ package object viewmodels {
     def asKg: String = kgsFormat.format(amount)
   }
 
-  implicit class PrintTaxRate(val amount: Double) extends AnyVal {
+  implicit class PrintTaxRate(val amount: BigDecimal) extends AnyVal {
     def asPoundPerTonne: String =
-      poundsFormat.format(BigDecimal(amount * 1000))
+      poundsFormat.format(amount * 1000)
       .replaceAll("\\.0*$", "")
   }
 }

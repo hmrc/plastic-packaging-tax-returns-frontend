@@ -74,7 +74,7 @@ object ReturnDisplayApi {
 
 case class SubmittedReturn
 (
-  taxRate: Double,
+  taxRate: BigDecimal,
   displayReturnJson: ReturnDisplayApi
 )
 
