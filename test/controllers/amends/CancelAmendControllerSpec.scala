@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,147 +16,212 @@
 
 package controllers.amends
 
-import base.SpecBase
-import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.CancelAmendFormProvider
 import models.UserAnswers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import models.requests.DataRequest
+import models.returns.TaxReturnObligation
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.{Answers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, RequestHeader}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.amends.CancelAmendView
+import play.twirl.api.HtmlFormat
+import queries.Gettable
+import views.html.amends.{AmendAlreadyCancelledView, CancelAmendView}
 
+import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CancelAmendControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(ReturnDisplayApiCacheable, retDisApi).get
-    .set(AmendObligationCacheable, taxReturnOb).get
+  val userAnswer: UserAnswers = mock[UserAnswers]
+  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.now(),
+    LocalDate.now().plusWeeks(12),
+    LocalDate.now().plusWeeks(16),
+    "PK1"
+  )
 
-  val formProvider = new CancelAmendFormProvider()
-  val form = formProvider()
 
-  lazy val cancelAmendRoute = controllers.amends.routes.CancelAmendController.onPageLoad.url
+  val form = mock[Form[Boolean]]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi = mock[MessagesApi]
+  private val cacheConnector = mock[CacheConnector]
+  private val journeyAction = mock[JourneyAction]
+  private val cancelAmendView = mock[CancelAmendView]
+  private val amendAlreadyCancelledView = mock[AmendAlreadyCancelledView]
+  private val formProvider = mock[CancelAmendFormProvider]
+  private val messages = mock[Messages]
 
+  private val sut = new CancelAmendController(
+    messagesApi,
+    cacheConnector,
+    journeyAction,
+    formProvider,
+    stubMessagesControllerComponents(),
+    cancelAmendView,
+    amendAlreadyCancelledView
+  )
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(cacheConnector)
+    reset(
+      cacheConnector,
+      messagesApi,
+      journeyAction,
+      cancelAmendView,
+      amendAlreadyCancelledView,
+      dataRequest,
+      userAnswer
+    )
+
+    when(dataRequest.userAnswers) thenReturn userAnswer
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
   }
 
-  "CancelAmend Controller" - {
+  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
+      .getMock[Action[AnyContent]]
 
-    "must return OK and the correct view for a GET" in {
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
+    when(mock[Action[AnyContent]].apply(any))
+      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+      .getMock[Action[AnyContent]]
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
-        .build()
+  "onPageLoad" should {
 
-      running(application) {
-        val request = FakeRequest(GET, cancelAmendRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CancelAmendView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, taxReturnOb)(request, messages(application)).toString
-      }
+    "invoke the journey action" in {
+      when(journeyAction.apply(any)).thenReturn(mock[Action[AnyContent]])
+      sut.onPageLoad(FakeRequest())
+      verify(journeyAction).apply(any)
     }
 
-    "must redirect to SubmittedReturns page when yes (will have no amended period key)" in {
+    "return ok" in {
+      when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
+      when(cancelAmendView.apply(any, any)(any,any)).thenReturn(HtmlFormat.empty)
 
-      when(cacheConnector.saveUserAnswerFunc(any())(any())) thenReturn ((_, _) => Future.successful(true))
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, cancelAmendRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.SubmittedReturnsController.onPageLoad().url
-      }
-    }
-    "must redirect back to amend heart page when no" in {
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, cancelAmendRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
-
-      }
+      status(result) mustBe OK
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "display the cancelAmendView page" in {
+      when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
+      when(formProvider.apply()).thenReturn(form)
+      when(cancelAmendView.apply(any, any)(any,any)).thenReturn(HtmlFormat.empty)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(inject.bind[CacheConnector].toInstance(cacheConnector))
-        .build()
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, cancelAmendRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[CancelAmendView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, taxReturnOb)(request, messages(application)).toString
-      }
+      status(result) mustBe OK
+      verify(cancelAmendView).apply(meq(form), meq(aTaxObligation))(any,any)
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "display the amendAlreadyCancelledView page" in {
+      when(amendAlreadyCancelledView.apply()(any,any)).thenReturn(HtmlFormat.empty)
+      when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(None)
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
-      running(application) {
-        val request = FakeRequest(GET, cancelAmendRoute)
+      status(result) mustBe OK
+      verify(amendAlreadyCancelledView).apply()(any,any)
+    }
+  }
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+  "onSubmit" should {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)).thenReturn(mock[Action[AnyContent]])
+      sut.onSubmit(FakeRequest())
+      verify(journeyAction).async(any)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "save a empty userAnswer to cache" in {
+      var saveUserAnswerToCache: Option[UserAnswers] = None
 
-      val application = applicationBuilder(userAnswers = None).build()
+      when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(true))
+      when(formProvider.apply()).thenReturn(form)
+      when(dataRequest.userAnswers).thenReturn(UserAnswers("234").set(AmendObligationCacheable, aTaxObligation).get)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((a: UserAnswers, b: Boolean) => {
+        saveUserAnswerToCache = Some(a)
+        Future.successful(true)
+      })
+      when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, cancelAmendRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+      await(sut.onSubmit(dataRequest))
 
-        val result = route(application, request).value
+      saveUserAnswerToCache.get.data.value mustBe empty
+      saveUserAnswerToCache.get.id mustBe "234"
+    }
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+    "return 200" in {
+      setUpMocks
+
+      val result = sut.onSubmit(dataRequest)
+
+      status(result) mustEqual OK
+    }
+
+    "return the amendAlreadyCancelledView" in {
+      setUpMocks
+
+      val result = sut.onSubmit(dataRequest)
+
+      status(result) mustEqual OK
+      verify(amendAlreadyCancelledView).apply()(any,any)
+    }
+
+    "redirect to check your answer page if not cancelled" in {
+      when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
+      when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(false))
+      when(formProvider.apply()).thenReturn(form)
+
+      val result = sut.onSubmit(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.amends.routes.CheckYourAnswersController.onPageLoad.url
+    }
+
+    "return bad request if error on form" in {
+      when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
+      when(formProvider.apply()).thenReturn(form)
+      val errorForm = new CancelAmendFormProvider()().withError("error", "error message")
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
+      when(cancelAmendView.apply(any,any)(any,any)).thenReturn(HtmlFormat.empty)
+
+      val result = sut.onSubmit(dataRequest)
+
+      status(result) mustEqual BAD_REQUEST
+      verify(cancelAmendView).apply(meq(errorForm), meq(aTaxObligation))(any,any)
+    }
+
+    "throw an exception if obligation not found" in {
+      when(dataRequest.userAnswers).thenReturn(UserAnswers("234"))
+
+      intercept[IllegalStateException] {
+        await(sut.onSubmit(dataRequest))
       }
     }
+  }
+
+  private def setUpMocks = {
+    when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
+    when(userAnswer.reset).thenReturn(userAnswer)
+    when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
+    when(dataRequest.request.pptReference) thenReturn ("123")
+    when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
+    when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(true))
+    when(formProvider.apply()).thenReturn(form)
   }
 }

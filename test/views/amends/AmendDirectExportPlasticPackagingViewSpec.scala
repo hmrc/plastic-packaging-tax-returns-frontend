@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,14 +54,14 @@ class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
         val view: Html = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange.low"))
+        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))
       }
 
       "number submitted is greater than maximum" in {
         val view: Html = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange.high"))
+        doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))
       }
 
     }

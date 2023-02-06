@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,14 @@
 package support
 
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction
-import models.{subscription, SignedInUser}
 import models.requests.IdentityData
-import models.subscription.subscriptionDisplay.{
-  ChangeOfCircumstanceDetails,
-  SubscriptionDisplayResponse
-}
-import models.subscription.subscriptionUpdate.SubscriptionUpdateRequest
 import models.subscription._
+import models.subscription.subscriptionDisplay.{ChangeOfCircumstanceDetails, SubscriptionDisplayResponse}
+import models.{SignedInUser, subscription}
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime.now
@@ -48,21 +44,25 @@ object PptTestData {
                                                            organisationDetails =
                                                              Some(
                                                                subscription.OrganisationDetails(
-                                                                 organisationName =
-                                                                   Some("Plastics Ltd"),
+                                                                 organisationName = "Plastics Ltd", 
                                                                  organisationType =
                                                                    Some("UK Limited Company")
                                                                )
-                                                             )
-                         )
+                                                             ), 
+                           individualDetails = None),
+        groupSubscriptionFlag = false, 
+        regWithoutIDFlag = false,
+        partnershipSubscriptionFlag = false
       ),
     principalPlaceOfBusinessDetails =
       PrincipalPlaceOfBusinessDetails(
         addressDetails = AddressDetails(addressLine1 = "2-3 Scala Street",
                                         addressLine2 = "Soho",
                                         addressLine3 = Some("London"),
+                                        addressLine4 = None,
                                         postalCode = Some("W1T 2HN"),
-                                        countryCode = "GB"
+                                        countryCode = "GB", 
+          
         ),
         contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
       ),
@@ -74,6 +74,8 @@ object PptTestData {
       ),
     businessCorrespondenceDetails = AddressDetails(addressLine1 = "addressLine1",
                                                    addressLine2 = " line2 Town",
+                                                   addressLine3 = None,
+                                                   addressLine4 = None,
                                                    postalCode = Some("PostCode"),
                                                    countryCode = "GB"
     ),
@@ -95,10 +97,15 @@ object PptTestData {
                                              Some(
                                                IndividualDetails(title = Some("MR"),
                                                                  firstName = "James",
-                                                                 lastName = "Bond"
+                                                                 lastName = "Bond",
+                                                 middleName = None
                                                )
-                                             )
-                           )
+                                             ),
+                             organisationDetails = None
+                           ), 
+        regWithoutIDFlag = false, 
+        partnershipSubscriptionFlag = false,
+        groupSubscriptionFlag = false
       )
     )
     subscription
@@ -154,31 +161,8 @@ object PptTestData {
                                   subscription.last12MonthTotalTonnageAmt.longValue(),
                                 declaration =
                                   subscription.declaration,
-                                groupOrPartnershipSubscription =
+                                groupPartnershipSubscription =
                                   subscription.groupSubscription
-    )
-
-  def createSubscriptionUpdateRequest(
-    subscription: Subscription,
-    changeOfCircumstanceDetails: ChangeOfCircumstanceDetails
-  ) =
-    SubscriptionUpdateRequest(changeOfCircumstanceDetails = changeOfCircumstanceDetails,
-                              legalEntityDetails =
-                                subscription.legalEntityDetails,
-                              principalPlaceOfBusinessDetails =
-                                subscription.principalPlaceOfBusinessDetails,
-                              primaryContactDetails =
-                                subscription.primaryContactDetails,
-                              businessCorrespondenceDetails =
-                                subscription.businessCorrespondenceDetails,
-                              taxObligationStartDate =
-                                subscription.taxObligationStartDate,
-                              last12MonthTotalTonnageAmt =
-                                subscription.last12MonthTotalTonnageAmt.longValue(),
-                              declaration =
-                                subscription.declaration,
-                              groupOrPartnershipSubscription =
-                                subscription.groupSubscription
     )
 
 }

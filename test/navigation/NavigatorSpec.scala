@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,22 @@
 
 package navigation
 
-import base.SpecBase
-import base.utils.NonExportedPlasticTestHelper
 import config.FrontendAppConfig
+import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models._
 import org.mockito.MockitoSugar.mock
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import pages.returns._
 
-/** ***********************************************************
- * Returns journey (v1)
- * *************************************************************
- * start-date
- * Yes: continue to manufactured-components (y/n)
- * Yes: continue to manufactured-weight
- * No: imported-components (y/n)
- * Yes: imported-weight
- * No: human-medicines-packaging-weight
- * No: account
- * human-medicines-packaging-weight
- * exported-plastic-packaging-weight
- * recycled-plastic-packaging-weight
- * how-much-credit
- * check-your-return
- * *********************************************************** */
 //todo duplicated tests? check if can be removed
-class NavigatorSpec extends SpecBase {
+class NavigatorSpec extends AnyFreeSpec with Matchers {
 
   private val frontendConfig = mock[FrontendAppConfig]
-  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig))
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
+  val navigator = new Navigator(returns = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper))
 
   "Navigator" - {
 
@@ -65,58 +51,6 @@ class NavigatorSpec extends SpecBase {
 
           }
 
-        }
-
-        "for the DirectlyExportedPlasticPackagingPage" - {
-
-          "navigate to ExportedPlasticPackagingWeightPage when yes" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, true)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(NormalMode)
-
-
-          }
-
-          "navigate to NonExportedHumanMedicinesPlasticPackagingController when no" in {
-            val answers = UserAnswers("id").set(DirectlyExportedComponentsPage, false)
-
-            navigator.nextPage(DirectlyExportedComponentsPage,
-              NormalMode,
-              answers.get
-            ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
-          }
-        }
-
-        "for the ExportedPlasticPackagingWeightPage" - {
-
-          "navigate to NonExportedHumanMedicinesPlasticPackagingController" - {
-            "when exported amount is less then the total plastic package" in {
-              val answers = NonExportedPlasticTestHelper.createUserAnswer(
-                exportedAmount = 1000L,
-                manufacturedAmount = 1000L,
-                importedAmount = 50L)
-
-              navigator.nextPage(ExportedPlasticPackagingWeightPage,
-                NormalMode,
-                answers
-              ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
-
-            }
-          }
-
-          "navigate to the check your answer page when" - {
-            "exported amount greater the the total plastic package" in {
-              val answers = UserAnswers("id").set(ExportedPlasticPackagingWeightPage, 1000L)
-
-              navigator.nextPage(ExportedPlasticPackagingWeightPage,
-                NormalMode,
-                answers.get
-              ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
-            }
-          }
         }
 
         "for the NonExportedRecycledPlasticPackagingWeightPage" - {
@@ -167,6 +101,7 @@ class NavigatorSpec extends SpecBase {
           }
 
         }
+
       }
     }
   }

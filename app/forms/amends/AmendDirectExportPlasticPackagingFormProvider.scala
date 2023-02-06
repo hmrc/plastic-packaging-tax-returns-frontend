@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ class AmendDirectExportPlasticPackagingFormProvider @Inject() extends Mappings {
                      "amendDirectExportPlasticPackaging.error.wholeNumber",
                      "amendDirectExportPlasticPackaging.error.nonNumeric"
       )
-        .verifying(minimumValue(0L, "amendDirectExportPlasticPackaging.error.outOfRange.low"))
-        .verifying(maximumValue(99999999999L, "amendDirectExportPlasticPackaging.error.outOfRange.high"))
+        .verifying(minimumValue(0L, "amendDirectExportPlasticPackaging.error.outOfRange"))
+        .verifying(maximumValue(99999999999L, "amendDirectExportPlasticPackaging.error.outOfRange"))
     )
 
 }

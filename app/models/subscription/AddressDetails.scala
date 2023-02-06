@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,22 @@
 
 package models.subscription
 
+import models.subscription.AddressDetails.GB
 import play.api.libs.json.{Json, OFormat}
 
 case class AddressDetails(
   addressLine1: String,
   addressLine2: String,
-  addressLine3: Option[String] = None,
-  addressLine4: Option[String] = None,
-  postalCode: Option[String] = None,
-  countryCode: String
-)
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postalCode: Option[String],
+  countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
+){
+  def isGB: Boolean = countryCode == GB
+}
 
 object AddressDetails {
+  val GB = "GB"
   implicit val format: OFormat[AddressDetails] = Json.format[AddressDetails]
 
 }

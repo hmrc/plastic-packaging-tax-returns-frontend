@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,9 +55,15 @@ class DirectlyExportedComponentsViewSpec extends ViewSpecBase with ViewAssertion
     }
 
     "contain paragraph content" in{
+      val paragraph = view.getElementsByClass("govuk-body").text()
 
-      view.getElementsByClass("govuk-body").text() must include (messages("You will not be charged tax on these but you must still tell us about them. If you do not export these plastics within 12 months, you’ll need to pay tax on them."))
+      paragraph must include(messages("You will not be charged tax on these but you must still tell us about them."))
+      paragraph must include(messages("directlyExportedComponents.paragraph.1"))
+
+      paragraph must include(messages("If you do not export these plastics within 12 months of manufacture or import, you’ll need to pay tax on them."))
+      paragraph must include(messages("directlyExportedComponents.paragraph.2"))
     }
+
     "contain save & continue button" in {
 
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")

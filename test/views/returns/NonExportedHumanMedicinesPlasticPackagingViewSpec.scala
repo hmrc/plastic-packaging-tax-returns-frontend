@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,23 +31,40 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
   val plastic = 1234L
   val plasticInKg = plastic.asKg
 
-  private def createView(yesNoDirectExportedAnswer: Boolean = true): Html =
-    page(plastic, form, NormalMode, yesNoDirectExportedAnswer)(request, messages)
+  private def createView(yesNoDirectExportedAnswer: Boolean = true, yesNoAnotherBusinessExportedAnswer: Boolean = true): Html =
+    page(plastic, form, NormalMode, yesNoDirectExportedAnswer, yesNoAnotherBusinessExportedAnswer)(request, messages)
 
   "NonExportedHumanMedicinesPlasticPackagingView" should {
     val view = createView()
 
     "have a title" when {
-      "directly exported component answer is yes" in {
+      "directly exported component answer is yes and another business exported answer is yes" in {
         view.select("title").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
-
       }
 
-      "directly exported component answer is No" in {
-        val view = createView(false)
+      "directly exported component answer is yes and another business exported answer is no" in {
+        val view = createView(true,false)
+
+        view.select("title").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
+      }
+
+      "directly exported component answer is no and another business exported answer is yes" in {
+        val view = createView(false,true)
+
+        view.select("title").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
+      }
+
+      "directly exported component answer is No and another business exported answer is no" in {
+        val view = createView(false, false)
 
         view.select("title").text mustBe
           s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
@@ -55,15 +72,33 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
       }
     }
     "have a heading" when {
-      "directly exported component answer is yes" in {
+      "directly exported component answer is yes and another business exported answer is yes" in {
         view.select("h1").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
 
         view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
       }
 
-      "directly exported component answer is No" in {
-        val view = createView(false)
+      "directly exported component answer is yes and another business exported answer is no" in {
+        val view = createView(true,false)
+
+        view.select("h1").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
+
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+      }
+
+      "directly exported component answer is no and another business exported answer is yes" in {
+        val view = createView(false,true)
+
+        view.select("h1").text mustBe
+          s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
+
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+      }
+
+      "directly exported component answer is no and another business exported answer is no" in {
+        val view = createView(false, false)
 
         view.select("h1").text mustBe
           s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines?"

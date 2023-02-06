@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,8 @@ trait SpecBase
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[SessionRepository].toInstance(mockSessionRepo)
       )
 
   protected def applicationBuilderNotEnrolled(
@@ -106,12 +107,16 @@ trait SpecBase
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[AuthCheckAction].to[FakeAuthActionNotEnrolled],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[SessionRepository].toInstance(mock[SessionRepository])
       )
 
   protected def applicationBuilderAgent(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
-      .overrides(bind[AuthAgentAction].to[FakeAgentIdentifierAction])
+      .overrides(
+        bind[AuthAgentAction].to[FakeAgentIdentifierAction],
+        bind[SessionRepository].toInstance(mock[SessionRepository])
+      )
 
   protected def applicationBuilderFailedAuth(
     userAnswers: Option[UserAnswers] = None
@@ -120,7 +125,8 @@ trait SpecBase
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierActionFailed],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[SessionRepository].toInstance(mock[SessionRepository])
       )
 
 }

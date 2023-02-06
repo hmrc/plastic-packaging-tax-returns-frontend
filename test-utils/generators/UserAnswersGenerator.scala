@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.amends._
+import pages.changeGroupLead._
 import pages.returns._
 import pages.returns.credits._
 
@@ -31,14 +32,20 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] ::
+    arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] ::
+    arbitrary[(AnotherBusinessExportedPage.type, JsValue)] ::
+    arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] ::
+    arbitrary[(MainContactNamePage.type, JsValue)] ::
+    arbitrary[(MainContactJobTitlePage.type, JsValue)] ::
     arbitrary[(ExportedCreditsPage.type, JsValue)] ::
     arbitrary[(ConvertedCreditsPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
     arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
-    arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
+    arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
     arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
-    arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] ::
+    arbitrary[(DirectlyExportedPage.type, JsValue)] ::
     arbitrary[(AgentsPage.type, JsValue)] ::
     arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
@@ -46,7 +53,7 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ImportedPlasticPackagingPage.type, JsValue)] ::
-      arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
       arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendManufacturedPlasticPackagingPage.type, JsValue)] ::
       arbitrary[(AmendImportedPlasticPackagingPage.type, JsValue)] ::

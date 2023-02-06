@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package models.returns
 
-import models.returns.CreditsClaimedDetails.{CreditConvertedAnswerPartialKey, CreditConvertedWeightPartialKey, CreditExportedAnswerPartialKey, CreditExportedWeightPartialKey, CreditTotalPartialKey, CreditsTotalWeightPartialKey}
+import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(

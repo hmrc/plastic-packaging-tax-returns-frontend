@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,167 +16,163 @@
 
 package controllers.amends
 
-import base.SpecBase
-import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
+import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.UserAnswers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.UserAnswers.SaveUserAnswerFunc
+import models.requests.DataRequest
+import models.returns._
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
 import pages.amends.AmendDirectExportPlasticPackagingPage
-import play.api.inject.bind
-import play.api.mvc.Call
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import queries.{Gettable, Settable}
+import support.AmendExportedData
 import views.html.amends.AmendDirectExportPlasticPackagingView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
-class AmendDirectExportPlasticPackagingControllerSpec extends SpecBase with MockitoSugar {
+class AmendDirectExportPlasticPackagingControllerSpec
+  extends PlaySpec
+    with JourneyActionAnswer
+    with MockitoSugar
+    with AmendExportedData
+    with BeforeAndAfterEach{
 
-  override def userAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(ReturnDisplayApiCacheable, retDisApi).get
-    .set(AmendObligationCacheable, taxReturnOb).get
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[Long]]
+  private val saveFunction = mock[SaveUserAnswerFunc]
+  private val formProvider = mock[AmendDirectExportPlasticPackagingFormProvider]
+  private val messagesApi = mock[MessagesApi]
+  private val cacheConnector = mock[CacheConnector]
+  private val journeyAction = mock[JourneyAction]
+  private val view = mock[AmendDirectExportPlasticPackagingView]
 
-  val formProvider = new AmendDirectExportPlasticPackagingFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  private val sut = new AmendDirectExportPlasticPackagingController(
+    messagesApi,
+    cacheConnector,
+    journeyAction,
+    formProvider,
+    stubMessagesControllerComponents(),
+    view
+  )
 
-  val validAnswer: Long = 0
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-  lazy val amendDirectExportPlasticPackagingRoute =
-    routes.AmendDirectExportPlasticPackagingController.onPageLoad().url
+    reset(messagesApi, cacheConnector, journeyAction, view, dataRequest, form, saveFunction)
 
-  "AmendDirectExportPlasticPackaging Controller" - {
+    when(view.apply(any)(any, any)).thenReturn(Html("correct view"))
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+  }
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(request,
-                                                                 messages(application)
-        ).toString
-      }
+  "onPageLoad" should {
+    "use the journey action" in {
+      sut.onPageLoad
+      verify(journeyAction).apply(any)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "return 200" in {
+      when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(mock[Form[Long]])
+      when(dataRequest.userAnswers.get(any[Gettable[TaxReturnObligation]])(any)).thenReturn(Some(taxReturnOb))
 
-      val ans = userAnswers.set(AmendDirectExportPlasticPackagingPage, validAnswer).success.value
+      val result = sut.onPageLoad(dataRequest)
 
-      val application = applicationBuilder(userAnswers = Some(ans)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
-
-        val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer))(
-          request,
-          messages(application)
-        ).toString
-      }
+      status(result) mustEqual OK
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "display a view" in {
+      when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(form)
+      when(dataRequest.userAnswers.get(any[Gettable[TaxReturnObligation]])(any)).thenReturn(Some(taxReturnOb))
 
-      val mockCacheConnector = mock[CacheConnector]
+      val result = sut.onPageLoad(dataRequest)
 
-      val ans = userAnswers.set(AmendDirectExportPlasticPackagingPage, validAnswer).success.value
-
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(ans)).overrides(
-          bind[CacheConnector].toInstance(mockCacheConnector)
-        ).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
-      }
+      status(result) mustEqual OK
+      verify(view).apply(meq(form))(any,any)
     }
 
-    "must redirect when previous tax return is not in user answers" in {
+    "redirect if already submitted" in {
+      when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(mock[Form[Long]])
+      when(dataRequest.userAnswers.get(any[Gettable[TaxReturnObligation]])(any)).thenReturn(None)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val result = sut.onPageLoad(dataRequest)
 
-      running(application) {
-        val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(routes.SubmittedReturnsController.onPageLoad().url)
+    }
+  }
 
-        val result = route(application, request).value
-
-        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
-      }
+  "onSubmit" should {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onSubmit(FakeRequest())))
+      verify(journeyAction).async(any)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "set UserAnswer" in {
+      setUpMocks
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      await(sut.onSubmit.skippingJourneyAction(dataRequest))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[AmendDirectExportPlasticPackagingView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request,
-          messages(application)
-        ).toString
-      }
+      verify(dataRequest.userAnswers).setOrFail(meq(AmendDirectExportPlasticPackagingPage), meq(10L), any)(any)
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "save a empty userAnswer to cache" in {
+      val ans = createUserAnswers
 
-      val application = applicationBuilder(userAnswers = None).build()
+      setUpMocks
+      when(dataRequest.userAnswers).thenReturn(ans)
+      when(dataRequest.pptReference).thenReturn("123")
 
-      running(application) {
-        val request = FakeRequest(GET, amendDirectExportPlasticPackagingRoute)
+      await(sut.onSubmit(dataRequest))
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
+      verify(saveFunction).apply(ans.set(AmendDirectExportPlasticPackagingPage, 10L).get, true)
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "redirect to amend exported by another business page" in {
+      setUpMocks
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, amendDirectExportPlasticPackagingRoute)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(controllers.amends.routes.AmendExportedByAnotherBusinessController.onPageLoad.url)
     }
+
+    "return a bad request with an error on view" in {
+      val formError = new AmendDirectExportPlasticPackagingFormProvider()().withError("error", "error message")
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(formError)
+
+      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual BAD_REQUEST
+      verify(view).apply(meq(formError))(any,any)
+    }
+
+  }
+
+  private def setUpMocks: Unit = {
+    when(formProvider.apply()).thenReturn(form)
+    when(form.bindFromRequest()(any, any)).thenReturn(new AmendDirectExportPlasticPackagingFormProvider()().bind(Map("value" -> "10")))
+    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(UserAnswers("123"))
+    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
+    when(saveFunction.apply(any, any)).thenReturn(Future.successful(true))
   }
 }

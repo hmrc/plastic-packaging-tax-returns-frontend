@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc._
 import views.html.returns.credits.ConvertedCreditsView
 
 import javax.inject.Inject
@@ -35,36 +36,35 @@ class ConvertedCreditsController @Inject()
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   formProvider: ConvertedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) 
+  extends I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = {
+    journeyAction {
+      implicit request =>
+        val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
+        Results.Ok(view(preparedForm, mode))
+    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-
-        formProvider()
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-            formValue => {
-              request.userAnswers
-                .setOrFail(ConvertedCreditsPage, formValue)
-                .setOrFail(WhatDoYouWantToDoPage, true)
-                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(updatedAnswers => Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
-            }
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
+    implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
+          formValue => {
+            request.userAnswers
+              .setOrFail(ConvertedCreditsPage, formValue)
+              .setOrFail(WhatDoYouWantToDoPage, true)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
+          }
+        )
+  }
 }

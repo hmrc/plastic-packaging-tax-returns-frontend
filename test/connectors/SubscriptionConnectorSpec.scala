@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,15 @@
 package connectors
 
 import base.utils.ConnectorISpec
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import models.subscription.subscriptionDisplay.ChangeOfCircumstanceDetails
-import models.subscription.subscriptionUpdate.SubscriptionUpdateResponse
 import support.PptTestData._
 
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with EitherValues {
@@ -87,33 +84,23 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
     }
   }
 
-  "update subscription details" should {
+  "changeGroupLead" should {
 
     "return success response" when {
 
-      "updating existing subscription details" in {
+      "OK result is response is returned" in {
 
         val pptReference = UUID.randomUUID().toString
-        val expectedUpdateResponse = SubscriptionUpdateResponse(pptReference = pptReference,
-                                                                processingDate = ZonedDateTime.now,
-                                                                formBundleNumber = "123456789"
-        )
+
         givenUpdateSubscriptionEndpointReturns(Status.OK,
                                                pptReference,
-                                               Json.toJsObject(expectedUpdateResponse).toString
+                                               "some body"
         )
 
-        val res = await(
-          connector.update(
-            pptReference,
-            createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
-                                            ChangeOfCircumstanceDetails("Update to details")
-            )
-          )
-        )
+        val res = await(connector.changeGroupLead(pptReference))
 
-        res mustBe expectedUpdateResponse
-
+        res.status mustBe Status.OK
+        res.body mustBe "some body"
       }
     }
 
@@ -123,32 +110,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
         val pptReference = UUID.randomUUID().toString
         givenUpdateSubscriptionEndpointReturns(Status.BAD_REQUEST, pptReference)
 
-        intercept[DownstreamServiceError] {
-          await(
-            connector.update(
-              pptReference,
-              createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
-                                              ChangeOfCircumstanceDetails("Update to details")
-              )
-            )
-          )
-        }
-      }
-
-      "service returns invalid response" in {
-        val pptReference = UUID.randomUUID().toString
-        givenUpdateSubscriptionEndpointReturns(Status.CREATED, pptReference, "someRubbish")
-
-        intercept[DownstreamServiceError] {
-          await(
-            connector.update(
-              pptReference,
-              createSubscriptionUpdateRequest(ukLimitedCompanySubscription,
-                                              ChangeOfCircumstanceDetails("Update to details")
-              )
-            )
-          )
-        }
+        intercept[DownstreamServiceError](await(connector.changeGroupLead(pptReference)))
       }
     }
   }
@@ -173,7 +135,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
     body: String = ""
   ) =
     stubFor(
-      WireMock.put(s"/subscriptions/$pptReference")
+      WireMock.post(s"/change-group-lead/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)

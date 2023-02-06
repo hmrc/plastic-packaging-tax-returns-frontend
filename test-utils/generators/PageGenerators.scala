@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,29 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.amends._
+import pages.changeGroupLead._
 import pages.returns._
 import pages.returns.credits._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryAmendExportedByAnotherBusinessPage: Arbitrary[AmendExportedByAnotherBusinessPage.type] =
+    Arbitrary(AmendExportedByAnotherBusinessPage)
+
+  implicit lazy val arbitraryAnotherBusinessExportWeightPage: Arbitrary[AnotherBusinessExportedWeightPage.type] =
+    Arbitrary(AnotherBusinessExportedWeightPage)
+
+  implicit lazy val arbitraryPlasticExportedByAnotherBusinessPage: Arbitrary[AnotherBusinessExportedPage.type] =
+    Arbitrary(AnotherBusinessExportedPage)
+
+  implicit lazy val arbitraryMainContactNamePage: Arbitrary[MainContactNamePage.type] =
+    Arbitrary(MainContactNamePage)
+
+  implicit lazy val arbitraryNewGroupLeadEnterContactAddressPage: Arbitrary[NewGroupLeadEnterContactAddressPage.type] =
+    Arbitrary(NewGroupLeadEnterContactAddressPage)
+
+  implicit lazy val arbitraryMainContactJobTitlePage: Arbitrary[MainContactJobTitlePage.type] =
+    Arbitrary(MainContactJobTitlePage)
 
   implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
     Arbitrary(ExportedCreditsPage)
@@ -39,8 +58,8 @@ trait PageGenerators {
   implicit lazy val arbitraryRecycledPlasticPackagingPage: Arbitrary[NonExportedRecycledPlasticPackagingPage.type] =
     Arbitrary(NonExportedRecycledPlasticPackagingPage)
 
-  implicit lazy val arbitraryDirectlyExportedComponentsPage: Arbitrary[DirectlyExportedComponentsPage.type] =
-    Arbitrary(DirectlyExportedComponentsPage)
+  implicit lazy val arbitraryDirectlyExportedComponentsPage: Arbitrary[DirectlyExportedPage.type] =
+    Arbitrary(DirectlyExportedPage)
 
   implicit lazy val arbitraryAgentsPage: Arbitrary[AgentsPage.type] =
     Arbitrary(AgentsPage)
@@ -69,8 +88,8 @@ trait PageGenerators {
     Arbitrary(ImportedPlasticPackagingPage)
 
   implicit lazy val arbitraryExportedPlasticPackagingWeightPage
-    : Arbitrary[ExportedPlasticPackagingWeightPage.type] =
-    Arbitrary(ExportedPlasticPackagingWeightPage)
+    : Arbitrary[DirectlyExportedWeightPage.type] =
+    Arbitrary(DirectlyExportedWeightPage)
 
   implicit lazy val arbitraryAmendRecycledPlasticPackagingPage
     : Arbitrary[AmendRecycledPlasticPackagingPage.type] =

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,16 @@ package controllers.returns
 
 import audit.Auditor
 import cacheables.ReturnObligationCacheable
-import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.Mode
-import models.Mode.NormalMode
 import models.requests.OptionalDataRequest
-import navigation.{Navigator, ReturnsJourneyNavigator}
+import navigation.ReturnsJourneyNavigator
 import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
 
@@ -82,16 +79,16 @@ class StartYourReturnController @Inject()(
       val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
 
       form().bindFromRequest().fold(
-        formWithErrors => {
+        formWithErrors =>
           Future.successful(
             BadRequest(view(formWithErrors, obligation, isFirstReturn)))
-        },
-        formValue => {
+        ,
+        formValue =>
           userAnswers
             .setOrFail(StartYourReturnPage, formValue)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
             .map(_ => act(formValue, isFirstReturn))
-        }      )
+      )
   }
 
   private def act(formValue: Boolean, isFirstReturn: Boolean) (implicit request: OptionalDataRequest[_]) = {

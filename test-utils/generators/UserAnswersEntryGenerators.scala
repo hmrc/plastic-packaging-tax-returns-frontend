@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,65 @@
 
 package generators
 
+import models.changeGroupLead.NewGroupLeadAddressDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.amends._
 import pages.returns._
 import pages.returns.credits._
-
+import pages.changeGroupLead._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryAmendExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendExportedByAnotherBusinessPage.type]
+        value <- arbitrary[Long].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry: Arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AnotherBusinessExportedWeightPage.type]
+        value <- arbitrary[Long].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryPlasticExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AnotherBusinessExportedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AnotherBusinessExportedPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+    implicit lazy val arbitraryNewGroupLeadEnterContactAddressUserAnswersEntry: Arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[NewGroupLeadEnterContactAddressPage.type]
+        value <- arbitrary[NewGroupLeadAddressDetails].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryMainContactNameUserAnswersEntry: Arbitrary[(MainContactNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[MainContactNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryMainContactJobTitleUserAnswersEntry: Arbitrary[(MainContactJobTitlePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[MainContactJobTitlePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryExportedCreditsUserAnswersEntry: Arbitrary[(ExportedCreditsPage.type, JsValue)] =
     Arbitrary {
@@ -67,10 +116,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry: Arbitrary[(DirectlyExportedComponentsPage.type, JsValue)] =
+  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry: Arbitrary[(DirectlyExportedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[DirectlyExportedComponentsPage.type]
+        page  <- arbitrary[DirectlyExportedPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -136,10 +185,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     }
 
   implicit lazy val arbitraryExportedPlasticPackagingWeightUserAnswersEntry
-    : Arbitrary[(ExportedPlasticPackagingWeightPage.type, JsValue)] =
+    : Arbitrary[(DirectlyExportedWeightPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ExportedPlasticPackagingWeightPage.type]
+        page  <- arbitrary[DirectlyExportedWeightPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }

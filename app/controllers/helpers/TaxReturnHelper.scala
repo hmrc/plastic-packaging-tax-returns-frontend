@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package controllers.helpers
 
-import connectors.{ObligationsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{ObligationsConnector, TaxReturnsConnector}
 import models.returns._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -42,14 +42,13 @@ class TaxReturnHelper @Inject()(
     }
   }
 
-  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[TaxReturnObligation] = {
+  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Option[TaxReturnObligation]] = {
     obligationsConnector.getFulfilled(pptId)
       .map { obligations => obligations.filter(o => o.periodKey == periodKey) }
-      .flatMap { sequence: Seq[TaxReturnObligation] => 
-        if (sequence.length == 1)
-          Future.successful(sequence.head)
-        else
-          Future.failed(new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}"))
+      .map {
+        case Seq(obligation) => Some(obligation)
+        case Nil => None
+        case sequence => throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
       }
   }
 

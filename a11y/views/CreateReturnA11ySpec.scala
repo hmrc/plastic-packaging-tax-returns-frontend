@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,22 +58,6 @@ class CreateReturnA11ySpec
 
   }
 
-  "StartYourReturnView" should {
-    val form = new StartYourReturnFormProvider()()
-    val page = inject[StartYourReturnView]
-
-    def render(form: Form[Boolean]): String =
-      page(form, aTaxObligation, true)(request, messages).toString()
-
-    "pass accessibility checks without error" in {
-      render(form) must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
-    }
-  }
-
   "ReturnConfirmationView" should {
     "pass accessibility checks" in {
       val page: ReturnConfirmationView = inject[ReturnConfirmationView]
@@ -116,8 +100,8 @@ class CreateReturnA11ySpec
     val form = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
     val page = inject[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
-    def render(form: Form[Long], directlyExportedAnswer: Boolean = true): String =
-      page(amount, form, NormalMode, true)(request, messages).toString()
+    def render(form: Form[Long], directlyExportedAnswer: Boolean = true, anotherBusinessExportedAnswer: Boolean = true): String =
+      page(amount, form, NormalMode, true, true)(request, messages).toString()
 
     "pass accessibility checks pass" when {
       "directly exported page answer is Yes" in {
@@ -125,7 +109,7 @@ class CreateReturnA11ySpec
       }
 
       "directly exported page answer is No" in {
-        render(form, false) must passAccessibilityChecks
+        render(form, false, false) must passAccessibilityChecks
       }
     }
 
@@ -232,7 +216,4 @@ class CreateReturnA11ySpec
       Seq(ConfirmManufacturedPlasticPackaging).flatMap(_.row(answer))
     )
   }
-
-  //TODO: Add spec for ReturnsCheckYourAnswersView once refactored
-
 }

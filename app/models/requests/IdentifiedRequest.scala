@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,16 @@ package models.requests
 
 import models.SignedInUser
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 case class IdentifiedRequest[+A](
   request: Request[A],
   user: SignedInUser,
   pptReference: String
 ) extends WrappedRequest[A](request) {
+
+  def headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
   def cacheKey: String = s"${user.identityData.internalId}-$pptReference"
 

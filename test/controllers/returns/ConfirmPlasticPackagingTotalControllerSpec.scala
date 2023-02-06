@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,198 +16,166 @@
 
 package controllers.returns
 
-import base.SpecBase
-import cacheables.ReturnObligationCacheable
-import controllers.returns.{routes => returnsRoutes}
+
+import base.utils.JourneyActionAnswer
+import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
+import controllers.actions.JourneyAction
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
-import models.Mode.CheckMode
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.MockitoSugar.mock
+import models.requests.DataRequest
+import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
-import pages.returns.{ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
-import play.api.Application
-import play.api.inject.bind
-import play.api.test.FakeRequest
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
+import pages.returns._
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.PrintLong
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.returns.ConfirmPlasticPackagingTotalView
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.Try
 
-class ConfirmPlasticPackagingTotalControllerSpec extends SpecBase with BeforeAndAfterEach {
+class ConfirmPlasticPackagingTotalControllerSpec
+  extends PlaySpec
+    with MockitoSugar
+    with JourneyActionAnswer
+    with BeforeAndAfterEach {
 
-  private val view    = mock[ConfirmPlasticPackagingTotalView]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messages = mock[Messages]
+  private val messagesApi = mock[MessagesApi]
+  private val journeyAction = mock[JourneyAction]
+  private val view = mock[ConfirmPlasticPackagingTotalView]
+  private val cacheConnector = mock[CacheConnector]
+  private val navigator = mock[ReturnsJourneyNavigator]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
+  private val sut = new ConfirmPlasticPackagingTotalController(
+    messagesApi,
+    journeyAction,
+    stubMessagesControllerComponents(),
+    view,
+    cacheConnector,
+    navigator,
+    nonExportedAmountHelper
+  )
 
   override def beforeEach() = {
     super.beforeEach()
-    reset(view)
-    when(view.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+
+    reset(journeyAction, view,cacheConnector, dataRequest, messages, navigator)
+
+    when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+    when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
 
-  lazy val confirmPlasticPackagingTotalRoute = controllers.returns.routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
+  "onPageLoad" should {
 
-  "ConfirmPlasticPackagingTotal Controller" - {
+    "use the journey action" in {
+      sut.onPageLoad
+      verify(journeyAction).apply(any)
+    }
 
-    "when displaying the page" - {
-      
-      "fail if no data found" in {
+    "return OK" in {
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer)
 
-        val application = buildApplication(emptyUserAnswers)
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
-        running(application) {
-          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
+      status(result) mustEqual OK
+    }
 
-          val result = route(application, request).value
+    "pass a summary list to the view" in {
+      when(dataRequest.userAnswers).thenReturn(createUserAnswer)
+      when(messages.apply("site.yes")).thenReturn("Yes")
+      when(messages.apply("10kg")).thenReturn("manufacture weight")
+      when(messages.apply("1kg")).thenReturn("imported weigh")
+      when(messages.apply("50kg")).thenReturn("total weight")
 
-          intercept[IllegalStateException](status(result))
-        }
-      }
+      await(sut.onPageLoad.skippingJourneyAction(dataRequest))
 
-      "must display all the answer with total" in {
+      val captor: ArgumentCaptor[SummaryList] = ArgumentCaptor.forClass(classOf[SummaryList])
+      verify(view).apply(captor.capture())(any, any)
+      captor.getValue.rows.length mustEqual 5
+      captor.getValue.rows(0).value.content.asHtml.toString() mustEqual "Yes"
+      captor.getValue.rows(1).value.content.asHtml.toString() mustEqual "manufacture weight"
+      captor.getValue.rows(2).value.content.asHtml.toString() mustEqual "Yes"
+      captor.getValue.rows(3).value.content.asHtml.toString() mustEqual "imported weigh"
+      captor.getValue.rows(4).value.content.asHtml.toString() mustEqual "total weight"
+    }
 
-        val application: Application = buildApplication(
-          createUserAnswer(manufacturedPlastic = true -> 20000L, importedPlastic = true -> 25000L).success.value)
+    "redirect on account page if cannot calculate total plastic" in {
+      when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
-        running(application) {
-          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
+      val result = sut.onPageLoad.skippingJourneyAction(dataRequest)
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-
-          val captor: ArgumentCaptor[SummaryList] = ArgumentCaptor.forClass(classOf[SummaryList])
-          verify(view).apply(captor.capture())(any(), any())
-          assertResults(application, captor.getValue, ("site.yes", 20000), ("site.yes", 25000))
-        }
-      }
-
-      "should display the No answer" in {
-        val application: Application = buildApplication(createUserNoAnswer)
-
-        running(application) {
-          val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-
-          val captor: ArgumentCaptor[SummaryList] = ArgumentCaptor.forClass(classOf[SummaryList])
-          verify(view).apply(captor.capture())(any(), any())
-          assertResults(
-            application,
-            captor.getValue,
-            expectedManufactured = "site.no" -> 0,
-            expectedImported = "site.no" -> 0)
-        }
-      }
-
-      "raise and error" - {
-        "when not authorised" in {
-          val application = applicationBuilderFailedAuth(userAnswers = None).build()
-
-          running(application) {
-            val request = FakeRequest(GET, confirmPlasticPackagingTotalRoute)
-
-            val result = route(application, request).value
-
-            intercept[InsufficientEnrolments](status(result))
-          }
-        }
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
   }
 
-  private def buildApplication(userAnswer: UserAnswers) = {
-    applicationBuilder(userAnswers = Some(userAnswer))
-      .overrides(bind[ConfirmPlasticPackagingTotalView].toInstance(view))
-      .build()
-  }
-
-  private def createUserAnswer
-  (
-    manufacturedPlastic: (Boolean, Long),
-    importedPlastic: (Boolean, Long)
-  ): Try[UserAnswers] = {
-    UserAnswers("123").set(ReturnObligationCacheable, taxReturnOb).get
-      .set(ManufacturedPlasticPackagingPage, manufacturedPlastic._1).get
-      .set(ManufacturedPlasticPackagingWeightPage, manufacturedPlastic._2).get
-      .set(ImportedPlasticPackagingPage, importedPlastic._1).get
-      .set(ImportedPlasticPackagingWeightPage, importedPlastic._2)
-  }
-
-  private def createUserNoAnswer: UserAnswers = {
-    UserAnswers("123").set(ReturnObligationCacheable, taxReturnOb).get
-      .set(ManufacturedPlasticPackagingPage, false).get
-      .set(ImportedPlasticPackagingPage, false).get
-  }
-
-  private def assertResults
-  (
-    application: Application,
-    actual: SummaryList,
-    expectedManufactured: (String, Long),
-    expectedImported: (String, Long)
-  ): Unit = {
-
-    actual.rows.size mustBe 5
-
-    assertRowResults(
-      application,
-      actual.rows(0),
-      "confirmPlasticPackagingTotal.manufacturedPlasticPackaging.label",
-      messages(application, expectedManufactured._1),
-      Some(returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url))
-
-    assertRowResults(
-      application,
-      actual.rows(1),
-      "confirmPlasticPackagingTotal.weightManufacturedPlasticPackaging.label",
-      expectedManufactured._2.asKg,
-      Some(returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
-
-    assertRowResults(
-      application,
-      actual.rows(2),
-      "confirmPlasticPackagingTotal.importedPlasticPackaging.label",
-      messages(application, expectedImported._1),
-      Some(returnsRoutes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url))
-
-    assertRowResults(
-      application,
-      actual.rows(3),
-      "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label",
-      expectedImported._2.asKg,
-      Some(returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode).url))
-
-    assertRowResults(
-      application,
-      actual.rows(4),
-      "confirmPlasticPackagingTotal.total.label",
-      (expectedManufactured._2 + expectedImported._2).asKg
-    )
-  }
-
-  private def assertRowResults
-  (
-    app: Application,
-    row: SummaryListRow,
-    expectedKey: String,
-    expectedAnswer: String,
-    expectedUrl: Option[String] = None,
-    change: Option[String] = None
-  ): Unit = {
-    row.key.content.asInstanceOf[Text].value mustBe messages(app, expectedKey)
-    row.value.content.asInstanceOf[Text].value mustBe expectedAnswer
-    change.map { value =>
-      row.actions.get.items(0).content.asInstanceOf[Text].value mustBe messages(app, value)
+  "onwardRouting" should {
+    "invoke the journey action" in {
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.submit(dataRequest)))
+      verify(journeyAction).async(any)
     }
-    expectedUrl.map { value => row.actions.get.items(0).href mustBe value }
+
+    "redirect" in {
+      setUpMocks(createUserAnswer)
+
+      val result = sut.submit.skippingJourneyAction(dataRequest)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(Call("GET", "/foo").url)
+    }
+
+    "set the user answer" in {
+      var saveUserAnswerToCache: Option[UserAnswers] = None
+      val ans = createUserAnswer
+
+      setUpMocks(ans)
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((a: UserAnswers, b: Boolean) => {
+        saveUserAnswerToCache = Some(a)
+        Future.successful(true)
+      })
+
+      await(sut.submit.skippingJourneyAction(dataRequest))
+
+      saveUserAnswerToCache mustBe Some(ans)
+    }
+
+    "save userAnswer to cache" in {
+      setUpMocks(createUserAnswer)
+
+      await(sut.submit.skippingJourneyAction(dataRequest))
+
+      verify(cacheConnector).saveUserAnswerFunc(ArgumentMatchers.eq("123"))(any)
+    }
+  }
+
+  private def setUpMocks(userAnswer: UserAnswers): Unit = {
+    when(dataRequest.userAnswers).thenReturn(userAnswer)
+    when(dataRequest.pptReference).thenReturn("123")
+    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+    when(navigator.confirmTotalPlasticPackagingRoute(any)).thenReturn(Call("GET", "/foo"))
+  }
+
+  private def createUserAnswer: UserAnswers = {
+    UserAnswers("123")
+      .set(ManufacturedPlasticPackagingPage, true).get
+      .set(ManufacturedPlasticPackagingWeightPage, 10L).get
+      .set(ImportedPlasticPackagingPage, true).get
+      .set(ImportedPlasticPackagingWeightPage, 1L).get
   }
 }

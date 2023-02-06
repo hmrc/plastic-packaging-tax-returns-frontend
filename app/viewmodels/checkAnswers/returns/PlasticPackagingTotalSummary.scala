@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers.returns
 
+import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
-import models.returns.{ImportedPlasticWeight, ManufacturedPlasticWeight}
-import pages.returns.{ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingWeightPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.PrintLong
@@ -27,21 +26,12 @@ import viewmodels.govuk.all.FluentValue
 import viewmodels.govuk.summarylist.{SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
-object PlasticPackagingTotalSummary extends SummaryViewModel {
+class PlasticPackagingTotalSummary(nonExportedAmountHelper: NonExportedAmountHelper) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     Some(SummaryListRowViewModel(
       key = "confirmPlasticPackagingTotal.total.label",
-      value = ValueViewModel(calculateTotal(answers).asKg).withCssClass("total-weight"),
+      value = ValueViewModel(nonExportedAmountHelper.totalPlasticAdditions(answers).getOrElse(0L).asKg).withCssClass("total-weight"),
       actions = Seq.empty
     ))
 
-  //todo if these exceptions get thrown we should redirect the user to the questions to input them
-  def calculateTotal(answers: UserAnswers): Long = {
-    answers.get(ManufacturedPlasticPackagingWeightPage).map(
-      value => ManufacturedPlasticWeight(value).totalKg
-    ).getOrElse(throw new IllegalStateException("Manufactured Plastic Weight not found.")) +
-      answers.get(ImportedPlasticPackagingWeightPage).map(
-        value => ImportedPlasticWeight(value).totalKg
-      ).getOrElse(throw new IllegalStateException("Imported Plastic Weight not found."))
-  }
 }

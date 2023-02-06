@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("deregistered.title"))) {
+@layout(pageTitle = titleNoForm(messages("deregistered.title")), showBackLink = false) {
 
-    <h1 class="govuk-heading-xl">@messages("deregistered.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("deregistered.heading")</h1>
 
     @paragraph(content = link(id = "bta-link", text = messages("deregistered.bta.link"), call = Call("GET", appConfig.businessAccountUrl)))
 }

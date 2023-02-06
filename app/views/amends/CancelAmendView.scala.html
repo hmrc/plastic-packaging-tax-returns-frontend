@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,48 @@
  *@
 
 @import models.returns.TaxReturnObligation
+@import views.html.components.paragraphBody
+@import views.html.components.paragraph
+@import views.html.components.heading
+@import views.html.components.Link
+@import views.html.components.bulletList
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    paragraph: paragraph,
+    heading: heading,
+    link: Link,
+    bulletList: bulletList
 )
-
 @(form: Form[_], obligation: TaxReturnObligation)(implicit request: Request[_], messages: Messages)
 
-@pageHeading =  @{messages("cancelAmend.title",
-                messages(s"month.${obligation.fromDate.getMonthValue}"),
-                messages(s"month.${obligation.toDate.getMonthValue}"),
-                obligation.toDate.getYear.toString)
-                }
+@pageHeading = @{
 
+    messages(
+        "cancelAmend.title",
+        messages(s"month.${obligation.fromDate.getMonthValue}"),
+        messages(s"month.${obligation.toDate.getMonthValue}"),
+        obligation.toDate.getYear.toString
+    )
+}
 
-@layout(pageTitle = title(form, pageHeading)) {
+@layout(pageTitle = title(form, pageHeading, Some(messages("return.title.tail"))), showBackLink = false) {
 
-    @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
-
+     @formHelper(action = controllers.amends.routes.CancelAmendController.onSubmit, 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(pageHeading).asPageHeading()
             )
         )
-
         @govukButton(
             ButtonViewModel(messages("site.button.continue"))
         )

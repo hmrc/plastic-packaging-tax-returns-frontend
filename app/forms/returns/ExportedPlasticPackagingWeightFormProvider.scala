@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ class ExportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
                      "exportedPlasticPackagingWeight.error.wholeNumber",
                      "exportedPlasticPackagingWeight.error.nonNumeric"
       )
-        .verifying(minimumValue(0L, "exportedPlasticPackagingWeight.error.outOfRange.low"))
-        .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange.high"))
+        .verifying(minimumValue(0L, "exportedPlasticPackagingWeight.error.outOfRange"))
+        .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange"))
     )
 
 }

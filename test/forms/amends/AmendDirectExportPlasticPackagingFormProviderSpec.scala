@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
       minimum = minimum,
       expectedError = FormError(
         fieldName,
-        "amendDirectExportPlasticPackaging.error.outOfRange.low",
+        "amendDirectExportPlasticPackaging.error.outOfRange",
         Seq(minimum)
       )
     )
@@ -49,7 +49,7 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
       maximum = maximum,
       expectedError = FormError(
         fieldName,
-        "amendDirectExportPlasticPackaging.error.outOfRange.high",
+        "amendDirectExportPlasticPackaging.error.outOfRange",
         Seq(maximum)
       )
     )

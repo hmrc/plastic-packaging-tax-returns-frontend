@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,63 +33,81 @@ class NonExportedHumanMedicinesPlasticPackagingWeightViewSpec extends ViewSpecBa
   val plastic = 1234L
   private val plasticAsKg = plastic.asKg
 
-  private def createView(directlyExportedYesNoAnswer: Boolean = true): Html =
-    page(plastic, form, NormalMode, directlyExportedYesNoAnswer)(request, messages)
+  private def createView(directlyExportedYesNoAnswer: Boolean = true, anotherBusinessExportedYesNoAnswer: Boolean = true): Html =
+    page(plastic, form, NormalMode, directlyExportedYesNoAnswer, anotherBusinessExportedYesNoAnswer)(request, messages)
 
   "NonExportedHumanMedicinesPlasticPackagingWeightView" should {
     val view = createView()
 
     "have a title" when {
-      "directly exported page answer is Yes" in {
-        view.select("title").text mustBe
-          s"Out of the $plasticAsKg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+      "directly exported component answer is yes and another business exported answer is yes" in {
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
       }
 
-      "directly exported page answer is No" in {
-        val view = createView(false)
+      "directly exported component answer is yes and another business exported answer is no" in {
+        val view = createView(true,false)
+
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
+      }
+
+      "directly exported component answer is no and another business exported answer is yes" in {
+        val view = createView(false,true)
+
+        view.select("title").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
+        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg))
+      }
+
+      "directly exported component answer is No and another business exported answer is no" in {
+        val view = createView(false, false)
 
         view.select("title").text mustBe s"How much of your $plasticAsKg of finished plastic packaging components was used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
         view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading", plastic.asKg))
       }
     }
-    "have a heading" in{
 
-      view.select("h1").text mustBe
-        "Out of the 1,234kg of finished plastic packaging components that you did not export, how much was used for the immediate packaging of licenced human medicines?"
+    "have a heading" when {
+      "directly exported component answer is yes and another business exported answer is yes" in {
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
+      }
 
-    }
+      "directly exported component answer is yes and another business exported answer is no" in {
+        val view = createView(true,false)
 
-    "have a heading when they answer no" in{
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
+      }
 
-      val view = createView(false)
+      "directly exported component answer is no and another business exported answer is yes" in {
+        val view = createView(false,true)
 
-      view.select("h1").text mustBe
-        s"How much of your $plasticAsKg of finished plastic packaging components was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe s"Out of the $plasticAsKg that was not exported, how much was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.heading", plasticAsKg)
+      }
+
+      "directly exported component answer is no and another business exported answer is no" in {
+        val view = createView(false, false)
+
+        view.select("h1").text mustBe s"How much of your $plasticAsKg of finished plastic packaging components was used for the immediate packaging of licenced human medicines?"
+        view.select("h1").text must include(messages("nonExportedHumanMedicinesPlasticPackagingWeight.direct.exported.no.answer.heading", plasticAsKg))
+      }
     }
 
     "have a caption" in {
-
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption")
-
     }
 
     "have a hint" in {
-
       val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("value-hint").text must include (messages("1 tonne is 1,000kg."))
-
     }
-
 
     "contain save & continue button" in {
-
       view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
-
     }
-
   }
-
 }

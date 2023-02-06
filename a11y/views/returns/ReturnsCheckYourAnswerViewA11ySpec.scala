@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package views.returns
 
 import base.ViewSpecBase
-import controllers.helpers.TaxReturnViewModel
-import models.{CreditBalance, UserAnswers}
-import models.requests.{DataRequest, IdentifiedRequest}
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
+import models.{CreditBalance, UserAnswers}
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
-import pages.returns.{DirectlyExportedComponentsPage, ImportedPlasticPackagingPage, ManufacturedPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedRecycledPlasticPackagingPage}
+import pages.returns._
 import play.twirl.api.Html
-import support.PptTestData
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
+import viewmodels.TaxReturnViewModel
 import views.html.returns.ReturnsCheckYourAnswersView
 
 import java.time.LocalDate
@@ -38,7 +36,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
   private val userAnswer = UserAnswers("123")
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
-    .set(DirectlyExportedComponentsPage, false).get
+    .set(DirectlyExportedPage, false).get
+    .set(AnotherBusinessExportedPage, false).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
     .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
@@ -52,15 +51,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     "PK1")
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val identifiedRequest: IdentifiedRequest[_] = IdentifiedRequest(
-      request,
-      PptTestData.newUser(),
-      "123"
-    )
-    val dataRequest: DataRequest[_] = DataRequest(identifiedRequest, answers)
     val calculations = Calculations(1, 2L, 3L, 5L, true)
-
-    TaxReturnViewModel(dataRequest, aTaxObligation, calculations)
+    TaxReturnViewModel(answers, "123", aTaxObligation, calculations)
   }
 
   val credits = CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true))
@@ -90,7 +82,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         val ans = UserAnswers("123")
           .set(ManufacturedPlasticPackagingPage, false).get
           .set(ImportedPlasticPackagingPage, false).get
-          .set(DirectlyExportedComponentsPage, false).get
+          .set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 

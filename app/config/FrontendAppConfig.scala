@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import java.time.LocalDate
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -114,11 +112,17 @@ class FrontendAppConfig @Inject() (
   def isCreditsForReturnsFeatureEnabled: Boolean =
     isFeatureEnabled(Features.creditsForReturnsEnabled)
 
+  def isFeatureEnabledChangeOfGroupLead: Boolean =
+    isFeatureEnabled(Features.changeOfGroupLead)
+
   def isFeatureEnabled(name: String): Boolean =
     configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
 
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"
+
+  def pptChangeGroupLeadUrl(pptReference: String): String =
+    s"$pptServiceHost/change-group-lead/$pptReference"
 
   lazy val pptCompleteReturnGuidanceUrl: String =
     configuration.get[String]("urls.pptCompleteReturnGuidanceLink")
@@ -154,5 +158,9 @@ class FrontendAppConfig @Inject() (
 
   def claimingCreditGuidanceUrl: String =
     configuration.get[String]("urls.claimingCreditGuidanceUrl")
+
+  def addMemberToGroupUrl: String =
+    configuration.get[String]("urls.addMemberToGroup")
+
 
 }

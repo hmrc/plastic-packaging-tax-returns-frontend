@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.helpers.NonExportedAmountHelper
 import controllers.{routes => appRoutes}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
@@ -33,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedComponentsPage, NonExportedHumanMedicinesPlasticPackagingPage}
+import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingPage, AnotherBusinessExportedPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
@@ -55,20 +56,23 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
   val manufacturedAmount = 200L
   val importedAmount = 100L
   val exportedAmount = 50L
-  val nonExportedAmount = (manufacturedAmount + importedAmount) - exportedAmount
+  val exportedByAnotherBusinessAmount = 50L
+  val nonExportedAmount = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector = mock[CacheConnector]
   private val mockNavigator = mock[Navigator]
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
+  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, manufacturedAmount, importedAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockView, mockNavigator, mockCacheConnector)
-    when(mockView.apply(any(),any(),any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper)
+    when(mockView.apply(any(),any(),any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L,true, true)))
   }
 
 
@@ -97,43 +101,22 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(nonExportedAmount),
         captor.capture(),
         ArgumentMatchers.eq(NormalMode),
+        ArgumentMatchers.eq(true),
         ArgumentMatchers.eq(true)
       )(any(),any())
 
       captor.getValue.value mustBe Some(true)
     }
 
-    "display total plastic weight if Direct exports answer was no" in {
-
-      val result = createSut(userAnswer = Some(nonExportedAnswer.set(DirectlyExportedComponentsPage, false).success.value))
-        .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
-
-      status(result) mustBe OK
-
-      verify(mockView).apply(
-        ArgumentMatchers.eq(manufacturedAmount + importedAmount),
-        any(),
-        ArgumentMatchers.eq(NormalMode),
-        ArgumentMatchers.eq(false)
-      )(any(),any())
-
-    }
-
-    "redirect GET to home page when Directly exported amount not found" in {
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value))
+    "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
+      when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
+        .remove(AnotherBusinessExportedPage).success.value
+      ))
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
-    }
-
-    "redirect GET to home page when exported amount not found" in {
-
-      val result = createSut(userAnswer = Some(UserAnswers("123")))
-        .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual appRoutes.IndexController.onPageLoad.url
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -166,8 +149,11 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         status(result) mustEqual BAD_REQUEST
     }
 
-    "redirect Post to the home page is Directly exported question no answered" in {
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedComponentsPage).success.value))
+    "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
+      when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
+      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
+        .remove(AnotherBusinessExportedPage).success.value
+      ))
         .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
           .withFormUrlEncodedBody(("value", "")))
 
@@ -207,7 +193,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      mockView
+      mockView,
+      nonExportedAmountHelper
     )
   }
 }

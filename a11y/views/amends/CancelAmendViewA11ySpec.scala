@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package views.amends
 import base.ViewSpecBase
 import forms.amends.CancelAmendFormProvider
 import models.returns.TaxReturnObligation
+import play.api.data.Form
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.amends.CancelAmendView
@@ -27,21 +28,25 @@ import java.time.LocalDate
 
 class CancelAmendViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
+  val form = new CancelAmendFormProvider()()
+  val page = inject[CancelAmendView]
+
   val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
     LocalDate.now(),
     LocalDate.now().plusWeeks(12),
     LocalDate.now().plusWeeks(16),
     "PK1")
 
+  private def render(form: Form[Boolean] = form):  Html =
+    page(form, aTaxObligation)(request, messages)
+
   "CancelAmendView" should {
     "pass accessibility checks" in {
-      val form = new CancelAmendFormProvider()()
-      val page = inject[CancelAmendView]
+      render().toString() must passAccessibilityChecks
+    }
 
-      def render: Html =
-        page(form, aTaxObligation)(request, messages)
-
-      render.toString() must passAccessibilityChecks
+    "pass accessibility checks when error" in {
+      render(form.withError("error", "error message")).toString() must passAccessibilityChecks
     }
   }
 

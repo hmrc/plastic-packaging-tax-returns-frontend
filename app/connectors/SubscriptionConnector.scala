@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.EisFailure
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
-import models.subscription.subscriptionUpdate.{SubscriptionUpdateRequest, SubscriptionUpdateResponse}
-import play.api.Logger
 import play.api.http.Status
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -35,8 +34,6 @@ class SubscriptionConnector @Inject() (
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
-
-  private val logger = Logger(this.getClass)
 
   def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[EisFailure, SubscriptionDisplayResponse]] = {
 
@@ -54,26 +51,20 @@ class SubscriptionConnector @Inject() (
       .andThen { case _ => timer.stop() }
   }
 
-  def update(pptReferenceNumber: String, updateRequest: SubscriptionUpdateRequest)(implicit
+  def changeGroupLead(pptReferenceNumber: String)(implicit
     hc: HeaderCarrier
-  ): Future[SubscriptionUpdateResponse] = {
-    val timer = metrics.defaultRegistry.timer("ppt.subscription.update.timer").time()
-    httpClient.PUT[SubscriptionUpdateRequest, SubscriptionUpdateResponse](
-      appConfig.pptSubscriptionUrl(pptReferenceNumber),
-      updateRequest
-    ).map {
-      response =>
-        logger.info(s"Update subscription for ppt reference number [$pptReferenceNumber]")
-        response
-    }
-      .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
+  ): Future[HttpResponse] = {
+    httpClient.POSTEmpty[HttpResponse](
+      appConfig.pptChangeGroupLeadUrl(pptReferenceNumber)
+    ).map{ response =>
+      response.status match {
+        case OK => response
+        case _ => throw DownstreamServiceError(
+          s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
+          new Exception()
+        )
       }
+    }
   }
 
 }

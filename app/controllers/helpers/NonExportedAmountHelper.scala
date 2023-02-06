@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,43 +16,55 @@
 
 package controllers.helpers
 
+import com.google.inject.Singleton
 import models.UserAnswers
 import pages.QuestionPage
 import pages.returns._
 
-object NonExportedAmountHelper {
+@Singleton
+class NonExportedAmountHelper {
 
-  def nonExportedAmount(userAnswers: UserAnswers):Option[Long] = {
-
+  def totalPlasticAdditions(userAnswers: UserAnswers): Option[Long] = {
     for {
       manufacturing <- manufacturingPlasticAmount(userAnswers)
       imported <- importedPlasticAmount(userAnswers)
-      exported <- exportedAmount(userAnswers)
-    } yield manufacturing + imported - exported
-
+    } yield manufacturing + imported
   }
 
-  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean)] = {
+  def nonExportedAmount(userAnswers: UserAnswers): Option[Long] = {
     for {
-      isYesNo <- userAnswers.get(DirectlyExportedComponentsPage)
-      value <- nonExportedAmount(userAnswers)
-    } yield (value, isYesNo)
+      manufacturing <- manufacturingPlasticAmount(userAnswers)
+      imported <- importedPlasticAmount(userAnswers)
+      exported <- directlyExportedAmount(userAnswers)
+      exportedByAnotherBusiness = exportedByAnotherBusinessAmount(userAnswers)
+    } yield manufacturing + imported - (exported + exportedByAnotherBusiness)
+  }
+
+  def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
+    val value = nonExportedAmount(userAnswers).get
+    val isDirectExportYesNo = userAnswers.get(DirectlyExportedPage).get
+    val isAnotherBusinessYesNo = userAnswers.get(AnotherBusinessExportedPage).getOrElse(false) // default to no if not answered
+    Some(value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(
-    userAnswer: UserAnswers,
-    page: QuestionPage[Boolean],
-    weightPage: QuestionPage[Long]
-  ): Option[Long] = {
-    userAnswer.get(page).flatMap { _  => userAnswer.get(weightPage) }
+                         userAnswer: UserAnswers,
+                         page: QuestionPage[Boolean],
+                         weightPage: QuestionPage[Long]
+                       ): Option[Long] = {
+    userAnswer.get(page).flatMap { _ => userAnswer.get(weightPage) }
   }
 
-  private def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
+  def manufacturingPlasticAmount(userAnswer: UserAnswers): Option[Long] =
     getAmount(userAnswer, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage)
 
-  private def importedPlasticAmount(userAnswer: UserAnswers):Option[Long] =
+  def importedPlasticAmount(userAnswer: UserAnswers):Option[Long] =
     getAmount(userAnswer, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage)
 
-  private def exportedAmount(userAnswer: UserAnswers):Option[Long] =
-    getAmount(userAnswer, DirectlyExportedComponentsPage, ExportedPlasticPackagingWeightPage)
+  def directlyExportedAmount(userAnswer: UserAnswers):Option[Long] =
+    getAmount(userAnswer, DirectlyExportedPage, DirectlyExportedWeightPage)
+
+  private def exportedByAnotherBusinessAmount(userAnswer: UserAnswers): Long =
+    getAmount(userAnswer, AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage)
+      .getOrElse(0L) // default to zero kg if unanswered
 }

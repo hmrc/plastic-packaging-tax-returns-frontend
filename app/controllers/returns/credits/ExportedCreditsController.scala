@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -44,7 +45,7 @@ class ExportedCreditsController @Inject()
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+    implicit request: DataRequest[AnyContent] =>
       val userAnswers = request.userAnswers
       val preparedForm = userAnswers.get(ExportedCreditsPage) match {
         case None => formProvider()

@@ -35,6 +35,7 @@ caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio
 return.title.tail = Cyflwyno Ffurflen Dreth
+account.title.tail = Account
 
 timeout.title = Rydych ar fin cael eich allgofnodi
 timeout.message = Er eich diogelwch, cewch eich allgofnodi ymhen.
@@ -111,19 +112,23 @@ unauthorised.paragraph.2.link = arweiniad ar y Dreth Deunydd Pacio Plastig
 cancelAmend.title = Ydych chi’n siŵr eich bod am ganslo diwygio eich datganiad ar gyfer mis {0} i fis {1} {2}?
 cancelAmend.error.required = Dewiswch ‘Iawn’ os hoffech ganslo diwygio’ch Ffurflen Dreth
 
+amendAlreadyCancelledView.heading = Rydych wedi rhoi’r gorau i ddiwygio’r Ffurflen Dreth hon
+amendAlreadyCancelledView.para = Gallwch wneud y canlynol:
+amendAlreadyCancelledView.link-text.1 = mynd i’ch cyfrif Treth Deunydd Pacio Plastig
+amendAlreadyCancelledView.link-text.2 = bwrw golwg dros neu ddiwygio’r holl Ffurflenni Treth a gyflwynwyd
+
 amendDirectExportPlasticPackaging.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 amendDirectExportPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig a allforiwyd
 amendDirectExportPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendDirectExportPlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
 amendDirectExportPlasticPackaging.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-amendDirectExportPlasticPackaging.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
-amendDirectExportPlasticPackaging.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+amendDirectExportPlasticPackaging.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 amendDirectExportPlasticPackaging.para = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 amendDirectExportPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendHumanMedicinePlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
-amendHumanMedicinePlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint oedd wedi’i ddefnyddio ar gyfer deunydd pacio uniongyrchol meddyginiaethau dynol trwyddedig?
+amendHumanMedicinePlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a ddefnyddiwyd fel deunydd pacio uniongyrchol ar gyfer meddyginiaethau dynol trwyddedig?
+amendHumanMedicinePlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a ddefnyddiwyd fel deunydd pacio uniongyrchol ar gyfer meddyginiaethau dynol trwyddedig?
 amendHumanMedicinePlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 amendHumanMedicinePlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 amendHumanMedicinePlasticPackaging.error.required = Nodwch y pwysau, mewn cilogramau
@@ -174,8 +179,8 @@ amendManufacturedPlasticPackaging.para.list.6 = yn rhan annatod o’r nwyddau
 amendManufacturedPlasticPackaging.para.list.7 = wedi’i ailddefnyddio er mwyn cyflwyno nwyddau
 amendManufacturedPlasticPackaging.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 
-amendRecycledPlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
-amendRecycledPlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+amendRecycledPlasticPackaging.title = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+amendRecycledPlasticPackaging.heading = O’r cydrannau deunydd pacio plastig gorffenedig na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 amendRecycledPlasticPackaging.checkYourAnswersLabel = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 amendRecycledPlasticPackaging.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 
@@ -208,7 +213,8 @@ confirmPackagingCredit.confirm.credit.button = Cadarnhau swm y credyd
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.error.required = Dewiswch ‘Iawn’ os ydych wedi allforio unrhyw faint o’ch cydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu os ydych yn bwriadu gwneud hynny o fewn y 12 mis nesaf
-directlyExportedComponents.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd. Os nad ydych yn allforio’r deunyddiau plastig hyn cyn pen 12 mis, bydd angen i chi dalu treth arnynt.
+directlyExportedComponents.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
+directlyExportedComponents.paragraph.2 = Os na fyddwch yn allforio’r plastigion hyn cyn pen 12 mis ar ôl eu gweithgynhyrchu neu eu mewnforio, bydd yn rhaid i chi dalu treth arnynt.
 
 exportedPlasticPackagingWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
 exportedPlasticPackagingWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio cyn pen 12 mis?
@@ -216,8 +222,7 @@ exportedPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhif
 
 exportedPlasticPackagingWeight.error.required = Nodwch y pwysau, mewn cilogramau
 exportedPlasticPackagingWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
-exportedPlasticPackagingWeight.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 0kg neu fwy
-exportedPlasticPackagingWeight.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+exportedPlasticPackagingWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exportedPlasticPackagingWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 exportedPlasticPackagingWeight.paragraph.line.1 = Bydd deunydd pacio plastig a allforiwyd gennych yn dangos fel didyniad yn eich cyfrifiad treth.
 
@@ -290,7 +295,7 @@ NonExportRecycledPlasticPackaging.paragraph.line.1 =Ni fydd treth yn cael ei cho
 NonExportRecycledPlasticPackaging.paragraph.line.2 = Dysgwch am {0}.
 NonExportRecycledPlasticPackaging.paragraph.link = ystyr deunydd pacio plastig wedi’i ailgylchu
 
-NonExportRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau deunydd pacio plastig gorffenedig na wnaethoch eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
+NonExportRecycledPlasticPackagingWeight.heading = O’r {0} o gydrannau na chawsant eu hallforio, faint a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackagingWeight.directly.export.no.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig a oedd yn cynnwys 30% neu fwy o blastig wedi’i ailgylchu?
 NonExportRecycledPlasticPackagingWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 
@@ -318,7 +323,7 @@ viewReturnSummary.liable.field.manufactured = Deunydd pacio plastig a weithgynhy
 viewReturnSummary.liable.field.imported = Deunydd pacio plastig a fewnforiwyd
 viewReturnSummary.liable.field.total = Cyfanswm y deunydd pacio plastig
 viewReturnSummary.exempt.heading = Didyniadau
-viewReturnSummary.exempt.field.exported = Deunydd pacio plastig a allforiwyd gennych
+viewReturnSummary.exempt.field.exported = Deunydd pacio plastig a allforiwyd
 viewReturnSummary.exempt.field.medicine = Deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
 viewReturnSummary.exempt.field.recycled = Deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
 viewReturnSummary.exempt.field.total = Cyfanswm y didyniadau
@@ -407,6 +412,7 @@ submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plasti
 help.not.include = enghreifftiau o bethau na ddylech eu cynnwys
 
 startYourReturn.title = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
+startYourReturn.firstReturn.title = Eich dyddiad dechrau treth yw {0}. Hoffech chi ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu {1} i {2}?
 startYourReturn.heading = A hoffech ddechrau’ch Ffurflen Dreth ar gyfer y cyfnod cyfrifyddu o fis {0} i fis {1} {2}?
 startYourReturn.error.required = Dewiswch ‘Iawn’ os hoffech ddechrau’ch Ffurflen Dreth
 startYourReturn.first.obligation.hint = Rhowch fanylion o’ch dyddiad dechrau treth tan ddiwedd y cyfnod cyfrifyddu yn unig.
@@ -457,7 +463,8 @@ nonExportedHumanMedicinesPlasticPackagingWeight.error.outOfRange.high = Mae’n 
 submit-return.check-your-answers.heading = Gwiriwch eich atebion cyn anfon eich Ffurflen Dreth
 submit-return.check-your-answers.business-details.heading = Manylion y busnes
 submit-return.check-your-answers.business-details.row1 = Rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-submit-return.check-your-answers.business-details.row2 = Cyfnod y Ffurflen Dreth
+submit-return.check-your-answers.business-details.periodStartDate = Dyddiad dechrau cyfnod y datganiad
+submit-return.check-your-answers.business-details.periodEndDate = Dyddiad dod i ben cyfnod y datganiad
 submit-return.check-your-answers.rest-of-return.heading = Eich Ffurflen Dreth
 
 submit-return.check-your-answers.packaging-total.heading = Cyfanswm y deunydd pacio plastig
@@ -479,9 +486,11 @@ submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
 
 
 submit-return.check-your-answers.exported-packaging.heading = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.exported-packaging.change-link-text = Newidiwch unrhyw ateb o’r adran Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.row1 = Deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging.row2 = Pwysau’r deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.exported-packaging-by-another-business-label = Deunydd pacio plastig sydd wedi’i allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.exported-packaging-by-another-business-weight = Pwysau’r deunydd pacio plastig a gafodd ei allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.exported-packaging.change-link-text = Newid unrhyw ateb o’r adran deunydd pacio plastig a allforiwyd
 submit-return.check-your-answers.exported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig a allforiwyd, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio deunydd pacio plastig.
 
 submit-return.check-your-answers.nonexported-packaging.heading = Deunydd pacio plastig heb ei allforio
@@ -493,10 +502,11 @@ submit-return.check-your-answers.nonexported-packaging.change-link-text = Newidi
 submit-return.check-your-answers.nonexported-packaging.no-change-reason = I newid ateb o’r adran Deunydd pacio plastig heb ei allforio, mae’n rhaid i chi fod wedi gweithgynhyrchu neu fewnforio rhywfaint o ddeunydd pacio plastig nad yw wedi’i allforio.
 
 submit-return.check-your-answers.deductions.heading = Didyniadau
-submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd
-submit-return.check-your-answers.deductions.row2 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
-submit-return.check-your-answers.deductions.row3 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
-submit-return.check-your-answers.deductions.row4 = Cyfanswm y didyniadau
+submit-return.check-your-answers.deductions.row1 = Pwysau’r deunydd pacio plastig a allforiwyd gennych
+submit-return.check-your-answers.deductions.row2 = Pwysau’r deunydd pacio plastig a gafodd ei allforio neu ei drosi gan fusnes arall
+submit-return.check-your-answers.deductions.row3 = Pwysau deunydd pacio plastig heb ei allforio a ddefnyddiwyd ar gyfer meddyginiaethau dynol trwyddedig
+submit-return.check-your-answers.deductions.row4 = Pwysau’r deunydd pacio plastig heb ei allforio sy’n cynnwys 30% neu fwy o blastig wedi’i ailgylchu
+submit-return.check-your-answers.deductions.row5 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
 submit-return.check-your-answers.credits.line1 = Ni allwch hawlio treth yn ôl fel credyd eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
@@ -536,7 +546,7 @@ exported.credits.weight.label = Faint o bwysau, mewn cilogramau?
 exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -551,7 +561,7 @@ converted.credits.weight.label = Faint o bwysau, mewn cilogramau?
 converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
 converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 1kg a 99,999,999,999kg
+converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
 converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
@@ -583,3 +593,106 @@ return-already-submitted.para.1 = Mae’ch Ffurflen Dreth ar gyfer {0} wedi dod 
 return-already-submitted.para.2 = Gallwch wneud y canlynol:
 return-already-submitted.list.1 = bwrw golwg dros neu ddiwygio Ffurflenni a gyflwynwyd
 return-already-submitted.list.2 = gwirio’r hyn sydd arnoch
+
+select-new-representative.link = Ychwanegwch aelod newydd i’r grŵp
+select-new-representative.title = Dewiswch yr aelod cynrychiadol newydd
+select-new-representative.heading = Dewiswch yr aelod cynrychiadol newydd
+select-new-representative.paragraph = Os nad yw’r sefydliad wedi’i restru uchod bydd angen i chi eu hychwanegu fel aelod newydd yn gyntaf.
+select-new-representative.error.required = Dewiswch y sefydliad rydych ei eisiau fel yr aelod cynrychiadol newydd neu ychwanegwch aelod newydd
+
+newGroupLeadCheckYourAnswers.heading = Gwirio’ch atebion
+newGroupLeadCheckYourAnswers.representative.member.key = Aelod cynrychiadol newydd
+newGroupLeadCheckYourAnswers.contact.address.key = Cyfeiriad cyswllt
+newGroupLeadCheckYourAnswers.contact.name.key = Enw cyswllt
+newGroupLeadCheckYourAnswers.job.title.key = Teitl y swydd
+newGroupLeadCheckYourAnswers.sendYourRequest = Anfonwch eich newid nawr
+newGroupLeadCheckYourAnswers.body = Drwy anfon y newid hwn at aelod cynrychioliadol y grŵp rydych yn cadarnhau, hyd eithaf eich gwybodaeth, bod y manylion rydych yn eu rhoi yn gywir.
+newGroupLeadCheckYourAnswers.button = Anfonwch y newid
+
+mainContactName.title = Pwy yw’r prif gyswllt ar gyfer y sefydliad?
+mainContactName.heading = Pwy yw’r prif gyswllt ar gyfer {0}?
+mainContactName.hint = Dyma enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y grŵp, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+mainContactName.error.required = Nodwch enw’r prif gyswllt
+mainContactName.error.length = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu lai
+mainContactName.error.invalid = Mae’n rhaid i’r enw gynnwys llythrennau, cysylltnodau, bylchau, collnodau ac atalnodau llawn yn unig
+
+newGroupLeadConfirmation.title = Bydd yr aelod cynrychiadol yn cael ei newid
+newGroupLeadConfirmation.heading = Bydd yr aelod cynrychiadol yn cael ei newid
+newGroupLeadConfirmation.heading.2 = Yr hyn y mae angen i chi ei wneud nawr
+newGroupLeadConfirmation.paragraph.1 = Mae angen i chi fynd i’ch {0}.
+newGroupLeadConfirmation.paragraph.1.link = cyfrif treth busnes a thynnu Treth Deunydd Pacio Plastig
+newGroupLeadConfirmation.heading.3 = Beth sydd angen i’r aelod cynrychiadol newydd ei wneud nesaf
+newGroupLeadConfirmation.paragraph.2.1 = Mae angen i’r aelod cynrychiadol newydd fewngofnodi i’w cyfrif treth busnes. Mae angen iddynt ychwanegu Treth Deunydd Pacio Plastig drwy ddewis ’cael mynediad ar-lein at dreth, toll neu gynllun’ o’r hafan.
+newGroupLeadConfirmation.paragraph.2.2 = I actifadu’r cyfrif bydd angen y canlynol arnynt:
+newGroupLeadConfirmation.bulletList.first =  Rhif cofrestru Treth Deunydd Pacio Plastig y grŵp
+newGroupLeadConfirmation.bulletList.second = dyddiad cofrestru’r grŵp
+newGroupLeadConfirmation.paragraph.2.3 = Byddan nhw’n gallu rheoli cyfrif Treth Deunydd Pacio Plastig y grŵp, cael diweddariadau am y cyfrif a chyflwyno Ffurflenni Treth.
+newGroupLeadConfirmation.exitSurvey.link = Beth oedd eich barn am y gwasanaeth hwn?
+
+newGroupLeadEnterContactAddress.title = Beth yw cyfeiriad cyswllt y sefydliad?
+newGroupLeadEnterContactAddress.heading = Beth yw cyfeiriad cyswllt {0}?
+newGroupLeadEnterContactAddress.paragraph = Dim ond i anfon hysbysiadau am gyfrif Treth Deunydd Pacio Plastig y grŵp y byddwn yn ei ddefnyddio.
+newGroupLeadEnterContactAddress.addressLine1.label = Cyfeiriad – llinell 1
+newGroupLeadEnterContactAddress.addressLine2.label = Cyfeiriad – llinell 2 (dewisol)
+newGroupLeadEnterContactAddress.addressLine3.label = Cyfeiriad – llinell 3 (dewisol)
+newGroupLeadEnterContactAddress.addressLine4.label = Tref neu ddinas
+newGroupLeadEnterContactAddress.postalCode.label = Cod post (gofynnol ar gyfer cyfeiriadau yn y DU)
+newGroupLeadEnterContactAddress.countryCode.label = Gwlad
+newGroupLeadEnterContactAddress.error.addressLine1.required = Nodwch linell gyntaf cyfeiriad cyswllt y sefydliad
+newGroupLeadEnterContactAddress.error.addressLine2.required = Nodwch ail linell cyfeiriad cyswllt y sefydliad
+newGroupLeadEnterContactAddress.error.addressLine4.required = Nodwch dref neu ddinas
+newGroupLeadEnterContactAddress.error.addressLine1.length = Mae’n rhaid i linell 1 y cyfeiriad fod yn 35 o gymeriadau neu lai
+newGroupLeadEnterContactAddress.error.addressLine2.length = Mae’n rhaid i linell 2 y cyfeiriad fod yn 35 o gymeriadau neu lai
+newGroupLeadEnterContactAddress.error.addressLine3.length = Mae’n rhaid i linell 3 y cyfeiriad fod yn 35 o gymeriadau neu lai
+newGroupLeadEnterContactAddress.error.addressLine4.length = Mae’n rhaid i’r dref neu’r ddinas fod yn 35 o gymeriadau neu lai
+newGroupLeadEnterContactAddress.error.addressLine1.invalid.line = Mae’n rhaid i linell 1 y cyfeiriad gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.addressLine2.invalid.line = Mae’n rhaid i linell 2 y cyfeiriad gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.addressLine3.invalid.line = Mae’n rhaid i linell 3 y cyfeiriad gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.addressLine4.invalid.line = Mae’n rhaid i enw’r dref neu’r ddinas gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.postalCode.inRange = Nodwch god post yn y fformat cywir, megis AB1 2CD
+newGroupLeadEnterContactAddress.error.postalCode.required = Nodwch god post eich sefydliad
+newGroupLeadEnterContactAddress.error.countryCode.required = Nodwch wlad
+newGroupLeadEnterContactAddress.error.countryCode.length = Mae’n rhaid i’r wlad gynnwys 35 o gymeriadau neu lai
+newGroupLeadEnterContactAddress.error.countryCode.invalid = Mae’n rhaid i’r wlad gynnwys llythrennau, rhifau, ampersandau, cysylltnodau, collnodau, comas ac atalnodau llawn yn unig
+newGroupLeadEnterContactAddress.error.nonUkPostCode.length = Mae’n rhaid i’r cod post fod yn 10 o gymeriadau neu lai
+
+mainContactJobTitle.title = Beth yw teitl swydd y prif gyswllt?
+mainContactJobTitle.heading = Beth yw teitl swydd {0}?
+mainContactJobTitle.error.required = Nodwch deitl swydd y prif gyswllt
+mainContactJobTitle.error.length = Mae’n rhaid i deitl y swydd fod yn 155 o gymeriadau neu’n llai
+mainContactJobTitle.error.invalid = Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
+
+plasticExportedByAnotherBusiness.title = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.heading = Yn ystod y cyfnod hwn, a oes busnes arall wedi allforio neu drosi unrhyw rai o’ch {0} o gydrannau deunydd pacio plastig a weithgynhyrchwyd neu’ch cydrannau deunydd pacio plastig gorffenedig?
+plasticExportedByAnotherBusiness.caption = Deunydd pacio plastig a allforiwyd
+plasticExportedByAnotherBusiness.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain, ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
+plasticExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
+plasticExportedByAnotherBusiness.error.required = Dewiswch ‘Iawn’ os oes busnes arall wedi allforio neu drosi unrhyw un o’ch cydrannau deunydd pacio plastig
+
+anotherBusinessExportWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+anotherBusinessExportWeight.caption = Deunydd pacio plastig a allforiwyd
+anotherBusinessExportWeight.paragraph = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
+anotherBusinessExportWeight.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+anotherBusinessExportWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+anotherBusinessExportWeight.error.required = Nodwch y pwysau, mewn cilogramau
+anotherBusinessExportWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+anotherBusinessExportWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+
+amendExportedPlasticPackaging.title = Diwygio deunydd pacio plastig sydd wedi’i allforio
+amendExportedPlasticPackaging.heading = Diwygio deunydd pacio plastig sydd wedi’i allforio
+amendExportedPlasticPackaging.paragraph.1 = Cyfanswm y deunydd pacio plastig sydd wedi’i allforio yw’r ddau swm a nodwyd gennych ar gyfer y pwysau wrth gyflwyno’ch Ffurflen Treth Deunydd Pacio Plastig.
+amendExportedPlasticPackaging.paragraph.2 = Dyma bwysau’r deunydd pacio plastig:
+amendExportedPlasticPackaging.paragraph.3 = Er mwyn diwygio’r naill neu’r llall o’r pwysau hyn, bydd yn rhaid nodi’r ddau. Byddwn yn eu cyfuno, a bydd hyn yn dangos fel y cyfanswm diwygiedig ar gyfer eich deunydd pacio plastig sydd wedi’i allforio.
+amendExportedPlasticPackaging.bulletPoint.1 = y gwnaethoch ei allforio, neu yr ydych yn bwriadu ei allforio, o fewn 12 mis
+amendExportedPlasticPackaging.bulletPoint.2 = y gwnaeth busnes arall ei allforio neu ei drosi
+
+amendExportedByAnotherBusiness.title = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+amendExportedByAnotherBusiness.heading = Faint o’ch cydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
+amendExportedByAnotherBusiness.paragraph.1 = Bydd hyn yn dangos fel didyniad yn eich cyfrifiad treth.
+amendExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
+amendExportedByAnotherBusiness.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+amendExportedByAnotherBusiness.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+amendExportedByAnotherBusiness.error.required = Nodwch y pwysau, mewn cilogramau
+amendExportedByAnotherBusiness.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,14 @@ case class UserAnswers(
   def fill[A](gettable: Gettable[A], form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(gettable).fold(form)(form.fill)
 
+  def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
+    get(path).fold(form)(form.fill)
+
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
-    Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+    get(page.path)
+
+  def get[A](path: JsPath)(implicit rds: Reads[A]): Option[A] =
+    Reads.optionNoError(Reads.at(path)).reads(data).getOrElse(None)
 
   def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A = 
     getOrFail(page.path)
@@ -79,6 +85,9 @@ case class UserAnswers(
   def setOrFail[A](answerPath: String, value: A) (implicit writes: Writes[A]): UserAnswers =
     copy(data = data.setObject(JsPath \ answerPath, Json.toJson(value)).get)
 
+  def setOrFail[A](answerPath: JsPath, value: A) (implicit writes: Writes[A]): UserAnswers =
+    copy(data = data.setObject(answerPath, Json.toJson(value)).get)
+
   /**
     * Saves this UserAnswers using the given function
     * @param saveUserAnswerFunc - function called to save user answers
@@ -117,8 +126,7 @@ case class UserAnswers(
     */
   def reset: UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
 
-
-  def remove[A](page: Settable[A]): Try[UserAnswers] = {
+  def remove[A](page: Settable[A],  cleanup: Boolean = true): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>
@@ -130,7 +138,7 @@ case class UserAnswers(
     updatedData.flatMap {
       d =>
         val updatedAnswers = copy(data = d)
-        page.cleanup(None, updatedAnswers)
+        if(cleanup) page.cleanup(None, updatedAnswers) else Try(updatedAnswers)
     }
   }
 

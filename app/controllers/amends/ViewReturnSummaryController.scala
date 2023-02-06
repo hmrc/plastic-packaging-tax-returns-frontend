@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package controllers.amends
 
-import cacheables.{AmendSelectedPeriodKey, AmendObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
+import handlers.ErrorHandler
 import models.requests.OptionalDataRequest
-import models.returns.{ReturnDisplayApi, TaxReturnObligation}
+import models.returns.{DDInProgressApi, ReturnDisplayApi, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
@@ -40,7 +41,9 @@ class ViewReturnSummaryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
   taxReturnHelper: TaxReturnHelper,
-  returnsConnector: TaxReturnsConnector
+  returnsConnector: TaxReturnsConnector,
+  errorHandler: ErrorHandler
+
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
@@ -48,10 +51,12 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
 
-        fetchData(periodKey).map { case (_, submittedReturn, obligation, ddInProgress) =>
-          val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
-          val amendCall: Option[Call] = Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)).filter(_ => !ddInProgress)
-          Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
+        fetchData(periodKey).map {
+          case Right((_, submittedReturn, obligation, ddInProgress)) =>
+            val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
+            val amendCall: Option[Call] = Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)).filter(_ => !ddInProgress)
+            Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
+          case Left(result) => result
         }
     }
     
@@ -59,7 +64,8 @@ class ViewReturnSummaryController @Inject() (
     (identify andThen getData).async {
       implicit request =>
         
-      fetchData(periodKey).flatMap { case (pptReference, submittedReturn, obligation, ddInProgress) =>
+      fetchData(periodKey).flatMap {
+        case Right((pptReference, submittedReturn, obligation, ddInProgress)) =>
         if (ddInProgress) throw new Exception("Can not amend a return that has a Direct Debit collection in progress") else {
           val future = if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
               reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
@@ -67,22 +73,30 @@ class ViewReturnSummaryController @Inject() (
               Future.unit
           future.map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
         }
+        case Left(result) => Future.successful(result)
       }
     }
     
-  private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_]) = {
+  private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_])
+  : Future[Either[Result, (String, ReturnDisplayApi, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("[A-Z0-9]{4}")) throw new Exception(s"Period key '$periodKey' is not allowed.")
+    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
+    else {
 
-    val futureReturn = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
-    val futureObligation = taxReturnHelper.getObligation(pptReference, periodKey)
-    val futureDDInProgress = returnsConnector.ddInProgress(pptReference, periodKey)
-    for {
-      submittedReturn <- futureReturn
-      obligation <- futureObligation
-      ddInProgress <- futureDDInProgress
-    } yield {
-      (pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress)
+      val futureReturn: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
+      val futureMaybeObligation: Future[Option[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
+      val futureDDInProgress: Future[DDInProgressApi] = returnsConnector.ddInProgress(pptReference, periodKey)
+      for {
+        submittedReturn <- futureReturn
+        maybeObligation <- futureMaybeObligation
+        ddInProgress <- futureDDInProgress
+      } yield {
+        maybeObligation match {
+          case Some(obligation) => Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
+          case None => Left(NotFound(errorHandler.notFoundTemplate))
+        }
+
+      }
     }
   }
 
