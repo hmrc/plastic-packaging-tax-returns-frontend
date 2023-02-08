@@ -146,6 +146,8 @@ case class TaxReturnViewModel(
     calculations.taxDue.asPounds
   }
 
+  def taxRate: String = calculations.taxRate.asPoundPerTonne
+
   def packagingTotalMiniCya: String = routes.ConfirmPlasticPackagingTotalController.onPageLoad.url
 
   def exportedStartUrl: String = routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url

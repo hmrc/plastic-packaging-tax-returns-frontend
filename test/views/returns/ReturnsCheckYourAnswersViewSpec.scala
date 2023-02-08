@@ -51,7 +51,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
 
 
-  private val calculations    = Calculations(1, 2L, 3L, 5L, true)
+  private val calculations    = Calculations(1, 2L, 3L, 5L, true, 0.3)
   private val returnViewModel = createViewModel(createUserAnswer)
 
   override def fakeApplication(): Application =
@@ -254,7 +254,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         .set(DirectlyExportedWeightPage, 0L).get
         .set(AnotherBusinessExportedWeightPage, 0L).get
 
-      val view = createView(taxReturn = createViewModel(ans, Calculations(1,1,1,0, true)))
+      val view = createView(taxReturn = createViewModel(ans, Calculations(1,1,1,0, true, 200.0)))
       val text = view.select("p").text()
 
       text must include("To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.")
@@ -312,6 +312,21 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     "display total deduction" in {
       summaryListTexts must include("Deductions total 3kg")
       summaryListTexts must include(messages("submit-return.check-your-answers.deductions.row5"))
+    }
+  }
+
+  "display tax calculation" should {
+    val view = createView()
+
+    "have a header" in {
+      view.select("h3").text() must include("Your tax calculation")
+      view.select("h3").text() must include(messages("submit-return.check-your-answers.tax-calc.heading"))
+    }
+
+    "display tax rate" in {
+      view.getElementsByClass("govuk-body").text() must include("Tax is £300 per tonne on chargeable plastic packaging.")
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("submit-return.check-your-answers.tax-calc.footnote", "£300"))
     }
   }
 

@@ -117,8 +117,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
   private def createCalculations(isSubmittable: Boolean) = {
     AmendsCalculations(
-      Calculations(12, 40, 100, 200, isSubmittable),
-      Calculations(12, 40, 100, 200, isSubmittable)
+      Calculations(12, 40, 100, 200, isSubmittable, 200.0),
+      Calculations(12, 40, 100, 200, isSubmittable, 200.0)
     )
   }
 

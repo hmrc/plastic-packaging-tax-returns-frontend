@@ -52,7 +52,7 @@ class TaxReturnHelper @Inject()(
       }
   }
 
-  def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[ReturnDisplayApi] = {
+  def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
     returnsConnector.get(userId, periodKey)
   }
 

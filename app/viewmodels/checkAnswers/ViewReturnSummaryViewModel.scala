@@ -59,34 +59,34 @@ final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSec
 
 object ViewReturnSummaryViewModel {
 
-  private def toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+  private def   toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
 
-  def apply(submittedReturn: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
+  def apply(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        "processed" -> ViewUtils.displayLocalDate(toLocalDate(submittedReturn.processingDate)),
-        "reference" -> submittedReturn.chargeReferenceAsString,
+        "processed" -> ViewUtils.displayLocalDate(toLocalDate(returnDisplay.processingDate)),
+        "reference" -> returnDisplay.chargeReferenceAsString,
       ),
       DetailsSection(
         Section("credit", lastBold = false)(
-          "total" -> submittedReturn.returnDetails.creditForPeriod.asPounds
+          "total" -> returnDisplay.returnDetails.creditForPeriod.asPounds
         ),
         Section("liable")(
-          "manufactured" -> submittedReturn.returnDetails.manufacturedWeight.asKg,
-          "imported" -> submittedReturn.returnDetails.importedWeight.asKg,
-          "total" -> submittedReturn.returnDetails.liableWeight.asKg
+          "manufactured" -> returnDisplay.returnDetails.manufacturedWeight.asKg,
+          "imported" -> returnDisplay.returnDetails.importedWeight.asKg,
+          "total" -> returnDisplay.returnDetails.liableWeight.asKg
         ),
         Section("exempt")(
-          "exported" -> submittedReturn.returnDetails.directExports.asKg,
-          "medicine" -> submittedReturn.returnDetails.humanMedicines.asKg,
-          "recycled" -> submittedReturn.returnDetails.recycledPlastic.asKg,
-          "total" -> submittedReturn.returnDetails.totalNotLiable.asKg,
+          "exported" -> returnDisplay.returnDetails.directExports.asKg,
+          "medicine" -> returnDisplay.returnDetails.humanMedicines.asKg,
+          "recycled" -> returnDisplay.returnDetails.recycledPlastic.asKg,
+          "total" -> returnDisplay.returnDetails.totalNotLiable.asKg,
         ),
         Section("calculation", lastBig = false)(
-          "liable" -> submittedReturn.returnDetails.liableWeight.asKg,
-          "exempt" -> submittedReturn.returnDetails.totalNotLiable.asKg,
-          "total" -> submittedReturn.returnDetails.totalWeight.asKg,
-          "tax" -> submittedReturn.returnDetails.taxDue.asPounds,
+          "liable" -> returnDisplay.returnDetails.liableWeight.asKg,
+          "exempt" -> returnDisplay.returnDetails.totalNotLiable.asKg,
+          "total" -> returnDisplay.returnDetails.totalWeight.asKg,
+          "tax" -> returnDisplay.returnDetails.taxDue.asPounds,
         )
       )
     )

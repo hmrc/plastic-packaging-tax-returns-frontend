@@ -323,7 +323,7 @@ viewReturnSummary.calculation.field.liable = Plastic packaging total
 viewReturnSummary.calculation.field.exempt = Deductions total
 viewReturnSummary.calculation.field.total = Chargeable plastic packaging total
 viewReturnSummary.calculation.field.tax = Tax due on this return
-viewReturnSummary.calculation.field.paragraph.1 = Tax is £200 per tonne on chargeable plastic packaging.
+viewReturnSummary.calculation.field.paragraph.1 = Tax is {0} per tonne on chargeable plastic packaging.
 viewReturnSummary.calculation.field.credit = Credit claimed
 viewReturnSummary.calculation.field.debit = Debit??
 viewReturnSummary.calculation.field.liability = Your tax liability
@@ -468,7 +468,7 @@ submit-return.check-your-answers.tax-calc.row1 = Plastic packaging total
 submit-return.check-your-answers.tax-calc.row2 = Deductions total
 submit-return.check-your-answers.tax-calc.row3 = Chargeable plastic packaging total
 submit-return.check-your-answers.tax-calc.row4 = Tax due on this return
-submit-return.check-your-answers.tax-calc.footnote = Tax is £200 per tonne on chargeable plastic packaging.
+submit-return.check-your-answers.tax-calc.footnote = Tax is {0} per tonne on chargeable plastic packaging.
 submit-return.check-your-answers.tax-calc.footnote.2 = Your {0} will be applied against your total balance in your Plastic Packaging Tax account.
 submit-return.check-your-answers.tax-calc.credit.of = {0} credit
 

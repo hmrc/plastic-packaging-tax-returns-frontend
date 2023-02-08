@@ -30,7 +30,7 @@
     paragraphBody: paragraphBody
 )
 
-@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call])(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
@@ -84,5 +84,5 @@
     <h3 class="govuk-heading-m">@messages(vm.detailsSection.calculation.titleKey)</h3>
     @govukSummaryList(vm.detailsSection.calculation.summaryList)
 
-    <p>@messages("viewReturnSummary.calculation.field.paragraph.1")</p>
+    <p>@messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne)</p>
 }
