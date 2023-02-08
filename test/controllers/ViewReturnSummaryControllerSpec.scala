@@ -16,165 +16,223 @@
 
 package controllers
 
-import base.{MockObligationsConnector, SpecBase}
-import connectors.{CacheConnector, ObligationsConnector, TaxReturnsConnector}
+import base.utils.JourneyActionAnswer
+import connectors.{CacheConnector, TaxReturnsConnector}
+import controllers.actions.JourneyAction
+import controllers.amends.ViewReturnSummaryController
+import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
-import models.returns.{DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.{verify, when}
+import models.UserAnswers
+import models.UserAnswers.SaveUserAnswerFunc
+import models.requests.DataRequest
+import models.returns._
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{anyString, eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.i18n.Messages
-import play.api.inject
-import play.api.mvc.{Call, Result}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import org.scalatestplus.play.PlaySpec
+import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{AnyContent, RequestHeader}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
+import play.twirl.api.{Html, HtmlFormat}
+import queries.{Gettable, Settable}
+import support.AmendExportedData
+import uk.gov.hmrc.http.HttpResponse
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
-import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ViewReturnSummaryControllerSpec extends SpecBase with MockitoSugar with MockObligationsConnector {
+class ViewReturnSummaryControllerSpec
+  extends PlaySpec
+    with MockitoSugar
+    with JourneyActionAnswer
+    with AmendExportedData
+    with BeforeAndAfterEach {
 
-  val mockMessages: Messages = mock[Messages]
-  when(mockMessages.apply(anyString(), any())).thenReturn("August")
-
-  private val mockConnector = mock[TaxReturnsConnector]
+  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messages = mock[Messages]
+  private val messagesApi = mock[MessagesApi]
+  private val journeyAction =  mock[JourneyAction]
+  private val cacheConnector = mock[CacheConnector]
+  private val view = mock[ViewReturnSummaryView]
+  private val taxReturnHelper = mock[TaxReturnHelper]
+  private val returnsConnector = mock[TaxReturnsConnector]
+  private val errorHandler = mock[ErrorHandler]
 
   val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-  val submittedReturn = ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
+  val submittedReturn = SubmittedReturn(
+    0.3,
+    ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
+  )
 
-  "onPageLoad" - {
-    "must return OK and the correct view" in {
+  private val sut = new ViewReturnSummaryController(
+    messagesApi,
+    journeyAction,
+    cacheConnector,
+    stubMessagesControllerComponents(),
+    view,
+    taxReturnHelper,
+    returnsConnector,
+    errorHandler
+  )
 
-      val ob: TaxReturnObligation = TaxReturnObligation(
-        LocalDate.parse("2022-04-01"),
-        LocalDate.parse("2022-06-30"),
-        LocalDate.parse("2022-06-30").plusWeeks(8),
-        "22C4")
+  override def beforeEach() = {
+    super.beforeEach()
 
-      mockGetFulfilledObligations(Seq(ob))
+    reset(journeyAction, view, cacheConnector, dataRequest, errorHandler)
 
-      when(mockConnector.get(any(), any())(any())).thenReturn(
-        Future.successful(submittedReturn)
-      )
+    when(dataRequest.pptReference).thenReturn("123")
+    when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+  }
 
-      when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+  "onPageLoad" should {
+    "use the journey action" in {
+      sut.onPageLoad("anyKey")
+      verify(journeyAction).async(any)
+    }
 
-      when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+    "return ok" in {
+      setUpAPiCalls(false, Some(taxReturnOb))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[TaxReturnsConnector].toInstance(mockConnector),
-          inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
-          inject.bind[CacheConnector].toInstance(cacheConnector)
-        ).build()
+      val result = sut.onPageLoad("22C2")(dataRequest)
 
-      running(application) {
+      status(result) mustBe OK
+    }
 
-        val viewModel = ViewReturnSummaryViewModel(submittedReturn)(mockMessages)
+    "return the right view" in {
+      setUpAPiCalls(false, Some(taxReturnOb))
+      when(messages.apply(anyString, any)).thenReturn("any-period")
 
-        val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("22C4"))
+      await(sut.onPageLoad("22C2")(dataRequest))
 
-        val result = route(application, request).value
+      val expected = ViewReturnSummaryViewModel(submittedReturn.displayReturnJson)(messages)
 
-        val view = application.injector.instanceOf[ViewReturnSummaryView]
+      verify(view).apply(
+        meq("any-period"),
+        meq(expected),
+        meq(Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn("22C2"))),
+        meq("£300")
+      )(any, any)
+    }
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view("April to June 2022", viewModel, Some(Call("", "/plastic-packaging-tax/viewReturnSummary/22C4/amend")))(
-          request,
-          messages(application)
-        ).toString
+    "return the right view with an empty calback when DD is in progress" in {
+      setUpAPiCalls(true, Some(taxReturnOb))
+      when(messages.apply(anyString, any)).thenReturn("any-period")
 
-        verify(mockConnector).get(any(), ArgumentMatchers.eq("22C4"))(any())
+      await(sut.onPageLoad("22C2")(dataRequest))
+
+      val expected = ViewReturnSummaryViewModel(submittedReturn.displayReturnJson)(messages)
+
+      verify(view).apply(
+        meq("any-period"),
+        meq(expected),
+        meq(None),
+        meq("£300")
+      )(any, any)
+    }
+
+    "return 404 not found" when {
+      "the period key is mistyped" in {
+        when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
+
+        val result = sut.onPageLoad("222Ca")(dataRequest)
+
+        status(result) mustBe NOT_FOUND
+        verify(errorHandler).notFoundTemplate(dataRequest.request)
       }
     }
 
-    "must return 404 not found" - {
-      "when the period key is mistyped" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .build()
+    "the user doesn't have a fulfilled obligation for the requested period" in {
+      setUpAPiCalls(false, None)
+      when(messages.apply(anyString, any)).thenReturn("any-period")
+      when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
 
-        running(application) {
-          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("MALFORMED"))
+      val result = sut.onPageLoad("22C2")(dataRequest)
 
-          val result: Future[Result] = (route(application, request).value)
+      status(result) mustBe NOT_FOUND
+      verify(errorHandler).notFoundTemplate(any)
+    }
+  }
 
-          val errorHandler = application.injector.instanceOf[ErrorHandler]
-          val errorView = errorHandler.notFoundTemplate(request).toString()
+  "amendReturn" should {
+    "use the journey action" in {
+      sut.amendReturn("anyKey")
+      verify(journeyAction).async(any)
+    }
 
-          status(result) mustEqual NOT_FOUND
-          contentAsString(result) mustEqual errorView
-        }
-      }
-      "when the user doesn't have a fulfilled obligation for the requested period" in {
-        val ob: TaxReturnObligation = TaxReturnObligation(
-          LocalDate.parse("2022-04-01"),
-          LocalDate.parse("2022-06-30"),
-          LocalDate.parse("2022-06-30").plusWeeks(8),
-          "21C1")
+    "redirect to CYA page" in {
+      setUpAPiCalls()
+      val userAnswer = mock[UserAnswers]
 
-        mockGetFulfilledObligations(Seq(ob))
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
+      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
+      when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            inject.bind[TaxReturnsConnector].toInstance(mockConnector),
-            inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
-            inject.bind[CacheConnector].toInstance(cacheConnector)
-          ).build()
+      val result = sut.amendReturn("22C3").skippingJourneyAction(dataRequest)
 
-        when(mockConnector.get(any(), any())(any())).thenReturn(
-          Future.successful(submittedReturn)
-        )
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.amends.routes.CheckYourAnswersController.onPageLoad().url
+    }
+    "re-initialise cache if is a new period key" in {
+      setUpAPiCalls()
+      val userAnswer = mock[UserAnswers]
+      val saveFunction = mock[SaveUserAnswerFunc]
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
+      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
+      when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
-        when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+      await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+      verify(userAnswer).save(meq(saveFunction))(any)
+      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
+    }
 
-        running(application) {
-          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("90C4"))
+    "not re-initialise cache if period key is found" in {
+      setUpAPiCalls()
+      when(dataRequest.userAnswers.get(any[Gettable[String]])(any)).thenReturn(Some("22C3"))
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
 
-          val result: Future[Result] = (route(application, request).value)
+      await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-          val errorHandler = application.injector.instanceOf[ErrorHandler]
-          val errorView = errorHandler.notFoundTemplate(request).toString()
+      verifyZeroInteractions(dataRequest.userAnswers.reset)
+      verifyZeroInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
+    }
 
-          status(result) mustEqual NOT_FOUND
-          contentAsString(result) mustEqual errorView
-        }
-      }
-      "when the user doesn't have any fulfilled obligations" in {
-        mockGetFulfilledObligations(Seq.empty)
+    "return 404 when cannot fetch data" in {
+      setUpAPiCalls(obligation = None)
+      when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            inject.bind[TaxReturnsConnector].toInstance(mockConnector),
-            inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
-            inject.bind[CacheConnector].toInstance(cacheConnector)
-          ).build()
+      val result = sut.amendReturn("22C2").skippingJourneyAction(dataRequest)
 
-        when(mockConnector.get(any(), any())(any())).thenReturn(
-          Future.successful(submittedReturn)
-        )
+      status(result) mustEqual NOT_FOUND
+    }
 
-        when(mockConnector.ddInProgress(any(), any())(any())).thenReturn(Future.successful(DDInProgressApi(false)))
+    "throw if Direct debit is in progress" in {
+      setUpAPiCalls(isDDInProgress = true)
 
-        when(cacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mockResponse))
-
-        running(application) {
-          val request = FakeRequest(controllers.amends.routes.ViewReturnSummaryController.onPageLoad("21C1"))
-
-          val result: Future[Result] = (route(application, request).value)
-
-          val errorHandler = application.injector.instanceOf[ErrorHandler]
-          val errorView = errorHandler.notFoundTemplate(request).toString()
-
-          status(result) mustEqual NOT_FOUND
-          contentAsString(result) mustEqual errorView
-        }
-
+      intercept[Exception] {
+        await(sut.amendReturn("22C2").skippingJourneyAction(dataRequest))
       }
     }
+  }
+
+  private def setUpAPiCalls(
+    isDDInProgress: Boolean = false,
+    obligation: Option[TaxReturnObligation] = Some(taxReturnOb)
+  ): Unit = {
+    when(taxReturnHelper.fetchTaxReturn(any, any)(any)).thenReturn(Future.successful(submittedReturn))
+    when(taxReturnHelper.getObligation(any, any)(any)).thenReturn(Future.successful(obligation))
+    when(returnsConnector.ddInProgress(any, any)(any)).thenReturn(Future.successful(DDInProgressApi(isDDInProgress)))
+    when(cacheConnector.set(any, any)(any)).thenReturn(Future.successful(mock[HttpResponse]))
   }
 }

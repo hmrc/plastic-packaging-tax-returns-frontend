@@ -31,7 +31,9 @@ case class Calculations(taxDue: BigDecimal,
                         chargeableTotal: Long,
                         deductionsTotal: Long,
                         packagingTotal: Long,
-                        isSubmittable: Boolean)
+                        isSubmittable: Boolean,
+                        taxRate: BigDecimal
+                       )
 
 object Calculations {
   implicit val format: OFormat[Calculations] = Json.format[Calculations]

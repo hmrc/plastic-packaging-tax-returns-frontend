@@ -35,8 +35,8 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
     "PK1")
 
   val amendsCalculations = AmendsCalculations(
-    Calculations(12, 200L, 100L, 300L, true),
-    Calculations(12, 200L, 150L, 350L, true)
+    Calculations(12, 200L, 100L, 300L, true, 0.2),
+    Calculations(12, 200L, 150L, 350L, true, 0.2)
   )
   val totalRows = createTotalPlasticTable
   val deductionsRows = createDeductionTable
@@ -110,8 +110,8 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
 
   private def createCalculationTable = {
     AmendsCalculations(
-      Calculations(12, 40, 100, 200, true),
-      Calculations(12, 40, 100, 200, true)
+      Calculations(12, 40, 100, 200, true, 0.2),
+      Calculations(12, 40, 100, 200, true, 0.2)
     )
   }
 }

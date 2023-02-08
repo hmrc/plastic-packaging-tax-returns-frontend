@@ -25,6 +25,9 @@ import play.api.i18n.Messages
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import viewmodels.{RowInfo, TaxReturnViewModel}
 
+import java.text.DecimalFormat
+import scala.math.BigDecimal.RoundingMode
+
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val calculations = mock[Calculations]
@@ -177,5 +180,13 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       sut.canEditNonExported mustBe true
     }
 
+  }
+
+  "taxRateInPounds" should {
+    "return the taxRate in pounds per tonne" in {
+      when(calculations.taxRate).thenReturn(0.3)
+
+      sut.taxRate mustBe "£300"
+    }
   }
 }

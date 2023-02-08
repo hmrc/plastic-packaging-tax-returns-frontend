@@ -19,14 +19,16 @@ package controllers.amends
 import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
+import models.requests.DataRequest.headerCarrier
 import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
-import models.requests.OptionalDataRequest
-import models.returns.{DDInProgressApi, ReturnDisplayApi, TaxReturnObligation}
+import models.UserAnswers
+import models.requests.DataRequest
+import models.returns.{DDInProgressApi, ReturnDisplayApi, SubmittedReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{NotFound, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.PrintTaxRate
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
@@ -35,55 +37,74 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ViewReturnSummaryController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  journeyAction: JourneyAction,
   cacheConnector: CacheConnector,
-  getData: DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewReturnSummaryView,
   taxReturnHelper: TaxReturnHelper,
   returnsConnector: TaxReturnsConnector,
   errorHandler: ErrorHandler
 
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(periodKey: String): Action[AnyContent] =
-    (identify andThen getData).async {
+    journeyAction.async {
       implicit request =>
 
         fetchData(periodKey).map {
           case Right((_, submittedReturn, obligation, ddInProgress)) =>
             val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
             val amendCall: Option[Call] = Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)).filter(_ => !ddInProgress)
-            Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn), amendCall))
+            Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn.displayReturnJson), amendCall, submittedReturn.taxRate.asPoundPerTonne))
           case Left(result) => result
         }
     }
     
   def amendReturn(periodKey: String): Action[AnyContent] =
-    (identify andThen getData).async {
+    journeyAction.async {
       implicit request =>
         
       fetchData(periodKey).flatMap {
         case Right((pptReference, submittedReturn, obligation, ddInProgress)) =>
-        if (ddInProgress) throw new Exception("Can not amend a return that has a Direct Debit collection in progress") else {
-          val future = if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey)) 
-              reinitialiseCache(periodKey, request, pptReference, submittedReturn, obligation)
-            else
-              Future.unit
-          future.map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
-        }
+          handleAPIsSuccessResponse(periodKey, pptReference, submittedReturn, obligation, ddInProgress)
         case Left(result) => Future.successful(result)
       }
     }
-    
-  private def fetchData(periodKey: String) (implicit request: OptionalDataRequest[_])
-  : Future[Either[Result, (String, ReturnDisplayApi, TaxReturnObligation, Boolean)]] = {
+
+  private def handleAPIsSuccessResponse(
+    periodKey: String,
+    pptReference: String,
+    submittedReturn: SubmittedReturn,
+    obligation: TaxReturnObligation,
+    ddInProgress: Boolean
+  )(implicit request: DataRequest[_]): Future[Result] = {
+    if (ddInProgress)
+      throw new Exception("Can not amend a return that has a Direct Debit collection in progress")
+    else
+      handleNewPeriodKey(periodKey, pptReference, submittedReturn, obligation)
+        .map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
+  }
+
+  private def handleNewPeriodKey
+  (
+    periodKey: String,
+    pptReference: String,
+    submittedReturn: SubmittedReturn,
+    obligation: TaxReturnObligation
+  )(implicit request: DataRequest[_]): Future[Any] = {
+
+    if(!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey))
+      reinitialiseCache(periodKey, pptReference, submittedReturn.displayReturnJson, obligation)
+    else Future.unit
+  }
+
+  private def fetchData(periodKey: String)(implicit request: DataRequest[_])
+  : Future[Either[Result, (String, SubmittedReturn, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate)))
+    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate(request.request))))
     else {
 
-      val futureReturn: Future[ReturnDisplayApi] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
+      val futureReturn: Future[SubmittedReturn] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
       val futureMaybeObligation: Future[Option[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
       val futureDDInProgress: Future[DDInProgressApi] = returnsConnector.ddInProgress(pptReference, periodKey)
       for {
@@ -100,8 +121,12 @@ class ViewReturnSummaryController @Inject() (
     }
   }
 
-  private def reinitialiseCache(periodKey: String, request: OptionalDataRequest[_], pptReference: String, 
-    submittedReturn: ReturnDisplayApi, obligation: TaxReturnObligation) (implicit hc: HeaderCarrier) = {
+  private def reinitialiseCache(
+    periodKey: String,
+    pptReference: String,
+    submittedReturn: ReturnDisplayApi,
+    obligation: TaxReturnObligation
+  )(implicit request: DataRequest[_]): Future[UserAnswers] = {
     request.userAnswers
       .reset
       .setOrFail(AmendSelectedPeriodKey, periodKey)
@@ -109,4 +134,5 @@ class ViewReturnSummaryController @Inject() (
       .setOrFail(ReturnDisplayApiCacheable, submittedReturn)
       .save(cacheConnector.saveUserAnswerFunc(pptReference))
   }
+
 }

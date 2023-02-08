@@ -332,7 +332,7 @@ viewReturnSummary.calculation.field.liable = Cyfanswm y deunydd pacio plastig
 viewReturnSummary.calculation.field.exempt = Cyfanswm y didyniadau
 viewReturnSummary.calculation.field.total = Cyfanswm y deunydd pacio plastig trethadwy
 viewReturnSummary.calculation.field.tax = Treth sy’n ddyledus ar y Ffurflen Dreth hon
-viewReturnSummary.calculation.field.paragraph.1 = Mae £200 o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
+viewReturnSummary.calculation.field.paragraph.1 = Mae {0} o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
 viewReturnSummary.calculation.field.credit = Credyd a hawliwyd
 viewReturnSummary.calculation.field.debit = Debyd
 viewReturnSummary.calculation.field.liability = Eich rhwymedigaeth treth
@@ -480,7 +480,7 @@ submit-return.check-your-answers.tax-calc.row1 = Cyfanswm y deunydd pacio plasti
 submit-return.check-your-answers.tax-calc.row2 = Cyfanswm y didyniadau
 submit-return.check-your-answers.tax-calc.row3 = Cyfanswm y deunydd pacio plastig trethadwy
 submit-return.check-your-answers.tax-calc.row4 = Treth sy’n ddyledus ar y Ffurflen Dreth hon
-submit-return.check-your-answers.tax-calc.footnote = Mae £200 o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
+submit-return.check-your-answers.tax-calc.footnote = Mae {0} o dreth am bob tunnell o ddeunydd pacio plastig trethadwy.
 submit-return.check-your-answers.tax-calc.footnote.2 = Bydd eich {0} yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 submit-return.check-your-answers.tax-calc.credit.of = credyd o {0}
 
