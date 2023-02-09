@@ -95,9 +95,6 @@ class AuthenticatedIdentifierAction @Inject() (
 
       case _: InsufficientEnrolments =>
         Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
-
-      case _: AuthorisationException =>
-        Redirect(homeRoutes.UnauthorisedController.notEnrolled())
     }
   }
 

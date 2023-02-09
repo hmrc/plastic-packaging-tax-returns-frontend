@@ -64,9 +64,6 @@ class AuthFunction @Inject() (
             "continueUrl" -> Seq(target)
           )
         )
-
-      case _: AuthorisationException => //todo does this happen if auth just fails. cos this is wrong
-        Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
     }
   }
 

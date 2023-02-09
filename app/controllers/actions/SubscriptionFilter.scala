@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import connectors.SubscriptionConnector
 import models.requests.IdentifiedRequest
 import play.api.mvc.{ActionFilter, Result}
-import controllers.{routes => agentRoutes}
 import models.PPTSubscriptionDetails
 import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
@@ -44,7 +43,7 @@ class SubscriptionFilter @Inject()(
             .set(request.cacheKey, SubscriptionIsActive, PPTSubscriptionDetails(subscription.legalEntityDetails))
             .map(_ => None)
           case Left(eisFailure) if eisFailure.isDeregistered =>
-            Future.successful(Some(Redirect(agentRoutes.DeregisteredController.onPageLoad()))) //agent?????
+            Future.successful(Some(Redirect(controllers.routes.DeregisteredController.onPageLoad())))
           case Left(eisFailure) =>
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
