@@ -17,13 +17,14 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import connectors.SubscriptionConnector
+import connectors.{DownstreamServiceError, SubscriptionConnector}
 import models.requests.IdentifiedRequest
 import play.api.mvc.{ActionFilter, Result}
 import models.PPTSubscriptionDetails
 import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
+import uk.gov.hmrc.http.{HttpException, ServiceUnavailableException}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,6 +45,8 @@ class SubscriptionFilter @Inject()(
             .map(_ => None)
           case Left(eisFailure) if eisFailure.isDeregistered =>
             Future.successful(Some(Redirect(controllers.routes.DeregisteredController.onPageLoad())))
+          case Left(eisFailure) if eisFailure.isDependentSystemsNotResponding =>
+            throw DownstreamServiceError("Dependent systems are currently not responding.", new ServiceUnavailableException(eisFailure.failures.toString))
           case Left(eisFailure) =>
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))

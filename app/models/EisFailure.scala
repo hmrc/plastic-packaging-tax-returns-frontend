@@ -28,6 +28,9 @@ case class EisFailure(failures: Option[Seq[EisError]]){
 
   def isDeregistered: Boolean =
     failures.exists(_.exists(_.code == "NO_DATA_FOUND"))
+
+  def isDependentSystemsNotResponding: Boolean =
+    failures.exists(_.exists(_.reason == "Dependent systems are currently not responding."))
 }
 
 object EisFailure {
