@@ -73,7 +73,7 @@ class AgentsController @Inject()(
                 .withDelegatedAuthRule("ppt-auth"),
               EmptyRetrieval
             )
-            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier)
+            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier) // this should only happen if authConnector.authorise does NOT fail
           } yield
             Redirect(routes.IndexController.onPageLoad)
               .addingToSession("clientPPT" -> selectedClientIdentifier) //todo we dont want to do this, but reg needs it
