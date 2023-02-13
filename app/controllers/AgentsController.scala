@@ -16,63 +16,74 @@
 
 package controllers
 
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.actions._
-import controllers.agents.SelectedClientIdentifier
 import forms.AgentsFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.AgentSelectedPPTRef
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AgentsView
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
+
+//todo rename? AgentSelectPPTRef And auth controller? BLAH
 class AgentsController @Inject()(
                                   override val messagesApi: MessagesApi,
+                                  authConnector: AuthConnector,
+                                  sessionRepository: SessionRepository,
                                   identify: AuthAgentAction,
                                   form: AgentsFormProvider,
                                   val controllerComponents: MessagesControllerComponents,
                                   view: AgentsView
-                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SelectedClientIdentifier {
+                                )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify {
+  //todo mode????
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
-
-      val currentlySelectedClientIdentifier = getSelectedClientIdentifierFrom(request)
-
-      // Look for a flash signal if the client identifier on the session has failed auth
-      request.flash.get("clientPPTFailed") match {
-
-        case Some(_) =>
-          val errorForm = form().fill(
-            currentlySelectedClientIdentifier.getOrElse("")
-          ).withError("identifier", "agents.client.identifier.auth.error")
-          Forbidden(view(errorForm, mode))
-        case _ =>
+      sessionRepository
+        .get[String](request.internalId, AgentSelectedPPTRef)
+        .map{ maybeSelectedClientIdentifier =>
           val preparedForm = form().fill(
-            currentlySelectedClientIdentifier.getOrElse("")
+            maybeSelectedClientIdentifier.getOrElse("")
           )
-
           Ok(view(preparedForm, mode))
-      }
-
+        }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify) {
+  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
-
-      form().bindFromRequest().fold(
+      form()
+        .bindFromRequest().fold(
         formWithErrors =>
-          BadRequest(view(formWithErrors, mode)),
-        value => {
-
-          // Set this on the session and then redirect to account page to attempt to auth with it
-          appendSelectedClientIdentifierToResult(value, Redirect(routes.IndexController.onPageLoad))
-
-        }
+          Future.successful(BadRequest(view(formWithErrors, mode))),
+        selectedClientIdentifier => {
+          for {
+            _ <- authConnector.authorise(
+              Enrolment(pptEnrolmentKey)
+                .withIdentifier(pptEnrolmentIdentifierName, selectedClientIdentifier)
+                .withDelegatedAuthRule("ppt-auth"),
+              EmptyRetrieval
+            )
+            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier) // this should only happen if authConnector.authorise does NOT fail
+          } yield
+            Redirect(routes.IndexController.onPageLoad)
+              .addingToSession("clientPPT" -> selectedClientIdentifier) //todo we dont want to do this, but reg needs it
+          }.recover{
+            case _: InsufficientEnrolments =>
+              val errorForm = form()
+                .fill(selectedClientIdentifier)
+                .withError("identifier", "agents.client.identifier.auth.error")
+              BadRequest(view(errorForm, mode))
+          }
       )
   }
 }

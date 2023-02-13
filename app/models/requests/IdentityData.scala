@@ -18,49 +18,18 @@ package models.requests
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, LoginTimes, Name, _}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.controllers.RestFormats
 
 case class IdentityData(
   internalId: String,
-  externalId: Option[String] = None,
-  agentCode: Option[String] = None,
-  credentials: Option[Credentials] = None,
-  confidenceLevel: Option[ConfidenceLevel] = None,
-  nino: Option[String] = None,
-  saUtr: Option[String] = None,
-  name: Option[Name] = None,
-  dateOfBirth: Option[LocalDate] = None,
-  email: Option[String] = None,
-  agentInformation: Option[AgentInformation] = None,
-  groupIdentifier: Option[String] = None,
-  credentialRole: Option[String] = None,
-  mdtpInformation: Option[MdtpInformation] = None,
-  itmpName: Option[ItmpName] = None,
-  itmpDateOfBirth: Option[LocalDate] = None,
-  itmpAddress: Option[ItmpAddress] = None,
-  affinityGroup: Option[AffinityGroup] = None,
-  credentialStrength: Option[String] = None,
-  loginTimes: Option[LoginTimes] = None
+  affinityGroup: Option[AffinityGroup] = None
 )
 
 object IdentityData {
   implicit val localDateFormat: Format[LocalDate] = RestFormats.localDateFormats
   implicit val dateTimeReads: Format[DateTime]    = RestFormats.dateTimeFormats
-  implicit val credentialsFormat                  = Json.format[Credentials]
-  implicit val nameFormat                         = Json.format[Name]
-  implicit val agentInformationFormat             = Json.format[AgentInformation]
-  implicit val mdtpInformationFormat              = Json.format[MdtpInformation]
-  implicit val itmpNameFormat                     = Json.format[ItmpName]
-  implicit val itmpAddressFormat                  = Json.format[ItmpAddress]
-  implicit val loginTimesFormat                   = Json.format[LoginTimes]
 
   implicit val format: OFormat[IdentityData] = Json.format[IdentityData]
 }
 
-case class SearchKeys(conversationId: Option[String], ducr: Option[String])
-
-object SearchKeys {
-  implicit val format: OFormat[SearchKeys] = Json.format[SearchKeys]
-}

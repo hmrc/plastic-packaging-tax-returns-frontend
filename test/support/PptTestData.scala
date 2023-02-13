@@ -118,30 +118,7 @@ object PptTestData {
   ): SignedInUser =
     SignedInUser(enrolments.getOrElse(Enrolments(Set())),
                  IdentityData("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-                              Some(externalId),
-                              None,
-                              Some(nrsCredentials),
-                              Some(L50),
-                              None,
-                              None,
-                              Some(Name(Some("Aldo"), Some("Rain"))),
-                              Some(LocalDate.now().minusYears(25)),
-                              Some("amina@hmrc.co.uk"),
-                              Some(
-                                AgentInformation(Some("agentId"),
-                                                 Some("agentCode"),
-                                                 Some("agentFriendlyName")
-                                )
-                              ),
-                              None,
-                              None,
-                              None,
-                              None,
-                              None,
-                              None,
-                              affinityGroup,
-                              Some("crdentialStrength 50"),
-                              Some(LoginTimes(DateTime.now, None))
+                              affinityGroup
                  )
     )
 
