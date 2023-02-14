@@ -83,7 +83,7 @@ class AuthenticatedIdentifierActionSpec extends PlaySpec with BeforeAndAfterEach
         contentAsString(result) mustBe "ppt-enrolment-ref"
 
         verify(mockAuthConnector).authorise(
-          refEq(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong)).or(AffinityGroup.Agent)),
+          refEq(AffinityGroup.Agent.or(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong)))),
           refEq(internalId and affinityGroup and allEnrolments)
         )(any(), any())
       }
