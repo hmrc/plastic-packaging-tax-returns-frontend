@@ -62,7 +62,7 @@ class AuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong)).or(AffinityGroup.Agent))
+    authorised(AffinityGroup.Agent.or(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong))))
       .retrieve(internalId and affinityGroup and allEnrolments) {
       case maybeInternalId ~ affinityGroup ~ allEnrolments =>
         val internalId = maybeInternalId.getOrElse(throw new IllegalArgumentException("internalId is required"))
