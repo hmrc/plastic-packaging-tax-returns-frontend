@@ -117,7 +117,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
         val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
 
-        val customErrorFrom = filledForm.withError("identifier", "agents.client.identifier.auth.error")
+        val customErrorFrom = filledForm.withError("value", "agents.client.identifier.auth.error")
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe "Test View"
