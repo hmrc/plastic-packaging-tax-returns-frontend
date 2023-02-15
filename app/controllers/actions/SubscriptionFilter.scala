@@ -18,13 +18,13 @@ package controllers.actions
 
 import com.google.inject.Inject
 import connectors.{DownstreamServiceError, SubscriptionConnector}
-import models.requests.IdentifiedRequest
-import play.api.mvc.{ActionFilter, Result}
 import models.PPTSubscriptionDetails
+import models.requests.IdentifiedRequest
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionFilter, Result}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
-import uk.gov.hmrc.http.{HttpException, ServiceUnavailableException}
+import uk.gov.hmrc.http.ServiceUnavailableException
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +35,7 @@ class SubscriptionFilter @Inject()(
                                   )(implicit val executionContext: ExecutionContext)
   extends ActionFilter[IdentifiedRequest] with HeaderCarrierConverter {
 
-  override protected def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
+  override def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
     sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive).flatMap{
       case Some(_) => Future.successful(None)
       case _ =>
