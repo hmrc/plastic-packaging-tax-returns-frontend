@@ -17,5 +17,5 @@
 package util
 
 object PurplePrint {
-  def purplePrint(string: String): Unit = println(Console.MAGENTA + string + Console.RESET)
+  def purplePrint[A](string: A): Unit = println(Console.MAGENTA + string + Console.RESET)
 }

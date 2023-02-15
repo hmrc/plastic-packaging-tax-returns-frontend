@@ -26,6 +26,7 @@ import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
 import uk.gov.hmrc.http.ServiceUnavailableException
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import util.PurplePrint.purplePrint
 
 import scala.concurrent.{ExecutionContext, Future}
 

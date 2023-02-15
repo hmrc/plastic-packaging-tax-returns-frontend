@@ -19,14 +19,16 @@ package controllers.actions
 import connectors.SubscriptionConnector
 import models.PPTSubscriptionDetails
 import models.requests.IdentifiedRequest
+import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.MockitoSugar.{mock, never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.JsPath
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, RequestHeader, Session}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,22 +38,51 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   private val subscriptionConnector = mock[SubscriptionConnector]
   private val sessionRepository = mock[SessionRepository]
   
-  private val subscriptionFilter = new SubscriptionFilter(subscriptionConnector, sessionRepository)
+  private val subscriptionFilter = new SubscriptionFilter(subscriptionConnector, sessionRepository) {
+    override def fromRequestAndSession(request: RequestHeader, session: Session): HeaderCarrier =
+      mock[HeaderCarrier]
+  }
   val request = mock[IdentifiedRequest[AnyContent]]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(subscriptionConnector, sessionRepository, request)
-    when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn 
-      Future.successful(Some(mock[PPTSubscriptionDetails]))
+    when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(Some(mock[PPTSubscriptionDetails]))
+    when(sessionRepository.set(any, any, any) (any)) thenReturn Future.successful(true)
     when(request.cacheKey) thenReturn "cache-key"
+    when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
+  }
+
+  private def callFilter = await {
+    subscriptionFilter.filter(request)
   }
 
   "it" should {
     
     "check the session repo for current subscription" in {
-      await { subscriptionFilter.filter(request) } mustBe None
+      callFilter
       verify(sessionRepository).get[PPTSubscriptionDetails](eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive")) (any)
+    }
+    
+    "handle" when {
+      
+      "subscription is still in sessions repo" in {
+        callFilter mustBe None
+        verify(subscriptionConnector, never).get(any) (any)
+        verify(sessionRepository, never).set(any, any, any) (any)
+      }
+      
+      "subscription cache expired / not present" in {
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        callFilter mustBe None
+      }
+      
+      "session repo get fails" in {}
+      
+      "session repo set fails" in {}
+      
+      "subscription connector get fails" in {}
+      
     }
     
   }
