@@ -81,7 +81,7 @@ class AgentsController @Inject()(
             case _: InsufficientEnrolments =>
               val errorForm = form()
                 .fill(selectedClientIdentifier)
-                .withError("identifier", "agents.client.identifier.auth.error")
+                .withError("value", "agents.client.identifier.auth.error")
               BadRequest(view(errorForm, mode))
           }
       )
