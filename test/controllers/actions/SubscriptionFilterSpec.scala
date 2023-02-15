@@ -50,6 +50,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
     when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(Some(mock[PPTSubscriptionDetails]))
     when(sessionRepository.set(any, any, any) (any)) thenReturn Future.successful(true)
     when(request.cacheKey) thenReturn "cache-key"
+    when(request.pptReference) thenReturn "ppt-ref"
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
   }
 
@@ -75,12 +76,16 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
       "subscription cache expired / not present" in {
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
         callFilter mustBe None
+        verify(subscriptionConnector).get(eqTo("ppt-ref")) (any) // TODO check for header carrier
+        verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any) // todo check value
       }
-      
+
+      // TODO list      
+      "subscription is de-registered" in {}
+      "downstream unreliability" in {}
+      "some other downstream error" in {}
       "session repo get fails" in {}
-      
       "session repo set fails" in {}
-      
       "subscription connector get fails" in {}
       
     }
