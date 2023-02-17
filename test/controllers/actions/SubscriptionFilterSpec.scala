@@ -17,15 +17,17 @@
 package controllers.actions
 
 import connectors.SubscriptionConnector
-import models.PPTSubscriptionDetails
 import models.requests.IdentifiedRequest
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import models.{EisFailure, PPTSubscriptionDetails}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{mock, never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.Inside.inside
 import org.scalatestplus.play.PlaySpec
+import play.api.http.Status
 import play.api.libs.json.JsPath
-import play.api.mvc.{AnyContent, RequestHeader, Session}
+import play.api.mvc.{AnyContent, RequestHeader, Result, Session}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -80,8 +82,20 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any) // todo check value
       }
 
+      "subscription is de-registered" in {
+        val eisFailure = mock[EisFailure]
+        when(eisFailure.isDeregistered) thenReturn true
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
+
+        inside(callFilter.value) {
+          case Result(header, _, _, _, _) => 
+            header must have ('status (Status.SEE_OTHER))
+            header.headers must contain ("Location" -> "/deregistered")
+        }
+      }
+
       // TODO list      
-      "subscription is de-registered" in {}
       "downstream unreliability" in {}
       "some other downstream error" in {}
       "session repo get fails" in {}
