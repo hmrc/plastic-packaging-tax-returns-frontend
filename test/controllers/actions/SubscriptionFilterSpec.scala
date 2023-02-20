@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import app.RoutesPrefix
 import connectors.{DownstreamServiceError, SubscriptionConnector}
 import models.requests.IdentifiedRequest
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
@@ -58,6 +59,9 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
     when(request.cacheKey) thenReturn "cache-key"
     when(request.pptReference) thenReturn "ppt-ref"
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
+    
+    // TODO a better way of avoiding the need for this?
+    RoutesPrefix.setPrefix("/")
   }
 
   private def callFilter = await {
