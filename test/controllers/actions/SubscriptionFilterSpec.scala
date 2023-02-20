@@ -16,21 +16,22 @@
 
 package controllers.actions
 
-import connectors.SubscriptionConnector
+import connectors.{DownstreamServiceError, SubscriptionConnector}
 import models.requests.IdentifiedRequest
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
-import models.{EisFailure, PPTSubscriptionDetails}
+import models.{EisError, EisFailure, PPTSubscriptionDetails}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{mock, never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.Inside.inside
+import org.scalatest.enablers.Messaging
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, RequestHeader, Result, Session}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, ServiceUnavailableException}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,13 +43,16 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   
   private val subscriptionFilter = new SubscriptionFilter(subscriptionConnector, sessionRepository) {
     override def fromRequestAndSession(request: RequestHeader, session: Session): HeaderCarrier =
-      mock[HeaderCarrier]
+      mock[HeaderCarrier] // todo can we do better?
   }
-  val request = mock[IdentifiedRequest[AnyContent]]
+  
+  private val request = mock[IdentifiedRequest[AnyContent]]
+  private val eisFailure = mock[EisFailure]
+  private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] = Messaging.messagingNatureOfThrowable
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(subscriptionConnector, sessionRepository, request)
+    reset(subscriptionConnector, sessionRepository, request, eisFailure)
     when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(Some(mock[PPTSubscriptionDetails]))
     when(sessionRepository.set(any, any, any) (any)) thenReturn Future.successful(true)
     when(request.cacheKey) thenReturn "cache-key"
@@ -82,21 +86,31 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any) // todo check value
       }
 
-      "subscription is de-registered" in {
-        val eisFailure = mock[EisFailure]
+      "subscription is de-registered" in { // todo stop this one logging!
         when(eisFailure.isDeregistered) thenReturn true
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
-        inside(callFilter.value) {
+        inside (callFilter.value) {
           case Result(header, _, _, _, _) => 
             header must have ('status (Status.SEE_OTHER))
             header.headers must contain ("Location" -> "/deregistered")
         }
       }
 
-      // TODO list      
-      "downstream unreliability" in {}
+      "downstream unreliability" in {
+        when(eisFailure.isDependentSystemsNotResponding) thenReturn true
+        when(eisFailure.failures) thenReturn Some(Seq(EisError("code", "reason")))
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
+
+        val thrown = the [DownstreamServiceError] thrownBy { callFilter }
+        thrown must have message "Dependent systems are currently not responding." 
+        thrown.getCause mustBe a[ServiceUnavailableException]
+        thrown.getCause must have message "Some(List(EisError(code,reason)))"
+      }
+      
+      // TODO list
       "some other downstream error" in {}
       "session repo get fails" in {}
       "session repo set fails" in {}
