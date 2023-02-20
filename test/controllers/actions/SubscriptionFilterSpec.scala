@@ -50,6 +50,8 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   private val request = mock[IdentifiedRequest[AnyContent]]
   private val eisFailure = mock[EisFailure]
   private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] = Messaging.messagingNatureOfThrowable
+  
+  case class RandoError() extends RuntimeException
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -121,11 +123,23 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         // todo should we log the entire payload like above
         the [RuntimeException] thrownBy callFilter must have message "Failed to get subscription - Some(reason)"
       }
+
+      "session repo get fails" in {
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.failed(RandoError())
+        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+      }
+
+      "session repo set fails" in {
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.set(any, any, any) (any)) thenReturn Future.failed(RandoError())
+        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+      }
       
-      // TODO list
-      "session repo get fails" in {}
-      "session repo set fails" in {}
-      "subscription connector get fails" in {}
+      "subscription connector get fails" in {
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(subscriptionConnector.get(any)(any)) thenReturn Future.failed(RandoError())
+        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+      }
       
     }
     
