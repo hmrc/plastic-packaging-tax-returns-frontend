@@ -113,9 +113,16 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         thrown.getCause mustBe a[ServiceUnavailableException]
         thrown.getCause must have message "Some(List(EisError(code,reason)))"
       }
+
+      "some other downstream error" in {
+        when(eisFailure.failures) thenReturn Some(Seq(EisError("code", "reason")))
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
+        // todo should we log the entire payload like above
+        the [RuntimeException] thrownBy callFilter must have message "Failed to get subscription - Some(reason)"
+      }
       
       // TODO list
-      "some other downstream error" in {}
       "session repo get fails" in {}
       "session repo set fails" in {}
       "subscription connector get fails" in {}
