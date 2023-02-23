@@ -44,7 +44,8 @@ class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendEx
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
         Some("15kg"),
-        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url),
+        "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
       )
 
       AmendDirectExportPlasticPackagingSummary(answer) mustEqual expected
@@ -60,7 +61,8 @@ class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendEx
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
         None,
-        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url),
+        "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
       )
 
       AmendDirectExportPlasticPackagingSummary(ans) mustEqual expected

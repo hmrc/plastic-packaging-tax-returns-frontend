@@ -38,7 +38,8 @@ object AmendRecycledPlasticPackagingSummary {
       "amendRecycledPlasticPackaging.checkYourAnswersLabel",
       existing,
       amended,
-      Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
+      Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url),
+      "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
     )
   }
 

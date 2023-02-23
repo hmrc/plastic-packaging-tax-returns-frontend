@@ -69,14 +69,17 @@ class CheckYourAnswersController @Inject()
   private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation,
                           calculations: AmendsCalculations)(implicit r: DataRequest[_]) = {
 
+    val amendmentMade = comparisonService.hasMadeChangesOnAmend(request.userAnswers)
+
     val totalRows: Seq[AmendSummaryRow] = Seq(
       AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
       AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
       AmendSummaryRow(
         "AmendsCheckYourAnswers.packagingTotal",
         calculations.original.packagingTotal.asKg,
-        Some(calculations.amend.packagingTotal.asKg),
-        None
+        if(amendmentMade) Some(calculations.amend.packagingTotal.asKg) else None,
+        None,
+        "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
       )
     )
 
@@ -87,12 +90,11 @@ class CheckYourAnswersController @Inject()
       AmendSummaryRow(
         "AmendsCheckYourAnswers.deductionsTotal",
         calculations.original.deductionsTotal.asKg,
-        Some(calculations.amend.deductionsTotal.asKg),
-        None
+        if(amendmentMade) Some(calculations.amend.deductionsTotal.asKg) else None,
+        None,
+        "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
       )
     )
-
-    val amendmentMade = comparisonService.hasMadeChangesOnAmend(request.userAnswers)
 
     Ok(view(obligation, totalRows, deductionsRows, calculations, amendmentMade))
   }

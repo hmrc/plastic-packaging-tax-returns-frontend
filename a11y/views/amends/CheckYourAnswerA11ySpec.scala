@@ -65,16 +65,20 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
         messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
         "200",
         Some("0"),
-        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)),
+        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url),
+        "hidden text"
+      ),
       AmendSummaryRow(messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
         "100",
         Some("0"),
-        Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
+        Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url),
+        "hidden text"
       ),
       AmendSummaryRow(messages("AmendsCheckYourAnswers.packagingTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
         Some(amendsCalculations.amend.deductionsTotal.asKg),
-        None
+        None,
+        "hidden text"
       )
     )
   }
@@ -85,25 +89,29 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
         messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
         "20",
         Some("0"),
-        Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
+        Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url),
+        "hidden text"
       ),
       AmendSummaryRow(
         messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
         "30",
         Some("0"),
-        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url),
+        "hidden text"
       ),
       AmendSummaryRow(
         messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
         "50",
         Some("0"),
-        Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
+        Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url),
+        "hidden text"
       ),
       AmendSummaryRow(
         messages("AmendsCheckYourAnswers.deductionsTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
         Some(amendsCalculations.amend.deductionsTotal.asKg),
-        None
+        None,
+        "hidden text"
       )
     )
   }
