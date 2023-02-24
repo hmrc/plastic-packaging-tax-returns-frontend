@@ -102,8 +102,8 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
 
       val view = createView(form)
 
-      view.getElementById("error-summary-title").text() mustBe "There is a problem"
-      view.getElementById("error-summary-title").text() mustBe messages("error.summary.title")
+      view.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      view.getElementsByClass("govuk-error-summary__title").text() mustBe messages("error.summary.title")
       view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "error message"
 
     }

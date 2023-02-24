@@ -35,8 +35,7 @@ import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()
 (override val messagesApi: MessagesApi,
@@ -47,7 +46,7 @@ class CheckYourAnswersController @Inject()
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
-) extends I18nSupport {
+) (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     journeyAction.async {

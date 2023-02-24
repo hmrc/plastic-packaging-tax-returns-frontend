@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.SubmittedReturnsView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class SubmittedReturnsController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -32,7 +32,8 @@ class SubmittedReturnsController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             view: SubmittedReturnsView,
                                             obligationsConnector: ObligationsConnector
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     identify.async {
