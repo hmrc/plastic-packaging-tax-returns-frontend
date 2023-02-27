@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package models.amends
+package viewmodels.checkAnswers.amends
 
-import play.api.libs.json.{Json, OFormat}
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
+import models.returns.AmendsCalculations
+import viewmodels.PrintLong
 
+object AmendTotalPlasticPackagingSummary {
 
-case class AmendSummaryRow(
-  label: String,
-  oldAnswer: String,
-  newAnswer: AmendNewAnswerType,
-  changeUrl: Option[(String, String)]
-)
-
-object AmendSummaryRow {
-  implicit def jsonFormats: OFormat[AmendSummaryRow] =
-    Json.using[Json.WithDefaultValues].format[AmendSummaryRow]
-
+  def apply(calculations: AmendsCalculations, isAmending: Boolean) = {
+    AmendSummaryRow(
+      "AmendsCheckYourAnswers.packagingTotal",
+      calculations.original.packagingTotal.asKg,
+      AmendNewAnswerType(
+        Some(calculations.amend.packagingTotal.asKg),
+        "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
+        isAmending),
+      None
+    )
+  }
 }

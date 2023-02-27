@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.amends
 
 import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
-import models.amends.AmendSummaryRow
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.ReturnDisplayApi
 import pages.amends.AmendManufacturedPlasticPackagingPage
 import viewmodels.PrintLong
@@ -37,9 +37,8 @@ object AmendManufacturedPlasticPackagingSummary {
     AmendSummaryRow(
       "amendManufacturedPlasticPackaging.checkYourAnswersLabel",
       existing,
-      amended,
+      AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
       Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url),
-      "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
     )
   }
 

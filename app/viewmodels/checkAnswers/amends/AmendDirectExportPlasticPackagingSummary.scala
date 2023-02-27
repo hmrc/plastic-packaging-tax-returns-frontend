@@ -18,9 +18,8 @@ package viewmodels.checkAnswers.amends
 
 import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
-import models.amends.AmendSummaryRow
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.ReturnDisplayApi
-import pages.amends.AmendDirectExportPlasticPackagingPage
 import services.ExportedPlasticAnswer
 import viewmodels.PrintLong
 
@@ -38,9 +37,8 @@ object AmendDirectExportPlasticPackagingSummary {
     AmendSummaryRow(
       "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
       existing,
-      amended,
-      Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url),
-      "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
+      AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+      Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
     )
   }
 

@@ -17,7 +17,7 @@
 package views.amends
 
 import base.ViewSpecBase
-import models.amends.AmendSummaryRow
+import models.amends.{AmendSummaryRow, AnswerWithValue, AnswerWithoutValue}
 import models.returns.{AmendsCalculations, Calculations, TaxReturnObligation}
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -92,7 +92,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
         view.text() must include("exportedPlastic 4kg hidden text")
         view.text() must include("humanMedicine 3kg hidden text")
         view.text() must include("recycledPlastic 5kg hidden text")
-        view.text() must include("total 3kg Hidden field")
+        view.text() must include("total 3kg hidden field")
       }
     }
     "display calculation section" when {
@@ -140,18 +140,18 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
   private def createExpectedDeductionRows: Seq[AmendSummaryRow] =
     Seq(
-      AmendSummaryRow("exportedPlastic", "4kg", Some("70kg"), Some("export", "/url"),"hidden text"),
-      AmendSummaryRow("humanMedicine", "3kg", Some("30kg"), Some("medicine", "/url"), "hidden text"),
-      AmendSummaryRow("recycledPlastic", "5kg", Some("20kg"), Some("recycled", "/rycycled"), "hidden text"),
-      AmendSummaryRow("total", "3kg", Some("3kg"), None, "hidden text")
+      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithValue(Some("70kg")), Some("export", "/url")),
+      AmendSummaryRow("humanMedicine", "3kg", AnswerWithValue(Some("30kg")), Some("medicine", "/url")),
+      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithValue(Some("20kg")), Some("recycled", "/rycycled")),
+      AmendSummaryRow("total", "3kg", AnswerWithValue(Some("3kg")), None)
     )
 
   private def createExpectedDeductionRowsForNotAmended: Seq[AmendSummaryRow] =
     Seq(
-      AmendSummaryRow("exportedPlastic", "4kg", None, Some("export", "/url"), "hidden text"),
-      AmendSummaryRow("humanMedicine", "3kg", None, Some("medicine", "/url"), "hidden text"),
-      AmendSummaryRow("recycledPlastic", "5kg", None, Some("recycled", "/rycycled"), "hidden text"),
-      AmendSummaryRow("total", "3kg", None, None, "Hidden field")
+      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithoutValue("hidden text"), Some("export", "/url")),
+      AmendSummaryRow("humanMedicine", "3kg", AnswerWithoutValue("hidden text"), Some("medicine", "/url")),
+      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithoutValue("hidden text"), Some("recycled", "/rycycled")),
+      AmendSummaryRow("total", "3kg", AnswerWithoutValue("hidden field"), None)
     )
 
 }

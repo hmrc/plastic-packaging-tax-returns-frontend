@@ -31,7 +31,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
-import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
 
@@ -74,26 +73,14 @@ class CheckYourAnswersController @Inject()
     val totalRows: Seq[AmendSummaryRow] = Seq(
       AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
       AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-      AmendSummaryRow(
-        "AmendsCheckYourAnswers.packagingTotal",
-        calculations.original.packagingTotal.asKg,
-        if(amendmentMade) Some(calculations.amend.packagingTotal.asKg) else None,
-        None,
-        "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
-      )
+      AmendTotalPlasticPackagingSummary(calculations, amendmentMade)
     )
 
     val deductionsRows: Seq[AmendSummaryRow] = Seq(
       AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
       AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
       AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-      AmendSummaryRow(
-        "AmendsCheckYourAnswers.deductionsTotal",
-        calculations.original.deductionsTotal.asKg,
-        if(amendmentMade) Some(calculations.amend.deductionsTotal.asKg) else None,
-        None,
-        "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
-      )
+      AmendTotalDeductionSummary.apply(calculations, amendmentMade)
     )
 
     Ok(view(obligation, totalRows, deductionsRows, calculations, amendmentMade))
