@@ -45,7 +45,7 @@
                     format = Some("text")
                 ),
                 TableRow(
-                    content =  row.newAnswer.fold[Content](HtmlContent(hiddenContent(row.hiddenText)))(Text(_)),
+                    content =  row.newAnswer.value.fold[Content](HtmlContent(hiddenContent(row.newAnswer.hiddenMessage)))(Text(_)),
                     format = Some("text")
                 ),
                 row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true"))){case (linkID, href) =>
