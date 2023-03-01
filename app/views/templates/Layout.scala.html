@@ -78,7 +78,7 @@
     }
 
     @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#"))
+        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible"))
     }
 }
 
