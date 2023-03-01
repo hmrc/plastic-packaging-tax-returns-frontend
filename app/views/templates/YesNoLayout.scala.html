@@ -23,13 +23,13 @@
     headingLabel: heading,
     sectionHeader: SectionHeader,
     govukErrorSummary: GovukErrorSummary,
+    hiddenContent: HiddenContent
 )
 
 
 
 @(sectionHeading: Option[String], heading: String, paragraphText: Html = HtmlFormat.empty, hintText: Option[String] = None, form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
-    @hiddenContent(contentKey: String) = {<span class="govuk-visually-hidden">@messages(contentKey)</span>}
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }

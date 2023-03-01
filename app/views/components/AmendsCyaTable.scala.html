@@ -19,12 +19,14 @@
 @import components._
 @import viewmodels._
 @import models.amends.AmendNewAnswerType._
+@import templates.HiddenContent
 
-@this(govukTable : GovukTable)
+@this(
+    govukTable : GovukTable,
+    hiddenContent: HiddenContent
+)
 
 @(tableRows: Seq[AmendSummaryRow], header: String = "section-header")(implicit messages: Messages)
-
-@hiddenContent(contentKey: String) = {<span class="govuk-visually-hidden">@messages(contentKey)</span>}
 
 @link(id: String, label: String, url: String) = {
 <a href="@url" id="amend-@{id}-link">

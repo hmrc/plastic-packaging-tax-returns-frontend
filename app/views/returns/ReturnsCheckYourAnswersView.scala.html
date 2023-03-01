@@ -40,10 +40,6 @@
 
 @(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
 
-@hiddenText(key: String) = @{
-    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
-}
-
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
 }
