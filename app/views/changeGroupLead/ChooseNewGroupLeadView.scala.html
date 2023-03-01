@@ -17,6 +17,7 @@
 @import components.{Link, heading, paragraphBody}
 @import config.FrontendAppConfig
 @import models.subscription.{GroupMembers, Member}
+@import templates.HiddenContent
 
 @this(
     formHelper: FormWithCSRF,
@@ -27,7 +28,8 @@
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
     link: Link,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    hiddenContent: HiddenContent
 )
 
 @(form: Form[Member], members: GroupMembers, submitCall: Call)(implicit request: Request[_], messages: Messages)
@@ -45,6 +47,7 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
+                legend = LegendViewModel(HtmlContent(hiddenContent("select-new-representative.title"))),
                 items = members.membersNames.sortBy(_.organisationName).zipWithIndex.map{case (member, index) =>
                     RadioItem(id = Some("radio-member-"+index), value = Some(member.crn), content = Text(member.organisationName))
                 }
