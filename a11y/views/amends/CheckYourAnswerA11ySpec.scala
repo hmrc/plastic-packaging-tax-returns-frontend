@@ -17,7 +17,7 @@
 package views.amends
 
 import base.ViewSpecBase
-import models.amends.AmendSummaryRow
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.{AmendsCalculations, Calculations, TaxReturnObligation}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import viewmodels.PrintLong
@@ -64,16 +64,17 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
       AmendSummaryRow(
         messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
         "200",
-        Some("0"),
-        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)),
+        AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url),
+      ),
       AmendSummaryRow(messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
         "100",
-        Some("0"),
+        AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
       ),
       AmendSummaryRow(messages("AmendsCheckYourAnswers.packagingTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
-        Some(amendsCalculations.amend.deductionsTotal.asKg),
+        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"),
         None
       )
     )
@@ -84,25 +85,25 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
       AmendSummaryRow(
         messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
         "20",
-        Some("0"),
+        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
       ),
       AmendSummaryRow(
         messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
         "30",
-        Some("0"),
-        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+        AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url),
       ),
       AmendSummaryRow(
         messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
         "50",
-        Some("0"),
+        AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
       ),
       AmendSummaryRow(
         messages("AmendsCheckYourAnswers.deductionsTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
-        Some(amendsCalculations.amend.deductionsTotal.asKg),
+        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"),
         None
       )
     )

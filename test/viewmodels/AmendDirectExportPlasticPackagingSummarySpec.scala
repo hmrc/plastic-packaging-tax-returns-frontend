@@ -18,7 +18,7 @@ package viewmodels
 
 import cacheables.ReturnDisplayApiCacheable
 import models.UserAnswers
-import models.amends.AmendSummaryRow
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
@@ -43,8 +43,8 @@ class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendEx
       val expected = AmendSummaryRow(
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
-        Some("15kg"),
-        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+        AmendNewAnswerType(Some("15kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url),
       )
 
       AmendDirectExportPlasticPackagingSummary(answer) mustEqual expected
@@ -59,7 +59,7 @@ class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendEx
       val expected = AmendSummaryRow(
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
-        None,
+        AmendNewAnswerType(None, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
       )
 
