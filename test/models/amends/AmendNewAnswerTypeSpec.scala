@@ -16,6 +16,7 @@
 
 package models.amends
 
+import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
 import org.scalatestplus.play.PlaySpec
 
 class AmendNewAnswerTypeSpec extends PlaySpec{
@@ -26,35 +27,29 @@ class AmendNewAnswerTypeSpec extends PlaySpec{
         val res = AmendNewAnswerType(Some("value"), "message")
 
         assert(res.isInstanceOf[AnswerWithValue])
-        res.value mustEqual Some("value")
-        res.hiddenMessage mustEqual ""
+        res.asInstanceOf[AnswerWithValue].value mustEqual "value"
       }
+
       "value is not present" in {
         val res = AmendNewAnswerType(None, "hidden message")
 
         assert(res.isInstanceOf[AnswerWithoutValue])
-        res.value mustEqual None
-        res.hiddenMessage mustEqual "hidden message"
+        res.asInstanceOf[AnswerWithoutValue].hiddenMessage mustEqual "hidden message"
       }
 
       "is in amending Mode" in {
-        val res = AmendNewAnswerType(Some("2kg"), "message", true)
+        val res = AmendNewAnswerType("2kg", "message", true)
 
         assert(res.isInstanceOf[AnswerWithValue])
-        res.value mustEqual Some("2kg")
-        res.hiddenMessage mustEqual ""
+        res.asInstanceOf[AnswerWithValue].value mustEqual "2kg"
       }
 
       "is first amending" in {
-        val res = AmendNewAnswerType(Some("2kg"), "message", false)
+        val res = AmendNewAnswerType("2kg", "message", false)
 
         assert(res.isInstanceOf[AnswerWithoutValue])
-        res.value mustEqual None
-        res.hiddenMessage mustEqual "message"
+        res.asInstanceOf[AnswerWithoutValue].hiddenMessage mustEqual "message"
       }
     }
-
-
-
   }
 }

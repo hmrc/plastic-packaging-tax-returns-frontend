@@ -27,7 +27,7 @@ object AmendTotalPlasticPackagingSummary {
       "AmendsCheckYourAnswers.packagingTotal",
       calculations.original.packagingTotal.asKg,
       AmendNewAnswerType(
-        Some(calculations.amend.packagingTotal.asKg),
+        calculations.amend.packagingTotal.asKg,
         "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
         isAmending),
       None

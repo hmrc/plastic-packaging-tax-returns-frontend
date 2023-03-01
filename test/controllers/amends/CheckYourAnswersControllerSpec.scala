@@ -22,7 +22,8 @@ import config.FrontendAppConfig
 import connectors.{DownstreamServiceError, TaxReturnsConnector}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import models.amends.{AmendNewAnswerType, AmendSummaryRow, AnswerWithValue}
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
+import models.amends.AmendNewAnswerType.AnswerWithValue
 import models.requests.DataRequest
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.Answers
@@ -279,7 +280,7 @@ class CheckYourAnswersControllerSpec
     AmendSummaryRow(
       key,
       originalTotal.asKg,
-      AnswerWithValue(Some(amendedTotal.asKg)),
+      AnswerWithValue(amendedTotal.asKg),
       None
     )
   }

@@ -16,34 +16,14 @@
 
 package models.amends
 
-import play.api.libs.json.{Json, OFormat}
-
-
-sealed trait  AmendNewAnswerType{
-  val value: Option[String]
-  val hiddenMessage: String
-}
-case class AnswerWithValue(value: Option[String]) extends AmendNewAnswerType {
-  override val hiddenMessage: String = ""
-}
-
-object AnswerWithValue {
-  implicit def jsonFormats: OFormat[AnswerWithValue] =
-    Json.using[Json.WithDefaultValues].format[AnswerWithValue]
-}
-
-case class AnswerWithoutValue(override val hiddenMessage: String ) extends AmendNewAnswerType {
- override val value: Option[String] = None
-}
-
-object AnswerWithoutValue {
-  implicit def jsonFormats: OFormat[AnswerWithoutValue] =
-    Json.using[Json.WithDefaultValues].format[AnswerWithoutValue]
-}
-
+sealed trait  AmendNewAnswerType
 
 object AmendNewAnswerType {
-  def apply(value: Option[String], hiddenMessage: String, amendmentMade: Boolean): AmendNewAnswerType = {
+
+  final case class AnswerWithValue(value: String) extends AmendNewAnswerType
+  final case class AnswerWithoutValue(hiddenMessage: String ) extends AmendNewAnswerType
+
+  def apply(value: String, hiddenMessage: String, amendmentMade: Boolean): AmendNewAnswerType = {
     amendmentMade match {
       case true => AnswerWithValue(value)
       case _ => AnswerWithoutValue(hiddenMessage)
@@ -52,11 +32,8 @@ object AmendNewAnswerType {
 
   def apply(value: Option[String], hiddenMessage: String): AmendNewAnswerType = {
     value match {
-      case Some(_) => AnswerWithValue(value)
+      case Some(v) => AnswerWithValue(v)
       case _ => AnswerWithoutValue(hiddenMessage)
     }
   }
-
-  implicit def jsonFormats: OFormat[AmendNewAnswerType] =
-    Json.using[Json.WithDefaultValues].format[AmendNewAnswerType]
 }

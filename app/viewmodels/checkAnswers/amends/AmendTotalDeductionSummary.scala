@@ -25,7 +25,7 @@ object AmendTotalDeductionSummary {
   def apply(calculations: AmendsCalculations, isAmending: Boolean): AmendSummaryRow = {
 
     val answer  = AmendNewAnswerType(
-      Some(calculations.amend.deductionsTotal.asKg),
+      calculations.amend.deductionsTotal.asKg,
       "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
       isAmending)
 

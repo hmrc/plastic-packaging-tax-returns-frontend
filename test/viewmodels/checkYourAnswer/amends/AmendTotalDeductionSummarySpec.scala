@@ -16,12 +16,13 @@
 
 package viewmodels.checkYourAnswer.amends
 
-import models.amends.{AmendSummaryRow, AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.amends.AmendTotalDeductionSummary
 
-class AmendTotalDeductionSummarySpec  extends PlaySpec {
+class AmendTotalDeductionSummarySpec extends PlaySpec {
 
   private val calculations = AmendsCalculations(
     Calculations(1,2, 200, 100, true, 0.2),
@@ -34,7 +35,7 @@ class AmendTotalDeductionSummarySpec  extends PlaySpec {
         AmendSummaryRow(
           "AmendsCheckYourAnswers.deductionsTotal",
           "200kg",
-          AnswerWithValue(Some("100kg")),
+          AnswerWithValue("100kg"),
           None
         )
     }

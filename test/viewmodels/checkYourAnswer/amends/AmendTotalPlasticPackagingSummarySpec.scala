@@ -16,7 +16,8 @@
 
 package viewmodels.checkYourAnswer.amends
 
-import models.amends.{AmendSummaryRow, AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
 import org.scalatestplus.play.PlaySpec
 import viewmodels.checkAnswers.amends.AmendTotalPlasticPackagingSummary
@@ -35,7 +36,7 @@ class AmendTotalPlasticPackagingSummarySpec extends PlaySpec {
         AmendSummaryRow(
           "AmendsCheckYourAnswers.packagingTotal",
           "100kg",
-          AnswerWithValue(Some("100kg")),
+          AnswerWithValue("100kg"),
           None
         )
     }

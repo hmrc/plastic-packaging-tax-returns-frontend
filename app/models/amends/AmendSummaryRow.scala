@@ -16,8 +16,6 @@
 
 package models.amends
 
-import play.api.libs.json.{Json, OFormat}
-
 
 case class AmendSummaryRow(
   label: String,
@@ -25,9 +23,3 @@ case class AmendSummaryRow(
   newAnswer: AmendNewAnswerType,
   changeUrl: Option[(String, String)]
 )
-
-object AmendSummaryRow {
-  implicit def jsonFormats: OFormat[AmendSummaryRow] =
-    Json.using[Json.WithDefaultValues].format[AmendSummaryRow]
-
-}

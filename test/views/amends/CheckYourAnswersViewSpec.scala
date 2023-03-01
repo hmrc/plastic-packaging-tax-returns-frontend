@@ -17,7 +17,8 @@
 package views.amends
 
 import base.ViewSpecBase
-import models.amends.{AmendSummaryRow, AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
+import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations, TaxReturnObligation}
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -140,10 +141,10 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
   private def createExpectedDeductionRows: Seq[AmendSummaryRow] =
     Seq(
-      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithValue(Some("70kg")), Some("export", "/url")),
-      AmendSummaryRow("humanMedicine", "3kg", AnswerWithValue(Some("30kg")), Some("medicine", "/url")),
-      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithValue(Some("20kg")), Some("recycled", "/rycycled")),
-      AmendSummaryRow("total", "3kg", AnswerWithValue(Some("3kg")), None)
+      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithValue("70kg"), Some("export", "/url")),
+      AmendSummaryRow("humanMedicine", "3kg", AnswerWithValue("30kg"), Some("medicine", "/url")),
+      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithValue("20kg"), Some("recycled", "/rycycled")),
+      AmendSummaryRow("total", "3kg", AnswerWithValue("3kg"), None)
     )
 
   private def createExpectedDeductionRowsForNotAmended: Seq[AmendSummaryRow] =

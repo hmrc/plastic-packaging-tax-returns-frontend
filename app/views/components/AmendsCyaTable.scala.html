@@ -18,6 +18,7 @@
 @import models.amends.AmendSummaryRow
 @import components._
 @import viewmodels._
+@import models.amends.AmendNewAnswerType._
 
 @this(govukTable : GovukTable)
 
@@ -45,7 +46,10 @@
                     format = Some("text")
                 ),
                 TableRow(
-                    content =  row.newAnswer.value.fold[Content](HtmlContent(hiddenContent(row.newAnswer.hiddenMessage)))(Text(_)),
+                    content =  row.newAnswer match {
+                        case answer: AnswerWithValue => Text(answer.value)
+                        case emptyAnswer: AnswerWithoutValue => HtmlContent(hiddenContent(emptyAnswer.hiddenMessage))
+                    },
                     format = Some("text")
                 ),
                 row.changeUrl.fold(TableRow(attributes=Map("aria-hidden" -> "true"))){case (linkID, href) =>
