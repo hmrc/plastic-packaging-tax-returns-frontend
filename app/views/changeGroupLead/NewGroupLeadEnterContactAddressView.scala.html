@@ -32,12 +32,13 @@
 
 @(form: Form[_], countryMap: Map[String, String], organisationName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@input(formName: String, key: String) = @{
+@input(formName: String, key: String, attr: String) = @{
     govukInput(
         InputViewModel(
             field = form(formName),
             label = LabelViewModel(messages(key))
         )
+        .withAttribute("autocomplete", attr)
         .withWidth(Full)
     )
 }
@@ -45,11 +46,11 @@
 @fieldSetBody = {
         @paragraphBody(messages("newGroupLeadEnterContactAddress.paragraph"))
 
-        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label")
-        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label")
-        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label")
-        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label")
-        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label")
+        @input("addressLine1", "newGroupLeadEnterContactAddress.addressLine1.label", "address-line1")
+        @input("addressLine2", "newGroupLeadEnterContactAddress.addressLine2.label", "address-line2")
+        @input("addressLine3", "newGroupLeadEnterContactAddress.addressLine3.label", "off")
+        @input("addressLine4", "newGroupLeadEnterContactAddress.addressLine4.label", "address-level2")
+        @input("postalCode", "newGroupLeadEnterContactAddress.postalCode.label", "postal-code")
 
         @govukSelect(
             Select(
@@ -78,7 +79,7 @@
 
 @layout(pageTitle = title(form, messages("newGroupLeadEnterContactAddress.title"), Some(messages("account.title.tail")))) {
 
-    @formHelper(action = controllers.changeGroupLead.routes.NewGroupLeadEnterContactAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.changeGroupLead.routes.NewGroupLeadEnterContactAddressController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -57,23 +57,27 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
 
     "have input box" when {
       val table = Table(
-        ("description", "id", "message", "key"),
-        ("Address Line 1", "addressLine1", "Address line 1", "newGroupLeadEnterContactAddress.addressLine1.label"),
-        ("Address Line 2", "addressLine2", "Address line 2 (optional)", "newGroupLeadEnterContactAddress.addressLine2.label"),
-        ("Address Line 3", "addressLine3", "Address line 3 (optional)", "newGroupLeadEnterContactAddress.addressLine3.label"),
-        ("Address Line 4", "addressLine4", "Town or city", "newGroupLeadEnterContactAddress.addressLine4.label"),
-        ("Postal Code", "postalCode", "Postcode (required for UK addresses)", "newGroupLeadEnterContactAddress.postalCode.label"),
-        ("Country Code", "countryCode", "Country", "newGroupLeadEnterContactAddress.countryCode.label")
+        ("description", "id", "message", "key", "autocompleteValue"),
+        ("Address Line 1", "addressLine1", "Address line 1", "newGroupLeadEnterContactAddress.addressLine1.label", "address-line1"),
+        ("Address Line 2", "addressLine2", "Address line 2 (optional)", "newGroupLeadEnterContactAddress.addressLine2.label", "address-line2"),
+        ("Address Line 3", "addressLine3", "Address line 3 (optional)", "newGroupLeadEnterContactAddress.addressLine3.label", "off"),
+        ("Address Line 4", "addressLine4", "Town or city", "newGroupLeadEnterContactAddress.addressLine4.label", "address-level2"),
+        ("Postal Code", "postalCode", "Postcode (required for UK addresses)", "newGroupLeadEnterContactAddress.postalCode.label", "postal-code"),
       )
 
       forAll(table) {
-        (description, id, message, key) =>
+        (description, id, message, key, autocompleteValue) =>
           s"for $description" in {
             view.getElementsByAttributeValue("for", id).text() mustBe message
-            view.getElementsByAttributeValue("for", id).text() mustBe
-              messages(key)
+            view.getElementsByAttributeValue("for", id).text() mustBe messages(key)
+            view.getElementsByAttributeValue("id", id).attr("autocomplete") mustBe autocompleteValue
           }
       }
+    }
+
+    "have country code input" in {
+      view.getElementsByAttributeValue("for", countryCode).text() mustBe "Country"
+      view.getElementsByAttributeValue("for", countryCode).text() mustBe messages("newGroupLeadEnterContactAddress.countryCode.label")
     }
 
 
