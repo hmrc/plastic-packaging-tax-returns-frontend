@@ -18,6 +18,7 @@
 @import models.returns.TaxReturnObligation
 @import views.ViewUtils
 @import config.FrontendAppConfig
+@import templates.HiddenContent
 
 @this(
     formHelper: FormWithCSRF,
@@ -28,12 +29,15 @@
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
     link: Link,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    hiddenContent: HiddenContent
 )
 
 @(form: Form[Boolean], obligation: TaxReturnObligation, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @obligationPrettyPrint = {@ViewUtils.displayReturnQuarter(obligation)}
+
+
 
 @layout(pageTitle = title(form, messages("what-do-you-want-to-do.title"), Some(messages("return.title.tail")))) {
 
@@ -50,6 +54,7 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
+                legend = LegendViewModel(HtmlContent(hiddenContent("what-do-you-want-to-do.title"))),
                 items = Seq(
                     RadioItem(id = Some("value"), value = Some("true"), content = Text(messages("what-do-you-want-to-do.credit-and-return", obligationPrettyPrint))),
                     RadioItem(id = Some("radio-just-return"), value = Some("false"), content = Text(messages("what-do-you-want-to-do.just-return", obligationPrettyPrint)))
