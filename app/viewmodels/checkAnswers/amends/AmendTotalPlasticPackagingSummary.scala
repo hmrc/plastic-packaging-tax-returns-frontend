@@ -16,21 +16,29 @@
 
 package viewmodels.checkAnswers.amends
 
+import models.UserAnswers
 import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.AmendsCalculations
+import pages.amends.{AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage}
 import viewmodels.PrintLong
 
 object AmendTotalPlasticPackagingSummary {
 
-  def apply(calculations: AmendsCalculations, isAmending: Boolean) = {
+  def apply(calculations: AmendsCalculations, userAnswer: UserAnswers) = {
+
     AmendSummaryRow(
       "AmendsCheckYourAnswers.packagingTotal",
       calculations.original.packagingTotal.asKg,
       AmendNewAnswerType(
         calculations.amend.packagingTotal.asKg,
         "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
-        isAmending),
+        isAmending(userAnswer)),
       None
     )
+  }
+
+  private def isAmending(userAnswer: UserAnswers) = {
+    userAnswer.get(AmendManufacturedPlasticPackagingPage).isDefined ||
+      userAnswer.get(AmendImportedPlasticPackagingPage).isDefined
   }
 }
