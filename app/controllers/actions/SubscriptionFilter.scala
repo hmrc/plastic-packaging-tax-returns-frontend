@@ -17,13 +17,14 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import connectors.SubscriptionConnector
-import models.requests.IdentifiedRequest
-import play.api.mvc.{ActionFilter, Result}
+import connectors.{DownstreamServiceError, SubscriptionConnector}
 import models.PPTSubscriptionDetails
+import models.requests.IdentifiedRequest
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionFilter, Result}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
+import uk.gov.hmrc.http.ServiceUnavailableException
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +35,7 @@ class SubscriptionFilter @Inject()(
                                   )(implicit val executionContext: ExecutionContext)
   extends ActionFilter[IdentifiedRequest] with HeaderCarrierConverter {
 
-  override protected def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
+  override def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
     sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive).flatMap{
       case Some(_) => Future.successful(None)
       case _ =>
@@ -44,6 +45,8 @@ class SubscriptionFilter @Inject()(
             .map(_ => None)
           case Left(eisFailure) if eisFailure.isDeregistered =>
             Future.successful(Some(Redirect(controllers.routes.DeregisteredController.onPageLoad())))
+          case Left(eisFailure) if eisFailure.isDependentSystemsNotResponding =>
+            throw DownstreamServiceError("Dependent systems are currently not responding.", new ServiceUnavailableException(eisFailure.failures.toString))
           case Left(eisFailure) =>
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
