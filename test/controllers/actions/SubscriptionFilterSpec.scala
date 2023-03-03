@@ -62,7 +62,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
     when(request.pptReference) thenReturn "ppt-ref"
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
     
-    // Routes behaves differently for play running states, Test vs Production
+    // RoutesPrefix is a singleton, other tests may change it
     RoutesPrefix.setPrefix("/")
   }
 
