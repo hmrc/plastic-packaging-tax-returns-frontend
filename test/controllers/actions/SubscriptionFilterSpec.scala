@@ -51,7 +51,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   private val eisFailure = mock[EisFailure]
   private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] = Messaging.messagingNatureOfThrowable
   
-  case class RandoError() extends RuntimeException
+  object RandoError extends RuntimeException
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,7 +62,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
     when(request.pptReference) thenReturn "ppt-ref"
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
     
-    // TODO a better way of avoiding the need for this?
+    // Routes behaves differently for play running states, Test vs Production
     RoutesPrefix.setPrefix("/")
   }
 
@@ -125,20 +125,20 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
       }
 
       "session repo get fails" in {
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.failed(RandoError())
-        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.failed(RandoError)
+        an [RandoError.type] must be thrownBy callFilter
       }
 
       "session repo set fails" in {
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
-        when(sessionRepository.set(any, any, any) (any)) thenReturn Future.failed(RandoError())
-        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+        when(sessionRepository.set(any, any, any) (any)) thenReturn Future.failed(RandoError)
+        an [RandoError.type] must be thrownBy callFilter
       }
       
       "subscription connector get fails" in {
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
-        when(subscriptionConnector.get(any)(any)) thenReturn Future.failed(RandoError())
-        an [Exception] must be thrownBy callFilter // todo what do we want to do here?
+        when(subscriptionConnector.get(any)(any)) thenReturn Future.failed(RandoError)
+        an [RandoError.type] must be thrownBy callFilter
       }
       
     }
