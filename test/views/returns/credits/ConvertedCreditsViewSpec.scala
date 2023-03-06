@@ -52,8 +52,8 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.getElementById("section-header").text mustBe messages("credits.caption")
     }
 
-    "have a secondary heading" in {
-      view.getElementById("converted-credits-h2").text mustBe messages("converted.credits.heading.2")
+    "have a fieldset legend" in {
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted.credits.heading.2")
     }
 
     "have a hint" in {

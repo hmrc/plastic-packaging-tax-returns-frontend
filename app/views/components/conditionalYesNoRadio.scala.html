@@ -28,8 +28,8 @@
   noValue: String = "false",
   hint: Option[Html] = None,
   headingMessageArgs: Seq[String] = Seq(),
-  isPageHeading: Boolean = true,
-  classes: String = "govuk-fieldset__legend--l"
+  isPageHeading: Boolean = false,
+  classes: String = "govuk-fieldset__legend--m"
 )(implicit messages: Messages)
 
 @radios(Radios(
@@ -61,3 +61,4 @@
                 )),
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))
+
