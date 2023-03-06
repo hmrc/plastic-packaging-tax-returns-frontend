@@ -16,23 +16,54 @@
 
 package viewmodels.checkYourAnswer.amends
 
+import models.UserAnswers
 import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
 import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import viewmodels.checkAnswers.amends.AmendTotalPlasticPackagingSummary
+import pages.amends.{AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage}
+import queries.Gettable
+import viewmodels.checkAnswers.amends.{AmendTotalDeductionSummary, AmendTotalPlasticPackagingSummary}
 
-class AmendTotalPlasticPackagingSummarySpec extends PlaySpec {
+class AmendTotalPlasticPackagingSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
+  private val ans = mock[UserAnswers]
   private val calculations = AmendsCalculations(
-    Calculations(1,2, 200, 100, true, 0.2),
-    Calculations(1,2,100, 100, true, 0.2)
+    Calculations(1, 2, 200, 100, true, 0.2),
+    Calculations(1, 2, 100, 100, true, 0.2)
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(ans)
+
+    when(ans.get(any[Gettable[Long]])(any)).thenReturn(None)
+  }
+
   "AmendTotalPlasticPackagingSummarySpec" should {
+
+    "get the amended exported by you weight" in {
+      AmendTotalPlasticPackagingSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendManufacturedPlasticPackagingPage))(any)
+    }
+
+    "get the amended exported by another Business weight" in {
+      AmendTotalPlasticPackagingSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendImportedPlasticPackagingPage))(any)
+    }
+
     "return a summary row with amended value" in {
 
-      AmendTotalPlasticPackagingSummary(calculations, true) mustEqual
+      when(ans.get(any[Gettable[Long]])(any)).thenReturn(Some(10L))
+
+      AmendTotalPlasticPackagingSummary(calculations, ans) mustEqual
         AmendSummaryRow(
           "AmendsCheckYourAnswers.packagingTotal",
           "100kg",
@@ -43,7 +74,7 @@ class AmendTotalPlasticPackagingSummarySpec extends PlaySpec {
 
     "return a summary row without amended value and a hidden message" in {
 
-      AmendTotalPlasticPackagingSummary(calculations, false) mustEqual
+      AmendTotalPlasticPackagingSummary(calculations, ans) mustEqual
         AmendSummaryRow(
           "AmendsCheckYourAnswers.packagingTotal",
           "100kg",

@@ -16,22 +16,65 @@
 
 package viewmodels.checkYourAnswer.amends
 
+import models.UserAnswers
 import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
 import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage, AmendHumanMedicinePlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import queries.Gettable
 import viewmodels.checkAnswers.amends.AmendTotalDeductionSummary
 
-class AmendTotalDeductionSummarySpec extends PlaySpec {
+class AmendTotalDeductionSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
+  private val ans = mock[UserAnswers]
   private val calculations = AmendsCalculations(
     Calculations(1,2, 200, 100, true, 0.2),
     Calculations(1,2,100, 100, true, 0.2)
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(ans)
+
+    when(ans.get(any[Gettable[Long]])(any)).thenReturn(None)
+  }
   "AmendTotalDeductionSummary" should {
+
+    "get the amended exported by you weight" in {
+      AmendTotalDeductionSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendDirectExportPlasticPackagingPage))(any)
+    }
+
+    "get the amended exported by another Business weight" in {
+      AmendTotalDeductionSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendExportedByAnotherBusinessPage))(any)
+    }
+
+    "get the amended Human medicine plastic weight" in {
+      AmendTotalDeductionSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendHumanMedicinePlasticPackagingPage))(any)
+    }
+
+    "get the exported amended recycled plastic weight" in {
+      AmendTotalDeductionSummary(calculations, ans)
+
+      verify(ans).get(meq(AmendRecycledPlasticPackagingPage))(any)
+    }
+
     "return a summary row with amended value" in {
 
-      AmendTotalDeductionSummary(calculations, true) mustEqual
+      when(ans.get(any[Gettable[Long]])(any)).thenReturn(Some(2L))
+
+      AmendTotalDeductionSummary(calculations, ans) mustEqual
         AmendSummaryRow(
           "AmendsCheckYourAnswers.deductionsTotal",
           "200kg",
@@ -42,7 +85,7 @@ class AmendTotalDeductionSummarySpec extends PlaySpec {
 
     "return a summary row without amended value and a hidden message" in {
 
-      AmendTotalDeductionSummary(calculations, false) mustEqual
+      AmendTotalDeductionSummary(calculations, ans) mustEqual
         AmendSummaryRow(
           "AmendsCheckYourAnswers.deductionsTotal",
           "200kg",

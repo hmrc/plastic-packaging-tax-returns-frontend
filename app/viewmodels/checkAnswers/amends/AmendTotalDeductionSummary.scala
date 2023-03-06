@@ -16,18 +16,25 @@
 
 package viewmodels.checkAnswers.amends
 
+import models.UserAnswers
 import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.AmendsCalculations
+import pages.amends.{
+  AmendDirectExportPlasticPackagingPage,
+  AmendExportedByAnotherBusinessPage,
+  AmendHumanMedicinePlasticPackagingPage,
+  AmendRecycledPlasticPackagingPage
+}
 import viewmodels.PrintLong
 
 object AmendTotalDeductionSummary {
 
-  def apply(calculations: AmendsCalculations, isAmending: Boolean): AmendSummaryRow = {
+  def apply(calculations: AmendsCalculations, userAnswer: UserAnswers): AmendSummaryRow = {
 
     val answer  = AmendNewAnswerType(
       calculations.amend.deductionsTotal.asKg,
       "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
-      isAmending)
+      isAmending(userAnswer))
 
     AmendSummaryRow(
       "AmendsCheckYourAnswers.deductionsTotal",
@@ -37,5 +44,10 @@ object AmendTotalDeductionSummary {
     )
   }
 
-
+  private def isAmending(userAnswer: UserAnswers) = {
+    userAnswer.get(AmendDirectExportPlasticPackagingPage).isDefined ||
+      userAnswer.get(AmendExportedByAnotherBusinessPage).isDefined ||
+      userAnswer.get(AmendHumanMedicinePlasticPackagingPage).isDefined ||
+      userAnswer.get(AmendRecycledPlasticPackagingPage).isDefined
+  }
 }
