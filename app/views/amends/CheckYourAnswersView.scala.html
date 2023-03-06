@@ -81,14 +81,7 @@
 
     @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 
-    <!--//todo proper margin bottom on tables so dont need br br-->
-    <br>
-    <br>
-
     @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
-
-    <br>
-    <br>
 
     <!--calculations-->
     @govukTable(
@@ -130,24 +123,24 @@
            ),
            caption = Some(messages("AmendsCheckYourAnswers.calculation")),
            captionClasses = "govuk-table__caption--m",
-           firstCellIsHeader = true
+           firstCellIsHeader = true,
+           classes = "govuk-!-margin-bottom-9"
         )
     )
 
-    <br>
-    <br>
-
     <h2 class="govuk-heading-m">@messages("AmendsCheckYourAnswers.credits.heading")</h2>
-    @paragraphBody(message = messages("AmendsCheckYourAnswers.credit.paragraph"))
-    <br>
+    @paragraphBody(
+        message = messages("AmendsCheckYourAnswers.credit.paragraph"),
+        classes = "govuk-body govuk-!-margin-bottom-8"
+    )
 
     @if(amendmentMade){ @submitContent }else{ @noAmendmentsMadeContent }
 
 
 
-    @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"),
-        call = controllers.amends.routes.CancelAmendController.onPageLoad))
-
-    <br /><!--bottom margin-->
-
+    @paragraph(
+        content = link(id = "cancel-link",
+        text = messages("AmendsCheckYourAnswers.cancel.link.text"),
+        call = controllers.amends.routes.CancelAmendController.onPageLoad),
+        classes = "govuk-body govuk-!-margin-bottom-6")
 }
