@@ -52,8 +52,8 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
       view.getElementById("section-header").text mustBe messages("credits.caption")
     }
 
-    "have a secondary heading" in {
-      view.getElementById("exported-credits-h2").text mustBe messages("exported.credits.heading.2")
+    "have a fieldset legend" in {
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exported.credits.heading.2")
     }
 
     "have paragraph content" in {

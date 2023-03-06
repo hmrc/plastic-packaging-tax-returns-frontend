@@ -62,8 +62,7 @@
         @sectionHeader(messages("credits.caption"))
         @heading("exported.credits.heading")
         @paraContent
-        @h2heading(messages("exported.credits.heading.2"), Some("exported-credits-h2"))
-        @conditionalYesNo(form, None, Some(ifYes))
+        @conditionalYesNo(form, Some(messages("exported.credits.heading.2")), Some(ifYes))
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
 }
