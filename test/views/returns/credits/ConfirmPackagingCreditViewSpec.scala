@@ -67,16 +67,16 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       view.getElementById("paragraph-body-4").text() mustBe messages("confirmPackagingCredit.hint.p4")
     }
 
-    "have a confirm button" in {
-      view.getElementById("link-button") must haveHref(continueCall.url)
-      view.getElementById("link-button").text() mustBe  "Confirm credit amount"
-      view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
-    }
-
     "allow to change the amount of credit" in {
       view.getElementById("change-credit-amount") must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
       view.getElementById("change-credit-amount").text() mustBe "Change the amount of credit"
       view.getElementById("change-credit-amount").text() mustBe messages("confirmPackagingCredit.change.credit.paragraph")
+    }
+
+    "have a confirm button" in {
+      view.getElementById("link-button") must haveHref(continueCall.url)
+      view.getElementById("link-button").text() mustBe  "Confirm credit amount"
+      view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
     }
 
   }
