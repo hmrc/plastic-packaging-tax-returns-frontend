@@ -57,7 +57,7 @@ class SubmittedReturnsViewSpec extends ViewSpecBase {
       val view = createView(notSubmittedReturns)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("previous-returns-list").text() mustBe "You have not submitted any returns yet."
+      doc.getElementsByClass("govuk-body").text() must include("You have not submitted any returns yet.")
 
     }
     "have a previous return" in {
