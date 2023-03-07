@@ -59,11 +59,6 @@
         id = Some("paragraph-body-4")
     )
 
-    @linkButton(
-        messageKey = "confirmPackagingCredit.confirm.credit.button",
-        linkUrl = continueCall.url
-    )
-
     <p class="govuk-body">
         @link(
             id = "change-credit-amount",
@@ -71,4 +66,9 @@
             call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
         )
     </p>
+
+    @linkButton(
+        messageKey = "confirmPackagingCredit.confirm.credit.button",
+        linkUrl = continueCall.url
+    )
 }
