@@ -294,7 +294,7 @@ const confirmationPage = () => {
 }
 
 /*########################     MAIN FUNCTION     ########################## */
-function completeJourney(manualJourney) => {
+function completeJourney(manualJourney) {
 
     startPage()
     returnAccountingPeriod()
@@ -312,9 +312,9 @@ function completeJourney(manualJourney) => {
     nonExportedMedicinesWeightPage()
     nonExportedRecycledPage()
     nonExportedRecycledWeightPage()
-    reviewReturn()
     if(manualJourney){
-            confirmationPage()
-        }
+        reviewReturn()
+    }
+    confirmationPage()
 
 }
