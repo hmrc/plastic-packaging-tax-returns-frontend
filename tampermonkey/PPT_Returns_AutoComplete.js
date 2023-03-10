@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.5
+// @version      5.6
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/*
-// @include      http*://*/register-for-plastic-packaging-tax*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_AutoComplete.js
