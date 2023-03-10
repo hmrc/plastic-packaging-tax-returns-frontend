@@ -66,7 +66,7 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
 
 
     "contain a how much the plastic is charged for tonne" in {
-      view.select("p").text() must include("Tax is £300 per tonne on chargeable plastic packaging.")
+      view.select("p").text() must include("For this period, tax is charged at a rate of £300 per tonne.")
     }
   }
 

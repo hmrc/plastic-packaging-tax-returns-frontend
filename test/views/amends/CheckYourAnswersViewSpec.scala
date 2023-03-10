@@ -98,6 +98,11 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
     "display calculation section" when {
 
+      "display tax rate" in {
+        val view = createView(calculation = createCalculations(false), amendmentMade = true)
+
+        view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300 per tonne.")
+      }
       "amended" in {
         val view = createView(calculation = createCalculations(true), amendmentMade = true)
         view.text() must include("Plastic packaging total 200kg 200kg")
@@ -135,7 +140,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
   private def createCalculations(isSubmittable: Boolean) = {
     AmendsCalculations(
       Calculations(12, 40, 100, 200, isSubmittable, 200.0),
-      Calculations(12, 40, 100, 200, isSubmittable, 200.0)
+      Calculations(12, 40, 100, 200, isSubmittable, 0.3)
     )
   }
 

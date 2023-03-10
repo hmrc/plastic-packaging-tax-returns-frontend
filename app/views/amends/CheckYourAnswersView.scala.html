@@ -84,6 +84,10 @@
     @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
 
     <!--calculations-->
+    @sectionH2Heading(messages("AmendsCheckYourAnswers.calculation"))
+
+    @paragraphBody(messages("AmendsCheckYourAnswers.calculation.taxRate", calculations.amend.taxRate.asPoundPerTonne))
+
     @govukTable(
         Table(
             rows = Seq(
@@ -121,8 +125,6 @@
                     )
                 )
            ),
-           caption = Some(messages("AmendsCheckYourAnswers.calculation")),
-           captionClasses = "govuk-table__caption--m",
            firstCellIsHeader = true,
            classes = "govuk-!-margin-bottom-9"
         )
