@@ -34,7 +34,7 @@ class MainContactJobTitleFormProvider{
 }
 object MainContactJobTitleFormProvider {
   private val MaxLength = 155
-  private val AllowedCharacterRegex = "^[A-z ]*$"
+  private val AllowedCharacterRegex = "^[A-Za-z ]*$"
   val EmptyError = "mainContactJobTitle.error.required"
   val LengthError = "mainContactJobTitle.error.length"
   val InvalidError = "mainContactJobTitle.error.invalid"
