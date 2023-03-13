@@ -35,7 +35,7 @@ object MainContactNameSummary extends SummaryViewModel {
 
         SummaryListRowViewModel(
           key     = "newGroupLeadCheckYourAnswers.contact.name.key",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(answer),
           actions = Seq(
             ActionItemViewModel("site.change", routes.MainContactNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.name.key"))
