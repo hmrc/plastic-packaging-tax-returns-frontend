@@ -31,12 +31,12 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   val requestedCredit = BigDecimal(500)
   val continueCall = Call("TEST", "/end-point")
 
-  private def createView: Html =
-    page(requestedCredit, weight, continueCall, NormalMode)(request, messages)
+  private def createView(isPostApril: Boolean = false): Html =
+    page(requestedCredit, weight, continueCall, NormalMode, isPostApril)(request, messages)
 
   "View" should {
 
-    val view = createView
+    val view = createView()
 
     "have a title" in {
       view.select("title").text() must include("Confirm credit amount - Submit return - Plastic Packaging Tax - GOV.UK")
@@ -57,15 +57,26 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       view.getElementById("paragraph-body-1").text() mustBe s"You told us that you paid tax on ${weight.asKg} of plastic packaging from a previous return, and it has since been exported or converted."
       view.getElementById("paragraph-body-1").text() mustBe messages("confirmPackagingCredit.hint.p1", weight.asKg)
 
-      view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
-      view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
-
       view.getElementById("paragraph-body-3").text() mustBe s"This means the amount of tax you’ll get back as credit will be ${requestedCredit.asPounds}."
       view.getElementById("paragraph-body-3").text() mustBe messages("confirmPackagingCredit.hint.p3", requestedCredit.asPounds)
 
       view.getElementById("paragraph-body-4").text() mustBe s"Your credit will be applied against your total balance in your Plastic Packaging Tax account."
       view.getElementById("paragraph-body-4").text() mustBe messages("confirmPackagingCredit.hint.p4")
     }
+
+    "display tax rate per tonne" when {
+      "before 1st April 2023" in {
+        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
+        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
+      }
+
+      "after 1st April 2023" in {
+        val view = createView(true)
+        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is charged at £200 per tonne."
+        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.afterFirstApril2023")
+      }
+    }
+
 
     "allow to change the amount of credit" in {
       view.getElementById("change-credit-amount") must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)

@@ -23,6 +23,8 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
+
 @Singleton
 class FrontendAppConfig @Inject() (
   configuration: Configuration,
@@ -162,5 +164,5 @@ class FrontendAppConfig @Inject() (
   def addMemberToGroupUrl: String =
     configuration.get[String]("urls.addMemberToGroup")
 
-
+  val taxRegimeStartDate: LocalDate = LocalDate.of(2023, 4, 1)
 }

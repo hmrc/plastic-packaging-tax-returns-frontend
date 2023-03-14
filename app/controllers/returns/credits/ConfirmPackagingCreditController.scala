@@ -18,35 +18,36 @@ package controllers.returns.credits
 
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
-import models.{CreditBalance, Mode}
 import models.requests.DataRequest
+import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.Results.{Ok, Redirect}
+import play.api.mvc._
+import models.requests.DataRequest.headerCarrier
+import services.LocalDateService
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ConfirmPackagingCreditController @Inject()(
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
   tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
-  returnsJourneyNavigator: ReturnsJourneyNavigator
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+  returnsJourneyNavigator: ReturnsJourneyNavigator,
+  localDateService: LocalDateService
+)(implicit ec: ExecutionContext)  extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request: DataRequest[AnyContent] =>
+    journeyAction.async {
+      implicit request =>
         creditConnector.get(request.pptReference).map {
           case Right(response) => displayView(response, mode)
           case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
@@ -61,7 +62,8 @@ class ConfirmPackagingCreditController @Inject()(
         creditBalance.totalRequestedCreditInPounds,
         creditBalance.totalRequestedCreditInKilograms,
         continueCall,
-        mode)
+        mode,
+        localDateService.isTodayPostTaxRegimeStartDate)
       )
     } else {
       val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
@@ -71,12 +73,16 @@ class ConfirmPackagingCreditController @Inject()(
   }
 
   def onCancelClaim(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
         request.userAnswers
           .setOrFail(WhatDoYouWantToDoPage, false)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
     }
+
+  def isPostApril = {
+    LocalDate.now.compareTo(LocalDate.of(2023, 4, 1)) >= 0
+  }
 
 }
