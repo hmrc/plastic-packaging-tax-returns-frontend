@@ -19,17 +19,16 @@ package controllers.returns.credits
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
-import models.requests.DataRequest.headerCarrier
 import services.LocalDateService
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
