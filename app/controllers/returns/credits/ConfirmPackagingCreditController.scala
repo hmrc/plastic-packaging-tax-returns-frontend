@@ -80,9 +80,4 @@ class ConfirmPackagingCreditController @Inject()(
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
     }
-
-  def isPostApril = {
-    LocalDate.now.compareTo(LocalDate.of(2023, 4, 1)) >= 0
-  }
-
 }
