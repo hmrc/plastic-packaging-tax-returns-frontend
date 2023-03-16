@@ -26,9 +26,10 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
-import services.LocalDateService
+import util.EdgeOfSystem
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -41,8 +42,10 @@ class ConfirmPackagingCreditController @Inject()(
   tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
-  localDateService: LocalDateService
+  edgeOfSystem: EdgeOfSystem
 )(implicit ec: ExecutionContext)  extends I18nSupport {
+
+  private val midnight1stApril2023 = LocalDateTime.of(2023, 4, 1, 0, 0, 0)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction.async {
@@ -55,6 +58,7 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
+    val isOnOrAfterApril2023 = !midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
       Ok(confirmCreditView(
@@ -62,7 +66,7 @@ class ConfirmPackagingCreditController @Inject()(
         creditBalance.totalRequestedCreditInKilograms,
         continueCall,
         mode,
-        localDateService.isTodayPostTaxRegimeStartDate)
+        isOnOrAfterApril2023)
       )
     } else {
       val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)

@@ -25,13 +25,11 @@ import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{never, reset}
-import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.{Answers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.MessagesApi
@@ -39,18 +37,20 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Settable
-import services.LocalDateService
+import util.EdgeOfSystem
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
 class ConfirmPackagingCreditControllerSpec
   extends PlaySpec
-    with JourneyActionAnswer
     with MockitoSugar
-    with BeforeAndAfterEach {
+    with JourneyActionAnswer
+    with BeforeAndAfterEach
+    with ResetMocksAfterEachTest {
 
   private val saveAnsFun = mock[SaveUserAnswerFunc]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
@@ -61,7 +61,7 @@ class ConfirmPackagingCreditControllerSpec
   private val tooMuchCreditView = mock[TooMuchCreditClaimedView]
   private val cacheConnector = mock[CacheConnector]
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val localDateService = mock[LocalDateService]
+  private val edgeOfSystem = mock[EdgeOfSystem]
   private val journeyAction = mock[JourneyAction]
 
   private val sut = new ConfirmPackagingCreditController(
@@ -73,22 +73,14 @@ class ConfirmPackagingCreditControllerSpec
     tooMuchCreditView,
     cacheConnector, 
     returnsJourneyNavigator,
-    localDateService
+    edgeOfSystem
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(
-      mockCalculateCreditConnector,
-      mockView,
-      tooMuchCreditView,
-      journeyAction,
-      dataRequest,
-      cacheConnector,
-      returnsJourneyNavigator)
-
     when(dataRequest.pptReference).thenReturn("123")
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
   }
 
 
@@ -111,16 +103,15 @@ class ConfirmPackagingCreditControllerSpec
     "view the tax rate per tonne" when {
       "before 1st April 2023" in {
         setUpMockForConfirmCreditsView()
-        when(localDateService.isTodayPostTaxRegimeStartDate).thenReturn(false)
 
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
         verify(mockView).apply(any, any, any, any, meq(false))(any, any)
       }
 
-      "after 1st April 2023" in {
+      "on or after 1st April 2023" in {
         setUpMockForConfirmCreditsView()
-        when(localDateService.isTodayPostTaxRegimeStartDate).thenReturn(true)
+        when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 4, 1, 0, 0, 0) // Midnight
 
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
@@ -154,7 +145,7 @@ class ConfirmPackagingCreditControllerSpec
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
         verify(tooMuchCreditView).apply(any, any)(any,any)
-        verify(mockView, never()).apply(any, any, any, any, any)(any,any)
+        verify(mockView, never).apply(any, any, any, any, any)(any,any)
       }
     }
 
@@ -165,7 +156,7 @@ class ConfirmPackagingCreditControllerSpec
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
         verify(mockView).apply(meq(BigDecimal(5)), meq(500L), any, any, any)(any,any)
-        verify(tooMuchCreditView, never()).apply(any, any)(any,any)
+        verify(tooMuchCreditView, never).apply(any, any)(any,any)
       }
 
       "only exported weight is Available" in {

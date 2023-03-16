@@ -23,7 +23,8 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
+import java.time.format.DateTimeFormatter
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -164,5 +165,18 @@ class FrontendAppConfig @Inject() (
   def addMemberToGroupUrl: String =
     configuration.get[String]("urls.addMemberToGroup")
 
-  val taxRegimeStartDate: LocalDate = LocalDate.of(2023, 4, 1)
+
+  /** Override the current system data-time, for coding and testing
+    * @return
+    *   - [[None]] if no date-time override is in-place
+    *   - [[Some]][String]  if an override is in-place, the date-time to use is serialised in the string
+    * @example 2011-12-03T10:15:30
+    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
+    * @see [[util.EdgeOfSystem.localDateTimeNow]] 
+    */
+  def overrideSystemDateTime: Option[LocalDateTime] = {
+    configuration
+      .getOptional[String]("features.override-system-date-time")
+      .map(LocalDateTime.parse(_, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+  }
 }

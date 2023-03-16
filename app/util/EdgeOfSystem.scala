@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package services
+package util
 
 import config.FrontendAppConfig
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
-class LocalDateService @Inject() (appConfig: FrontendAppConfig) {
+class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
 
-  def isTodayPostTaxRegimeStartDate = {
-    LocalDate.now.compareTo(appConfig.taxRegimeStartDate) >= 0
+  /** The current system date-time, or the overridden date-time if set in config
+    * @return
+    *  - current system date-time, if no override in-place
+    *  - overridden date-time, if set 
+    * @see [[FrontendAppConfig.overrideSystemDateTime]]
+    */
+  def localDateTimeNow: LocalDateTime = {
+    frontendAppConfig
+      .overrideSystemDateTime
+      .getOrElse(LocalDateTime.now())
   }
+  
 }
-
