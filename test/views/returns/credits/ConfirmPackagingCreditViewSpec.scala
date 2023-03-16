@@ -72,7 +72,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
       "after 1st April 2023" in {
         val view = createView(true)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is charged at £200 per tonne."
+        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax was charged at £200 per tonne during this time. "
         view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.afterFirstApril2023")
       }
     }
