@@ -170,7 +170,8 @@ class FrontendAppConfig @Inject() (
     * @return
     *   - [[None]] if no date-time override is in-place
     *   - [[Some]][String]  if an override is in-place, the date-time to use is serialised in the string
-    * @example 2011-12-03T10:15:30
+    * @example 2023-03-31T23:59:59
+    * @example 2023-04-01T00:00:00
     * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     * @see [[util.EdgeOfSystem.localDateTimeNow]] 
     */
