@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{LocalDate, LocalDateTime}
 import java.time.format.DateTimeFormatter
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -176,8 +177,12 @@ class FrontendAppConfig @Inject() (
     * @see [[util.EdgeOfSystem.localDateTimeNow]] 
     */
   def overrideSystemDateTime: Option[LocalDateTime] = {
-    configuration
+    Try(configuration
       .getOptional[String]("features.override-system-date-time")
-      .map(LocalDateTime.parse(_, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+      .map(LocalDateTime.parse(_, DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+    match {
+      case Success(date) => date
+      case Failure(_) => None
+    }
   }
 }
