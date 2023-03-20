@@ -23,9 +23,6 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.{LocalDate, LocalDateTime}
-import java.time.format.DateTimeFormatter
-import scala.util.{Failure, Success, Try}
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -38,7 +35,7 @@ class FrontendAppConfig @Inject() (
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  private val contactHost                  = configuration.get[String]("contact-frontend.host")
+  lazy private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
@@ -152,7 +149,7 @@ class FrontendAppConfig @Inject() (
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"
 
-  val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
+   lazy val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
 
   def pptStartDirectDebit : String =
     s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
