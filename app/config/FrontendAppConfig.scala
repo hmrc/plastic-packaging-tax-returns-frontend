@@ -167,12 +167,15 @@ class FrontendAppConfig @Inject() (
     configuration.get[String]("urls.addMemberToGroup")
 
 
-  /** Override the current system data-time, for coding and testing
+  /** Override the current system data-time, for coding and testing, set the config to an ISO_LOCAL_DATE_TIME string to
+    * override system date-time, or set to false to use system date-time. If config is missing, will use use system 
+    * date-time.
     * @return
     *   - [[None]] if no date-time override is in-place
-    *   - [[Some]][String]  if an override is in-place, the date-time to use is serialised in the string
-    * @example 2023-03-31T23:59:59
-    * @example 2023-04-01T00:00:00
+    *   - [[Some]][LocalDateTime] if an override is in-place, the date-time to use is serialised in the string
+    * @example "2023-03-31T23:59:59"
+    * @example "2023-04-01T00:00:00"
+    * @example false
     * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     * @see [[util.EdgeOfSystem.localDateTimeNow]] 
     */
