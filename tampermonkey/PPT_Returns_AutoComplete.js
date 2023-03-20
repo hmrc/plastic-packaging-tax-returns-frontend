@@ -1,11 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-<<<<<<< Updated upstream
-// @version      5.6
-=======
 // @version      5.7
->>>>>>> Stashed changes
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/*
