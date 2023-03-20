@@ -31,12 +31,12 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   val requestedCredit = BigDecimal(500)
   val continueCall = Call("TEST", "/end-point")
 
-  private def createView(isPostApril: Boolean = false): Html =
-    page(requestedCredit, weight, continueCall, NormalMode, isPostApril)(request, messages)
+  private def createView(isBefore1stApril2023: Boolean): Html =
+    page(requestedCredit, weight, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
 
   "View" should {
 
-    val view = createView()
+    val view = createView(true)
 
     "have a title" in {
       view.select("title").text() must include("Confirm credit amount - Submit return - Plastic Packaging Tax - GOV.UK")
@@ -66,12 +66,13 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
     "display tax rate per tonne" when {
       "before 1st April 2023" in {
+        val view = createView(true)
         view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
         view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
       }
 
-      "after 1st April 2023" in {
-        val view = createView(true)
+      "on or after 1st April 2023" in {
+        val view = createView(false)
         view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax was charged at £200 per tonne during this time."
         view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.afterFirstApril2023")
       }

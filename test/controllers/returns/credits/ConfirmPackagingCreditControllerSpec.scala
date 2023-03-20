@@ -103,19 +103,16 @@ class ConfirmPackagingCreditControllerSpec
     "view the tax rate per tonne" when {
       "before 1st April 2023" in {
         setUpMockForConfirmCreditsView()
-
+        when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
         await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(mockView).apply(any, any, any, any, meq(false))(any, any)
+        verify(mockView).apply(any, any, any, any, meq(true))(any, any)
       }
 
       "on or after 1st April 2023" in {
         setUpMockForConfirmCreditsView()
         when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 4, 1, 0, 0, 0) // Midnight
-
         await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(mockView).apply(any, any, any, any, meq(true))(any, any)
+        verify(mockView).apply(any, any, any, any, meq(false))(any, any)
       }
     }
 

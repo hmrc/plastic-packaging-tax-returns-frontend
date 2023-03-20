@@ -58,7 +58,7 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val isOnOrAfterApril2023 = !midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
+    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
       Ok(confirmCreditView(
@@ -66,7 +66,7 @@ class ConfirmPackagingCreditController @Inject()(
         creditBalance.totalRequestedCreditInKilograms,
         continueCall,
         mode,
-        isOnOrAfterApril2023)
+        isBeforeApril2023)
       )
     } else {
       val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
