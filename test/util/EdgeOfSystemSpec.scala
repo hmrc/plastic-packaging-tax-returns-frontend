@@ -23,6 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class EdgeOfSystemSpec extends PlaySpec
   with MockitoSugar
@@ -34,20 +35,24 @@ class EdgeOfSystemSpec extends PlaySpec
   
 
   "localDateTimeNow" should {
-    
-    "test" in {
-      Numeric.Implicits
-    }
-    
+
     "use the override time if it's there" in {
       val exampleDateTime = LocalDateTime.of(2023, 4, 1, 12, 11, 10)
-      when(frontendAppConfig.overrideSystemDateTime) thenReturn Some(exampleDateTime)
+      when(frontendAppConfig.overrideSystemDateTime) thenReturn Some(exampleDateTime.toString)
       edgeOfSystem.localDateTimeNow mustBe exampleDateTime
     }
     
-    "use the system time if override not present" ignore { // todo
+    "use the system time if override not present" in {
       when(frontendAppConfig.overrideSystemDateTime) thenReturn None
-      edgeOfSystem.localDateTimeNow mustBe (10 +- 1)
+
+      edgeOfSystem.localDateTimeNow.truncatedTo(ChronoUnit.MINUTES) mustBe
+        LocalDateTime.now.truncatedTo(ChronoUnit.MINUTES)
+    }
+
+    "use the system time if override is invalid date" in {
+      when(frontendAppConfig.overrideSystemDateTime) thenReturn Some("false")
+
+      edgeOfSystem.localDateTimeNow.truncatedTo(ChronoUnit.MINUTES) mustBe LocalDateTime.now.truncatedTo(ChronoUnit.MINUTES)
     }
     
   }

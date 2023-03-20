@@ -19,7 +19,9 @@ package util
 import config.FrontendAppConfig
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import scala.util.{Failure, Success, Try}
 
 class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
 
@@ -28,11 +30,19 @@ class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
     *  - current system date-time, if no override in-place
     *  - overridden date-time, if set 
     * @see [[FrontendAppConfig.overrideSystemDateTime]]
+    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     */
   def localDateTimeNow: LocalDateTime = {
     frontendAppConfig
       .overrideSystemDateTime
-      .getOrElse(LocalDateTime.now())
+      .fold(LocalDateTime.now())(parseDate(_))
+  }
+
+  private def parseDate(date: String): LocalDateTime = {
+    Try(LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME)) match {
+      case Success(value) => value
+      case Failure(_) => LocalDateTime.now
+    }
   }
   
 }

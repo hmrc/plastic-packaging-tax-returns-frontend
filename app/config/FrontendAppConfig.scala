@@ -33,8 +33,8 @@ class FrontendAppConfig @Inject() (
   val servicesConfig: ServicesConfig
 ) {
 
-  val host: String           = configuration.get[String]("host")
-  val appName: String        = configuration.get[String]("appName")
+  lazy val host: String           = configuration.get[String]("host")
+  lazy val appName: String        = configuration.get[String]("appName")
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
@@ -46,24 +46,24 @@ class FrontendAppConfig @Inject() (
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String         = configuration.get[String]("urls.login")
-  val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  lazy val loginUrl: String         = configuration.get[String]("urls.login")
+  lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
+  lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
 
-  val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
-  val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
+  lazy val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
+  lazy val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
-  val languageTranslationEnabled: Boolean =
+  lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
 
   def languageMap: Map[String, Lang] = Map("en" -> Lang("en"), "cy" -> Lang("cy"))
 
   def contactFrontEnd = contactHost
 
-  val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
-  val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
+  lazy val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
+  lazy val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
-  val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  lazy val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
@@ -167,25 +167,18 @@ class FrontendAppConfig @Inject() (
     configuration.get[String]("urls.addMemberToGroup")
 
 
-  /** Override the current system data-time, for coding and testing, set the config to an ISO_LOCAL_DATE_TIME string to
+  /** Override the current system data-time, for coding and testing.
     * override system date-time, or set to false to use system date-time. The system date-time is also used if config is 
     * missing or its value fails to parse.
     * @return
     *   - [[None]] if no date-time override is in-place
-    *   - Some[ [[LocalDateTime]] ] if an override is in-place, the date-time to use is serialised in the string
+    *   - Some[ Any ] if an override is in-place. This can be anything. The caller should take step to check for
+    *     a valid string representation of date-time. See util.EdgeOfSystem.localDateTimeNow for example
     * @example "2023-03-31T23:59:59"
     * @example "2023-04-01T00:00:00"
     * @example false
-    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     * @see [[util.EdgeOfSystem.localDateTimeNow]] 
     */
-  def overrideSystemDateTime: Option[LocalDateTime] = {
-    Try(configuration
-      .getOptional[String]("features.override-system-date-time")
-      .map(LocalDateTime.parse(_, DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-    match {
-      case Success(date) => date
-      case Failure(_) => None
-    }
-  }
+  def overrideSystemDateTime: Option[String] =
+      configuration.getOptional[String]("features.override-system-date-time")
 }
