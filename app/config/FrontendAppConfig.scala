@@ -168,11 +168,11 @@ class FrontendAppConfig @Inject() (
 
 
   /** Override the current system data-time, for coding and testing, set the config to an ISO_LOCAL_DATE_TIME string to
-    * override system date-time, or set to false to use system date-time. If config is missing, will use use system 
-    * date-time.
+    * override system date-time, or set to false to use system date-time. The system date-time is also used if config is 
+    * missing or its value fails to parse.
     * @return
     *   - [[None]] if no date-time override is in-place
-    *   - [[Some]][LocalDateTime] if an override is in-place, the date-time to use is serialised in the string
+    *   - Some[ [[LocalDateTime]] ] if an override is in-place, the date-time to use is serialised in the string
     * @example "2023-03-31T23:59:59"
     * @example "2023-04-01T00:00:00"
     * @example false
