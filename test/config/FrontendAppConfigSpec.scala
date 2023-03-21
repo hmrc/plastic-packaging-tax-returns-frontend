@@ -46,14 +46,27 @@ class FrontendAppConfigSpec extends PlaySpec
 
     "return override-system-date-time" in {
       val configService: FrontendAppConfig = appConfig(validServicesConfiguration)
-
       configService.overrideSystemDateTime mustBe Some("whatEver")
     }
 
     "return a none for invalid override-system-date-time" in {
       val configService = appConfig(Configuration(ConfigFactory.empty))
-
       configService.overrideSystemDateTime mustBe None
+    }
+    
+    "handle non-string content" when {
+      
+      "content is boolean" in {
+        val config: Config = ConfigFactory.parseString("""features.override-system-date-time = false""")
+        val frontendAppConfig = appConfig(Configuration(config))
+        frontendAppConfig.overrideSystemDateTime mustBe Some("false")
+      }
+      
+      "content is rando string" in {
+        val config: Config = ConfigFactory.parseString("""features.override-system-date-time = "hello" """)
+        val frontendAppConfig = appConfig(Configuration(config))
+        frontendAppConfig.overrideSystemDateTime mustBe Some("hello")
+      }
     }
   }
 
