@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
 
@@ -35,14 +35,13 @@ class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
   def localDateTimeNow: LocalDateTime = {
     frontendAppConfig
       .overrideSystemDateTime
-      .fold(LocalDateTime.now())(parseDate(_))
+      .flatMap(parseDate)
+      .getOrElse(LocalDateTime.now())
   }
 
-  private def parseDate(date: String): LocalDateTime = {
-    Try(LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME)) match {
-      case Success(value) => value
-      case Failure(_) => LocalDateTime.now
-    }
+  private def parseDate(date: String): Option[LocalDateTime] = {
+    Try(LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+      .toOption
   }
   
 }
