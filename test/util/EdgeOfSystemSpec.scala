@@ -37,22 +37,20 @@ class EdgeOfSystemSpec extends PlaySpec
   "localDateTimeNow" should {
 
     "use the override time if it's there" in {
-      val exampleDateTime = LocalDateTime.of(2023, 4, 1, 12, 11, 10)
-      when(frontendAppConfig.overrideSystemDateTime) thenReturn Some(exampleDateTime.toString)
-      edgeOfSystem.localDateTimeNow mustBe exampleDateTime
+      when(frontendAppConfig.overrideSystemDateTime) thenReturn Some("2023-04-01T12:11:10")
+      edgeOfSystem.localDateTimeNow mustBe LocalDateTime.of(2023, 4, 1, 12, 11, 10)
     }
     
     "use the system time if override not present" in {
       when(frontendAppConfig.overrideSystemDateTime) thenReturn None
-
       edgeOfSystem.localDateTimeNow.truncatedTo(ChronoUnit.MINUTES) mustBe
         LocalDateTime.now.truncatedTo(ChronoUnit.MINUTES)
     }
 
     "use the system time if override is invalid date" in {
       when(frontendAppConfig.overrideSystemDateTime) thenReturn Some("false")
-
-      edgeOfSystem.localDateTimeNow.truncatedTo(ChronoUnit.MINUTES) mustBe LocalDateTime.now.truncatedTo(ChronoUnit.MINUTES)
+      edgeOfSystem.localDateTimeNow.truncatedTo(ChronoUnit.MINUTES) mustBe 
+        LocalDateTime.now.truncatedTo(ChronoUnit.MINUTES)
     }
     
   }
