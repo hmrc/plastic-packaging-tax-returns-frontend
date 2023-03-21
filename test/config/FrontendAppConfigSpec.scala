@@ -16,16 +16,13 @@
 
 package config
 
-import org.mockito.ArgumentMatchersSugar.any
+import com.typesafe.config.{Config, ConfigFactory}
 import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
-import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import java.time.LocalDateTime
 
 class FrontendAppConfigSpec extends PlaySpec
   with MockitoSugar
@@ -44,29 +41,24 @@ class FrontendAppConfigSpec extends PlaySpec
 
   "configuration" should {
 
-    "return override-system-date-time" in {
-      val configService: FrontendAppConfig = appConfig(validServicesConfiguration)
-      configService.overrideSystemDateTime mustBe Some("whatEver")
-    }
-
-    "return a none for invalid override-system-date-time" in {
-      val configService = appConfig(Configuration(ConfigFactory.empty))
-      configService.overrideSystemDateTime mustBe None
-    }
-    
-    "handle non-string content" when {
+    "return override-system-date-time" when {
       
+      "value is present" in {
+        val configService: FrontendAppConfig = appConfig(validServicesConfiguration)
+        configService.overrideSystemDateTime mustBe Some("whatEver")
+      }
+
+      "value is missing" in {
+        val configService = appConfig(Configuration(ConfigFactory.empty))
+        configService.overrideSystemDateTime mustBe None
+      }
+
       "content is boolean" in {
         val config: Config = ConfigFactory.parseString("""features.override-system-date-time = false""")
         val frontendAppConfig = appConfig(Configuration(config))
         frontendAppConfig.overrideSystemDateTime mustBe Some("false")
       }
-      
-      "content is rando string" in {
-        val config: Config = ConfigFactory.parseString("""features.override-system-date-time = "hello" """)
-        val frontendAppConfig = appConfig(Configuration(config))
-        frontendAppConfig.overrideSystemDateTime mustBe Some("hello")
-      }
+
     }
   }
 
