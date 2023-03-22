@@ -22,6 +22,10 @@ import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import util.EdgeOfSystem
+
+import java.time.format.DateTimeFormatter
+
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -29,12 +33,12 @@ class FrontendAppConfig @Inject() (
   val servicesConfig: ServicesConfig
 ) {
 
-  val host: String           = configuration.get[String]("host")
-  val appName: String        = configuration.get[String]("appName")
+  lazy val host: String           = configuration.get[String]("host")
+  lazy val appName: String        = configuration.get[String]("appName")
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  private val contactHost                  = configuration.get[String]("contact-frontend.host")
+  lazy private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
@@ -42,24 +46,24 @@ class FrontendAppConfig @Inject() (
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String         = configuration.get[String]("urls.login")
-  val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  lazy val loginUrl: String         = configuration.get[String]("urls.login")
+  lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
+  lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
 
-  val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
-  val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
+  lazy val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
+  lazy val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
-  val languageTranslationEnabled: Boolean =
+  lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("features.welsh-translation")
 
   def languageMap: Map[String, Lang] = Map("en" -> Lang("en"), "cy" -> Lang("cy"))
 
   def contactFrontEnd = contactHost
 
-  val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
-  val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
+  lazy val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
+  lazy val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
-  val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  lazy val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
@@ -76,11 +80,11 @@ class FrontendAppConfig @Inject() (
       servicesConfig.baseUrl("ppt-registration-frontend")
     )
 
-  
+
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
   lazy val pptRecycledPlasticGuidanceLink: String = configuration.get[String]("urls.pptRecycledPlasticGuidanceLink")
-  
+
 
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
@@ -148,7 +152,7 @@ class FrontendAppConfig @Inject() (
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"
 
-  val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
+   lazy val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
 
   def pptStartDirectDebit : String =
     s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
@@ -163,4 +167,18 @@ class FrontendAppConfig @Inject() (
     configuration.get[String]("urls.addMemberToGroup")
 
 
+  /** Override the current system data-time, for coding and testing,  or set to false to use system date-time. The 
+    * system date-time is also used if config is config value is missing or its value fails to parse.
+    * @return
+    *   - [[None]] if no date-time override config value is present
+    *   - Some[ [[String]] ] if an override config value is present, needs to be a ISO_LOCAL_DATE_TIME serialised 
+    *   date-time for override to work
+    * @example {{{"2023-03-31T23:59:59"}}}
+    * @example {{{"2023-04-01T00:00:00"}}}
+    * @example {{{false}}}
+    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
+    * @see [[EdgeOfSystem.localDateTimeNow]]
+    */
+  def overrideSystemDateTime: Option[String] =
+    configuration.getOptional[String]("features.override-system-date-time")
 }

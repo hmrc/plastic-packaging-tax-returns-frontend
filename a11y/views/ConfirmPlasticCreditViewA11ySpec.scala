@@ -30,7 +30,7 @@ class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMa
 
       val page = inject[ConfirmPackagingCreditView]
 
-      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"), NormalMode)(request, messages)
+      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"), NormalMode, false)(request, messages)
 
       render.toString() must passAccessibilityChecks
     }
