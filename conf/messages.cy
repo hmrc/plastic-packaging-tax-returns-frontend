@@ -43,6 +43,7 @@ timeout.keepAlive = Aros wedi mewngofnodi
 timeout.signOut = Allgofnodi
 
 error.browser.title.prefix = Gwall:
+error.message.prefix = Gwall
 error.boolean = Please give an answer
 error.invalid_date = Give a correct date
 error.date.day_blank = Enter a day
