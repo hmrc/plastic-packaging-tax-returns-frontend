@@ -17,6 +17,7 @@
 package models.changeGroupLead
 
 import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.Request
 import services.CountryService
 
 
@@ -28,7 +29,7 @@ case class NewGroupLeadAddressDetails(
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
 ) {
-  def definedFields(countryService: CountryService) =
+  def definedFields(countryService: CountryService) (implicit request: Request[_])=
     Seq(
       Some(addressLine1),
       Some(addressLine2),
