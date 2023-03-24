@@ -128,7 +128,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
     "view display address containing countryCode as value" in {
       val countryCode = "GB"
-      when(countryService.tryLookupCountryName(countryCode)).thenReturn("United Kingdom")
+      when(countryService.tryLookupCountryName(ArgumentMatchers.eq(countryCode))(any)).thenReturn("United Kingdom")
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
         .thenReturn(Some(Member("Blah", "1")))
 

@@ -96,7 +96,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any)) thenReturn Member("organisation-name", "1")
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
-    when(mockCountryService.getAll).thenReturn(countryMap)
+    when(mockCountryService.getAll(any)).thenReturn(countryMap)
 
     when(mockFormProvider.apply()) thenReturn form
     val userAnswers = dataRequest.userAnswers
