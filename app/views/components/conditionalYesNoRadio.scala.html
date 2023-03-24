@@ -59,6 +59,11 @@
                 checked = form("answer").value.contains(noValue),
                 conditionalHtml = ifNo
                 )),
-        errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        errorMessage = form("answer").error.map(err =>
+            ErrorMessage(
+                content = Text(messages(err.message, err.args:_*)),
+                visuallyHiddenText = Some(messages("error.message.prefix"))
+            )
+        )
 ))
 
