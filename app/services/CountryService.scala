@@ -17,9 +17,11 @@
 package services
 
 import com.google.inject.Singleton
-import org.slf4j.LoggerFactory
 import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.Request
+import uk.gov.hmrc.play.language.LanguageUtils
 
+import javax.inject.Inject
 import scala.collection.immutable.ListMap
 
 case class FcoCountry(name: String)
@@ -29,26 +31,31 @@ object FcoCountry {
 }
 
 @Singleton
-class CountryService {
-  private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
+class CountryService @Inject() (languageUtils: LanguageUtils) {
 
-  val countries = parseCountriesResource()
+  private val countriesEn = parseCountriesResource("EN")
+  private val countriesCy = parseCountriesResource("CY")
 
-  def tryLookupCountryName(code: String): String =
+  def tryLookupCountryName(code: String) (implicit request: Request[_]): String =
     getAll.getOrElse(code, code)
 
-  def getAll: Map[String, String] = countries
+  def getAll(implicit request: Request[_]): Map[String, String] = {
+    languageUtils.getCurrentLang(request).code.take(2) match {
+      case "cy" => countriesCy
+      case _    => countriesEn
+    }
+  }
 
-  def getKeyForName(countryName: String): Option[String] = {
+  def getKeyForName(countryName: String) (implicit request: Request[_]): Option[String] = {
     val allCountries = getAll
 
     allCountries.map(_.swap).get(countryName)
   }
 
+  private def parseCountriesResource(languageCode: String): Map[String, String] = {
 
-  private def parseCountriesResource(): Map[String, String] = {
-
-    val countryMap = Json.parse(getClass.getResourceAsStream("/resources/countriesEN.json")).as[Map[String, FcoCountry]]
+    val stream = getClass.getResourceAsStream(s"/resources/countries$languageCode.json")
+    val countryMap = Json.parse(stream).as[Map[String, FcoCountry]]
       .map { entry =>
         entry._1 -> entry._2.name
       }

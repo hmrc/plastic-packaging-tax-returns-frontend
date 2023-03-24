@@ -23,7 +23,11 @@ $(document).ready(function() {
             selectElement: document.querySelector("select[data-all-countries]"),
             showAllValues: false,
             autoselect: true,
-            defaultValue: ''
+            defaultValue: '',
+            tNoResults: () => {
+                return "cy" === document.getElementsByTagName("html")[0].getAttribute("lang") ? 
+                    "Dim canlyniadau wedi’u canfod" : "No results found"
+            }
         });
     }
 
