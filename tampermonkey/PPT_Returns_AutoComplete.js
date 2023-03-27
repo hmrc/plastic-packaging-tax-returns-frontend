@@ -383,7 +383,6 @@ function completeJourney(manualJourney) {
     existingReturn()
     amendReturn()
     amendManufacturedWeight()
-    deregister()
     if(manualJourney){
         reviewReturn()
     }
