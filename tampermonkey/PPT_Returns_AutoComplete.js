@@ -5,6 +5,7 @@
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/*
+// @include      http*://*/register-for-plastic-packaging-tax*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_AutoComplete.js
@@ -122,7 +123,7 @@ function createAutoCompleteCheckbox() {
 const currentPageIs = (path) => {
     if(path.includes("*")) {
         let matches = window.location.pathname.match(path)
-        return matches && window.location.pathname.endsWith(path.slice(-5))
+        return matches
     } else {
         return path === window.location.pathname
     }
@@ -131,7 +132,7 @@ const currentPageIs = (path) => {
 /*########################     PPT RETURNS PAGES     ########################## */
 const startPage = () => {
     if (currentPageIs('/plastic-packaging-tax/account')) {
-        if(optionSelected("Journey", "Return") || optionSelected("Journey", "Return with credit")) {
+        if(optionSelected("Journey", "Return")||optionSelected("Journey", "Return with credit")) {
            document.getElementById('start-date-return-link').click()
         }
         else if (optionSelected("Journey", "Amend Return")) {
@@ -328,7 +329,7 @@ const submittedReturns = () => {
 }
 
 const existingReturn = () => {
-     if (currentPageIs('/plastic-packaging-tax/viewReturnSummary/22C2')) {
+     if (currentPageIs('/plastic-packaging-tax/viewReturnSummary/*')) {
          document.getElementById('amend-return').click()
      }
 }
