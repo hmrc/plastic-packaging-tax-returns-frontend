@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.6
+// @version      5.7
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/*
+// @include      http*://*/register-for-plastic-packaging-tax*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-returns-frontend/master/tampermonkey/PPT_Returns_AutoComplete.js
@@ -122,7 +123,7 @@ function createAutoCompleteCheckbox() {
 const currentPageIs = (path) => {
     if(path.includes("*")) {
         let matches = window.location.pathname.match(path)
-        return matches && window.location.pathname.endsWith(path.slice(-5))
+        return matches
     } else {
         return path === window.location.pathname
     }
@@ -131,17 +132,16 @@ const currentPageIs = (path) => {
 /*########################     PPT RETURNS PAGES     ########################## */
 const startPage = () => {
     if (currentPageIs('/plastic-packaging-tax/account')) {
-
-        if(optionSelected("Journey", "Return")||optionSelected("Journey", "Return with credit")){
+        if(optionSelected("Journey", "Return")||optionSelected("Journey", "Return with credit")) {
            document.getElementById('start-date-return-link').click()
         }
-        else if (optionSelected("Journey", "Amend Return")){
+        else if (optionSelected("Journey", "Amend Return")) {
            document.getElementById('view-submitted-returns-link').click()
         }
-        else if (optionSelected("Journey", "Deregister")){
+        else if (optionSelected("Journey", "Deregister")) {
            document.getElementById('amend-deregister').click()
         }
-        else if (optionSelected("Journey", "Change group lead")){
+        else if (optionSelected("Journey", "Change group lead")) {
            document.getElementById('amend-group').click()
         }
     }
@@ -170,6 +170,34 @@ const submitReturnOrClaimCredit = () => {
 }
 
 /* ####################### Returns credit pages */
+
+const creditForExported = () => {
+     if (currentPageIs('/plastic-packaging-tax/credit-for-exported')) {
+         document.getElementById('answer').click()
+         document.getElementById('exported-credits-weight').value = '10'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const creditForConverted = () => {
+     if (currentPageIs('/plastic-packaging-tax/credit-for-converted')) {
+         document.getElementById('answer').click()
+         document.getElementById('converted-credits-weight').value = '10'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const confirmOrCorrectCredit = () => {
+         if (currentPageIs('/plastic-packaging-tax/confirm-or-correct-credit')) {
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const startReturn = () => {
+         if (currentPageIs('/plastic-packaging-tax/start-return')) {
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
 
 /* ####################### Returns pages */
 
@@ -292,6 +320,42 @@ const confirmationPage = () => {
      }
 }
 
+/* ####################### Amend submitted returns pages */
+
+const submittedReturns = () => {
+     if (currentPageIs('/plastic-packaging-tax/submitted-returns')) {
+         document.getElementsByClassName('govuk-body')[1].click()
+     }
+}
+
+const existingReturn = () => {
+     if (currentPageIs('/plastic-packaging-tax/viewReturnSummary/*')) {
+         document.getElementById('amend-return').click()
+     }
+}
+
+const amendReturn = () => {
+     if (currentPageIs('/plastic-packaging-tax/amend-return')) {
+         let noChange = document.querySelector('#main-content > div > div > table:nth-child(2) > tbody > tr:nth-child(1) > td:nth-child(3) > span').innerText
+         if (noChange == 'Not yet amended') {
+             document.getElementById('amend-manufacture-link').click()
+         }
+     }
+}
+
+const amendManufacturedWeight = () => {
+     if (currentPageIs('/plastic-packaging-tax/amend-manufactured-weight')) {
+         document.getElementById('value').value = '251'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const returnAmended = () => {
+     if (currentPageIs('/plastic-packaging-tax/return-amended')) {
+         document.querySelector('#main-content > div > div > p:nth-child(5) > a').click()
+     }
+}
+
 /*########################     MAIN FUNCTION     ########################## */
 function completeJourney(manualJourney) {
 
@@ -311,9 +375,18 @@ function completeJourney(manualJourney) {
     nonExportedMedicinesWeightPage()
     nonExportedRecycledPage()
     nonExportedRecycledWeightPage()
+    creditForExported()
+    creditForConverted()
+    confirmOrCorrectCredit()
+    startReturn()
+    submittedReturns()
+    existingReturn()
+    amendReturn()
+    amendManufacturedWeight()
     if(manualJourney){
         reviewReturn()
     }
     confirmationPage()
+    returnAmended()
 
 }
