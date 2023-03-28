@@ -15,15 +15,21 @@
  *@
 
 @this(
-        layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    layout: templates.Layout,
+    govukButton: GovukButton,
 )
 
-@(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("claim-for-which-year.title"), Some(messages("return.title.tail")))) {
-    <p>Hello I'm a skeleton</p>
-    <p>
-      <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/hostedimages/1503259236i/23643963.jpg"
-     alt="funny bones illustration"/>
-    </p>
+
+    @formHelper(action = submitCall, 'autoComplete -> "off") {
+
+        <p>Hello I'm a skeleton</p>
+        <p>choose a year to claim for</p>
+            
+        @govukButton(ButtonViewModel(messages("site.continue")))
+
+    }
 })

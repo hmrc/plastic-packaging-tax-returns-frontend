@@ -109,7 +109,10 @@ POST        /submit-return-or-claim-credit                          controllers.
 GET         /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
 
-GET         /claim-for-which-year                                   controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
+GET         /claim-for-which-year               controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
+POST        /claim-for-which-year               controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = NormalMode)
+GET         /change-claim-for-which-year        controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-claim-for-which-year        controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = CheckMode)
 
 GET         /start-date-not-recognised                              controllers.returns.NotStartOtherReturnsController.onPageLoad()
 

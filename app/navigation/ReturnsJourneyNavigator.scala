@@ -69,15 +69,17 @@ class ReturnsJourneyNavigator @Inject()(
     } else
       routes.NotStartOtherReturnsController.onPageLoad()
 
-
   def whatDoYouWantDoRoute(mode: Mode, newAnswer: Boolean): Call = {
     if (mode.equals(CheckMode))
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     else if (newAnswer)
-      controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
+      controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(NormalMode)
     else
       routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
   }
+
+  def claimForWhichYear: Call =
+    controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
 
   def exportedCreditsRoute(mode: Mode): Call = {
     controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
