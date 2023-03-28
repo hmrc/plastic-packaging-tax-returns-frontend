@@ -109,6 +109,8 @@ POST        /submit-return-or-claim-credit                          controllers.
 GET         /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
 
+GET         /claim-for-which-year                                   controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
+
 GET         /start-date-not-recognised                              controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
 GET         /return-submitted/:isUserClaimingCredit                 controllers.returns.ReturnConfirmationController.onPageLoad(isUserClaimingCredit: Boolean)
