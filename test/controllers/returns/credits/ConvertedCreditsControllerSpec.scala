@@ -160,15 +160,16 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), any)
     }
     
-    "pass the two credit claim answers to the navigator" ignore {
+    "pass the two credit claim answers to the navigator" in {
       when(userAnswers.getOrFail(meq(ExportedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(11))
       when(userAnswers.getOrFail(meq(ConvertedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(22))
 
       // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
+      val usersAnswer = CreditsAnswer(false, None)
+      when(form.fold(any, any)) thenAnswer {i =>  i.getArgument[CreditsAnswer => Future[Result]](1) apply usersAnswer}
       await(controller.onSubmit(NormalMode) (dataRequest))
 
-      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(CreditsAnswer(true, Some(22))))
+      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(CreditsAnswer(false, None)))
     }
 
     "display any errors" in {
