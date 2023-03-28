@@ -68,7 +68,7 @@ class ExportedCreditsController @Inject()
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.exportedCreditsRoute(mode))
+              } yield Redirect(navigator.exportedCreditsRoute(mode, value))
           )
     }
 }

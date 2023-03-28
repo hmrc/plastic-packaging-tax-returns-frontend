@@ -144,10 +144,15 @@ POST        /change-non-exported-medicines-packaging-weight         controllers.
 GET         /cancel-amend                                           controllers.amends.CancelAmendController.onPageLoad()
 POST        /cancel-amend                                           controllers.amends.CancelAmendController.onSubmit()
 
-GET         /credit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST        /credit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET         /change-credit-for-exported                             controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-credit-for-exported                             controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /credit-for-exported               controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-exported               controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-exported        controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-exported        controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /credit-for-exported-weight               controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-exported-weight               controllers.returns.credits.ExportedCreditsWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-exported-weight        controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-exported-weight        controllers.returns.credits.ExportedCreditsWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET         /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
 POST        /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)

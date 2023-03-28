@@ -22,6 +22,7 @@ import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
+import models.returns.CreditsAnswer
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
@@ -81,9 +82,21 @@ class ReturnsJourneyNavigator @Inject()(
   def claimForWhichYear: Call =
     controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
 
-  def exportedCreditsRoute(mode: Mode): Call = {
-    controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+  def exportedCreditsRoute(mode: Mode, usersAnswer: CreditsAnswer): Call = {
+    if (usersAnswer.yesNo)
+      controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(mode)
+    else if (mode == NormalMode)
+      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+    else
+      controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
   }
+
+  def exportedCreditsWeight(mode: Mode): Call = {
+    if (mode.equals(CheckMode))
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else
+      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+  } 
 
   def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
     if (claimedCredits.hasMadeClaim)
