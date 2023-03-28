@@ -143,7 +143,6 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   "onSubmit" must {
 
     "remember the user's answers" in {
-      
       // Invokes the "form is good" side of the fold() call
       when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(true, Some(20))))
       await(controller.onSubmit(NormalMode) (dataRequest))
@@ -161,9 +160,6 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     }
     
     "pass the two credit claim answers to the navigator" in {
-      when(userAnswers.getOrFail(meq(ExportedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(11))
-      when(userAnswers.getOrFail(meq(ConvertedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(22))
-
       // Invokes the "form is good" side of the fold() call
       val usersAnswer = CreditsAnswer(false, None)
       when(form.fold(any, any)) thenAnswer {i =>  i.getArgument[CreditsAnswer => Future[Result]](1) apply usersAnswer}

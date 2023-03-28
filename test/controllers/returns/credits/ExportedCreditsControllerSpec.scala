@@ -73,7 +73,6 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   "ExportedCredits Controller" must {
 
     "return OK and the correct view" when {
-
       "a GET is made" in {
         when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
         val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
@@ -81,12 +80,12 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
         status(result) mustEqual OK
       }
     }
-    "must redirect to the next page when No is submitted" ignore {
 
+    "must redirect to the next page when No is submitted" in {
       when(mockView.apply(any(), any())(any(), any())).thenReturn(Html("correct view"))
       when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
       when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-      when(mockNavigator.exportedCreditsYesNo(NormalMode, any())).thenReturn(Call("GET", "/foo"))
+      when(mockNavigator.exportedCreditsYesNo(any(), any())).thenReturn(Call("GET", "/foo"))
 
       val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
         .withFormUrlEncodedBody(("answer" -> "false")))
