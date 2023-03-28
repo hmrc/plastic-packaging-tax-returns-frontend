@@ -89,8 +89,8 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
       }
 
-      "in check mode" ignore {
-        val call = navigator.exportedCreditsYesNo(CheckMode, CreditsAnswer(true, None))
+      "in check mode" in {
+        val call = navigator.exportedCreditsYesNo(CheckMode, CreditsAnswer(false, None))
         call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
       }
     }
@@ -115,9 +115,9 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         val call = navigator.convertedCreditsYesNo(NormalMode, CreditsAnswer(false, None))
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
       }
-      "check mode" ignore {
+      "check mode" in {
         val call = navigator.convertedCreditsYesNo(CheckMode, CreditsAnswer(false, None))
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
       }
     }
     
