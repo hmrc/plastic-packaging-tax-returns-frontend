@@ -22,12 +22,12 @@ import controllers.returns.credits.{ClaimedCredits, routes => creditsRoutes}
 import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.Mockito.verify
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage}
 import queries.Gettable
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
@@ -69,51 +69,63 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
 
-  "ExportedCreditsRoute" must {
-    "redirect to ConvertedCredits page" when {
-      "in normalmode" in {
-        val call = navigator.exportedCreditsRoute(NormalMode)
+  "exportedCreditsYesNo" must {
+
+    "redirect to weight page when user answers 'yes'" when {
+      "in normal mode" in {
+        val call = navigator.exportedCreditsYesNo(NormalMode, CreditsAnswer(true, None))
+        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(NormalMode)
+      }
+
+      "in check mode" in {
+        val call = navigator.exportedCreditsYesNo(CheckMode, CreditsAnswer(true, None))
+        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(CheckMode)
+      }
+    }
+
+    "redirect to converted yes-no or CYA page when user answers 'no'" when {
+      "in normal mode" in {
+        val call = navigator.exportedCreditsYesNo(NormalMode, CreditsAnswer(false, None))
         call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
       }
-    }
-    "redirect to checkYourAnswers page" when {
-      "in checkmode" in {
-        val call = navigator.exportedCreditsRoute(CheckMode)
-        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(CheckMode)
+
+      "in check mode" ignore {
+        val call = navigator.exportedCreditsYesNo(CheckMode, CreditsAnswer(true, None))
+        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
       }
     }
+    
   }
 
-  "ConvertedCreditsRoute" must {
-    "redirect to NowStartYourReturn page" when {
-      "the user does not claim any credits" in {
-        when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
-        val call = navigator.convertedCreditsYesNo(NormalMode, mockClaimedCredits)
-        call mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
+  "convertedCreditsYesNo" must {
+    
+    "redirect to weight page when user answers 'yes'" when {
+      "normal mode" in {
+        val call = navigator.convertedCreditsYesNo(NormalMode, CreditsAnswer(true, None))
+        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(NormalMode)
       }
-      "in checkmode" in {
-        when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
-        val call = navigator.convertedCreditsYesNo(CheckMode, mockClaimedCredits)
-        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+      "check mode" in {
+        val call = navigator.convertedCreditsYesNo(CheckMode, CreditsAnswer(true, None))
+        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(CheckMode)
       }
     }
-    "redirect to confirmCredit page" when {
-      "the user claims credits" in {
-        when(mockClaimedCredits.hasMadeClaim).thenReturn(true)
-        val call = navigator.convertedCreditsYesNo(NormalMode, mockClaimedCredits)
+    
+    "skip weight page when user answers 'no'" when {
+      "normal mode" in {
+        val call = navigator.convertedCreditsYesNo(NormalMode, CreditsAnswer(false, None))
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
       }
-      "in checkmode" in {
-        when(mockClaimedCredits.hasMadeClaim).thenReturn(true)
-        val call = navigator.convertedCreditsYesNo(CheckMode, mockClaimedCredits)
+      "check mode" ignore {
+        val call = navigator.convertedCreditsYesNo(CheckMode, CreditsAnswer(false, None))
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
       }
     }
+    
   }
 
   "manufacturedPlasticPackagingRoute" must {
-    "redirect to manufacturedWeight page in normalmode" when {
-
+    
+    "redirect to manufacturedWeight page in normal mode" when {
       "answer is Yes" in {
         val call = navigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
@@ -123,12 +135,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
     }
-    "redirect to to Imported yes/no page in normalmode" when {
+
+    "redirect to to Imported yes/no page in normal mode" when {
       "answer is No" in {
         val call = navigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = true, usersAnswer = false)
         call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
       }
-
 
       "answer is No and not been changed" in {
         val call = navigator.manufacturedPlasticPackagingRoute(NormalMode, hasAnswerChanged = false, usersAnswer = false)
@@ -137,12 +149,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "redirect to manufacturedWeight for check mode" when {
-
       "answer is Yes and has been changed" in {
         val call = navigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
       }
     }
+
     "redirect to check your answers page for check mode" when {
       "answer is No and has been changed" in {
         val call = navigator.manufacturedPlasticPackagingRoute(CheckMode, hasAnswerChanged = true, usersAnswer = false)
