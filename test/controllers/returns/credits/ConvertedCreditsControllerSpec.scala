@@ -106,7 +106,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
 
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(false))
-    when(mockNavigator.convertedCreditsRoute(any, any)).thenReturn(Call("GET", "/next/page"))
+    when(mockNavigator.convertedCreditsYesNo(any, any)).thenReturn(Call("GET", "/next/page"))
 
     when(dataRequest.userAnswers) thenReturn userAnswers
     
@@ -157,7 +157,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       val result = controller.onSubmit(NormalMode) (dataRequest)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustBe Some("/next/page")
-      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), any)
+      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), any)
     }
     
     "pass the two credit claim answers to the navigator" in {
@@ -169,7 +169,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       await(controller.onSubmit(NormalMode) (dataRequest))
 
       val expectedCreditsClaim = ClaimedCredits(CreditsAnswer(true, Some(11)), CreditsAnswer(true, Some(22)))
-      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), meq(expectedCreditsClaim))
+      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(expectedCreditsClaim))
     }
 
     "display any errors" in {

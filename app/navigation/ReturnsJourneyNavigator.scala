@@ -96,9 +96,18 @@ class ReturnsJourneyNavigator @Inject()(
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     else
       controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
-  } 
+  }
+  
+  def convertedCreditsYesNo(mode: Mode, usersAnswer: CreditsAnswer): Call = {
+    if (usersAnswer.yesNo)
+      controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(mode)
+    else if (mode == NormalMode)
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+    else
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+  }
 
-  def convertedCreditsRoute(mode: Mode, claimedCredits: ClaimedCredits): Call = {
+  def convertedCreditsWeight(mode: Mode, claimedCredits: ClaimedCredits): Call = {
     if (claimedCredits.hasMadeClaim)
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
     else if (mode == NormalMode)

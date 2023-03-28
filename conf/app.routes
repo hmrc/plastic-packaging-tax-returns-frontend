@@ -154,10 +154,15 @@ POST        /credit-for-exported-weight               controllers.returns.credit
 GET         /change-credit-for-exported-weight        controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-credit-for-exported-weight        controllers.returns.credits.ExportedCreditsWeightController.onSubmit(mode: Mode = CheckMode)
 
-GET         /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST        /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET         /change-credit-for-converted                            controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-credit-for-converted                            controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /credit-for-converted               controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-converted               controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-converted        controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-converted        controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /credit-for-converted-weight               controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(mode: Mode = NormalMode)
+POST        /credit-for-converted-weight               controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(mode: Mode = NormalMode)
+GET         /change-credit-for-converted-weight        controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-credit-for-converted-weight        controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(mode: Mode = CheckMode)
 
 GET         /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
 POST        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()

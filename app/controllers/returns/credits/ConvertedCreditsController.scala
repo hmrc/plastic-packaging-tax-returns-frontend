@@ -63,7 +63,7 @@ class ConvertedCreditsController @Inject()
               .setOrFail(ConvertedCreditsPage, formValue)
               .setOrFail(WhatDoYouWantToDoPage, true)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
+              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
           }
         )
   }

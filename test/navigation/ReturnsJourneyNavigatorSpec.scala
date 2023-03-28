@@ -88,24 +88,24 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "redirect to NowStartYourReturn page" when {
       "the user does not claim any credits" in {
         when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
-        val call = navigator.convertedCreditsRoute(NormalMode, mockClaimedCredits)
+        val call = navigator.convertedCreditsYesNo(NormalMode, mockClaimedCredits)
         call mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
       }
       "in checkmode" in {
         when(mockClaimedCredits.hasMadeClaim).thenReturn(false)
-        val call = navigator.convertedCreditsRoute(CheckMode, mockClaimedCredits)
+        val call = navigator.convertedCreditsYesNo(CheckMode, mockClaimedCredits)
         call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       }
     }
     "redirect to confirmCredit page" when {
       "the user claims credits" in {
         when(mockClaimedCredits.hasMadeClaim).thenReturn(true)
-        val call = navigator.convertedCreditsRoute(NormalMode, mockClaimedCredits)
+        val call = navigator.convertedCreditsYesNo(NormalMode, mockClaimedCredits)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
       }
       "in checkmode" in {
         when(mockClaimedCredits.hasMadeClaim).thenReturn(true)
-        val call = navigator.convertedCreditsRoute(CheckMode, mockClaimedCredits)
+        val call = navigator.convertedCreditsYesNo(CheckMode, mockClaimedCredits)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
       }
     }
