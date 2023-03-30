@@ -538,16 +538,14 @@ submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o�
 submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
 credits.caption = Credydau
-
-exported.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
-exported.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
+credits.period.caption = [WELSH NEEDED] Credit for {0} to {1}
+exported.credits.heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was exported
 exported.credits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
-exported.credits.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod yn ei allforio’n ddiweddarach, gallwch hawlio treth yn ôl fel credyd.
-exported.credits.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os bydd busnes arall yn ei allforio.
-exported.credits.paragraph.3 = Rhaid i chi fod â thystiolaeth bod y deunydd pacio wedi’i allforio.
+exported.credits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
+exported.credits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exports it.
 exported.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
 exported.credits.weight.label = Faint o bwysau, mewn cilogramau?
-exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
+exported.credits.error.required = [WELSH NEEDED] Select yes if you paid tax on plastic packaging before it was exported
 exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
 exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
 exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg

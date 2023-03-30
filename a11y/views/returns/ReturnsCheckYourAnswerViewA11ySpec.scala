@@ -40,7 +40,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     .set(AnotherBusinessExportedPage, false).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
-    .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
+    .set(ExportedCreditsPage, false).get
     .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0))).get
     .set(WhatDoYouWantToDoPage, true).get
 

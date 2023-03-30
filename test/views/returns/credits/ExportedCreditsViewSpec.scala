@@ -19,7 +19,6 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.CreditsAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -32,7 +31,7 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
   val page: ExportedCreditsView = inject[ExportedCreditsView]
   val form = new ExportedCreditsFormProvider()()
 
-  private def createView(form: Form[CreditsAnswer] = form): Html =
+  private def createView(form: Form[Boolean] = form): Html =
     page(form, NormalMode)(request, messages)
 
   "Exported Credits View" should {
@@ -40,16 +39,18 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     val view = createView()
 
     "have a title" in {
-      view.select("title").text must include("- Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text must include(messages("exported.credits.title"))
+      view.select("title").text must include("Plastic packaging you paid tax on before it was exported - Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text must include(messages("exported.credits.heading"))
     }
 
     "have a heading" in {
+      view.select("h1").text mustBe messages("Plastic packaging you paid tax on before it was exported")
       view.select("h1").text mustBe messages("exported.credits.heading")
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe messages("credits.caption")
+      view.getElementById("section-header").text mustBe messages("Credit for 1 April 2022 to 1 April 2023")
+      view.getElementById("section-header").text mustBe messages("credits.period.caption", "1 April 2022", "1 April 2023")
     }
 
     "have a fieldset legend" in {
@@ -59,16 +60,11 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
 
+      doc.text() must include("If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.")
       doc.text() must include(messages("exported.credits.paragraph.1"))
+      doc.text() must include("You can also claim tax back as credit if another business exports it.")
       doc.text() must include(messages("exported.credits.paragraph.2"))
-      doc.text() must include(messages("exported.credits.paragraph.3"))
-    }
 
-    "have a hint" in {
-      view.getElementsByAttributeValue("for", "exported-credits-weight").text() mustBe "How much weight, in kilograms?"
-      view.getElementsByAttributeValue("for", "exported-credits-weight").text() mustBe messages("exported.credits.weight.label")
-      view.getElementById("exported-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
-      view.getElementById("exported-credits-weight-hint").text mustBe messages("exported.credits.weight.hint")
     }
 
     "have a submit button" in {
@@ -82,20 +78,20 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been exported")
-      }
-      "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(0L))))
-
-        view.getElementById("exported-credits-weight-error").text() must include("Weight must be 1kg or more")
-      }
-
-      "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(100000000000L))))
-
-        view.getElementById("exported-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
+        doc.text() must include("Select yes if you paid tax on plastic packaging before it was exported")
       }
     }
+//      "negative number submitted" in {
+//        val view: Html = createView(form.bind(Map("value" -> "true")))
+//
+//        view.getElementById("exported-credits-weight-error").text() must include("Weight must be 1kg or more")
+//      }
+//
+//      "number submitted is greater than maximum" in {
+//        val view: Html = createView(form.fillAndValidate(true))
+//
+//        view.getElementById("exported-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
+//      }
+//    }
   }
-
 }

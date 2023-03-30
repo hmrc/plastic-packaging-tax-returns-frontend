@@ -19,9 +19,9 @@ package pages.returns.credits
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ExportedCreditsPage extends QuestionPage[Boolean] {
+case object ExportedCreditsWeightPage extends QuestionPage[Long] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "exportedCredits"
+  override def toString: String = "exportedCreditsWeight"
 }

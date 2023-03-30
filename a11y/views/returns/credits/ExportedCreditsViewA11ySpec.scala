@@ -19,7 +19,6 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.CreditsAnswer
 import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ExportedCreditsView
@@ -29,7 +28,7 @@ class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatcher
   val form = new ExportedCreditsFormProvider()()
   val page = inject[ExportedCreditsView]
 
-  def render(form: Form[CreditsAnswer]): String =
+  def render(form: Form[Boolean]): String =
     page(form, NormalMode)(request, messages).toString()
 
   "view" should {
