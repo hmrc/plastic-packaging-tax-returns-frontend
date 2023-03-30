@@ -23,7 +23,7 @@ class ExportedCreditsFormProvider extends Mappings {
 
   def apply(): Form[Boolean] = {
     Form(
-      "value" -> boolean("exported.credits.error.required")
+      "value" -> boolean("exportedCredits.error.required")
     )
   }
 }

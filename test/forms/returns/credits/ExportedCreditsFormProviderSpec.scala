@@ -43,13 +43,13 @@ class ExportedCreditsFormProviderSpec extends PlaySpec {
       "answer is non boolean" in {
         val boundForm = sut.bind(Map("value" -> ""))
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("value", "exported.credits.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", "exportedCredits.error.required"))
       }
 
       "answer is empty" in {
         val boundForm = sut.bind(Map.empty[String, String])
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("value", "exported.credits.error.required"))
+        boundForm.errors mustBe Seq(FormError("value", "exportedCredits.error.required"))
       }
     }
 

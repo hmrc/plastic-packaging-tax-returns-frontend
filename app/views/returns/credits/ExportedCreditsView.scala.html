@@ -37,12 +37,12 @@
 
 
 @paraContent = {
-    @paragraphBody(messages("exported.credits.paragraph.1"))
-    @paragraphBody(messages("exported.credits.paragraph.2"))
+    @paragraphBody(messages("exportedCredits.paragraph.1"))
+    @paragraphBody(messages("exportedCredits.paragraph.2"))
 }
 
 
-@layout(pageTitle = title(form, messages("exported.credits.heading"), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("exportedCredits.heading"), Some(messages("return.title.tail")))) {
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -51,13 +51,13 @@
             todo: change credits period to be dynamic. For now this will be static
         *****************************************************************************@
         @sectionHeader(messages("credits.period.caption", "1 April 2022", "1 April 2023"))
-        @heading("exported.credits.heading")
+        @heading("exportedCredits.heading")
         @paraContent
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(HtmlContent(messages("exported.credits.heading.2")))
+                legend = LegendViewModel(HtmlContent(messages("exportedCredits.heading.2")))
                             .asPageHeading(false, LegendSize.Medium)
             )
         )

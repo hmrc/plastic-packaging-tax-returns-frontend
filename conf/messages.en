@@ -526,18 +526,13 @@ submit-return.check-your-answers.credits.remove.text.link = Remove credits
 credits.caption = Credits
 credits.period.caption = Credit for {0} to {1}
 
-exported.credits.heading = Plastic packaging you paid tax on before it was exported
-exported.credits.heading.2 = Have you already paid tax on plastic packaging that has since been exported?
-exported.credits.paragraph.1 = If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
-exported.credits.paragraph.2 = You can also claim tax back as credit if another business exports it.
-exported.credits.weight.hint = 1 tonne is 1,000kg.
-exported.credits.weight.label = How much weight, in kilograms?
-exported.credits.error.required = Select yes if you paid tax on plastic packaging before it was exported
+exportedCredits.heading = Plastic packaging you paid tax on before it was exported
+exportedCredits.heading.2 = Have you already paid tax on plastic packaging that has since been exported?
+exportedCredits.paragraph.1 = If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
+exportedCredits.paragraph.2 = You can also claim tax back as credit if another business exports it.
+exportedCredits.error.required = Select yes if you paid tax on plastic packaging before it was exported
 exported.credits.error.weight.required = Enter the weight, in kilograms
-exported.credits.error.outOfRange.low = Weight must be 1kg or more
-exported.credits.error.outOfRange.high = Weight must be between 0kg and 99,999,999,999kg
-exported.credits.error.non.numeric = Weight must be entered as numbers
-exported.credits.error.whole.number = Weight must not include decimals
+
 
 converted.credits.title = Plastic packaging you’ve paid tax on that has since been converted
 converted.credits.heading = Plastic packaging you’ve paid tax on that has since been converted

@@ -40,12 +40,12 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
 
     "have a title" in {
       view.select("title").text must include("Plastic packaging you paid tax on before it was exported - Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text must include(messages("exported.credits.heading"))
+      view.select("title").text must include(messages("exportedCredits.heading"))
     }
 
     "have a heading" in {
       view.select("h1").text mustBe messages("Plastic packaging you paid tax on before it was exported")
-      view.select("h1").text mustBe messages("exported.credits.heading")
+      view.select("h1").text mustBe messages("exportedCredits.heading")
     }
 
     "have a caption/section header" in {
@@ -54,16 +54,16 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     }
 
     "have a fieldset legend" in {
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exported.credits.heading.2")
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exportedCredits.heading.2")
     }
 
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.text() must include("If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.")
-      doc.text() must include(messages("exported.credits.paragraph.1"))
+      doc.text() must include(messages("exportedCredits.paragraph.1"))
       doc.text() must include("You can also claim tax back as credit if another business exports it.")
-      doc.text() must include(messages("exported.credits.paragraph.2"))
+      doc.text() must include(messages("exportedCredits.paragraph.2"))
 
     }
 
@@ -74,7 +74,7 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     "display error" when {
 
       "nothing has been checked" in {
-        val boundForm = form.withError("requiredKey", "exported.credits.error.required")
+        val boundForm = form.withError("requiredKey", "exportedCredits.error.required")
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
