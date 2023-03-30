@@ -14,10 +14,15 @@
  * limitations under the License.
  *@
 
+@import components._
+
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
+    paragraphBody: paragraphBody,
+    heading: heading,
+    govukRadios: GovukRadios
 )
 
 @(form: Form[Boolean], submitCall: Call)(implicit request: Request[_], messages: Messages)
@@ -26,9 +31,21 @@
 
     @formHelper(action = submitCall, 'autoComplete -> "off") {
 
-        <p>Hello I'm a skeleton</p>
-        <p>choose a year to claim for</p>
-            
+        @heading(messages("claim-for-which-year.credits.heading"))
+
+        @paragraphBody(messages("claim-for-which-year.credits.paragraph.1"))
+
+        @govukRadios(
+            RadiosViewModel.apply(
+                field = form("value"),
+                items = Seq(
+                    RadioItem(id = Some("value"), value = Some("true"), content =  Text("1 April 2022 to 31 March 2023"))
+                )
+            )
+        )
+
+        @paragraphBody(messages("claim-for-which-year.credits.paragraph.2"))
+
         @govukButton(ButtonViewModel(messages("site.continue")))
 
     }
