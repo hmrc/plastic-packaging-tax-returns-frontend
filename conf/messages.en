@@ -531,7 +531,14 @@ exportedCredits.heading.2 = Have you already paid tax on plastic packaging that 
 exportedCredits.paragraph.1 = If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
 exportedCredits.paragraph.2 = You can also claim tax back as credit if another business exports it.
 exportedCredits.error.required = Select yes if you paid tax on plastic packaging before it was exported
-exported.credits.error.weight.required = Enter the weight, in kilograms
+
+exportedCreditsWeight.heading = How much plastic packaging did you pay tax on before it was exported?
+exportedCreditsWeight.caption = Credit for {0} to {1}
+exportedCreditsWeight.hint = Enter the weight in kilograms. 1 tonne is 1,000kg.
+exportedCreditsWeight.error.required = Enter the weight, in kilograms
+exportedCreditsWeight.error.wholeNumber = Weight must not include decimals
+exportedCreditsWeight.error.nonNumeric = Weight must be entered as numbers
+exportedCreditsWeight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 
 
 converted.credits.title = Plastic packaging you’ve paid tax on that has since been converted

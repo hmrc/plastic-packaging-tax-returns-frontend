@@ -16,7 +16,6 @@
 
 package forms.returns.credits
 
-import models.returns.CreditsAnswer
 import org.scalatestplus.play.PlaySpec
 import play.api.data.{Form, FormError}
 

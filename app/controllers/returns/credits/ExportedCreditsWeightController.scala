@@ -16,14 +16,16 @@
 
 package controllers.returns.credits
 
+import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode
-import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import play.api.data.Form
+import pages.returns.credits.ExportedCreditsWeightPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.Ok
+import play.api.mvc.Results.{BadRequest, Ok}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ExportedCreditsWeightView
 
@@ -33,29 +35,31 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExportedCreditsWeightController @Inject()(
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
+  cacheConnector: CacheConnector,
   val controllerComponents: MessagesControllerComponents,
   view: ExportedCreditsWeightView,
-  formProvider: WhatDoYouWantToDoFormProvider, // todo tmp
-  navigator: ReturnsJourneyNavigator,
-
+  formProvider: ExportedCreditsWeightFormProvider,
+  navigator: ReturnsJourneyNavigator
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = formProvider()
-        Ok(createView(form, mode))
+        val form = request.userAnswers.fill(ExportedCreditsWeightPage, formProvider())
+        Ok(view(form, mode))
     }
 
-  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
-    view(form, routes.ExportedCreditsWeightController.onSubmit(mode))
-  }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    journeyAction.async {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
       implicit request =>
-        Future.successful(Results.Redirect(navigator.exportedCreditsWeight(mode))
+        formProvider().bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            request.userAnswers
+              .setOrFail(ExportedCreditsWeightPage, value)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(mode)))
       )
     }
 
