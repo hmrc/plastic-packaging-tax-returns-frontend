@@ -29,6 +29,6 @@ class ConvertedCreditsWeightFormProvider @Inject() extends Mappings {
         "converted-credits-weight.error.required",
         "converted-credits-weight.error.wholeNumber",
         "converted-credits-weight.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "converted-credits-weight.error.outOfRange"))
+          .verifying(inRange(0L, 99999999999L, "converted-credits-weight.error.outOfRange")) // TODO is iRange ok? Also check 3rd party export form
     )
 }

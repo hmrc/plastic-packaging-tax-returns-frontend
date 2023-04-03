@@ -17,7 +17,7 @@
 package controllers.returns.credits
 
 import controllers.actions.JourneyAction
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -35,7 +35,7 @@ class ConvertedCreditsWeightController @Inject()(
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsWeightView,
-  formProvider: WhatDoYouWantToDoFormProvider, // todo tmp
+  formProvider: ConvertedCreditsWeightFormProvider,
   navigator: ReturnsJourneyNavigator,
 
 )
@@ -48,7 +48,7 @@ class ConvertedCreditsWeightController @Inject()(
         Ok(createView(form, mode))
     }
 
-  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Long], mode: Mode) (implicit request: DataRequest[_]) = {
     view(form, routes.ConvertedCreditsWeightController.onSubmit(mode))
   }
 
