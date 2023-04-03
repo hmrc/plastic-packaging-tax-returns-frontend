@@ -17,6 +17,7 @@
 package views.returns.credits
 
 import base.ViewSpecBase
+import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode.NormalMode
 import play.api.data.Form
 import play.api.data.Forms.longNumber
@@ -25,7 +26,7 @@ import views.html.returns.credits.ExportedCreditsWeightView
 
 class ExportedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = Form("value" -> longNumber).fill(10L)
+  val form = new ExportedCreditsWeightFormProvider()()
   val page = inject[ExportedCreditsWeightView]
 
   def render(form: Form[Long]): String =
@@ -35,6 +36,10 @@ class ExportedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityM
     "pass accessibility tests" when {
       "no error" in {
         render(form) must passAccessibilityChecks
+      }
+
+      "with error" in {
+        render(form.withError("error", "error message")) must passAccessibilityChecks
       }
     }
   }
