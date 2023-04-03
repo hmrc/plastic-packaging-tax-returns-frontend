@@ -544,11 +544,14 @@ exportedCredits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio pla
 exportedCredits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
 exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exports it.
 exportedCredits.error.required = [WELSH NEEDED] Select yes if you paid tax on plastic packaging before it was exported
-exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
-exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
-exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
-exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+
+exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
+exportedCreditsWeight.caption = [WELSH NEEDED] Credit for {0} to {1}
+exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
+exportedCreditsWeight.error.[WELSH NEEDED] required = Enter the weight, in kilograms
+exportedCreditsWeight.error.[WELSH NEEDED] wholeNumber = Weight must not include decimals
+exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered as numbers
+exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
 
 converted.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
 converted.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
