@@ -53,7 +53,7 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
       view.getElementById("section-header").text mustBe messages("credits.period.caption", "1 April 2022", "1 April 2023")
     }
 
-    "have a fieldset legend" in {
+    "have a field set legend" in {
       view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exportedCredits.heading.2")
     }
 
@@ -81,17 +81,5 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
         doc.text() must include("Select yes if you paid tax on plastic packaging before it was exported")
       }
     }
-//      "negative number submitted" in {
-//        val view: Html = createView(form.bind(Map("value" -> "true")))
-//
-//        view.getElementById("exported-credits-weight-error").text() must include("Weight must be 1kg or more")
-//      }
-//
-//      "number submitted is greater than maximum" in {
-//        val view: Html = createView(form.fillAndValidate(true))
-//
-//        view.getElementById("exported-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
-//      }
-//    }
   }
 }

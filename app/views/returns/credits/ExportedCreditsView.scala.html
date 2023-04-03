@@ -58,7 +58,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(HtmlContent(messages("exportedCredits.heading.2")))
-                            .asPageHeading(false, LegendSize.Medium)
+                            .withCssClass(LegendSize.Medium.toString)
             )
         )
 

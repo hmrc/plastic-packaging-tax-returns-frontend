@@ -60,20 +60,13 @@ trait FieldsetFluency {
 
   implicit class FluentLegend(legend: Legend) {
 
-    //todo: shell we keep both?
     def asPageHeading(size: LegendSize = LegendSize.Large): Legend =
       legend
         .copy(isPageHeading = true)
-        .withCssClass(size.toString)
-
-    def asPageHeading(isPageHeading: Boolean, size: LegendSize): Legend =
-      legend
-        .copy(isPageHeading = isPageHeading)
         .withCssClass(size.toString)
 
     def withCssClass(newClass: String): Legend =
       legend copy (classes = s"${legend.classes} $newClass")
 
   }
-
 }
