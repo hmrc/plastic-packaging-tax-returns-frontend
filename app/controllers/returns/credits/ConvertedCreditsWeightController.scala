@@ -22,7 +22,9 @@ import models.Mode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ConvertedCreditsWeightView
@@ -44,19 +46,25 @@ class ConvertedCreditsWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = formProvider()
+        val form = request.userAnswers.fill(JsPath \ "convertedCredits" \ "weight", formProvider())
         Ok(createView(form, mode))
     }
 
-  private def createView(form: Form[Long], mode: Mode) (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Long], mode: Mode)(implicit request: DataRequest[_]) = {
     view(form, routes.ConvertedCreditsWeightController.onSubmit(mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        Future.successful(Results.Redirect(navigator.convertedCreditsWeight(mode, ClaimedCredits(request.userAnswers)))
-      )
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, mode))),
+            _ => {
+              val claimedCredits = ClaimedCredits(request.userAnswers)
+              val nextPage = navigator.convertedCreditsWeight(mode, claimedCredits)
+              Future.successful(Results.Redirect(nextPage))
+            })
     }
-
 }
