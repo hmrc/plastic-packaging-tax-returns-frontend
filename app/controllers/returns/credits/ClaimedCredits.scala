@@ -18,19 +18,19 @@ package controllers.returns.credits
 
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage}
 
-case class ClaimedCredits(isExported: Boolean, isCreditsConverted: Boolean) {
+case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
   def hasMadeClaim: Boolean =
-    isExported || isCreditsConverted
+    exported.yesNo || converted.yesNo
 
 }
 
 object ClaimedCredits {
 
   def apply(userAnswers: UserAnswers): ClaimedCredits = {
-    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
+    ClaimedCredits(userAnswers.getOrFail(OldExportedCreditsPage), userAnswers.getOrFail(OldConvertedCreditsPage))
 
   }
 }
