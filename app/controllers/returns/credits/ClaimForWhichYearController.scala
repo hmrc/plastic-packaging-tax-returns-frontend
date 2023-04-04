@@ -21,6 +21,7 @@ import forms.returns.credits.WhatDoYouWantToDoFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Ok
@@ -41,18 +42,15 @@ class ClaimForWhichYearController @Inject()(
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = formProvider()
-        Ok(createView(form, mode))
+        val form = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
+        Ok(view(form))
     }
 
-  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
-    view(form, routes.ClaimForWhichYearController.onSubmit(mode))
-  }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit: Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         Future.successful(Results.Redirect(navigator.claimForWhichYear)
