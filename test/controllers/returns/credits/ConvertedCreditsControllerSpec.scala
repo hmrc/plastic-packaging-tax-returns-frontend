@@ -32,7 +32,7 @@ import org.mockito.MockitoSugar.{when => scalaWhen}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}

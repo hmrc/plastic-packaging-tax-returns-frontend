@@ -22,6 +22,7 @@ import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
+import models.returns.CreditsAnswer
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._

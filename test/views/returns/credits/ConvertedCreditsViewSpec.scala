@@ -19,7 +19,6 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.CreditsAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form

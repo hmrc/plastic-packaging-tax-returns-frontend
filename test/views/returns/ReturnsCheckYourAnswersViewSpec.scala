@@ -27,7 +27,7 @@ import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -364,6 +364,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       .set(ExportedCreditsPage, true).get
       .set(ConvertedCreditsPage, true).get
       .set(ExportedCreditsWeightPage, 100L).get
+      .set(ConvertedCreditsWeightPage, 200L).get
       .set(DirectlyExportedWeightPage, 100L).get
       .set(WhatDoYouWantToDoPage, true).get
 

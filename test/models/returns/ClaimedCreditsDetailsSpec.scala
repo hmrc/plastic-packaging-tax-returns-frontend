@@ -21,7 +21,7 @@ import models.{CreditBalance, UserAnswers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
 import viewmodels.PrintLong
 
 class ClaimedCreditsDetailsSpec extends PlaySpec {
@@ -30,7 +30,7 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
     .set(ExportedCreditsPage, true).get
     .set(ExportedCreditsWeightPage, 100L).get
     .set(ConvertedCreditsPage, true).get
-    .set(ConvertedCreditsWeight, 200L).get
+    .set(ConvertedCreditsWeightPage, 200L).get
     .set(WhatDoYouWantToDoPage, true).get
 
   "summaryList" should {
@@ -48,7 +48,7 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
           val newAns = userAnswer
             .set(ExportedCreditsPage, exported).get
             .set(ExportedCreditsWeightPage, exportedWeight).get
-            .set(ConvertedCreditsPage, CreditsAnswer(converted, convertedWeight)).get
+            set(ConvertedCreditsPage, converted).get
 
           val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true))
 
