@@ -18,29 +18,30 @@ package models.returns
 
 import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(
                                   isExported: Boolean,
                                   exportedCreditsWeight: Long,
-                                  converted: CreditsAnswer,
+                                  isCreditsConverted: Boolean,
+                                  convertedCreditsWeight: Long,
                                   totalWeight: Long,
                                   totalCredits: BigDecimal
 ) extends Credits {
 
   override def summaryList: Seq[(String, String)] = {
-
+    val convertedCreditYesNoMsgKey: String = if (isCreditsConverted) "site.yes" else "site.no"
     val exportedCreditYesNoMsgKey: String = if(isExported) "site.yes" else "site.no"
 
     Seq(
       CreditExportedAnswerPartialKey -> exportedCreditYesNoMsgKey -> true,
       CreditExportedWeightPartialKey -> getExportedValue -> true,
-      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
-      CreditConvertedWeightPartialKey -> converted.value.asKg -> converted.yesNo,
+      CreditConvertedAnswerPartialKey -> convertedCreditYesNoMsgKey -> true,
+      CreditConvertedWeightPartialKey -> getConvertedValue -> true,
       CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
       CreditTotalPartialKey -> totalCredits.asPounds -> true
-    ).collect{case (tuple, show) if show => tuple}
+    ).collect { case (tuple, show) if show => tuple }
   }
 
   private def getExportedValue = {
@@ -49,6 +50,12 @@ case class CreditsClaimedDetails(
     else 0L.asKg
   }
 
+  
+  private def getConvertedValue = {
+    if(isCreditsConverted)
+      convertedCreditsWeight.asKg
+    else 0L.asKg
+  }
 }
 
 object CreditsClaimedDetails {
@@ -62,9 +69,10 @@ object CreditsClaimedDetails {
 
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrDefault(ExportedCreditsPage, false),
-      userAnswer.getOrDefault(ExportedCreditsWeightPage, 0L),
+      userAnswer.getOrFail(ExportedCreditsPage),
+      userAnswer.getOrFail(ExportedCreditsWeightPage),
       userAnswer.getOrFail(ConvertedCreditsPage),
+      userAnswer.getOrFail(ConvertedCreditsWeightPage),
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,
     )

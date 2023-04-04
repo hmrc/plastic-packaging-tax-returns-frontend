@@ -20,10 +20,10 @@ import models.UserAnswers
 import models.returns.CreditsAnswer
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 
-case class ClaimedCredits(isExported: Boolean, converted: CreditsAnswer) {
+case class ClaimedCredits(isExported: Boolean, isCreditsConverted: Boolean) {
 
   def hasMadeClaim: Boolean =
-    isExported || converted.yesNo
+    isExported || isCreditsConverted
 
 }
 

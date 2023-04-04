@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package forms.returns.credits
+package pages.returns.credits
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class ConvertedCreditsFormProvider extends Mappings {
+case object ConvertedCreditsWeightPage extends QuestionPage[Long] {
+  override def path: JsPath = JsPath \ "convertedCredits" \ toString
 
-  def apply(): Form[Boolean] = {
-      Form(
-        "value" -> boolean("converted.credits.error.required")
-      )
-  }
+  override def toString: String = "weight"
 }

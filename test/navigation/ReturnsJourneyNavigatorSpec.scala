@@ -101,22 +101,22 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode, CreditsAnswer(true, None))
+        val call = navigator.convertedCreditsYesNo(NormalMode, true)
         call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode, CreditsAnswer(true, None))
+        val call = navigator.convertedCreditsYesNo(CheckMode, true)
         call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(CheckMode)
       }
     }
     
     "skip weight page when user answers 'no'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode, CreditsAnswer(false, None))
+        val call = navigator.convertedCreditsYesNo(NormalMode, false)
         call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode, CreditsAnswer(false, None))
+        val call = navigator.convertedCreditsYesNo(CheckMode, false)
         call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
       }
     }
