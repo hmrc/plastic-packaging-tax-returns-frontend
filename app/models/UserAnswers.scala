@@ -53,10 +53,6 @@ case class UserAnswers(
     
   def getOrFail[A](answerPath: JsPath)(implicit rds: Reads[A]): A =
     Reads.at(answerPath).reads(data).get
-
-    default: A
-  )(implicit rds: Reads[A]): A =
-    get(page).fold(default)(v => v)
     
   def set[A](page: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 

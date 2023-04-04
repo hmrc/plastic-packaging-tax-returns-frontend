@@ -19,7 +19,7 @@ package controllers.returns.credits
 import models.UserAnswers
 import models.returns.CreditsAnswer
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage}
 
 class ClaimedCreditsSpec extends PlaySpec {
 

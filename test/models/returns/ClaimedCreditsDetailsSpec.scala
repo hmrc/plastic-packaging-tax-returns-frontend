@@ -48,7 +48,7 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
           val newAns = userAnswer
             .set(ExportedCreditsPage, exported).get
             .set(ExportedCreditsWeightPage, exportedWeight).get
-            set(ConvertedCreditsPage, converted).get
+            .set(ConvertedCreditsPage, converted).get
             .set(ConvertedCreditsWeightPage, convertedWeight).get
 
           val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true))

@@ -69,8 +69,8 @@ object CreditsClaimedDetails {
 
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrDefault(ExportedCreditsPage, false),
-      userAnswer.getOrDefault(ExportedCreditsWeightPage, 0L),
+      userAnswer.getOrFail(ExportedCreditsPage),
+      userAnswer.getOrFail(ExportedCreditsWeightPage),
       userAnswer.getOrFail(ConvertedCreditsPage),
       userAnswer.getOrFail(ConvertedCreditsWeightPage),
       creditBalance.totalRequestedCreditInKilograms,
