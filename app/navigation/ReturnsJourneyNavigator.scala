@@ -82,8 +82,9 @@ class ReturnsJourneyNavigator @Inject()(
   def claimForWhichYear: Call =
     controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
 
-  def exportedCreditsYesNo(mode: Mode, usersAnswer: CreditsAnswer): Call = {
-    if (usersAnswer.yesNo)
+  //todo: re-look at the logic here
+  def exportedCreditsYesNo(mode: Mode, isYes: Boolean): Call = {
+    if (isYes)
       controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(mode)
     else if (mode == NormalMode)
       controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)

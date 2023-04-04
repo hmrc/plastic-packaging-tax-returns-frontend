@@ -19,7 +19,7 @@ package controllers.returns.credits
 import models.UserAnswers
 import models.returns.CreditsAnswer
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage}
 
 class ClaimedCreditsSpec extends PlaySpec {
 
@@ -29,40 +29,48 @@ class ClaimedCreditsSpec extends PlaySpec {
     "be true" when {
 
       "user claims exportedCredit but not convertedCredit" in {
-        val ans = UserAnswers("ppt321")
-          .set(ExportedCreditsPage, CreditsAnswer(true, Some(20))).get
-          .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
-
-        ClaimedCredits(ans).hasMadeClaim mustBe true
+        ClaimedCredits(createUserAnswerWithNoConvertedCredits).hasMadeClaim mustBe true
       }
 
       "user claims convertedCredit but not exportedCredit" in {
-        val ans = UserAnswers("ppt321")
-          .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
-          .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
-
-        ClaimedCredits(ans).hasMadeClaim mustBe true
+        ClaimedCredits(createUserAnswerWithNoExportedCredits).hasMadeClaim mustBe true
       }
 
       "user claims convertedCredit and exportedCredit" in {
-        val ans = UserAnswers("ppt321")
-          .set(ExportedCreditsPage, CreditsAnswer(true, Some(30))).get
-          .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
-
-        ClaimedCredits(ans).hasMadeClaim mustBe true
-
+        ClaimedCredits(createUserAnswerWithCredits).hasMadeClaim mustBe true
       }
     }
 
     "be false" when {
-
       "user claims no convertedCredit or exportedCredit" in {
-        val ans = UserAnswers("ppt321")
-          .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
-          .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
-
-        ClaimedCredits(ans).hasMadeClaim mustBe false
+        ClaimedCredits(createUserAnswerWithNoExportedOrConvertedCredits).hasMadeClaim mustBe false
       }
     }
+  }
+
+  private def createUserAnswerWithCredits: UserAnswers = {
+    UserAnswers("ppt321")
+      .set(ExportedCreditsPage, true).get
+      .set(ExportedCreditsWeightPage, 20L).get
+      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
+  }
+
+  private def createUserAnswerWithNoExportedOrConvertedCredits: UserAnswers = {
+    UserAnswers("ppt321")
+      .set(ExportedCreditsPage, false).get
+      .set(ConvertedCreditsPage, CreditsAnswer(false, Some(30))).get
+  }
+
+  private def createUserAnswerWithNoConvertedCredits: UserAnswers = {
+    UserAnswers("ppt321")
+      .set(ExportedCreditsPage, true).get
+      .set(ExportedCreditsWeightPage, 20L).get
+      .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
+  }
+
+  private def createUserAnswerWithNoExportedCredits: UserAnswers = {
+    UserAnswers("ppt321")
+      .set(ExportedCreditsPage, false).get
+      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
   }
 }

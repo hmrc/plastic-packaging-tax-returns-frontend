@@ -21,37 +21,39 @@ import models.{CreditBalance, UserAnswers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
 import viewmodels.PrintLong
 
 class ClaimedCreditsDetailsSpec extends PlaySpec {
 
   val userAnswer = UserAnswers("123")
-    .set(ExportedCreditsPage, CreditsAnswer(true, Some(100L))).get
+    .set(ExportedCreditsPage, true).get
+    .set(ExportedCreditsWeightPage, 100L).get
     .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
     .set(WhatDoYouWantToDoPage, true).get
 
   "summaryList" should {
     val table = Table(
       ("description", "exported", "converted", "exportedWeight", "convertedWeight"),
-      ("populate both weights when both answers are yes", true, true, Some(100L), Some(200L)),
-      ("remove converted weight when converted is no", true, false, Some(100L), None),
-      ("remove exported weight when exported is no", false, true, None, Some(200L)),
-      ("remove both exported and converted weight", false, false, None, None)
+      ("populate both weights when both answers are yes", true, true, 100L, Some(200L)),
+      ("remove converted weight when converted is no", true, false, 100L, None),
+      ("remove exported weight when exported is no", false, true, 0L, Some(200L)),
+      ("remove both exported and converted weight", false, false, 0L, None)
     )
 
     forAll(table) {
       (description, exported, converted, exportedWeight, convertedWeight) =>
         s"$description" in {
           val newAns = userAnswer
-            .set(ExportedCreditsPage, CreditsAnswer(exported, exportedWeight)).get
+            .set(ExportedCreditsPage, exported).get
+            .set(ExportedCreditsWeightPage, exportedWeight).get
             .set(ConvertedCreditsPage, CreditsAnswer(converted, convertedWeight)).get
 
           val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true))
 
           credits.summaryList mustBe Seq(
             CreditExportedAnswerPartialKey -> (if (exported) "site.yes" else "site.no"),
-            exportedWeight.fold("N/A" -> "N/A")(o => CreditExportedWeightPartialKey -> o.asKg),
+            CreditExportedWeightPartialKey -> exportedWeight.asKg,
             CreditConvertedAnswerPartialKey -> (if (converted) "site.yes" else "site.no"),
             convertedWeight.fold("N/A" -> "N/A")(o => CreditConvertedWeightPartialKey -> o.asKg),
             CreditsTotalWeightPartialKey -> "200kg",
