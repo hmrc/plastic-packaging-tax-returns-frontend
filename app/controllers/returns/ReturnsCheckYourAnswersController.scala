@@ -26,7 +26,7 @@ import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.Credits._
 import models.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -100,8 +100,8 @@ class ReturnsCheckYourAnswersController @Inject()(
       case Some(true) => Future.successful(true)
       case _          =>
         userAnswers
-          .setOrFail(ExportedCreditsPage, false)
-          .setOrFail(ConvertedCreditsPage, false)
+          .setOrFail(OldExportedCreditsPage, CreditsAnswer.noClaim)
+          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
           .save(cacheConnector.saveUserAnswerFunc(pptReference))
           .map(_ => false)
     }
