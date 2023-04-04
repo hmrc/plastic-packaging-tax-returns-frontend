@@ -27,15 +27,15 @@ class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with Vi
 
   val page = inject[ClaimForWhichYearView]
   val form = new WhatDoYouWantToDoFormProvider()()
-  private val call = Call("a", "b")
 
   private def createView: Html = page(form)(request, messages)
 
   "ClaimForWhichYearView" should {
     val view = createView
 
-    "have a title" in { //todo dont have title yet
-      view.select("title").text must include( "claim-for-which-year.title")
+    "have a title" in {
+      view.select("title").text mustBe
+        "Which year do you want to claim tax back as credit for? - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "have heading" in {

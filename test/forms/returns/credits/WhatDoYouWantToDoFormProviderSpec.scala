@@ -16,8 +16,23 @@
 
 package forms.returns.credits
 
-import org.scalatestplus.play.PlaySpec
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class WhatDoYouWantToDoFormProviderSpec extends PlaySpec {
+class WhatDoYouWantToDoFormProviderSpec extends BooleanFieldBehaviours {
+
+  val requiredKey = "what-do-you-want-to-do.error.required"
+  val invalidKey  = "error.boolean"
+
+  val form = new WhatDoYouWantToDoFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(form, fieldName, invalidError = FormError(fieldName, invalidKey))
+
+    behave like mandatoryField(form, fieldName, requiredError = FormError(fieldName, requiredKey))
+  }
 
 }
