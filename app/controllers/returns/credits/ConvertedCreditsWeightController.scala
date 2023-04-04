@@ -63,14 +63,20 @@ class ConvertedCreditsWeightController @Inject()(
       implicit request =>
         formProvider()
           .bindFromRequest()
-          .fold(
-            formWithErrors =>  Future.successful(Results.BadRequest(createView(formWithErrors, mode))),
-            answer => {
-              val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-              request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
-              val claimedCredits = ClaimedCredits(request.userAnswers)
-              val nextPage = navigator.convertedCreditsWeight(mode, claimedCredits)
-              Future.successful(Results.Redirect(nextPage))
-            })
+          .fold(formHasErrors(mode, _),formIsGood(mode, _))
     }
+
+  private def formIsGood(mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
+    val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+    request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
+      .map { _ =>
+        val claimedCredits = ClaimedCredits(request.userAnswers)
+        val nextPage = navigator.convertedCreditsWeight(mode, claimedCredits)
+        Results.Redirect(nextPage)
+      }
+  }
+
+  private def formHasErrors(mode: Mode, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
+    Future.successful(Results.BadRequest(createView(formWithErrors, mode)))
+  }
 }
