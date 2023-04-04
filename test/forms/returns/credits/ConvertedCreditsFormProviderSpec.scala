@@ -28,19 +28,19 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
   "bind correctly" when {
     "yes is provided" in {
 
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "20"))
-      boundForm.value mustBe Some(CreditsAnswer(yesNo = true, Some(20)))
+      val boundForm = sut.bind(Map("answer" -> "true"))
+      boundForm.value mustBe true
       boundForm.errors mustBe Nil
     }
-    "no is provided with no weight" in {
+    "no is provided" in {
       val boundForm = sut.bind(Map("answer" -> "false"))
-      boundForm.value mustBe Some(CreditsAnswer(yesNo = false, None))
+      boundForm.value mustBe false
       boundForm.errors mustBe Nil
     }
   }
   "radio errors" when {
-    "answer is none boolean" in {
-      val boundForm = sut.bind(Map("answer" -> "porridge", "converted-credits-weight" -> "20"))
+    "answer is rubbish" in {
+      val boundForm = sut.bind(Map("answer" -> "porridge"))
       boundForm.value mustBe None
     }
 
@@ -49,32 +49,4 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
       boundForm.value mustBe None
     }
   }
-
-  "weight input errors" when {
-    "nothing entered in weight field" in {
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> ""))
-      boundForm.value mustBe None
-    }
-
-    "entered weight is below 1" in {
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "-1"))
-      boundForm.value mustBe None
-    }
-
-    "entered weight is below above max" in {
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "100000000000"))
-      boundForm.value mustBe None
-    }
-
-    "entered weight is only non numeric" in {
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "porridge"))
-      boundForm.value mustBe None
-    }
-
-    "entered weight is decimal" in {
-      val boundForm = sut.bind(Map("answer" -> "true", "converted-credits-weight" -> "4.20"))
-      boundForm.value mustBe None
-    }
-  }
-
 }
