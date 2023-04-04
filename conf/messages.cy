@@ -548,8 +548,8 @@ exportedCredits.error.required = [WELSH NEEDED] Select yes if you paid tax on pl
 exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
 exportedCreditsWeight.caption = [WELSH NEEDED] Credit for {0} to {1}
 exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
-exportedCreditsWeight.error.[WELSH NEEDED] required = Enter the weight, in kilograms
-exportedCreditsWeight.error.[WELSH NEEDED] wholeNumber = Weight must not include decimals
+exportedCreditsWeight.error.required = [WELSH NEEDED] Enter the weight, in kilograms
+exportedCreditsWeight.error.wholeNumber = [WELSH NEEDED] Weight must not include decimals
 exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered as numbers
 exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
 

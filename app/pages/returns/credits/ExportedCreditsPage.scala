@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 case object ExportedCreditsPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "exportedCredits" \ toString
 
-  override def toString: String = "exportedCredits"
+  override def toString: String = "yesNo"
 }
