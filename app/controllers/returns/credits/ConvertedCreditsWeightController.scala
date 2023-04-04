@@ -16,13 +16,17 @@
 
 package controllers.returns.credits
 
+import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ConvertedCreditsWeightView
@@ -35,28 +39,44 @@ class ConvertedCreditsWeightController @Inject()(
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsWeightView,
-  formProvider: WhatDoYouWantToDoFormProvider, // todo tmp
+  formProvider: ConvertedCreditsWeightFormProvider,
   navigator: ReturnsJourneyNavigator,
-
+  cacheConnector: CacheConnector, 
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
+
+  private val userAnswerPath = JsPath \ "convertedCredits" \ "weight"
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = formProvider()
+        val form = request.userAnswers.fill(userAnswerPath, formProvider())
         Ok(createView(form, mode))
     }
 
-  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Long], mode: Mode)(implicit request: DataRequest[_]) = {
     view(form, routes.ConvertedCreditsWeightController.onSubmit(mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit(mode: Mode) : Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        Future.successful(Results.Redirect(navigator.convertedCreditsWeight(mode, ClaimedCredits(request.userAnswers)))
-      )
+        formProvider()
+          .bindFromRequest()
+          .fold(formHasErrors(mode, _),formIsGood(mode, _))
     }
 
+  private def formIsGood(mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
+    val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+    request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
+      .map { _ =>
+        val claimedCredits = ClaimedCredits(request.userAnswers)
+        val nextPage = navigator.convertedCreditsWeight(mode, claimedCredits)
+        Results.Redirect(nextPage)
+      }
+  }
+
+  private def formHasErrors(mode: Mode, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
+    Future.successful(Results.BadRequest(createView(formWithErrors, mode)))
+  }
 }

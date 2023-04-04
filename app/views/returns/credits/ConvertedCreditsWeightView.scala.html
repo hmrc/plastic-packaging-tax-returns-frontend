@@ -14,22 +14,47 @@
  * limitations under the License.
  *@
 
+@import components._
+@import viewmodels.InputWidth._
+
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
+    govukErrorSummary: GovukErrorSummary,
+    sectionHeader: SectionHeader,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    govukInput: GovukInput,
 )
 
-@(form: Form[Boolean], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("converted-credits-weight.title"), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("converted-credits-weight.heading-title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = submitCall, 'autoComplete -> "off") {
 
-        <p>Hello I'm a skeleton</p>
-        <p>enter converted weight</p>
-            
-        @govukButton(ButtonViewModel(messages("site.continue")))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
+        @sectionHeader(messages("credits.caption"))
+        @heading("converted-credits-weight.heading-title")
+        
+        @paragraphBody(messages("converted-credits-weight.paragraph.1"))
+        @paragraphBody(messages("converted-credits-weight.paragraph.2"))
+
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("converted-credits-weight.label"))
+            )
+                .asKg()
+                .withWidth(Fixed10)
+                .withId("value")
+                .withHint(Hint(content = "converted-credits-weight.hint"))
+        )
+
+        @govukButton(ButtonViewModel(messages("site.continue")))
     }
 })

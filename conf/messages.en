@@ -690,3 +690,9 @@ amendExportedByAnotherBusiness.error.nonNumeric = Weight must be entered as numb
 amendExportedByAnotherBusiness.error.required = Enter the weight, in kilograms
 amendExportedByAnotherBusiness.error.wholeNumber = Weight must not include decimals
 amendExportedByAnotherBusiness.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
+
+converted-credits-weight.heading-title = How much converted cheese would you like?
+converted-credits-weight.paragraph.1 = Hello I'm a skeleton
+converted-credits-weight.paragraph.2 = enter your converted cheese weight here
+converted-credits-weight.hint = hint
+converted-credits-weight.label = label
