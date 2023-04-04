@@ -90,9 +90,6 @@ class ReturnsJourneyNavigator @Inject()(
   }
 
   def exportedCreditsWeight(mode: Mode): Call = {
-    if (mode.equals(CheckMode))
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
-    else
       controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
   }
   
