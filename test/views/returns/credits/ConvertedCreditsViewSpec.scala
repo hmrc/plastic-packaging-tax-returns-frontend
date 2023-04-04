@@ -34,6 +34,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
   private def createView(form: Form[Boolean] = form): Html =
     page(form, NormalMode)(request, messages)
 
+  //todo: re-instate the test when updating content
   "Converted Credits View" should {
 
     val view = createView()
