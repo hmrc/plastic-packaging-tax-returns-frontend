@@ -74,7 +74,7 @@ class ReturnsJourneyNavigator @Inject()(
     if (mode.equals(CheckMode))
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     else if (newAnswer)
-      controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(NormalMode)
+      controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit
     else
       routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
   }
