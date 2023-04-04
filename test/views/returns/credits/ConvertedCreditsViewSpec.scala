@@ -93,27 +93,6 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
         doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been converted")
       }
-
-      "letters with no numbers" in {
-        val boundForm: Form[Boolean] = form.bind(Map("answer" -> "true"))
-        val view: Html = createView(boundForm)
-
-        view.getElementById("converted-credits-weight-error").text() must include("Weight must be entered as numbers")
-        view.getElementById("converted-credits-weight-error").text() must include(
-          messages("converted.credits.error.non.numeric")
-        )
-      }
-      "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(true))
-
-        view.getElementById("converted-credits-weight-error").text() must include("Weight must be 1kg or more")
-      }
-
-      "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(true))
-
-        view.getElementById("converted-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
-      }
     }
   }
 

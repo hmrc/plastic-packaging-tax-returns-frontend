@@ -16,9 +16,8 @@
 
 package forms.returns.credits
 
-import models.returns.CreditsAnswer
 import org.scalatestplus.play.PlaySpec
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 
 class ConvertedCreditsFormProviderSpec extends PlaySpec {
 
@@ -28,25 +27,21 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
   "bind correctly" when {
     "yes is provided" in {
 
-      val boundForm = sut.bind(Map("answer" -> "true"))
-      boundForm.value mustBe true
+      val boundForm = sut.bind(Map("value" -> "true"))
+      boundForm.value mustBe Some(true)
       boundForm.errors mustBe Nil
     }
     "no is provided" in {
-      val boundForm = sut.bind(Map("answer" -> "false"))
-      boundForm.value mustBe false
+      val boundForm = sut.bind(Map("value" -> "false"))
+      boundForm.value mustBe Some(false)
       boundForm.errors mustBe Nil
     }
   }
   "radio errors" when {
-    "answer is rubbish" in {
-      val boundForm = sut.bind(Map("answer" -> "porridge"))
-      boundForm.value mustBe None
-    }
-
     "answer is empty" in {
       val boundForm = sut.bind(Map.empty[String, String])
       boundForm.value mustBe None
+      boundForm.errors mustBe Seq(FormError("value", "converted.credits.error.required"))
     }
   }
 }

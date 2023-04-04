@@ -144,7 +144,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "remember the user's answers" in {
       // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(true, Some(20))))
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Boolean => Future[Result]](1).apply(true))
       await(controller.onSubmit(NormalMode) (dataRequest))
       verify(userAnswers).setOrFail(meq(ConvertedCreditsPage), meq(true), meq(false))(any)
       verify(userAnswers).save(any)(any)
@@ -152,7 +152,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "redirect to the next page" in {
       // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Boolean => Future[Result]](1).apply(false))
       val result = controller.onSubmit(NormalMode) (dataRequest)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustBe Some("/next/page")
@@ -161,8 +161,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     
     "pass the two credit claim answers to the navigator" in {
       // Invokes the "form is good" side of the fold() call
-      val usersAnswer = CreditsAnswer(false, None)
-      when(form.fold(any, any)) thenAnswer {i =>  i.getArgument[CreditsAnswer => Future[Result]](1) apply usersAnswer}
+      when(form.fold(any, any)) thenAnswer {i =>  i.getArgument[Boolean => Future[Result]](1) apply false}
       await(controller.onSubmit(NormalMode) (dataRequest))
 
       verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(false))
