@@ -174,8 +174,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val ans = UserAnswers("123")
           .set(ExportedCreditsPage, false).get
-          .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
-          .set(WhatDoYouWantToDoPage, true).get
+          .set(ConvertedCreditsPage,false).get
+          .set(WhatDoYouWantToDoPage,true).get
 
         val view = createView(
           credits = CreditsClaimedDetails(ans, CreditBalance(10, 40, 300L, true)))
@@ -362,9 +362,9 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
       .set(ExportedCreditsPage, true).get
+      .set(ConvertedCreditsPage, true).get
       .set(ExportedCreditsWeightPage, 100L).get
       .set(DirectlyExportedWeightPage, 100L).get
-      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
       .set(WhatDoYouWantToDoPage, true).get
 
   private def assertExportedCreditsAnswer(view: Html, expectedValue: String, expectedKey: String): Unit = {
@@ -433,8 +433,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
     .set(ExportedCreditsPage, false).get
+    .set(ConvertedCreditsPage, true).get
     .set(ExportedCreditsWeightPage, 100L).get
-    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0))).get
     .set(WhatDoYouWantToDoPage, true).get
 }
 

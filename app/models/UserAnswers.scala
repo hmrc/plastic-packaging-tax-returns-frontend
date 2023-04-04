@@ -54,9 +54,6 @@ case class UserAnswers(
   def getOrFail[A](answerPath: JsPath)(implicit rds: Reads[A]): A =
     Reads.at(answerPath).reads(data).get
 
-  def getOrDefault[A]
-  (
-    page: Gettable[A],
     default: A
   )(implicit rds: Reads[A]): A =
     get(page).fold(default)(v => v)

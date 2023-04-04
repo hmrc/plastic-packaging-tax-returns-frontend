@@ -22,7 +22,6 @@ import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
-import models.returns.CreditsAnswer
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
@@ -99,8 +98,8 @@ class ReturnsJourneyNavigator @Inject()(
       controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
   }
   
-  def convertedCreditsYesNo(mode: Mode, usersAnswer: CreditsAnswer): Call = {
-    if (usersAnswer.yesNo)
+  def convertedCreditsYesNo(mode: Mode, isAnswerYes: Boolean): Call = {
+    if (isAnswerYes)
       controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(mode)
     else if (mode == NormalMode)
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)

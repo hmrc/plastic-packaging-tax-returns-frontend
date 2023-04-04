@@ -52,7 +52,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val view = mock[ConvertedCreditsView]
   private val formProvider = mock[ConvertedCreditsFormProvider]
-  private val form = mock[Form[CreditsAnswer]]
+  private val form = mock[Form[Boolean]]
   private val userAnswers = mock[UserAnswers]
   private val journeyAction = mock[JourneyAction]
   private val dataRequest = mock[DataRequest[AnyContent]]
@@ -97,7 +97,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       dataRequest,
       messages
     )
-    when(userAnswers.fill[CreditsAnswer](any[Gettable[CreditsAnswer]], any)(any)) thenReturn form
+    when(userAnswers.fill(any[Gettable[Boolean]], any)(any)) thenReturn form
     when(userAnswers.setOrFail(any, any, any)(any)) thenReturn userAnswers
     when(userAnswers.save(any)(any)) thenReturn Future.successful(userAnswers)
 
@@ -124,7 +124,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     
     "fill the form with user's previous answer" in {
       controller.onPageLoad(NormalMode) (dataRequest)
-      verify(userAnswers).fill[CreditsAnswer](ConvertedCreditsPage, form)
+      verify(userAnswers).fill(ConvertedCreditsPage, form)
     }
     
     "render the page" in {
@@ -146,7 +146,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       // Invokes the "form is good" side of the fold() call
       when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(true, Some(20))))
       await(controller.onSubmit(NormalMode) (dataRequest))
-      verify(userAnswers).setOrFail(meq(ConvertedCreditsPage), meq(CreditsAnswer(true, Some(20))), meq(false))(any)
+      verify(userAnswers).setOrFail(meq(ConvertedCreditsPage), meq(true), meq(false))(any)
       verify(userAnswers).save(any)(any)
     }
 
@@ -165,12 +165,12 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       when(form.fold(any, any)) thenAnswer {i =>  i.getArgument[CreditsAnswer => Future[Result]](1) apply usersAnswer}
       await(controller.onSubmit(NormalMode) (dataRequest))
 
-      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(CreditsAnswer(false, None)))
+      verify(mockNavigator).convertedCreditsYesNo(meq(NormalMode), meq(false))
     }
 
     "display any errors" in {
       // Invokes the "form is bad" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Form[CreditsAnswer] => Future[Result]](0).apply(form))
+      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Form[Boolean] => Future[Result]](0).apply(form))
       val result = controller.onSubmit(NormalMode) (dataRequest)
 
       status(result) mustEqual BAD_REQUEST

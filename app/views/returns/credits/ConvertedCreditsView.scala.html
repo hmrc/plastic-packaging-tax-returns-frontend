@@ -32,7 +32,7 @@
 
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @ifYes = {
     @govukInput(

@@ -22,7 +22,7 @@ import play.api.data.Form
 
 class ConvertedCreditsFormProviderSpec extends PlaySpec {
 
-  val sut: Form[CreditsAnswer] = new ConvertedCreditsFormProvider().apply()
+  val sut: Form[Boolean] = new ConvertedCreditsFormProvider().apply()
 
 
   "bind correctly" when {

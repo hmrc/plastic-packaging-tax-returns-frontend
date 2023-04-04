@@ -32,7 +32,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
   val form = new ConvertedCreditsFormProvider()()
 
-  private def createView(form: Form[CreditsAnswer] = form): Html =
+  private def createView(form: Form[Boolean] = form): Html =
     page(form, NormalMode)(request, messages)
 
   "Converted Credits View" should {
@@ -96,7 +96,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       }
 
       "letters with no numbers" in {
-        val boundForm: Form[CreditsAnswer] = form.bind(Map("answer" -> "true", "converted-credits-weight" -> "agdhjsfvjsw"))
+        val boundForm: Form[Boolean] = form.bind(Map("answer" -> "true"))
         val view: Html = createView(boundForm)
 
         view.getElementById("converted-credits-weight-error").text() must include("Weight must be entered as numbers")
@@ -105,13 +105,13 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
         )
       }
       "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(0L))))
+        val view: Html = createView(form.fillAndValidate(true))
 
         view.getElementById("converted-credits-weight-error").text() must include("Weight must be 1kg or more")
       }
 
       "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(100000000000L))))
+        val view: Html = createView(form.fillAndValidate(true))
 
         view.getElementById("converted-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
       }

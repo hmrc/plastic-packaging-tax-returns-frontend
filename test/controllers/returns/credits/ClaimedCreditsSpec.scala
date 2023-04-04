@@ -52,25 +52,27 @@ class ClaimedCreditsSpec extends PlaySpec {
     UserAnswers("ppt321")
       .set(ExportedCreditsPage, true).get
       .set(ExportedCreditsWeightPage, 20L).get
-      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
+      .set(ConvertedCreditsPage, true).get
+       .set(ConvertedCreditsWeightPage, 30L).get
   }
 
   private def createUserAnswerWithNoExportedOrConvertedCredits: UserAnswers = {
     UserAnswers("ppt321")
       .set(ExportedCreditsPage, false).get
-      .set(ConvertedCreditsPage, CreditsAnswer(false, Some(30))).get
+      .set(ConvertedCreditsPage, false).get
   }
 
   private def createUserAnswerWithNoConvertedCredits: UserAnswers = {
     UserAnswers("ppt321")
       .set(ExportedCreditsPage, true).get
       .set(ExportedCreditsWeightPage, 20L).get
-      .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
+      .set(ConvertedCreditsPage, false).get
   }
 
   private def createUserAnswerWithNoExportedCredits: UserAnswers = {
     UserAnswers("ppt321")
       .set(ExportedCreditsPage, false).get
-      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(30))).get
-  }
+      .set(ConvertedCreditsWeightPage, 30L).get
+      .set(ConvertedCreditsPage, true).get  
+      }
 }

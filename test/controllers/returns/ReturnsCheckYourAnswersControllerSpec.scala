@@ -125,7 +125,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         isExported = true,
         exportedCreditsWeight = 200L,
-        converted = CreditsAnswer(true, Some(300L)),
+         isCreditsConverted = true,
+        convertedCreditsWeight = 300L,
         totalWeight = 500L,
         totalCredits = 20L
       )
@@ -270,7 +271,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     userAnswers
       .set(ExportedCreditsPage, true).get
       .set(ExportedCreditsWeightPage, 200L).get
-      .set(ConvertedCreditsPage, CreditsAnswer(true, Some(300L))).get
+      .set(ConvertedCreditsPage, true).get
+      .set(ConvertedCreditsWeight, 300L).get
       .set(WhatDoYouWantToDoPage, true).get
   }
 

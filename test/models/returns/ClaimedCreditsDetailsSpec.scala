@@ -29,7 +29,8 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
   val userAnswer = UserAnswers("123")
     .set(ExportedCreditsPage, true).get
     .set(ExportedCreditsWeightPage, 100L).get
-    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
+    .set(ConvertedCreditsPage, true).get
+    .set(ConvertedCreditsWeight, 200L).get
     .set(WhatDoYouWantToDoPage, true).get
 
   "summaryList" should {

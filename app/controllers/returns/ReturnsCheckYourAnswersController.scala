@@ -101,7 +101,7 @@ class ReturnsCheckYourAnswersController @Inject()(
       case _          =>
         userAnswers
           .setOrFail(ExportedCreditsPage, false)
-          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
+          .setOrFail(ConvertedCreditsPage, false)
           .save(cacheConnector.saveUserAnswerFunc(pptReference))
           .map(_ => false)
     }
