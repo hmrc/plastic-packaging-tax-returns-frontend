@@ -14,22 +14,29 @@
  * limitations under the License.
  *@
 
+@import templates.WeightInputLayout
+
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
+    weightInputLayout: WeightInputLayout
 )
 
-@(form: Form[Boolean], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("exported-credits-weight.title"), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("exportedCreditsWeight.heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(mode), 'autoComplete -> "off") {
 
-        <p>Hello I'm a skeleton</p>
-        <p>enter exported weight</p>
-            
-        @govukButton(ButtonViewModel(messages("site.continue")))
-
+        @***********************************************************
+            todo: get caption date dynamically
+        ***********************************************************@
+        @weightInputLayout(
+                sectionHeading = Some(messages("exportedCreditsWeight.caption", "1 April 2022", "31 March 2023")),
+                heading = messages("exportedCreditsWeight.heading"),
+                hintText = Some(messages("exportedCreditsWeight.hint")),
+                form = form
+        )
     }
-})
+}

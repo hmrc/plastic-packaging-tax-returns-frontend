@@ -27,7 +27,7 @@ import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -163,7 +163,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
         view.getElementById("exported-answer").children().size() mustBe 6
         assertExportedCreditsAnswer(view, "Yes", "site.yes")
-        assertExportedCreditsWeight(view)
+        assertExportedCreditsWeight(view, "100kg")
         assertConvertedCreditsAnswer(view, 2, "Yes", "site.yes")
         assertConvertedCreditsWeight(view)
         assertCreditsTotalWight(view, 4)
@@ -173,18 +173,19 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "no exported and converted answer no" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val ans = UserAnswers("123")
-          .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
+          .set(ExportedCreditsPage, false).get
           .set(ConvertedCreditsPage, CreditsAnswer(false, None)).get
           .set(WhatDoYouWantToDoPage, true).get
 
         val view = createView(
           credits = CreditsClaimedDetails(ans, CreditBalance(10, 40, 300L, true)))
 
-        view.getElementById("exported-answer").children().size() mustBe 4
+        view.getElementById("exported-answer").children().size() mustBe 5
         assertExportedCreditsAnswer(view, "No", "site.no")
-        assertConvertedCreditsAnswer(view, 1, "No", "site.no")
-        assertCreditsTotalWight(view, 2)
-        assertTotalCredits(view, 3)
+        assertExportedCreditsWeight(view, "0kg")
+        assertConvertedCreditsAnswer(view, 2, "No", "site.no")
+        assertCreditsTotalWight(view, 3)
+        assertTotalCredits(view, 4)
       }
     }
 
@@ -360,7 +361,9 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
-      .set(ExportedCreditsPage, CreditsAnswer(true, Some(100L))).get
+      .set(ExportedCreditsPage, true).get
+      .set(ExportedCreditsWeightPage, 100L).get
+      .set(DirectlyExportedWeightPage, 100L).get
       .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
       .set(WhatDoYouWantToDoPage, true).get
 
@@ -371,10 +374,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     getCreditCellText(view, 0, "dd") mustBe messages(expectedKey)
   }
 
-  private def assertExportedCreditsWeight(view: Html): Unit = {
+  private def assertExportedCreditsWeight(view: Html, value: String): Unit = {
     getCreditCellText(view, 1, "dt") mustBe "Weight of exported plastic packaging"
     getCreditCellText(view, 1, "dt") mustBe messages("submit-return.check-your-answers.credits.exported.weight")
-    getCreditCellText(view, 1, "dd") mustBe "100kg"
+    getCreditCellText(view, 1, "dd") mustBe value
   }
 
   private def assertConvertedCreditsAnswer(view: Html, row: Int, expectedValue: String, expectedKey: String): Unit = {
@@ -429,7 +432,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(ExportedCreditsPage, CreditsAnswer(false, None)).get
+    .set(ExportedCreditsPage, false).get
+    .set(ExportedCreditsWeightPage, 100L).get
     .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0))).get
     .set(WhatDoYouWantToDoPage, true).get
 }

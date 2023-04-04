@@ -36,3 +36,5 @@ trait JourneyActionAnswer {
       .thenAnswer((request: DataRequest[AnyContent]) => function(request))
       .getMock[Action[AnyContent]]
 }
+
+object JourneyActionAnswer extends JourneyActionAnswer

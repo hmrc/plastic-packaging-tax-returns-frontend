@@ -18,6 +18,7 @@ package models.returns
 
 import play.api.libs.json.{Json, OFormat}
 
+//todo: This would need to relooked as now we had two page for credit answer and weight
 case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
   def yesNoMsgKey: String = if(yesNo) "site.yes" else "site.no"
   def value: Long = (yesNo, weight) match {

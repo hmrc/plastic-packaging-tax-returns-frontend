@@ -33,7 +33,6 @@ class ExportedPlasticPackagingWeightViewSpec
     with AccessibilityMatchers {
 
   val form = new ExportedPlasticPackagingWeightFormProvider()()
-
   val page = inject[ExportedPlasticPackagingWeightView]
 
   val totalPlastic = 1234L
@@ -51,7 +50,6 @@ class ExportedPlasticPackagingWeightViewSpec
     }
 
     "have a heading" in{
-
       view.select("h1").text mustBe
         "How much of your 1,234kg of finished plastic packaging components did you export, or do you intend to export within 12 months?"
     }

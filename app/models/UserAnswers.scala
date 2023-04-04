@@ -53,6 +53,13 @@ case class UserAnswers(
     
   def getOrFail[A](answerPath: JsPath)(implicit rds: Reads[A]): A =
     Reads.at(answerPath).reads(data).get
+
+  def getOrDefault[A]
+  (
+    page: Gettable[A],
+    default: A
+  )(implicit rds: Reads[A]): A =
+    get(page).fold(default)(v => v)
     
   def set[A](page: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
@@ -118,6 +125,24 @@ case class UserAnswers(
     else {
       saveUserAnswerFunc.apply(updatedUserAnswers, true)
     }
+  }
+
+  /** If user's answer has changed, passes updated user-answers object to given save function  
+    *
+    * @param path               - [[JsPath]] to where this answer should be added / changed
+    * @param newValue           - the user's answer
+    * @param saveUserAnswerFunc - function to call if answer has changed
+    * @param format             - formatter for user's answer object type
+    * @tparam A - type of user's answer
+    * @return
+    *  - Future of false if user's answer is the same as the current value
+    *  - Future of true if user's answer has changed
+    */
+  def changeWithPath[A](answerPath: JsPath, newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) (implicit format: Format[A]): Future[Boolean] = {
+    val page = new QuestionPage[A] {
+      override def path: JsPath = answerPath
+    }
+    change(page, newValue, saveUserAnswerFunc) // TODO
   }
 
   /**

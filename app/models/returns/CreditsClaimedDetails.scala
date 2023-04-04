@@ -18,25 +18,36 @@ package models.returns
 
 import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, ExportedCreditsWeightPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(
-                                  exported: CreditsAnswer,
+                                  isExported: Boolean,
+                                  exportedCreditsWeight: Long,
                                   converted: CreditsAnswer,
                                   totalWeight: Long,
                                   totalCredits: BigDecimal
 ) extends Credits {
 
-  override def summaryList: Seq[(String, String)] =
+  override def summaryList: Seq[(String, String)] = {
+
+    val exportedCreditYesNoMsgKey: String = if(isExported) "site.yes" else "site.no"
+
     Seq(
-      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
-      CreditExportedWeightPartialKey -> exported.value.asKg -> exported.yesNo,
+      CreditExportedAnswerPartialKey -> exportedCreditYesNoMsgKey -> true,
+      CreditExportedWeightPartialKey -> getExportedValue -> true,
       CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
       CreditConvertedWeightPartialKey -> converted.value.asKg -> converted.yesNo,
       CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
       CreditTotalPartialKey -> totalCredits.asPounds -> true
     ).collect{case (tuple, show) if show => tuple}
+  }
+
+  private def getExportedValue = {
+    if(isExported)
+      exportedCreditsWeight.asKg
+    else 0L.asKg
+  }
 
 }
 
@@ -51,7 +62,8 @@ object CreditsClaimedDetails {
 
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrFail(ExportedCreditsPage),
+      userAnswer.getOrDefault(ExportedCreditsPage, false),
+      userAnswer.getOrDefault(ExportedCreditsWeightPage, 0L),
       userAnswer.getOrFail(ConvertedCreditsPage),
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,

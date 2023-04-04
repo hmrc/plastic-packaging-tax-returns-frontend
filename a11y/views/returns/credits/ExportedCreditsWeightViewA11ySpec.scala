@@ -17,18 +17,19 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import forms.returns.credits.ExportedCreditsFormProvider
+import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode.NormalMode
 import play.api.data.Form
+import play.api.data.Forms.longNumber
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.credits.ExportedCreditsView
+import views.html.returns.credits.ExportedCreditsWeightView
 
-class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class ExportedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new ExportedCreditsFormProvider()()
-  val page = inject[ExportedCreditsView]
+  val form = new ExportedCreditsWeightFormProvider()()
+  val page = inject[ExportedCreditsWeightView]
 
-  def render(form: Form[Boolean]): String =
+  def render(form: Form[Long]): String =
     page(form, NormalMode)(request, messages).toString()
 
   "view" should {
@@ -36,10 +37,10 @@ class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatcher
       "no error" in {
         render(form) must passAccessibilityChecks
       }
-    }
 
-    "with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
+      "with error" in {
+        render(form.withError("error", "error message")) must passAccessibilityChecks
+      }
     }
   }
 

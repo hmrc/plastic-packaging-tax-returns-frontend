@@ -538,21 +538,20 @@ submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o�
 submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
 credits.caption = Credydau
+credits.period.caption = [WELSH NEEDED] Credit for {0} to {1}
+exportedCredits.heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was exported
+exportedCredits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
+exportedCredits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
+exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exports it.
+exportedCredits.error.required = [WELSH NEEDED] Select yes if you paid tax on plastic packaging before it was exported
 
-exported.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
-exported.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i allforio
-exported.credits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
-exported.credits.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod yn ei allforio’n ddiweddarach, gallwch hawlio treth yn ôl fel credyd.
-exported.credits.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os bydd busnes arall yn ei allforio.
-exported.credits.paragraph.3 = Rhaid i chi fod â thystiolaeth bod y deunydd pacio wedi’i allforio.
-exported.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
-exported.credits.weight.label = Faint o bwysau, mewn cilogramau?
-exported.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio
-exported.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
-exported.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-exported.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
-exported.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
-exported.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
+exportedCreditsWeight.caption = [WELSH NEEDED] Credit for {0} to {1}
+exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
+exportedCreditsWeight.error.required = [WELSH NEEDED] Enter the weight, in kilograms
+exportedCreditsWeight.error.wholeNumber = [WELSH NEEDED] Weight must not include decimals
+exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered as numbers
+exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
 
 converted.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
 converted.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
