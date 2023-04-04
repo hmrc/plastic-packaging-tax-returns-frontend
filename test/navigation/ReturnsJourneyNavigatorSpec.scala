@@ -83,7 +83,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       }
     }
 
-    "redirect to converted yes-no or CYA page when user answers 'no'" when {
+    "redirect to converted yes-no page when user answers 'no'" when {
       "in normal mode" in {
         val call = navigator.exportedCreditsYesNo(NormalMode, false)
         call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
@@ -91,10 +91,24 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
       "in check mode" in {
         val call = navigator.exportedCreditsYesNo(CheckMode, false)
-        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(CheckMode)
       }
     }
     
+  }
+  "exportedCreditsWeight" must {
+
+    "redirect to converted yes-no page" when {
+      "in normal mode" in {
+        val call = navigator.exportedCreditsWeight(NormalMode)
+        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
+      }
+
+      "in check mode" in {
+        val call = navigator.exportedCreditsWeight(CheckMode)
+        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(CheckMode)
+      }
+    }
   }
 
   "convertedCreditsYesNo" must {
