@@ -16,10 +16,12 @@
 
 package controllers.returns.credits
 
+import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
@@ -39,14 +41,16 @@ class ConvertedCreditsWeightController @Inject()(
   view: ConvertedCreditsWeightView,
   formProvider: ConvertedCreditsWeightFormProvider,
   navigator: ReturnsJourneyNavigator,
-
+  cacheConnector: CacheConnector, 
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
+
+  private val userAnswerPath = JsPath \ "convertedCredits" \ "weight"
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.fill(JsPath \ "convertedCredits" \ "weight", formProvider())
+        val form = request.userAnswers.fill(userAnswerPath, formProvider())
         Ok(createView(form, mode))
     }
 
@@ -54,14 +58,16 @@ class ConvertedCreditsWeightController @Inject()(
     view(form, routes.ConvertedCreditsWeightController.onSubmit(mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit(mode: Mode) : Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, mode))),
-            _ => {
+            formWithErrors =>  Future.successful(Results.BadRequest(createView(formWithErrors, mode))),
+            answer => {
+              val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
               val claimedCredits = ClaimedCredits(request.userAnswers)
               val nextPage = navigator.convertedCreditsWeight(mode, claimedCredits)
               Future.successful(Results.Redirect(nextPage))

@@ -120,6 +120,24 @@ case class UserAnswers(
     }
   }
 
+  /** If user's answer has changed, passes updated user-answers object to given save function  
+    *
+    * @param path               - [[JsPath]] to where this answer should be added / changed
+    * @param newValue           - the user's answer
+    * @param saveUserAnswerFunc - function to call if answer has changed
+    * @param format             - formatter for user's answer object type
+    * @tparam A - type of user's answer
+    * @return
+    *  - Future of false if user's answer is the same as the current value
+    *  - Future of true if user's answer has changed
+    */
+  def changeWithPath[A](answerPath: JsPath, newValue: A, saveUserAnswerFunc: SaveUserAnswerFunc) (implicit format: Format[A]): Future[Boolean] = {
+    val page = new QuestionPage[A] {
+      override def path: JsPath = answerPath
+    }
+    change(page, newValue, saveUserAnswerFunc) // TODO
+  }
+
   /**
     * Removes all answers, preserves id, updates timestamp  
     * @return UserAnswers with all answers removed

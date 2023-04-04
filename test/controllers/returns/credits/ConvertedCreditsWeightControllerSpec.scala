@@ -17,6 +17,8 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import connectors.CacheConnector
+import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode.NormalMode
@@ -25,14 +27,15 @@ import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.stubbing.{ReturnsDeepStubs, ScalaFirstStubbing}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import play.api.data.Form
+import play.api.data.Forms.longNumber
+import play.api.data.{Form, Mapping}
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
-import play.api.mvc.{AnyContent, MessagesControllerComponents, RequestHeader}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, RequestHeader}
 import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConvertedCreditsWeightView
@@ -48,9 +51,10 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   private val view = mock[ConvertedCreditsWeightView]
   private val formProvider = mock[ConvertedCreditsWeightFormProvider]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val cacheConnector = mock[CacheConnector]
 
   private val controller = new ConvertedCreditsWeightController(
-    messagesApi, journeyAction, controllerComponents, view, formProvider, navigator
+    messagesApi, journeyAction, controllerComponents, view, formProvider, navigator, cacheConnector
   )
   
   private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
@@ -64,8 +68,11 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     
     when(formProvider.apply()) thenReturn form
+    
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
     when(request.userAnswers.fill[Long](any[JsPath], any) (any)) thenReturn form
+    
+    when(navigator.convertedCreditsWeight(any, any)) thenReturn Call("whoyagonna", "ghostbusters")
   }
 
   "onPageLoad" should {
@@ -77,16 +84,32 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     
     "show web page with correct submit url" in {
       when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
-      status(controller.onPageLoad(NormalMode)(request)) mustBe Status.OK
+      status {
+        controller.onPageLoad(NormalMode).skippingJourneyAction(request)
+      } mustBe Status.OK
       verify(view).apply(form, routes.ConvertedCreditsWeightController.onSubmit(NormalMode)) (request, messages)
     }
     
     "use an existing user-answer if present" in {
-      await { controller.onPageLoad(NormalMode)(request) }
+      await {
+        controller.onPageLoad(NormalMode).skippingJourneyAction(request)
+      }
       verify(request.userAnswers).fill(JsPath \ "convertedCredits" \ "weight", form)
     }
 
     // TODO ...
+  }
+  
+  "onSubmit" should {
+    
+    "save the user's answer" in {
+      when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
+      await {
+        controller.onSubmit(NormalMode).skippingJourneyAction(request)
+      }
+      verify(request.userAnswers).changeWithPath(any, any, any) (any)
+    }
+    
   }
 
 }
