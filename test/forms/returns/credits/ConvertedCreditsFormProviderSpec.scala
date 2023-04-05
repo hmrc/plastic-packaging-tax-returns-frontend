@@ -41,7 +41,7 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
     "answer is empty" in {
       val boundForm = sut.bind(Map.empty[String, String])
       boundForm.value mustBe None
-      boundForm.errors mustBe Seq(FormError("value", "converted.credits.error.required"))
+      boundForm.errors mustBe Seq(FormError("value", "converted-credits-yes-no.error.required"))
     }
   }
 }

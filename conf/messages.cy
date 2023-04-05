@@ -553,20 +553,11 @@ exportedCreditsWeight.error.wholeNumber = [WELSH NEEDED] Weight must not include
 exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered as numbers
 exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
 
-converted.credits.title = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
-converted.credits.heading = Deunydd pacio plastig rydych wedi talu treth arno ac sydd bellach wedi’i drosi
-converted.credits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi?
-converted.credits.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod yn ei drosi’n ddiweddarach yn gydrannau deunydd pacio plastig taladwy gwahanol, gallwch hawlio treth yn ôl fel credyd. 
-converted.credits.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os bydd busnes arall yn ei drosi. 
-converted.credits.paragraph.3 = Rhaid i chi fod â thystiolaeth bod y deunydd pacio wedi’i drosi.
-converted.credits.weight.hint = Mae 1 dunnell yn 1,000kg.
-converted.credits.weight.label = Faint o bwysau, mewn cilogramau?
-converted.credits.error.required = Dewiswch ‘Iawn’ os ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i drosi
-converted.credits.error.weight.required = Nodwch y pwysau, mewn cilogramau
-converted.credits.error.outOfRange.low = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy
-converted.credits.error.outOfRange.high = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
-converted.credits.error.non.numeric = Rhaid nodi’r pwysau fel rhifau
-converted.credits.error.whole.number = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+converted-credits-yes-no.title-heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was converted 
+converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later convert it into different chargeable plastic packaging components, you can claim tax back as credit. 
+converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business converts it.
+converted-credits-yes-no.question = [WELSH NEEDED] Did you pay tax on plastic packaging between April 2022 and March 2023 before it was converted?
+converted-credits-yes-no.error.required = [WELSH NEEDED] Select yes if you’ve already paid tax on plastic packaging that has since been converted
 
 what-do-you-want-to-do.title = Beth hoffech ei wneud?
 what-do-you-want-to-do.paragraph.1 = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.

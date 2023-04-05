@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms.returns.credits
+@import views.html.components.SectionHeader
 
-import forms.mappings.Mappings
-import play.api.data.Form
+@this(sectionHeader: SectionHeader)
 
-class ConvertedCreditsFormProvider extends Mappings {
+@()(implicit messages: Messages)
 
-  def apply(): Form[Boolean] = {
-      Form(
-        "value" -> boolean("converted-credits-yes-no.error.required")
-      )
-  }
-}
+@*****************************************************************************
+todo: change credits period to be dynamic. For now this will be static
+*****************************************************************************@
+@sectionHeader(messages("credits.period.caption", "1 April 2022", "31 March 2023"))

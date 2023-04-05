@@ -49,8 +49,8 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe messages("Credit for 1 April 2022 to 1 April 2023")
-      view.getElementById("section-header").text mustBe messages("credits.period.caption", "1 April 2022", "1 April 2023")
+      view.getElementById("section-header").text mustBe messages("Credit for 1 April 2022 to 31 March 2023")
+      view.getElementById("section-header").text mustBe messages("credits.period.caption", "1 April 2022", "31 March 2023")
     }
 
     "have a field set legend" in {

@@ -41,35 +41,32 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "have a title" in {
       view.select("title").text must include("- Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text must include(messages("converted.credits.title"))
+      view.select("title").text must include(messages("converted-credits-yes-no.title-heading"))
     }
 
-    "have a heading" ignore { // todo needs fixing
-      view.select("h1").text mustBe messages("converted.credits.heading")
+    "have a heading" in {
+      view.select("h1").text mustBe messages("converted-credits-yes-no.title-heading")
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe messages("credits.caption")
+      view.getElementById("section-header").text mustBe "Credit for 1 April 2022 to 31 March 2023"
     }
 
     "have a fieldset legend" ignore { // todo needs fixing
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted.credits.heading.2")
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.heading.2")
     }
 
     "have a hint" ignore { // todo needs fixing
       view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe "How much weight, in kilograms?"
-      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe messages("converted.credits.weight.label")
+      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe messages("converted-credits-yes-no.weight.label")
       view.getElementById("converted-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
-      view.getElementById("converted-credits-weight-hint").text mustBe messages("converted.credits.weight.hint")
+      view.getElementById("converted-credits-weight-hint").text mustBe messages("converted-credits-yes-no.weight.hint")
     }
 
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
-
-      doc.text() must include(messages("converted.credits.paragraph.1"))
-      doc.text() must include(messages("converted.credits.paragraph.2"))
-      doc.text() must include(messages("converted.credits.paragraph.3"))
-
+      doc.text() must include(messages("converted-credits-yes-no.paragraph.1"))
+      doc.text() must include(messages("converted-credits-yes-no.paragraph.2"))
     }
 
     "have a submit button" in {
@@ -81,14 +78,14 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       "nothing has been checked" in {
         //todo: change to a generic error or bind the form to an empty value to see the proper error.
         /*
-          If the intent here is to test that we get the converted.credits.error.required error message
+          If the intent here is to test that we get the converted-credits-yes-no.error.required error message
           then we should bind the form to an empty value
 
           Else if the intent is just to test we get any error message when the form has an error then we
           should use any generic test error message as using the real one it may make the intent
           of the test obscured.
         */
-        val boundForm = form.withError("requiredKey", "converted.credits.error.required")
+        val boundForm = form.withError("requiredKey", "converted-credits-yes-no.error.required")
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
