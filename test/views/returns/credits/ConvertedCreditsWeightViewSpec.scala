@@ -20,7 +20,8 @@ import base.ViewSpecBase
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import play.api.i18n.Messages
 import play.api.mvc.Call
@@ -48,27 +49,19 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
     "have a title and heading" in {
       verify(messages, times(2)).apply("converted-credits-weight.heading-title")
       view.select("title").text must include ("Submit return - Plastic Packaging Tax - GOV.UK")
-      //      view.select("h1").text must include (" ") // todo
+      view.select("h1").text must include ("")
     }
 
     "have a caption" in {
-      verify(messages, times(1)).apply("credits.caption")
-      //      view.getElementById("section-header").text must include (" ") // todo
+      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.period.caption"), any(), any())
+      view.getElementById("section-header").text must include ("Credit for")
     }
 
     "have a hint" in {
       verify(messages, times(1)).apply("converted-credits-weight.hint")
-      // todo
-      //      val view: Html    = createView
-      //      val doc: Document = Jsoup.parse(view.toString())
-      //      doc.getElementById("value-hint").text must include (messages("1 tonne is 1,000kg."))
-    }
 
-    "contain paragraph content" in{
-      verify(messages, times(1)).apply("converted-credits-weight.paragraph.1")
-      verify(messages, times(1)).apply("converted-credits-weight.paragraph.2")
-      // todo
-      //      view.getElementsByClass("govuk-body").text() must include(messages("This will show as a deduction on your tax calculation."))
+      val doc: Document = Jsoup.parse(view.toString())
+      doc.getElementById("value-hint").text must include (messages("Enter the weight in kilograms. 1 tonne is 1,000kg."))
     }
 
     "contain save & continue button" in {

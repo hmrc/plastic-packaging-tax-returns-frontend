@@ -14,18 +14,13 @@
  * limitations under the License.
  *@
 
-@import components._
-@import viewmodels.InputWidth._
+@import templates.WeightInputLayout
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
-    govukErrorSummary: GovukErrorSummary,
-    sectionHeader: SectionHeader,
-    heading: heading,
-    paragraphBody: paragraphBody,
-    govukInput: GovukInput,
+    weightInputLayout: WeightInputLayout
 )
 
 @(form: Form[Long], submitCall: Call)(implicit request: Request[_], messages: Messages)
@@ -33,28 +28,15 @@
 @layout(pageTitle = title(form, messages("converted-credits-weight.heading-title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = submitCall, 'autoComplete -> "off") {
+        @*****************************************************************************
+        todo: change credits period to be dynamic. For now this will be static
+        *****************************************************************************@
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
-
-        @sectionHeader(messages("credits.caption"))
-        @heading("converted-credits-weight.heading-title")
-        
-        @paragraphBody(messages("converted-credits-weight.paragraph.1"))
-        @paragraphBody(messages("converted-credits-weight.paragraph.2"))
-
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("converted-credits-weight.label"))
-            )
-                .asKg()
-                .withWidth(Fixed10)
-                .withId("value")
-                .withHint(Hint(content = "converted-credits-weight.hint"))
+        @weightInputLayout(
+            sectionHeading = Some(messages("credits.period.caption", "1 April 2022", "31 March 2023")),
+            heading = messages("converted-credits-weight.heading-title"),
+            hintText = Some(messages("converted-credits-weight.hint")),
+            form = form
         )
-
-        @govukButton(ButtonViewModel(messages("site.continue")))
     }
 })
