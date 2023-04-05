@@ -75,7 +75,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "display error" when {
 
-      "nothing has been checked" in {
+      "nothing has been checked" in { // todo sort
         //todo: change to a generic error or bind the form to an empty value to see the proper error.
         /*
           If the intent here is to test that we get the converted-credits-yes-no.error.required error message
@@ -89,7 +89,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been converted")
+        doc.text() must include("Select yes if you paid tax on plastic packaging before it was converted")
       }
     }
   }
