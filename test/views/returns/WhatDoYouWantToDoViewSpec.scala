@@ -18,7 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import config.FrontendAppConfig
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import play.twirl.api.Html
@@ -30,7 +30,7 @@ import java.time.LocalDate
 
 class WhatDoYouWantToDoViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val form = new WhatDoYouWantToDoFormProvider()()
+  val form = new DoYouWantToClaimFormProvider()()
   val page = inject[WhatDoYouWantToDoView]
   val appConfig = inject[FrontendAppConfig]
 

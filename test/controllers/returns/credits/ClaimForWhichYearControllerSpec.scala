@@ -19,7 +19,7 @@ package controllers.returns.credits
 import base.utils.JourneyActionAnswer
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -49,7 +49,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val messages = mock[Messages]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val mockView = mock[ClaimForWhichYearView]
-  private val mockFormProvider = mock[WhatDoYouWantToDoFormProvider]
+  private val mockFormProvider = mock[DoYouWantToClaimFormProvider]
   private val journeyAction = mock[JourneyAction]
   private val controllerComponents = stubMessagesControllerComponents()
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)

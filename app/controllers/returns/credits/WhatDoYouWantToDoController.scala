@@ -20,7 +20,7 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.{Mode, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
@@ -28,22 +28,22 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.returns.credits.WhatDoYouWantToDoView
+import views.html.returns.credits.DoYouWantToClaimView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoController @Inject() (
-  override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: WhatDoYouWantToDoFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: WhatDoYouWantToDoView,
-  taxReturnHelper: TaxReturnHelper,
-  returnsNavigator: ReturnsJourneyNavigator
+                                              override val messagesApi: MessagesApi,
+                                              cacheConnector: CacheConnector,
+                                              identify: IdentifierAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: DoYouWantToClaimFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              view: DoYouWantToClaimView,
+                                              taxReturnHelper: TaxReturnHelper,
+                                              returnsNavigator: ReturnsJourneyNavigator
 ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =

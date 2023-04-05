@@ -21,10 +21,8 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-//todo: We may want something different from a boolean. Maubt a enum with
-// StartReturn and ClaimTaxBack
-class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
+class DoYouWantToClaimFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] = Form("value" -> boolean("what-do-you-want-to-do.error.required"))
+  def apply(): Form[Boolean] = Form("value" -> boolean("do-you-want-to-claim.error.required"))
 
 }

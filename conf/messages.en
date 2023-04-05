@@ -551,14 +551,18 @@ converted-credits-yes-no.paragraph.2 = You can also claim tax back as credit if 
 converted-credits-yes-no.question = Did you pay tax on plastic packaging between April 2022 and March 2023 before it was converted?
 converted-credits-yes-no.error.required = Select yes if you’ve already paid tax on plastic packaging that has since been converted
 
-what-do-you-want-to-do.title = What do you want to do?
-what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
-what-do-you-want-to-do.paragraph.1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
-what-do-you-want-to-do.error.required = Select what you want to do
-what-do-you-want-to-do.credit-and-return = Claim tax back from previous returns as credit, then start {0} return
-what-do-you-want-to-do.just-return = Start {0} return
-what-do-you-want-to-do.paragraph.2 = Find out about {0}.
-what-do-you-want-to-do.paragraph.2.link = claiming tax back as credit for packaging you’ve paid tax on
+do-you-want-to-claim.title = Claiming tax back as credit
+do-you-want-to-claim.p1 = You can claim tax back as credit if you pay tax on plastic packaging before you or another business:
+do-you-want-to-claim.p1.b1 = export it
+do-you-want-to-claim.p1.b2 = convert it into different chargeable plastic packaging components
+do-you-want-to-claim.p2 = To claim the credit you must:
+do-you-want-to-claim.p2.b1 = get evidence of exporting or converting plastic packaging within 2 years of the date of import or manufacture
+do-you-want-to-claim.p2.b2 = make a claim when you submit a return for the accounting period in which you got the evidence
+do-you-want-to-claim.p3 = Find out more about:
+do-you-want-to-claim.p3.b1.a = claiming tax back as credit
+do-you-want-to-claim.p3.b2.a = records you need to keep
+do-you-want-to-claim.question = Do you want to claim tax back as credit?
+do-you-want-to-claim.error.required = Select yes if you want to claim tax back as credit
 
 nowStartYourReturn.heading = Now start your return for {0}
 nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.

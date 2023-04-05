@@ -559,13 +559,18 @@ converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax bac
 converted-credits-yes-no.question = [WELSH NEEDED] Did you pay tax on plastic packaging between April 2022 and March 2023 before it was converted?
 converted-credits-yes-no.error.required = [WELSH NEEDED] Select yes if you’ve already paid tax on plastic packaging that has since been converted
 
-what-do-you-want-to-do.title = Beth hoffech ei wneud?
-what-do-you-want-to-do.paragraph.1 = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.
-what-do-you-want-to-do.error.required = Dewiswch yr hyn yr hoffech ei wneud
-what-do-you-want-to-do.credit-and-return = Hawlio treth yn ôl o Ffurflenni Treth blaenorol fel credyd, yna dechrau Ffurflen Dreth {0}
-what-do-you-want-to-do.just-return = Dechrau Ffurflen Dreth {0}
-what-do-you-want-to-do.paragraph.2 = Rhagor o wybodaeth am {0}.
-what-do-you-want-to-do.paragraph.2.link = hawlio treth yn ôl fel credyd ar gyfer deunydd pacio rydych wedi talu treth arno
+do-you-want-to-claim.title = [NEED WELSH]Claiming tax back as credit
+do-you-want-to-claim.p1 =[NEED WELSH] You can claim tax back as credit if you pay tax on plastic packaging before you or another business:
+do-you-want-to-claim.p1.b1 =[NEED WELSH] export it
+do-you-want-to-claim.p1.b2 = [NEED WELSH]convert it into different chargeable plastic packaging components
+do-you-want-to-claim.p2 = [NEED WELSH]To claim the credit you must:
+do-you-want-to-claim.p2.b1 = [NEED WELSH]get evidence of exporting or converting plastic packaging within 2 years of the date of import or manufacture
+do-you-want-to-claim.p2.b2 = [NEED WELSH]make a claim when you submit a return for the accounting period in which you got the evidence
+do-you-want-to-claim.p3 = [NEED WELSH]Find out more about:
+do-you-want-to-claim.p3.b1.a = [NEED WELSH]claiming tax back as credit
+do-you-want-to-claim.p3.b2.a = [NEED WELSH]records you need to keep
+do-you-want-to-claim.question = [NEED WELSH]Do you want to claim tax back as credit?
+do-you-want-to-claim.error.required = [NEED WELSH]Select yes if you want to claim tax back as credit
 
 nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
 nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
