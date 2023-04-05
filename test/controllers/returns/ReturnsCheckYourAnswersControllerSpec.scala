@@ -123,10 +123,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
-        isExported = true,
-        exportedCreditsWeight = 200L,
-         isCreditsConverted = true,
-        convertedCreditsWeight = 300L,
+        CreditsAnswer(true, Some(200L)),
+        converted = CreditsAnswer(true, Some(300L)),
         totalWeight = 500L,
         totalCredits = 20L
       )

@@ -16,8 +16,13 @@
 
 package pages.returns.credits
 
+import models.returns.CreditsAnswer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+case object OldConvertedCreditsPage extends QuestionPage[CreditsAnswer] {
+  override def path: JsPath = JsPath \ "convertedCredits"
+}
 
 case object ConvertedCreditsPage extends QuestionPage[Boolean] {
 

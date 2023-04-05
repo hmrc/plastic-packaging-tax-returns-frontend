@@ -131,7 +131,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       }
       "check mode" in {
         val call = navigator.convertedCreditsYesNo(CheckMode, false)
-        call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
       }
     }
     

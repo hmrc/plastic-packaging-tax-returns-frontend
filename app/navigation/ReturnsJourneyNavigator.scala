@@ -96,19 +96,17 @@ class ReturnsJourneyNavigator @Inject()(
   def convertedCreditsYesNo(mode: Mode, isAnswerYes: Boolean): Call = {
     if (isAnswerYes)
       controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(mode)
-    else if (mode == NormalMode)
-      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
     else
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
   }
 
   def convertedCreditsWeight(mode: Mode, claimedCredits: ClaimedCredits): Call = {
-    if (claimedCredits.hasMadeClaim)
+    // todo not sure of flow here
+    // todo test coverage missing for this?
+//    if (claimedCredits.hasMadeClaim)
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
-    else if (mode == NormalMode)
-      controllers.returns.routes.NowStartYourReturnController.onPageLoad
-    else
-      controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad()
+//    else
+//      controllers.returns.routes.NowStartYourReturnController.onPageLoad
   }
 
   def confirmCreditRoute(mode: Mode): Call =
