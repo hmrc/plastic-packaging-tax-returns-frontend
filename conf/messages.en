@@ -696,6 +696,4 @@ amendExportedByAnotherBusiness.error.wholeNumber = Weight must not include decim
 amendExportedByAnotherBusiness.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 
 converted-credits-weight.heading-title = How much plastic packaging did you pay tax on before it was converted?
-converted-credits-weight.paragraph.1 = Hello I'm a skeleton
-converted-credits-weight.paragraph.2 = enter your converted cheese weight here
 converted-credits-weight.hint = Enter the weight in kilograms. 1 tonne is 1,000kg.

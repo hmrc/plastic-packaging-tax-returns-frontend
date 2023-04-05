@@ -699,3 +699,6 @@ amendExportedByAnotherBusiness.error.nonNumeric = Rhaid nodi’r pwysau fel rhif
 amendExportedByAnotherBusiness.error.required = Nodwch y pwysau, mewn cilogramau
 amendExportedByAnotherBusiness.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+
+converted-credits-weight.heading-title = [NEEDS WELSH] How much plastic packaging did you pay tax on before it was converted?
+converted-credits-weight.hint = [NEEDS WELSH] Enter the weight in kilograms. 1 tonne is 1,000kg.
