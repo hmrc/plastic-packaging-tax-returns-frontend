@@ -61,7 +61,7 @@ class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase  with ViewAssert
     }
 
     "display the continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.button.continue")
+      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
     }
   }
 
