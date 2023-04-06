@@ -64,6 +64,7 @@ class ConfirmPackagingCreditController @Inject()(
       Ok(confirmCreditView(
         creditBalance.totalRequestedCreditInPounds,
         creditBalance.totalRequestedCreditInKilograms,
+        creditBalance.taxRate,
         continueCall,
         mode,
         isBeforeApril2023)

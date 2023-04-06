@@ -28,11 +28,12 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
   val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
   val weight = 200L
+  val taxRate = 0.30
   val requestedCredit = BigDecimal(500)
   val continueCall = Call("TEST", "/end-point")
 
   private def createView(isBefore1stApril2023: Boolean): Html =
-    page(requestedCredit, weight, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
+    page(requestedCredit, weight, taxRate, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
 
   "View" should {
 
@@ -67,7 +68,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     "display tax rate per tonne" when {
       "before 1st April 2023" in {
         val view = createView(true)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
+        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £300 per tonne."
         view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
       }
 

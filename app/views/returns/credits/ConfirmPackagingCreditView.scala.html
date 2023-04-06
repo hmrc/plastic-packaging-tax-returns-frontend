@@ -29,7 +29,7 @@
     heading: heading
 )
 
-@(requestedCredit: BigDecimal, weight: Long, continueCall: Call, mode: Mode, isBefore1stApril2023: Boolean)(implicit request: Request[_], messages: Messages)
+@(requestedCredit: BigDecimal, weight: Long, taxRate: BigDecimal, continueCall: Call, mode: Mode, isBefore1stApril2023: Boolean)(implicit request: Request[_], messages: Messages)
 
 @taxRateMessage = @{
     if(isBefore1stApril2023) {

@@ -47,7 +47,7 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
             .set(OldExportedCreditsPage, CreditsAnswer(exported, exportedWeight)).get
             .set(OldConvertedCreditsPage, CreditsAnswer(converted, convertedWeight)).get
 
-          val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true))
+          val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true, 0.30))
 
           credits.summaryList mustBe Seq(
             CreditExportedAnswerPartialKey -> (if (exported) "site.yes" else "site.no"),

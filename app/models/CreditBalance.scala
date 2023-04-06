@@ -22,7 +22,8 @@ case class CreditBalance(
   availableCreditInPounds: BigDecimal,
   totalRequestedCreditInPounds: BigDecimal,
   totalRequestedCreditInKilograms: Long,
-  canBeClaimed: Boolean
+  canBeClaimed: Boolean,
+  taxRate: BigDecimal
 )
 
 object CreditBalance {
