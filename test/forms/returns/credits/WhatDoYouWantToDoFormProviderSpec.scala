@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class WhatDoYouWantToDoFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "what-do-you-want-to-do.error.required"
+  val requiredKey = "do-you-want-to-claim.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new WhatDoYouWantToDoFormProvider()()
+  val form = new DoYouWantToClaimFormProvider()()
 
   ".value" - {
 

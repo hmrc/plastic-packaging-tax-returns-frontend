@@ -17,7 +17,7 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.DoYouWantToClaimFormProvider
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -26,7 +26,7 @@ import views.html.returns.credits.ClaimForWhichYearView
 class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers{
 
   val page = inject[ClaimForWhichYearView]
-  val form = new WhatDoYouWantToDoFormProvider()()
+  val form = new DoYouWantToClaimFormProvider()()
 
   private def createView: Html = page(form)(request, messages)
 

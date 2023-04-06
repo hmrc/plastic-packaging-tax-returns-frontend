@@ -17,7 +17,7 @@
 package controllers.returns.credits
 
 import controllers.actions.JourneyAction
-import forms.returns.credits.WhatDoYouWantToDoFormProvider
+import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -32,12 +32,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimForWhichYearController @Inject()(
-  override val messagesApi: MessagesApi,
-  journeyAction: JourneyAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: ClaimForWhichYearView,
-  formProvider: WhatDoYouWantToDoFormProvider, // todo tmp
-  navigator: ReturnsJourneyNavigator,
+                                             override val messagesApi: MessagesApi,
+                                             journeyAction: JourneyAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             view: ClaimForWhichYearView,
+                                             formProvider: DoYouWantToClaimFormProvider, // todo tmp
+                                             navigator: ReturnsJourneyNavigator,
 
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
