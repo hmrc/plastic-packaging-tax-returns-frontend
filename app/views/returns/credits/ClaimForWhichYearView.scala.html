@@ -15,6 +15,7 @@
  *@
 
 @import components._
+@import views.html.templates._
 
 @this(
     formHelper: FormWithCSRF,
@@ -22,22 +23,24 @@
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
     heading: heading,
-    govukRadios: GovukRadios
+    govukRadios: GovukRadios,
+    hiddenContent: HiddenContent
 )
 
 @(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("claim-for-which-year.credits.title"), Some(messages("return.title.tail")))) {
+@layout(pageTitle = title(form, messages("claim-for-which-year.credits.title-heading"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit, 'autoComplete -> "off") {
 
-        @heading(messages("claim-for-which-year.credits.heading"))
+        @heading(messages("claim-for-which-year.credits.title-heading"))
 
         @paragraphBody(messages("claim-for-which-year.credits.paragraph.1"))
 
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
+                legend = LegendViewModel(HtmlContent(hiddenContent("claim-for-which-year.credits.title-heading"))),
                 items = Seq(
                     RadioItem(id = Some("value"), value = Some("true"), content =  Text("1 April 2022 to 31 March 2023"))
                 )
