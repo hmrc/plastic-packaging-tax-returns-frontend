@@ -198,16 +198,18 @@ amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Pl
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
-confirmPackagingCredit.title = Confirm credit amount
+confirmPackagingCredit.title = Confirm credit for {0} to {1}
 confirmPackagingCredit.heading = Confirm {0} of credit
 confirmPackagingCredit.subHeading = Credits
+confirmPackagingCredit.taxRate = Tax rate
+confirmPackagingCredit.taxRate.value = {0} per tonne
+confirmPackagingCredit.exported.answer = Paid tax on plastic packaging before it was exported
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
 confirmPackagingCredit.hint.afterFirstApril2023 = Plastic Packaging Tax was charged at {0} per tonne during this time.
 confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
 confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
-confirmPackagingCredit.confirm.credit.button = Confirm credit amount
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?

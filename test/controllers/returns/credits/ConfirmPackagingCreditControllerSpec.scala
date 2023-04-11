@@ -28,7 +28,7 @@ import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.{Answers, MockitoSugar}
+import org.mockito.{Answers, ArgumentCaptor, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
@@ -37,10 +37,12 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Settable
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import util.EdgeOfSystem
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import java.time.LocalDateTime
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -100,19 +102,31 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe OK
     }
 
+    "view tax rate" in {
+      setUpMockForConfirmCreditsView()
+      when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
+      await(sut.onPageLoad(NormalMode)(dataRequest))
+
+      val captor: ArgumentCaptor[Seq[SummaryListRow]] = ArgumentCaptor.forClass(classOf[Seq[SummaryListRow]])
+      verify(mockView).apply(any, any, meq(BigDecimal(0.3)), any, any, captor.capture(), any, any, meq(true))(any, any)
+
+      val list: Seq[SummaryListRow] = captor.getValue
+      list(0).value mustBe "£300 per tonne"
+
+    }
     "view the tax rate per tonne" when {
       "before 1st April 2023" in {
         setUpMockForConfirmCreditsView()
         when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
         await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(any, any, meq(BigDecimal(0.3)), any, any, meq(true))(any, any)
+        verify(mockView).apply(any, any, meq(BigDecimal(0.3)), any, any, any, any, any, meq(true))(any, any)
       }
 
       "on or after 1st April 2023" in {
         setUpMockForConfirmCreditsView()
         when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 4, 1, 0, 0, 0) // Midnight
         await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(any, any, meq(BigDecimal(0.30)), any, any, meq(false))(any, any)
+        verify(mockView).apply(any, any, meq(BigDecimal(0.30)), any, any, any, any, any, meq(false))(any, any)
       }
     }
 
@@ -121,14 +135,14 @@ class ConfirmPackagingCreditControllerSpec
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), meq(Call("Hi", "You")), meq(NormalMode), any)(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any, meq(Call("Hi", "You")), meq(NormalMode), any)(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(CheckMode)(dataRequest))
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), meq(Call("get", "cheese")), meq(CheckMode), any
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)),any, any, any, meq(Call("get", "cheese")), meq(CheckMode), any
         )(any,any)
       }
     }
@@ -142,7 +156,7 @@ class ConfirmPackagingCreditControllerSpec
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
         verify(tooMuchCreditView).apply(any, any)(any,any)
-        verify(mockView, never).apply(any, any, any, any, any, any)(any,any)
+        verify(mockView, never).apply(any, any, any, any, any, any, any, any, any)(any,any)
       }
     }
 
@@ -152,7 +166,7 @@ class ConfirmPackagingCreditControllerSpec
 
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any)(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)),any, any, any, any, any, any)(any,any)
         verify(tooMuchCreditView, never).apply(any, any)(any,any)
       }
 
@@ -161,7 +175,7 @@ class ConfirmPackagingCreditControllerSpec
 
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any)(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any, any, any, any)(any,any)
       }
 
       "only converted weight is Available" in {
@@ -169,7 +183,7 @@ class ConfirmPackagingCreditControllerSpec
 
         await(sut.onPageLoad(NormalMode)(dataRequest))
 
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any)(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(BigDecimal(0.30)), any, any, any, any, any, any)(any,any)
       }
     }
 
@@ -219,7 +233,7 @@ class ConfirmPackagingCreditControllerSpec
   }
 
   private def setUpMockForConfirmCreditsView(): Unit = {
-    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any, any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(Right(CreditBalance(10, 5, 500, true, 0.30))))
   }

@@ -17,79 +17,56 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import models.Mode.NormalMode
+import models.Mode.{CheckMode, NormalMode}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import viewmodels.{PrintBigDecimal, PrintLong}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 import views.html.returns.credits.ConfirmPackagingCreditView
 
 class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
-  val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
-  val weight = 200L
-  val taxRate = 0.30
-  val requestedCredit = BigDecimal(500)
-  val continueCall = Call("TEST", "/end-point")
+  private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
+  private val weight = 200L
+  private val taxRate = 0.30
+  private val requestedCredit = BigDecimal(500)
+  private val fromDate = "1 April 2022"
+  private val toDate = "31 March 2023"
+  private val continueCall = Call("TEST", "/end-point")
 
+  private val summaryList = Seq(
+    SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
+    SummaryListRow(
+      key = Key(Text("exported")),
+      value = Value(Text("answer")),
+      actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
+  )
   private def createView(isBefore1stApril2023: Boolean): Html =
-    page(requestedCredit, weight, taxRate, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
+    page(requestedCredit, weight, taxRate, fromDate, toDate, summaryList, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
 
   "View" should {
 
     val view = createView(true)
 
     "have a title" in {
-      view.select("title").text() must include("Confirm credit amount - Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text() must include(messages("confirmPackagingCredit.title"))
+      view.select("title").text() must include("Confirm credit for 1 April 2022 to 31 March 2023 - Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text() must include(messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023"))
     }
 
     "have a header" in {
-      view.select("h1").text mustBe s"Confirm ${requestedCredit.asPounds} of credit"
-      view.select("h1").text mustBe messages("confirmPackagingCredit.heading", requestedCredit.asPounds)
+      view.select("h1").text mustBe s"Confirm credit for 1 April 2022 to 31 March 2023"
+      view.select("h1").text mustBe messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023")
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text() mustBe "Credits"
-      view.getElementsByClass("govuk-caption-l").text() mustBe messages("confirmPackagingCredit.subHeading")
+    "display summary list row" in {
+      view.getElementsByClass("govuk-summary-list__row").size() mustEqual 2
     }
 
-    "have a hint" in {
-      view.getElementById("paragraph-body-1").text() mustBe s"You told us that you paid tax on ${weight.asKg} of plastic packaging from a previous return, and it has since been exported or converted."
-      view.getElementById("paragraph-body-1").text() mustBe messages("confirmPackagingCredit.hint.p1", weight.asKg)
-
-      view.getElementById("paragraph-body-3").text() mustBe s"This means the amount of tax you’ll get back as credit will be ${requestedCredit.asPounds}."
-      view.getElementById("paragraph-body-3").text() mustBe messages("confirmPackagingCredit.hint.p3", requestedCredit.asPounds)
-
-      view.getElementById("paragraph-body-4").text() mustBe s"Your credit will be applied against your total balance in your Plastic Packaging Tax account."
-      view.getElementById("paragraph-body-4").text() mustBe messages("confirmPackagingCredit.hint.p4")
-    }
-
-    "display tax rate per tonne" when {
-      "before 1st April 2023" in {
-        val view = createView(true)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
-        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
-      }
-
-      "on or after 1st April 2023" in {
-        val view = createView(false)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax was charged at £300 per tonne during this time."
-        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.afterFirstApril2023", "£300")
-      }
-    }
-
-
-    "allow to change the amount of credit" in {
-      view.getElementById("change-credit-amount") must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
-      view.getElementById("change-credit-amount").text() mustBe "Change the amount of credit"
-      view.getElementById("change-credit-amount").text() mustBe messages("confirmPackagingCredit.change.credit.paragraph")
-    }
-
-    "have a confirm button" in {
+    "have a confirm and continue button" in {
       view.getElementById("link-button") must haveHref(continueCall.url)
-      view.getElementById("link-button").text() mustBe  "Confirm credit amount"
-      view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
+      view.getElementById("link-button").text() mustBe  "Confirm and continue"
+      view.getElementById("link-button").text() mustBe messages("site.continue.confirm")
     }
 
   }

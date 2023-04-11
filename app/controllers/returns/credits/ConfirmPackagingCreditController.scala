@@ -27,6 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
 import util.EdgeOfSystem
+import viewmodels.checkAnswers.returns.credits.{CreditTaxRateSummary, ExportedCreditSummary}
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import java.time.LocalDateTime
@@ -58,13 +59,23 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
+    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow)
+    val fromDate = "1 April 2022"
+    val toDate = "31 March 2023"
+
+    val list =
+      CreditTaxRateSummary(creditBalance.taxRate) +:
+      Seq(ExportedCreditSummary).flatMap(_.row(request.userAnswers))
+
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
       Ok(confirmCreditView(
         creditBalance.totalRequestedCreditInPounds,
         creditBalance.totalRequestedCreditInKilograms,
         creditBalance.taxRate,
+        fromDate,
+        toDate,
+        list,
         continueCall,
         mode,
         isBeforeApril2023)
