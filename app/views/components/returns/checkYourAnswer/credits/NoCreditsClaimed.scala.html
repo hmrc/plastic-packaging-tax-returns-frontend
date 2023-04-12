@@ -31,6 +31,6 @@
 <!-- todo: add a proper link for the credit change -->
 @link(id = "credits-change-link",
     text = messages("submit-return.check-your-answers.credits.not.claimed.link"),
-    call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode),
+    href = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url,
     classes = "govuk-link govuk-body govuk-link--no-visited-state"
 )

@@ -33,7 +33,7 @@
 
 
 @btaPageLink = @{
-link(id = "bta-page-link", text = messages("newGroupLeadConfirmation.paragraph.1.link"), call = Call("GET", appConfig.businessAccountUrl))
+link(id = "bta-page-link", text = messages("newGroupLeadConfirmation.paragraph.1.link"), href = appConfig.businessAccountUrl)
 }
 
 @layout(pageTitle = titleNoForm(messages("newGroupLeadConfirmation.title"), Some(messages("account.title.tail"))),showBackLink = false){
@@ -62,7 +62,7 @@ link(id = "bta-page-link", text = messages("newGroupLeadConfirmation.paragraph.1
    @paragraphBody(messages("newGroupLeadConfirmation.paragraph.2.3"))
 
    <p class="govuk-body" style="margin-top:2.5em">
-    @link(id = "survey-link", text = messages("newGroupLeadConfirmation.exitSurvey.link"), call = Call("GET", appConfig.exitSurveyUrl))
+    @link(id = "survey-link", text = messages("newGroupLeadConfirmation.exitSurvey.link"), href = appConfig.exitSurveyUrl)
    </p>
 
 }

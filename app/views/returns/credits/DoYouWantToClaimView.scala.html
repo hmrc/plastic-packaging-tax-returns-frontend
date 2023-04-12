@@ -68,8 +68,8 @@
         @paragraphBody(messages("do-you-want-to-claim.p3"))
 
         @bulletList(elements = Seq(
-            link(id = "credit-info-link", text = messages("do-you-want-to-claim.p3.b1.a"), call = Call("GET", appConfig.creditsGuidanceUrl)),
-            link(id = "records-info-link", text = messages("do-you-want-to-claim.p3.b2.a"), call = Call("GET", appConfig.recordsToKeepGuidanceUrl))
+            link(id = "credit-info-link", text = messages("do-you-want-to-claim.p3.b1.a"), href = appConfig.creditsGuidanceUrl),
+            link(id = "records-info-link", text = messages("do-you-want-to-claim.p3.b2.a"), href = appConfig.recordsToKeepGuidanceUrl)
             ),
             classes = "govuk-list govuk-list--bullet govuk-!-margin-bottom-7"
         )

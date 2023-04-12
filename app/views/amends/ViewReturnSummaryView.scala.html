@@ -50,14 +50,14 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
+    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
 
     @if(appConfig.isAmendsFeatureEnabled){
         @amendCall.fold{
             <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
             <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
         }{ amendCall =>
-            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall)</p>
+            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall.url)</p>
         }
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>
