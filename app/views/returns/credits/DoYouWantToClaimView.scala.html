@@ -75,17 +75,13 @@
         )
 
         @govukRadios(
-            RadiosViewModel.apply(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(HtmlContent(messages("do-you-want-to-claim.question"))).withCssClass(LegendSize.Medium.toString),
-                items = Seq(
-                    RadioItem(id = Some("yes"), value = Some("true"), content = Text(messages("site.yes"))),
-                    RadioItem(id = Some("no"), value = Some("false"), content = Text(messages("site.no")))
-                )
+                legend = LegendViewModel(HtmlContent(messages("do-you-want-to-claim.question")))
+                    .withCssClass(LegendSize.Medium.toString),
             )
         )
 
         @govukButton(ButtonViewModel(messages("site.continue")))
-
     }
 }

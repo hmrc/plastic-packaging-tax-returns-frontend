@@ -24,17 +24,17 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import views.ViewUtils
 import views.html.returns.credits.ConvertedCreditsView
 
 class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-//todo add tests
+
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
   val form = new ConvertedCreditsFormProvider()()
 
   private def createView(form: Form[Boolean] = form): Html =
     page(form, NormalMode)(request, messages)
 
-  //todo: re-instate the test when updating content
   "Converted Credits View" should {
 
     val view = createView()
@@ -52,21 +52,19 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.getElementById("section-header").text mustBe "Credit for 1 April 2022 to 31 March 2023"
     }
 
-    "have a fieldset legend" ignore { // todo needs fixing
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.heading.2")
-    }
-
-    "have a hint" ignore { // todo needs fixing
-      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe "How much weight, in kilograms?"
-      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe messages("converted-credits-yes-no.weight.label")
-      view.getElementById("converted-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
-      view.getElementById("converted-credits-weight-hint").text mustBe messages("converted-credits-yes-no.weight.hint")
-    }
-
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
       doc.text() must include(messages("converted-credits-yes-no.paragraph.1"))
       doc.text() must include(messages("converted-credits-yes-no.paragraph.2"))
+    }
+
+    "have a question" in {
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.question")
+    }
+
+    "have radios" in {
+      view.select(".govuk-radios__item").get(0).text mustBe messages("site.yes")
+      view.select(".govuk-radios__item").get(1).text mustBe messages("site.no")
     }
 
     "have a submit button" in {
@@ -75,21 +73,12 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "display error" when {
 
-      "nothing has been checked" in { // todo sort
-        //todo: change to a generic error or bind the form to an empty value to see the proper error.
-        /*
-          If the intent here is to test that we get the converted-credits-yes-no.error.required error message
-          then we should bind the form to an empty value
-
-          Else if the intent is just to test we get any error message when the form has an error then we
-          should use any generic test error message as using the real one it may make the intent
-          of the test obscured.
-        */
+      "the form has an error" in {
         val boundForm = form.withError("requiredKey", "converted-credits-yes-no.error.required")
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include("Select yes if you paid tax on plastic packaging before it was converted")
+        doc.getElementsByClass("govuk-error-summary").text() must include("Select yes if you paid tax on plastic packaging before it was converted")
       }
     }
   }
