@@ -43,7 +43,7 @@
 }
 
 @homePageLink = @{
-    link(id = "account-link", text = messages("return.confirmation.homePage.link2"), call = routes.IndexController.onPageLoad)
+    link(id = "account-link", text = messages("return.confirmation.homePage.link2"), href = routes.IndexController.onPageLoad.url)
 }
     
 @accountLinkForValidChargeRef = @{
@@ -101,6 +101,6 @@
     @homeAccountLink
 
     <p class="govuk-body" style="margin-top:2.5em">
-        @link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl))
+        @link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), href = appConfig.exitSurveyUrl)
     </p>
 }

@@ -52,7 +52,7 @@
     content = link(
         id = "change-credit-link",
         text = messages("submit-return.check-your-answers.credits.change.text.link"),
-        call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode)
+        href = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url
     )
 )
 
@@ -60,6 +60,6 @@
     content = link(
         id = "remove-credit-link",
         text = messages("submit-return.check-your-answers.credits.remove.text.link"),
-        call = controllers.returns.credits.routes.RemoveCreditController.onPageLoad()
+        href = controllers.returns.credits.routes.RemoveCreditController.onPageLoad().url
     )
 )

@@ -142,7 +142,7 @@
 
     @paragraph(
         content = link(id = "cancel-link",
-        text = messages("AmendsCheckYourAnswers.cancel.link.text"),
-        call = controllers.amends.routes.CancelAmendController.onPageLoad),
+            text = messages("AmendsCheckYourAnswers.cancel.link.text"),
+            href = controllers.amends.routes.CancelAmendController.onPageLoad.url),
         classes = "govuk-body govuk-!-margin-bottom-6")
 }

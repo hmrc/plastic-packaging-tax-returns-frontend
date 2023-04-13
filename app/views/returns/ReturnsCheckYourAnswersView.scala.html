@@ -82,7 +82,7 @@
     paragraph(content = Html(messages(toLongKey(paraShortKey), link(
         id = toLongKey(linkShortKey),
         text = text(linkShortKey),
-        call = Call("GET", url),
+        href = url,
         newTab = true
     ))),
         id = paragraphId
@@ -94,7 +94,7 @@
     val linkId = linkTextShortKey.split("\\.")(0)
 
     paragraph(
-        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
+        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), href = url),
     )
 }
 
