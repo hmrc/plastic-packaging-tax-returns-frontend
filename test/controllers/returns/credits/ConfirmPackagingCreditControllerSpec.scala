@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
@@ -27,8 +28,8 @@ import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.{Answers, ArgumentCaptor, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
@@ -37,12 +38,12 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Settable
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import java.time.LocalDateTime
-import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -55,7 +56,8 @@ class ConfirmPackagingCreditControllerSpec
     with ResetMocksAfterEachTest {
 
   private val saveAnsFun = mock[SaveUserAnswerFunc]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val answer = mock[UserAnswers]
+  private val dataRequest = mock[DataRequest[AnyContent]]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
@@ -65,6 +67,7 @@ class ConfirmPackagingCreditControllerSpec
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val edgeOfSystem = mock[EdgeOfSystem]
   private val journeyAction = mock[JourneyAction]
+  private val creditSummaryListFactory = mock[CreditSummaryListFactory]
 
   private val sut = new ConfirmPackagingCreditController(
     mockMessagesApi,
@@ -75,11 +78,16 @@ class ConfirmPackagingCreditControllerSpec
     tooMuchCreditView,
     cacheConnector, 
     returnsJourneyNavigator,
-    edgeOfSystem
+    edgeOfSystem,
+    creditSummaryListFactory
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(dataRequest, mockView, creditSummaryListFactory)
+
+    when(dataRequest.userAnswers).thenReturn(answer)
     when(dataRequest.pptReference).thenReturn("123")
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
@@ -102,18 +110,32 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe OK
     }
 
-    "view tax rate" in {
+    "display a view" in {
       setUpMockForConfirmCreditsView()
+
+      val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
+
+      when(creditSummaryListFactory.createSummaryList(any, any)(any)).thenReturn(summaryList)
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      val captor: ArgumentCaptor[Seq[SummaryListRow]] = ArgumentCaptor.forClass(classOf[Seq[SummaryListRow]])
-      verify(mockView).apply(any, any, meq(BigDecimal(0.3)), any, any, captor.capture(), any, any, meq(true))(any, any)
-
-      val list: Seq[SummaryListRow] = captor.getValue
-      list(0).value mustBe "£300 per tonne"
-
+      verify(mockView).apply(any, any, meq(BigDecimal(0.3)), any, any, meq(summaryList), any, any, meq(true))(any, any)
     }
+
+    "pass a summary list to view with the data" in {
+      setUpMockForConfirmCreditsView()
+
+      val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
+
+      when(creditSummaryListFactory.createSummaryList(any, any)(any)).thenReturn(summaryList)
+      when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
+      await(sut.onPageLoad(NormalMode)(dataRequest))
+
+      verify(creditSummaryListFactory).createSummaryList(meq(BigDecimal(0.30)), any)(any)
+      verify(creditSummaryListFactory).createSummaryList(meq(BigDecimal(0.30)), meq(answer))(any)
+    }
+
+
     "view the tax rate per tonne" when {
       "before 1st April 2023" in {
         setUpMockForConfirmCreditsView()

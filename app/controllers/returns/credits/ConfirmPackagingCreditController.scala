@@ -18,6 +18,7 @@ package controllers.returns.credits
 
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
+import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
@@ -27,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
 import util.EdgeOfSystem
-import viewmodels.checkAnswers.returns.credits.{CreditTaxRateSummary, ExportedCreditSummary}
+import viewmodels.checkAnswers.returns.credits.{CreditsTaxRateSummary, CreditsExportedPlasticSummary}
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
 import java.time.LocalDateTime
@@ -43,7 +44,8 @@ class ConfirmPackagingCreditController @Inject()(
   tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
-  edgeOfSystem: EdgeOfSystem
+  edgeOfSystem: EdgeOfSystem,
+  creditSummaryListFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext)  extends I18nSupport {
 
   private val midnight1stApril2023 = LocalDateTime.of(2023, 4, 1, 0, 0, 0)
@@ -63,10 +65,6 @@ class ConfirmPackagingCreditController @Inject()(
     val fromDate = "1 April 2022"
     val toDate = "31 March 2023"
 
-    val list =
-      CreditTaxRateSummary(creditBalance.taxRate) +:
-      Seq(ExportedCreditSummary).flatMap(_.row(request.userAnswers))
-
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
       Ok(confirmCreditView(
@@ -75,7 +73,7 @@ class ConfirmPackagingCreditController @Inject()(
         creditBalance.taxRate,
         fromDate,
         toDate,
-        list,
+        creditSummaryListFactory.createSummaryList(creditBalance.taxRate, request.userAnswers),
         continueCall,
         mode,
         isBeforeApril2023)

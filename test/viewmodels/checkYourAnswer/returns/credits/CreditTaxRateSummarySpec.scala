@@ -25,7 +25,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.checkAnswers.returns.credits.CreditTaxRateSummary
+import viewmodels.checkAnswers.returns.credits.CreditsTaxRateSummary
 
 class CreditTaxRateSummarySpec extends PlaySpec {
 
@@ -35,7 +35,7 @@ class CreditTaxRateSummarySpec extends PlaySpec {
     "return a row for the tax rate" in {
       when(messages.apply(anyString())).thenReturn("value")
 
-      CreditTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
+      CreditsTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
         key = Key(Text("value")),
         value = Value(Text("value")))
     }

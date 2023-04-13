@@ -204,6 +204,7 @@ confirmPackagingCredit.subHeading = Credits
 confirmPackagingCredit.taxRate = Tax rate
 confirmPackagingCredit.taxRate.value = {0} per tonne
 confirmPackagingCredit.exported.answer = Paid tax on plastic packaging before it was exported
+confirmPackagingCredit.exported.weight = Weight of plastic packaging you paid tax on before it was exported
 confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
 confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
 confirmPackagingCredit.hint.afterFirstApril2023 = Plastic Packaging Tax was charged at {0} per tonne during this time.
