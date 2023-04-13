@@ -10,7 +10,7 @@ import play.api.i18n.Messages
 import org.mockito.ArgumentMatchers.{eq => meq}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryListRow, Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key}
-import pages.returns.credits.{ExportedCreditsPage, ExportedCreditsWeightPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage}
 
 class CreditSummaryListFactorySpec extends PlaySpec {
 
@@ -23,15 +23,21 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       when(messages.apply(meq("confirmPackagingCredit.taxRate"))).thenReturn("Tax Rate")
       when(messages.apply(meq("confirmPackagingCredit.exported.answer"))).thenReturn("exported")
       when(messages.apply(meq("confirmPackagingCredit.exported.weight"))).thenReturn("exported weight")
+      when(messages.apply(meq("confirmPackagingCredit.converted.answer"))).thenReturn("converted")
+      when(messages.apply(meq("confirmPackagingCredit.converted.weight"))).thenReturn("converted weight")
       when(answer.get(meq(ExportedCreditsPage))(any)).thenReturn(Some(true))
       when(answer.get(meq(ExportedCreditsWeightPage))(any)).thenReturn(Some(10L))
+      when(answer.get(meq(ConvertedCreditsPage))(any)).thenReturn(Some(true))
+      when(answer.get(meq(ConvertedCreditsWeightPage))(any)).thenReturn(Some(20L))
 
       val res = sut.createSummaryList(0.30, answer)(messages)
 
       res mustBe Seq(
         createTaxRateRow,
         createExportedPlasticRow,
-        createExportedPlasticWeightRow
+        createExportedPlasticWeightRow,
+        createConvertedPlasticRow,
+        createConvertedPlasticWeightRow
       )
     }
   }
@@ -49,6 +55,16 @@ class CreditSummaryListFactorySpec extends PlaySpec {
     createSummaryRow(
       "exported weight",
       controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(CheckMode).url)
+
+  private def createConvertedPlasticRow =
+    createSummaryRow(
+      "converted",
+      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url)
+
+  private def createConvertedPlasticWeightRow =
+    createSummaryRow(
+      "converted weight",
+      controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(CheckMode).url)
 
   private def createSummaryRow(key: String, href: String) = {
       SummaryListRow(
