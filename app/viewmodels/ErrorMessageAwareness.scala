@@ -34,3 +34,5 @@ trait ErrorMessageAwareness {
       }
 
 }
+
+object ErrorMessageAwareness extends ErrorMessageAwareness

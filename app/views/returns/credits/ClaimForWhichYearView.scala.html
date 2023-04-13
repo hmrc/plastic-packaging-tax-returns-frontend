@@ -14,8 +14,10 @@
  * limitations under the License.
  *@
 
-@import components._
-@import views.html.templates._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.paragraphBody
+@import views.html.components.heading
+@import viewmodels.ErrorMessageAwareness
 
 @this(
     formHelper: FormWithCSRF,
@@ -24,7 +26,7 @@
     paragraphBody: paragraphBody,
     heading: heading,
     govukRadios: GovukRadios,
-    hiddenContent: HiddenContent
+    govukErrorSummary: GovukErrorSummary,
 )
 
 @(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
@@ -33,23 +35,27 @@
 
     @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit, 'autoComplete -> "off") {
 
-        @heading(messages("claim-for-which-year.credits.title-heading"))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-        @paragraphBody(messages("claim-for-which-year.credits.paragraph.1"))
-
-        @govukRadios(
-            RadiosViewModel.apply(
-                field = form("value"),
-                legend = LegendViewModel(HtmlContent(hiddenContent("claim-for-which-year.credits.title-heading"))),
-                items = Seq(
-                    RadioItem(id = Some("value"), value = Some("true"), content =  Text("1 April 2022 to 31 March 2023"))
-                )
+        @govukRadios(Radios(
+            name = "value",
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("claim-for-which-year.credits.title-heading")), 
+                    classes = "govuk-fieldset__legend--l", 
+                    isPageHeading = true
+                )),
+            )),
+            hint = Some(Hint(content = Text(messages("claim-for-which-year.credits.paragraph.1")))), 
+            errorMessage = ErrorMessageAwareness.errorMessage(form("value")), 
+            items = Seq(
+                RadioItem(id = Some("value"), value = Some("true"), content =  Text("1 April 2022 to 31 March 2023"))
             )
-        )
+        ))
 
         @paragraphBody(messages("claim-for-which-year.credits.paragraph.2"))
-
         @govukButton(ButtonViewModel(messages("site.continue")))
-
     }
-})
+}
