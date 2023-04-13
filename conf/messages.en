@@ -540,8 +540,7 @@ exportedCreditsWeight.error.wholeNumber = Weight must not include decimals
 exportedCreditsWeight.error.nonNumeric = Weight must be entered as numbers
 exportedCreditsWeight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 
-claim-for-which-year.credits.title = Which year do you want to claim tax back as credit for?
-claim-for-which-year.credits.heading = Which year do you want to claim tax back as credit for?
+claim-for-which-year.credits.title-heading = Which year do you want to claim tax back as credit for?
 claim-for-which-year.credits.paragraph.1 = Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate.
 claim-for-which-year.credits.paragraph.2 = If you need to claim tax back as credit for more than one year you will be given the option to do this later.
 
