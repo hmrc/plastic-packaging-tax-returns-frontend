@@ -18,7 +18,6 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import forms.returns.credits.DoYouWantToClaimFormProvider
-import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ClaimForWhichYearView
@@ -42,10 +41,13 @@ class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with Vi
       view.select("h1").text mustBe "Which year do you want to claim tax back as credit for?"
     }
 
+    "have hint" in {
+      val hint = view.getElementsByClass("govuk-hint").text()
+      hint must include("Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate.")
+    }
+
     "have paragraph content" in {
       val paragraph = view.getElementsByClass("govuk-body").text()
-
-      paragraph must include("Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate.")
       paragraph must include("If you need to claim tax back as credit for more than one year you will be given the option to do this later.")
     }
 
