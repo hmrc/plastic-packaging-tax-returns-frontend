@@ -20,13 +20,12 @@ import base.utils.JourneyActionAnswer
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.DoYouWantToClaimFormProvider
-import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -34,7 +33,7 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -42,6 +41,7 @@ import queries.Gettable
 import views.html.returns.credits.ClaimForWhichYearView
 
 import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
 
 class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach  {
 
@@ -49,7 +49,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val messages = mock[Messages]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val mockView = mock[ClaimForWhichYearView]
-  private val mockFormProvider = mock[DoYouWantToClaimFormProvider]
+  private val formProvider = mock[DoYouWantToClaimFormProvider]
   private val journeyAction = mock[JourneyAction]
   private val controllerComponents = stubMessagesControllerComponents()
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
@@ -60,7 +60,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     journeyAction,
     controllerComponents,
     mockView,
-    mockFormProvider,
+    formProvider,
     mockNavigator
   )(global)
 
@@ -70,7 +70,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       mockMessagesApi,
       journeyAction,
       mockView,
-      mockFormProvider,
+      formProvider,
       form,
       mockNavigator,
       dataRequest,
@@ -79,7 +79,9 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(mockView.apply(any)(any, any)).thenReturn(Html("correct view"))
-    when(mockFormProvider.apply()) thenReturn form
+    
+    when(formProvider.apply()) thenReturn form
+    when(form.bindFromRequest()(any, any)) thenReturn form
   }
 
   "onPageLoad" must {
@@ -116,9 +118,15 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "redirect to the next page" in {
       when(mockNavigator.claimForWhichYear).thenReturn(Call(GET, "/foo"))
+      when(form.fold[Future[Result]](any, any)) thenAnswer {
+        (_: Any, isValid: Boolean =>Future[Result]) => isValid(false)
+      }
+      
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
-      status(result) mustBe SEE_OTHER
+
       verify(mockNavigator).claimForWhichYear
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe "/foo"
     }
 
   }

@@ -18,13 +18,11 @@ package controllers.returns.credits
 
 import controllers.actions.JourneyAction
 import forms.returns.credits.DoYouWantToClaimFormProvider
-import models.Mode
-import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
-import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.Ok
+import play.api.mvc.Results.{BadRequest, Ok}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ClaimForWhichYearView
 
@@ -53,9 +51,12 @@ class ClaimForWhichYearController @Inject()(
   def onSubmit: Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        Future.successful(Results.Redirect(navigator.claimForWhichYear)
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+            _ => Future.successful(Results.Redirect(navigator.claimForWhichYear))
       )
     }
-
 
 }
