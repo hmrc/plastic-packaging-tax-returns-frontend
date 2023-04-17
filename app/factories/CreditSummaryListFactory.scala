@@ -16,21 +16,21 @@
 
 package factories
 
-import models.UserAnswers
+import models.{CreditBalance, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.returns.credits.{CreditsConvertedPlasticSummary, CreditsConvertedWeightSummary, CreditsExportedPlasticSummary, CreditsExportedWeightSummary, CreditsTaxRateSummary}
+import viewmodels.checkAnswers.returns.credits.{CreditAmountSummary, CreditsConvertedPlasticSummary, CreditsConvertedWeightSummary, CreditsExportedPlasticSummary, CreditsExportedWeightSummary, CreditsTaxRateSummary, CreditsTotalPlasticSummary}
 
 class CreditSummaryListFactory {
 
-  def createSummaryList(taxRate: BigDecimal, userAnswer: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    CreditsTaxRateSummary(taxRate) +:
-      Seq(
+  def createSummaryList(creditBalance: CreditBalance, userAnswer: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(CreditsTaxRateSummary(creditBalance.taxRate)) ++ Seq(
         CreditsExportedPlasticSummary,
         CreditsExportedWeightSummary,
         CreditsConvertedPlasticSummary,
         CreditsConvertedWeightSummary
-      ).flatMap(_.row(userAnswer))
-  }
-
+      ).flatMap(_.row(userAnswer)) ++ Seq(
+        CreditsTotalPlasticSummary(creditBalance.totalRequestedCreditInKilograms),
+        CreditAmountSummary(creditBalance.totalRequestedCreditInPounds)
+      )
 }

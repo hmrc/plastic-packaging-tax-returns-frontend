@@ -17,26 +17,30 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.checkAnswers.returns.credits.CreditsTaxRateSummary
+import viewmodels.PrintBigDecimal
+import viewmodels.checkAnswers.returns.credits.{CreditAmountSummary, CreditsTotalPlasticSummary}
 
-class CreditTaxRateSummarySpec extends PlaySpec {
+class CreditAmountSummarySpec extends PlaySpec {
 
-  private val messages = mock[Messages]
+  private val message = mock[Messages]
 
   "summary" should {
-    "return a row for the tax rate" in {
-      when(messages.apply(anyString())).thenReturn("value")
-      when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+    "return a row" in {
 
-      CreditsTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
-        key = Key(Text("value"), "govuk-!-width-one-half"),
-        value = Value(HtmlContent(s"""<p>value<span class="govuk-visually-hidden">hidden text</span></p>""")))
+      when(message.apply("confirmPackagingCredit.creditAmount")).thenReturn("credit amount")
+      when(message.apply(BigDecimal(200).asPounds)).thenReturn("£200")
+      when(message.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+
+      CreditAmountSummary(200L)(message) mustBe SummaryListRow(
+        key = Key(Text("credit amount"), "govuk-!-width-one-half"),
+        value = Value(HtmlContent(s"""<p>£200<span class="govuk-visually-hidden">hidden text</span></p>"""))
+      )
+
     }
   }
 }

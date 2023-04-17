@@ -62,7 +62,7 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
   private def createExpectedResult(answerValue: String): Option[SummaryListRow] = {
     Some(SummaryListRow(
-      key = Key(Text("answer")),
+      key = Key(Text("answer"), "govuk-!-width-one-half"),
       value = Value(Text(answerValue)),
       actions = Some(Actions(items = Seq(ActionItem(
         controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url,

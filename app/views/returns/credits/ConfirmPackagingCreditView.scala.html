@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraph, Link, LinkButton, heading}
+@import components.{SectionH2Heading, SectionH3Heading, paragraph, paragraphBody, Link, LinkButton, heading, Strong}
 @import viewmodels._
 @import models.Mode
 
@@ -23,29 +23,48 @@
     formHelper: FormWithCSRF,
     govukButton: GovukButton,
     govukSummaryList: GovukSummaryList,
+    paragraphBody: paragraphBody,
     paragraph: paragraph,
+    sectionH2Heading: SectionH2Heading,
+    sectionH3Heading: SectionH3Heading,
     link: Link,
     linkButton: LinkButton,
-    heading: heading
+    heading: heading,
+    strong: Strong
 )
 
-@(
-    requestedCredit: BigDecimal,
-    weight: Long,
-    taxRate: BigDecimal,
+@( requestedCredit: BigDecimal,
+    canClaim: Boolean,
     fromDate: String,
     toDate: String,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
-    mode: Mode,
-    isBefore1stApril2023: Boolean)(implicit request: Request[_], messages: Messages)
+    mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@taxRateMessage = @{
-    if(isBefore1stApril2023) {
-        messages("confirmPackagingCredit.hint.p2")
-    } else {
-        messages("confirmPackagingCredit.hint.afterFirstApril2023", taxRate.asPoundPerTonne)
-    }
+@previousSubmittedReturnsLink = {
+    @link(
+        id = "previous-submitted-return",
+        text = messages("confirmPackagingCredit.previousSubmittedReturn.link"),
+        call = Call("GET", controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
+    )
+}
+
+@claimCreditContent = {
+    @paragraphBody(messages("confirmPackagingCredit.requestedCredits", strong(requestedCredit.asPounds)))
+
+    @linkButton(
+        messageKey = "site.continue.confirm",
+        linkUrl = continueCall.url
+    )
+}
+
+@tooMuchCreditContent = {
+    @sectionH2Heading(messages("confirmPackagingCredit.tooMuchCredit.heading"))
+    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p1"))
+    @sectionH3Heading(messages("confirmPackagingCredit.tooMuchCredit.h3"))
+    @paragraph(content = Html(messages("confirmPackagingCredit.tooMuchCredit.p2", previousSubmittedReturnsLink)))
+    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p3"))
+    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p4"))
 }
 
 @layout(pageTitle = titleNoForm(
@@ -57,9 +76,21 @@
 
     @govukSummaryList(SummaryList(rows = summaryRows))
 
+    @if(canClaim) {
+        @claimCreditContent
+    } else {
+        @tooMuchCreditContent
+    }
 
-    @linkButton(
-        messageKey = "site.continue.confirm",
-        linkUrl = continueCall.url
-    )
+    @*
+    * Todo: add a proper link to the cancel page. This may need to be created together with the
+    * navigation
+    *
+    * Also is this cancel the same as the happy path cancel but with different text? The happy
+    * path cancel has no yes/no page
+    *@
+    @paragraph(content = link(
+        id = "cancel-credit-claim",
+        text = messages("confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link"),
+        call = Call("GET", "/foo")))
 }

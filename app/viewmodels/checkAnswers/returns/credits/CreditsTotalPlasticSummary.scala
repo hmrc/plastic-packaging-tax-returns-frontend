@@ -18,21 +18,17 @@ package viewmodels.checkAnswers.returns.credits
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.{InputWidth, PrintTaxRate}
+import viewmodels.PrintLong
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object CreditsTaxRateSummary {
+object CreditsTotalPlasticSummary {
 
-  def apply(taxRate: BigDecimal)(implicit messages: Messages): SummaryListRow = {
+  def apply(totalRequestedCreditInKilograms: Long)(implicit messages: Messages): SummaryListRow = {
     SummaryListRowViewModel(
-      key = Key("confirmPackagingCredit.taxRate", classes="govuk-!-width-one-half"),
-      value = ValueViewModel(
-        messages("confirmPackagingCredit.taxRate.value", taxRate.asPoundPerTonne),
-      )
+      key = Key("confirmPackagingCredit.totalPlastic", classes="govuk-!-width-one-half"),
+      value = ValueViewModel(totalRequestedCreditInKilograms.asKg)
         .withVisuallyHiddenText(messages("confirmPackagingCredit.hiddenText"))
     )
-
   }
-
 }

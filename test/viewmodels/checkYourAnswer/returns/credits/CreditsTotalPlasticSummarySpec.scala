@@ -17,26 +17,30 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.checkAnswers.returns.credits.CreditsTaxRateSummary
+import viewmodels.PrintLong
+import viewmodels.checkAnswers.returns.credits.CreditsTotalPlasticSummary
 
-class CreditTaxRateSummarySpec extends PlaySpec {
+class CreditsTotalPlasticSummarySpec extends PlaySpec {
 
-  private val messages = mock[Messages]
+  private val message = mock[Messages]
 
   "summary" should {
-    "return a row for the tax rate" in {
-      when(messages.apply(anyString())).thenReturn("value")
-      when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+    "return a row" in {
 
-      CreditsTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
-        key = Key(Text("value"), "govuk-!-width-one-half"),
-        value = Value(HtmlContent(s"""<p>value<span class="govuk-visually-hidden">hidden text</span></p>""")))
+      when(message.apply("confirmPackagingCredit.totalPlastic")).thenReturn("total plastic")
+      when(message.apply(200L.asKg)).thenReturn("200kg")
+      when(message.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+
+      CreditsTotalPlasticSummary(200L)(message) mustBe SummaryListRow(
+        key = Key(Text("total plastic"), "govuk-!-width-one-half"),
+        value = Value(HtmlContent(s"""<p>200kg<span class="govuk-visually-hidden">hidden text</span></p>"""))
+      )
+
     }
   }
 }

@@ -20,6 +20,7 @@ import models.Mode.CheckMode
 import models.UserAnswers
 import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Key
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
@@ -33,7 +34,7 @@ object CreditsExportedPlasticSummary extends SummaryViewModel {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "confirmPackagingCredit.exported.answer",
+          key = Key("confirmPackagingCredit.exported.answer", classes="govuk-!-width-one-half"),
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel(
