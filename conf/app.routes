@@ -207,3 +207,6 @@ POST       /amending-exported-plastic-packaging                     controllers.
 GET        /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad
 POST       /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onSubmit
 
+
+GET        /cancel-credit                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad
+POST       /cancel-credit                        controllers.returns.credits.CancelCreditsClaimController.onSubmit

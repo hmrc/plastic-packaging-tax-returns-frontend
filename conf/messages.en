@@ -704,3 +704,9 @@ converted-credits-weight.error.required = Enter the weight, in kilograms
 converted-credits-weight.error.nonNumeric = Weight must be entered as numbers
 converted-credits-weight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 converted-credits-weight.error.wholeNumber = Weight must not include decimals
+
+cancelCreditsClaim.title = ancelCreditsClaim
+cancelCreditsClaim.heading = ancelCreditsClaim
+cancelCreditsClaim.checkYourAnswersLabel = ancelCreditsClaim
+cancelCreditsClaim.error.required = Select yes if ancelCreditsClaim
+cancelCreditsClaim.change.hidden = ancelCreditsClaim
