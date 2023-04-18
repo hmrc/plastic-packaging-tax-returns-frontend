@@ -137,6 +137,19 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
   }
 
+  "confirmCreditRoute" must {
+
+    "redirect to start return page in Normal Mode" in {
+      val call = navigator.confirmCreditRoute(NormalMode)
+      call mustBe controllers.returns.routes.NowStartYourReturnController.onPageLoad
+    }
+
+    "redirect to CYA page in CheckMode Mode" in {
+      val call = navigator.confirmCreditRoute(CheckMode)
+      call mustBe controllers.returns.routes.ReturnsCheckYourAnswersController.onPageLoad
+    }
+  }
+
   "manufacturedPlasticPackagingRoute" must {
     
     "redirect to manufacturedWeight page in normal mode" when {
