@@ -376,5 +376,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     navigator.manufacturedPlasticPackagingWeightRoute(userAnswers) mustBe 
       returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad     
   }
+
+  "cancelCreditRoute" should {
+    "redirect to submit-return-or-claim-credit when answer is Yes" in {
+
+      controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+    }
+  }
 }
 

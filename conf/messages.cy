@@ -694,3 +694,7 @@ amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod
 
 converted-credits-weight.heading-title = [NEEDS WELSH] How much plastic packaging did you pay tax on before it was converted?
 converted-credits-weight.hint = [NEEDS WELSH] Enter the weight in kilograms. 1 tonne is 1,000kg.
+
+cancelCreditsClaim.title = [NEEDS WELSH]Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.heading = [NEEDS WELSH] Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.error.required = [NEEDS WELSH] Select yes if you want to cancel this credit
