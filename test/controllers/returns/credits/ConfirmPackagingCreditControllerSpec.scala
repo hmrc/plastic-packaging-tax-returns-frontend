@@ -41,7 +41,7 @@ import queries.Settable
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
-import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -63,7 +63,6 @@ class ConfirmPackagingCreditControllerSpec
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
   private val mockView = mock[ConfirmPackagingCreditView]
-  private val tooMuchCreditView = mock[TooMuchCreditClaimedView]
   private val cacheConnector = mock[CacheConnector]
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val edgeOfSystem = mock[EdgeOfSystem]
@@ -76,7 +75,6 @@ class ConfirmPackagingCreditControllerSpec
     journeyAction,
     controllerComponents,
     mockView,
-    tooMuchCreditView,
     cacheConnector, 
     returnsJourneyNavigator,
     creditSummaryListFactory

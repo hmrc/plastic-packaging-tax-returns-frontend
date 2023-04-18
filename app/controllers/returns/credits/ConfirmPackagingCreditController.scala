@@ -27,7 +27,7 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
-import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -38,7 +38,6 @@ class ConfirmPackagingCreditController @Inject()(
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
-  tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
   creditSummaryListFactory: CreditSummaryListFactory
@@ -68,11 +67,6 @@ class ConfirmPackagingCreditController @Inject()(
         returnsJourneyNavigator.confirmCreditRoute(mode),
         mode)
       )
-//    } else {
-//      val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
-//      val cancelClaimCall: Call = controllers.returns.credits.routes.ConfirmPackagingCreditController.onCancelClaim(mode)
-//      Ok(tooMuchCreditView(changeWeightCall, cancelClaimCall))
-//    }
   }
 
   def onCancelClaim(mode: Mode): Action[AnyContent] =

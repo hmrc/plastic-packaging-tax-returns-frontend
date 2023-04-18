@@ -579,13 +579,6 @@ nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
 nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
 nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
-too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
-too-much-credit-claimed.section-heading = Credydau
-too-much-credit-claimed.para-1 = Mae’r pwysau rydych wedi’u nodi yn fwy na’r holl bwysau rydych wedi talu treth arnynt o'ch Ffurflenni Treth blaenorol.
-too-much-credit-claimed.para-2 = I fynd yn eich blaen, newidiwch bwysau’r deunydd pacio plastig sydd bellach wedi’i allforio neu wedi’i drosi.
-too-much-credit-claimed.button-text = Newid pwysau
-too-much-credit-claimed.cancel-link-text = Canslo hawlio credyd ac yn eich blaen gyda’r Ffurflen Dreth
-
 removeCredit.title = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.heading = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.error.required = Dewiswch ‘Iawn’ os ydych am dynnu’r credyd hwn

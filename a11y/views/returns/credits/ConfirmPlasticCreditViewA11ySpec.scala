@@ -17,22 +17,26 @@
 package views.returns.credits
 
 import base.ViewSpecBase
+import models.Mode.NormalMode
 import play.api.mvc.Call
-import play.api.test.Helpers.GET
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.credits.TooMuchCreditClaimedView
+import views.html.returns.credits.ConfirmPackagingCreditView
 
-class TooMuchCreditClaimedViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val page = inject[TooMuchCreditClaimedView]
+  private val page = inject[ConfirmPackagingCreditView]
+  private def render(canClaimCredit: Boolean ): Html = page(BigDecimal(200), canClaimCredit, "1 April 2022", "31 MArch 2023", Seq.empty, Call("GET", "/test"), NormalMode)(request, messages)
 
-  "view" should {
-    "pass accessibility tests" in {
-      def render: Html = page(Call(GET,"/change-weight"),Call(GET,"/cancel-claim"))(request, messages)
+  "ConfirmPackagingCreditView" should {
+    "pass accessibility checks" when {
+      "can claim credit" in {
+        render(true).toString() must passAccessibilityChecks
+      }
 
-      render.toString() must passAccessibilityChecks
+      "cannot claim credit" in {
+        render(false).toString() must passAccessibilityChecks
+      }
     }
   }
-
 }
