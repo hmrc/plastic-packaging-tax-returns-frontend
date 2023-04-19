@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package pages.returns.credits
 
-import play.api.libs.json.{Json, OFormat}
+import pages.behaviours.PageBehaviours
 
-case class CreditBalance(
-  availableCreditInPounds: BigDecimal,
-  totalRequestedCreditInPounds: BigDecimal,
-  totalRequestedCreditInKilograms: Long,
-  canBeClaimed: Boolean,
-  taxRate: BigDecimal
-)
+class CancelCreditsClaimPageSpec extends PageBehaviours {
 
-object CreditBalance {
+  "CancelCreditsClaimPage" - {
 
-  implicit val format: OFormat[CreditBalance] =
-    Json.format[CreditBalance]
+    beRetrievable[Boolean](CancelCreditsClaimPage)
 
+    beSettable[Boolean](CancelCreditsClaimPage)
+
+    beRemovable[Boolean](CancelCreditsClaimPage)
+  }
 }

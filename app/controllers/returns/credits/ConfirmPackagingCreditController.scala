@@ -18,6 +18,7 @@ package controllers.returns.credits
 
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
+import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
@@ -26,10 +27,8 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
-import util.EdgeOfSystem
-import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
+import views.html.returns.credits.ConfirmPackagingCreditView
 
-import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -39,13 +38,10 @@ class ConfirmPackagingCreditController @Inject()(
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
-  tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
-  edgeOfSystem: EdgeOfSystem
+  creditSummaryListFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext)  extends I18nSupport {
-
-  private val midnight1stApril2023 = LocalDateTime.of(2023, 4, 1, 0, 0, 0)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction.async {
@@ -58,21 +54,16 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
-    if (creditBalance.canBeClaimed) {
-      val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
-      Ok(confirmCreditView(
-        creditBalance.totalRequestedCreditInPounds,
-        creditBalance.totalRequestedCreditInKilograms,
-        continueCall,
-        mode,
-        isBeforeApril2023)
-      )
-    } else {
-      val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
-      val cancelClaimCall: Call = controllers.returns.credits.routes.ConfirmPackagingCreditController.onCancelClaim(mode)
-      Ok(tooMuchCreditView(changeWeightCall, cancelClaimCall))
-    }  
+
+    //Todo: Pass to the view the fromDate and toDate the user is claiming
+    // credit for.
+    Ok(confirmCreditView(
+      creditBalance.totalRequestedCreditInPounds,
+      creditBalance.canBeClaimed,
+      creditSummaryListFactory.createSummaryList(creditBalance, request.userAnswers),
+      returnsJourneyNavigator.confirmCreditRoute(mode),
+      mode)
+    )
   }
 
   def onCancelClaim(mode: Mode): Action[AnyContent] =

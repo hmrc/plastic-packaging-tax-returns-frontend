@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
@@ -27,18 +28,22 @@ import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar
+import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.{Answers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Settable
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
-import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
+import views.html.returns.credits.ConfirmPackagingCreditView
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,17 +57,19 @@ class ConfirmPackagingCreditControllerSpec
     with BeforeAndAfterEach
     with ResetMocksAfterEachTest {
 
+  private val creditBalance = CreditBalance(10, 5, 500, true, 0.30)
   private val saveAnsFun = mock[SaveUserAnswerFunc]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val answer = mock[UserAnswers]
+  private val dataRequest = mock[DataRequest[AnyContent]]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
   private val mockView = mock[ConfirmPackagingCreditView]
-  private val tooMuchCreditView = mock[TooMuchCreditClaimedView]
   private val cacheConnector = mock[CacheConnector]
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val edgeOfSystem = mock[EdgeOfSystem]
   private val journeyAction = mock[JourneyAction]
+  private val creditSummaryListFactory = mock[CreditSummaryListFactory]
 
   private val sut = new ConfirmPackagingCreditController(
     mockMessagesApi,
@@ -70,14 +77,17 @@ class ConfirmPackagingCreditControllerSpec
     journeyAction,
     controllerComponents,
     mockView,
-    tooMuchCreditView,
     cacheConnector, 
     returnsJourneyNavigator,
-    edgeOfSystem
+    creditSummaryListFactory
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(dataRequest, mockView, creditSummaryListFactory)
+
+    when(dataRequest.userAnswers).thenReturn(answer)
     when(dataRequest.pptReference).thenReturn("123")
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
@@ -100,76 +110,45 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe OK
     }
 
-    "view the tax rate per tonne" when {
-      "before 1st April 2023" in {
-        setUpMockForConfirmCreditsView()
-        when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(any, any, any, any, meq(true))(any, any)
-      }
+    "display a view" in {
+      setUpMockForConfirmCreditsView()
 
-      "on or after 1st April 2023" in {
-        setUpMockForConfirmCreditsView()
-        when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 4, 1, 0, 0, 0) // Midnight
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(any, any, any, any, meq(false))(any, any)
-      }
+      val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
+
+      when(creditSummaryListFactory.createSummaryList(any, any)(any)).thenReturn(summaryList)
+      when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
+      await(sut.onPageLoad(NormalMode)(dataRequest))
+
+      verify(mockView).apply(meq(BigDecimal(5)), any, meq(summaryList), any, any)(any, any)
     }
+
+    "pass a summary list to view with the data" in {
+      setUpMockForConfirmCreditsView()
+
+      val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
+
+      when(creditSummaryListFactory.createSummaryList(any, any)(any)).thenReturn(summaryList)
+      when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
+      await(sut.onPageLoad(NormalMode)(dataRequest))
+
+      verify(creditSummaryListFactory).createSummaryList(meq(creditBalance), any)(any)
+      verify(creditSummaryListFactory).createSummaryList(meq(creditBalance), meq(answer))(any)
+    }
+
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
       "total requested credit is less than available credit - (NormalMode)" in {
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(Call("Hi", "You")), meq(NormalMode), any)(any,any)
+        verify(mockView).apply( meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(CheckMode)(dataRequest))
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), meq(Call("get", "cheese")), meq(CheckMode), any
-        )(any,any)
-      }
-    }
-
-    "return too muchCreditView" when {
-      "total requested credit is grater than available credit" in {
-        when(tooMuchCreditView.apply(any, any)(any,any)).thenReturn(Html("too much credit view"))
-        when(mockCalculateCreditConnector.get(any)(any))
-          .thenReturn(Future.successful(Right(CreditBalance(10, 20, 500L, false))))
-
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(tooMuchCreditView).apply(any, any)(any,any)
-        verify(mockView, never).apply(any, any, any, any, any)(any,any)
-      }
-    }
-
-    "display the exported and converted weight" when {
-      "total requested credit is less than available credit" in {
-        setUpMockForConfirmCreditsView()
-
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), any, any, any)(any,any)
-        verify(tooMuchCreditView, never).apply(any, any)(any,any)
-      }
-
-      "only exported weight is Available" in {
-        setUpMockForConfirmCreditsView()
-
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), any, any, any)(any,any)
-      }
-
-      "only converted weight is Available" in {
-        setUpMockForConfirmCreditsView()
-
-        await(sut.onPageLoad(NormalMode)(dataRequest))
-
-        verify(mockView).apply(meq(BigDecimal(5)), meq(500L), any, any, any)(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
       }
     }
 
@@ -221,7 +200,7 @@ class ConfirmPackagingCreditControllerSpec
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(mockView.apply(any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
-      .thenReturn(Future.successful(Right(CreditBalance(10, 5, 500, true))))
+      .thenReturn(Future.successful(Right(creditBalance)))
   }
 
   private def setUpMockForCancelCredit(ans: UserAnswers): Unit = {

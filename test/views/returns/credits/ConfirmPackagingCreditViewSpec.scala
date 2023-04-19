@@ -21,74 +21,98 @@ import models.Mode.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import viewmodels.{PrintBigDecimal, PrintLong}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 import views.html.returns.credits.ConfirmPackagingCreditView
 
 class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
-  val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
-  val weight = 200L
-  val requestedCredit = BigDecimal(500)
-  val continueCall = Call("TEST", "/end-point")
+  private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
+  private val requestedCredit = BigDecimal(500)
+  private val continueCall = Call("TEST", "/end-point")
 
-  private def createView(isBefore1stApril2023: Boolean): Html =
-    page(requestedCredit, weight, continueCall, NormalMode, isBefore1stApril2023)(request, messages)
+
+  private val summaryList = Seq(
+    SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
+    SummaryListRow(
+      key = Key(Text("exported")),
+      value = Value(Text("answer")),
+      actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
+  )
+  private def createView(canClaim: Boolean = true): Html =
+    page(requestedCredit, canClaim, summaryList, continueCall, NormalMode)(request, messages)
 
   "View" should {
 
-    val view = createView(true)
+    val view = createView()
 
     "have a title" in {
-      view.select("title").text() must include("Confirm credit amount - Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text() must include(messages("confirmPackagingCredit.title"))
+      view.select("title").text() must include("Confirm credit for 1 April 2022 to 31 March 2023 - Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text() must include(messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023"))
     }
 
     "have a header" in {
-      view.select("h1").text mustBe s"Confirm ${requestedCredit.asPounds} of credit"
-      view.select("h1").text mustBe messages("confirmPackagingCredit.heading", requestedCredit.asPounds)
+      view.select("h1").text mustBe s"Confirm credit for 1 April 2022 to 31 March 2023"
+      view.select("h1").text mustBe messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023")
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text() mustBe "Credits"
-      view.getElementsByClass("govuk-caption-l").text() mustBe messages("confirmPackagingCredit.subHeading")
+    "display summary list row" in {
+      view.getElementsByClass("govuk-summary-list__row").size() mustEqual 2
     }
 
-    "have a hint" in {
-      view.getElementById("paragraph-body-1").text() mustBe s"You told us that you paid tax on ${weight.asKg} of plastic packaging from a previous return, and it has since been exported or converted."
-      view.getElementById("paragraph-body-1").text() mustBe messages("confirmPackagingCredit.hint.p1", weight.asKg)
+    "display conditional paragraph" when{
+      "only one year available to claim" in {
+        view.getElementsByClass("govuk-body").text() must include("Your £500.00 credit will be applied against your total balance in your Plastic Packaging Tax account.")
+        view.getElementsByClass("govuk-body").text() must include(messages("confirmPackagingCredit.requestedCredits", "£500.00"))
 
-      view.getElementById("paragraph-body-3").text() mustBe s"This means the amount of tax you’ll get back as credit will be ${requestedCredit.asPounds}."
-      view.getElementById("paragraph-body-3").text() mustBe messages("confirmPackagingCredit.hint.p3", requestedCredit.asPounds)
-
-      view.getElementById("paragraph-body-4").text() mustBe s"Your credit will be applied against your total balance in your Plastic Packaging Tax account."
-      view.getElementById("paragraph-body-4").text() mustBe messages("confirmPackagingCredit.hint.p4")
-    }
-
-    "display tax rate per tonne" when {
-      "before 1st April 2023" in {
-        val view = createView(true)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax is calculated at £200 per tonne."
-        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.p2")
+        withClue("should not show too much credit paragraph") {
+          view.select("h2").text() must not include("You are claiming too much credit")
+        }
       }
 
-      "on or after 1st April 2023" in {
-        val view = createView(false)
-        view.getElementById("paragraph-body-2").text() mustBe s"Plastic Packaging Tax was charged at £200 per tonne during this time."
-        view.getElementById("paragraph-body-2").text() mustBe messages("confirmPackagingCredit.hint.afterFirstApril2023")
+      "one year to claim back and too much credits" in {
+        val tooMuchCreditView = createView(false)
+        tooMuchCreditView.select("h2").text() must include("You are claiming too much credit")
+        tooMuchCreditView.getElementsByClass("govuk-body").text must include("This credit amount is more than the total tax you paid between 1 April 2022 and 31 March 2023.")
+        tooMuchCreditView.select("h3").text must include("What you need to do")
+        tooMuchCreditView.getElementsByClass("govuk-body").text must
+          include("To continue, you need to change one or more of your answers. Check how much plastic packaging you paid tax on between 1 April 2022 and 31 March 2023. You might need to check more than one previously submitted return .")
+
+        tooMuchCreditView.getElementById("previous-submitted-return").select("a").get(0) must
+          haveHref(controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
+
+        tooMuchCreditView.getElementsByClass("govuk-body").text must
+          include("We have saved your answers. You can check your records and come back later.")
+
+        tooMuchCreditView.getElementsByClass("govuk-body").text must
+          include("You must have sufficient evidence to claim tax back as credit.")
+
+        withClue("should not show available credit applied mnessage") {
+          tooMuchCreditView.getElementsByClass("govuk-body").text() must not include("Your £500.00 credit will be applied against your total balance in your Plastic Packaging Tax account.")
+        }
       }
     }
 
-
-    "allow to change the amount of credit" in {
-      view.getElementById("change-credit-amount") must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode).url)
-      view.getElementById("change-credit-amount").text() mustBe "Change the amount of credit"
-      view.getElementById("change-credit-amount").text() mustBe messages("confirmPackagingCredit.change.credit.paragraph")
+    "show cancel credit claim link when too much credit" in {
+      createView(false).getElementById("cancel-credit-claim").text() mustBe "Cancel credit claim"
+      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
     }
 
-    "have a confirm button" in {
+    "should not show button when too much credit" in {
+      createView(false).getElementById("link-button") mustBe null
+    }
+
+    "show cancel button when can claim credit" in {
+      createView().getElementById("cancel-credit-claim").text() mustBe "Cancel"
+      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
+    }
+
+    "have a confirm and continue button" in {
       view.getElementById("link-button") must haveHref(continueCall.url)
-      view.getElementById("link-button").text() mustBe  "Confirm credit amount"
-      view.getElementById("link-button").text() mustBe messages("confirmPackagingCredit.confirm.credit.button")
+      view.getElementById("link-button").text() mustBe  "Confirm and continue"
+      view.getElementById("link-button").text() mustBe messages("site.continue.confirm")
     }
 
   }

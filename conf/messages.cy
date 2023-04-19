@@ -3,6 +3,7 @@ service.name = Treth Deunydd Pacio Plastig
 site.back = Yn ôl
 site.remove = Tynnu
 site.change = Newid
+site.cancel = [NEED WELSH] Cancel
 site.no = Na
 site.yes = Iawn
 site.continue = Cadw ac yn eich blaen
@@ -203,16 +204,27 @@ amend.confirmation.paragraph.1 = Gall hyn gymryd hyd at 24 awr i’w ddangos ar 
 amend.confirmation.paragraph.2 = Mae’n bosibl bod faint o dreth sydd arnoch wedi newid.
 amend.confirmation.paragraph.3 = pan fydd wedi’i ddiweddaru, i ddod o hyd i faint o dreth sydd angen i chi ei dalu a phryd mae’n ddyledus.
 
-confirmPackagingCredit.title = Cadarnhau swm y credyd
-confirmPackagingCredit.heading = Cadarnhau {0} o gredyd
-confirmPackagingCredit.subHeading = Credydau
-confirmPackagingCredit.hint.p1 = Rhoesoch wybod i ni eich bod wedi talu treth ar {0} o ddeunydd pacio plastig mewn Ffurflen Dreth flaenorol, a’i fod bellach wedi’i allforio neu ei drosi.
-confirmPackagingCredit.hint.p2 = Caiff y Dreth Deunydd Pacio Plastig ei chyfrifo ar sail £200 y dunnell.
-confirmPackagingCredit.hint.afterFirstApril2023 = Codwyd Treth Deunydd Pacio Plastig ar £200 y dunnell yn ystod y cyfnod hwn.
-confirmPackagingCredit.hint.p3 = Mae hyn yn golygu y cewch {0} o dreth yn ôl fel credyd.
-confirmPackagingCredit.hint.p4 = Bydd eich credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
-confirmPackagingCredit.change.credit.paragraph = Newid swm y credyd
-confirmPackagingCredit.confirm.credit.button = Cadarnhau swm y credyd
+confirmPackagingCredit.title = [NEED WELSH] Confirm credit for 1 April 2022 to 31 March 2023
+confirmPackagingCredit.heading = [NEED WELSH] Confirm {0} of credit
+confirmPackagingCredit.subHeading = [NEED WELSH] Credits
+confirmPackagingCredit.taxRate = [NEED WELSH] Tax rate
+confirmPackagingCredit.taxRate.value = [NEED WELSH] {0} per tonne
+confirmPackagingCredit.hiddenText = [NEED WELSH] You cannot change this field
+confirmPackagingCredit.exported.answer = [NEED WELSH] Paid tax on plastic packaging before it was exported
+confirmPackagingCredit.exported.weight = [NEED WELSH] Weight of plastic packaging you paid tax on before it was exported
+confirmPackagingCredit.converted.answer = [NEED WELSH] Paid tax on plastic packaging before it was converted
+confirmPackagingCredit.converted.weight = [NEED WELSH] Weight of plastic packaging you paid tax on before it was converted
+confirmPackagingCredit.totalPlastic = [NEED WELSH] Total plastic packaging
+confirmPackagingCredit.creditAmount = [NEED WELSH] Credit amount
+confirmPackagingCredit.requestedCredits = [NEED WELSH] Your {0} credit will be applied against your total balance in your Plastic Packaging Tax account.
+confirmPackagingCredit.tooMuchCredit.heading = [NEED WELSH] You are claiming too much credit
+confirmPackagingCredit.tooMuchCredit.p1 = [NEED WELSH] This credit amount is more than the total tax you paid between 1 April 2022 and 31 March 2023.
+confirmPackagingCredit.tooMuchCredit.p2 = [NEED WELSH] To continue, you need to change one or more of your answers. Check how much plastic packaging you paid tax on between 1 April 2022 and 31 March 2023. You might need to check more than one{0}.
+confirmPackagingCredit.previousSubmittedReturn.link = [NEED WELSH] previously submitted return
+confirmPackagingCredit.tooMuchCredit.p3 = [NEED WELSH] We have saved your answers. You can check your records and come back later.
+confirmPackagingCredit.tooMuchCredit.p4 = [NEED WELSH] You must have sufficient evidence to claim tax back as credit.
+confirmPackagingCredit.tooMuchCredit.h3 = [NEED WELSH] What you need to do
+confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link = [NEED WELSH] Cancel credit claim
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
 directlyExportedComponents.heading = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
@@ -580,13 +592,6 @@ nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
 nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
 nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
-too-much-credit-claimed.heading = Ni allwch hawlio mwy o dreth yn ôl fel credyd na faint rydych wedi’i dalu o’r blaen
-too-much-credit-claimed.section-heading = Credydau
-too-much-credit-claimed.para-1 = Mae’r pwysau rydych wedi’u nodi yn fwy na’r holl bwysau rydych wedi talu treth arnynt o'ch Ffurflenni Treth blaenorol.
-too-much-credit-claimed.para-2 = I fynd yn eich blaen, newidiwch bwysau’r deunydd pacio plastig sydd bellach wedi’i allforio neu wedi’i drosi.
-too-much-credit-claimed.button-text = Newid pwysau
-too-much-credit-claimed.cancel-link-text = Canslo hawlio credyd ac yn eich blaen gyda’r Ffurflen Dreth
-
 removeCredit.title = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.heading = A ydych yn siŵr eich bod am dynnu’r credyd hwn?
 removeCredit.error.required = Dewiswch ‘Iawn’ os ydych am dynnu’r credyd hwn
@@ -702,3 +707,7 @@ amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod
 
 converted-credits-weight.heading-title = [NEEDS WELSH] How much plastic packaging did you pay tax on before it was converted?
 converted-credits-weight.hint = [NEEDS WELSH] Enter the weight in kilograms. 1 tonne is 1,000kg.
+
+cancelCreditsClaim.title = [NEEDS WELSH]Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.heading = [NEEDS WELSH] Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.error.required = [NEEDS WELSH] Select yes if you want to cancel this credit

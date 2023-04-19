@@ -207,3 +207,9 @@ POST       /amending-exported-plastic-packaging                     controllers.
 GET        /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad
 POST       /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onSubmit
 
+# Todo: on the SoT this route is cancel-credit. This already exist and it it handled by
+# the RemoveCeeditController. For the momemnt I have renamed this as below. We may later
+# want to reuse the RemoveCeeditController for this, but I have not touched that as this
+# is used by the ReturnsCheckYourAnswer page which will change in near future.
+GET        /cancel-credit-claim                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad
+POST       /cancel-credit-claim                        controllers.returns.credits.CancelCreditsClaimController.onSubmit

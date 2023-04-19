@@ -44,7 +44,7 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
   "Get" should {
     "return a credit for a pptReference" in {
-      val expectedCredit = CreditBalance(10, 5, 200, true)
+      val expectedCredit = CreditBalance(10, 5, 200, true, 0.30)
       stubCalculateCreditApi(
         Status.OK,
         pptReference,

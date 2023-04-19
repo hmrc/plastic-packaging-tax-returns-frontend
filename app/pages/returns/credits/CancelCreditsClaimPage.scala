@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package pages.returns.credits
 
-import play.api.libs.json.{Json, OFormat}
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class CreditBalance(
-  availableCreditInPounds: BigDecimal,
-  totalRequestedCreditInPounds: BigDecimal,
-  totalRequestedCreditInKilograms: Long,
-  canBeClaimed: Boolean,
-  taxRate: BigDecimal
-)
-
-object CreditBalance {
-
-  implicit val format: OFormat[CreditBalance] =
-    Json.format[CreditBalance]
-
+case object CancelCreditsClaimPage extends QuestionPage[Boolean] {
+  override def path: JsPath = JsPath \ "CancelCreditsClaim"
 }

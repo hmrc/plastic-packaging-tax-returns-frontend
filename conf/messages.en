@@ -2,6 +2,7 @@ service.name = Plastic Packaging Tax
 
 site.back = Back
 site.remove = Remove
+site.cancel = Cancel
 site.change = Change
 site.no = No
 site.yes = Yes
@@ -198,16 +199,27 @@ amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Pl
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
-confirmPackagingCredit.title = Confirm credit amount
+confirmPackagingCredit.title = Confirm credit for 1 April 2022 to 31 March 2023
 confirmPackagingCredit.heading = Confirm {0} of credit
 confirmPackagingCredit.subHeading = Credits
-confirmPackagingCredit.hint.p1 = You told us that you paid tax on {0} of plastic packaging from a previous return, and it has since been exported or converted.
-confirmPackagingCredit.hint.p2 = Plastic Packaging Tax is calculated at £200 per tonne.
-confirmPackagingCredit.hint.afterFirstApril2023 = Plastic Packaging Tax was charged at £200 per tonne during this time.
-confirmPackagingCredit.hint.p3 = This means the amount of tax you’ll get back as credit will be {0}.
-confirmPackagingCredit.hint.p4 = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
-confirmPackagingCredit.change.credit.paragraph = Change the amount of credit
-confirmPackagingCredit.confirm.credit.button = Confirm credit amount
+confirmPackagingCredit.taxRate = Tax rate
+confirmPackagingCredit.taxRate.value = {0} per tonne
+confirmPackagingCredit.hiddenText = You cannot change this field
+confirmPackagingCredit.exported.answer = Paid tax on plastic packaging before it was exported
+confirmPackagingCredit.exported.weight = Weight of plastic packaging you paid tax on before it was exported
+confirmPackagingCredit.converted.answer = Paid tax on plastic packaging before it was converted
+confirmPackagingCredit.converted.weight = Weight of plastic packaging you paid tax on before it was converted
+confirmPackagingCredit.totalPlastic = Total plastic packaging
+confirmPackagingCredit.creditAmount = Credit amount
+confirmPackagingCredit.requestedCredits = Your {0} credit will be applied against your total balance in your Plastic Packaging Tax account.
+confirmPackagingCredit.tooMuchCredit.heading = You are claiming too much credit
+confirmPackagingCredit.tooMuchCredit.p1 = This credit amount is more than the total tax you paid between 1 April 2022 and 31 March 2023.
+confirmPackagingCredit.tooMuchCredit.p2 = To continue, you need to change one or more of your answers. Check how much plastic packaging you paid tax on between 1 April 2022 and 31 March 2023. You might need to check more than one{0}.
+confirmPackagingCredit.previousSubmittedReturn.link =previously submitted return
+confirmPackagingCredit.tooMuchCredit.p3 = We have saved your answers. You can check your records and come back later.
+confirmPackagingCredit.tooMuchCredit.p4 = You must have sufficient evidence to claim tax back as credit.
+confirmPackagingCredit.tooMuchCredit.h3 = What you need to do
+confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link = Cancel credit claim
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
@@ -567,13 +579,6 @@ nowStartYourReturn.heading = Now start your return for {0}
 nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.
 nowStartYourReturn.button-text = Start your return
 
-too-much-credit-claimed.heading = You cannot claim more tax back as credit than you’ve previously paid
-too-much-credit-claimed.section-heading = Credits
-too-much-credit-claimed.para-1 = The weight you’ve entered is more than the total weight you’ve paid tax on from your previous returns.
-too-much-credit-claimed.para-2 = To continue, change the weight of plastic packaging that has since been exported or converted.
-too-much-credit-claimed.button-text = Change weight
-too-much-credit-claimed.cancel-link-text = Cancel claiming credit and continue return
-
 removeCredit.title = Are you sure you want to remove this credit?
 removeCredit.heading = Are you sure you want to remove this credit?
 removeCredit.error.required = Select yes if you want to remove this credit
@@ -695,3 +700,8 @@ converted-credits-weight.error.required = Enter the weight, in kilograms
 converted-credits-weight.error.nonNumeric = Weight must be entered as numbers
 converted-credits-weight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 converted-credits-weight.error.wholeNumber = Weight must not include decimals
+
+cancelCreditsClaim.title = Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.heading = Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
+cancelCreditsClaim.error.required = Select yes if you want to cancel this credit
+

@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package views
+package views.returns.credits
 
 import base.ViewSpecBase
-import models.Mode.NormalMode
-import play.api.mvc.Call
+import play.api.data.Form
+import play.api.data.Forms.boolean
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.credits.ConfirmPackagingCreditView
+import views.html.returns.credits.CancelCreditsClaimView
 
-class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class CancelCreditsClaimViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  "ConfirmPackagingCreditView" should {
+  private val page = inject[CancelCreditsClaimView]
+  private def render: Html = page(Form("value" -> boolean).fill(true))(request, messages)
+
+  "view" should {
     "pass accessibility checks" in {
-
-      val page = inject[ConfirmPackagingCreditView]
-
-      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"), NormalMode, false)(request, messages)
-
       render.toString() must passAccessibilityChecks
     }
   }
+
 }

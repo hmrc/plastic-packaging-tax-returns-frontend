@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package forms.returns.credits
 
-import play.api.libs.json.{Json, OFormat}
+import javax.inject.Inject
 
-case class CreditBalance(
-  availableCreditInPounds: BigDecimal,
-  totalRequestedCreditInPounds: BigDecimal,
-  totalRequestedCreditInKilograms: Long,
-  canBeClaimed: Boolean,
-  taxRate: BigDecimal
-)
+import forms.mappings.Mappings
+import play.api.data.Form
 
-object CreditBalance {
+class CancelCreditsClaimFormProvider @Inject() extends Mappings {
 
-  implicit val format: OFormat[CreditBalance] =
-    Json.format[CreditBalance]
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("cancelCreditsClaim.error.required")
+  )
 }
