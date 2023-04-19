@@ -20,8 +20,5 @@ import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object CancelCreditsClaimPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "CancelCreditsClaim"
+  override def path: JsPath = JsPath \ "CancelCreditsClaim"
 }
