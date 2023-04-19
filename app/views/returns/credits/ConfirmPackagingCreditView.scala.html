@@ -43,7 +43,7 @@
     @link(
         id = "previous-submitted-return",
         text = messages("confirmPackagingCredit.previousSubmittedReturn.link"),
-        call = Call("GET", controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
+        href = controllers.amends.routes.SubmittedReturnsController.onPageLoad().url
     )
 }
 
@@ -98,5 +98,5 @@
     @paragraph(content = link(
         id = "cancel-credit-claim",
         text = cancelText,
-        call = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad))
+        href = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url))
 }
