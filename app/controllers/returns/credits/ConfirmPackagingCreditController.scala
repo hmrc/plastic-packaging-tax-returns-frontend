@@ -54,19 +54,16 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val fromDate = "1 April 2022"
-    val toDate = "31 March 2023"
 
-
-      Ok(confirmCreditView(
-        creditBalance.totalRequestedCreditInPounds,
-        creditBalance.canBeClaimed,
-        fromDate,
-        toDate,
-        creditSummaryListFactory.createSummaryList(creditBalance, request.userAnswers),
-        returnsJourneyNavigator.confirmCreditRoute(mode),
-        mode)
-      )
+    //Todo: Pass to the view the fromDate and toDate the user is claiming
+    // credit for.
+    Ok(confirmCreditView(
+      creditBalance.totalRequestedCreditInPounds,
+      creditBalance.canBeClaimed,
+      creditSummaryListFactory.createSummaryList(creditBalance, request.userAnswers),
+      returnsJourneyNavigator.confirmCreditRoute(mode),
+      mode)
+    )
   }
 
   def onCancelClaim(mode: Mode): Action[AnyContent] =

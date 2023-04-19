@@ -3,6 +3,7 @@ service.name = Treth Deunydd Pacio Plastig
 site.back = Yn ôl
 site.remove = Tynnu
 site.change = Newid
+site.cancel = [NEED WELSH] Cancel
 site.no = Na
 site.yes = Iawn
 site.continue = Cadw ac yn eich blaen

@@ -35,8 +35,6 @@
 
 @( requestedCredit: BigDecimal,
     canClaim: Boolean,
-    fromDate: String,
-    toDate: String,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
     mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -47,6 +45,14 @@
         text = messages("confirmPackagingCredit.previousSubmittedReturn.link"),
         call = Call("GET", controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
     )
+}
+
+@cancelText = @{
+    if(canClaim) {
+        messages("site.cancel")
+    } else {
+        messages("confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link")
+    }
 }
 
 @claimCreditContent = {
@@ -68,11 +74,11 @@
 }
 
 @layout(pageTitle = titleNoForm(
-                        messages("confirmPackagingCredit.title", fromDate, toDate),
+                        messages("confirmPackagingCredit.title"),
                         Some(messages("return.title.tail")))) {
 
 
-    @heading(messages("confirmPackagingCredit.title", fromDate, toDate))
+    @heading(messages("confirmPackagingCredit.title"))
 
     @govukSummaryList(SummaryList(rows = summaryRows))
 
@@ -91,6 +97,6 @@
     *@
     @paragraph(content = link(
         id = "cancel-credit-claim",
-        text = messages("confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link"),
-        call = Call("GET", "/foo")))
+        text = cancelText,
+        call = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad))
 }

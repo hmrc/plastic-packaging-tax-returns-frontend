@@ -2,6 +2,7 @@ service.name = Plastic Packaging Tax
 
 site.back = Back
 site.remove = Remove
+site.cancel = Cancel
 site.change = Change
 site.no = No
 site.yes = Yes
@@ -198,7 +199,7 @@ amend.confirmation.paragraph.1 = This may take up to 24 hours to show on your Pl
 amend.confirmation.paragraph.2 = The amount of tax you owe may have changed.
 amend.confirmation.paragraph.3 = when it’s been updated, to find out how much tax you need to pay and when it’s due.
 
-confirmPackagingCredit.title = Confirm credit for {0} to {1}
+confirmPackagingCredit.title = Confirm credit for 1 April 2022 to 31 March 2023
 confirmPackagingCredit.heading = Confirm {0} of credit
 confirmPackagingCredit.subHeading = Credits
 confirmPackagingCredit.taxRate = Tax rate

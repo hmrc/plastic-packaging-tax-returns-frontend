@@ -119,7 +119,7 @@ class ConfirmPackagingCreditControllerSpec
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      verify(mockView).apply(meq(BigDecimal(5)),any, any, any, meq(summaryList), any, any)(any, any)
+      verify(mockView).apply(meq(BigDecimal(5)), any, meq(summaryList), any, any)(any, any)
     }
 
     "pass a summary list to view with the data" in {
@@ -141,14 +141,14 @@ class ConfirmPackagingCreditControllerSpec
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(NormalMode)(dataRequest))
-        verify(mockView).apply( meq(BigDecimal(5)), any, any, any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
+        verify(mockView).apply( meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
         when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(CheckMode)(dataRequest))
-        verify(mockView).apply(meq(BigDecimal(5)), any, any, any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
+        verify(mockView).apply(meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
       }
     }
 
@@ -198,7 +198,7 @@ class ConfirmPackagingCreditControllerSpec
   }
 
   private def setUpMockForConfirmCreditsView(): Unit = {
-    when(mockView.apply(any, any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(Right(creditBalance)))
   }

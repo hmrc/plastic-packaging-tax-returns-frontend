@@ -378,9 +378,14 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "cancelCreditRoute" should {
-    "redirect to submit-return-or-claim-credit when answer is Yes" in {
-
+    "redirect to submit-return-or-claim-credit when credit is cancel" in {
+      navigator.cancelCreditRoute(true) mustBe
       controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+    }
+
+    "redirect to confirm-or-correct-credit page not cancelled" in {
+      navigator.cancelCreditRoute(false) mustBe
+        controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
     }
   }
 }

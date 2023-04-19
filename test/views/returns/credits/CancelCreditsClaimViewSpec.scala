@@ -47,6 +47,7 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
       view.getElementsByClass("govuk-button").text() mustBe messages("site.button.continue")
     }
 
+
     "error" when {
       "no option is selected" in {
         val errorForm = form.bind(Map("value" -> ""))

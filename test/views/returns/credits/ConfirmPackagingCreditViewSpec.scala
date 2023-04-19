@@ -29,8 +29,6 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
   private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
   private val requestedCredit = BigDecimal(500)
-  private val fromDate = "1 April 2022"
-  private val toDate = "31 March 2023"
   private val continueCall = Call("TEST", "/end-point")
 
 
@@ -42,7 +40,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
   )
   private def createView(canClaim: Boolean = true): Html =
-    page(requestedCredit, canClaim, fromDate, toDate, summaryList, continueCall, NormalMode)(request, messages)
+    page(requestedCredit, canClaim, summaryList, continueCall, NormalMode)(request, messages)
 
   "View" should {
 
@@ -97,10 +95,18 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
     "show cancel credit claim link when too much credit" in {
       createView(false).getElementById("cancel-credit-claim").text() mustBe "Cancel credit claim"
+      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
     }
 
     "should not show button when too much credit" in {
       createView(false).getElementById("link-button") mustBe null
+    }
+
+    "show cancel button when can claim credit" in {
+      createView().getElementById("cancel-credit-claim").text() mustBe "Cancel"
+      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
     }
 
     "have a confirm and continue button" in {

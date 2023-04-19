@@ -16,22 +16,28 @@
 
 package controllers.returns.credits
 
-import controllers.actions._
-
-import javax.inject.Inject
-import models.Mode
-import navigation.{Navigator, ReturnsJourneyNavigator}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.CacheConnector
+import controllers.actions._
 import forms.returns.credits.CancelCreditsClaimFormProvider
-import pages.returns.credits.CancelCreditsClaimPage
-import uk.gov.hmrc.http.HttpVerbs.GET
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import models.requests.DataRequest.headerCarrier
+import navigation.ReturnsJourneyNavigator
+import pages.returns.credits._
+import play.api.data.FormBinding.Implicits.formBinding
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.returns.credits.CancelCreditsClaimView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+/*
+  Todo: There is already a RemoveCreditController, used by the ReturnsCheckYourAnswer page
+  which only reset to false the WhatDoYouWantToDoPage page. We may could consolidate
+  this CancelCreditsClaimController and the RemoveCreditController into one.
+  Not done it at this point as we have not looked into the ReturnsCheckYourAnswer page
+  which will need to change.
+ */
 class CancelCreditsClaimController @Inject()(
                                               override val messagesApi: MessagesApi,
                                               cacheConnector: CacheConnector,
@@ -40,14 +46,13 @@ class CancelCreditsClaimController @Inject()(
                                               form: CancelCreditsClaimFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               view: CancelCreditsClaimView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends I18nSupport {
 
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
 
       val preparedForm = request.userAnswers.fill(CancelCreditsClaimPage, form())
-
       Ok(view(preparedForm))
   }
 
@@ -58,8 +63,17 @@ class CancelCreditsClaimController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors))),
 
-        value =>
-          Future.successful(Redirect(Call(GET, "/foo")))
+        cancel =>
+          (if(cancel) {
+            // Todo: we may want to use the CreditsAnswer object, so remove the
+            //  ExportCreditPage and the other page that do not use the CreditAnswer.
+            //  OldExportedCreditsPage uses the CreditAnswer
+            request.userAnswers
+              .remove(OldExportedCreditsPage).get
+              .remove(OldConvertedCreditsPage).get
+              .change(WhatDoYouWantToDoPage, false,cacheConnector.saveUserAnswerFunc(request.pptReference))
+          }else Future.unit)
+            .map(_ => Redirect(navigator.cancelCreditRoute(cancel)))
       )
   }
 }

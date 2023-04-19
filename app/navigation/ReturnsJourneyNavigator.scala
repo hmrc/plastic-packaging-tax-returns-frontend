@@ -22,7 +22,6 @@ import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
 import models.Mode.{CheckMode, NormalMode}
-import models.returns.CreditsAnswer
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
@@ -201,6 +200,12 @@ class ReturnsJourneyNavigator @Inject()(
       routes.ReturnsCheckYourAnswersController.onPageLoad() 
     else 
       routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
+  }
+
+  def cancelCreditRoute(isCancelled: Boolean): Call = {
+    if(isCancelled)
+      controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
+    else controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
   }
 
   private def nonExportedHumanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =
