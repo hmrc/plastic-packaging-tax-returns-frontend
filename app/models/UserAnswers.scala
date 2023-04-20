@@ -121,6 +121,16 @@ case class UserAnswers(
     }
   }
 
+  /** Change the value or the given user answer, or add the user answer if it does not exists. The value of the user
+    * answer will be the value returned by `newValueFunc(previousValue)`, where `previousValue = None` if 
+    * the user answer does not exist
+    * @param questionPage source of path 
+    * @param newValueFunc function to calculate new value, passed Some(previous value) if there was one, or None if
+    *                     there was not a previous value
+    * @param saveUserAnswerFunc function to save the updated user answers once new value applied
+    * @tparam A type of user answer field's value
+    * @return [[Future]] of Unit
+    */
   def changeWithFunc[A](questionPage: QuestionPage[A], newValueFunc: Option[A] => A,  
     saveUserAnswerFunc: SaveUserAnswerFunc) (implicit format: Format[A], ec: ExecutionContext): Future[Unit] = {
 
