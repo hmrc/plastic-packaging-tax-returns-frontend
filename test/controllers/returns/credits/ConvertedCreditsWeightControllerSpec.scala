@@ -50,11 +50,10 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   private val controllerComponents = mock[MessagesControllerComponents]
   private val view = mock[ConvertedCreditsWeightView]
   private val formProvider = mock[ConvertedCreditsWeightFormProvider]
-  private val navigator = mock[ReturnsJourneyNavigator]
   private val cacheConnector = mock[CacheConnector]
 
   private val controller = new ConvertedCreditsWeightController(
-    messagesApi, journeyAction, controllerComponents, view, formProvider, navigator, cacheConnector
+    messagesApi, journeyAction, controllerComponents, view, formProvider, cacheConnector
   )
   
   private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
@@ -71,8 +70,6 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
     when(request.userAnswers.fill[Long](any[JsPath], any) (any)) thenReturn form
-    
-    when(navigator.convertedCreditsWeight(any, any)) thenReturn Call("whoyagonna", "ghostbusters")
   }
 
   "onPageLoad" should {
