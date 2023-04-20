@@ -16,13 +16,10 @@
 
 package controllers.returns.credits
 
-import akka.stream.testkit.NoMaterializer
-import base.FakeIdentifierActionWithEnrolment
 import connectors.CacheConnector
-import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
+import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
-import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchersSugar.any
@@ -36,7 +33,7 @@ import play.api.http.Status._
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ExportedCreditsView
@@ -52,14 +49,13 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   private val controllerComponents = stubMessagesControllerComponents()
   private val mockView = mock[ExportedCreditsView]
   private val mockForm = mock[ExportedCreditsFormProvider]
+  private val mockJourneyAction = mock[JourneyAction]
 
   val sut: ExportedCreditsController = new ExportedCreditsController(
     mockMessages,
     mockCacheConnector,
     mockNavigator,
-    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
-    new FakeDataRetrievalAction(Some(UserAnswers("123"))),
-    new DataRequiredActionImpl(),
+    mockJourneyAction, 
     mockForm,
     controllerComponents,
     mockView)

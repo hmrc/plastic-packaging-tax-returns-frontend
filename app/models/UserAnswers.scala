@@ -120,6 +120,13 @@ case class UserAnswers(
     }
   }
 
+  def changeWithFunc[A](questionPage: QuestionPage[A], newValueFunc: A => A, saveUserAnswerFunc: SaveUserAnswerFunc) 
+    (implicit format: Format[A]) = {
+    val previousValue = getOrFail(questionPage)
+    val updatedUserAnswers = setOrFail(questionPage, newValueFunc(previousValue))
+    saveUserAnswerFunc.apply(updatedUserAnswers, true)
+  }
+
   /** If user's answer has changed, passes updated user-answers object to given save function  
     *
     * @param path               - [[JsPath]] to where this answer should be added / changed

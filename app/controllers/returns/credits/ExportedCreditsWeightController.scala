@@ -47,7 +47,6 @@ class ExportedCreditsWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-
         val form = CreditsAnswer.fillFormWeight(request.userAnswers, OldExportedCreditsPage, formProvider() )
         Ok(view(form, mode))
     }
@@ -57,11 +56,9 @@ class ExportedCreditsWeightController @Inject()(
       implicit request =>
         formProvider().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value => {
-
-            CreditsAnswer.setUserAnswer(request.userAnswers)
+          formValue => {
             request.userAnswers
-              .setOrFail(ExportedCreditsWeightPage, value)
+              .setOrFail(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(formValue))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(_ => Results.Redirect(navigator.exportedCreditsWeight(mode)))
           }
