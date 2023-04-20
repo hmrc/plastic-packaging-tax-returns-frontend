@@ -25,6 +25,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
+import scala.runtime.Nothing$
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -120,11 +121,14 @@ case class UserAnswers(
     }
   }
 
-  def changeWithFunc[A](questionPage: QuestionPage[A], newValueFunc: A => A, saveUserAnswerFunc: SaveUserAnswerFunc) 
-    (implicit format: Format[A]) = {
-    val previousValue = getOrFail(questionPage)
+  def changeWithFunc[A](questionPage: QuestionPage[A], newValueFunc: Option[A] => A,  
+    saveUserAnswerFunc: SaveUserAnswerFunc) (implicit format: Format[A], ec: ExecutionContext): Future[Unit] = {
+
+    val previousValue = get(questionPage)
     val updatedUserAnswers = setOrFail(questionPage, newValueFunc(previousValue))
-    saveUserAnswerFunc.apply(updatedUserAnswers, true)
+    saveUserAnswerFunc
+      .apply(updatedUserAnswers, true)
+      .map(_ => ())
   }
 
   /** If user's answer has changed, passes updated user-answers object to given save function  

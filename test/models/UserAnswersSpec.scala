@@ -17,13 +17,13 @@
 package models
 
 import models.UserAnswers.SaveUserAnswerFunc
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.ArgumentMatchersSugar._
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
+import play.api.libs.json.Json.obj
 import play.api.libs.json.{JsObject, JsPath, JsString, Json, OWrites}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
@@ -31,10 +31,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach {
+class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
 
-  private val userAnswers = UserAnswers("henry")
-  private val filledUserAnswers = UserAnswers("id", JsObject(Seq("cheese" -> JsObject(Seq("brie" -> JsString("200g"))))))
+  private val emptyUserAnswers = UserAnswers("henry")
+  private val filledUserAnswers = UserAnswers("id", 
+    obj { "cheese" -> obj("brie" -> "200g") }
+  )
 
   private class TestException extends Exception {}
   
@@ -45,30 +47,35 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach {
   
   private val questionPage = mock[QuestionPage[String]]
   private val saveFunction = mock[SaveUserAnswerFunc]
+  val newValueFunc = mock[Option[String] => String]
   
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(questionPage, saveFunction)
+    
     when(questionPage.path) thenReturn JsPath \ "cheese" \ "brie"
-    when(questionPage.cleanup(any(), any())) thenAnswer {i => Try(i.getArgument[UserAnswers](1))}
-    when(saveFunction.apply(any(), any())) thenReturn Future.successful(true)
+    when(questionPage.cleanup(any, any)) thenAnswer {
+      (_: Option[String], userAnswers: UserAnswers) => Try(userAnswers) // pass through
+    }
+    
+    when(saveFunction.apply(any, any)) thenReturn Future.successful(true)
+    when(newValueFunc.apply(any)) thenReturn "new-value"
   }
 
-  
   "it" should {
     "remember its id" in {
-      userAnswers must have ('id ("henry"))
+      emptyUserAnswers must have ('id ("henry"))
     }
 
     "set a value" when {
       "using a string key" in {
-        userAnswers.setOrFail("cheese", "please").data.value mustBe Map("cheese" -> JsString("please"))
+        emptyUserAnswers.setOrFail("cheese", "please").data.value mustBe Map("cheese" -> JsString("please"))
       }
       "setting a value fails" in {
-        a[TestException] must be thrownBy userAnswers.setOrFail("x", BadValue())
+        a[TestException] must be thrownBy emptyUserAnswers.setOrFail("x", BadValue())
       }
       "using a question page key" in {
-        userAnswers.setOrFail(questionPage, "much").data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
+        emptyUserAnswers.setOrFail(questionPage, "much").data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
       }
     }
 
@@ -87,7 +94,7 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach {
 
     "fill in a form's value" in {
       val form = mock[Form[String]]
-      when(form.fill(any())) thenReturn form
+      when(form.fill(any)) thenReturn form
       filledUserAnswers.fill(questionPage, form) mustBe theSameInstanceAs(form)
       verify(form).fill("200g")
     }
@@ -100,13 +107,36 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach {
       }
       "new value is the same" in {
         await(filledUserAnswers.change(questionPage, "200g", saveFunction)) mustBe false
-        verify(saveFunction, never()).apply(any(), any())
+        verify(saveFunction, never).apply(any, any)
+      }
+    }
+    
+    "change a value with a function" when {
+      
+      "previous value exists" in {
+        await {
+          filledUserAnswers.changeWithFunc(questionPage, newValueFunc, saveFunction)
+        }
+        verify(newValueFunc).apply(Some("200g"))
+        verify(saveFunction).apply(
+          eqTo(UserAnswers("id", obj { "cheese" -> obj("brie" -> "new-value") }, filledUserAnswers.lastUpdated)), 
+          any)
+      }
+      
+      "previous value does not exist" in {
+        await {
+          emptyUserAnswers.changeWithFunc(questionPage, newValueFunc, saveFunction)
+        }
+        verify(newValueFunc).apply(None)
+        verify(saveFunction).apply(
+          eqTo(UserAnswers("henry", obj { "cheese" -> obj("brie" -> "new-value") }, emptyUserAnswers.lastUpdated)),
+          any)
       }
     }
     
     "save changed answers" in {
       await(filledUserAnswers.save(saveFunction)) must be theSameInstanceAs(filledUserAnswers)
-      verify(saveFunction).apply(any(), any())
+      verify(saveFunction).apply(any, any)
     }
     
     "remove any answers" in {
