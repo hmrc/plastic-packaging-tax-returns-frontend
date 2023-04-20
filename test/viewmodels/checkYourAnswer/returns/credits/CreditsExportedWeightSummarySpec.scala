@@ -53,7 +53,9 @@ class CreditsExportedWeightSummarySpec extends PlaySpec {
       value = Value(Text(20L.asKg)),
       actions = Some(Actions(items = Seq(ActionItem(
         controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(CheckMode).url,
-        Text("change")))))
+        Text("change"),
+        Some("exported weight")
+      ))))
     ))
   }
 }

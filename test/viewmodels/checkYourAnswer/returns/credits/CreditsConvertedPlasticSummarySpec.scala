@@ -69,7 +69,9 @@ class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEac
       value = Value(Text(answerValue)),
       actions = Some(Actions(items = Seq(ActionItem(
         controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url,
-        Text("change")))))
+        Text("change"),
+        Some("answer")
+      ))))
     ))
   }
 }

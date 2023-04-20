@@ -20,10 +20,10 @@ import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.PrintBigDecimal
-import viewmodels.checkAnswers.returns.credits.{CreditAmountSummary, CreditsTotalPlasticSummary}
+import viewmodels.checkAnswers.returns.credits.CreditAmountSummary
 
 class CreditAmountSummarySpec extends PlaySpec {
 
@@ -38,7 +38,7 @@ class CreditAmountSummarySpec extends PlaySpec {
 
       CreditAmountSummary(200L)(message) mustBe SummaryListRow(
         key = Key(Text("credit amount"), "govuk-!-width-one-half"),
-        value = Value(HtmlContent(s"""<p>£200<span class="govuk-visually-hidden">hidden text</span></p>"""))
+        value = Value(Text("£200"))
       )
 
     }
