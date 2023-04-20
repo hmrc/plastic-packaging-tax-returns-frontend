@@ -16,7 +16,10 @@
 
 package models.returns
 
+import models.UserAnswers
+import play.api.data.Form
 import play.api.libs.json.{Json, OFormat}
+import queries.Gettable
 
 //todo: This would need to relooked as now we had two page for credit answer and weight
 case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
@@ -29,6 +32,24 @@ case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
 }
 
 object CreditsAnswer {
+  def setUserAnswer(userAnswers: UserAnswers) = ???
+
+  def isYesNo(value: Boolean): CreditsAnswer = CreditsAnswer(value, None)
+
   def noClaim: CreditsAnswer = CreditsAnswer(false, None)
   implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
+
+  def fillForm(userAnswers: UserAnswers, page: Gettable[CreditsAnswer], form: Form[Boolean]) = {
+    userAnswers.get(page) match {
+      case None => form
+      case Some(value) => form.fill(value.yesNo)
+    }
+  }
+
+  def fillFormWeight(userAnswers: UserAnswers, page: Gettable[CreditsAnswer], form: Form[Long]) = {
+    userAnswers.get(page) match {
+      case None => form
+      case Some(value) => form.fill(value.value)
+    }
+  }
 }

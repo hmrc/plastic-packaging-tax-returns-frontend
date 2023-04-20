@@ -21,8 +21,9 @@ import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.ExportedCreditsPage
+import pages.returns.credits.{ExportedCreditsPage, OldExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -46,11 +47,9 @@ class ExportedCreditsController @Inject()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val userAnswers = request.userAnswers
-      val preparedForm = userAnswers.get(ExportedCreditsPage) match {
-        case None => formProvider()
-        case Some(value) => formProvider().fill(value)
-      }
+
+      val preparedForm = CreditsAnswer.fillForm(request.userAnswers, OldExportedCreditsPage, formProvider())
+
       Ok(view(preparedForm, mode))
   }
 
@@ -66,7 +65,7 @@ class ExportedCreditsController @Inject()
 
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(OldExportedCreditsPage, CreditsAnswer.isYesNo(value)))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
               } yield Redirect(navigator.exportedCreditsYesNo(mode, value))
           )
