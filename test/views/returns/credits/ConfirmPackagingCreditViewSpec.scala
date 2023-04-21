@@ -31,7 +31,6 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   private val requestedCredit = BigDecimal(500)
   private val continueCall = Call("TEST", "/end-point")
 
-
   private val summaryList = Seq(
     SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
     SummaryListRow(
@@ -104,8 +103,8 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "show cancel button when can claim credit" in {
-      createView().getElementById("cancel-credit-claim").text() mustBe "Cancel"
-      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
+      createView().getElementById("link-cancel").text() mustBe "Cancel"
+      createView().getElementById("link-cancel").select("a").get(0) must
         haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
     }
 
