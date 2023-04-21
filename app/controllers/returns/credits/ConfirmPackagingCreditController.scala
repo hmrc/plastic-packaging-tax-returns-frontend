@@ -23,14 +23,14 @@ import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.WhatDoYouWantToDoPage
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
 import views.html.returns.credits.ConfirmPackagingCreditView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmPackagingCreditController @Inject()(
   override val messagesApi: MessagesApi,
@@ -46,9 +46,13 @@ class ConfirmPackagingCreditController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        creditConnector.get(request.pptReference).map {
-          case Right(response) => displayView(response, mode)
-          case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
+        if (request.userAnswers.get(ExportedCreditsPage).isEmpty||request.userAnswers.get(ConvertedCreditsPage).isEmpty) {
+          Future.successful(Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(mode)))
+        } else {
+          creditConnector.get(request.pptReference).map {
+            case Right(response) => displayView(response, mode)
+            case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
+          }
         }
     }
 
