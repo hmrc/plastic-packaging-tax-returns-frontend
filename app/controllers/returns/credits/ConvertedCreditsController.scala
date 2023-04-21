@@ -61,9 +61,8 @@ class ConvertedCreditsController @Inject()
           .fold(
             formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
             formValue => {
-              request.userAnswers
-                .setOrFail(OldConvertedCreditsPage, CreditsAnswer.answerYesNoWith(formValue))
-                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithFunc(OldConvertedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
                 .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
             }
           )
