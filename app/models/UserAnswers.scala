@@ -25,7 +25,6 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
-import scala.runtime.Nothing$
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -39,6 +38,24 @@ case class UserAnswers(
 
   def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(path).fold(form)(form.fill)
+
+
+  /** Fills the given form by reading a user answer and passing that through the given function
+    * @param gettable [[Gettable]] provides [[JsPath]] of the user answer
+    * @param form [[Form]] to fill with answer
+    * @param func function to extract form value from user answer 
+    * @param reads [[Reads]] to de-serialise user answer 
+    * @tparam FormValue type of the form's value 
+    * @tparam AnswerType type of the user answer
+    * @return the form as is, or a new form filled with the value returned by the given function. If the function return
+    */
+  def genericFill[FormValue, AnswerType](gettable: Gettable[AnswerType], form: Form[FormValue], 
+    func: AnswerType => Option[FormValue]) (implicit reads: Reads[AnswerType]): Form[FormValue] = {
+      get(gettable)
+        .flatMap(func)
+        .map(form.fill)
+        .getOrElse(form) 
+  }
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     get(page.path)

@@ -29,7 +29,7 @@ import viewmodels.implicits._
 object CreditsExportedPlasticSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage).map {
+    answers.get(ExportedCreditsPage).orElse(Some(false)).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 

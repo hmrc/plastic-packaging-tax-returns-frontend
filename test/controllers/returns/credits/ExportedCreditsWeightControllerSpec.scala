@@ -25,6 +25,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -52,8 +53,8 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
   private val form = mock[Form[Long]]
   private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  val saveFunction = mock[SaveUserAnswerFunc]
-  val ans = mock[UserAnswers]
+  private val saveFunction = mock[SaveUserAnswerFunc]
+  private val userAnswers = mock[UserAnswers]
   private val messagesApi = mock[MessagesApi]
   private val journeyAction = mock[JourneyAction]
   private val cacheConnector = mock[CacheConnector]
@@ -74,7 +75,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, ans)
+    reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, userAnswers)
 
     when(formProvider.apply()).thenReturn(form)
     when(view.apply(any, any)(any, any)).thenReturn(HtmlFormat.empty)
@@ -133,7 +134,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
       withClue("save weight to user Answer") {
-        verify(ans).save(meq(saveFunction))(any)
+        verify(userAnswers).save(meq(saveFunction))(any)
       }
 
       withClue("save weight to cache") {
@@ -171,8 +172,8 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
   private def setupMocks = {
     when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber).fill(10L))
-    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(ans)
-    when(ans.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswers)
+    when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(dataRequest.pptReference).thenReturn("123")
     when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))

@@ -31,9 +31,9 @@ case class CreditsClaimedDetails(
   override def summaryList: Seq[(String, String)] =
     Seq(
       CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
-      CreditExportedWeightPartialKey -> exported.weight.asKg -> exported.yesNo,
+      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
       CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
-      CreditConvertedWeightPartialKey -> converted.weight.asKg -> converted.yesNo,
+      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
       CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
       CreditTotalPartialKey -> totalCredits.asPounds -> true
     ).collect{case (tuple, show) if show => tuple}

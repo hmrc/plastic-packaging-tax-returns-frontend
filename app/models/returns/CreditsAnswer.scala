@@ -16,31 +16,26 @@
 
 package models.returns
 
-import models.UserAnswers
-import play.api.data.Form
 import play.api.libs.json.{Json, OFormat}
-import queries.Gettable
 
-import scala.language.implicitConversions
-
-case class CreditsAnswer(yesNo: Boolean, private val _weight: Option[Long]) {
+case class CreditsAnswer(yesNo: Boolean, private val weight: Option[Long]) {
 
   def yesNoMsgKey: String = if (yesNo) "site.yes" else "site.no"
 
-  def weight: Long = (yesNo, _weight) match {
+  def weightValue: Long = (yesNo, weight) match {
     case (true, Some(x)) => x
-    case (true, None) => 0
-    case (false, _) => 0
+    case _ => 0
   }
 
-  def changeYesNoTo(isYes: Boolean) = 
-    if (isYes)
-      CreditsAnswer(isYes, _weight)
-    else
-      CreditsAnswer(false, Some(0))
+  def changeYesNoTo(isYes: Boolean): CreditsAnswer = CreditsAnswer(isYes, weight)
+  def asTuple: (Boolean, Long) = yesNo -> weightValue
 
-  def asTuple: (Boolean, Long) = yesNo -> weight
-
+  def weightForForm: Option[Long] = (yesNo, weight) match {
+    case (_, None) => None
+    case (false, _) => Some(0L)
+    case (true, x) => x 
+  }
+  
 }
 
 object CreditsAnswer {
@@ -55,20 +50,8 @@ object CreditsAnswer {
   implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
 
   def noClaim: CreditsAnswer = CreditsAnswer(false, None)
-  
   def answerWeightWith(weight: Long): CreditsAnswer = CreditsAnswer(true, Some(weight))
-
-  def fillFormYesNo(userAnswers: UserAnswers, page: Gettable[CreditsAnswer], form: Form[Boolean]): Form[Boolean] = {
-    userAnswers.get(page) match {
-      case None => form
-      case Some(value) => form.fill(value.yesNo)
-    }
-  }
-
-  def fillFormWeight(userAnswers: UserAnswers, page: Gettable[CreditsAnswer], form: Form[Long]): Form[Long] = {
-    userAnswers.get(page) match {
-      case None => form
-      case Some(value) => form.fill(value.weight)
-    }
-  }
+  def fillFormYesNo(creditsAnswer: CreditsAnswer): Option[Boolean] = Some(creditsAnswer.yesNo)
+  def fillFormWeight(creditsAnswer: CreditsAnswer): Option[Long] = creditsAnswer.weightForForm
+    
 }

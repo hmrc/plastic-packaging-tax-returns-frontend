@@ -46,7 +46,7 @@ class ExportedCreditsController @Inject()
   def onPageLoad(mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = CreditsAnswer.fillFormYesNo(request.userAnswers, OldExportedCreditsPage, formProvider())
+        val preparedForm = request.userAnswers.genericFill(OldExportedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
         Results.Ok(view(preparedForm, mode))
     }
   }

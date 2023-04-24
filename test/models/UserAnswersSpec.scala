@@ -19,6 +19,7 @@ package models
 import models.UserAnswers.SaveUserAnswerFunc
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.MockitoSugar
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
@@ -31,7 +32,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
+class UserAnswersSpec extends PlaySpec 
+  with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
   private val emptyUserAnswers = UserAnswers("henry")
   private val filledUserAnswers = UserAnswers("id", 
@@ -47,11 +49,13 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar
   
   private val questionPage = mock[QuestionPage[String]]
   private val saveFunction = mock[SaveUserAnswerFunc]
-  val newValueFunc = mock[Option[String] => String]
-  
+  private val newValueFunc = mock[Option[String] => String]
+  private val fillFormFunc = mock[String => Option[String]]
+  private val emptyForm = mock[Form[String]]("empty form")
+  private val filledForm = mock[Form[String]]("filled form")
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(questionPage, saveFunction)
     
     when(questionPage.path) thenReturn JsPath \ "cheese" \ "brie"
     when(questionPage.cleanup(any, any)) thenAnswer {
@@ -60,6 +64,8 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar
     
     when(saveFunction.apply(any, any)) thenReturn Future.successful(true)
     when(newValueFunc.apply(any)) thenReturn "new-value"
+    
+    when(emptyForm.fill(any)) thenReturn filledForm
   }
 
   "it" should {
@@ -92,11 +98,35 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar
       }
     }
 
-    "fill in a form's value" in {
-      val form = mock[Form[String]]
-      when(form.fill(any)) thenReturn form
-      filledUserAnswers.fill(questionPage, form) mustBe theSameInstanceAs(form)
-      verify(form).fill("200g")
+    "fill in a form's value" when {
+      "the answer exists" in {
+        filledUserAnswers.fill(questionPage, emptyForm) mustBe theSameInstanceAs(filledForm)
+        verify(emptyForm).fill("200g")
+      }
+      "the answer does not exist" in {
+        emptyUserAnswers.fill(questionPage, emptyForm) mustBe theSameInstanceAs(emptyForm)
+        verify(emptyForm, never).fill(any)
+      }
+    }
+    
+    "fill a yes-no form using given function" when {
+      "user answer does not exist" in {
+        emptyUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        verify(fillFormFunc, never).apply(any)
+        verify(emptyForm, never).fill(any)
+      }
+      "user answer does exist" in {
+        when(fillFormFunc.apply(any)) thenReturn Some("new-value")
+        filledUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(filledForm)
+        verify(fillFormFunc).apply(any)
+        verify(emptyForm).fill(any)
+      }
+      "user answer does exist by function returns None" in {
+        when(fillFormFunc.apply(any)) thenReturn None
+        filledUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        verify(fillFormFunc).apply(any)
+        verify(emptyForm, never).fill(any)
+      }
     }
 
     "change a value" when {

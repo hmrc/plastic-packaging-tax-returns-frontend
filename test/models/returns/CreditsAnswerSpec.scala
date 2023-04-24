@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package models.returns
 
 import models.UserAnswers
@@ -38,10 +54,10 @@ class CreditsAnswerSpec extends PlaySpec
     }
     
     "always give the inferred weight value" in {
-      CreditsAnswer(false, None).weight mustBe 0L
-      CreditsAnswer(false, Some(1L)).weight mustBe 0L
-      CreditsAnswer(true, None).weight mustBe 0L
-      CreditsAnswer(true, Some(1L)).weight mustBe 1L
+      CreditsAnswer(false, None).weightValue mustBe 0L
+      CreditsAnswer(false, Some(1L)).weightValue mustBe 0L
+      CreditsAnswer(true, None).weightValue mustBe 0L
+      CreditsAnswer(true, Some(1L)).weightValue mustBe 1L
     }
     
     "change its answer from yes to no" when {
@@ -114,37 +130,26 @@ class CreditsAnswerSpec extends PlaySpec
       }
     }
     
-    "fill a yes-no form" when {
-      "user has a previous answer" in {
-        when(userAnswers.get(any[Gettable[CreditsAnswer]]) (any)) thenReturn Some(CreditsAnswer(true, None))
-        CreditsAnswer.fillFormYesNo(userAnswers, TestPage(), yesNoForm) mustBe filledYesNoForm
-        verify(userAnswers).get(TestPage())
-        verify(yesNoForm).fill(value = true)
-      }
-      "there is no previous answer" in {
-        when(userAnswers.get(any[Gettable[CreditsAnswer]]) (any)) thenReturn None
-        CreditsAnswer.fillFormYesNo(userAnswers, TestPage(), yesNoForm) mustBe yesNoForm
-        verify(userAnswers).get(TestPage())
-        verify(yesNoForm, never).fill(any)
-      }
+    "fill a yes-no form" in {
+      val creditsAnswer = mock[CreditsAnswer]
+      when(creditsAnswer.yesNo) thenReturn true 
+      CreditsAnswer.fillFormYesNo(creditsAnswer) mustBe Some(true)
+      verify(creditsAnswer).yesNo
     }
     
-    "fill a weight form" when {
-      "user has a previous answer" in {
-        when(userAnswers.get(any[Gettable[CreditsAnswer]]) (any)) thenReturn Some(CreditsAnswer(true, Some(314L)))
-        CreditsAnswer.fillFormWeight(userAnswers, TestPage(), weightForm) mustBe filledWeightForm
-        verify(userAnswers).get(TestPage())
-        verify(weightForm).fill(value = 314L)
-      }
-      "there is no previous answer" in {
-        when(userAnswers.get(any[Gettable[CreditsAnswer]]) (any)) thenReturn None
-        CreditsAnswer.fillFormWeight(userAnswers, TestPage(), weightForm) mustBe weightForm
-        verify(userAnswers).get(TestPage())
-        verify(weightForm, never).fill(any)
-      }
+    "fill a weight form" in {
+      val creditsAnswer = mock[CreditsAnswer]
+      when(creditsAnswer.weightForForm) thenReturn Some(7L)
+      CreditsAnswer.fillFormWeight(creditsAnswer) mustBe Some(7L)
+      verify(creditsAnswer).weightForForm
     }
     
+    "provide a weight value for display" in {
+      CreditsAnswer(false, None).weightForForm mustBe None
+      CreditsAnswer(true, None).weightForForm mustBe None
+      CreditsAnswer(false, Some(7L)).weightForForm mustBe Some(0L)
+      CreditsAnswer(true, Some(7L)).weightForForm mustBe Some(7L)
+    }
     
   }
-
 }
