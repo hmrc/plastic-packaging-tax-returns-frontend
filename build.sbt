@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
   .settings(ThisBuild / useSuperShell := false)
   .settings(headerSettings(A11yTest): _*)
   .settings(automateHeaderSettings(A11yTest))
-  .settings(scalaVersion := "2.13.8",
+  .settings(scalaVersion := "2.13.10",
             name := appName,
             RoutesKeys.routesImport ++= Seq("models._",
                                             "models.Mode._",
@@ -46,6 +46,8 @@ lazy val root = (project in file("."))
             ScoverageKeys.coverageFailOnMinimum := true,
             ScoverageKeys.coverageHighlighting := true,
             scalacOptions ++= Seq("-feature"),
+            // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+            libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
             libraryDependencies ++= AppDependencies(),
             retrieveManaged := true,
             update / evictionWarningOptions :=
