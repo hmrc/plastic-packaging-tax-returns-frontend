@@ -16,94 +16,125 @@
 
 package controllers.returns.credits
 
+import base.utils.JourneyActionAnswer._
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
+import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{reset, verify}
-import org.mockito.MockitoSugar.when
+import org.mockito.ArgumentMatchersSugar._
+import org.mockito.MockitoSugar
+import org.mockito.captor.ArgCaptor
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.OldExportedCreditsPage
 import play.api.data.Form
-import play.api.http.Status._
-import play.api.i18n.MessagesApi
-import play.api.mvc.Call
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, status, stubMessagesControllerComponents}
+import play.api.data.Forms.boolean
+import play.api.http.Status
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{AnyContent, Call, RequestHeader}
+import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.credits.ExportedCreditsView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
+class ExportedCreditsControllerSpec extends PlaySpec 
+  with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
 
-  private val mockMessages: MessagesApi = mock[MessagesApi]
-  private val mockCacheConnector: CacheConnector = mock[CacheConnector]
-  private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[ExportedCreditsView]
-  private val mockForm = mock[ExportedCreditsFormProvider]
+  
+  private val messagesApi = mock[MessagesApi]
+  private val mockCacheConnector = mock[CacheConnector]
+  private val mockNavigator = mock[ReturnsJourneyNavigator]
+  private val view = mock[ExportedCreditsView]
+  private val formProvider = mock[ExportedCreditsFormProvider]
   private val mockJourneyAction = mock[JourneyAction]
 
+  private val preparedForm = mock[Form[Boolean]]("prepared form")
+  private val initialForm = mock[Form[Boolean]]("initial form")
+  private val messages = mock[Messages]
+  private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+
   val sut: ExportedCreditsController = new ExportedCreditsController(
-    mockMessages,
+    messagesApi,
     mockCacheConnector,
     mockNavigator,
     mockJourneyAction, 
-    mockForm,
+    formProvider,
     controllerComponents,
-    mockView)
+    view)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockForm)
+    
+    when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
+    when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    
+    when(view.apply(any, any)(any, any)) thenReturn Html("correct view")
+    when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
+
+    when(formProvider.apply()) thenReturn initialForm
+    when(request.userAnswers.genericFill(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
   }
 
-  "ExportedCredits Controller" must {
+  "onPageLoad" must {
 
-    "return OK and the correct view" when {
-      "a GET is made" in {
-        when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
-        val result = sut.onPageLoad(NormalMode)(FakeRequest(GET, "/foo"))
+    "display the page" in {
+      val result = sut.onPageLoad(NormalMode)(request)
+      await(result)
 
-        status(result) mustEqual OK
+      verify(view).apply(preparedForm, NormalMode)(request, messages)
+
+      val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
+      verify(request.userAnswers).genericFill(eqTo(OldExportedCreditsPage), eqTo(initialForm), func)(any)
+
+      status(result) mustEqual Status.OK
+      contentAsString(result) mustBe "correct view"
+
+      withClue("fills the form value with correct function") {
+        val creditsAnswer = mock[CreditsAnswer]
+        func.value(creditsAnswer)
+        verify(creditsAnswer).yesNo
       }
     }
+    
+  }
+  
+  "onSubmit" must {
 
-    "must redirect to the next page when No is submitted" in {
-      when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
-      when(mockCacheConnector.set(any, any)(any)).thenReturn(Future.successful(HttpResponse.apply(200, "")))
-      when(mockNavigator.exportedCreditsYesNo(any, any)).thenReturn(Call("GET", "/foo"))
+    "must redirect to the next page using the navigator" in { 
+      // Follow the "form is good" side
+      when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
+      
+      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
+      when(mockNavigator.exportedCreditsYesNo(any, any)) thenReturn Call("me", "mr")
 
-      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody("value" -> "false"))
-
-      status(result) mustEqual SEE_OTHER
+      val result = await { sut.onSubmit(NormalMode)(request) }
+      verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
+      verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
+      verify(mockNavigator).exportedCreditsYesNo(any, any)
+      
+      result.header.status mustEqual SEE_OTHER
+      redirectLocation(Future.successful(result)).value mustBe "mr"
     }
 
-    "return 400 on error" in {
-      when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
-      when(mockForm.apply()).thenReturn(new ExportedCreditsFormProvider()())
+    "handle answer that fails form validation" in {
+      // Follow the "form is bad" side
+      val formWithError = Form("v" -> boolean).withError("key", "message")
+      when(initialForm.bindFromRequest()(any, any)) thenReturn formWithError
 
-      val result = sut.onSubmit(NormalMode)(FakeRequest("POST", "")
-        .withFormUrlEncodedBody(("answer" -> "true")))
+      val result = await { sut.onSubmit(NormalMode)(request) }
+      verify(view).apply(formWithError, NormalMode) (request, messages)
 
-      status(result) mustEqual BAD_REQUEST
-      formVerifyAndCapture.hasErrors mustBe true
+      result.header.status mustEqual BAD_REQUEST
+      contentAsString(Future.successful(result)) mustBe "correct view"
     }
+    
   }
-
-  private def formVerifyAndCapture: Form[Boolean] = {
-    val captor = ArgumentCaptor.forClass(classOf[Form[Boolean]])
-    verify(mockView).apply(captor.capture(), any)(any, any)
-    captor.getValue
-  }
-
 }

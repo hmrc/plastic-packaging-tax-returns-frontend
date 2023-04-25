@@ -45,11 +45,11 @@ case class UserAnswers(
     * @param form [[Form]] to fill with answer
     * @param func function to extract form value from user answer 
     * @param reads [[Reads]] to de-serialise user answer 
-    * @tparam FormValue type of the form's value 
     * @tparam AnswerType type of the user answer
+    * @tparam FormValue type of the form's value 
     * @return the form as is, or a new form filled with the value returned by the given function. If the function return
     */
-  def genericFill[FormValue, AnswerType](gettable: Gettable[AnswerType], form: Form[FormValue], 
+  def genericFill[AnswerType, FormValue](gettable: Gettable[AnswerType], form: Form[FormValue], 
     func: AnswerType => Option[FormValue]) (implicit reads: Reads[AnswerType]): Form[FormValue] = {
       get(gettable)
         .flatMap(func)

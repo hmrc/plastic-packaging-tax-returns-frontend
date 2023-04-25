@@ -29,12 +29,13 @@ import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.ExportedCreditsWeightPage
+import pages.returns.credits.{ExportedCreditsWeightPage, OldExportedCreditsPage}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, longNumber}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -92,23 +93,26 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return 200" in {
       val result = sut.onPageLoad(NormalMode)(dataRequest)
-
       status(result) mustBe OK
     }
 
-    "get the weight from the form" in {
+    "fill the weight in the form" in {
       await(sut.onPageLoad(NormalMode)(dataRequest))
+      val func = ArgCaptor[CreditsAnswer => Option[Long]]
+      verify(dataRequest.userAnswers).genericFill(eqTo(OldExportedCreditsPage), eqTo(form), func) (any)
 
-      verify(dataRequest.userAnswers).fill(ExportedCreditsWeightPage, form)
+      withClue("gets weight or None for displaying") {
+        val creditsAnswer = mock[CreditsAnswer]
+        func.value(creditsAnswer)
+        verify(creditsAnswer).weightForForm
+      }
     }
 
     "return a view" in {
       val boundForm = Form("value" -> longNumber).fill(10L)
-      when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(boundForm)
-
+      when(dataRequest.userAnswers.genericFill(any, any[Form[Long]], any) (any)) thenReturn boundForm
       await(sut.onPageLoad(NormalMode)(dataRequest))
-
-      verify(view).apply(meq(boundForm), meq(NormalMode))(any,any)
+      verify(view).apply(eqTo(boundForm), eqTo(NormalMode)) (any, any)
     }
   }
 
@@ -120,12 +124,11 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     }
 
     "get the weight from the form" in {
-      when(form.bindFromRequest()(any,any)).thenReturn(Form("value" -> longNumber).fill(10L))
+      when(form.bindFromRequest() (any, any)) thenReturn Form("value" -> longNumber).fill(10L)
       when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))
-
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsWeightPage), meq(10L), any )(any)
+      verify(dataRequest.userAnswers).setOrFail(eqTo(OldExportedCreditsPage), 
+        eqTo(CreditsAnswer(true, Some(10))), any) (any)
     }
 
     "save the weight" in {
