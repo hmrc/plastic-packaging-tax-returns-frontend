@@ -22,25 +22,29 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.{ReturnsDeepStubs, ScalaFirstStubbing}
+import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
 import play.api.data.Forms.longNumber
-import play.api.data.{Form, Mapping}
 import play.api.http.Status
+import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, RequestHeader}
-import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConvertedCreditsWeightView
+import org.mockito.ArgumentMatchers.{eq => meq}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ConvertedCreditsWeightControllerSpec extends PlaySpec 
   with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
@@ -51,9 +55,16 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   private val view = mock[ConvertedCreditsWeightView]
   private val formProvider = mock[ConvertedCreditsWeightFormProvider]
   private val cacheConnector = mock[CacheConnector]
+  private val navigator = mock[ReturnsJourneyNavigator]
 
   private val controller = new ConvertedCreditsWeightController(
-    messagesApi, journeyAction, controllerComponents, view, formProvider, cacheConnector
+    messagesApi,
+    journeyAction,
+    controllerComponents,
+    view,
+    formProvider,
+    cacheConnector,
+    navigator
   )
   
   private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
@@ -100,11 +111,40 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   "onSubmit" should {
     
     "save the user's answer" in {
-      when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
+      val boundForm = Form("value" -> longNumber).fill(1L)
+      when(form.bindFromRequest()(any, any)) thenReturn boundForm
+      val saveFunction = mock[SaveUserAnswerFunc]
+      when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
+
       await {
         controller.onSubmit(NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).changeWithPath(any, any, any) (any)
+
+      verify(request.userAnswers).changeWithPath(
+        meq(JsPath \ "convertedCredits" \ "weight"),
+        meq(1L),
+        meq(saveFunction)) (any)
+    }
+
+    "redirect" in {
+      when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
+      when(request.userAnswers.changeWithPath(any,any,any)(any)).thenReturn(Future.successful(true))
+      when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
+
+      val result =  controller.onSubmit(NormalMode).skippingJourneyAction(request)
+
+      status(result) mustBe SEE_OTHER
+      verify(navigator).convertedCreditsWeightRoute(NormalMode)
+    }
+
+    "show an error page when error on form" in {
+      val boundFormWithError = Form("value" -> longNumber).withError("message", "error message")
+      when(form.bindFromRequest()(any, any)) thenReturn boundFormWithError
+
+      val result =  controller.onSubmit(NormalMode).skippingJourneyAction(request)
+
+      status(result) mustBe BAD_REQUEST
+      verify(view).apply(meq(boundFormWithError), any)(any, any)
     }
     
   }

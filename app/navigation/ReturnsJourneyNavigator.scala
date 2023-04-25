@@ -103,6 +103,8 @@ class ReturnsJourneyNavigator @Inject()(
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
   }
 
+  def convertedCreditsWeightRoute(mode: Mode) =
+    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
 
   def confirmCreditRoute(mode: Mode): Call =
     if (mode.equals(CheckMode))

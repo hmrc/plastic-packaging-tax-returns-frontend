@@ -140,6 +140,20 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
   }
 
+  "convertedCreditsWeight" must {
+    "redirect to confirm-or-correct-credit page" when {
+      "in NormalMode" in {
+        val call = navigator.convertedCreditsWeightRoute(NormalMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+      }
+
+      "in CheckMode" in {
+        val call = navigator.convertedCreditsWeightRoute(CheckMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+      }
+    }
+  }
+
 
   "confirmCreditRoute" must {
 

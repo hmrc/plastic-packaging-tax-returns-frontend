@@ -40,7 +40,8 @@ class ConvertedCreditsWeightController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsWeightView,
   formProvider: ConvertedCreditsWeightFormProvider,
-  cacheConnector: CacheConnector, 
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
@@ -69,8 +70,7 @@ class ConvertedCreditsWeightController @Inject()(
     val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
     request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
       .map { _ =>
-        val nextPage = controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
-        Results.Redirect(nextPage)
+        Results.Redirect(navigator.convertedCreditsWeightRoute(mode))
       }
   }
 
