@@ -82,14 +82,18 @@ class ReturnsJourneyNavigator @Inject()(
     controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
 
   def exportedCreditsYesNo(mode: Mode, isYes: Boolean): Call = {
-    if (isYes)
-      controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(mode)
-    else
-      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+    (mode,isYes) match {
+      case (_, true) => controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(mode)
+      case (NormalMode, false) => controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+      case (CheckMode, false) => controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+    }
   }
 
   def exportedCreditsWeight(mode: Mode): Call = {
+    if(mode.equals(NormalMode))
       controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+    else
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
   }
   
   def convertedCreditsYesNo(mode: Mode, isAnswerYes: Boolean): Call = {
@@ -99,14 +103,8 @@ class ReturnsJourneyNavigator @Inject()(
       controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
   }
 
-  def convertedCreditsWeight(mode: Mode, claimedCredits: ClaimedCredits): Call = {
-    // todo not sure of flow here
-    // todo test coverage missing for this?
-//    if (claimedCredits.hasMadeClaim)
-      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
-//    else
-//      controllers.returns.routes.NowStartYourReturnController.onPageLoad
-  }
+  def convertedCreditsWeightRoute(mode: Mode) =
+    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
 
   def confirmCreditRoute(mode: Mode): Call =
     if (mode.equals(CheckMode))
