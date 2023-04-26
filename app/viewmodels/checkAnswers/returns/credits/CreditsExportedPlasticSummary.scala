@@ -18,7 +18,8 @@ package viewmodels.checkAnswers.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
-import pages.returns.credits.ExportedCreditsPage
+import models.returns.CreditsAnswer
+import pages.returns.credits.OldExportedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Key
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -29,13 +30,11 @@ import viewmodels.implicits._
 object CreditsExportedPlasticSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage).orElse(Some(false)).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-
+    answers.get(OldExportedCreditsPage).orElse(Some(CreditsAnswer.noClaim)).map {
+      creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.exported.answer", classes="govuk-!-width-one-half"),
-          value = ValueViewModel(value),
+          value = ValueViewModel(creditsAnswer.yesNoMsgKey),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
