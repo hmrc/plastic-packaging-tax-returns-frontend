@@ -23,7 +23,7 @@ import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
@@ -67,7 +67,7 @@ class ConfirmPackagingCreditController @Inject()(
     }
 
   private def isUserAnswerValid(implicit request: DataRequest[_]) = {
-    request.userAnswers.get(ExportedCreditsPage).isDefined && request.userAnswers.get(ConvertedCreditsPage).isDefined
+    request.userAnswers.get(OldExportedCreditsPage).isDefined && request.userAnswers.get(OldConvertedCreditsPage).isDefined
   }
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {

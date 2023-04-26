@@ -18,7 +18,7 @@ package models.returns
 
 import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, OldConvertedCreditsPage, OldExportedCreditsPage}
+import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(
