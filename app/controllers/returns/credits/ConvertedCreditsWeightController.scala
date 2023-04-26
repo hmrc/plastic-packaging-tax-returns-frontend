@@ -22,11 +22,12 @@ import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.OldConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ConvertedCreditsWeightView
@@ -45,12 +46,10 @@ class ConvertedCreditsWeightController @Inject()(
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
-  private val userAnswerPath = JsPath \ "convertedCredits" \ "weight"
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.fill(userAnswerPath, formProvider())
+        val form = request.userAnswers.genericFill(OldConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
         Ok(createView(form, mode))
     }
 
@@ -67,11 +66,12 @@ class ConvertedCreditsWeightController @Inject()(
     }
 
   private def formIsGood(mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
-    val userAnswersSaveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-    request.userAnswers.changeWithPath(userAnswerPath, answer, userAnswersSaveFunc)
-      .map { _ =>
-        Results.Redirect(navigator.convertedCreditsWeightRoute(mode))
-      }
+    request.userAnswers
+      .changeWithFunc(OldConvertedCreditsPage, 
+        (_: Option[CreditsAnswer]) => CreditsAnswer.answerWeightWith(answer), 
+        cacheConnector.saveUserAnswerFunc(request.pptReference)
+      )
+      .map(_ => Results.Redirect(navigator.convertedCreditsWeightRoute(mode)))
   }
 
   private def formHasErrors(mode: Mode, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
