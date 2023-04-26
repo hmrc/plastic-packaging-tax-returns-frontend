@@ -19,7 +19,6 @@ package viewmodels.checkYourAnswer.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -53,7 +52,9 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
       value = Value(Text(answerValue.asKg)),
       actions = Some(Actions(items = Seq(ActionItem(
         controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(CheckMode).url,
-        Text("change")))))
+        Text("change"),
+        Some("answer")
+      ))))
     ))
   }
 

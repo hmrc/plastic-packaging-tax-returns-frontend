@@ -40,7 +40,7 @@ object CreditsExportedPlasticSummary extends SummaryViewModel {
             ActionItemViewModel(
               "site.change",
               controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url
-            )
+            ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.answer"))
           )
         )
     }

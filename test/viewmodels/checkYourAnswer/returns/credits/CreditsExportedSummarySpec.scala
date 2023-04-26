@@ -66,7 +66,9 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
       value = Value(Text(answerValue)),
       actions = Some(Actions(items = Seq(ActionItem(
         controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url,
-        Text("change")))))
+        Text("change"),
+        Some("answer")
+      ))))
     ))
   }
 }

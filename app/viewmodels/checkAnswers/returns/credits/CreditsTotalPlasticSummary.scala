@@ -28,7 +28,6 @@ object CreditsTotalPlasticSummary {
     SummaryListRowViewModel(
       key = Key("confirmPackagingCredit.totalPlastic", classes="govuk-!-width-one-half"),
       value = ValueViewModel(totalRequestedCreditInKilograms.asKg)
-        .withVisuallyHiddenText(messages("confirmPackagingCredit.hiddenText"))
     )
   }
 }
