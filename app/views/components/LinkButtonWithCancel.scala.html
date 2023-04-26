@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package viewmodels.checkAnswers.returns.credits
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.PrintLong
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+@this(
+ govukButton: GovukButton,
+ link: Link
+)
 
-object CreditsTotalPlasticSummary {
+@(
+ buttonKey: String,
+ buttonUrl: String,
+ cancelUrl: String,
+ cancelKey: String = "Cancel",
+ id: String = "link-button")(implicit messages: Messages)
 
-  def apply(totalRequestedCreditInKilograms: Long)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
-      key = Key("confirmPackagingCredit.totalPlastic", classes="govuk-!-width-one-half"),
-      value = ValueViewModel(totalRequestedCreditInKilograms.asKg)
-    )
-  }
-}
+
+<span class="govuk-button-group" >
+    @govukButton(Button(
+        content = Text(messages(buttonKey)),
+        classes = "govuk-!-margin-right-4",
+        href = Some(buttonUrl),
+        attributes = Map("id" -> id)
+    ))
+
+    @link(id = "link-cancel", text = messages(cancelKey), href = cancelUrl)
+</span>

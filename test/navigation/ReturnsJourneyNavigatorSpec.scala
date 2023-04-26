@@ -77,6 +77,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(NormalMode)
       }
 
+
       "in check mode" in {
         val call = navigator.exportedCreditsYesNo(CheckMode, true)
         call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(CheckMode)
@@ -89,9 +90,11 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
       }
 
-      "in check mode" in {
-        val call = navigator.exportedCreditsYesNo(CheckMode, false)
-        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(CheckMode)
+      "redirect to the confirm credit page when user answer is No" when {
+        "in check mode" in {
+          val call = navigator.exportedCreditsYesNo(CheckMode, false)
+          call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+        }
       }
     }
     
@@ -106,7 +109,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
       "in check mode" in {
         val call = navigator.exportedCreditsWeight(CheckMode)
-        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(CheckMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
       }
     }
   }
@@ -136,6 +139,21 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     }
     
   }
+
+  "convertedCreditsWeight" must {
+    "redirect to confirm-or-correct-credit page" when {
+      "in NormalMode" in {
+        val call = navigator.convertedCreditsWeightRoute(NormalMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+      }
+
+      "in CheckMode" in {
+        val call = navigator.convertedCreditsWeightRoute(CheckMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+      }
+    }
+  }
+
 
   "confirmCreditRoute" must {
 

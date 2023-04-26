@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Key
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -39,7 +39,7 @@ object CreditsConvertedPlasticSummary extends SummaryViewModel {
             ActionItemViewModel(
               "site.change",
               controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url
-            )
+            ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.answer"))
           )
         )
     }

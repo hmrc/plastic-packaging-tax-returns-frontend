@@ -28,7 +28,6 @@ object CreditAmountSummary {
     SummaryListRowViewModel(
       key = Key("confirmPackagingCredit.creditAmount", classes="govuk-!-width-one-half"),
       value = ValueViewModel(creditAmount.asPounds)
-        .withVisuallyHiddenText(messages("confirmPackagingCredit.hiddenText"))
     )
   }
 }

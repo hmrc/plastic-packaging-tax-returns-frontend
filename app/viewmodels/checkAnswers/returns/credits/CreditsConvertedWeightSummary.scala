@@ -37,7 +37,7 @@ object CreditsConvertedWeightSummary extends SummaryViewModel{
             ActionItemViewModel(
               "site.change",
               controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(CheckMode).url
-            )
+            ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.weight"))
           )
         )
     }
