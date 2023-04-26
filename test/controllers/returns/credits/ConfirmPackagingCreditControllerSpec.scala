@@ -28,22 +28,23 @@ import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.WhatDoYouWantToDoPage
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Settable
+import queries.{Gettable, Settable}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
 import views.html.returns.credits.ConfirmPackagingCreditView
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -153,6 +154,7 @@ class ConfirmPackagingCreditControllerSpec
     }
 
     "return an error page" in {
+      when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
       when(mockCalculateCreditConnector.get(any)(any))
         .thenReturn(Future.successful(Left(DownstreamServiceError("Error", new Exception("error")))))
 
@@ -161,6 +163,25 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
+
+    val table = Table(
+      ("description", "ExportedCreditsPage", "ConvertedCreditsPage"),
+      ("exported credit", None, Some(true)),
+      ("converted credit", Some(true), None),
+      ("exported and converted", None, None),
+    )
+    forAll(table){
+      (description, exportedCreditsPage, convertedCreditsPage) =>
+        s"redirect to submit-return-or-claim-credit page when ${description} hasn't been answered" in {
+          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ExportedCreditsPage))(any)).thenReturn(exportedCreditsPage)
+          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ConvertedCreditsPage))(any)).thenReturn(convertedCreditsPage)
+          val result = sut.onPageLoad(NormalMode)(dataRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).url
+        }
+    }
+
   }
 
   "onCancelClaim" should {
@@ -198,6 +219,7 @@ class ConfirmPackagingCreditControllerSpec
   }
 
   private def setUpMockForConfirmCreditsView(): Unit = {
+    when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
     when(mockView.apply(any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(Right(creditBalance)))
