@@ -27,7 +27,7 @@ case class CreditsAnswer(yesNo: Boolean, private val weight: Option[Long]) {
     case _ => 0
   }
 
-  def changeYesNoTo(isYes: Boolean): CreditsAnswer = CreditsAnswer(isYes, weight)
+  def changeYesNoTo(isYes: Boolean): CreditsAnswer = CreditsAnswer(isYes, weightForForm)
   def asTuple: (Boolean, Long) = yesNo -> weightValue
 
   def weightForForm: Option[Long] = (yesNo, weight) match {

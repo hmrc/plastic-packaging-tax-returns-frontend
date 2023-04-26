@@ -25,7 +25,6 @@ import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json.JsPath
-import queries.Gettable
 
 class CreditsAnswerSpec extends PlaySpec 
   with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
@@ -81,7 +80,14 @@ class CreditsAnswerSpec extends PlaySpec
       }
       "current weight is something" in {
         val newAnswer = CreditsAnswer(false, Some(2L)).changeYesNoTo(isYes = true)
-        newAnswer.asTuple mustBe true -> 2L
+        newAnswer.asTuple mustBe true -> 0L
+      }
+      "weight should be zero after changing answer to no, then to yes again" in {
+        val firstAnswer = CreditsAnswer.answerWeightWith(11L)
+        val secondAnswer = firstAnswer.changeYesNoTo(false)
+        val thirdAnswer = secondAnswer.changeYesNoTo(true)
+        thirdAnswer.weightValue mustBe 0L
+        thirdAnswer.weightForForm mustBe Some(0L)
       }
     }
     
