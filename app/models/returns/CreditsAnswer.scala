@@ -18,17 +18,40 @@ package models.returns
 
 import play.api.libs.json.{Json, OFormat}
 
-//todo: This would need to relooked as now we had two page for credit answer and weight
-case class CreditsAnswer(yesNo: Boolean, weight: Option[Long]) {
-  def yesNoMsgKey: String = if(yesNo) "site.yes" else "site.no"
-  def value: Long = (yesNo, weight) match {
+case class CreditsAnswer(yesNo: Boolean, private val weight: Option[Long]) {
+
+  def yesNoMsgKey: String = if (yesNo) "site.yes" else "site.no"
+
+  def weightValue: Long = (yesNo, weight) match {
     case (true, Some(x)) => x
-    case (true, None) => 0
-    case (false, _) => 0
+    case _ => 0
   }
+
+  def changeYesNoTo(isYes: Boolean): CreditsAnswer = CreditsAnswer(isYes, weightForForm)
+  def asTuple: (Boolean, Long) = yesNo -> weightValue
+
+  def weightForForm: Option[Long] = (yesNo, weight) match {
+    case (_, None) => None
+    case (false, _) => Some(0L)
+    case (true, x) => x 
+  }
+  
 }
 
 object CreditsAnswer {
-  def noClaim: CreditsAnswer = CreditsAnswer(false, None)
+
+  def changeYesNoTo(isYes: Boolean) (previousAnswer: Option[CreditsAnswer]): CreditsAnswer = { // Curry for the win
+    previousAnswer match {
+      case None => CreditsAnswer(isYes, None)
+      case Some(previous) => previous.changeYesNoTo(isYes)
+    }
+  }
+
   implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
+
+  def noClaim: CreditsAnswer = CreditsAnswer(false, None)
+  def answerWeightWith(weight: Long): CreditsAnswer = CreditsAnswer(true, Some(weight))
+  def fillFormYesNo(creditsAnswer: CreditsAnswer): Option[Boolean] = Some(creditsAnswer.yesNo)
+  def fillFormWeight(creditsAnswer: CreditsAnswer): Option[Long] = creditsAnswer.weightForForm
+    
 }

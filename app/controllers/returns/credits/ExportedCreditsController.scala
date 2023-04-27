@@ -20,12 +20,13 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
-import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.ExportedCreditsPage
+import pages.returns.credits.OldExportedCreditsPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ExportedCreditsView
 
 import javax.inject.Inject
@@ -36,39 +37,33 @@ class ExportedCreditsController @Inject()
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   formProvider: ExportedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ExportedCreditsView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
-      val userAnswers = request.userAnswers
-      val preparedForm = userAnswers.get(ExportedCreditsPage) match {
-        case None => formProvider()
-        case Some(value) => formProvider().fill(value)
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = {
+    journeyAction {
+      implicit request =>
+        val preparedForm = request.userAnswers.genericFill(OldExportedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
+        Results.Ok(view(preparedForm, mode))
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
-                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.exportedCreditsYesNo(mode, value))
+            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithFunc(OldExportedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(mode, formValue)))
+            }
           )
     }
+    
 }

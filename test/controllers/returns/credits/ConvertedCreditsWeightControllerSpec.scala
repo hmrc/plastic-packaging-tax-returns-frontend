@@ -22,26 +22,27 @@ import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchersSugar._
+import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
-import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.OldConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.longNumber
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, RequestHeader}
 import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConvertedCreditsWeightView
-import org.mockito.ArgumentMatchers.{eq => meq}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -80,7 +81,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fill[Long](any[JsPath], any) (any)) thenReturn form
+    when(request.userAnswers.genericFill(eqTo(OldConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
   }
 
   "onPageLoad" should {
@@ -102,7 +103,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       await {
         controller.onPageLoad(NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).fill(JsPath \ "convertedCredits" \ "weight", form)
+      verify(request.userAnswers).genericFill(eqTo(OldConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
     }
 
     // TODO ...
@@ -110,26 +111,29 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   
   "onSubmit" should {
     
-    "save the user's answer" in {
+    "save the user's answer" in { // TODO needs tidying
       val boundForm = Form("value" -> longNumber).fill(1L)
       when(form.bindFromRequest()(any, any)) thenReturn boundForm
+      
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
+      
+      val updatedUserAnswers = mock[UserAnswers] 
+      when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
+      when(request.userAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
 
-      await {
-        controller.onSubmit(NormalMode).skippingJourneyAction(request)
-      }
+      when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
 
-      verify(request.userAnswers).changeWithPath(
-        meq(JsPath \ "convertedCredits" \ "weight"),
-        meq(1L),
-        meq(saveFunction)) (any)
+      await(controller.onSubmit(NormalMode).skippingJourneyAction(request))
+
+      verify(request.userAnswers).changeWithFunc(eqTo(OldConvertedCreditsPage), any, eqTo(saveFunction)) (any, any) // TODO could improve
     }
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
       when(request.userAnswers.changeWithPath(any,any,any)(any)).thenReturn(Future.successful(true))
       when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
+      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
       val result =  controller.onSubmit(NormalMode).skippingJourneyAction(request)
 

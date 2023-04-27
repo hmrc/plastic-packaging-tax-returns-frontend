@@ -25,15 +25,17 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.ExportedCreditsWeightPage
+import pages.returns.credits.{ExportedCreditsWeightPage, OldExportedCreditsPage}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, longNumber}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -52,8 +54,8 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
   private val form = mock[Form[Long]]
   private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  val saveFunction = mock[SaveUserAnswerFunc]
-  val ans = mock[UserAnswers]
+  private val saveFunction = mock[SaveUserAnswerFunc]
+  private val userAnswers = mock[UserAnswers]
   private val messagesApi = mock[MessagesApi]
   private val journeyAction = mock[JourneyAction]
   private val cacheConnector = mock[CacheConnector]
@@ -74,7 +76,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, ans)
+    reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, userAnswers)
 
     when(formProvider.apply()).thenReturn(form)
     when(view.apply(any, any)(any, any)).thenReturn(HtmlFormat.empty)
@@ -91,23 +93,26 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return 200" in {
       val result = sut.onPageLoad(NormalMode)(dataRequest)
-
       status(result) mustBe OK
     }
 
-    "get the weight from the form" in {
+    "fill the weight in the form" in {
       await(sut.onPageLoad(NormalMode)(dataRequest))
+      val func = ArgCaptor[CreditsAnswer => Option[Long]]
+      verify(dataRequest.userAnswers).genericFill(eqTo(OldExportedCreditsPage), eqTo(form), func) (any)
 
-      verify(dataRequest.userAnswers).fill(ExportedCreditsWeightPage, form)
+      withClue("gets weight or None for displaying") {
+        val creditsAnswer = mock[CreditsAnswer]
+        func.value(creditsAnswer)
+        verify(creditsAnswer).weightForForm
+      }
     }
 
     "return a view" in {
       val boundForm = Form("value" -> longNumber).fill(10L)
-      when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(boundForm)
-
+      when(dataRequest.userAnswers.genericFill(any, any[Form[Long]], any) (any)) thenReturn boundForm
       await(sut.onPageLoad(NormalMode)(dataRequest))
-
-      verify(view).apply(meq(boundForm), meq(NormalMode))(any,any)
+      verify(view).apply(eqTo(boundForm), eqTo(NormalMode)) (any, any)
     }
   }
 
@@ -119,12 +124,11 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     }
 
     "get the weight from the form" in {
-      when(form.bindFromRequest()(any,any)).thenReturn(Form("value" -> longNumber).fill(10L))
+      when(form.bindFromRequest() (any, any)) thenReturn Form("value" -> longNumber).fill(10L)
       when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))
-
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsWeightPage), meq(10L), any )(any)
+      verify(dataRequest.userAnswers).setOrFail(eqTo(OldExportedCreditsPage), 
+        eqTo(CreditsAnswer(true, Some(10))), any) (any)
     }
 
     "save the weight" in {
@@ -133,7 +137,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
       withClue("save weight to user Answer") {
-        verify(ans).save(meq(saveFunction))(any)
+        verify(userAnswers).save(meq(saveFunction))(any)
       }
 
       withClue("save weight to cache") {
@@ -171,8 +175,8 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
   private def setupMocks = {
     when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber).fill(10L))
-    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(ans)
-    when(ans.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+    when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswers)
+    when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(dataRequest.pptReference).thenReturn("123")
     when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))

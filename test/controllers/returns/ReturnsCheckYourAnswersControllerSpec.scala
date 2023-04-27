@@ -32,7 +32,7 @@ import org.mockito.MockitoSugar.mock
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ConvertedCreditsWeightPage, ExportedCreditsPage, ExportedCreditsWeightPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -248,6 +248,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     verify(mockView).apply(any(), captor.capture())(any(), any())
     captor.getValue
   }
+  
   private def createSut(userAnswer: Option[UserAnswers]): ReturnsCheckYourAnswersController = {
     new ReturnsCheckYourAnswersController(
       mockMessagesApi,

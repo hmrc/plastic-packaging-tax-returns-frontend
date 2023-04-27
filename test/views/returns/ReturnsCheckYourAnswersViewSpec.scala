@@ -200,7 +200,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
         getText(view, "change-credit-link") mustBe "Change any answer from credits"
         getText(view, "change-credit-link") mustBe messages("submit-return.check-your-answers.credits.change.text.link")
-        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode))
+        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(CheckMode))
       }
     }
 

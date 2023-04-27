@@ -31,6 +31,7 @@ import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
+// TODO these "unit" tests need Mongo running
 class SessionRepositorySpec
   extends AnyFreeSpec
     with Matchers

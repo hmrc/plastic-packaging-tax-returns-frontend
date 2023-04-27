@@ -39,6 +39,24 @@ case class UserAnswers(
   def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(path).fold(form)(form.fill)
 
+
+  /** Fills the given form by reading a user answer and passing that through the given function
+    * @param gettable [[Gettable]] provides [[JsPath]] of the user answer
+    * @param form [[Form]] to fill with answer
+    * @param func function to extract form value from user answer 
+    * @param reads [[Reads]] to de-serialise user answer 
+    * @tparam AnswerType type of the user answer
+    * @tparam FormValue type of the form's value 
+    * @return the form as is, or a new form filled with the value returned by the given function. If the function return
+    */
+  def genericFill[AnswerType, FormValue](gettable: Gettable[AnswerType], form: Form[FormValue], 
+    func: AnswerType => Option[FormValue]) (implicit reads: Reads[AnswerType]): Form[FormValue] = {
+      get(gettable)
+        .flatMap(func)
+        .map(form.fill)
+        .getOrElse(form) 
+  }
+
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     get(page.path)
 
@@ -118,6 +136,26 @@ case class UserAnswers(
     else {
       saveUserAnswerFunc.apply(updatedUserAnswers, true)
     }
+  }
+
+  /** Change the value or the given user answer, or add the user answer if it does not exists. The value of the user
+    * answer will be the value returned by `newValueFunc(previousValue)`, where `previousValue = None` if 
+    * the user answer does not exist
+    * @param questionPage source of path 
+    * @param newValueFunc function to calculate new value, passed Some(previous value) if there was one, or None if
+    *                     there was not a previous value
+    * @param saveUserAnswerFunc function to save the updated user answers once new value applied
+    * @tparam A type of user answer field's value
+    * @return [[Future]] of Unit
+    */
+  def changeWithFunc[A](questionPage: QuestionPage[A], newValueFunc: Option[A] => A,  
+    saveUserAnswerFunc: SaveUserAnswerFunc) (implicit format: Format[A], ec: ExecutionContext): Future[Unit] = {
+
+    val previousValue = get(questionPage)
+    val updatedUserAnswers = setOrFail(questionPage, newValueFunc(previousValue))
+    saveUserAnswerFunc
+      .apply(updatedUserAnswers, true)
+      .map(_ => ())
   }
 
   /** If user's answer has changed, passes updated user-answers object to given save function  

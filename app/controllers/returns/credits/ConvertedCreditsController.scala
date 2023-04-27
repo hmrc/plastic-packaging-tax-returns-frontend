@@ -21,8 +21,9 @@ import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.OldConvertedCreditsPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -47,24 +48,24 @@ class ConvertedCreditsController @Inject()
   def onPageLoad(mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
+        val preparedForm = request.userAnswers.genericFill(OldConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
         Results.Ok(view(preparedForm, mode))
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
-          formValue => {
-            request.userAnswers
-              .setOrFail(ConvertedCreditsPage, formValue)
-              .setOrFail(WhatDoYouWantToDoPage, true)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
-          }
-        )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    journeyAction.async {
+      implicit request =>
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithFunc(OldConvertedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
+            }
+          )
+    }
+
 }

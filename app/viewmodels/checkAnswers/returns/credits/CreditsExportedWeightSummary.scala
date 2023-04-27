@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
-import pages.returns.credits.ExportedCreditsWeightPage
+import pages.returns.credits.OldExportedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Key
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,13 +27,14 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
+// TODO de-dupe?
 object CreditsExportedWeightSummary extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsWeightPage).map {
-      value =>
+    answers.get(OldExportedCreditsPage).map {
+      creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.exported.weight", classes="govuk-!-width-one-half"),
-          value = ValueViewModel(value.asKg),
+          value = ValueViewModel(creditsAnswer.weightValue.asKg),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
