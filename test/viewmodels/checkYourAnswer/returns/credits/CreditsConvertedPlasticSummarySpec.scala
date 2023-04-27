@@ -18,11 +18,12 @@ package viewmodels.checkYourAnswer.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.ConvertedCreditsPage
+import pages.returns.credits.OldConvertedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Key, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow, Value}
@@ -45,7 +46,7 @@ class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEac
     "return a summary row" when {
       "answer is yes" in {
         when(messages.apply(ArgumentMatchers.eq("site.yes"))).thenReturn("yes")
-        val userAnswer = UserAnswers("123").set(ConvertedCreditsPage, true).get
+        val userAnswer = UserAnswers("123").set(OldConvertedCreditsPage, CreditsAnswer(true, None)).get
 
         val result = CreditsConvertedPlasticSummary.row(userAnswer)(messages)
 
@@ -54,7 +55,7 @@ class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEac
 
       "answer is no" in {
         when(messages.apply(ArgumentMatchers.eq("site.no"))).thenReturn("no")
-        val userAnswer = UserAnswers("123").set(ConvertedCreditsPage, false).get
+        val userAnswer = UserAnswers("123").set(OldConvertedCreditsPage, CreditsAnswer(false, None)).get
 
         val result = CreditsConvertedPlasticSummary.row(userAnswer)(messages)
 
