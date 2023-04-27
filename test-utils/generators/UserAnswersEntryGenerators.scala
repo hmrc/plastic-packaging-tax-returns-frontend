@@ -84,10 +84,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryExportedCreditsUserAnswersEntry: Arbitrary[(ExportedCreditsPage.type, JsValue)] =
+  implicit lazy val arbitraryExportedCreditsUserAnswersEntry: Arbitrary[(OldExportedCreditsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ExportedCreditsPage.type]
+        page  <- arbitrary[OldExportedCreditsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

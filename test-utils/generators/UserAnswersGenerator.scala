@@ -39,7 +39,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] ::
     arbitrary[(MainContactNamePage.type, JsValue)] ::
     arbitrary[(MainContactJobTitlePage.type, JsValue)] ::
-    arbitrary[(ExportedCreditsPage.type, JsValue)] ::
+    arbitrary[(OldExportedCreditsPage.type, JsValue)] ::
     arbitrary[(OldConvertedCreditsPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
     arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
