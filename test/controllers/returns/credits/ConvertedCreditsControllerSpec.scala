@@ -33,7 +33,7 @@ import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, OldConvertedCreditsPage}
+import pages.returns.credits.OldConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status
@@ -41,7 +41,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Gettable
 import views.html.returns.credits.ConvertedCreditsView
 
 import scala.concurrent.ExecutionContext.Implicits.global
