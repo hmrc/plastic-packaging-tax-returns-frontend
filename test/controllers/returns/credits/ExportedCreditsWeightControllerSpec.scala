@@ -35,7 +35,7 @@ import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ExportedCreditsWeightPage, OldExportedCreditsPage}
+import pages.returns.credits.OldExportedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.{ignored, longNumber}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -44,7 +44,7 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents}
 import play.twirl.api.{Html, HtmlFormat}
-import queries.{Gettable, Settable}
+import queries.Settable
 import views.html.returns.credits.ExportedCreditsWeightView
 
 import scala.concurrent.ExecutionContext.Implicits.global

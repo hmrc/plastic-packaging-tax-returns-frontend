@@ -24,9 +24,3 @@ case object OldExportedCreditsPage extends QuestionPage[CreditsAnswer] {
   override def path: JsPath = JsPath \ "exportedCredits"
 }
 
-case object ExportedCreditsPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ "exportedCredits" \ toString
-
-  override def toString: String = "yesNo"
-}
