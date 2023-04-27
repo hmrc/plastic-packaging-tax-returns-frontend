@@ -25,9 +25,6 @@ import pages.returns.credits._
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryCancelCreditsClaimPage: Arbitrary[CancelCreditsClaimPage.type] =
-    Arbitrary(CancelCreditsClaimPage)
-
   implicit lazy val arbitraryAmendExportedByAnotherBusinessPage: Arbitrary[AmendExportedByAnotherBusinessPage.type] =
     Arbitrary(AmendExportedByAnotherBusinessPage)
 

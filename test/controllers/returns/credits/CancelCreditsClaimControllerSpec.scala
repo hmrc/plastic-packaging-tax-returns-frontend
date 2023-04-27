@@ -80,7 +80,6 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
     )
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(dataRequest.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(form)
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
   }
 
@@ -100,18 +99,17 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
     }
 
     "return a view with correct form" in {
+      when(formProvider.apply()).thenReturn(form)
       sut.onPageLoad(dataRequest)
-
       verify(view).apply(ArgumentMatchers.eq(form))(any, any)
     }
   }
 
   "onSubmit" should {
+    
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-
       sut.onSubmit(dataRequest)
-
       verify(journeyAction).async(any)
     }
 
