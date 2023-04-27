@@ -21,7 +21,7 @@ import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import models.{CreditBalance, UserAnswers}
 import pages.returns._
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import viewmodels.TaxReturnViewModel
@@ -40,8 +40,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     .set(AnotherBusinessExportedPage, false).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
-    .set(OldExportedCreditsPage, CreditsAnswer.noClaim).get
-    .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
+    .set(ExportedCreditsPage, CreditsAnswer.noClaim).get
+    .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
     .set(WhatDoYouWantToDoPage, true).get
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(

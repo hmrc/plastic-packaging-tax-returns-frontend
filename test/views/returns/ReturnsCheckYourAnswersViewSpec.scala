@@ -27,7 +27,7 @@ import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.returns._
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -174,8 +174,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "no exported and converted answer no" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val ans = UserAnswers("123")
-          .set(OldExportedCreditsPage, CreditsAnswer(false, Some(0L))).get
-          .set(OldConvertedCreditsPage, CreditsAnswer(false, Some(0L))).get
+          .set(ExportedCreditsPage, CreditsAnswer(false, Some(0L))).get
+          .set(ConvertedCreditsPage, CreditsAnswer(false, Some(0L))).get
           .set(WhatDoYouWantToDoPage,true).get
 
         val view = createView(
@@ -364,8 +364,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
-      .set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(100L)).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(100L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
       .set(DirectlyExportedWeightPage, 100L).get
       .set(WhatDoYouWantToDoPage, true).get
 
@@ -434,8 +434,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(OldExportedCreditsPage, CreditsAnswer(false, Some(100L))).get
-    .set(OldConvertedCreditsPage, CreditsAnswer(true, Some(0L))).get
+    .set(ExportedCreditsPage, CreditsAnswer(false, Some(100L))).get
+    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0L))).get
     .set(WhatDoYouWantToDoPage, true).get
 }
 

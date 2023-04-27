@@ -188,7 +188,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
 
   def createUserAnswer = {
     UserAnswers("123")
-      .set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
   }
 }

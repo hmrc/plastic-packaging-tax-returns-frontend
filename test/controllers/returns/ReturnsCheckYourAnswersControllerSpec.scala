@@ -32,7 +32,7 @@ import org.mockito.MockitoSugar.mock
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -268,8 +268,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUserAnswer(): UserAnswers = {
     userAnswers
-      .set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(300L)).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(300L)).get
       .set(WhatDoYouWantToDoPage, true).get
   }
 

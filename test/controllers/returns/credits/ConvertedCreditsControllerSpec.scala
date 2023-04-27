@@ -33,7 +33,7 @@ import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldConvertedCreditsPage
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status
@@ -99,7 +99,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     "fill the form with user's previous answer" in {
       controller.onPageLoad(NormalMode) (request)
       val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(OldConvertedCreditsPage), eqTo(initialForm), function) (any)
+      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage), eqTo(initialForm), function) (any)
       
       withClue("using correct function") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -130,7 +130,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
       await(controller.onSubmit(NormalMode) (request))
       
       // TODO tweak CreditsAnswer.changeYesNoTo so we can test for it here
-      verify(request.userAnswers).changeWithFunc(eqTo(OldConvertedCreditsPage), any, eqTo(saveUserAnswerFunc)) (any, any)
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage), any, eqTo(saveUserAnswerFunc)) (any, any)
     }
 
     "redirect to the next page" in {

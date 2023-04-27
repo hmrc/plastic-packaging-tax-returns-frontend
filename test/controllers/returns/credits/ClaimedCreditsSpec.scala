@@ -19,7 +19,7 @@ package controllers.returns.credits
 import models.UserAnswers
 import models.returns.CreditsAnswer
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 
 class ClaimedCreditsSpec extends PlaySpec {
 
@@ -50,25 +50,25 @@ class ClaimedCreditsSpec extends PlaySpec {
 
   private def createUserAnswerWithCredits: UserAnswers = {
     UserAnswers("ppt321")
-      .set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(30L)).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(30L)).get
   }
 
   private def createUserAnswerWithNoExportedOrConvertedCredits: UserAnswers = {
     UserAnswers("ppt321")
-      .set(OldExportedCreditsPage, CreditsAnswer.noClaim).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.noClaim).get
+      .set(ExportedCreditsPage, CreditsAnswer.noClaim).get
+      .set(ConvertedCreditsPage, CreditsAnswer.noClaim).get
   }
 
   private def createUserAnswerWithNoConvertedCredits: UserAnswers = {
     UserAnswers("ppt321")
-      .set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.noClaim).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.noClaim).get
   }
 
   private def createUserAnswerWithNoExportedCredits: UserAnswers = {
     UserAnswers("ppt321")
-      .set(OldExportedCreditsPage, CreditsAnswer.noClaim).get
-      .set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(30L)).get
+      .set(ExportedCreditsPage, CreditsAnswer.noClaim).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(30L)).get
   }
 }

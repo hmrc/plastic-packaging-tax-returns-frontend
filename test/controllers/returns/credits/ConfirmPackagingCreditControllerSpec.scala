@@ -34,7 +34,7 @@ import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers._
@@ -172,8 +172,8 @@ class ConfirmPackagingCreditControllerSpec
     forAll(table){
       (description, exportedCreditsPage, convertedCreditsPage) =>
         s"redirect to submit-return-or-claim-credit page when ${description} hasn't been answered" in {
-          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(OldExportedCreditsPage))(any)).thenReturn(exportedCreditsPage)
-          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(OldConvertedCreditsPage))(any)).thenReturn(convertedCreditsPage)
+          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ExportedCreditsPage))(any)).thenReturn(exportedCreditsPage)
+          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ConvertedCreditsPage))(any)).thenReturn(convertedCreditsPage)
           val result = sut.onPageLoad(NormalMode)(dataRequest)
 
           status(result) mustBe SEE_OTHER
