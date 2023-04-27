@@ -49,8 +49,8 @@ trait PageGenerators {
   implicit lazy val arbitraryExportedCreditsPage: Arbitrary[ExportedCreditsPage.type] =
     Arbitrary(ExportedCreditsPage)
 
-  implicit lazy val arbitraryConvertedCreditsPage: Arbitrary[ConvertedCreditsPage.type] =
-    Arbitrary(ConvertedCreditsPage)
+  implicit lazy val arbitraryConvertedCreditsPage: Arbitrary[OldConvertedCreditsPage.type] =
+    Arbitrary(OldConvertedCreditsPage)
 
   implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightPage: Arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type] =
     Arbitrary(NonExportedHumanMedicinesPlasticPackagingWeightPage)
