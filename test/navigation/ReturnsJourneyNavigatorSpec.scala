@@ -27,6 +27,7 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
+import pages.returns._
 import queries.Gettable
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
@@ -157,15 +158,23 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "confirmCreditRoute" must {
 
     "redirect to start return page in Normal Mode" in {
-      val call = navigator.confirmCreditRoute(NormalMode)
+      val call = navigator.confirmCreditRoute(NormalMode, userAnswers)
+
       call mustBe controllers.returns.routes.NowStartYourReturnController.onPageLoad
     }
 
-    "redirect to CYA page in CheckMode Mode" in {
-      val call = navigator.confirmCreditRoute(CheckMode)
-      // tmp - workaround for bug
-//      call mustBe controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+    "redirect to CYA page in CheckMode Mode and have NOT done Returns questions" in {
+      val call = navigator.confirmCreditRoute(CheckMode, userAnswers)
+
       call mustBe controllers.returns.routes.NowStartYourReturnController.onPageLoad
+    }
+
+    "redirect to CYA page in CheckMode Mode and have done Returns questions" in {
+      when(nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers)).thenReturn(true)
+
+      val call = navigator.confirmCreditRoute(CheckMode, userAnswers)
+
+      call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
 
   }

@@ -63,7 +63,7 @@ class ConfirmPackagingCreditController @Inject()(
         request.userAnswers
           .setOrFail(WhatDoYouWantToDoPage, false)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
+          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers)))
     }
 
   private def isUserAnswerValid(implicit request: DataRequest[_]) = {
@@ -78,7 +78,7 @@ class ConfirmPackagingCreditController @Inject()(
       creditBalance.totalRequestedCreditInPounds,
       creditBalance.canBeClaimed,
       creditSummaryListFactory.createSummaryList(creditBalance, request.userAnswers),
-      returnsJourneyNavigator.confirmCreditRoute(mode),
+      returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers),
       mode)
     )
   }

@@ -22,7 +22,15 @@ import pages.QuestionPage
 import pages.returns._
 
 @Singleton
-class NonExportedAmountHelper {
+class NonExportedAmountHelper { //todo rename?
+
+  def returnsQuestionsAnswered(userAnswers: UserAnswers): Boolean =
+    userAnswers.get(ManufacturedPlasticPackagingWeightPage).isDefined &&
+    userAnswers.get(ImportedPlasticPackagingWeightPage).isDefined &&
+    userAnswers.get(DirectlyExportedWeightPage).isDefined &&
+    userAnswers.get(AnotherBusinessExportedWeightPage).isDefined &&
+    userAnswers.get(NonExportedHumanMedicinesPlasticPackagingWeightPage).isDefined &&
+    userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage).isDefined
 
   def totalPlasticAdditions(userAnswers: UserAnswers): Option[Long] = {
     for {

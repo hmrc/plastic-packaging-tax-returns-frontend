@@ -139,14 +139,14 @@ class ConfirmPackagingCreditControllerSpec
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
       "total requested credit is less than available credit - (NormalMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("Hi", "You")
+        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(NormalMode)(dataRequest))
         verify(mockView).apply( meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("get", "cheese")
+        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(CheckMode)(dataRequest))
         verify(mockView).apply(meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
@@ -214,7 +214,7 @@ class ConfirmPackagingCreditControllerSpec
 
       await(sut.onCancelClaim(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode)
+      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode, dataRequest.userAnswers)
     }
   }
 
@@ -229,6 +229,6 @@ class ConfirmPackagingCreditControllerSpec
     when(ans.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
-    when(returnsJourneyNavigator.confirmCreditRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
+    when(returnsJourneyNavigator.confirmCreditRoute(NormalMode, dataRequest.userAnswers)).thenReturn(Call("GET", "/foo"))
   }
 }
