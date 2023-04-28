@@ -41,10 +41,34 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
     reset(mockUserAnswers)
   }
 
-
   private val sut = new NonExportedAmountHelper
+
+  "returnsQuestionsAnswered" should {
+    "return true" when {
+      "all are defined" in {
+        val ua =
+          UserAnswers("id")
+            .setOrFail(ManufacturedPlasticPackagingWeightPage, 0L)
+            .setOrFail(ImportedPlasticPackagingWeightPage, 0L)
+            .setOrFail(DirectlyExportedWeightPage, 0L)
+            .setOrFail(AnotherBusinessExportedWeightPage, 0L)
+            .setOrFail(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L)
+            .setOrFail(NonExportedRecycledPlasticPackagingWeightPage, 0L)
+
+        sut.returnsQuestionsAnswered(ua) mustBe true
+      }
+    }
+    "return false" when {
+      "the questions are not answered" in {
+        val ua = UserAnswers("id")
+
+        sut.returnsQuestionsAnswered(ua) mustBe false
+      }
+    }
+  }
+
   "nonExportedAmount" should {
-    "return total plastic" when { "" +
+    "return total plastic" when {
       "plastic is not exported" in {
       val ans = userAnswer
         .set(DirectlyExportedPage, false).get
