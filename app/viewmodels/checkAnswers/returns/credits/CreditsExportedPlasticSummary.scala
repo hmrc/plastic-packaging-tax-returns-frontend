@@ -19,7 +19,7 @@ package viewmodels.checkAnswers.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import pages.returns.credits.OldExportedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Key
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -30,7 +30,7 @@ import viewmodels.implicits._
 object CreditsExportedPlasticSummary extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(OldExportedCreditsPage).orElse(Some(CreditsAnswer.noClaim)).map {
+    answers.get(ExportedCreditsPage).orElse(Some(CreditsAnswer.noClaim)).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.exported.answer", classes="govuk-!-width-one-half"),

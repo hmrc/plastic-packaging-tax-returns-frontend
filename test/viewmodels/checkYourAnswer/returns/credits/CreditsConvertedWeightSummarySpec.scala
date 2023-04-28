@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldConvertedCreditsPage
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Key, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow, Value}
@@ -39,7 +39,7 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
       when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.converted.weight"))).thenReturn("answer")
       when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
       when(messages.apply(ArgumentMatchers.eq(50L.asKg))).thenReturn(50L.asKg)
-      val userAnswer = UserAnswers("123").set(OldConvertedCreditsPage, CreditsAnswer.answerWeightWith(50L)).get
+      val userAnswer = UserAnswers("123").set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(50L)).get
 
       val result = CreditsConvertedWeightSummary.row(userAnswer)(messages)
 

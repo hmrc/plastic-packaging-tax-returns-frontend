@@ -23,7 +23,7 @@ import models.Mode
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.OldExportedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok}
@@ -47,7 +47,7 @@ class ExportedCreditsWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.genericFill(OldExportedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
+        val form = request.userAnswers.genericFill(ExportedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
         Ok(view(form, mode))
     }
 
@@ -58,7 +58,7 @@ class ExportedCreditsWeightController @Inject()(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           formValue => {
             request.userAnswers
-              .setOrFail(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(formValue))
+              .setOrFail(ExportedCreditsPage, CreditsAnswer.answerWeightWith(formValue))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(_ => Results.Redirect(navigator.exportedCreditsWeight(mode)))
           }

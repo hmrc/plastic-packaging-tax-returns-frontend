@@ -24,6 +24,7 @@ import forms.returns.credits.CancelCreditsClaimFormProvider
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
@@ -187,9 +188,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
 
   def createUserAnswer = {
     UserAnswers("123")
-      .set(ExportedCreditsPage, true).get
-      .set(ExportedCreditsWeightPage, 10L).get
-      .set(ConvertedCreditsPage, true).get
-      .set(ConvertedCreditsWeightPage, 10L).get
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
   }
 }

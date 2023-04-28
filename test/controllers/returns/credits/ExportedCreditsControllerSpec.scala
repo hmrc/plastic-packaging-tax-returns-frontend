@@ -31,7 +31,7 @@ import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldExportedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status
@@ -92,7 +92,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
       verify(view).apply(preparedForm, NormalMode)(request, messages)
 
       val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(OldExportedCreditsPage), eqTo(initialForm), func)(any)
+      verify(request.userAnswers).genericFill(eqTo(ExportedCreditsPage), eqTo(initialForm), func)(any)
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"

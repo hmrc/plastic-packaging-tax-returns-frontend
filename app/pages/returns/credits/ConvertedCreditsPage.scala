@@ -20,13 +20,6 @@ import models.returns.CreditsAnswer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object OldConvertedCreditsPage extends QuestionPage[CreditsAnswer] {
+case object ConvertedCreditsPage extends QuestionPage[CreditsAnswer] {
   override def path: JsPath = JsPath \ "convertedCredits"
-}
-
-case object ConvertedCreditsPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ "convertedCredits" \ toString
-
-  override def toString: String = "yesNo"
 }

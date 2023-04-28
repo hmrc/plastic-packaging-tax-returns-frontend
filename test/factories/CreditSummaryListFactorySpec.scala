@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
@@ -41,8 +41,8 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       when(messages.apply(meq("confirmPackagingCredit.converted.weight"))).thenReturn("converted weight")
       when(messages.apply(meq("confirmPackagingCredit.totalPlastic"))).thenReturn("total plastic")
       when(messages.apply(meq("confirmPackagingCredit.creditAmount"))).thenReturn("credit amount")
-      when(answer.get(meq(OldExportedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
-      when(answer.get(meq(OldConvertedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
+      when(answer.get(meq(ExportedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
+      when(answer.get(meq(ConvertedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
 
       val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 0.30) , answer)(messages)
 

@@ -24,19 +24,19 @@ import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.{ArgumentMatchers, MockitoSugar}
-import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
@@ -44,7 +44,6 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
 import views.html.returns.credits.ConfirmPackagingCreditView
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -166,8 +165,8 @@ class ConfirmPackagingCreditControllerSpec
 
     val table = Table(
       ("description", "ExportedCreditsPage", "ConvertedCreditsPage"),
-      ("exported credit", None, Some(true)),
-      ("converted credit", Some(true), None),
+      ("exported credit", None, Some(CreditsAnswer.answerWeightWith(1L))),
+      ("converted credit", Some(CreditsAnswer.answerWeightWith(2L)), None),
       ("exported and converted", None, None),
     )
     forAll(table){
