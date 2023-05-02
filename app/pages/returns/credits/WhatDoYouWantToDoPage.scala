@@ -17,6 +17,7 @@
 package pages.returns.credits
 
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -28,6 +29,13 @@ case object WhatDoYouWantToDoPage extends QuestionPage[Boolean] {
 
   override def toString: String = "whatDoYouWantToDo"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    super.cleanup(value, userAnswers)
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value.fold(super.cleanup(value, userAnswers)){
+      claimCredit =>
+        if (claimCredit) super.cleanup(value, userAnswers)
+        else userAnswers //todo this could remove everything under a /credit sub object in useranswers for simplicity
+          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
+          .set(ExportedCreditsPage, CreditsAnswer.noClaim)
+    }
+  }
 }
