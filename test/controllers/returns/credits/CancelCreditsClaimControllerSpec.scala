@@ -26,11 +26,10 @@ import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
-import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchersSugar._
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.{Answers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits._
 import play.api.data.Form
@@ -38,16 +37,17 @@ import play.api.data.Forms.boolean
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
-import play.api.test.Helpers.{await, defaultAwaitTimeout, status, stubMessagesControllerComponents}
-import play.twirl.api.HtmlFormat
-import queries.Gettable
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HttpVerbs.GET
 import views.html.returns.credits.CancelCreditsClaimView
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
+import scala.util.Try
 
-class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach{
+class CancelCreditsClaimControllerSpec extends PlaySpec
+  with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
 
   private val journeyAction = mock[JourneyAction]
   private val messagesApi = mock[MessagesApi]
@@ -56,8 +56,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
   private val formProvider = mock[CancelCreditsClaimFormProvider]
   private val controllerComponents = stubMessagesControllerComponents()
   private val view = mock[CancelCreditsClaimView]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = Form("value" -> boolean)
+  private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form = mock[Form[Boolean]]
   private val saveFunction = mock[SaveUserAnswerFunc]
 
   private val sut = new CancelCreditsClaimController(
@@ -72,118 +72,89 @@ class CancelCreditsClaimControllerSpec extends PlaySpec with JourneyActionAnswer
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(
-      journeyAction,
-      dataRequest,
-      view,
-      navigator,
-      saveFunction
-    )
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(dataRequest.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(form)
-    when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
+
+    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+
+    when(view.apply(any)(any, any)) thenReturn Html("the view")
+    when(formProvider.apply()) thenReturn form
+
+    when(navigator.cancelCreditRoute(any)) thenReturn Call(GET, "/next-page")
+    when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
+
+    val x = request.userAnswers
+    when(request.userAnswers.remove(any, any)) thenReturn Try(x)
+    when(request.userAnswers.change(any, any, any)(any)) thenReturn Future.successful(true)
   }
 
   "onPageLoad" should {
+
     "use the journey action" in {
       when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
-
-      sut.onPageLoad(dataRequest)
-
+      sut.onPageLoad(request)
       verify(journeyAction).apply(any)
     }
 
     "return a 200" in {
-      val result = sut.onPageLoad(dataRequest)
-
+      val result = sut.onPageLoad(request)
       status(result) mustBe OK
+      contentAsString(result) mustBe "the view"
     }
 
     "return a view with correct form" in {
-      sut.onPageLoad(dataRequest)
-
-      verify(view).apply(ArgumentMatchers.eq(form))(any, any)
+      when(formProvider.apply()).thenReturn(form)
+      sut.onPageLoad(request)
+      verify(view).apply(eqTo(form))(any, any)
     }
+
   }
 
   "onSubmit" should {
+
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-
-      sut.onSubmit(dataRequest)
-
+      sut.onSubmit(request)
       verify(journeyAction).async(any)
     }
 
     "redirect with answer yes" in {
-      setUpMocksForSubmit(true)
+      when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
 
-      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
+      val result = await(sut.onSubmit.skippingJourneyAction(request))
+      verify(request.userAnswers).remove(eqTo(ExportedCreditsPage), any)
+      verify(request.userAnswers).remove(eqTo(ConvertedCreditsPage), any)
+      verify(request.userAnswers).change(eqTo(WhatDoYouWantToDoPage), eqTo(false), any)(any)
+      verify(navigator).cancelCreditRoute(true)
 
-      status(result) mustBe SEE_OTHER
-      withClue("call the navigator with Yes parameter"){
-        verify(navigator).cancelCreditRoute(ArgumentMatchers.eq(true))
-      }
+      result.header.status mustBe SEE_OTHER
+      redirectLocation(Future.successful(result)).value mustBe "/next-page"
     }
 
     "redirect with answer No" in {
-      setUpMocksForSubmit(false)
+      when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(false)
 
-      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
+      val result = await(sut.onSubmit.skippingJourneyAction(request))
+      verify(request.userAnswers, never).remove(any, any)
+      verify(request.userAnswers, never).change(any, any, any)(any)
+      verify(navigator).cancelCreditRoute(false)
+      verifyZeroInteractions(saveFunction)
 
-      status(result) mustBe SEE_OTHER
-      withClue("call the navigator with Yes parameter"){
-        verify(navigator).cancelCreditRoute(ArgumentMatchers.eq(false))
-      }
-
-      withClue("should not clear userAnswer"){
-        verifyZeroInteractions(saveFunction)
-      }
+      result.header.status mustBe SEE_OTHER
+      redirectLocation(Future.successful(result)).value mustBe "/next-page"
     }
 
-    "clean UserAnswer on Cancel" in {
-      setUpMocksForSubmit(true)
+    "handle a bad form" in {
+      val formWithErrors = Form("v" -> boolean).withError("error", "error message")
+      when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 
-      await(sut.onSubmit.skippingJourneyAction(dataRequest))
+      val result = await(sut.onSubmit.skippingJourneyAction(request))
+      verify(view).apply(eqTo(formWithErrors)) (eqTo(request), any)
+      verifyZeroInteractions(saveFunction)
 
-      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(saveFunction).apply(captor.capture(), any)
-
-      captor.getValue.data mustBe UserAnswers("123").set(WhatDoYouWantToDoPage, false).get.data
+      result.header.status mustBe BAD_REQUEST
+      contentAsString(Future.successful(result)) mustBe "the view"
     }
 
-    "should return an error" when {
-      "error on form" in {
-        val boundForm = mock[Form[Boolean]]
-        when(formProvider.apply()).thenReturn(boundForm)
-        val errorForm = form.withError("error", "error message")
-        when(boundForm.bindFromRequest()(any, any)).thenReturn(errorForm)
-
-        val result = sut.onSubmit.skippingJourneyAction(dataRequest)
-
-        status(result) mustBe BAD_REQUEST
-
-        withClue("should return a view") {
-          verify(view).apply(ArgumentMatchers.eq(errorForm))(any,any)
-        }
-
-        withClue("should not save userAnswer to cache") {
-          verifyZeroInteractions(saveFunction)
-        }
-      }
-    }
-  }
-
-  private def setUpMocksForSubmit(formValue: Boolean): Unit = {
-    val boundForm = mock[Form[Boolean]]
-    when(formProvider.apply()).thenReturn(boundForm)
-    when(boundForm.bindFromRequest()(any, any)).thenReturn(form.fill(formValue))
-    when(dataRequest.userAnswers).thenReturn(createUserAnswer)
-    when(dataRequest.pptReference).thenReturn("123")
-    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
-    when(saveFunction.apply(any, any)).thenReturn(Future.successful(true))
-    when(navigator.cancelCreditRoute(any)).thenReturn(Call(GET, "/foo"))
   }
 
   def createUserAnswer = {

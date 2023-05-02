@@ -39,27 +39,24 @@ import scala.concurrent.{ExecutionContext, Future}
   which will need to change.
  */
 class CancelCreditsClaimController @Inject()(
-                                              override val messagesApi: MessagesApi,
-                                              cacheConnector: CacheConnector,
-                                              navigator: ReturnsJourneyNavigator,
-                                              journeyAction: JourneyAction,
-                                              form: CancelCreditsClaimFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: CancelCreditsClaimView
-                                 )(implicit ec: ExecutionContext) extends I18nSupport {
-
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  journeyAction: JourneyAction,
+  formProvider: CancelCreditsClaimFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: CancelCreditsClaimView
+) (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
-
-      val preparedForm = request.userAnswers.fill(CancelCreditsClaimPage, form())
-      Ok(view(preparedForm))
+      Ok(view(formProvider()))
   }
 
   def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form().bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors))),
 
