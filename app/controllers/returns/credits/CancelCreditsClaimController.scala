@@ -66,8 +66,8 @@ class CancelCreditsClaimController @Inject()(
             //  ExportCreditPage and the other page that do not use the CreditAnswer.
             //  OldExportedCreditsPage uses the CreditAnswer
             request.userAnswers
-              .remove(OldExportedCreditsPage).get
-              .remove(OldConvertedCreditsPage).get
+              .remove(ExportedCreditsPage).get
+              .remove(ConvertedCreditsPage).get
               .change(WhatDoYouWantToDoPage, false,cacheConnector.saveUserAnswerFunc(request.pptReference))
           }else Future.unit)
             .map(_ => Redirect(navigator.cancelCreditRoute(cancel)))

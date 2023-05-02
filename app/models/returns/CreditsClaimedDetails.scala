@@ -18,7 +18,7 @@ package models.returns
 
 import models.returns.CreditsClaimedDetails._
 import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, OldConvertedCreditsPage, OldExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import viewmodels.{PrintBigDecimal, PrintLong}
 
 case class CreditsClaimedDetails(
@@ -51,8 +51,8 @@ object CreditsClaimedDetails {
 
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrFail(OldExportedCreditsPage),
-      userAnswer.getOrFail(OldConvertedCreditsPage),
+      userAnswer.getOrFail(ExportedCreditsPage),
+      userAnswer.getOrFail(ConvertedCreditsPage),
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,
     )

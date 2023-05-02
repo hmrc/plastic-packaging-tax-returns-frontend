@@ -35,7 +35,7 @@ import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ExportedCreditsWeightPage, OldExportedCreditsPage}
+import pages.returns.credits.ExportedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.{ignored, longNumber}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -44,7 +44,7 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents}
 import play.twirl.api.{Html, HtmlFormat}
-import queries.{Gettable, Settable}
+import queries.Settable
 import views.html.returns.credits.ExportedCreditsWeightView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -99,7 +99,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     "fill the weight in the form" in {
       await(sut.onPageLoad(NormalMode)(dataRequest))
       val func = ArgCaptor[CreditsAnswer => Option[Long]]
-      verify(dataRequest.userAnswers).genericFill(eqTo(OldExportedCreditsPage), eqTo(form), func) (any)
+      verify(dataRequest.userAnswers).genericFill(eqTo(ExportedCreditsPage), eqTo(form), func) (any)
 
       withClue("gets weight or None for displaying") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -127,7 +127,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       when(form.bindFromRequest() (any, any)) thenReturn Form("value" -> longNumber).fill(10L)
       when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-      verify(dataRequest.userAnswers).setOrFail(eqTo(OldExportedCreditsPage), 
+      verify(dataRequest.userAnswers).setOrFail(eqTo(ExportedCreditsPage), 
         eqTo(CreditsAnswer(true, Some(10))), any) (any)
     }
 

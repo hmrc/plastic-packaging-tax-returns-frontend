@@ -24,19 +24,19 @@ import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.{ArgumentMatchers, MockitoSugar}
-import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
@@ -44,7 +44,6 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
 import views.html.returns.credits.ConfirmPackagingCreditView
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -139,14 +138,14 @@ class ConfirmPackagingCreditControllerSpec
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
       "total requested credit is less than available credit - (NormalMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("Hi", "You")
+        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(NormalMode)(dataRequest))
         verify(mockView).apply( meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any)) thenReturn Call("get", "cheese")
+        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad(CheckMode)(dataRequest))
         verify(mockView).apply(meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
@@ -166,8 +165,8 @@ class ConfirmPackagingCreditControllerSpec
 
     val table = Table(
       ("description", "ExportedCreditsPage", "ConvertedCreditsPage"),
-      ("exported credit", None, Some(true)),
-      ("converted credit", Some(true), None),
+      ("exported credit", None, Some(CreditsAnswer.answerWeightWith(1L))),
+      ("converted credit", Some(CreditsAnswer.answerWeightWith(2L)), None),
       ("exported and converted", None, None),
     )
     forAll(table){
@@ -214,7 +213,7 @@ class ConfirmPackagingCreditControllerSpec
 
       await(sut.onCancelClaim(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode)
+      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode, dataRequest.userAnswers)
     }
   }
 
@@ -229,6 +228,6 @@ class ConfirmPackagingCreditControllerSpec
     when(ans.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
-    when(returnsJourneyNavigator.confirmCreditRoute(NormalMode)).thenReturn(Call("GET", "/foo"))
+    when(returnsJourneyNavigator.confirmCreditRoute(NormalMode, dataRequest.userAnswers)).thenReturn(Call("GET", "/foo"))
   }
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Returns AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.7
+// @version      5.8
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax/*
@@ -159,7 +159,7 @@ const submitReturnOrClaimCredit = () => {
     if (currentPageIs('/plastic-packaging-tax/submit-return-or-claim-credit')) {
 
         if(optionSelected("Journey", "Return")){
-           document.getElementById('radio-just-return').checked = true
+           document.getElementById('value-no').checked = true
         }
         else if(optionSelected("Journey", "Return with credit")){
             document.getElementById('value').checked = true
@@ -171,18 +171,37 @@ const submitReturnOrClaimCredit = () => {
 
 /* ####################### Returns credit pages */
 
+const creditWhichYear = () => {
+     if (currentPageIs('/plastic-packaging-tax/claim-for-which-year')) {
+         document.getElementById('value').click()
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
 const creditForExported = () => {
      if (currentPageIs('/plastic-packaging-tax/credit-for-exported')) {
-         document.getElementById('answer').click()
-         document.getElementById('exported-credits-weight').value = '10'
+         document.getElementById('value').click()
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const creditForExportedWeight = () => {
+     if (currentPageIs('/plastic-packaging-tax/credit-for-exported-weight')) {
+         document.getElementById('value').value = '10'
          document.getElementsByClassName('govuk-button')[0].click()
      }
 }
 
 const creditForConverted = () => {
      if (currentPageIs('/plastic-packaging-tax/credit-for-converted')) {
-         document.getElementById('answer').click()
-         document.getElementById('converted-credits-weight').value = '10'
+         document.getElementById('value').click()
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+}
+
+const creditForConvertedWeight = () => {
+     if (currentPageIs('/plastic-packaging-tax/credit-for-converted-weight')) {
+         document.getElementById('value').value = '10'
          document.getElementsByClassName('govuk-button')[0].click()
      }
 }
@@ -375,8 +394,11 @@ function completeJourney(manualJourney) {
     nonExportedMedicinesWeightPage()
     nonExportedRecycledPage()
     nonExportedRecycledWeightPage()
+    creditWhichYear()
     creditForExported()
+    creditForExportedWeight()
     creditForConverted()
+    creditForConvertedWeight()
     confirmOrCorrectCredit()
     startReturn()
     submittedReturns()

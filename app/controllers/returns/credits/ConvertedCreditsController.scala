@@ -23,7 +23,7 @@ import models.Mode
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.OldConvertedCreditsPage
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -48,7 +48,7 @@ class ConvertedCreditsController @Inject()
   def onPageLoad(mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.genericFill(OldConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
+        val preparedForm = request.userAnswers.genericFill(ConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
         Results.Ok(view(preparedForm, mode))
     }
   }
@@ -62,7 +62,7 @@ class ConvertedCreditsController @Inject()
             formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-              request.userAnswers.changeWithFunc(OldConvertedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+              request.userAnswers.changeWithFunc(ConvertedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
                 .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
             }
           )

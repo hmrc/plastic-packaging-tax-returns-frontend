@@ -24,6 +24,7 @@ import forms.returns.credits.CancelCreditsClaimFormProvider
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.CreditsAnswer
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
@@ -45,7 +46,7 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class CancelCreditsClaimControllerSpec extends PlaySpec 
+class CancelCreditsClaimControllerSpec extends PlaySpec
   with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
 
   private val journeyAction = mock[JourneyAction]
@@ -71,7 +72,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    
+
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
@@ -109,7 +110,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
   }
 
   "onSubmit" should {
-    
+
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(request)
@@ -120,13 +121,13 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
 
       val result = await(sut.onSubmit.skippingJourneyAction(request))
-      verify(request.userAnswers).remove(eqTo(OldExportedCreditsPage), any)
-      verify(request.userAnswers).remove(eqTo(OldConvertedCreditsPage), any)
+      verify(request.userAnswers).remove(eqTo(ExportedCreditsPage), any)
+      verify(request.userAnswers).remove(eqTo(ººConvertedCreditsPage), any)
       verify(request.userAnswers).change(eqTo(WhatDoYouWantToDoPage), eqTo(false), any)(any)
       verify(navigator).cancelCreditRoute(true)
 
       result.header.status mustBe SEE_OTHER
-      redirectLocation(Future.successful(result)).value mustBe "/next-page" 
+      redirectLocation(Future.successful(result)).value mustBe "/next-page"
     }
 
     "redirect with answer No" in {
@@ -137,7 +138,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       verify(request.userAnswers, never).change(any, any, any)(any)
       verify(navigator).cancelCreditRoute(false)
       verifyZeroInteractions(saveFunction)
-      
+
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
     }
@@ -156,4 +157,9 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
   }
 
+  def createUserAnswer = {
+    UserAnswers("123")
+      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+  }
 }
