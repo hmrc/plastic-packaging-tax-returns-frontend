@@ -122,7 +122,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
       val result = await(sut.onSubmit.skippingJourneyAction(request))
       verify(request.userAnswers).remove(eqTo(ExportedCreditsPage), any)
-      verify(request.userAnswers).remove(eqTo(ººConvertedCreditsPage), any)
+      verify(request.userAnswers).remove(eqTo(ConvertedCreditsPage), any)
       verify(request.userAnswers).change(eqTo(WhatDoYouWantToDoPage), eqTo(false), any)(any)
       verify(navigator).cancelCreditRoute(true)
 
