@@ -18,7 +18,7 @@ package controllers.returns.credits
 
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import pages.returns.credits.{OldConvertedCreditsPage, OldExportedCreditsPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 
 case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
@@ -30,7 +30,7 @@ case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 object ClaimedCredits {
 
   def apply(userAnswers: UserAnswers): ClaimedCredits = {
-    ClaimedCredits(userAnswers.getOrFail(OldExportedCreditsPage), userAnswers.getOrFail(OldConvertedCreditsPage))
+    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
 
   }
 }

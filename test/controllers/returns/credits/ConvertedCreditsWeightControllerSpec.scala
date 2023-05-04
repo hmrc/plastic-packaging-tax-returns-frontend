@@ -33,7 +33,7 @@ import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldConvertedCreditsPage
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.Forms.longNumber
 import play.api.http.Status
@@ -81,7 +81,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.genericFill(eqTo(OldConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.genericFill(eqTo(ConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
   }
 
   "onPageLoad" should {
@@ -103,7 +103,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       await {
         controller.onPageLoad(NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).genericFill(eqTo(OldConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
+      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
     }
 
     // TODO ...
@@ -126,7 +126,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
       await(controller.onSubmit(NormalMode).skippingJourneyAction(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(OldConvertedCreditsPage), any, eqTo(saveFunction)) (any, any) // TODO could improve
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage), any, eqTo(saveFunction)) (any, any) // TODO could improve
     }
 
     "redirect" in {

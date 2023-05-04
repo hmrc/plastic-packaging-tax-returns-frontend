@@ -106,11 +106,10 @@ class ReturnsJourneyNavigator @Inject()(
   def convertedCreditsWeightRoute(mode: Mode) =
     controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
 
-  def confirmCreditRoute(mode: Mode): Call =
-    // TODO disable for now - otherwise can try to jump to full CYA on first pass through journey -> crash
-//    if (mode.equals(CheckMode))
-//      routes.ReturnsCheckYourAnswersController.onPageLoad()
-//    else
+  def confirmCreditRoute(mode: Mode, userAnswers: UserAnswers): Call =
+    if (mode.equals(CheckMode) && nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers))
+      routes.ReturnsCheckYourAnswersController.onPageLoad()
+    else
       controllers.returns.routes.NowStartYourReturnController.onPageLoad
 
   def nowStartYourReturnRoute: Call =

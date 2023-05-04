@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
-import pages.returns.credits.OldConvertedCreditsPage
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.PrintLong
@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object CreditsConvertedWeightSummary extends SummaryViewModel{
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(OldConvertedCreditsPage).map {
+    answers.get(ConvertedCreditsPage).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.converted.weight", classes="govuk-!-width-one-half"),

@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldExportedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -45,13 +45,13 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
   "summary" should {
     "return a Summary row"  when {
       "answer is yes" in {
-        val userAnswer = UserAnswers("123").set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
+        val userAnswer = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
         when(messages.apply(ArgumentMatchers.eq("site.yes"))).thenReturn("yes")
         CreditsExportedPlasticSummary.row(userAnswer)(messages) mustBe createExpectedResult("yes")
       }
 
       "answer is no" in {
-        val ans = UserAnswers("123").set(OldExportedCreditsPage, CreditsAnswer.noClaim).get
+        val ans = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.noClaim).get
         when(messages.apply(ArgumentMatchers.eq("site.no"))).thenReturn("no")
         CreditsExportedPlasticSummary.row(ans)(messages) mustBe createExpectedResult("no")
       }

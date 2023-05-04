@@ -22,7 +22,7 @@ import models.returns.CreditsAnswer
 import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.OldExportedCreditsPage
+import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -41,7 +41,7 @@ class CreditsExportedWeightSummarySpec extends PlaySpec {
         when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
         when(messages.apply(ArgumentMatchers.eq(20L.asKg))).thenReturn(20L.asKg)
 
-        val userAnswer = UserAnswers("123").set(OldExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
+        val userAnswer = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
 
         CreditsExportedWeightSummary.row(userAnswer)(messages) mustBe createExpectedWeightResult
       }
