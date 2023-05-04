@@ -21,6 +21,7 @@ import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
+import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
 import models.Mode.{CheckMode, NormalMode}
 import models.{Mode, UserAnswers}
 import pages._
@@ -78,7 +79,7 @@ class ReturnsJourneyNavigator @Inject()(
       routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
   }
 
-  def claimForWhichYear: Call =
+  def claimForWhichYear(year: YearOption): Call = //todo use year
     controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
 
   def exportedCreditsYesNo(mode: Mode, isYes: Boolean): Call = {

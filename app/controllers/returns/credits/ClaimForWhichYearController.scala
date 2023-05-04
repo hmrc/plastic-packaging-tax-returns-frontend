@@ -17,44 +17,48 @@
 package controllers.returns.credits
 
 import controllers.actions.JourneyAction
-import forms.returns.credits.DoYouWantToClaimFormProvider
-import models.Mode
-import models.requests.DataRequest
+import forms.returns.credits.ClaimForWhichYearFormProvider
+import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.WhatDoYouWantToDoPage
-import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ClaimForWhichYearView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimForWhichYearController @Inject()(
-                                             override val messagesApi: MessagesApi,
-                                             journeyAction: JourneyAction,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             view: ClaimForWhichYearView,
-                                             formProvider: DoYouWantToClaimFormProvider, // todo tmp
-                                             navigator: ReturnsJourneyNavigator,
+  override val messagesApi: MessagesApi,
+  journeyAction: JourneyAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ClaimForWhichYearView,
+  formProvider: ClaimForWhichYearFormProvider,
+  navigator: ReturnsJourneyNavigator
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-)
-  (implicit ec: ExecutionContext) extends I18nSupport {
+  //todo get there from somewhere
+  val availableYears = Seq(YearOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)))
 
   def onPageLoad: Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-        val form = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
-        Ok(view(form))
+    journeyAction { implicit request =>
+      //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
+      val form = formProvider(availableYears)
+      Ok(view(form, availableYears))
     }
 
-
   def onSubmit: Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        Future.successful(Results.Redirect(navigator.claimForWhichYear)
-      )
+    journeyAction.async { implicit request =>
+      formProvider(availableYears)
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears))),
+          selectedYear => {
+            Future.successful(Results.Redirect(navigator.claimForWhichYear(selectedYear)))
+          }
+        )
     }
 
 

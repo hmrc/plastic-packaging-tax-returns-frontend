@@ -15,23 +15,41 @@
  *@
 
 @import components._
+@import java.time.LocalDate
 @import views.html.templates._
+@import views.ViewUtils.getMonthName
+@import forms.returns.credits.ClaimForWhichYearFormProvider
+@import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
+    govukErrorSummary: GovukErrorSummary,
     heading: heading,
     govukRadios: GovukRadios,
     hiddenContent: HiddenContent
 )
 
-@(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], options: Seq[YearOption])(implicit request: Request[_], messages: Messages)
+
+@radioContent(from: LocalDate, to: LocalDate) = @{
+    messages(
+        "return.quarter",
+        s"${from.getDayOfMonth} ${getMonthName(from.getMonthValue)} ${from.getYear}",
+        s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
+        to.getYear.toString
+    )
+}
 
 @layout(pageTitle = title(form, messages("claim-for-which-year.credits.title-heading"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit, 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
         @heading(messages("claim-for-which-year.credits.title-heading"))
 
@@ -41,9 +59,9 @@
             RadiosViewModel.apply(
                 field = form("value"),
                 legend = LegendViewModel(HtmlContent(hiddenContent("claim-for-which-year.credits.title-heading"))),
-                items = Seq(
-                    RadioItem(id = Some("value"), value = Some("true"), content =  Text("1 April 2022 to 31 March 2023"))
-                )
+                items = options.zipWithIndex.map{ case (year, i) =>
+                    RadioItem(id = Some(s"option-$i"), value = Some(year.key), content =  Text(radioContent(year.from, year.to)))
+                }
             )
         )
 

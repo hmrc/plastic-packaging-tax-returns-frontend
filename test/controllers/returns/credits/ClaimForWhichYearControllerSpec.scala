@@ -19,20 +19,23 @@ package controllers.returns.credits
 import base.utils.JourneyActionAnswer
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import forms.returns.credits.DoYouWantToClaimFormProvider
+import forms.returns.credits.ClaimForWhichYearFormProvider
+import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
-import play.api.data.Form
-import play.api.data.Forms.boolean
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{boolean, ignored, longNumber}
+import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
@@ -41,7 +44,9 @@ import play.twirl.api.Html
 import queries.Gettable
 import views.html.returns.credits.ClaimForWhichYearView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
 
 class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach  {
 
@@ -49,11 +54,11 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val messages = mock[Messages]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val mockView = mock[ClaimForWhichYearView]
-  private val mockFormProvider = mock[DoYouWantToClaimFormProvider]
+  private val mockFormProvider = mock[ClaimForWhichYearFormProvider]
   private val journeyAction = mock[JourneyAction]
   private val controllerComponents = stubMessagesControllerComponents()
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Boolean]]
+  private val form = mock[Form[YearOption]]
 
   val sut: ClaimForWhichYearController = new ClaimForWhichYearController(
     mockMessagesApi,
@@ -78,8 +83,8 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     )
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(mockView.apply(any)(any, any)).thenReturn(Html("correct view"))
-    when(mockFormProvider.apply()) thenReturn form
+    when(mockView.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(mockFormProvider.apply(any)) thenReturn form
   }
 
   "onPageLoad" must {
@@ -96,13 +101,13 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     }
 
     "take in a value from form & return view" in {
-      val validForm = Form("value" -> boolean).fill(true)
-      when(dataRequest.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(validForm)
+      val availableYears = sut.availableYears //todo get there from somewhere
+      // when(something.getAvailableYears).thenReturn(availableYears)
 
       val result = sut.onPageLoad(dataRequest)
+
       status(result) mustBe OK
-      verify(dataRequest.userAnswers).fill(meq(WhatDoYouWantToDoPage), meq(form))(any)
-      verify(mockView).apply(meq(validForm))(any, any)
+      verify(mockView).apply(meq(form), meq(availableYears))(any, any)
     }
   }
 
@@ -115,10 +120,31 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     }
 
     "redirect to the next page" in {
-      when(mockNavigator.claimForWhichYear).thenReturn(Call(GET, "/foo"))
-      val result = sut.onSubmit.skippingJourneyAction(dataRequest)
-      status(result) mustBe SEE_OTHER
-      verify(mockNavigator).claimForWhichYear
+      when(mockNavigator.claimForWhichYear(any)).thenReturn(Call(GET, "/next/page"))
+      val testForm: Form[YearOption] = Form("x" -> ignored(YearOption(LocalDate.now(), LocalDate.now())))
+      when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(YearOption(LocalDate.now(), LocalDate.now()))
+
+      val result = await(sut.onSubmit.skippingJourneyAction(dataRequest))
+      verify(mockNavigator).claimForWhichYear(meq(YearOption(LocalDate.now(), LocalDate.now())))
+
+      result.header.status mustBe Status.SEE_OTHER
+      redirectLocation(Future.successful(result)) mustBe Some("/next/page")
+    }
+
+    "display any errors" in {
+      val availableYears = sut.availableYears //todo get there from somewhere
+      //when(something.getAvailableYears).thenReturn(availableYears)
+
+      val testForm: Form[YearOption] = Form("x" -> ignored(YearOption(LocalDate.now(), LocalDate.now())))
+      val formWithErrors = testForm.withError("key", "message")
+      when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
+
+      val result = await(sut.onSubmit.skippingJourneyAction(dataRequest))
+
+      verify(mockView).apply(eqTo(formWithErrors), meq(availableYears)) (eqTo(dataRequest), any)
+
+      result.header.status mustBe Status.BAD_REQUEST
+      contentAsString(Future.successful(result)) mustBe "correct view"
     }
 
   }
