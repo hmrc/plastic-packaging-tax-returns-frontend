@@ -154,6 +154,10 @@ class UserAnswersSpec extends PlaySpec
         filledUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(filledForm)
         verify(emptyForm).fill("200g")
       }
+      "using a path" in {
+        filledUserAnswers.fill[String](JsPath \ "cheese" \ "brie", emptyForm) mustBe filledForm
+        verify(emptyForm).fill("200g")
+      }
       "the answer does not exist" in {
         emptyUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(emptyForm)
         verify(emptyForm, never).fill(any)
