@@ -131,7 +131,6 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
-      when(request.userAnswers.changeWithPath(any,any,any)(any)).thenReturn(Future.successful(true))
       when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
