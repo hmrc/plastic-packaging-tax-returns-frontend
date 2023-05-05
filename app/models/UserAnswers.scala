@@ -25,6 +25,8 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.runtime.universe.typeOf
+import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -63,14 +65,23 @@ case class UserAnswers(
   def get[A](path: JsPath)(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(path)).reads(data).getOrElse(None)
 
-  def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A]): A = 
+  def getOrFail[A](page: Gettable[A])(implicit rds: Reads[A], tt: TypeTag[A]): A = 
     getOrFail(page.path)
 
-  def getOrFail[A](answerPath: String)(implicit rds: Reads[A]): A =
+  def getOrFail[A](answerPath: String)(implicit rds: Reads[A], tt: TypeTag[A]): A =
     getOrFail[A](JsPath \ answerPath)
-    
-  def getOrFail[A](answerPath: JsPath)(implicit rds: Reads[A]): A =
-    Reads.at(answerPath).reads(data).get
+
+  def getOrFail[A](path: JsPath) (implicit rds: Reads[A], tt: TypeTag[A]): A = 
+    Reads
+      .at(path)
+      .reads(data)
+      .recover {
+        case JsError((_, JsonValidationError("error.path.missing" :: Nil) :: _) :: _) =>
+          throw new IllegalStateException(s"$path is missing from user answers")
+        case JsError((_, JsonValidationError(message :: Nil, _*) :: _) :: _) if message.startsWith("error.expected") =>
+          throw new IllegalStateException(s"$path in user answers cannot be read as type ${typeOf[A]}")
+      }
+      .get
     
   def set[A](page: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 

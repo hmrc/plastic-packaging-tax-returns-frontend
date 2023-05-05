@@ -25,26 +25,25 @@ import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, JsPath, JsString, Json, OWrites}
+import play.api.libs.json.{JsObject, JsPath, JsString, JsValue, Json, OWrites}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
+import java.time.{Instant, LocalDate}
 
 class UserAnswersSpec extends PlaySpec 
   with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
-  private val emptyUserAnswers = UserAnswers("henry")
-  private val filledUserAnswers = UserAnswers("id", 
-    obj { "cheese" -> obj("brie" -> "200g") }
-  )
+  private val emptyUserAnswers = UserAnswers("empty")
+  private val filledUserAnswers = UserAnswers("filled", obj("cheese" -> obj("brie" -> "200g")))
 
-  private class TestException extends Exception {}
+  private class RandoException extends Exception {}
   
   private case class BadValue()
   private object BadValue {
-    implicit val writes: OWrites[BadValue] = throw new TestException
+    implicit val writes: OWrites[BadValue] = throw new RandoException
   }
   
   private val questionPage = mock[QuestionPage[String]]
@@ -69,21 +68,33 @@ class UserAnswersSpec extends PlaySpec
   }
 
   "it" should {
-    "remember its id" in {
-      emptyUserAnswers must have ('id ("henry"))
+    "have an id" in {
+      emptyUserAnswers must have('id ("empty"))
+      filledUserAnswers must have('id ("filled"))
+    }
+    
+    // TODO the timestamp... is it needed? (Actual timestamp for mongo in set by session repo in backend)
+  }
+
+  "setOrFail" should {
+    "set a value" when {
+      "using a path" in {
+        val updatedAnswers = emptyUserAnswers.setOrFail(JsPath \ "cheese", "please")
+        updatedAnswers.data.value mustBe Map("cheese" -> JsString("please"))
+      }
+      "using a question" in {
+        val updatedAnswers = emptyUserAnswers.setOrFail(questionPage, "much")
+        updatedAnswers.data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
+      }
     }
 
-    "set a value" when {
-      "using a string key" in {
-        emptyUserAnswers.setOrFail("cheese", "please").data.value mustBe Map("cheese" -> JsString("please"))
-      }
-      "setting a value fails" in {
-        a[TestException] must be thrownBy emptyUserAnswers.setOrFail("x", BadValue())
-      }
-      "using a question page key" in {
-        emptyUserAnswers.setOrFail(questionPage, "much").data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
-      }
+    "pass on exceptions if something else goes wrong" in {
+      a[RandoException] must be thrownBy emptyUserAnswers.setOrFail("x", BadValue())
     }
+
+  }
+
+  "getOrFail" should {
 
     "get a value" when {
       "using a string key" in {
@@ -98,6 +109,22 @@ class UserAnswersSpec extends PlaySpec
       }
     }
 
+    "complain when an answer is missing" when {
+      "using a question" in {
+        when(questionPage.path) thenReturn JsPath \ "doesnt" \ "exist"
+        the [Exception] thrownBy emptyUserAnswers.getOrFail(questionPage) must have message
+          "/doesnt/exist is missing from user answers"
+      }
+      "using a path" in {
+        the [Exception] thrownBy emptyUserAnswers.getOrFail[JsValue](JsPath \ "not-there") must have message
+          "/not-there is missing from user answers"
+      }
+    }
+
+
+  }
+
+  "the rest" should {
     "fill in a form's value" when {
       "the answer exists" in {
         filledUserAnswers.fill(questionPage, emptyForm) mustBe theSameInstanceAs(filledForm)
@@ -133,7 +160,7 @@ class UserAnswersSpec extends PlaySpec
       "new value is different" in {
         await(filledUserAnswers.change(questionPage, "no", saveFunction)) mustBe true
         val updatedJs = JsObject(Seq("cheese" -> JsObject(Seq("brie" -> JsString("no")))))
-        verify(saveFunction).apply(UserAnswers("id", updatedJs, filledUserAnswers.lastUpdated), true)
+        verify(saveFunction).apply(UserAnswers("filled", updatedJs, filledUserAnswers.lastUpdated), true)
       }
       "new value is the same" in {
         await(filledUserAnswers.change(questionPage, "200g", saveFunction)) mustBe false
@@ -149,7 +176,7 @@ class UserAnswersSpec extends PlaySpec
         }
         verify(newValueFunc).apply(Some("200g"))
         verify(saveFunction).apply(
-          eqTo(UserAnswers("id", obj { "cheese" -> obj("brie" -> "new-value") }, filledUserAnswers.lastUpdated)), 
+          eqTo(UserAnswers("filled", obj { "cheese" -> obj("brie" -> "new-value") }, filledUserAnswers.lastUpdated)), 
           any)
       }
       
@@ -159,7 +186,7 @@ class UserAnswersSpec extends PlaySpec
         }
         verify(newValueFunc).apply(None)
         verify(saveFunction).apply(
-          eqTo(UserAnswers("henry", obj { "cheese" -> obj("brie" -> "new-value") }, emptyUserAnswers.lastUpdated)),
+          eqTo(UserAnswers("empty", obj { "cheese" -> obj("brie" -> "new-value") }, emptyUserAnswers.lastUpdated)),
           any)
       }
     }
@@ -171,7 +198,7 @@ class UserAnswersSpec extends PlaySpec
     
     "remove any answers" in {
       val resetUserAnswers = filledUserAnswers.reset
-      resetUserAnswers.id mustBe "id"
+      resetUserAnswers.id mustBe "filled"
       resetUserAnswers.data mustBe Json.obj()
     }
   }
