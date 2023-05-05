@@ -62,7 +62,7 @@ class StartYourReturnController @Inject()(
         case Some((taxReturnObligation, isFirst)) =>
           userAnswers
             .setOrFail(ReturnObligationCacheable, taxReturnObligation)
-            .setOrFail("isFirstReturn", isFirst)
+            .setOrFail(JsPath \ "isFirstReturn", isFirst)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
             .map(_ => Ok(view(preparedForm, taxReturnObligation, isFirst)))
         case None =>

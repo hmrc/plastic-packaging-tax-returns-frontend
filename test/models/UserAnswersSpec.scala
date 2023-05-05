@@ -25,13 +25,12 @@ import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, JsPath, JsString, JsValue, Json, OWrites}
+import play.api.libs.json._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
-import java.time.{Instant, LocalDate}
 
 class UserAnswersSpec extends PlaySpec 
   with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
@@ -89,7 +88,7 @@ class UserAnswersSpec extends PlaySpec
     }
 
     "pass on exceptions if something else goes wrong" in {
-      a[RandoException] must be thrownBy emptyUserAnswers.setOrFail("x", BadValue())
+      a [RandoException] must be thrownBy emptyUserAnswers.setOrFail(JsPath \ "x", BadValue())
     }
 
   }
