@@ -220,10 +220,19 @@ class UserAnswersSpec extends PlaySpec
       verify(saveFunction).apply(any, any)
     }
     
-    "remove any answers" in {
+    "remove all answers" in {
       val resetUserAnswers = filledUserAnswers.reset
       resetUserAnswers.id mustBe "filled"
       resetUserAnswers.data mustBe Json.obj()
     }
+    
+    "remove a single answer" in {
+      val updatedAnswers = filledUserAnswers.remove(question)
+      updatedAnswers.success.value.data.value mustBe Map("cheese" -> obj())
+    }
+
+    // TODO don't know how to test remove with a failed try 
+
+
   }
 }
