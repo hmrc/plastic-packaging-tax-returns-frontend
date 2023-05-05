@@ -27,6 +27,7 @@ import navigation.ReturnsJourneyNavigator
 import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
@@ -76,7 +77,7 @@ class StartYourReturnController @Inject()(
       val userAnswers = request.userAnswers
       val pptReference = request.pptReference
       val obligation = userAnswers.getOrFail(ReturnObligationCacheable)
-      val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
+      val isFirstReturn = userAnswers.getOrFail[Boolean](JsPath \ "isFirstReturn")
 
       form().bindFromRequest().fold(
         formWithErrors =>

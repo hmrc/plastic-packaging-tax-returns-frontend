@@ -97,10 +97,6 @@ class UserAnswersSpec extends PlaySpec
   "getOrFail" should {
 
     "get a value" when {
-      "using a string key" in {
-        val filledUserAnswers = UserAnswers("id", JsObject(Seq("cheese" -> JsString("please"))))
-        filledUserAnswers.getOrFail[String]("cheese") mustBe "please"
-      }
       "using a path key" in {
         filledUserAnswers.getOrFail[String](JsPath \ "cheese" \ "brie") mustBe "200g"
       }
