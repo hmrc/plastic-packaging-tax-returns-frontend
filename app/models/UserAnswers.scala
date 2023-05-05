@@ -129,9 +129,6 @@ case class UserAnswers(
   def setOrFail[A](settable: Settable[A], value: A, cleanup: Boolean = true) (implicit writes: Writes[A]): UserAnswers = 
     set(settable, value, cleanup).get
 
-  def setOrFail[A](answerPath: String, value: A) (implicit writes: Writes[A]): UserAnswers =
-    copy(data = data.setObject(JsPath \ answerPath, Json.toJson(value)).get)
-
   def setOrFail[A](answerPath: JsPath, value: A) (implicit writes: Writes[A]): UserAnswers =
     copy(data = data.setObject(answerPath, Json.toJson(value)).get)
 

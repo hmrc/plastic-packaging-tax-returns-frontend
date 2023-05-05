@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchersSugar._
 import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
@@ -44,6 +45,13 @@ class UserAnswersSpec extends PlaySpec
   private val fillFormFunc = mock[String => Option[String]]
   private val emptyForm = mock[Form[String]]("empty form")
   private val filledForm = mock[Form[String]]("filled form")
+
+  class RandoException extends Exception {}
+
+  case class BadValue()
+  object BadValue {
+    implicit val writes: OWrites[BadValue] = throw new RandoException
+  }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,6 +77,7 @@ class UserAnswersSpec extends PlaySpec
   }
 
   "setOrFail" should {
+
     "set a value" when {
       "using a path" in {
         val updatedAnswers = emptyUserAnswers.setOrFail(JsPath \ "cheese", "please")
@@ -80,17 +89,19 @@ class UserAnswersSpec extends PlaySpec
       }
     }
 
-    class RandoException extends Exception {}
-
-    case class BadValue()
-    object BadValue {
-      implicit val writes: OWrites[BadValue] = throw new RandoException
-    }
-
     "pass on exceptions if something else goes wrong" in {
       a [RandoException] must be thrownBy emptyUserAnswers.setOrFail(JsPath \ "x", BadValue())
     }
-
+  }
+  
+  "set" should {
+    
+    "set a value" in {
+      val updatedAnswers = emptyUserAnswers.set(question, "much")
+      updatedAnswers.success.value.data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
+    }
+    
+    // TODO don't know how to test set() return a failed Try
   }
 
   "getOrFail" should {
