@@ -59,9 +59,19 @@ case class UserAnswers(
         .getOrElse(form) 
   }
 
+  /** Read a user answer or return None
+    * @param question source of the path to the answer to read
+    * @tparam A the expected type of the answer
+    * @return Some[A] with user answer or None
+    */
   def get[A](question: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     get(question.path)
 
+  /** Read a user answer or return None
+    * @param path the path to the answer to read
+    * @tparam A the expected type of the answer
+    * @return Some[A] with user answer or None
+    */
   def get[A](path: JsPath)(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(path)).reads(data).getOrElse(None)
 

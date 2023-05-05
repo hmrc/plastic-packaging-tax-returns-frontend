@@ -39,14 +39,7 @@ class UserAnswersSpec extends PlaySpec
   private val emptyUserAnswers = UserAnswers("empty")
   private val filledUserAnswers = UserAnswers("filled", obj("cheese" -> obj("brie" -> "200g")))
 
-  private class RandoException extends Exception {}
-  
-  private case class BadValue()
-  private object BadValue {
-    implicit val writes: OWrites[BadValue] = throw new RandoException
-  }
-  
-  private val questionPage = mock[QuestionPage[String]]
+  private val question = mock[QuestionPage[String]]
   private val saveFunction = mock[SaveUserAnswerFunc]
   private val newValueFunc = mock[Option[String] => String]
   private val fillFormFunc = mock[String => Option[String]]
@@ -56,8 +49,8 @@ class UserAnswersSpec extends PlaySpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     
-    when(questionPage.path) thenReturn JsPath \ "cheese" \ "brie"
-    when(questionPage.cleanup(any, any)) thenAnswer {
+    when(question.path) thenReturn JsPath \ "cheese" \ "brie"
+    when(question.cleanup(any, any)) thenAnswer {
       (_: Option[String], userAnswers: UserAnswers) => Try(userAnswers) // pass through
     }
     
@@ -83,9 +76,16 @@ class UserAnswersSpec extends PlaySpec
         updatedAnswers.data.value mustBe Map("cheese" -> JsString("please"))
       }
       "using a question" in {
-        val updatedAnswers = emptyUserAnswers.setOrFail(questionPage, "much")
+        val updatedAnswers = emptyUserAnswers.setOrFail(question, "much")
         updatedAnswers.data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
       }
+    }
+
+    class RandoException extends Exception {}
+
+    case class BadValue()
+    object BadValue {
+      implicit val writes: OWrites[BadValue] = throw new RandoException
     }
 
     "pass on exceptions if something else goes wrong" in {
@@ -101,14 +101,14 @@ class UserAnswersSpec extends PlaySpec
         filledUserAnswers.getOrFail[String](JsPath \ "cheese" \ "brie") mustBe "200g"
       }
       "using a question page key" in {
-        filledUserAnswers.getOrFail(questionPage) mustBe "200g"
+        filledUserAnswers.getOrFail(question) mustBe "200g"
       }
     }
 
     "complain when an answer is missing" when {
       "using a question" in {
-        when(questionPage.path) thenReturn JsPath \ "doesnt" \ "exist"
-        the [Exception] thrownBy emptyUserAnswers.getOrFail(questionPage) must have message
+        when(question.path) thenReturn JsPath \ "doesnt" \ "exist"
+        the [Exception] thrownBy emptyUserAnswers.getOrFail(question) must have message
           "/doesnt/exist is missing from user answers"
       }
       "using a path" in {
@@ -121,37 +121,50 @@ class UserAnswersSpec extends PlaySpec
       the [Exception] thrownBy filledUserAnswers.getOrFail[Long](JsPath \ "cheese" \ "brie") must have message
         "/cheese/brie in user answers cannot be read as type Long"
     }
-
-
+  }
+  
+  "get" when {
+    "calling with a JsPath" in {
+      filledUserAnswers.get[String](JsPath \ "cheese" \ "brie") mustBe Some("200g")
+    }
+    "calling with a question / Gettable" in {
+      filledUserAnswers.get(question) mustBe Some("200g")
+    }
+    "asking for answer that isn't there" in {
+      emptyUserAnswers.get(question) mustBe None
+    }
+    "asking for answer of the wrong type" in {
+      filledUserAnswers.get[Long](JsPath \ "cheese" \ "brie") mustBe None
+    }
   }
 
   "the rest" should {
     "fill in a form's value" when {
       "the answer exists" in {
-        filledUserAnswers.fill(questionPage, emptyForm) mustBe theSameInstanceAs(filledForm)
+        filledUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(filledForm)
         verify(emptyForm).fill("200g")
       }
       "the answer does not exist" in {
-        emptyUserAnswers.fill(questionPage, emptyForm) mustBe theSameInstanceAs(emptyForm)
+        emptyUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(emptyForm)
         verify(emptyForm, never).fill(any)
       }
     }
     
     "fill a yes-no form using given function" when {
       "user answer does not exist" in {
-        emptyUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        emptyUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
         verify(fillFormFunc, never).apply(any)
         verify(emptyForm, never).fill(any)
       }
       "user answer does exist" in {
         when(fillFormFunc.apply(any)) thenReturn Some("new-value")
-        filledUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(filledForm)
+        filledUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(filledForm)
         verify(fillFormFunc).apply(any)
         verify(emptyForm).fill(any)
       }
       "user answer does exist by function returns None" in {
         when(fillFormFunc.apply(any)) thenReturn None
-        filledUserAnswers.genericFill(questionPage, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        filledUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
         verify(fillFormFunc).apply(any)
         verify(emptyForm, never).fill(any)
       }
@@ -159,12 +172,12 @@ class UserAnswersSpec extends PlaySpec
 
     "change a value" when {
       "new value is different" in {
-        await(filledUserAnswers.change(questionPage, "no", saveFunction)) mustBe true
+        await(filledUserAnswers.change(question, "no", saveFunction)) mustBe true
         val updatedJs = JsObject(Seq("cheese" -> JsObject(Seq("brie" -> JsString("no")))))
         verify(saveFunction).apply(UserAnswers("filled", updatedJs, filledUserAnswers.lastUpdated), true)
       }
       "new value is the same" in {
-        await(filledUserAnswers.change(questionPage, "200g", saveFunction)) mustBe false
+        await(filledUserAnswers.change(question, "200g", saveFunction)) mustBe false
         verify(saveFunction, never).apply(any, any)
       }
     }
@@ -173,7 +186,7 @@ class UserAnswersSpec extends PlaySpec
       
       "previous value exists" in {
         await {
-          filledUserAnswers.changeWithFunc(questionPage, newValueFunc, saveFunction)
+          filledUserAnswers.changeWithFunc(question, newValueFunc, saveFunction)
         }
         verify(newValueFunc).apply(Some("200g"))
         verify(saveFunction).apply(
@@ -183,7 +196,7 @@ class UserAnswersSpec extends PlaySpec
       
       "previous value does not exist" in {
         await {
-          emptyUserAnswers.changeWithFunc(questionPage, newValueFunc, saveFunction)
+          emptyUserAnswers.changeWithFunc(question, newValueFunc, saveFunction)
         }
         verify(newValueFunc).apply(None)
         verify(saveFunction).apply(
