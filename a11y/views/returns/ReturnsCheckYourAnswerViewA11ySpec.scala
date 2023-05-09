@@ -40,8 +40,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     .set(AnotherBusinessExportedPage, false).get
     .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
     .set(NonExportedRecycledPlasticPackagingPage, false).get
-    .set(ExportedCreditsPage, CreditsAnswer.noClaim).get
-    .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
+    .set(ExportedCreditsPage("year-key"), CreditsAnswer.noClaim).get
+    .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(1L)).get
     .set(WhatDoYouWantToDoPage, true).get
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(

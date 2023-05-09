@@ -19,7 +19,7 @@
 @import views.html.templates._
 @import views.ViewUtils.getMonthName
 @import forms.returns.credits.ClaimForWhichYearFormProvider
-@import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+@import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 
 @this(
     formHelper: FormWithCSRF,
@@ -32,7 +32,7 @@
     hiddenContent: HiddenContent
 )
 
-@(form: Form[_], options: Seq[YearOption], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], options: Seq[CreditRangeOption], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @radioContent(from: LocalDate, to: LocalDate) = @{
     messages(

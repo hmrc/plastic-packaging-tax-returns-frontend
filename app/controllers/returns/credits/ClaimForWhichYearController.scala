@@ -18,7 +18,7 @@ package controllers.returns.credits
 
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
-import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
@@ -41,9 +41,10 @@ class ClaimForWhichYearController @Inject()(
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   //todo get there from somewhere
+  //todo should this obj contain a taxrate per range?
   val availableYears = Seq(
-    YearOption(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31)),
-    YearOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
+    CreditRangeOption(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31)),
+    CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
   )
 
   //todo this needs check mode, else you loose the state coming from finalCYA

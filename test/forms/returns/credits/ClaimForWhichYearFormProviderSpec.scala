@@ -16,7 +16,7 @@
 
 package forms.returns.credits
 
-import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 
@@ -29,7 +29,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
   "form" must {
     "bind" when {
       "one of the years is selected" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> option.key))
@@ -41,7 +41,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
 
     "Error" when {
       "The option is not in the form" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq.empty)
         val bound = form.bind(Map("value" -> option.key))
@@ -50,7 +50,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
         bound.errors mustBe Seq(FormError("value", "claim-for-which-year.error.required"))
       }
       "The value is not correct" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> "blah-not-correct"))
@@ -59,7 +59,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
         bound.errors mustBe Seq(FormError("value", "claim-for-which-year.error.required"))
       }
       "The value is not provided" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> ""))
@@ -68,7 +68,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
         bound.errors mustBe Seq(FormError("value", "claim-for-which-year.error.required"))
       }
       "The binding is malformed" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq(option))
         val bound = form.bind(Map("blah" -> "bloop"))
@@ -77,7 +77,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
         bound.errors mustBe Seq(FormError("value", "claim-for-which-year.error.required"))
       }
       "The binding is not provided" in {
-        val option = YearOption(LocalDate.MIN, LocalDate.MAX)
+        val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
         val form = sut.apply(Seq(option))
         val bound = form.bind(Map.empty[String, String])

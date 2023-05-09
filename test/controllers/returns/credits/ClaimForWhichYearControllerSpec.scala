@@ -20,7 +20,7 @@ import base.utils.JourneyActionAnswer
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
-import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
@@ -58,7 +58,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val journeyAction = mock[JourneyAction]
   private val controllerComponents = stubMessagesControllerComponents()
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[YearOption]]
+  private val form = mock[Form[CreditRangeOption]]
 
   val sut: ClaimForWhichYearController = new ClaimForWhichYearController(
     mockMessagesApi,
@@ -121,11 +121,11 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "redirect to the next page" in {
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
-      val testForm: Form[YearOption] = Form("x" -> ignored(YearOption(LocalDate.now(), LocalDate.now())))
-      when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(YearOption(LocalDate.now(), LocalDate.now()))
+      val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+      when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(CreditRangeOption(LocalDate.now(), LocalDate.now()))
 
       val result = await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-      verify(mockNavigator).claimForWhichYear(meq(YearOption(LocalDate.now(), LocalDate.now())), meq(NormalMode))
+      verify(mockNavigator).claimForWhichYear(meq(CreditRangeOption(LocalDate.now(), LocalDate.now())), meq(NormalMode))
 
       result.header.status mustBe Status.SEE_OTHER
       redirectLocation(Future.successful(result)) mustBe Some("/next/page")
@@ -135,7 +135,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val availableYears = sut.availableYears //todo get there from somewhere
       //when(something.getAvailableYears).thenReturn(availableYears)
 
-      val testForm: Form[YearOption] = Form("x" -> ignored(YearOption(LocalDate.now(), LocalDate.now())))
+      val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 

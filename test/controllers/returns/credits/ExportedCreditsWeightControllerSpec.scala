@@ -140,6 +140,10 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
         verify(userAnswers).save(meq(saveFunction))(any)
       }
 
+      withClue("to the correct year"){
+        verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsPage("year-key")), any, any)(any)
+      }
+
       withClue("save weight to cache") {
         verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
       }
@@ -151,7 +155,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       val result = sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      verify(navigator).exportedCreditsWeight("year-key", NormalMode, userAnswers)
+      verify(navigator).exportedCreditsWeight("year-key", NormalMode, dataRequest.userAnswers)
     }
 
     "return an error" when {
@@ -176,9 +180,10 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   private def setupMocks = {
     when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber).fill(10L))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswers)
+    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(userAnswers)
     when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(dataRequest.pptReference).thenReturn("123")
-    when(navigator.exportedCreditsWeight("year-key", NormalMode, userAnswers)).thenReturn(Call(GET, "foo"))
+    when(navigator.exportedCreditsWeight(any, any, any)).thenReturn(Call(GET, "foo"))
   }
 }

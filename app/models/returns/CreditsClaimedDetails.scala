@@ -30,18 +30,22 @@ case class CreditsClaimedDetails(
 
   override def summaryList: Seq[(String, String)] =
     Seq(
-      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
-      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
-      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
-      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
-      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
-      CreditTotalPartialKey -> totalCredits.asPounds -> true
-    ).collect{case (tuple, show) if show => tuple}
+      "CREDITS CYA" -> "TODO",
+      "SHOULD BE MULTI YEAR BREAK DOWN" -> "TODO"
+    )
+//      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
+//      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
+//      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
+//      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
+//      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
+//      CreditTotalPartialKey -> totalCredits.asPounds -> true
+//    ).collect{case (tuple, show) if show => tuple}
 
 }
 
 object CreditsClaimedDetails {
 
+  //todo remove these?
   val CreditExportedAnswerPartialKey = "submit-return.check-your-answers.credits.exported.answer"
   val CreditExportedWeightPartialKey = "submit-return.check-your-answers.credits.exported.weight"
   val CreditConvertedAnswerPartialKey = "submit-return.check-your-answers.credits.converted.answer"

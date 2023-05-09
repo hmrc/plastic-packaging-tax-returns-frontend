@@ -225,9 +225,9 @@ class ConfirmPackagingCreditControllerSpec
   }
 
   private def setUpMockForCancelCredit(ans: UserAnswers): Unit = {
-    when(ans.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+    when(ans.save(any)(any)).thenReturn(Future.successful(ans))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
-    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any)(any)).thenReturn(ans)
+    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(ans)
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
     when(returnsJourneyNavigator.confirmCreditRoute(NormalMode, dataRequest.userAnswers)).thenReturn(Call("GET", "/foo"))
   }

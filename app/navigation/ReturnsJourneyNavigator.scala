@@ -19,9 +19,8 @@ package navigation
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
-import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode.{CheckMode, NormalMode}
 import models.{Mode, UserAnswers}
 import pages._
@@ -79,7 +78,7 @@ class ReturnsJourneyNavigator @Inject()(
     }
   }
 
-  def claimForWhichYear(year: YearOption, mode: Mode): Call = //todo use year
+  def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
     controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(year.key, mode)
 
   def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {

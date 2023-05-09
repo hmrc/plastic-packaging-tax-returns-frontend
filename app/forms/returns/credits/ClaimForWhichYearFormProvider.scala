@@ -17,7 +17,8 @@
 package forms.returns.credits
 
 import forms.mappings.Mappings
-import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
+import org.joda.time.Duration
 import play.api.data.Form
 
 import java.time.LocalDate
@@ -25,17 +26,17 @@ import java.time.LocalDate
 
 class ClaimForWhichYearFormProvider extends Mappings {
 
-  def apply(options: Seq[YearOption]): Form[YearOption] =
+  def apply(options: Seq[CreditRangeOption]): Form[CreditRangeOption] =
     Form("value" ->
       text("claim-for-which-year.error.required")
         .verifying("claim-for-which-year.error.required", key => options.exists(_.key == key))
-        .transform[YearOption](key => options.find(_.key == key).get, _.key)
+        .transform[CreditRangeOption](key => options.find(_.key == key).get, _.key)
     )
 }
 
 
 object ClaimForWhichYearFormProvider {
-  final case class YearOption(from: LocalDate, to: LocalDate){
+  final case class CreditRangeOption(from: LocalDate, to: LocalDate){
     def key: String = from.toString + "-" + to.toString //todo how do we want to represnt these?
   }
 }
