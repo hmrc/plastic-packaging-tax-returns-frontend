@@ -38,7 +38,7 @@ class UserAnswersSpec extends PlaySpec
 
   private val emptyUserAnswers = UserAnswers("empty")
   private val filledUserAnswers = UserAnswers("filled", obj("cheese" -> obj("brie" -> "200g")))
-
+  
   private val question = mock[QuestionPage[String]]
   private val saveFunction = mock[SaveUserAnswerFunc]
   private val newValueFunc = mock[Option[String] => String]
@@ -148,14 +148,15 @@ class UserAnswersSpec extends PlaySpec
     }
   }
 
-  "the rest" should {
+  "it" should {
+    
     "fill in a form's value" when {
       "the answer exists" in {
         filledUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(filledForm)
         verify(emptyForm).fill("200g")
       }
       "using a path" in {
-        filledUserAnswers.fill[String](JsPath \ "cheese" \ "brie", emptyForm) mustBe filledForm
+        filledUserAnswers.fill(JsPath \ "cheese" \ "brie", emptyForm) mustBe filledForm
         verify(emptyForm).fill("200g")
       }
       "the answer does not exist" in {
@@ -166,19 +167,19 @@ class UserAnswersSpec extends PlaySpec
     
     "fill a yes-no form using given function" when {
       "user answer does not exist" in {
-        emptyUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        emptyUserAnswers.fillWithFunc(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
         verify(fillFormFunc, never).apply(any)
         verify(emptyForm, never).fill(any)
       }
       "user answer does exist" in {
         when(fillFormFunc.apply(any)) thenReturn Some("new-value")
-        filledUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(filledForm)
+        filledUserAnswers.fillWithFunc(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(filledForm)
         verify(fillFormFunc).apply(any)
         verify(emptyForm).fill(any)
       }
       "user answer does exist by function returns None" in {
         when(fillFormFunc.apply(any)) thenReturn None
-        filledUserAnswers.genericFill(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
+        filledUserAnswers.fillWithFunc(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
         verify(fillFormFunc).apply(any)
         verify(emptyForm, never).fill(any)
       }
@@ -233,9 +234,42 @@ class UserAnswersSpec extends PlaySpec
     "remove a single answer" in {
       val updatedAnswers = filledUserAnswers.remove(question)
       updatedAnswers.success.value.data.value mustBe Map("cheese" -> obj())
+      // TODO don't know how to test remove with a failed try 
     }
 
-    // TODO don't know how to test remove with a failed try 
+    "quickly set lots of fields" when {
+
+      "one key-value pair" in {
+        filledUserAnswers.setAll("x" -> "y") mustBe UserAnswers("filled", Json.obj(
+          "cheese" -> Json.obj("brie" -> "200g"),
+          "x" -> "y"
+        ), filledUserAnswers.lastUpdated)
+      }
+
+      "multiple key-values" in {
+        filledUserAnswers.setAll("x" -> "y", "left" -> "right") mustBe UserAnswers("filled", Json.obj(
+          "cheese" -> Json.obj("brie" -> "200g"),
+          "left" -> "right",
+          "x" -> "y",
+        ), filledUserAnswers.lastUpdated)
+      }
+
+      "values are of multiple js types" in {
+        filledUserAnswers.setAll("x" -> JsNumber(1), "y" -> JsString("z")) mustBe UserAnswers("filled", Json.obj(
+          "cheese" -> Json.obj("brie" -> "200g"),
+          "x" -> 1,
+          "y" -> "z",
+        ), filledUserAnswers.lastUpdated)
+      }
+
+      "nested field" in {
+        filledUserAnswers.setAll("x" -> obj { "y" -> "z" }) mustBe UserAnswers("filled", Json.obj(
+          "cheese" -> Json.obj("brie" -> "200g"),
+          "x" -> Json.obj {"y" -> "z"}
+        ), filledUserAnswers.lastUpdated)
+      }
+
+    }
 
 
   }

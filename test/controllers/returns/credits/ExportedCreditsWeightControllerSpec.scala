@@ -99,7 +99,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     "fill the weight in the form" in {
       await(sut.onPageLoad(NormalMode)(dataRequest))
       val func = ArgCaptor[CreditsAnswer => Option[Long]]
-      verify(dataRequest.userAnswers).genericFill(eqTo(ExportedCreditsPage), eqTo(form), func) (any)
+      verify(dataRequest.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage), eqTo(form), func) (any)
 
       withClue("gets weight or None for displaying") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -110,7 +110,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return a view" in {
       val boundForm = Form("value" -> longNumber).fill(10L)
-      when(dataRequest.userAnswers.genericFill(any, any[Form[Long]], any) (any)) thenReturn boundForm
+      when(dataRequest.userAnswers.fillWithFunc(any, any[Form[Long]], any) (any)) thenReturn boundForm
       await(sut.onPageLoad(NormalMode)(dataRequest))
       verify(view).apply(eqTo(boundForm), eqTo(NormalMode)) (any, any)
     }

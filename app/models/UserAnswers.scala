@@ -51,7 +51,7 @@ case class UserAnswers(
     * @tparam FormValue type of the form's value 
     * @return the form as is, or a new form filled with the value returned by the given function. If the function return
     */
-  def genericFill[AnswerType, FormValue](gettable: Gettable[AnswerType], form: Form[FormValue], 
+  def fillWithFunc[AnswerType, FormValue](gettable: Gettable[AnswerType], form: Form[FormValue], 
     func: AnswerType => Option[FormValue]) (implicit reads: Reads[AnswerType]): Form[FormValue] = {
       get(gettable)
         .flatMap(func)
@@ -204,6 +204,20 @@ case class UserAnswers(
         val updatedAnswers = copy(data = d)
         if(cleanup) question.cleanup(None, updatedAnswers) else Try(updatedAnswers)
     }
+  }
+  
+  /**
+    * Quickly set lots of (top-level) fields. Can be either 
+    * @param all varargs of (key: String, value: A) or (key: String, value: JsValue)
+    * @param writes [[Writes]] for A
+    * @tparam A allows values without eg JsNumber wrapper, if all values are same type
+    * @return [[UserAnswers]] with previous answer merged with given key-value
+    * @see UserAnswerSpec
+    */
+  def setAll[A](all: (String, A)*) (implicit writes: Writes[A]): UserAnswers = {
+    copy(data = data ++ JsObject(all.map {
+      case (x, y) => (x, Json.toJson(y))
+    }))
   }
 
 }
