@@ -29,7 +29,7 @@ import views.html.returns.credits.RemoveCreditView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RemoveCreditController @Inject()(
+class RemoveCreditController @Inject()( //todo name better this will remove ALL years of credit
                                          override val messagesApi: MessagesApi,
                                          cacheConnector: CacheConnector,
                                          navigator: Navigator,

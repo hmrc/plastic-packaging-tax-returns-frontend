@@ -36,6 +36,6 @@ class ClaimForWhichYearFormProvider extends Mappings {
 
 object ClaimForWhichYearFormProvider {
   final case class YearOption(from: LocalDate, to: LocalDate){
-    def key: String = from.toString + "|" + to.toString //todo how do we want to represnt these?
+    def key: String = from.toString + "-" + to.toString //todo how do we want to represnt these?
   }
 }

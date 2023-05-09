@@ -19,6 +19,7 @@ package controllers.returns.credits
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import forms.returns.credits.ClaimForWhichYearFormProvider.YearOption
+import models.Mode
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,23 +41,29 @@ class ClaimForWhichYearController @Inject()(
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   //todo get there from somewhere
-  val availableYears = Seq(YearOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)))
+  val availableYears = Seq(
+    YearOption(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31)),
+    YearOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
+  )
 
-  def onPageLoad: Action[AnyContent] =
+  //todo this needs check mode, else you loose the state coming from finalCYA
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction { implicit request =>
       //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
+
+      //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
       val form = formProvider(availableYears)
-      Ok(view(form, availableYears))
+      Ok(view(form, availableYears, mode))
     }
 
-  def onSubmit: Action[AnyContent] =
+  def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
       formProvider(availableYears)
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears))),
+          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
           selectedYear => {
-            Future.successful(Results.Redirect(navigator.claimForWhichYear(selectedYear)))
+            Future.successful(Results.Redirect(navigator.claimForWhichYear(selectedYear, mode)))
           }
         )
     }

@@ -27,10 +27,10 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object CreditsExportedPlasticSummary extends SummaryViewModel {
+case class CreditsExportedPlasticSummary(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage).orElse(Some(CreditsAnswer.noClaim)).map {
+    answers.get(ExportedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.exported.answer", classes="govuk-!-width-one-half"),
@@ -38,7 +38,7 @@ object CreditsExportedPlasticSummary extends SummaryViewModel {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url
+              controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(key, CheckMode).url
             ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.answer"))
           )
         )

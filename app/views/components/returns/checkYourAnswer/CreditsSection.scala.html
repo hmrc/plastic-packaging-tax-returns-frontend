@@ -32,7 +32,7 @@
     noCreditsAvailable: NoCreditsAvailable
 )
 
-@(credits: Credits)(implicit request: Request[_], messages: Messages)
+@(key: String, credits: Credits)(implicit request: Request[_], messages: Messages)
 
 @selectView = @{
     credits match {

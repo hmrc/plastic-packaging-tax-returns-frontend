@@ -34,7 +34,9 @@
     linkButtonWithCancel: LinkButtonWithCancel
 )
 
-@( requestedCredit: BigDecimal,
+@(
+    key: String,
+    requestedCredit: BigDecimal,
     canClaim: Boolean,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
@@ -62,7 +64,7 @@
     @linkButtonWithCancel(
         buttonKey = "site.continue.confirm",
         buttonUrl = continueCall.url,
-        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
+        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url)
 }
 
 @tooMuchCreditContent = {
@@ -76,7 +78,7 @@
     @paragraph(content = link(
             id = "cancel-credit-claim",
             text = cancelText,
-            href = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url))
+            href = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url))
 }
 
 @layout(pageTitle = titleNoForm(

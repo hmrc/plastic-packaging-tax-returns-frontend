@@ -32,7 +32,7 @@
     hiddenContent: HiddenContent
 )
 
-@(form: Form[_], options: Seq[YearOption])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], options: Seq[YearOption], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @radioContent(from: LocalDate, to: LocalDate) = @{
     messages(
@@ -45,7 +45,7 @@
 
 @layout(pageTitle = title(form, messages("claim-for-which-year.credits.title-heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))

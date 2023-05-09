@@ -44,23 +44,23 @@ class ExportedCreditsWeightController @Inject()(
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.genericFill(ExportedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
-        Ok(view(form, mode))
+        val form = request.userAnswers.genericFill(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+        Ok(view(form, key, mode))
     }
 
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] = journeyAction.async {
       implicit request =>
         formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, key, mode))),
           formValue => {
             request.userAnswers
-              .setOrFail(ExportedCreditsPage, CreditsAnswer.answerWeightWith(formValue))
+              .setOrFail(ExportedCreditsPage(key), CreditsAnswer.answerWeightWith(formValue))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(mode)))
+              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(key, mode, request.userAnswers)))
           }
       )
     }

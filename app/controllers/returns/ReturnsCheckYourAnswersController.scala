@@ -67,7 +67,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val userAnswers: UserAnswers = request.userAnswers
-        ensureCreditAnswersConsistency(userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
+        val  isUserClaimingCredit = userAnswers.get(WhatDoYouWantToDoPage).getOrElse(false)
           returnsConnector.submit(request.pptReference).flatMap {
             case Right(optChargeRef) =>
               sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef).map {
@@ -79,7 +79,6 @@ class ReturnsCheckYourAnswersController @Inject()(
                 Redirect(routes.AlreadySubmittedController.onPageLoad())
               }
           }
-        }
     }
 
   def onRemoveCreditsClaim(): Action[AnyContent] =
@@ -89,21 +88,6 @@ class ReturnsCheckYourAnswersController @Inject()(
           .setOrFail(WhatDoYouWantToDoPage, false)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(_ => Redirect(routes.ReturnsCheckYourAnswersController.onPageLoad()))
-    }
-
-  /** TODO quick fix for user removing any previous credit claim
-    * @return true if the user is claiming a credit
-    */
-  private def ensureCreditAnswersConsistency(userAnswers: UserAnswers, pptReference: String)(implicit hc: HeaderCarrier)
-  : Future[Boolean] =
-    userAnswers.get(WhatDoYouWantToDoPage) match {
-      case Some(true) => Future.successful(true)
-      case _          =>
-        userAnswers
-          .setOrFail(ExportedCreditsPage, CreditsAnswer.noClaim)
-          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
-          .save(cacheConnector.saveUserAnswerFunc(pptReference))
-          .map(_ => false)
     }
 
   private def callCalculationAndCreditApi(

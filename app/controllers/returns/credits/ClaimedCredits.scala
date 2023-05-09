@@ -20,6 +20,8 @@ import models.UserAnswers
 import models.returns.CreditsAnswer
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 
+
+//todo or is this all years, where is this used??
 case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
   def hasMadeClaim: Boolean =
@@ -29,8 +31,8 @@ case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
 object ClaimedCredits {
 
-  def apply(userAnswers: UserAnswers): ClaimedCredits = {
-    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
+  def apply(userAnswers: UserAnswers): ClaimedCredits = { //todo what year?
+    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage("BLAH")), userAnswers.getOrFail(ConvertedCreditsPage("BALH")))
 
   }
 }

@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
   Not done it at this point as we have not looked into the ReturnsCheckYourAnswer page
   which will need to change.
  */
-class CancelCreditsClaimController @Inject()(
+class CancelCreditsClaimController @Inject()( //todo name better this will remove one year of credit
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -48,29 +48,26 @@ class CancelCreditsClaimController @Inject()(
   view: CancelCreditsClaimView
 ) (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = journeyAction {
+  def onPageLoad(key: String): Action[AnyContent] = journeyAction {
     implicit request =>
-      Ok(view(formProvider()))
+      //todo view is hardcoded, it should pull back the date range in question
+      Ok(view(key, formProvider()))
   }
 
-  def onSubmit: Action[AnyContent] = journeyAction.async {
+  def onSubmit(key: String): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
       formProvider().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors))),
-
-        cancel =>
-          (if(cancel) {
-            // Todo: we may want to use the CreditsAnswer object, so remove the
-            //  ExportCreditPage and the other page that do not use the CreditAnswer.
-            //  OldExportedCreditsPage uses the CreditAnswer
+        formWithErrors => Future.successful(BadRequest(view(key, formWithErrors))),
+        cancel => {
+          {if (cancel) {
             request.userAnswers
-              .remove(ExportedCreditsPage).get
-              .remove(ConvertedCreditsPage).get
-              .change(WhatDoYouWantToDoPage, false,cacheConnector.saveUserAnswerFunc(request.pptReference))
-          }else Future.unit)
-            .map(_ => Redirect(navigator.cancelCreditRoute(cancel)))
+              .remove(ExportedCreditsPage(key)).get //todo this should be the year key
+              .remove(ConvertedCreditsPage(key)).get //todo this should be the year key
+              .change(WhatDoYouWantToDoPage, false, cacheConnector.saveUserAnswerFunc(request.pptReference))
+          } else {Future.unit}
+          }.map(_ => Redirect(navigator.cancelCreditRoute(key, cancel)))
+        }
       )
   }
 }

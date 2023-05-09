@@ -39,7 +39,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
   )
   private def createView(canClaim: Boolean = true): Html =
-    page(requestedCredit, canClaim, summaryList, continueCall, NormalMode)(request, messages)
+    page("year-key", requestedCredit, canClaim, summaryList, continueCall, NormalMode)(request, messages)
 
   "View" should {
 
@@ -95,7 +95,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     "show cancel credit claim link when too much credit" in {
       createView(false).getElementById("cancel-credit-claim").text() mustBe "Cancel credit claim"
       createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
-        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad("year-key").url)
     }
 
     "should not show button when too much credit" in {
@@ -105,7 +105,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     "show cancel button when can claim credit" in {
       createView().getElementById("link-cancel").text() mustBe "Cancel"
       createView().getElementById("link-cancel").select("a").get(0) must
-        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad.url)
+        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad("year-key").url)
     }
 
     "have a confirm and continue button" in {

@@ -49,10 +49,11 @@ object CreditsClaimedDetails {
   val CreditsTotalWeightPartialKey = "submit-return.check-your-answers.credits.total.weight"
   val CreditTotalPartialKey = "submit-return.check-your-answers.credits.total"
 
+    //todo final CYA does not have a break down
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrFail(ExportedCreditsPage),
-      userAnswer.getOrFail(ConvertedCreditsPage),
+      CreditsAnswer.noClaim, //todo
+      CreditsAnswer.noClaim, //todo
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,
     )

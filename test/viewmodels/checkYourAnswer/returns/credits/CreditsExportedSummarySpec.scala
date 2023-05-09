@@ -45,15 +45,15 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
   "summary" should {
     "return a Summary row"  when {
       "answer is yes" in {
-        val userAnswer = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(1L)).get
+        val userAnswer = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(1L)).get
         when(messages.apply(ArgumentMatchers.eq("site.yes"))).thenReturn("yes")
-        CreditsExportedPlasticSummary.row(userAnswer)(messages) mustBe createExpectedResult("yes")
+        CreditsExportedPlasticSummary("year-key").row(userAnswer)(messages) mustBe createExpectedResult("yes")
       }
 
       "answer is no" in {
-        val ans = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.noClaim).get
+        val ans = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.noClaim).get
         when(messages.apply(ArgumentMatchers.eq("site.no"))).thenReturn("no")
-        CreditsExportedPlasticSummary.row(ans)(messages) mustBe createExpectedResult("no")
+        CreditsExportedPlasticSummary("year-key").row(ans)(messages) mustBe createExpectedResult("no")
       }
     }
   }
@@ -63,7 +63,7 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
       key = Key(Text("answer"), "govuk-!-width-one-half"),
       value = Value(Text(answerValue)),
       actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(CheckMode).url,
+        controllers.returns.credits.routes.ExportedCreditsController.onPageLoad("year-key", CheckMode).url,
         Text("change"),
         Some("answer")
       ))))

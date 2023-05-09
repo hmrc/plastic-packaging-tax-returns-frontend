@@ -174,8 +174,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       "no exported and converted answer no" in {
         when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val ans = UserAnswers("123")
-          .set(ExportedCreditsPage, CreditsAnswer(false, Some(0L))).get
-          .set(ConvertedCreditsPage, CreditsAnswer(false, Some(0L))).get
+          .set(ExportedCreditsPage("year-key"), CreditsAnswer(false, Some(0L))).get
+          .set(ConvertedCreditsPage("year-key"), CreditsAnswer(false, Some(0L))).get
           .set(WhatDoYouWantToDoPage,true).get
 
         val view = createView(
@@ -198,7 +198,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
         getText(view, "change-credit-link") mustBe "Change any answer from credits"
         getText(view, "change-credit-link") mustBe messages("submit-return.check-your-answers.credits.change.text.link")
-        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(CheckMode))
+        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode))
       }
     }
 
@@ -364,8 +364,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
-      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(100L)).get
-      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
+      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(100L)).get
+      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
       .set(DirectlyExportedWeightPage, 100L).get
       .set(WhatDoYouWantToDoPage, true).get
 
@@ -434,8 +434,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(ExportedCreditsPage, CreditsAnswer(false, Some(100L))).get
-    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0L))).get
+    .set(ExportedCreditsPage("year-key"), CreditsAnswer(false, Some(100L))).get
+    .set(ConvertedCreditsPage("year-key"), CreditsAnswer(true, Some(0L))).get
     .set(WhatDoYouWantToDoPage, true).get
 }
 

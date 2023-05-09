@@ -43,25 +43,26 @@ class ExportedCreditsController @Inject()
   view: ExportedCreditsView
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = {
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.genericFill(ExportedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
-        Results.Ok(view(preparedForm, mode))
+
+        val preparedForm = request.userAnswers.genericFill(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        Results.Ok(view(preparedForm, key, mode))
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
+            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key, mode))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-              request.userAnswers.changeWithFunc(ExportedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
-                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(mode, formValue)))
+              request.userAnswers.changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
             }
           )
     }

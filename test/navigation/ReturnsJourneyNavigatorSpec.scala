@@ -73,27 +73,27 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
     "redirect to weight page when user answers 'yes'" when {
       "in normal mode" in {
-        val call = navigator.exportedCreditsYesNo(NormalMode, true)
-        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(NormalMode)
+        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, true, userAnswers)
+        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
 
 
       "in check mode" in {
-        val call = navigator.exportedCreditsYesNo(CheckMode, true)
-        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad(CheckMode)
+        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, true, userAnswers)
+        call mustBe creditsRoutes.ExportedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }
 
     "redirect to converted yes-no page when user answers 'no'" when {
       "in normal mode" in {
-        val call = navigator.exportedCreditsYesNo(NormalMode, false)
-        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
+        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, false, userAnswers)
+        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
       }
 
       "redirect to the confirm credit page when user answer is No" when {
         "in check mode" in {
-          val call = navigator.exportedCreditsYesNo(CheckMode, false)
-          call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+          val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
+          call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
         }
       }
     }
@@ -103,13 +103,13 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
     "redirect to converted yes-no page" when {
       "in normal mode" in {
-        val call = navigator.exportedCreditsWeight(NormalMode)
-        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad(NormalMode)
+        val call = navigator.exportedCreditsWeight("year-key", NormalMode, userAnswers)
+        call mustBe creditsRoutes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
       }
 
       "in check mode" in {
-        val call = navigator.exportedCreditsWeight(CheckMode)
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+        val call = navigator.exportedCreditsWeight("year-key", CheckMode, userAnswers)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
       }
     }
   }
@@ -118,23 +118,23 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode, true)
-        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(NormalMode)
+        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  true)
+        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode, true)
-        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad(CheckMode)
+        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key",  true)
+        call mustBe creditsRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }
     
     "skip weight page when user answers 'no'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode, false)
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  false)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode, false)
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key", false)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
       }
     }
     
@@ -143,13 +143,13 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "convertedCreditsWeight" must {
     "redirect to confirm-or-correct-credit page" when {
       "in NormalMode" in {
-        val call = navigator.convertedCreditsWeightRoute(NormalMode)
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+        val call = navigator.convertedCreditsWeightRoute("year-key", NormalMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
       }
 
       "in CheckMode" in {
-        val call = navigator.convertedCreditsWeightRoute(CheckMode)
-        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad(CheckMode)
+        val call = navigator.convertedCreditsWeightRoute("year-key", CheckMode)
+        call mustBe creditsRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
       }
     }
   }
@@ -408,13 +408,13 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
   "cancelCreditRoute" should {
     "redirect to submit-return-or-claim-credit when credit is cancel" in {
-      navigator.cancelCreditRoute(true) mustBe
+      navigator.cancelCreditRoute("year-key", true) mustBe
       controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
     }
 
     "redirect to confirm-or-correct-credit page not cancelled" in {
-      navigator.cancelCreditRoute(false) mustBe
-        controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+      navigator.cancelCreditRoute("year-key", false) mustBe
+        controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
     }
   }
 }

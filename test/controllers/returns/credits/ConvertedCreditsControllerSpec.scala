@@ -79,10 +79,10 @@ class ConvertedCreditsControllerSpec extends PlaySpec
 
     when(formProvider.apply()).thenReturn(initialForm)
     when(initialForm.bindFromRequest()(any, any)).thenReturn(preparedForm)
-    when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
 
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
-    when(mockNavigator.convertedCreditsYesNo(any, any)).thenReturn(Call("GET", "/next/page"))
+    when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
     
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
@@ -92,14 +92,14 @@ class ConvertedCreditsControllerSpec extends PlaySpec
   "onPageLoad" must {
     
     "use the journey action" in {
-      controller.onPageLoad(NormalMode)
+      controller.onPageLoad("year-key", NormalMode)
       verify(journeyAction).apply(any)
     }
     
     "fill the form with user's previous answer" in {
-      controller.onPageLoad(NormalMode) (request)
+      controller.onPageLoad("year-key", NormalMode) (request)
       val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage), eqTo(initialForm), function) (any)
+      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function) (any)
       
       withClue("using correct function") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -110,13 +110,13 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     
     "render the page" in {
       when(request.userAnswers.genericFill(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
-      controller.onPageLoad(NormalMode) (request)
+      controller.onPageLoad("year-key", NormalMode) (request)
       verify(messagesApi).preferred(request)
-      verify(view).apply(preparedForm, NormalMode)(request, messages)
+      verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)
     }
     
     "200 ok the client" in {
-      val futureResult = controller.onPageLoad(NormalMode) (request)
+      val futureResult = controller.onPageLoad("year-key", NormalMode) (request)
       status(futureResult) mustBe Status.OK
       contentAsString(futureResult) mustBe "correct view"
     }
@@ -127,10 +127,10 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     "remember the user's answers" in {
       // Invokes the "form is good" side of the fold() call
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-      await(controller.onSubmit(NormalMode) (request))
+      await(controller.onSubmit("year-key", NormalMode) (request))
       
       // TODO tweak CreditsAnswer.changeYesNoTo so we can test for it here
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage), any, eqTo(saveUserAnswerFunc)) (any, any)
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc)) (any, any)
     }
 
     "redirect to the next page" in {
@@ -138,8 +138,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
       
-      val result = await { controller.onSubmit(NormalMode) (request) }
-      verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo(true))
+      val result = await { controller.onSubmit("year-key", NormalMode) (request) }
+      verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo("year-key"), eqTo(true))
       
       result.header.status mustBe Status.SEE_OTHER
       redirectLocation(Future.successful(result)) mustBe Some("/next/page")
@@ -150,8 +150,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec
       val formWithErrors = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 
-      val result = await { controller.onSubmit(NormalMode)(request) }
-      verify(view).apply(eqTo(formWithErrors), eqTo(NormalMode)) (eqTo(request), eqTo(messages))
+      val result = await { controller.onSubmit("year-key", NormalMode)(request) }
+      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode)) (eqTo(request), eqTo(messages))
       verifyNoInteractions(request.userAnswers)
 
       result.header.status mustBe Status.BAD_REQUEST

@@ -268,8 +268,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUserAnswer(): UserAnswers = {
     userAnswers
-      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
-      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(300L)).get
+      .set(ExportedCreditsPage("year"), CreditsAnswer.answerWeightWith(200L)).get
+      .set(ConvertedCreditsPage("year"), CreditsAnswer.answerWeightWith(300L)).get
       .set(WhatDoYouWantToDoPage, true).get
   }
 

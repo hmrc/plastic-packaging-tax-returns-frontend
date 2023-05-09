@@ -27,8 +27,8 @@ import viewmodels.PrintLong
 class ClaimedCreditsDetailsSpec extends PlaySpec {
 
   val userAnswer = UserAnswers("123")
-    .set(ExportedCreditsPage, CreditsAnswer(true, Some(100L))).get
-    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(200L))).get
+    .set(ExportedCreditsPage("year-key"), CreditsAnswer(true, Some(100L))).get
+    .set(ConvertedCreditsPage("year-key"), CreditsAnswer(true, Some(200L))).get
     .set(WhatDoYouWantToDoPage, true).get
 
   "summaryList" should {
@@ -44,8 +44,8 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
       (description, exported, converted, exportedWeight, convertedWeight) =>
         s"$description" in {
           val newAns = userAnswer
-            .set(ExportedCreditsPage, CreditsAnswer(exported, exportedWeight)).get
-            .set(ConvertedCreditsPage, CreditsAnswer(converted, convertedWeight)).get
+            .set(ExportedCreditsPage("year-key"), CreditsAnswer(exported, exportedWeight)).get
+            .set(ConvertedCreditsPage("year-key"), CreditsAnswer(converted, convertedWeight)).get
 
           val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true, 0.30))
 

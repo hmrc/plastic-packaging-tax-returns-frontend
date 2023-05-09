@@ -76,10 +76,10 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
-    when(view.apply(any)(any, any)) thenReturn Html("the view")
+    when(view.apply(any, any)(any, any)) thenReturn Html("the view")
     when(formProvider.apply()) thenReturn form
 
-    when(navigator.cancelCreditRoute(any)) thenReturn Call(GET, "/next-page")
+    when(navigator.cancelCreditRoute(any, any)) thenReturn Call(GET, "/next-page")
     when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
 
     val x = request.userAnswers
@@ -91,20 +91,20 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
     "use the journey action" in {
       when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
-      sut.onPageLoad(request)
+      sut.onPageLoad("year-key")(request)
       verify(journeyAction).apply(any)
     }
 
     "return a 200" in {
-      val result = sut.onPageLoad(request)
+      val result = sut.onPageLoad("year-key")(request)
       status(result) mustBe OK
       contentAsString(result) mustBe "the view"
     }
 
     "return a view with correct form" in {
       when(formProvider.apply()).thenReturn(form)
-      sut.onPageLoad(request)
-      verify(view).apply(eqTo(form))(any, any)
+      sut.onPageLoad("year-key")(request)
+      verify(view).apply(eqTo("year-key"), eqTo(form))(any, any)
     }
 
   }
@@ -113,18 +113,18 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      sut.onSubmit(request)
+      sut.onSubmit("year-key")(request)
       verify(journeyAction).async(any)
     }
 
     "redirect with answer yes" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
 
-      val result = await(sut.onSubmit.skippingJourneyAction(request))
-      verify(request.userAnswers).remove(eqTo(ExportedCreditsPage), any)
-      verify(request.userAnswers).remove(eqTo(ConvertedCreditsPage), any)
+      val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
+      verify(request.userAnswers).remove(eqTo(ExportedCreditsPage("year-key")), any)
+      verify(request.userAnswers).remove(eqTo(ConvertedCreditsPage("year-key")), any)
       verify(request.userAnswers).change(eqTo(WhatDoYouWantToDoPage), eqTo(false), any)(any)
-      verify(navigator).cancelCreditRoute(true)
+      verify(navigator).cancelCreditRoute("year-key", true)
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
@@ -133,10 +133,10 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     "redirect with answer No" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(false)
 
-      val result = await(sut.onSubmit.skippingJourneyAction(request))
+      val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
       verify(request.userAnswers, never).remove(any, any)
       verify(request.userAnswers, never).change(any, any, any)(any)
-      verify(navigator).cancelCreditRoute(false)
+      verify(navigator).cancelCreditRoute("year-key", false)
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe SEE_OTHER
@@ -147,8 +147,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       val formWithErrors = Form("v" -> boolean).withError("error", "error message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 
-      val result = await(sut.onSubmit.skippingJourneyAction(request))
-      verify(view).apply(eqTo(formWithErrors)) (eqTo(request), any)
+      val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
+      verify(view).apply(eqTo("year-key"), eqTo(formWithErrors)) (eqTo(request), any)
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe BAD_REQUEST
@@ -159,7 +159,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
   def createUserAnswer = {
     UserAnswers("123")
-      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
-      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(10L)).get
+      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
+      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
   }
 }

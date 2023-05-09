@@ -21,6 +21,7 @@ import controllers.actions._
 import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
@@ -32,7 +33,7 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmPackagingCreditController @Inject()(
+class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
   journeyAction: JourneyAction,
@@ -43,43 +44,46 @@ class ConfirmPackagingCreditController @Inject()(
   creditSummaryListFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext)  extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-
-        if (!isUserAnswerValid) {
+        if (!isUserAnswerValid(key)) {
           Future.successful(Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(mode)))
         } else {
-          creditConnector.get(request.pptReference).map {
-            case Right(response) => displayView(response, mode)
+          creditConnector.get(request.pptReference).map { //todo does this make sense to call here?
+            case Right(response) => displayView(response, key, mode)
             case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
           }
         }
     }
 
-  def onCancelClaim(mode: Mode): Action[AnyContent] =
+  def onCancelClaim(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         request.userAnswers
-          .setOrFail(WhatDoYouWantToDoPage, false)
+          .setOrFail(ExportedCreditsPage(key), CreditsAnswer.noClaim)
+          .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.noClaim)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers)))
     }
 
-  private def isUserAnswerValid(implicit request: DataRequest[_]) = {
-    request.userAnswers.get(ExportedCreditsPage).isDefined && request.userAnswers.get(ConvertedCreditsPage).isDefined
+  private def isUserAnswerValid(key: String)(implicit request: DataRequest[_]) = {
+    request.userAnswers.get(ExportedCreditsPage(key)).isDefined &&
+      request.userAnswers.get(ConvertedCreditsPage(key)).isDefined
   }
 
-  private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
+  private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
 
     //Todo: Pass to the view the fromDate and toDate the user is claiming
     // credit for.
     Ok(confirmCreditView(
-      creditBalance.totalRequestedCreditInPounds,
-      creditBalance.canBeClaimed,
-      creditSummaryListFactory.createSummaryList(creditBalance, request.userAnswers),
-      returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers),
-      mode)
+        key,
+        creditBalance.totalRequestedCreditInPounds,
+        creditBalance.canBeClaimed,
+        creditSummaryListFactory.createSummaryList(creditBalance, key: String, request.userAnswers),
+        returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers),
+        mode
+      )
     )
   }
 }
