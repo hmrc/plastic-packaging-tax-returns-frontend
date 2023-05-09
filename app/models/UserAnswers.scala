@@ -36,7 +36,7 @@ case class UserAnswers(
 ) {
 
   def fill[A](gettable: Gettable[A], form: Form[A])(implicit rds: Reads[A]): Form[A] =
-    get(gettable).fold(form)(form.fill)
+    fill(gettable.path, form)
 
   def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(path).fold(form)(form.fill)
