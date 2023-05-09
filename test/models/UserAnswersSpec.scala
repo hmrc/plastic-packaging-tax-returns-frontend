@@ -29,6 +29,7 @@ import play.api.libs.json.Json.obj
 import play.api.libs.json._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -225,16 +226,31 @@ class UserAnswersSpec extends PlaySpec
       verify(saveFunction).apply(any, any)
     }
     
-    "remove all answers" in {
-      val resetUserAnswers = filledUserAnswers.reset
-      resetUserAnswers.id mustBe "filled"
-      resetUserAnswers.data mustBe Json.obj()
-    }
-    
-    "remove a single answer" in {
-      val updatedAnswers = filledUserAnswers.remove(question)
-      updatedAnswers.success.value.data.value mustBe Map("cheese" -> obj())
+    "remove answers" when {
+
+      "remove all answers" in {
+        val resetUserAnswers = filledUserAnswers.removeAll()
+        resetUserAnswers.id mustBe "filled"
+        resetUserAnswers.data mustBe Json.obj()
+      }
+
+      "remove a single answer" in {
+        val updatedAnswers = filledUserAnswers.remove(question)
+        updatedAnswers.success.value.data.value mustBe Map("cheese" -> obj())
+      }
+
       // TODO don't know how to test remove with a failed try 
+      
+      "remove a top level field" in {
+        filledUserAnswers.removePath(JsPath \ "cheese") mustBe UserAnswers("filled", obj(), filledUserAnswers.lastUpdated)
+      }
+
+      "remove a nested field" in {
+        filledUserAnswers.removePath(JsPath \ "cheese" \ 'brie) mustBe UserAnswers("filled", obj(
+          "cheese" -> Json.obj(),
+        ), filledUserAnswers.lastUpdated)
+      }
+
     }
 
     "quickly set lots of fields" when {

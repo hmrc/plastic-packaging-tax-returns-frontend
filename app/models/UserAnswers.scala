@@ -35,9 +35,19 @@ case class UserAnswers(
   lastUpdated: Instant = Instant.now
 ) {
 
+  /** Overload of [[models.UserAnswers#fill(queries.Gettable, play.api.data.Form, play.api.libs.json.Reads)]]
+    * @param gettable source of path of user answer
+    * @return filled form
+    */
   def fill[A](gettable: Gettable[A], form: Form[A])(implicit rds: Reads[A]): Form[A] =
     fill(gettable.path, form)
 
+  /** Reads a user answer to fill given form
+    * @param path path to user answer to read
+    * @param form form to fill
+    * @tparam A expected type of user answer to read 
+    * @return a filled form
+    */
   def fill[A](path: JsPath, form: Form[A])(implicit rds: Reads[A]): Form[A] =
     get(path).fold(form)(form.fill)
 
@@ -100,7 +110,14 @@ case class UserAnswers(
           throw new IllegalStateException(s"$path in user answers cannot be read as type ${typeOf[A]}")
       }
       .get
-    
+
+  /** Tries to set the given answer to the given path. Over-writes an existing answer at the path, or adds a new answer
+    * @param question source of path to write answer to
+    * @param value answer to write
+    * @param cleanup true to call question's clean-up method (be careful, can be a circular call)
+    * @tparam A inferred type of value
+    * @return an updated [[UserAnswers]]
+    */
   def set[A](question: Settable[A], value: A, cleanup: Boolean = true)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(question.path, Json.toJson(value)) match {
@@ -188,8 +205,20 @@ case class UserAnswers(
     * Removes all answers, preserves id, updates timestamp  
     * @return UserAnswers with all answers removed
     */
-  def reset: UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
+  def removeAll(): UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
+  
+  /**
+    * Removes the field at the given path, if there is one
+    * @param path [[JsPath]] to field to remove
+    * @return an updated [[UserAnswers]]
+    */
+  def removePath(path: JsPath): UserAnswers = copy(data = data.transform(path.json.prune).get)
 
+  /** Alternative to removePath
+    * @param question source of path to remove
+    * @param cleanup true to call question's clean-up function (be-careful, can be a circular call)
+    * @return [[Try]] of updated [[UserAnswers]]
+    */
   def remove[A](question: Settable[A],  cleanup: Boolean = true): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(question.path) match {
