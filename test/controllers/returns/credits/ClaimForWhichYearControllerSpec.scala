@@ -17,17 +17,19 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
+import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode.NormalMode
+import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.Mockito.{atLeastOnce, verifyNoInteractions}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -37,6 +39,7 @@ import play.api.data.{Form, FormError}
 import play.api.data.Forms.{boolean, ignored, longNumber}
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -57,8 +60,11 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val mockFormProvider = mock[ClaimForWhichYearFormProvider]
   private val journeyAction = mock[JourneyAction]
   private val controllerComponents = stubMessagesControllerComponents()
+  private val mockCache = mock[CacheConnector]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[CreditRangeOption]]
+  val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+  val saveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
 
   val sut: ClaimForWhichYearController = new ClaimForWhichYearController(
     mockMessagesApi,
@@ -66,7 +72,8 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     controllerComponents,
     mockView,
     mockFormProvider,
-    mockNavigator
+    mockNavigator,
+    mockCache
   )(global)
 
   override def beforeEach(): Unit = {
@@ -119,23 +126,44 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       verify(journeyAction).async(any)
     }
 
+    "set the endDate in the UserAnswers" in {
+      val ua = dataRequest.userAnswers
+      when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
+      when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(ua)
+
+      val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
+      when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(creditRangeOption)
+
+      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+
+      verify(dataRequest.userAnswers, atLeastOnce()).setOrFail(JsPath \ "credit" \ "1000-01-01-1996-03-27" \ "endDate", LocalDate.of(1996, 3, 27))
+      verify(mockCache).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
+    }
+
     "redirect to the next page" in {
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
-      val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
+      when(dataRequest.pptReference).thenReturn("KILL YOURSELF")
+      val userAnswers = dataRequest.userAnswers
+      when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(userAnswers)
+      when(userAnswers.save(any)(any)).thenReturn(Future.successful(UserAnswers("fin")))
+
       when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(CreditRangeOption(LocalDate.now(), LocalDate.now()))
 
-      val result = await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-      verify(mockNavigator).claimForWhichYear(meq(CreditRangeOption(LocalDate.now(), LocalDate.now())), meq(NormalMode))
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+      verify(userAnswers).save(any)(any)
 
-      result.header.status mustBe Status.SEE_OTHER
-      redirectLocation(Future.successful(result)) mustBe Some("/next/page")
+      status(result) mustBe Status.SEE_OTHER
+      redirectLocation(result) mustBe Some("/next/page")
+      verify(mockNavigator).claimForWhichYear(meq(CreditRangeOption(LocalDate.now(), LocalDate.now())), meq(NormalMode))
     }
 
     "display any errors" in {
       val availableYears = sut.availableYears //todo get there from somewhere
       //when(something.getAvailableYears).thenReturn(availableYears)
 
-      val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 

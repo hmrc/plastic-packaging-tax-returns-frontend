@@ -16,20 +16,26 @@
 
 package controllers.returns.credits
 
+import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ClaimForWhichYearView
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.Try
+
 
 class ClaimForWhichYearController @Inject()(
   override val messagesApi: MessagesApi,
@@ -37,7 +43,8 @@ class ClaimForWhichYearController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: ClaimForWhichYearView,
   formProvider: ClaimForWhichYearFormProvider,
-  navigator: ReturnsJourneyNavigator
+  navigator: ReturnsJourneyNavigator,
+  cacheConnector: CacheConnector
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   //todo get there from somewhere
@@ -63,8 +70,12 @@ class ClaimForWhichYearController @Inject()(
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
-          selectedYear => {
-            Future.successful(Results.Redirect(navigator.claimForWhichYear(selectedYear, mode)))
+          selectedRange => {
+            request.userAnswers
+              .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
+                Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
+              )
           }
         )
     }
