@@ -47,7 +47,7 @@ class ExportedCreditsWeightController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.genericFill(ExportedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
+        val form = request.userAnswers.fillWithFunc(ExportedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
         Ok(view(form, mode))
     }
 

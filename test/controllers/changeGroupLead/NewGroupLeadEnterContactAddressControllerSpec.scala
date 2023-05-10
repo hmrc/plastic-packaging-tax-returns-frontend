@@ -93,7 +93,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
     when(mockView.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
-    when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any)) thenReturn Member("organisation-name", "1")
+    when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any, any)) thenReturn Member("organisation-name", "1")
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
     when(mockCountryService.getAll(any)).thenReturn(countryMap)

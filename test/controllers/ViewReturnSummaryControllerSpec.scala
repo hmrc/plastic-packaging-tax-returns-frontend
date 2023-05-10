@@ -173,7 +173,7 @@ class ViewReturnSummaryControllerSpec
       val userAnswer = mock[UserAnswers]
 
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
-      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
       when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
@@ -187,7 +187,7 @@ class ViewReturnSummaryControllerSpec
       val userAnswer = mock[UserAnswers]
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
-      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
       when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
@@ -204,7 +204,7 @@ class ViewReturnSummaryControllerSpec
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-      verifyZeroInteractions(dataRequest.userAnswers.reset)
+      verifyZeroInteractions(dataRequest.userAnswers.removeAll())
       verifyZeroInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
     }
 

@@ -81,7 +81,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.genericFill(eqTo(ConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
   }
 
   "onPageLoad" should {
@@ -103,7 +103,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       await {
         controller.onPageLoad(NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
     }
 
     // TODO ...
@@ -131,7 +131,6 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
-      when(request.userAnswers.changeWithPath(any,any,any)(any)).thenReturn(Future.successful(true))
       when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
