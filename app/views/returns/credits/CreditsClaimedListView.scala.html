@@ -18,11 +18,12 @@
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    govukSummaryList: GovukSummaryList,
     govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], summaryRows: Seq[SummaryListRow], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("creditsSummary.title"))) {
 
@@ -31,6 +32,8 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @govukSummaryList(SummaryList(rows = summaryRows))
 
         @govukRadios(
             RadiosViewModel.yesNo(

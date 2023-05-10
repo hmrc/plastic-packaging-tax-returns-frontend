@@ -18,15 +18,33 @@ package viewmodels.checkAnswers.returns.credits
 
 import models.Mode.CheckMode
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.Messages
+import play.api.libs.json.JsPath
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
+import java.time.LocalDate
+
+
+case class Credits(credits: Seq[Credit])
+
+
+case class Credit
+(
+  endDate: LocalDate,
+  exportedCredit: CreditsAnswer,
+  convertedCredit: CreditsAnswer
+)
+
+
 object CreditsClaimedListSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    val t=  answers.get((JsPath \ "credit"))
     answers.get(CreditsClaimedListPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
@@ -40,5 +58,6 @@ object CreditsClaimedListSummary {
           )
         )
     }
+  }
 
 }

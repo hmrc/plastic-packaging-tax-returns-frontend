@@ -707,7 +707,7 @@ cancelCreditsClaim.error.required = Select yes if you want to cancel this credit
 
 
 creditsSummary.title = creditsSummary
-creditsSummary.heading = creditsSummary
+creditsSummary.heading = Do you want to claim tax back as credit for 1 April 2022 to 31 March 2023?
 creditsSummary.checkYourAnswersLabel = creditsSummary
-creditsSummary.error.required = Select yes if creditsSummary
+creditsSummary.error.required = <Need to define error>
 creditsSummary.change.hidden = CreditsSummary

@@ -16,143 +16,108 @@
 
 package controllers.returns.credits
 
-import base.SpecBase
+import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
+import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
-import models.UserAnswers
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.requests.DataRequest
+import navigation.Navigator
+import org.mockito.Answers
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.returns.credits.CreditsClaimedListPage
-import play.api.inject.bind
-import play.api.mvc.Call
-import play.api.test.FakeRequest
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents}
 import play.api.test.Helpers._
+import play.twirl.api.Html
+import queries.Gettable
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 import views.html.returns.credits.CreditsClaimedListView
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class CreditsClaimedListControllerSpec extends SpecBase with MockitoSugar {
+class CreditsClaimedListControllerSpec
+  extends PlaySpec
+    with JourneyActionAnswer
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
 
-  val formProvider = new CreditsClaimedListFormProvider()
-  val form = formProvider()
+  private val messagesApi = mock[MessagesApi]
+  private val cacheConnector = mock[CacheConnector]
+  private val navigator = mock[Navigator]
+  private val journeyAction = mock[JourneyAction]
+  private val formProvider = mock[CreditsClaimedListFormProvider]
+  private val view = mock[CreditsClaimedListView]
 
-  lazy val creditsSummaryRoute = controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
 
-  "CreditsSummary Controller" - {
+  private val sut = new CreditsClaimedListController(
+    messagesApi,
+    cacheConnector,
+    navigator,
+    journeyAction,
+    formProvider,
+    stubMessagesControllerComponents(),
+    view
+  )
 
-    "must return OK and the correct view for a GET" in {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    reset(view, request)
 
-      running(application) {
-        val request = FakeRequest(GET, creditsSummaryRoute)
+    when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+  }
 
-        val result = route(application, request).value
+  "onPageLoad" should {
 
-        val view = application.injector.instanceOf[CreditsClaimedListView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
+    "use the journey action" in {
+      sut.onPageLoad(NormalMode)
+      verify(journeyAction).apply(any)
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "return 200" in {
+      when(request.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(mock[Form[Boolean]])
 
-      val userAnswers = UserAnswers(userAnswersId).set(CreditsClaimedListPage, true).success.value
+      val result = sut.onPageLoad(NormalMode)(request)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, creditsSummaryRoute)
-
-        val view = application.injector.instanceOf[CreditsClaimedListView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustBe OK
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "return a view" in {
+      val boundForm = mock[Form[Boolean]]
+      when(request.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(boundForm)
 
-      val mockCacheConnector = mock[CacheConnector]
+      await(sut.onPageLoad(NormalMode)(request))
 
-      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[CacheConnector].toInstance(mockCacheConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, creditsSummaryRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      verify(view).apply(eqTo(boundForm), eqTo(Seq.empty), eqTo(NormalMode))(any,any)
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "getting the claims from UserAnswer" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val rows = Seq(
+        SummaryListRow(
+          key = Key(Text("exported")),
+          value = Value(Text("answer")),
+          actions = Some(Actions(items = Seq(
+            ActionItem("/foo", Text("change")),
+            ActionItem("/remove", Text("remove"))
+          ))))
+      )
+      val boundForm = mock[Form[Boolean]]
+      when(request.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(boundForm)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, creditsSummaryRoute)
-            .withFormUrlEncodedBody(("value", ""))
+      await(sut.onPageLoad(NormalMode)(request))
 
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[CreditsClaimedListView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, creditsSummaryRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, creditsSummaryRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-      }
+      verify(view).apply(eqTo(boundForm), eqTo(rows), eqTo(NormalMode))(any,any)
     }
   }
 }

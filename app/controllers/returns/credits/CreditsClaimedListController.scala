@@ -34,33 +34,26 @@ class CreditsClaimedListController @Inject()(
                                               override val messagesApi: MessagesApi,
                                               cacheConnector: CacheConnector,
                                               navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
+                                              journeyAction: JourneyAction,
                                               formProvider: CreditsClaimedListFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               view: CreditsClaimedListView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(CreditsClaimedListPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = request.userAnswers.fill(CreditsClaimedListPage, formProvider())
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, Seq.empty, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, Seq.empty, mode))),
 
         value =>
           for {
