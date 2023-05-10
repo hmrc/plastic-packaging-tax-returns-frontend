@@ -182,6 +182,13 @@ case class UserAnswers(
     */
   def reset: UserAnswers = copy(data = Json.obj(), lastUpdated = Instant.now)
 
+  /**
+    * Removes the field at the given path, if there is one
+    * @param path [[JsPath]] to field to remove
+    * @return an updated [[UserAnswers]]
+    */
+  def removePath(path: JsPath): UserAnswers = copy(data = data.transform(path.json.prune).get)
+
   def remove[A](page: Settable[A],  cleanup: Boolean = true): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
