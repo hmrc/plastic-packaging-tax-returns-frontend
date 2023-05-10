@@ -217,3 +217,8 @@ POST       /amend-exported-by-another-business                      controllers.
 # is used by the ReturnsCheckYourAnswer page which will change in near future.
 GET        /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
 POST       /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
+
+GET        /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
+POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)
