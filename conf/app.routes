@@ -54,8 +54,6 @@ POST        /amend-recycled-weight                                  controllers.
 
 GET         /confirm-or-correct-credit                              controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
 GET         /change-confirm-or-correct-credit                       controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
-GET         /confirm-or-correct-credit/cancel                       controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit/cancel                controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = CheckMode)
 
 GET         /start-return                                           controllers.returns.NowStartYourReturnController.onPageLoad
 

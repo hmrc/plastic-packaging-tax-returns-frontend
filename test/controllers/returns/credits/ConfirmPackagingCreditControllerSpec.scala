@@ -183,40 +183,6 @@ class ConfirmPackagingCreditControllerSpec
 
   }
 
-  "onCancelClaim" should {
-    "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      Try(await(sut.onCancelClaim(NormalMode)(dataRequest)))
-      verify(journeyAction).async(any)
-    }
-
-    "set userAnswer" in {
-      setUpMockForCancelCredit(mock[UserAnswers])
-
-      await(sut.onCancelClaim(NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).setOrFail(meq(WhatDoYouWantToDoPage), meq(false), any)(any)
-    }
-
-    "save user answer to cache" in {
-      val ans = mock[UserAnswers]
-      setUpMockForCancelCredit(ans)
-
-      await(sut.onCancelClaim(NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(ans).save(meq(saveAnsFun))(any)
-      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
-    }
-
-    "navigate to a new page" in {
-      setUpMockForCancelCredit(mock[UserAnswers])
-
-      await(sut.onCancelClaim(NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode, dataRequest.userAnswers)
-    }
-  }
-
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
     when(mockView.apply(any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
