@@ -52,7 +52,7 @@ class CancelCreditsClaimController @Inject()(
     implicit request =>
       Ok(view(formProvider()))
   }
-
+ 
   def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
 
