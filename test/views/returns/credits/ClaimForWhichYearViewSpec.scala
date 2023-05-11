@@ -17,18 +17,22 @@
 package views.returns.credits
 
 import base.ViewSpecBase
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import forms.returns.credits.DoYouWantToClaimFormProvider
+import models.Mode.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ClaimForWhichYearView
+
+import java.time.LocalDate
 
 class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers{
 
   val page = inject[ClaimForWhichYearView]
   val form = new DoYouWantToClaimFormProvider()()
 
-  private def createView: Html = page(form)(request, messages)
+  private def createView: Html = page(form, Seq(CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31))), NormalMode)(request, messages)
 
   "ClaimForWhichYearView" should {
     val view = createView

@@ -76,23 +76,23 @@ class ExportedCreditsControllerSpec extends PlaySpec
     when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     
-    when(view.apply(any, any)(any, any)) thenReturn Html("correct view")
+    when(view.apply(any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
-    when(request.userAnswers.genericFill(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
   }
 
   "onPageLoad" must {
 
     "display the page" in {
-      val result = sut.onPageLoad(NormalMode)(request)
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
       await(result)
 
-      verify(view).apply(preparedForm, NormalMode)(request, messages)
+      verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)
 
       val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(ExportedCreditsPage), eqTo(initialForm), func)(any)
+      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"
@@ -113,12 +113,12 @@ class ExportedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
-      when(mockNavigator.exportedCreditsYesNo(any, any)) thenReturn Call("me", "mr")
+      when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
 
-      val result = await { sut.onSubmit(NormalMode)(request) }
+      val result = await { sut.onSubmit("year-key", NormalMode)(request) }
       verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
       verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
-      verify(mockNavigator).exportedCreditsYesNo(any, any)
+      verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
       
       result.header.status mustEqual SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "mr"
@@ -129,8 +129,8 @@ class ExportedCreditsControllerSpec extends PlaySpec
       val formWithError = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithError
 
-      val result = await { sut.onSubmit(NormalMode)(request) }
-      verify(view).apply(formWithError, NormalMode) (request, messages)
+      val result = await { sut.onSubmit("year-key", NormalMode)(request) }
+      verify(view).apply(formWithError, "year-key", NormalMode) (request, messages)
 
       result.header.status mustEqual BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"

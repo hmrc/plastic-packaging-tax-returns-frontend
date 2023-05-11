@@ -23,12 +23,12 @@ import viewmodels.checkAnswers.returns.credits.{CreditAmountSummary, CreditsConv
 
 class CreditSummaryListFactory {
 
-  def createSummaryList(creditBalance: CreditBalance, userAnswer: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+  def createSummaryList(creditBalance: CreditBalance,key: String, userAnswer: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(CreditsTaxRateSummary(creditBalance.taxRate)) ++ Seq(
-        CreditsExportedPlasticSummary,
-        CreditsExportedWeightSummary,
-        CreditsConvertedPlasticSummary,
-        CreditsConvertedWeightSummary
+        CreditsExportedPlasticSummary(key),
+        CreditsExportedWeightSummary(key),
+        CreditsConvertedPlasticSummary(key),
+        CreditsConvertedWeightSummary(key)
       ).flatMap(_.row(userAnswer)) ++ Seq(
         CreditsTotalPlasticSummary(creditBalance.totalRequestedCreditInKilograms),
         CreditAmountSummary(creditBalance.totalRequestedCreditInPounds)

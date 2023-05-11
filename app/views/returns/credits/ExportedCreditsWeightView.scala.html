@@ -23,11 +23,11 @@
     weightInputLayout: WeightInputLayout
 )
 
-@(form: Form[Long], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], yearKey: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("exportedCreditsWeight.heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
 
         @***********************************************************
             todo: get caption date dynamically

@@ -39,9 +39,9 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
       when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.converted.weight"))).thenReturn("answer")
       when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
       when(messages.apply(ArgumentMatchers.eq(50L.asKg))).thenReturn(50L.asKg)
-      val userAnswer = UserAnswers("123").set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(50L)).get
+      val userAnswer = UserAnswers("123").set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(50L)).get
 
-      val result = CreditsConvertedWeightSummary.row(userAnswer)(messages)
+      val result = CreditsConvertedWeightSummary("year-key").row(userAnswer)(messages)
 
       result mustBe createExpectedResult(50L)
     }
@@ -52,7 +52,7 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
       key = Key(Text("answer"), "govuk-!-width-one-half"),
       value = Value(Text(answerValue.asKg)),
       actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(CheckMode).url,
+        controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode).url,
         Text("change"),
         Some("answer")
       ))))

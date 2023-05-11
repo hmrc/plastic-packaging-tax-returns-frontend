@@ -79,7 +79,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, userAnswers)
 
     when(formProvider.apply()).thenReturn(form)
-    when(view.apply(any, any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
@@ -87,19 +87,19 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   "onPageLoad" should {
 
     "use the journey action" in {
-      sut.onPageLoad(NormalMode)
+      sut.onPageLoad("year-key", NormalMode)
       verify(journeyAction).apply(any)
     }
 
     "return 200" in {
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result = sut.onPageLoad("year-key", NormalMode)(dataRequest)
       status(result) mustBe OK
     }
 
     "fill the weight in the form" in {
-      await(sut.onPageLoad(NormalMode)(dataRequest))
+      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
       val func = ArgCaptor[CreditsAnswer => Option[Long]]
-      verify(dataRequest.userAnswers).genericFill(eqTo(ExportedCreditsPage), eqTo(form), func) (any)
+      verify(dataRequest.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(form), func) (any)
 
       withClue("gets weight or None for displaying") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -110,34 +110,38 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return a view" in {
       val boundForm = Form("value" -> longNumber).fill(10L)
-      when(dataRequest.userAnswers.genericFill(any, any[Form[Long]], any) (any)) thenReturn boundForm
-      await(sut.onPageLoad(NormalMode)(dataRequest))
-      verify(view).apply(eqTo(boundForm), eqTo(NormalMode)) (any, any)
+      when(dataRequest.userAnswers.fillWithFunc(any, any[Form[Long]], any) (any)) thenReturn boundForm
+      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
+      verify(view).apply(eqTo(boundForm), eqTo("year-key"), eqTo(NormalMode)) (any, any)
     }
   }
 
   "onSubmit" should {
     "invoke the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      sut.onSubmit(NormalMode)(FakeRequest())
+      sut.onSubmit("year-key", NormalMode)(FakeRequest())
       verify(journeyAction).async(any)
     }
 
     "get the weight from the form" in {
       when(form.bindFromRequest() (any, any)) thenReturn Form("value" -> longNumber).fill(10L)
-      when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))
-      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
-      verify(dataRequest.userAnswers).setOrFail(eqTo(ExportedCreditsPage), 
+      when(navigator.exportedCreditsWeight("year-key", NormalMode, userAnswers)).thenReturn(Call(GET, "foo"))
+      await(sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest))
+      verify(dataRequest.userAnswers).setOrFail(eqTo(ExportedCreditsPage("year-key")),
         eqTo(CreditsAnswer(true, Some(10))), any) (any)
     }
 
     "save the weight" in {
       setupMocks
 
-      await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+      await(sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest))
 
       withClue("save weight to user Answer") {
         verify(userAnswers).save(meq(saveFunction))(any)
+      }
+
+      withClue("to the correct year"){
+        verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsPage("year-key")), any, any)(any)
       }
 
       withClue("save weight to cache") {
@@ -148,25 +152,25 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     "redirect" in {
       setupMocks
 
-      val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+      val result = sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      verify(navigator).exportedCreditsWeight(NormalMode)
+      verify(navigator).exportedCreditsWeight("year-key", NormalMode, dataRequest.userAnswers)
     }
 
     "return an error" when {
       "error on form" in {
-        when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+        when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
         val firmWithError = Form("value" -> ignored(1L)).withError("key", "error")
         when(form.bindFromRequest()(any, any)).thenReturn(firmWithError)
 
-        val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
+        val result = sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest)
 
         status(result) mustBe BAD_REQUEST
 
         withClue("pass an error to the view") {
           contentAsString(result) mustBe "correct view"
-          verify(view).apply(meq(firmWithError), meq(NormalMode))(any,any)
+          verify(view).apply(meq(firmWithError), meq("year-key"), meq(NormalMode))(any,any)
         }
       }
     }
@@ -176,9 +180,10 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   private def setupMocks = {
     when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber).fill(10L))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswers)
+    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(userAnswers)
     when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(dataRequest.pptReference).thenReturn("123")
-    when(navigator.exportedCreditsWeight(NormalMode)).thenReturn(Call(GET, "foo"))
+    when(navigator.exportedCreditsWeight(any, any, any)).thenReturn(Call(GET, "foo"))
   }
 }
