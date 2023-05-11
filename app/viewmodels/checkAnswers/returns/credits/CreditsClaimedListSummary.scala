@@ -21,7 +21,7 @@ import models.UserAnswers
 import models.returns.CreditsAnswer
 import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsObject, JsPath}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -29,35 +29,37 @@ import viewmodels.implicits._
 import java.time.LocalDate
 
 
-case class Credits(credits: Seq[Credit])
-
-
-case class Credit
-(
-  endDate: LocalDate,
-  exportedCredit: CreditsAnswer,
-  convertedCredit: CreditsAnswer
-)
+//case class Credits(credits: Seq[Credit])
+//
+//
+//case class Credit
+//(
+//  endDate: LocalDate,
+//  exportedCredit: CreditsAnswer,
+//  convertedCredit: CreditsAnswer
+//)
 
 
 object CreditsClaimedListSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
 
-    val t=  answers.get((JsPath \ "credit"))
-    answers.get(CreditsClaimedListPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get[Map[String,JsObject]](JsPath \ "credit").map {
+      answer: Map[String, JsObject] =>
 
-        SummaryListRowViewModel(
-          key = "creditsSummary.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("creditsSummary.change.hidden"))
+        answer.map(o => {
+          SummaryListRowViewModel(
+            key = o._1,
+            value = ValueViewModel("0"),
+            actions = Seq(
+              ActionItemViewModel("site.change", "/change"),
+              ActionItemViewModel("site.remove", "/remove")
+            )
           )
-        )
-    }
+
+        })
+
+    }.getOrElse(Seq.empty).toSeq
   }
 
 }

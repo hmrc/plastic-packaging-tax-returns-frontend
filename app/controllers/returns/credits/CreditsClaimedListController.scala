@@ -25,6 +25,7 @@ import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class CreditsClaimedListController @Inject()(
 
       val preparedForm = request.userAnswers.fill(CreditsClaimedListPage, formProvider())
 
-      Ok(view(preparedForm, Seq.empty, mode))
+      Ok(view(preparedForm, CreditsClaimedListSummary.row(request.userAnswers), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
