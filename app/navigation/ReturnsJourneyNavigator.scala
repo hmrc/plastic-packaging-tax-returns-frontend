@@ -65,14 +65,17 @@ class ReturnsJourneyNavigator @Inject()(
       if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled) && !isFirstReturn)
         creditRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
       else
-        returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+        firstPageOfReturnSection
     } else
       returnRoutes.NotStartOtherReturnsController.onPageLoad()
+
+  private def firstPageOfReturnSection = 
+    returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
   def whatDoYouWantDo(mode: Mode, isClaimingCredit: Boolean): Call = {
     (mode, isClaimingCredit) match {
       case (_, true) => creditRoutes.ClaimForWhichYearController.onPageLoad(mode)
-      case (NormalMode, false) => returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      case (NormalMode, false) => firstPageOfReturnSection
       case (CheckMode, false) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
   }
@@ -119,7 +122,7 @@ class ReturnsJourneyNavigator @Inject()(
       returnRoutes.NowStartYourReturnController.onPageLoad
     
   def startYourReturn: Call =
-    returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+    firstPageOfReturnSection
 
   def manufacturedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
     if (mode.equals(NormalMode))
