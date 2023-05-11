@@ -21,10 +21,13 @@ import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
 import forms.returns.credits.DoYouWantToClaimFormProvider
+import models.requests.DataRequest.headerCarrier
 import models.{Mode, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,39 +39,36 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatDoYouWantToDoController @Inject() (
                                               override val messagesApi: MessagesApi,
                                               cacheConnector: CacheConnector,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
+                                              journeyAction: JourneyAction,
                                               formProvider: DoYouWantToClaimFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               view: DoYouWantToClaimView,
-                                              taxReturnHelper: TaxReturnHelper,
                                               returnsNavigator: ReturnsJourneyNavigator
-) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+) (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
+    journeyAction {
       implicit request =>
-        val obligation = request.userAnswers.get(ReturnObligationCacheable)
-          .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
+        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
         Ok(view(preparedForm, obligation, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
-        val obligation = request.userAnswers.get(ReturnObligationCacheable)
-          .getOrElse(throw new IllegalStateException("Trying to submit return with no obligation"))
 
         formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation, mode))),
+          formWithErrors => {
+            val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
+            Future.successful(BadRequest(view(formWithErrors, obligation, mode)))
+          },
           newAnswer => updateAnswersAndGotoNextPage(mode, request.pptReference, request.userAnswers, newAnswer)
         )
     }
 
-  private def updateAnswersAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
+  private def updateAnswersAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
     (implicit hc: HeaderCarrier) = 
     previousAnswers
       .change(WhatDoYouWantToDoPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
