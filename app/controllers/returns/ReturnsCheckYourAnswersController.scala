@@ -26,7 +26,8 @@ import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.Credits._
 import models.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -51,7 +52,8 @@ class ReturnsCheckYourAnswersController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
   view: ReturnsCheckYourAnswersView, 
-  cacheConnector: CacheConnector
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
@@ -113,7 +115,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     callCalculationAndCreditApi(request).map {
       case (calculations, credits) =>
         val returnViewModel = TaxReturnViewModel(request.userAnswers, request.pptReference, obligation, calculations)
-        Ok(view(returnViewModel, credits)(request, messages))
+        Ok(view(returnViewModel, credits, navigator.cyaChangeCredits, navigator.cyaRemoveCredits)(request, messages))
     }
   }
 

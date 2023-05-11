@@ -473,5 +473,14 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
     }
   }
+  
+  "big CYA" should {
+    "link to change credit answers" in {
+      navigator.cyaChangeCredits mustBe creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
+    }
+    "link to remove credit answers" in {
+      navigator.cyaRemoveCredits mustBe creditRoutes.RemoveCreditController.onPageLoad().url
+    }
+  } 
 }
 

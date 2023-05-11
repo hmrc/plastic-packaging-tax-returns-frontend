@@ -225,4 +225,11 @@ class ReturnsJourneyNavigator @Inject()(
       case Some(false) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       case _ => throw new Exception("Unable to navigate to page")
     }
+
+  def cyaChangeCredits: String =
+    creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
+
+  def cyaRemoveCredits: String =
+    creditRoutes.RemoveCreditController.onPageLoad().url
+
 }

@@ -69,7 +69,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
-    page(taxReturn, credits)(request, messages)
+    page(taxReturn, credits, "/change", "/remove")(request, messages)
 
   "View" should {
 
@@ -135,7 +135,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
 
         view.getElementById("remove-credit-link").select("a").first() must
-          haveHref(controllers.returns.credits.routes.RemoveCreditController.onPageLoad())
+          haveHref("/remove")
       }
     }
 
