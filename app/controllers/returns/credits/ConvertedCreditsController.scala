@@ -45,25 +45,25 @@ class ConvertedCreditsController @Inject()
   extends I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = {
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.fillWithFunc(ConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormYesNo)
-        Results.Ok(view(preparedForm, mode))
+        val preparedForm = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        Results.Ok(view(preparedForm, key, mode))
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
+            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key,  mode))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-              request.userAnswers.changeWithFunc(ConvertedCreditsPage, CreditsAnswer.changeYesNoTo(formValue), saveFunc)
-                .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, formValue)))
+              request.userAnswers.changeWithFunc(ConvertedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, key, formValue)))
             }
           )
     }

@@ -26,9 +26,9 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object CreditsConvertedWeightSummary extends SummaryViewModel{
+case class CreditsConvertedWeightSummary(key: String) extends SummaryViewModel{
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ConvertedCreditsPage).map {
+    answers.get(ConvertedCreditsPage(key)).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.converted.weight", classes="govuk-!-width-one-half"),
@@ -36,7 +36,7 @@ object CreditsConvertedWeightSummary extends SummaryViewModel{
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(CheckMode).url
+              controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(key, CheckMode).url
             ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.weight"))
           )
         )

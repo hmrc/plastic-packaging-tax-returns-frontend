@@ -33,7 +33,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
   val form = new ConvertedCreditsFormProvider()()
 
   private def createView(form: Form[Boolean] = form): Html =
-    page(form, NormalMode)(request, messages)
+    page(form,"year-key", NormalMode)(request, messages)
 
   "Converted Credits View" should {
 

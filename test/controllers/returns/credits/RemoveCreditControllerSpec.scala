@@ -29,6 +29,7 @@ import views.html.returns.credits.RemoveCreditView
 
 import scala.concurrent.Future
 
+// todo: Sort the test out. Start again
 class RemoveCreditControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new RemoveCreditFormProvider()
@@ -40,7 +41,9 @@ class RemoveCreditControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("bootstrap.filters.csrf.enabled" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, removeCreditRoute)

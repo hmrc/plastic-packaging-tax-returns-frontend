@@ -123,8 +123,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
-        CreditsAnswer(true, Some(200L)),
-        converted = CreditsAnswer(true, Some(300L)),
+        exported = CreditsAnswer.noClaim, //todo CYA does not have a break down
+        converted = CreditsAnswer.noClaim, //todo CYA does not have a break down
         totalWeight = 500L,
         totalCredits = 20L
       )
@@ -268,8 +268,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUserAnswer(): UserAnswers = {
     userAnswers
-      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
-      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(300L)).get
+      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
+      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(300L)).get
       .set(WhatDoYouWantToDoPage, true).get
   }
 

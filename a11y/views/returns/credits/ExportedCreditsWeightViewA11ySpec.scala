@@ -30,7 +30,7 @@ class ExportedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityM
   val page = inject[ExportedCreditsWeightView]
 
   def render(form: Form[Long]): String =
-    page(form, NormalMode)(request, messages).toString()
+    page(form, "year-key", NormalMode)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {

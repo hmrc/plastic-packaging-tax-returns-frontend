@@ -46,35 +46,35 @@ class ConvertedCreditsWeightController @Inject()(
 )
   (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.fillWithFunc(ConvertedCreditsPage, formProvider(), CreditsAnswer.fillFormWeight)
-        Ok(createView(form, mode))
+        val form = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+        Ok(createView(form, key, mode))
     }
 
-  private def createView(form: Form[Long], mode: Mode)(implicit request: DataRequest[_]) = {
-    view(form, routes.ConvertedCreditsWeightController.onSubmit(mode))
+  private def createView(form: Form[Long], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
+    view(form, routes.ConvertedCreditsWeightController.onSubmit(key, mode))
   }
 
-  def onSubmit(mode: Mode) : Action[AnyContent] =
+  def onSubmit(key: String, mode: Mode) : Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         formProvider()
           .bindFromRequest()
-          .fold(formHasErrors(mode, _),formIsGood(mode, _))
+          .fold(formHasErrors(mode, key, _),formIsGood(key, mode, _))
     }
 
-  private def formIsGood(mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
+  private def formIsGood(key: String, mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
     request.userAnswers
-      .changeWithFunc(ConvertedCreditsPage, 
+      .changeWithFunc(ConvertedCreditsPage(key),
         (_: Option[CreditsAnswer]) => CreditsAnswer.answerWeightWith(answer), 
         cacheConnector.saveUserAnswerFunc(request.pptReference)
       )
-      .map(_ => Results.Redirect(navigator.convertedCreditsWeightRoute(mode)))
+      .map(_ => Results.Redirect(navigator.convertedCreditsWeightRoute(key, mode)))
   }
 
-  private def formHasErrors(mode: Mode, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
-    Future.successful(Results.BadRequest(createView(formWithErrors, mode)))
+  private def formHasErrors(mode: Mode, key: String, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
+    Future.successful(Results.BadRequest(createView(formWithErrors, key, mode)))
   }
 }

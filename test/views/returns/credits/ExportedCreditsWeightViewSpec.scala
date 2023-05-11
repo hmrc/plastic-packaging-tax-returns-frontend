@@ -32,7 +32,7 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
   val form = new ExportedCreditsWeightFormProvider()()
 
   private def createView(form: Form[Long] = form): Html =
-    page(form, NormalMode)(request, messages)
+    page(form,"year-key", NormalMode)(request, messages)
 
   "view" should {
     val view = createView(form)
