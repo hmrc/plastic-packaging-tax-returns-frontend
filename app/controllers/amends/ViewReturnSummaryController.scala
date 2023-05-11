@@ -128,7 +128,7 @@ class ViewReturnSummaryController @Inject() (
     obligation: TaxReturnObligation
   )(implicit request: DataRequest[_]): Future[UserAnswers] = {
     request.userAnswers
-      .reset
+      .removeAll()
       .setOrFail(AmendSelectedPeriodKey, periodKey)
       .setOrFail(AmendObligationCacheable, obligation)
       .setOrFail(ReturnDisplayApiCacheable, submittedReturn)

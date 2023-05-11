@@ -183,40 +183,6 @@ class ConfirmPackagingCreditControllerSpec
 
   }
 
-  "onCancelClaim" should {
-    "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      Try(await(sut.onCancelClaim("year-key", NormalMode)(dataRequest)))
-      verify(journeyAction).async(any)
-    }
-
-    "set userAnswer" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsPage("year-key")), meq(CreditsAnswer.noClaim), any)(any)
-      verify(dataRequest.userAnswers).setOrFail(meq(ConvertedCreditsPage("year-key")), meq(CreditsAnswer.noClaim), any)(any)
-    }
-
-    "save user answer to cache" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).save(meq(saveAnsFun))(any)
-      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
-    }
-
-    "navigate to a new page" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode, dataRequest.userAnswers)
-    }
-  }
-
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
     when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))

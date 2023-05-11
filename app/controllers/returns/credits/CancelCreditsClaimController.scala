@@ -24,6 +24,7 @@ import navigation.ReturnsJourneyNavigator
 import pages.returns.credits._
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.returns.credits.CancelCreditsClaimView
@@ -62,9 +63,8 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
         cancel => {
           {if (cancel) {
             request.userAnswers
-              .remove(ExportedCreditsPage(key)).get //todo this should be the year key
-              .remove(ConvertedCreditsPage(key)).get //todo this should be the year key
-              .change(WhatDoYouWantToDoPage, false, cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .removePath(JsPath \ "credit" \ key)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           } else {Future.unit}
           }.map(_ => Redirect(navigator.cancelCreditRoute(key, cancel)))
         }

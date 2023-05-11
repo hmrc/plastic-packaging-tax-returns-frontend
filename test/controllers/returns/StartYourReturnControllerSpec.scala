@@ -36,6 +36,7 @@ import org.scalatest.BeforeAndAfterEach
 import pages.returns.StartYourReturnPage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.libs.json.JsPath
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -158,7 +159,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
       when(navigator.startYourReturnRoute(any, any)) thenReturn Call("GET", "/toast")
@@ -198,7 +199,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -230,7 +231,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -262,7 +263,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)

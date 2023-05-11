@@ -16,7 +16,7 @@
 
 @import components.{Link, paragraph}
 @import models.returns.Credits
-@import models.Mode.CheckMode
+@import models.Mode.NormalMode
 @import viewmodels._
 
 @this(
@@ -52,7 +52,7 @@
     content = link(
         id = "change-credit-link",
         text = messages("submit-return.check-your-answers.credits.change.text.link"),
-        href = controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("SHOULD_NOT_GO_HERE", CheckMode).url
+        href = controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).url
     )
 )
 

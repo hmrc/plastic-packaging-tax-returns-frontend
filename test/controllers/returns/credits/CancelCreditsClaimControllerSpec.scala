@@ -36,6 +36,7 @@ import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.Html
@@ -83,8 +84,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
 
     val x = request.userAnswers
-    when(request.userAnswers.remove(any, any)) thenReturn Try(x)
-    when(request.userAnswers.change(any, any, any)(any)) thenReturn Future.successful(true)
+    when(request.userAnswers.removePath(any)) thenReturn x
+    when(request.userAnswers.save(any)(any)) thenReturn Future.successful(x)
   }
 
   "onPageLoad" should {
@@ -121,9 +122,9 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
 
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
-      verify(request.userAnswers).remove(eqTo(ExportedCreditsPage("year-key")), any)
-      verify(request.userAnswers).remove(eqTo(ConvertedCreditsPage("year-key")), any)
-      verify(request.userAnswers).change(eqTo(WhatDoYouWantToDoPage), eqTo(false), any)(any)
+      verify(request.userAnswers).removePath(eqTo(JsPath \ "credit" \ "year-key"))
+      verify(request.userAnswers, never).change(any, any, any)(any)
+      verify(request.userAnswers).save(any)(any)
       verify(navigator).cancelCreditRoute("year-key", true)
 
       result.header.status mustBe SEE_OTHER

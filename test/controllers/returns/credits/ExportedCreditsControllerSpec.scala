@@ -80,7 +80,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
-    when(request.userAnswers.genericFill(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
   }
 
   "onPageLoad" must {
@@ -92,7 +92,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
       verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)
 
       val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
+      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"

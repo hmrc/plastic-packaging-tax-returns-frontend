@@ -50,7 +50,7 @@ class ClaimForWhichYearController @Inject()(
   //todo get there from somewhere
   //todo should this obj contain a taxrate per range?
   val availableYears = Seq(
-    CreditRangeOption(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31)),
+    CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)),
     CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
   )
 
