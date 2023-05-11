@@ -78,7 +78,7 @@ class ManufacturedPlasticPackagingController @Inject() (
 
     previousAnswers
       .change(ManufacturedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
-      .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
+      .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackaging(mode, hasAnswerChanged, newAnswer)))
   }
   
 }

@@ -20,7 +20,7 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,14 +32,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreditsClaimedListController @Inject()(
-                                              override val messagesApi: MessagesApi,
-                                              cacheConnector: CacheConnector,
-                                              navigator: Navigator,
-                                              journeyAction: JourneyAction,
-                                              formProvider: CreditsClaimedListFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: CreditsClaimedListView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  journeyAction: JourneyAction,
+  formProvider: CreditsClaimedListFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: CreditsClaimedListView
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
@@ -56,11 +56,11 @@ class CreditsClaimedListController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, Seq.empty, mode))),
 
-        value =>
+        isAddingAnotherYear =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CreditsClaimedListPage, value))
-            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(CreditsClaimedListPage, mode, updatedAnswers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(CreditsClaimedListPage, isAddingAnotherYear))
+              _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+          } yield Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, updatedAnswers))
       )
   }
 }

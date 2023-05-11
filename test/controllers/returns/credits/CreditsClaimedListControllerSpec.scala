@@ -22,7 +22,7 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{reset, verify, when}
@@ -31,7 +31,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Gettable
@@ -51,7 +51,7 @@ class CreditsClaimedListControllerSpec
 
   private val messagesApi = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[Navigator]
+  private val navigator = mock[ReturnsJourneyNavigator]
   private val journeyAction = mock[JourneyAction]
   private val formProvider = mock[CreditsClaimedListFormProvider]
   private val view = mock[CreditsClaimedListView]

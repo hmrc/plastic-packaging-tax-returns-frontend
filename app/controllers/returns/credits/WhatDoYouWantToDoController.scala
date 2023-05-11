@@ -19,7 +19,6 @@ package controllers.returns.credits
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
-import controllers.helpers.TaxReturnHelper
 import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.requests.DataRequest.headerCarrier
 import models.{Mode, UserAnswers}
@@ -30,7 +29,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.DoYouWantToClaimView
 
 import javax.inject.Inject
@@ -72,6 +70,6 @@ class WhatDoYouWantToDoController @Inject() (
     (implicit hc: HeaderCarrier) = 
     previousAnswers
       .change(WhatDoYouWantToDoPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
-      .map(_ => Redirect(returnsNavigator.whatDoYouWantDoRoute(mode, newAnswer)))
+      .map(_ => Redirect(returnsNavigator.whatDoYouWantDo(mode, newAnswer)))
   
 }

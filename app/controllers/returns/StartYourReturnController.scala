@@ -96,7 +96,7 @@ class StartYourReturnController @Inject()(
     if (formValue) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
     }
-    Redirect(returnsNavigator.startYourReturnRoute(formValue, isFirstReturn))
+    Redirect(returnsNavigator.startYourReturn(formValue, isFirstReturn))
   }
 
 }
