@@ -57,16 +57,6 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
         }
     }
 
-  def onCancelClaim(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        request.userAnswers
-          .setOrFail(ExportedCreditsPage(key), CreditsAnswer.noClaim)
-          .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.noClaim)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers)))
-    }
-
   private def isUserAnswerValid(key: String)(implicit request: DataRequest[_]) = {
     request.userAnswers.get(ExportedCreditsPage(key)).isDefined &&
       request.userAnswers.get(ConvertedCreditsPage(key)).isDefined
