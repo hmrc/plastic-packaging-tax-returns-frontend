@@ -28,9 +28,9 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 // TODO de-dupe
-object CreditsConvertedPlasticSummary extends SummaryViewModel {
+case class CreditsConvertedPlasticSummary(key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ConvertedCreditsPage).orElse(Some(CreditsAnswer.noClaim)).map {
+    answers.get(ConvertedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.converted.answer", classes="govuk-!-width-one-half"),
@@ -38,7 +38,7 @@ object CreditsConvertedPlasticSummary extends SummaryViewModel {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(CheckMode).url
+              controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(key, CheckMode).url
             ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.answer"))
           )
         )

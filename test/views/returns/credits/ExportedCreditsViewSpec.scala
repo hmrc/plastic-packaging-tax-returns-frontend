@@ -32,7 +32,7 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
   val form = new ExportedCreditsFormProvider()()
 
   private def createView(form: Form[Boolean] = form): Html =
-    page(form, NormalMode)(request, messages)
+    page(form, "year-key", NormalMode)(request, messages)
 
   "Exported Credits View" should {
 

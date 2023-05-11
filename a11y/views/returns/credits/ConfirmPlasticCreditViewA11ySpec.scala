@@ -26,7 +26,7 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   private val page = inject[ConfirmPackagingCreditView]
-  private def render(canClaimCredit: Boolean ): Html = page(BigDecimal(200), canClaimCredit, Seq.empty, Call("GET", "/test"), NormalMode)(request, messages)
+  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), canClaimCredit, Seq.empty, Call("GET", "/test"), NormalMode)(request, messages)
 
   "ConfirmPackagingCreditView" should {
     "pass accessibility checks" when {

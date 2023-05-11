@@ -122,85 +122,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Credits section" should {
-    "display guidance" when {
-      "credits feature is toggled off" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
-        val ans  = createUserAnswer.set(WhatDoYouWantToDoPage, false).get
-
-        val view = createView(CreditsClaimedDetails(ans, createCreditBalance))
-
-        assertNoCreditsAvailable(view)
-      }
-    }
-
-    "hide guidance" when {
-      "credits feature is toggled on" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        createView().getElementById("credits-line-1") mustBe null
-      }
-    }
-
-    "have no credits claimed" in {
-      when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-      val ans  = createUserAnswer.set(WhatDoYouWantToDoPage, false).get
-      val view = createView(
-        credits = NoCreditsClaimed,
-        taxReturn = createViewModel(ans))
-
-      val paragraphText = view.getElementsByClass("govuk-body").text()
-      paragraphText must include("If you want to claim tax back as credit, you must do this when you submit your return. " +
-        "If you do not claim it now, you must wait until your next return.")
-      paragraphText must include(messages("submit-return.check-your-answers.credits.not.claimed.hint"))
-      paragraphText must include("Claim tax back as credit")
-
-    }
-
-    "have claimed credit" when {
-      "exported and converted both answered yes" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(
-          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, createCreditBalance))
-
-        view.getElementById("exported-answer").children().size() mustBe 6
-        assertExportedCreditsAnswer(view, "Yes", "site.yes")
-        assertExportedCreditsWeight(view, "100kg")
-        assertConvertedCreditsAnswer(view, 2, "Yes", "site.yes")
-        assertConvertedCreditsWeight(view)
-        assertCreditsTotalWight(view, 4)
-        assertTotalCredits(view, 5)
-      }
-
-      //todo: check if this test still valid with the new Credit CYA
-      "no exported and converted answer no" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val ans = UserAnswers("123")
-          .set(ExportedCreditsPage, CreditsAnswer(false, Some(0L))).get
-          .set(ConvertedCreditsPage, CreditsAnswer(false, Some(0L))).get
-          .set(WhatDoYouWantToDoPage,true).get
-
-        val view = createView(
-          credits = CreditsClaimedDetails(ans, createCreditBalance))
-
-       // view.getElementById("exported-answer").children().size() mustBe 5
-//        assertExportedCreditsAnswer(view, "No", "site.no")
-//        assertConvertedCreditsAnswer(view, 2, "No", "site.no")
-//        assertCreditsTotalWight(view, 3)
-//        assertTotalCredits(view, 4)
-       // assertTotalCredits(view, 4)
-      }
-    }
-
-    "have change your answer credit link" when {
-      "credits is claimed" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(
-          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, createCreditBalance))
-
-        getText(view, "change-credit-link") mustBe "Change any answer from credits"
-        getText(view, "change-credit-link") mustBe messages("submit-return.check-your-answers.credits.change.text.link")
-        view.getElementById("change-credit-link").select("a").first() must haveHref(controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(CheckMode))
-      }
-    }
+      //todo how should credit section work on big CYA
 
     "can remove a credit" when {
       "credit is claimed" in {
@@ -364,8 +286,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")
-      .set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(100L)).get
-      .set(ConvertedCreditsPage, CreditsAnswer.answerWeightWith(200L)).get
+      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(100L)).get
+      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
       .set(DirectlyExportedWeightPage, 100L).get
       .set(WhatDoYouWantToDoPage, true).get
 
@@ -434,8 +356,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(ExportedCreditsPage, CreditsAnswer(false, Some(100L))).get
-    .set(ConvertedCreditsPage, CreditsAnswer(true, Some(0L))).get
+    .set(ExportedCreditsPage("year-key"), CreditsAnswer(false, Some(100L))).get
+    .set(ConvertedCreditsPage("year-key"), CreditsAnswer(true, Some(0L))).get
     .set(WhatDoYouWantToDoPage, true).get
 }
 

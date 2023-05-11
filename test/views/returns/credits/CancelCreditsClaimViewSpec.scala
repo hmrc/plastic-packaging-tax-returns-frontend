@@ -27,7 +27,7 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
   val page = inject[CancelCreditsClaimView]
   val form = new CancelCreditsClaimFormProvider()()
 
-  private def createView(form: Form[Boolean]): Html = page(form)(request, messages)
+  private def createView(form: Form[Boolean]): Html = page("year-key", form)(request, messages)
 
   "CancelCreditsClaimView" should {
     val view = createView(form)

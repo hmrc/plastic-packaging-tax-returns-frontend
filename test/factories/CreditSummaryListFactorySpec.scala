@@ -41,10 +41,10 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       when(messages.apply(meq("confirmPackagingCredit.converted.weight"))).thenReturn("converted weight")
       when(messages.apply(meq("confirmPackagingCredit.totalPlastic"))).thenReturn("total plastic")
       when(messages.apply(meq("confirmPackagingCredit.creditAmount"))).thenReturn("credit amount")
-      when(answer.get(meq(ExportedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
-      when(answer.get(meq(ConvertedCreditsPage))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
+      when(answer.get(meq(ExportedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
+      when(answer.get(meq(ConvertedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
 
-      val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 0.30) , answer)(messages)
+      val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 0.30) ,"year-key" , answer)(messages)
 
       res(0).key.content.asInstanceOf[Text].value mustBe "Tax Rate"
       res(1).key.content.asInstanceOf[Text].value mustBe "exported"

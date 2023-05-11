@@ -41,9 +41,9 @@ class CreditsExportedWeightSummarySpec extends PlaySpec {
         when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
         when(messages.apply(ArgumentMatchers.eq(20L.asKg))).thenReturn(20L.asKg)
 
-        val userAnswer = UserAnswers("123").set(ExportedCreditsPage, CreditsAnswer.answerWeightWith(20L)).get
+        val userAnswer = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(20L)).get
 
-        CreditsExportedWeightSummary.row(userAnswer)(messages) mustBe createExpectedWeightResult
+        CreditsExportedWeightSummary("year-key").row(userAnswer)(messages) mustBe createExpectedWeightResult
       }
     }
   }
@@ -53,7 +53,7 @@ class CreditsExportedWeightSummarySpec extends PlaySpec {
       key = Key(Text("exported weight"), "govuk-!-width-one-half"),
       value = Value(Text(20L.asKg)),
       actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(CheckMode).url,
+        controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad("year-key", CheckMode).url,
         Text("change"),
         Some("exported weight")
       ))))

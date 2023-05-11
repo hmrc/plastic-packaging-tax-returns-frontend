@@ -26,7 +26,7 @@ import views.html.returns.credits.CancelCreditsClaimView
 class CancelCreditsClaimViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   private val page = inject[CancelCreditsClaimView]
-  private def render: Html = page(Form("value" -> boolean).fill(true))(request, messages)
+  private def render: Html = page("year-key", Form("value" -> boolean).fill(true))(request, messages)
 
   "view" should {
     "pass accessibility checks" in {

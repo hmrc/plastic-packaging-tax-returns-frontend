@@ -28,9 +28,10 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 // TODO de-dupe?
-object CreditsExportedWeightSummary extends SummaryViewModel {
+case class CreditsExportedWeightSummary(key: String) extends SummaryViewModel {
+
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage).map {
+    answers.get(ExportedCreditsPage(key)).map {
       creditsAnswer =>
         SummaryListRowViewModel(
           key = Key("confirmPackagingCredit.exported.weight", classes="govuk-!-width-one-half"),
@@ -38,7 +39,7 @@ object CreditsExportedWeightSummary extends SummaryViewModel {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(CheckMode).url
+              controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(key, CheckMode).url
             ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.weight"))
           )
         )

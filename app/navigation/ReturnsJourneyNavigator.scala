@@ -19,12 +19,13 @@ package navigation
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.credits.ClaimedCredits
 import controllers.returns.routes
+import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode.{CheckMode, NormalMode}
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -70,43 +71,44 @@ class ReturnsJourneyNavigator @Inject()(
       routes.NotStartOtherReturnsController.onPageLoad()
 
   def whatDoYouWantDoRoute(mode: Mode, newAnswer: Boolean): Call = {
-    if (mode.equals(CheckMode))
-      routes.ReturnsCheckYourAnswersController.onPageLoad()
-    else if (newAnswer)
-      controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit
-    else
-      routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-  }
-
-  def claimForWhichYear: Call =
-    controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(NormalMode)
-
-  def exportedCreditsYesNo(mode: Mode, isYes: Boolean): Call = {
-    (mode,isYes) match {
-      case (_, true) => controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(mode)
-      case (NormalMode, false) => controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
-      case (CheckMode, false) => controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+    (mode, newAnswer) match {
+      case (_, true) => controllers.returns.credits.routes.ClaimForWhichYearController.onPageLoad(mode)
+      case (NormalMode, false) => routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      case (CheckMode, false) => routes.ReturnsCheckYourAnswersController.onPageLoad()
     }
   }
 
-  def exportedCreditsWeight(mode: Mode): Call = {
-    if(mode.equals(NormalMode))
-      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(mode)
+  def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
+    controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(year.key, mode)
+
+  def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {
+    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
+    (isCheckMode, isYes) match {
+      case (_, true) => controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(key, mode)
+      case (false, false) => controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(key, mode)
+      case (true, false) =>  controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(key, mode)
+    }
+  }
+
+  def exportedCreditsWeight(key: String, mode: Mode, userAnswers: UserAnswers): Call = {
+    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
+    if(isCheckMode)
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     else
-      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+      controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(key, mode)
   }
   
-  def convertedCreditsYesNo(mode: Mode, isAnswerYes: Boolean): Call = {
+  def convertedCreditsYesNo(mode: Mode, key: String, isAnswerYes: Boolean): Call = {
     if (isAnswerYes)
-      controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(mode)
+      controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(key, mode)
     else
-      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+      controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(key, mode)
   }
 
-  def convertedCreditsWeightRoute(mode: Mode) =
-    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(mode)
+  def convertedCreditsWeightRoute(key: String, mode: Mode) =
+    controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(key, mode)
 
-  def confirmCreditRoute(mode: Mode, userAnswers: UserAnswers): Call =
+  def confirmCreditRoute(mode: Mode, userAnswers: UserAnswers): Call = //todo go to multiYearCYA if supposed to
     if (mode.equals(CheckMode) && nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers))
       routes.ReturnsCheckYourAnswersController.onPageLoad()
     else
@@ -200,10 +202,10 @@ class ReturnsJourneyNavigator @Inject()(
       routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
   }
 
-  def cancelCreditRoute(isCancelled: Boolean): Call = {
+  def cancelCreditRoute(key: String, isCancelled: Boolean): Call = {
     if(isCancelled)
       controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-    else controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(NormalMode)
+    else controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(key, NormalMode)
   }
 
   private def nonExportedHumanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =

@@ -30,18 +30,22 @@ case class CreditsClaimedDetails(
 
   override def summaryList: Seq[(String, String)] =
     Seq(
-      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
-      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
-      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
-      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
-      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
-      CreditTotalPartialKey -> totalCredits.asPounds -> true
-    ).collect{case (tuple, show) if show => tuple}
+      "CREDITS CYA" -> "TODO",
+      "SHOULD BE MULTI YEAR BREAK DOWN" -> "TODO"
+    )
+//      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
+//      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
+//      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
+//      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
+//      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
+//      CreditTotalPartialKey -> totalCredits.asPounds -> true
+//    ).collect{case (tuple, show) if show => tuple}
 
 }
 
 object CreditsClaimedDetails {
 
+  //todo remove these?
   val CreditExportedAnswerPartialKey = "submit-return.check-your-answers.credits.exported.answer"
   val CreditExportedWeightPartialKey = "submit-return.check-your-answers.credits.exported.weight"
   val CreditConvertedAnswerPartialKey = "submit-return.check-your-answers.credits.converted.answer"
@@ -49,10 +53,11 @@ object CreditsClaimedDetails {
   val CreditsTotalWeightPartialKey = "submit-return.check-your-answers.credits.total.weight"
   val CreditTotalPartialKey = "submit-return.check-your-answers.credits.total"
 
+    //todo final CYA does not have a break down
   def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      userAnswer.getOrFail(ExportedCreditsPage),
-      userAnswer.getOrFail(ConvertedCreditsPage),
+      CreditsAnswer.noClaim, //todo
+      CreditsAnswer.noClaim, //todo
       creditBalance.totalRequestedCreditInKilograms,
       creditBalance.totalRequestedCreditInPounds,
     )

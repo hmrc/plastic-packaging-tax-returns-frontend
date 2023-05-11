@@ -81,29 +81,29 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
   }
 
   "onPageLoad" should {
 
     "use the journey action" in {
-      controller.onPageLoad(NormalMode)
+      controller.onPageLoad("year-key", NormalMode)
       verify(journeyAction).apply(any)
     }
     
     "show web page with correct submit url" in {
       when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
       status {
-        controller.onPageLoad(NormalMode).skippingJourneyAction(request)
+        controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       } mustBe Status.OK
-      verify(view).apply(form, routes.ConvertedCreditsWeightController.onSubmit(NormalMode)) (request, messages)
+      verify(view).apply(form, routes.ConvertedCreditsWeightController.onSubmit("year-key", NormalMode)) (request, messages)
     }
     
     "use an existing user-answer if present" in {
       await {
-        controller.onPageLoad(NormalMode).skippingJourneyAction(request)
+        controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage), eqTo(form), any) (any) // TODO could improve
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any) // TODO could improve
     }
 
     // TODO ...
@@ -122,29 +122,29 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
       when(request.userAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
 
-      when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.convertedCreditsWeightRoute(any, any)).thenReturn(Call(GET, "/foo"))
 
-      await(controller.onSubmit(NormalMode).skippingJourneyAction(request))
+      await(controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage), any, eqTo(saveFunction)) (any, any) // TODO could improve
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveFunction)) (any, any) // TODO could improve
     }
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
-      when(navigator.convertedCreditsWeightRoute(any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.convertedCreditsWeightRoute(any, any)).thenReturn(Call(GET, "/foo"))
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
-      val result =  controller.onSubmit(NormalMode).skippingJourneyAction(request)
+      val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe SEE_OTHER
-      verify(navigator).convertedCreditsWeightRoute(NormalMode)
+      verify(navigator).convertedCreditsWeightRoute("year-key", NormalMode)
     }
 
     "show an error page when error on form" in {
       val boundFormWithError = Form("value" -> longNumber).withError("message", "error message")
       when(form.bindFromRequest()(any, any)) thenReturn boundFormWithError
 
-      val result =  controller.onSubmit(NormalMode).skippingJourneyAction(request)
+      val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe BAD_REQUEST
       verify(view).apply(meq(boundFormWithError), any)(any, any)

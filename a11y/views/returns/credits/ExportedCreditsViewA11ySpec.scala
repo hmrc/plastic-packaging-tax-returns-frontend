@@ -29,7 +29,7 @@ class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatcher
   val page = inject[ExportedCreditsView]
 
   def render(form: Form[Boolean]): String =
-    page(form, NormalMode)(request, messages).toString()
+    page(form,"year-key", NormalMode)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {
