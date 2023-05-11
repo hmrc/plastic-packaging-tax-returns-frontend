@@ -70,7 +70,7 @@ class CancelAmendController @Inject()
 
   def cancel(implicit request: DataRequest[_]): Future[Result] = {
     request.userAnswers
-      .reset
+      .removeAll()
       .save(cacheConnector.saveUserAnswerFunc(request.request.pptReference))
       .map { _ => Results.Ok(amendAlreadyCancelledView()) }
   }
