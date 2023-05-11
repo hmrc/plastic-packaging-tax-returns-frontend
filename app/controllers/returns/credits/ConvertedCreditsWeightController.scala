@@ -71,7 +71,7 @@ class ConvertedCreditsWeightController @Inject()(
         (_: Option[CreditsAnswer]) => CreditsAnswer.answerWeightWith(answer), 
         cacheConnector.saveUserAnswerFunc(request.pptReference)
       )
-      .map(_ => Results.Redirect(navigator.convertedCreditsWeightRoute(key, mode)))
+      .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
   }
 
   private def formHasErrors(mode: Mode, key: String, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {

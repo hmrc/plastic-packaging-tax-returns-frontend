@@ -120,13 +120,13 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
     }
 
     "redirect to the next page" in {
-      when(navigator.whatDoYouWantDoRoute(any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.whatDoYouWantDo(any, any)).thenReturn(Call(GET, "/foo"))
       when(form.bindFromRequest()(any,any)).thenReturn(Form("value" -> boolean).fill(true))
       when(dataRequest.userAnswers.change(any, any, any)(any)).thenReturn(Future.successful(true))
 
       val result = await(sut.onSubmit(NormalMode)(dataRequest))
       verify(cacheConnector).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
-      verify(navigator).whatDoYouWantDoRoute(meq(NormalMode), meq(true))
+      verify(navigator).whatDoYouWantDo(meq(NormalMode), meq(true))
       verify(dataRequest.userAnswers, never).getOrFail(meq(ReturnObligationCacheable))(any, any)
 
       result.header.status mustBe SEE_OTHER

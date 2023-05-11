@@ -62,7 +62,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
 
     when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
-    when(returnsJourneyNavigator.manufacturedPlasticPackagingRoute(any, any, any)).thenReturn(onwardRoute)
+    when(returnsJourneyNavigator.manufacturedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
   }
 
   "ManufacturedPlasticPackaging Controller" - {
@@ -132,7 +132,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         
         verify(mockCacheConnector).saveUserAnswerFunc(eqq("123"))(any)
         verify(mockUserAnswers).change (eqq(ManufacturedPlasticPackagingPage), eqq(true), any) (any)
-        verify(returnsJourneyNavigator).manufacturedPlasticPackagingRoute (NormalMode, false, true)
+        verify(returnsJourneyNavigator).manufacturedPlasticPackaging (NormalMode, false, true)
       }
     }
 
@@ -212,7 +212,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
 
       verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
       verify(mockUserAnswers).change(eqq(ManufacturedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
-      verify(returnsJourneyNavigator).manufacturedPlasticPackagingRoute(CheckMode, false, true)
+      verify(returnsJourneyNavigator).manufacturedPlasticPackaging(CheckMode, false, true)
     }
     
   }
