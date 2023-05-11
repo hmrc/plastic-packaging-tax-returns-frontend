@@ -21,7 +21,6 @@ import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,24 +42,18 @@ class CreditsClaimedListController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
-
-      val preparedForm = request.userAnswers.fill(CreditsClaimedListPage, formProvider())
-
-      Ok(view(preparedForm, CreditsClaimedListSummary.row(request.userAnswers), mode))
+      Ok(view(formProvider(), CreditsClaimedListSummary.row(request.userAnswers), mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, Seq.empty, mode))),
+          BadRequest(view(formWithErrors, Seq.empty, mode)),
 
         isAddingAnotherYear =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CreditsClaimedListPage, isAddingAnotherYear))
-              _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, updatedAnswers))
+          Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers))
       )
   }
 }

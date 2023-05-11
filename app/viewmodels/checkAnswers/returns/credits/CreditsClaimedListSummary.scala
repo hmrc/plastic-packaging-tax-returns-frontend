@@ -19,7 +19,6 @@ package viewmodels.checkAnswers.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import pages.returns.credits.CreditsClaimedListPage
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsPath}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
