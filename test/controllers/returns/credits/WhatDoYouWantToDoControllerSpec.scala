@@ -84,7 +84,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(formProvider.apply()).thenReturn(form)
-    when(dataRequest.userAnswers.getOrFail(meq(ReturnObligationCacheable))(any)).thenReturn(obligation)
+    when(dataRequest.userAnswers.getOrFail(meq(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
 
   }
 
@@ -127,7 +127,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       val result = await(sut.onSubmit(NormalMode)(dataRequest))
       verify(cacheConnector).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
       verify(navigator).whatDoYouWantDoRoute(meq(NormalMode), meq(true))
-      verify(dataRequest.userAnswers, never).getOrFail(meq(ReturnObligationCacheable))(any)
+      verify(dataRequest.userAnswers, never).getOrFail(meq(ReturnObligationCacheable))(any, any)
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)) mustBe Some("/foo")
@@ -138,7 +138,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(form.bindFromRequest()(any,any)).thenReturn(formWithErrors)
 
       val result = await(sut.onSubmit(NormalMode)(dataRequest))
-      verify(dataRequest.userAnswers).getOrFail(meq(ReturnObligationCacheable))(any)
+      verify(dataRequest.userAnswers).getOrFail(meq(ReturnObligationCacheable))(any, any)
       verify(view).apply(meq(formWithErrors), meq(obligation), meq(NormalMode))(any, any)
 
       result.header.status mustBe BAD_REQUEST
