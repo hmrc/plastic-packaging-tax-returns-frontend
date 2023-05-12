@@ -701,10 +701,8 @@ converted-credits-weight.error.nonNumeric = Weight must be entered as numbers
 converted-credits-weight.error.outOfRange = Weight must be between 0kg and 99,999,999,999kg
 converted-credits-weight.error.wholeNumber = Weight must not include decimals
 
-cancelCreditsClaim.title = Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
-cancelCreditsClaim.heading = Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
-cancelCreditsClaim.error.required = Select yes if you want to cancel this credit
-
+cancelCreditsClaim.title-heading = Are you sure you want to remove this credit for {0}?
+cancelCreditsClaim.error.required = Select yes if you want to remove this credit
 
 creditsSummary.title-heading = Credit summary
 creditsSummary.add-to-list = Do you want to claim tax back as credit for another year?

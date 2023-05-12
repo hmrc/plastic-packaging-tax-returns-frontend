@@ -76,7 +76,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
-    when(view.apply(any, any)(any, any)) thenReturn Html("the view")
+    when(view.apply(any, any, any)(any, any)) thenReturn Html("the view")
     when(formProvider.apply()) thenReturn form
 
     when(navigator.cancelCredit(any)) thenReturn Call(GET, "/next-page")
@@ -104,7 +104,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     "return a view with correct form" in {
       when(formProvider.apply()).thenReturn(form)
       sut.onPageLoad("year-key")(request)
-      verify(view).apply(eqTo("year-key"), eqTo(form))(any, any)
+      val expectedCall = routes.CancelCreditsClaimController.onSubmit("year-key")
+      verify(view).apply(eqTo(form), eqTo(expectedCall), eqTo("year-key"))(any, any)
     }
 
   }
@@ -147,7 +148,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
-      verify(view).apply(eqTo("year-key"), eqTo(formWithErrors)) (eqTo(request), any)
+      verify(view).apply(eqTo(formWithErrors), any, eqTo("year-key")) (eqTo(request), any)
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe BAD_REQUEST

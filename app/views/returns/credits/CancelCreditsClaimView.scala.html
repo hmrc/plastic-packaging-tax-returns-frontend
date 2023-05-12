@@ -22,11 +22,15 @@
     govukButton: GovukButton
 )
 
-@(key: String,form: Form[_])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], submitCall: Call, yearRangeString: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("cancelCreditsClaim.title"), Some(messages("return.title.tail")))) {
+@titleHeading = @{
+    messages("cancelCreditsClaim.title-heading", yearRangeString)
+}
 
-    @formHelper(action = controllers.returns.credits.routes.CancelCreditsClaimController.onSubmit(key), 'autoComplete -> "off") {
+@layout(pageTitle = title(form, titleHeading, Some(messages("return.title.tail")))) {
+
+    @formHelper(action = submitCall, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -35,7 +39,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("cancelCreditsClaim.heading")).asPageHeading()
+                legend = LegendViewModel(titleHeading).asPageHeading()
             )
         )
 
