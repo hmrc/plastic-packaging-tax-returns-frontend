@@ -17,14 +17,69 @@
 package connectors
 
 import base.utils.ConnectorISpec
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import models.returns.CreditRangeOption
 import org.scalatest.concurrent.ScalaFutures
+import play.api.http.Status
+import play.api.libs.json.Json
+import play.api.test.Helpers.await
+
+import java.time.LocalDate
+import java.util.UUID
+import scala.collection.Seq
 
 class AvailableCreditYearsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
+  private val pptReference = UUID.randomUUID().toString
+  lazy val connector = app.injector.instanceOf[AvailableCreditYearsConnector]
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    startWireMockServer
+  }
+
+  override protected def afterAll(): Unit = {
+    stopWireMockServer
+    super.afterAll()
+  }
+
   "Get" should {
     "return list of dates" in {
+      val availableYears = Seq(
+        CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)),
+        CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
+      )
+      stubAvailableYearsApi(
+        Status.OK,
+        pptReference,
+        Json.toJson(availableYears).toString
+      )
 
+      val result = await(connector.get(pptReference))
+
+      result mustBe Right(availableYears)
+    }
+
+    "return an error" in {
+      stubAvailableYearsApi(
+        Status.INTERNAL_SERVER_ERROR,
+        pptReference
+      )
+
+      val result = await(connector.get(pptReference))
+
+      assert(result.left.get.isInstanceOf[DownstreamServiceError])
     }
   }
 
+  private def stubAvailableYearsApi(status: Int, pptReference: String, body: String = "") =
+    stubFor(
+      WireMock.get(s"/credits/available-years/$pptReference")
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(body)
+        )
+    )
 }
