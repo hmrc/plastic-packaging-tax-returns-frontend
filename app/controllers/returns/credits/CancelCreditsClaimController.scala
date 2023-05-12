@@ -21,7 +21,6 @@ import controllers.actions._
 import forms.returns.credits.CancelCreditsClaimFormProvider
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits._
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
@@ -60,13 +59,14 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
 
       formProvider().bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(key, formWithErrors))),
-        cancel => {
-          {if (cancel) {
+        
+        isRemovingYear => {
+          {if (isRemovingYear) {
             request.userAnswers
               .removePath(JsPath \ "credit" \ key)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           } else {Future.unit}
-          }.map(_ => Redirect(navigator.cancelCreditRoute(key, cancel)))
+          }.map(_ => Redirect(navigator.cancelCredit(key)))
         }
       )
   }

@@ -45,7 +45,6 @@ import views.html.returns.credits.CancelCreditsClaimView
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
-import scala.util.Try
 
 class CancelCreditsClaimControllerSpec extends PlaySpec
   with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
@@ -80,7 +79,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(view.apply(any, any)(any, any)) thenReturn Html("the view")
     when(formProvider.apply()) thenReturn form
 
-    when(navigator.cancelCreditRoute(any, any)) thenReturn Call(GET, "/next-page")
+    when(navigator.cancelCredit(any)) thenReturn Call(GET, "/next-page")
     when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
 
     val x = request.userAnswers
@@ -118,26 +117,25 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       verify(journeyAction).async(any)
     }
 
-    "redirect with answer yes" in {
+    "handle answer yes" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
+
       verify(request.userAnswers).removePath(eqTo(JsPath \ "credit" \ "year-key"))
-      verify(request.userAnswers, never).change(any, any, any)(any)
       verify(request.userAnswers).save(any)(any)
-      verify(navigator).cancelCreditRoute("year-key", true)
+      verify(navigator).cancelCredit("year-key")
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
     }
 
-    "redirect with answer No" in {
+    "handle answer no" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(false)
-
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
-      verify(request.userAnswers, never).remove(any, any)
-      verify(request.userAnswers, never).change(any, any, any)(any)
-      verify(navigator).cancelCreditRoute("year-key", false)
+
+      verify(request.userAnswers, never).removePath(any)
+      verify(request.userAnswers, never).save(any)(any)
+      verify(navigator).cancelCredit("year-key")
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe SEE_OTHER

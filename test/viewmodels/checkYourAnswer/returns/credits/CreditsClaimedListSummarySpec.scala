@@ -37,6 +37,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(navigator.creditSummaryChange(any)) thenReturn "change-url"
+    when(navigator.creditSummaryRemove(any)) thenReturn "remove-url"
   }
   
   "create a list of row" in {
@@ -76,12 +77,12 @@ class CreditsClaimedListSummarySpec extends PlaySpec
       SummaryListRow(
         key = Key(Text("2023-01-01-2023-03-31")),
         value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
+        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))))
       ),
       SummaryListRow(
         key = Key(Text("2023-04-01-2024-03-31")),
         value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
+        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))))
       )
     )
   }
