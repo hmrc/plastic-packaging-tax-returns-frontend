@@ -21,7 +21,7 @@ import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.{routes => returnRoutes}
 import controllers.returns.credits.{routes => creditRoutes}
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
+import models.returns.CreditRangeOption
 import models.Mode.{CheckMode, NormalMode}
 import models.{Mode, UserAnswers}
 import pages._
@@ -69,7 +69,7 @@ class ReturnsJourneyNavigator @Inject()(
     } else
       returnRoutes.NotStartOtherReturnsController.onPageLoad()
 
-  private def firstPageOfReturnSection = 
+  private def firstPageOfReturnSection =
     returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
   def whatDoYouWantDo(mode: Mode, isClaimingCredit: Boolean): Call = {
@@ -110,8 +110,8 @@ class ReturnsJourneyNavigator @Inject()(
   def convertedCreditsWeight(key: String, mode: Mode) =
     creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
 
-  def confirmCredit(mode: Mode): Call = 
-      creditRoutes.CreditsClaimedListController.onPageLoad(mode)  
+  def confirmCredit(mode: Mode): Call =
+      creditRoutes.CreditsClaimedListController.onPageLoad(mode)
 
   def creditClaimedList(mode: Mode, isAddingAnotherYear: Boolean, userAnswers: UserAnswers) =
     if (isAddingAnotherYear)
@@ -214,7 +214,7 @@ class ReturnsJourneyNavigator @Inject()(
     if (mode.equals(CheckMode)) 
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else if (isAllPlasticExported)
-      returnRoutes.ReturnsCheckYourAnswersController.onPageLoad() 
+      returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else 
       returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
   }

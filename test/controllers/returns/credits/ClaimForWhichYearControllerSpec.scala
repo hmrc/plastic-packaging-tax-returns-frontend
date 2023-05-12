@@ -17,26 +17,25 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
-import connectors.CacheConnector
+import connectors.{AvailableCreditYearsConnector, CacheConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
+import models.returns.CreditRangeOption
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.{atLeastOnce, verifyNoInteractions}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.atLeastOnce
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.WhatDoYouWantToDoPage
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.{boolean, ignored, longNumber}
+import play.api.data.Form
+import play.api.data.Forms.ignored
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
@@ -44,12 +43,12 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Gettable
 import views.html.returns.credits.ClaimForWhichYearView
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
+import scala.util.Try
 
 class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach  {
 
@@ -63,6 +62,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val mockCache = mock[CacheConnector]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[CreditRangeOption]]
+  private val availableYearsConnector = mock[AvailableCreditYearsConnector]
   val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
   val saveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
 
@@ -73,7 +73,8 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     mockView,
     mockFormProvider,
     mockNavigator,
-    mockCache
+    mockCache,
+    availableYearsConnector
   )(global)
 
   override def beforeEach(): Unit = {
@@ -97,19 +98,14 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
   "onPageLoad" must {
 
     "use the journey action" in {
-      when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
-      sut.onPageLoad(NormalMode)(dataRequest)
-      verify(journeyAction).apply(any)
-    }
-
-    "return a 200" in {
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
-      status(result) mustBe OK
+      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      Try(await(sut.onPageLoad(NormalMode)(dataRequest)))
+      verify(journeyAction).async(any)
     }
 
     "take in a value from form & return view" in {
-      val availableYears = sut.availableYears //todo get there from somewhere
-      // when(something.getAvailableYears).thenReturn(availableYears)
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -122,17 +118,21 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "invoke the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      sut.onSubmit(NormalMode)(FakeRequest())
+      Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
       verify(journeyAction).async(any)
     }
 
     "set the endDate in the UserAnswers" in {
       val ua = dataRequest.userAnswers
+      val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
+      val availableYears = Seq(creditRangeOption)
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
       when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(ua)
+      when(ua.save(any)(any)).thenReturn(Future.successful(ua))
 
-      val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
+
       when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(creditRangeOption)
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
@@ -143,9 +143,11 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "redirect to the next page" in {
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
 
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
-      when(dataRequest.pptReference).thenReturn("KILL YOURSELF")
+      when(dataRequest.pptReference).thenReturn("hello")
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(userAnswers)
       when(userAnswers.save(any)(any)).thenReturn(Future.successful(UserAnswers("fin")))
@@ -153,16 +155,16 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(form.bindFromRequest()(any, any)) thenReturn testForm.fill(CreditRangeOption(LocalDate.now(), LocalDate.now()))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
-      verify(userAnswers).save(any)(any)
 
       status(result) mustBe Status.SEE_OTHER
+      verify(userAnswers).save(any)(any)
       redirectLocation(result) mustBe Some("/next/page")
       verify(mockNavigator).claimForWhichYear(meq(CreditRangeOption(LocalDate.now(), LocalDate.now())), meq(NormalMode))
     }
 
-    "display any errors" in {
-      val availableYears = sut.availableYears //todo get there from somewhere
-      //when(something.getAvailableYears).thenReturn(availableYears)
+    "display any form errors" in {
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
 
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
@@ -175,7 +177,16 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       contentAsString(Future.successful(result)) mustBe "correct view"
     }
 
+    "throw error when couldn't get available years" in {
+      val error = DownstreamServiceError("error", new Exception())
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Left(error)))
+
+      val exception = intercept[DownstreamServiceError](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
+      exception mustBe error
+    }
+
   }
+
 
 
 

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.{routes => creditRoutes}
 import controllers.returns.{routes => returnsRoutes}
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
+import models.returns.CreditRangeOption
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.returns.CreditsAnswer
