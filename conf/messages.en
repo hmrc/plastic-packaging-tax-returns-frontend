@@ -706,8 +706,9 @@ cancelCreditsClaim.heading = Are you sure you want to cancel this credit for 1 A
 cancelCreditsClaim.error.required = Select yes if you want to cancel this credit
 
 
-creditsSummary.title = creditsSummary
-creditsSummary.heading = Do you want to claim tax back as credit for 1 April 2022 to 31 March 2023?
+creditsSummary.title-heading = Credit summary
+creditsSummary.add-to-list = Do you want to claim tax back as credit for another year?
 creditsSummary.checkYourAnswersLabel = creditsSummary
-creditsSummary.error.required = <Need to define error>
+creditsSummary.paragraph.credit-will-be-applied = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
+creditsSummary.error.required = Select yes if you want to claim tax back as credit for another year
 creditsSummary.change.hidden = CreditsSummary
