@@ -16,10 +16,9 @@
 
 package controllers.returns.credits
 
-import connectors.CacheConnector
+import connectors.{AvailableCreditYearsConnector, CacheConnector}
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
 import models.Mode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
@@ -30,11 +29,8 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ClaimForWhichYearView
 
-import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.Try
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class ClaimForWhichYearController @Inject()(
@@ -44,41 +40,42 @@ class ClaimForWhichYearController @Inject()(
   view: ClaimForWhichYearView,
   formProvider: ClaimForWhichYearFormProvider,
   navigator: ReturnsJourneyNavigator,
-  cacheConnector: CacheConnector
+  cacheConnector: CacheConnector,
+  availableCreditYearsConnector: AvailableCreditYearsConnector
 )(implicit ec: ExecutionContext) extends I18nSupport {
-
-  //todo get there from somewhere
-  //todo should this obj contain a taxrate per range?
-  val availableYears = Seq(
-    CreditRangeOption(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31)),
-    CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
-  )
 
   //todo this needs check mode, else you loose the state coming from finalCYA
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    journeyAction { implicit request =>
+    journeyAction.async { implicit request =>
       //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
+      availableCreditYearsConnector.get(request.pptReference).map {
+        case Right(availableYears) => //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
+          val form = formProvider(availableYears)
+          Ok(view(form, availableYears, mode))
+        case Left(error) => throw error
+      }
 
-      //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
-      val form = formProvider(availableYears)
-      Ok(view(form, availableYears, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      formProvider(availableYears)
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
-          selectedRange => {
-            request.userAnswers
-              .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
-                Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
-              )
-          }
-        )
+      availableCreditYearsConnector.get(request.pptReference).flatMap {
+        case Right(availableYears) =>
+          formProvider(availableYears)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
+              selectedRange => {
+                request.userAnswers
+                  .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
+                  .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
+                  Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
+                )
+              }
+            )
+        case Left(error) => throw error
+      }
+
+
     }
-
-
 }

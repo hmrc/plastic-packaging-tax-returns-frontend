@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package forms.returns.credits
+package connectors
 
-import forms.mappings.Mappings
-import models.returns.CreditRangeOption
-import play.api.data.Form
+import base.utils.ConnectorISpec
+import org.scalatest.concurrent.ScalaFutures
 
+class AvailableCreditYearsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
-class ClaimForWhichYearFormProvider extends Mappings {
+  "Get" should {
+    "return list of dates" in {
 
-  def apply(options: Seq[CreditRangeOption]): Form[CreditRangeOption] =
-    Form("value" ->
-      text("claim-for-which-year.error.required")
-        .verifying("claim-for-which-year.error.required", key => options.exists(_.key == key))
-        .transform[CreditRangeOption](key => options.find(_.key == key).get, _.key)
-    )
+    }
+  }
+
 }
-

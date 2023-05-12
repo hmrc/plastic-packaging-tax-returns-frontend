@@ -107,6 +107,9 @@ class FrontendAppConfig @Inject() (
   def pptCalculateCreditsUrl(pptReference: String): String =
     s"$pptServiceHost/credits/calculate/$pptReference"
 
+  def pptAvailableCreditYearsUrl(pptReference: String): String =
+    s"$pptServiceHost/credits/available-years/$pptReference"
+
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)
 

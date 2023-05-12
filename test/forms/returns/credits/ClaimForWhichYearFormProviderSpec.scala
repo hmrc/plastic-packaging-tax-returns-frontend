@@ -16,7 +16,7 @@
 
 package forms.returns.credits
 
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
+import models.returns.CreditRangeOption
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 

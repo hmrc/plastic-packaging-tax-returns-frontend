@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.routes
-import forms.returns.credits.ClaimForWhichYearFormProvider.CreditRangeOption
+import models.returns.CreditRangeOption
 import models.Mode.{CheckMode, NormalMode}
 import models.{Mode, UserAnswers}
 import pages._
