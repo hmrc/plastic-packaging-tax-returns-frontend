@@ -62,7 +62,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     
     when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
-    when(returnsJourneyNavigator.importedPlasticPackagingRoute(any, any, any)).thenReturn(onwardRoute)
+    when(returnsJourneyNavigator.importedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
   }
 
   "ImportedPlasticPackaging Controller" - {
@@ -208,7 +208,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
       
       verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
       verify(mockUserAnswers).change(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
-      verify(returnsJourneyNavigator).importedPlasticPackagingRoute(CheckMode, false, true)
+      verify(returnsJourneyNavigator).importedPlasticPackaging(CheckMode, false, true)
     }
 
   }

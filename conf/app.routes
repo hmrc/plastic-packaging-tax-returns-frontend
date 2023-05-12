@@ -52,7 +52,6 @@ POST        /amend-manufactured-weight                              controllers.
 GET         /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST        /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-
 GET         /start-return                                           controllers.returns.NowStartYourReturnController.onPageLoad
 
 GET         /directly-exported-components                           controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
@@ -162,9 +161,6 @@ POST        /change-credit-for-converted-weight/:key        controllers.returns.
 
 GET         /confirm-or-correct-credit/:key                              controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = NormalMode)
 GET         /change-confirm-or-correct-credit/:key                       controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = CheckMode)
-GET         /confirm-or-correct-credit/cancel/:key                       controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(key, mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit/cancel/:key                controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(key, mode: Mode = CheckMode)
-
 
 GET         /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
 POST        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
@@ -217,3 +213,8 @@ POST       /amend-exported-by-another-business                      controllers.
 # is used by the ReturnsCheckYourAnswer page which will change in near future.
 GET        /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
 POST       /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
+
+GET        /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
+POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)

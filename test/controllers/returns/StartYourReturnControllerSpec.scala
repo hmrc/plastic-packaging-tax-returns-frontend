@@ -23,7 +23,6 @@ import config.{Features, FrontendAppConfig}
 import connectors.CacheConnector
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.Mode.NormalMode
 import models.UserAnswers
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
@@ -36,6 +35,7 @@ import org.scalatest.BeforeAndAfterEach
 import pages.returns.StartYourReturnPage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.libs.json.JsPath
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -48,7 +48,7 @@ import scala.concurrent.Future
 
 class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  private lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad().url
+  private lazy val startYourReturnRoute = controllers.returns.routes.StartYourReturnController.onPageLoad().url // TODO fix
   private val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
   private val formProvider: StartYourReturnFormProvider = new StartYourReturnFormProvider()
   private val mockFormProvider = mock[StartYourReturnFormProvider]
@@ -66,12 +66,12 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
   )
 
   override protected def beforeEach(): Unit = {
-    super.beforeEach
+    super.beforeEach()
     reset(mockTaxReturnHelper, mockAuditConnector, mockCacheConnector, navigator, view, mockFormProvider)
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(true))
   }
 
-  private def any[T] = ArgumentMatchers.any[T]()
+  private def any[T] = ArgumentMatchers.any[T]() // TODO fix
 
   "onPageLoad should" - {
 
@@ -158,10 +158,10 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       when(config.isFeatureEnabled(Features.creditsForReturnsEnabled)) thenReturn true
-      when(navigator.startYourReturnRoute(any, any)) thenReturn Call("GET", "/toast")
+      when(navigator.startYourReturn(any, any)) thenReturn Call("GET", "/toast")
       
       val form = mock[Form[Boolean]]
       when(mockFormProvider.apply()) thenReturn form
@@ -189,7 +189,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual "/toast"
-      verify(navigator).startYourReturnRoute(true, true)
+      verify(navigator).startYourReturn(true, true)
     }
 
     "must audit started event when user answers yes" in {
@@ -198,7 +198,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -230,7 +230,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -262,7 +262,7 @@ class StartYourReturnControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrFail(ReturnObligationCacheable, taxReturnOb)
-        .setOrFail("isFirstReturn", true)
+        .setOrFail(JsPath \ "isFirstReturn", true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[TaxReturnHelper].toInstance(mockTaxReturnHelper)

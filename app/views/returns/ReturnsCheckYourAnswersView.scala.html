@@ -38,7 +38,7 @@
     heading: heading
 )
 
-@(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, credits: Credits, changeUrl:String, removeUrl: String)(implicit request: Request[_], messages: Messages)
 
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
@@ -115,7 +115,7 @@
     <!-- Credits -->
     @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"), id = Some("credit-section-header"), 
         size = "l")
-    @creditsSection("blah", credits)
+    @creditsSection("blah", credits, changeUrl, removeUrl)
         
     <!-- Rest of return -->
     @sectionH2Heading(messages("submit-return.check-your-answers.rest-of-return.heading"), size="l")

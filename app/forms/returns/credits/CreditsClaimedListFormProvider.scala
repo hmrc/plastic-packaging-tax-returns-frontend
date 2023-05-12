@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package base.utils
+package forms.returns.credits
 
-import scala.util.Random
-import scala.language.postfixOps
+import forms.mappings.Mappings
+import play.api.data.Form
 
-trait CommonTestUtils {
+import javax.inject.Inject
 
-  val alphabetAndWhitespaceChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ  "
+class CreditsClaimedListFormProvider @Inject() extends Mappings {
 
-  def randomAlphabetString(length: Int): String =
-    Stream.continually(
-      alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
-    ) take length mkString
-
-  def randomNumericString(length: Int): String =
-    (1 to length).map(_ => Random.nextInt(9)).mkString("")
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("creditsSummary.error.required")
+  )
 }

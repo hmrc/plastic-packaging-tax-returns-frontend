@@ -21,11 +21,12 @@ import controllers.actions._
 import forms.returns.credits.CancelCreditsClaimFormProvider
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits._
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import views.html.returns.credits.CancelCreditsClaimView
 
 import javax.inject.Inject
@@ -51,23 +52,28 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
   def onPageLoad(key: String): Action[AnyContent] = journeyAction {
     implicit request =>
       //todo view is hardcoded, it should pull back the date range in question
-      Ok(view(key, formProvider()))
+      Ok(createView(key, formProvider()))
   }
 
   def onSubmit(key: String): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
       formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(key, formWithErrors))),
-        cancel => {
-          {if (cancel) {
+        formWithErrors => Future.successful(BadRequest(createView(key, formWithErrors))),
+        
+        isRemovingYear => {
+          {if (isRemovingYear) {
             request.userAnswers
-              .remove(ExportedCreditsPage(key)).get //todo this should be the year key
-              .remove(ConvertedCreditsPage(key)).get //todo this should be the year key
-              .change(WhatDoYouWantToDoPage, false, cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .removePath(JsPath \ "credit" \ key)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           } else {Future.unit}
-          }.map(_ => Redirect(navigator.cancelCreditRoute(key, cancel)))
+          }.map(_ => Redirect(navigator.cancelCredit(key)))
         }
       )
+  }
+
+  private def createView(key: String, form: Form[Boolean]) (implicit request: Request[_]) = {
+    val dateRange = key
+    view(form, routes.CancelCreditsClaimController.onSubmit(key), dateRange)
   }
 }

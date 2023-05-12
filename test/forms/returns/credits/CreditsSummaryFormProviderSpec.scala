@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-package base.utils
+package forms.returns.credits
 
-import scala.util.Random
-import scala.language.postfixOps
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-trait CommonTestUtils {
+class CreditsSummaryFormProviderSpec extends BooleanFieldBehaviours {
 
-  val alphabetAndWhitespaceChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ  "
+  val requiredKey = "creditsSummary.error.required"
+  val invalidKey = "error.boolean"
 
-  def randomAlphabetString(length: Int): String =
-    Stream.continually(
-      alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
-    ) take length mkString
+  val form = new CreditsClaimedListFormProvider()()
 
-  def randomNumericString(length: Int): String =
-    (1 to length).map(_ => Random.nextInt(9)).mkString("")
+  ".value" - {
 
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

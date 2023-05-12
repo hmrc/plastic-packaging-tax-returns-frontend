@@ -65,7 +65,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       "credits is claimed" ignore {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, 0))
+          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, 0)), 
+          "/change", "/remove"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -76,6 +77,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         def render: Html = page(
           createViewModel(ans),
           NoCreditsClaimed,
+          "/change", "/remove"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -90,7 +92,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 
-        def render: Html = page(createViewModel(ans), NoCreditAvailable)(request, messages)
+        def render: Html = page(createViewModel(ans), NoCreditAvailable, "/change", "/remove")(request, messages)
 
         render.toString() must passAccessibilityChecks
       }

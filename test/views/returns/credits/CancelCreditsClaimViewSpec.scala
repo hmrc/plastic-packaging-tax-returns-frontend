@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.CancelCreditsClaimFormProvider
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.CancelCreditsClaimView
@@ -27,19 +28,23 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
   val page = inject[CancelCreditsClaimView]
   val form = new CancelCreditsClaimFormProvider()()
 
-  private def createView(form: Form[Boolean]): Html = page("year-key", form)(request, messages)
+  private def createView(form: Form[Boolean]): Html = page(form, Call("POST", "call-url"), "year-key")(request, messages)
 
+  // TODO test for actual content
+  
   "CancelCreditsClaimView" should {
+    
     val view = createView(form)
+    
     "have a title" in {
-      view.select("title").text mustBe
-        "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023? - Submit return - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text must include(messages("cancelCreditsClaim.title"))
+//      view.select("title").text mustBe
+//        "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023? - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select("title").text must include(messages("cancelCreditsClaim.title-heading", "year-key"))
     }
 
     "have a heading" in {
-      view.select("h1").text mustBe "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?"
-      view.select("h1").text mustBe messages("cancelCreditsClaim.heading")
+//      view.select("h1").text mustBe "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?"
+      view.select("h1").text mustBe messages("cancelCreditsClaim.title-heading", "year-key")
     }
 
     "have a continue button" in {
@@ -51,7 +56,7 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
     "error" when {
       "no option is selected" in {
         val errorForm = form.bind(Map("value" -> ""))
-        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe "Select yes if you want to cancel this credit"
+        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe "Select yes if you want to remove this credit"
         createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages("cancelCreditsClaim.error.required")
       }
 

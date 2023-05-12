@@ -18,7 +18,6 @@ package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
-import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
@@ -34,9 +33,9 @@ import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
@@ -48,7 +47,6 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
 
 class ConfirmPackagingCreditControllerSpec
   extends PlaySpec
@@ -138,14 +136,14 @@ class ConfirmPackagingCreditControllerSpec
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
       "total requested credit is less than available credit - (NormalMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("Hi", "You")
+        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn Call("Hi", "You")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
         verify(mockView).apply(meq("year-key"), meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
-        when(returnsJourneyNavigator.confirmCreditRoute(any, any)) thenReturn Call("get", "cheese")
+        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn Call("get", "cheese")
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", CheckMode)(dataRequest))
         verify(mockView).apply(meq("year-key"), meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
@@ -183,40 +181,6 @@ class ConfirmPackagingCreditControllerSpec
 
   }
 
-  "onCancelClaim" should {
-    "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
-      Try(await(sut.onCancelClaim("year-key", NormalMode)(dataRequest)))
-      verify(journeyAction).async(any)
-    }
-
-    "set userAnswer" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).setOrFail(meq(ExportedCreditsPage("year-key")), meq(CreditsAnswer.noClaim), any)(any)
-      verify(dataRequest.userAnswers).setOrFail(meq(ConvertedCreditsPage("year-key")), meq(CreditsAnswer.noClaim), any)(any)
-    }
-
-    "save user answer to cache" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(dataRequest.userAnswers).save(meq(saveAnsFun))(any)
-      verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
-    }
-
-    "navigate to a new page" in {
-      setUpMockForCancelCredit(dataRequest.userAnswers)
-
-      await(sut.onCancelClaim("year-key", NormalMode).skippingJourneyAction(dataRequest))
-
-      verify(returnsJourneyNavigator).confirmCreditRoute(NormalMode, dataRequest.userAnswers)
-    }
-  }
-
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
     when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
@@ -229,6 +193,6 @@ class ConfirmPackagingCreditControllerSpec
     when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
     when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(ans)
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
-    when(returnsJourneyNavigator.confirmCreditRoute(NormalMode, dataRequest.userAnswers)).thenReturn(Call("GET", "/foo"))
+    when(returnsJourneyNavigator.confirmCredit(NormalMode)).thenReturn(Call("GET", "/foo"))
   }
 }

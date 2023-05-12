@@ -21,10 +21,9 @@ import controllers.actions._
 import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import models.returns.CreditsAnswer
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
@@ -57,16 +56,6 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
         }
     }
 
-  def onCancelClaim(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        request.userAnswers
-          .setOrFail(ExportedCreditsPage(key), CreditsAnswer.noClaim)
-          .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.noClaim)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers)))
-    }
-
   private def isUserAnswerValid(key: String)(implicit request: DataRequest[_]) = {
     request.userAnswers.get(ExportedCreditsPage(key)).isDefined &&
       request.userAnswers.get(ConvertedCreditsPage(key)).isDefined
@@ -81,7 +70,7 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
         creditBalance.totalRequestedCreditInPounds,
         creditBalance.canBeClaimed,
         creditSummaryListFactory.createSummaryList(creditBalance, key: String, request.userAnswers),
-        returnsJourneyNavigator.confirmCreditRoute(mode, request.userAnswers),
+        returnsJourneyNavigator.confirmCredit(mode),
         mode
       )
     )

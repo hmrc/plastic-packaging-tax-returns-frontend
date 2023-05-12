@@ -37,7 +37,7 @@ class NowStartYourReturnController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: NowStartYourReturnView,
   returnsNavigator: ReturnsJourneyNavigator
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
@@ -46,7 +46,7 @@ class NowStartYourReturnController @Inject()(
         request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
           case Some(obligation) => 
             val returnQuarter = obligation.toReturnQuarter
-            val nextPage = returnsNavigator.nowStartYourReturnRoute
+            val nextPage = returnsNavigator.startYourReturn
 
             Ok(view(returnQuarter, true, nextPage))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)

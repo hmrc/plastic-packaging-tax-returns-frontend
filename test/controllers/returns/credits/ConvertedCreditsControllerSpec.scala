@@ -99,7 +99,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     "fill the form with user's previous answer" in {
       controller.onPageLoad("year-key", NormalMode) (request)
       val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function) (any)
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function) (any)
       
       withClue("using correct function") {
         val creditsAnswer = mock[CreditsAnswer]
@@ -109,7 +109,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     }
     
     "render the page" in {
-      when(request.userAnswers.genericFill(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
       controller.onPageLoad("year-key", NormalMode) (request)
       verify(messagesApi).preferred(request)
       verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)

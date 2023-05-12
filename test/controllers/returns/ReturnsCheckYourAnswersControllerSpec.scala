@@ -26,13 +26,16 @@ import controllers.helpers.TaxReturnHelper
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
 import models.{CreditBalance, UserAnswers}
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers._
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.mockito.MockitoSugar.mock
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -75,6 +78,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val cacheConnector = mock[CacheConnector]
   private val mockTaxReturnHelper = mock[TaxReturnHelper]
   private val appConfig = mock[FrontendAppConfig]
+  private val navigator = mock[ReturnsJourneyNavigator]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -86,7 +90,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
     when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
   }
 
@@ -97,7 +101,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
-      verify(mockView).apply(any(), any())(any(), any())
+      verify(mockView).apply(any(), any(), any(), any())(any(), any())
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
@@ -226,6 +230,29 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       }
     }
   }
+  
+  "navigate" should {
+    
+    val controller = createSut(Some(setUserAnswer()))
+    
+    "link to change credit answers" in {
+      when(navigator.cyaChangeCredits) thenReturn "/change-me"
+      setUpMockConnector()
+      await {
+        controller.onPageLoad()(FakeRequest(GET, "/foo"))
+      }
+      verify(mockView).apply(any(), any(), eqTo("/change-me"), any())(any(), any())
+    }
+
+    "link to credit remove" in {
+      when(navigator.cyaRemoveCredits) thenReturn "/remove-me"
+      setUpMockConnector()
+      await {
+        controller.onPageLoad()(FakeRequest(GET, "/foo"))
+      }
+      verify(mockView).apply(any(), any(), any(), eqTo("/remove-me"))(any(), any())
+    }
+  }
 
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
@@ -245,7 +272,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def verifyAndCaptorCreditDetails: Credits = {
     val captor = ArgumentCaptor.forClass(classOf[Credits])
-    verify(mockView).apply(any(), captor.capture())(any(), any())
+    verify(mockView).apply(any(), captor.capture(), any(), any())(any(), any())
     captor.getValue
   }
   
@@ -262,8 +289,11 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       controllerComponents,
       appConfig,
       mockView,
-      cacheConnector
-    )
+      cacheConnector,
+      navigator
+    ) {
+      override protected val logger: Logger = mock[Logger]
+    }
   }
 
   private def setUserAnswer(): UserAnswers = {

@@ -81,7 +81,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.genericFill(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
   }
 
   "onPageLoad" should {
@@ -103,7 +103,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       await {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).genericFill(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any) // TODO could improve
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any) // TODO could improve
     }
 
     // TODO ...
@@ -122,7 +122,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
       when(request.userAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
 
-      when(navigator.convertedCreditsWeightRoute(any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.convertedCreditsWeight(any, any)).thenReturn(Call(GET, "/foo"))
 
       await(controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
@@ -131,14 +131,13 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
-      when(request.userAnswers.changeWithPath(any,any,any)(any)).thenReturn(Future.successful(true))
-      when(navigator.convertedCreditsWeightRoute(any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.convertedCreditsWeight(any, any)).thenReturn(Call(GET, "/foo"))
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
       val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe SEE_OTHER
-      verify(navigator).convertedCreditsWeightRoute("year-key", NormalMode)
+      verify(navigator).convertedCreditsWeight("year-key", NormalMode)
     }
 
     "show an error page when error on form" in {

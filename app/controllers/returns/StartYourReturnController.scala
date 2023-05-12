@@ -27,6 +27,7 @@ import navigation.ReturnsJourneyNavigator
 import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.StartYourReturnView
@@ -61,7 +62,7 @@ class StartYourReturnController @Inject()(
         case Some((taxReturnObligation, isFirst)) =>
           userAnswers
             .setOrFail(ReturnObligationCacheable, taxReturnObligation)
-            .setOrFail("isFirstReturn", isFirst)
+            .setOrFail(JsPath \ "isFirstReturn", isFirst)
             .save(cacheConnector.saveUserAnswerFunc(pptReference))
             .map(_ => Ok(view(preparedForm, taxReturnObligation, isFirst)))
         case None =>
@@ -76,7 +77,7 @@ class StartYourReturnController @Inject()(
       val userAnswers = request.userAnswers
       val pptReference = request.pptReference
       val obligation = userAnswers.getOrFail(ReturnObligationCacheable)
-      val isFirstReturn = userAnswers.getOrFail[Boolean]("isFirstReturn")
+      val isFirstReturn = userAnswers.getOrFail[Boolean](JsPath \ "isFirstReturn")
 
       form().bindFromRequest().fold(
         formWithErrors =>
@@ -95,7 +96,7 @@ class StartYourReturnController @Inject()(
     if (formValue) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
     }
-    Redirect(returnsNavigator.startYourReturnRoute(formValue, isFirstReturn))
+    Redirect(returnsNavigator.startYourReturn(formValue, isFirstReturn))
   }
 
 }

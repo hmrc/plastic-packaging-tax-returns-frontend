@@ -32,7 +32,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, AnotherBusinessExportedPage}
+import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
