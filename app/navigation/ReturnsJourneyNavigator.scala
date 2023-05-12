@@ -120,7 +120,10 @@ class ReturnsJourneyNavigator @Inject()(
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else
       returnRoutes.NowStartYourReturnController.onPageLoad
-    
+
+  def creditSummaryChange(yearKey: String): String =
+    creditRoutes.ExportedCreditsController.onPageLoad(yearKey, CheckMode).url
+
   def startYourReturn: Call =
     firstPageOfReturnSection
 
