@@ -17,17 +17,28 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import models.UserAnswers
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.MockitoSugar
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Key, SummaryListRow, Text, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases._
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
-class CreditsClaimedListSummarySpec extends PlaySpec {
+class CreditsClaimedListSummarySpec extends PlaySpec 
+  with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
   private val message = mock[Messages]
+  private val navigator = mock[ReturnsJourneyNavigator]
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    when(navigator.creditSummaryChange(any)) thenReturn "change-url"
+  }
+  
   "create a list of row" in {
 
     val userAnswer = UserAnswers("123", Json.parse("""{
@@ -59,21 +70,20 @@ class CreditsClaimedListSummarySpec extends PlaySpec {
 
     when(message.apply(any[String])).thenAnswer((s: String) => s)
 
-    val rows = CreditsClaimedListSummary.row(userAnswer)(message)
-
-
+    val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
 
     rows mustBe Seq(
       SummaryListRow(
         key = Key(Text("2023-01-01-2023-03-31")),
         value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("/change", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
+        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
       ),
       SummaryListRow(
         key = Key(Text("2023-04-01-2024-03-31")),
         value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("/change", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
+        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("/remove", Text("site.remove")))))
       )
     )
   }
+
 }

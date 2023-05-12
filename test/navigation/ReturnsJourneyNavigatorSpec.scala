@@ -226,7 +226,12 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers)).thenReturn(true)
       navigator.creditClaimedList(CheckMode, false, userAnswers) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
-
+  }
+  
+  "credit summary" should {
+    "change a year" in {
+      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", CheckMode).url
+    }
   }
   
   "start your return" should {

@@ -19,6 +19,7 @@ package viewmodels.checkAnswers.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
+import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsPath}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -41,17 +42,18 @@ import java.time.LocalDate
 
 object CreditsClaimedListSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator) 
+    (implicit messages: Messages): Seq[SummaryListRow] = {
 
     answers.get[Map[String,JsObject]](JsPath \ "credit").map {
       answer: Map[String, JsObject] =>
 
-        answer.map(o => {
+        answer.map(item => {
           SummaryListRowViewModel(
-            key = o._1,
+            key = item._1,
             value = ValueViewModel("0"),
             actions = Seq(
-              ActionItemViewModel("site.change", "/change"),
+              ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
               ActionItemViewModel("site.remove", "/remove")
             )
           )

@@ -28,7 +28,7 @@ import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CreditsClaimedListController @Inject()(
   override val messagesApi: MessagesApi,
@@ -42,7 +42,7 @@ class CreditsClaimedListController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
-      Ok(view(formProvider(), CreditsClaimedListSummary.row(request.userAnswers), mode))
+      Ok(view(formProvider(), CreditsClaimedListSummary.createRows(request.userAnswers, navigator), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {

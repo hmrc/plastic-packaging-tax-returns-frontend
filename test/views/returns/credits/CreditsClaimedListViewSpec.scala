@@ -19,8 +19,11 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
-import play.api.data.Forms.boolean
 import play.twirl.api.Html
 import support.ViewAssertions
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
@@ -46,7 +49,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
   "View" should {
 
     "have a header" in {
-      createView(form).select("h1").text mustBe "Do you want to claim tax back as credit for 1 April 2022 to 31 March 2023?"
+      createView(form).select("h1").text mustBe messages("creditsSummary.title-heading")
     }
     "show a claimed credit" in {
       createView(form).getElementsByClass("govuk-summary-list__row").size() must be  > 0
@@ -56,7 +59,6 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
       "no option is selected" in {
         val errorForm = form.bind(Map("value" -> ""))
-        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe "<Need to define error>"
         createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages("creditsSummary.error.required")
       }
 
