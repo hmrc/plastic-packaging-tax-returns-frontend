@@ -26,21 +26,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AvailableCreditYearsConnector @Inject()(httpClient: HttpClient, appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Seq[CreditRangeOption]]] = {
+  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
 
     httpClient.GET[Seq[CreditRangeOption]](appConfig.pptAvailableCreditYearsUrl(pptReferenceNumber))
-      .map {
-        response =>
-          Right(response)
-      }
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(
+          throw DownstreamServiceError(
               s"Failed to get available credit years for ppt reference number [$pptReferenceNumber]",
               ex
             )
-          )
+
       }
   }
 

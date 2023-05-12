@@ -16,33 +16,30 @@
 
 package connectors
 
-import base.utils.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import config.FrontendAppConfig
 import models.returns.CreditRangeOption
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.test.Helpers.await
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream5xxResponse}
 
 import java.time.LocalDate
-import java.util.UUID
 import scala.collection.Seq
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class AvailableCreditYearsConnectorSpec extends ConnectorISpec with ScalaFutures {
+class AvailableCreditYearsConnectorSpec extends AnyWordSpec with MockitoSugar with ResetMocksAfterEachTest {
 
-  private val pptReference = UUID.randomUUID().toString
-  lazy val connector = app.injector.instanceOf[AvailableCreditYearsConnector]
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    startWireMockServer
-  }
-
-  override protected def afterAll(): Unit = {
-    stopWireMockServer
-    super.afterAll()
-  }
+  private val frontendAppConfig = mock[FrontendAppConfig]
+  private val httpClient = mock[HttpClient]
+  private val connector = new AvailableCreditYearsConnector(httpClient, frontendAppConfig)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   "Get" should {
     "return list of dates" in {
@@ -50,36 +47,20 @@ class AvailableCreditYearsConnectorSpec extends ConnectorISpec with ScalaFutures
         CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)),
         CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
       )
-      stubAvailableYearsApi(
-        Status.OK,
-        pptReference,
-        Json.toJson(availableYears).toString
-      )
 
-      val result = await(connector.get(pptReference))
+      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(availableYears)
 
-      result mustBe Right(availableYears)
+      val result = await(connector.get("ppt-reference"))
+
+      result mustBe availableYears
     }
 
     "return an error" in {
-      stubAvailableYearsApi(
-        Status.INTERNAL_SERVER_ERROR,
-        pptReference
-      )
 
-      val result = await(connector.get(pptReference))
+      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse("message", 500, 500))
 
-      assert(result.left.get.isInstanceOf[DownstreamServiceError])
+      a [DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
     }
   }
 
-  private def stubAvailableYearsApi(status: Int, pptReference: String, body: String = "") =
-    stubFor(
-      WireMock.get(s"/credits/available-years/$pptReference")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
 }
