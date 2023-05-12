@@ -124,6 +124,13 @@ class ReturnsJourneyNavigator @Inject()(
   def creditSummaryChange(yearKey: String): String =
     creditRoutes.ExportedCreditsController.onPageLoad(yearKey, CheckMode).url
 
+  def creditSummaryRemove(yearKey: String): String =
+    creditRoutes.CancelCreditsClaimController.onPageLoad(yearKey).url
+
+  def cancelCredit(key: String): Call = {
+    creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
+  }
+
   def startYourReturn: Call =
     firstPageOfReturnSection
 
@@ -210,12 +217,6 @@ class ReturnsJourneyNavigator @Inject()(
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad() 
     else 
       returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
-  }
-
-  def cancelCreditRoute(key: String, isCancelled: Boolean): Call = {
-    if(isCancelled)
-      creditRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-    else creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, NormalMode)
   }
 
   private def nonExportedHumanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =

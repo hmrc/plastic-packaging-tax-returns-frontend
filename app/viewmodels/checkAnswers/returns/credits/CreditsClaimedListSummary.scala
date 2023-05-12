@@ -54,7 +54,7 @@ object CreditsClaimedListSummary {
             value = ValueViewModel("0"),
             actions = Seq(
               ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
-              ActionItemViewModel("site.remove", "/remove")
+              ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
             )
           )
 

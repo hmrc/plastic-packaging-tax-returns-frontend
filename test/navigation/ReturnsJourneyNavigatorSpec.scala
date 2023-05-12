@@ -213,7 +213,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "in check mode and returns section has been completed" in {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(any)) thenReturn true
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = false, userAnswers) mustBe
-        returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad
+        returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
     }    
@@ -229,11 +229,18 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
   
   "credit summary" should {
-    "change a year" in {
+    "change a claim for a year" in {
       navigator.creditSummaryChange("a-key") mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", CheckMode).url
     }
+    "remove a claim for a year" in {
+      navigator.creditSummaryRemove("a-key") mustBe creditRoutes.CancelCreditsClaimController.onPageLoad("a-key").url
+    }
   }
-  
+
+  "cancelCredit" in {
+    navigator.cancelCredit("year-key") mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
+  }
+
   "start your return" should {
     "go to the first page of the return" in {
       navigator.startYourReturn mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
@@ -465,18 +472,6 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(1L)
     navigator.manufacturedPlasticPackagingWeight(userAnswers) mustBe 
       returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad     
-  }
-
-  "cancelCreditRoute" should {
-    "redirect to submit-return-or-claim-credit when credit is cancel" in {
-      navigator.cancelCreditRoute("year-key", true) mustBe
-      controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-    }
-
-    "redirect to confirm-or-correct-credit page not cancelled" in {
-      navigator.cancelCreditRoute("year-key", false) mustBe
-        controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
-    }
   }
   
   "big CYA" should {
