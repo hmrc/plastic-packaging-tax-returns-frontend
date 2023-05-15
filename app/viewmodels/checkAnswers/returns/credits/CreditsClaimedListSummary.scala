@@ -27,14 +27,14 @@ import viewmodels.implicits._
 object CreditsClaimedListSummary {
 
   def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator) 
-    (implicit messages: Messages): Seq[SummaryListRow] = {
+    (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     answers.get[Map[String,JsObject]](JsPath \ "credit").map {
       answer: Map[String, JsObject] =>
 
         answer.map(item => {
           CreditSummaryRow(
-            key = o._1,
+            item._1,
             "0",
             change = ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
             remove = ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))

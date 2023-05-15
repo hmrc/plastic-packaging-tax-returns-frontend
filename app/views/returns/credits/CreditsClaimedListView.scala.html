@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import models.returns.credits.CreditSummaryRow
 
 
 @this(
@@ -26,7 +27,7 @@
     govukButton: GovukButton, 
     paragraphBody: paragraphBody,
     heading: heading,
-     creditSummaryTable: CreditSummaryTable
+    creditSummaryTable: CreditSummaryTable
 )
 
 @(form: Form[_], summaryRows: Seq[CreditSummaryRow], mode: Mode)(implicit request: Request[_], messages: Messages)
