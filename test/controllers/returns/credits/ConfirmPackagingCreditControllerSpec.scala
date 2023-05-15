@@ -24,7 +24,7 @@ import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.CreditsAnswer
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
@@ -55,7 +55,7 @@ class ConfirmPackagingCreditControllerSpec
     with BeforeAndAfterEach
     with ResetMocksAfterEachTest {
 
-  private val creditBalance = CreditBalance(10, 5, 500, true, 0.30)
+  private val creditBalance = CreditBalance(10, 5, 500, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
   private val saveAnsFun = mock[SaveUserAnswerFunc]
   private val answer = mock[UserAnswers]
   private val dataRequest = mock[DataRequest[AnyContent]]

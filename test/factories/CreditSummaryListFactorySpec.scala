@@ -17,7 +17,7 @@
 package factories
 
 import models.returns.CreditsAnswer
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
@@ -44,7 +44,8 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       when(answer.get(meq(ExportedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
       when(answer.get(meq(ConvertedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
 
-      val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 0.30) ,"year-key" , answer)(messages)
+      val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 
+        Map("a-key" -> TaxablePlastic(1, 2, 0.30))), "year-key", answer)(messages)
 
       res(0).key.content.asInstanceOf[Text].value mustBe "Tax Rate"
       res(1).key.content.asInstanceOf[Text].value mustBe "exported"

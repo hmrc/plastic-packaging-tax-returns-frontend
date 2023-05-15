@@ -24,7 +24,7 @@ import viewmodels.checkAnswers.returns.credits.{CreditAmountSummary, CreditsConv
 class CreditSummaryListFactory {
 
   def createSummaryList(creditBalance: CreditBalance,key: String, userAnswer: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
-    Seq(CreditsTaxRateSummary(creditBalance.taxRate)) ++ Seq(
+    Seq(CreditsTaxRateSummary(creditBalance.taxRateFor(key))) ++ Seq(
         CreditsExportedPlasticSummary(key),
         CreditsExportedWeightSummary(key),
         CreditsConvertedPlasticSummary(key),

@@ -20,7 +20,9 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode
+import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,7 +44,11 @@ class CreditsClaimedListController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
-      Ok(view(formProvider(), CreditsClaimedListSummary.createRows(request.userAnswers, navigator), mode))
+      Ok(createView(formProvider(), mode))
+  }
+
+  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
+    view(form, CreditsClaimedListSummary.createRows(request.userAnswers, navigator), mode)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {
@@ -50,7 +56,7 @@ class CreditsClaimedListController @Inject()(
 
       formProvider().bindFromRequest().fold(
         formWithErrors =>
-          BadRequest(view(formWithErrors, Seq.empty, mode)),
+          BadRequest(createView(formWithErrors, mode)),
 
         isAddingAnotherYear =>
           Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers))
