@@ -16,51 +16,69 @@
 
 package connectors
 
+import com.codahale.metrics.Timer
+import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.CreditRangeOption
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
+import org.mockito.stubbing.ReturnsDeepStubs
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, theSameInstanceAs, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.Logger
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream5xxResponse}
 
-import java.time.LocalDate
 import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AvailableCreditYearsConnectorSpec extends AnyWordSpec with MockitoSugar with ResetMocksAfterEachTest {
+class AvailableCreditYearsConnectorSpec extends AnyWordSpec 
+  with MockitoSugar with ResetMocksAfterEachTest with BeforeAndAfterEach {
 
   private val frontendAppConfig = mock[FrontendAppConfig]
   private val httpClient = mock[HttpClient]
-  private val connector = new AvailableCreditYearsConnector(httpClient, frontendAppConfig)
+  private val metrics = mock[Metrics](ReturnsDeepStubs)
+  private val timer = mock[Timer.Context]
+  private val availableYears = mock[Seq[CreditRangeOption]]
+
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  
+  private val connector = new AvailableCreditYearsConnector(httpClient, frontendAppConfig, metrics) {
+    override protected val logger: Logger = mock[Logger]
+  }
 
-  "Get" should {
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    when(metrics.defaultRegistry.timer(any).time()) thenReturn timer
+    when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(availableYears)
+  }
+  
+  "get" should {
+    
+    "start the timer" in {
+      await(connector.get("ppt-reference"))
+      verify(metrics.defaultRegistry).timer("ppt.availableCreditYears.get.timer")
+      verify(metrics.defaultRegistry.timer(any)).time()
+    }
+    
     "return list of dates" in {
-      val availableYears = Seq(
-        CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31)),
-        CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31)),
-      )
-
-      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(availableYears)
-
-      val result = await(connector.get("ppt-reference"))
-
-      result mustBe availableYears
+      await(connector.get("ppt-reference")) mustBe theSameInstanceAs(availableYears)
+      withClue("stop the timer") {
+        verify(timer).stop
+      }
     }
 
     "return an error" in {
-
       when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse("message", 500, 500))
-
       a [DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
+      withClue("stop the timer") {
+        verify(timer).stop
+      }
     }
+
   }
 
 }
