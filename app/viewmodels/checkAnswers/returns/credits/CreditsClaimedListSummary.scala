@@ -16,29 +16,13 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.Mode.CheckMode
 import models.UserAnswers
-import models.returns.CreditsAnswer
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsPath}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-
-import java.time.LocalDate
-
-
-//case class Credits(credits: Seq[Credit])
-//
-//
-//case class Credit
-//(
-//  endDate: LocalDate,
-//  exportedCredit: CreditsAnswer,
-//  convertedCredit: CreditsAnswer
-//)
-
 
 object CreditsClaimedListSummary {
 
@@ -49,17 +33,13 @@ object CreditsClaimedListSummary {
       answer: Map[String, JsObject] =>
 
         answer.map(item => {
-          SummaryListRowViewModel(
-            key = item._1,
-            value = ValueViewModel("0"),
-            actions = Seq(
-              ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
-              ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
-            )
+          CreditSummaryRow(
+            key = o._1,
+            "0",
+            change = ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
+            remove = ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
           )
-
         })
-
     }.getOrElse(Seq.empty).toSeq
   }
 

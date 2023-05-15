@@ -1,0 +1,76 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import play.twirl.api.StringInterpolation
+@import models.returns.credits.CreditSummaryRow
+
+@this(
+    govukTable : GovukTable
+)
+
+@(list: Seq[CreditSummaryRow])
+
+@govukTable(
+    Table(
+        rows = list.map( row =>
+            Seq(
+                TableRow(
+                    content = Text(row.label),
+                    format = Some("text")
+                ),
+                TableRow(
+                    content =  Text(row.value),
+                    format = Some("text")
+                ),
+               TableRow(
+                    content = HtmlContent(actionContent(row.change, row.remove)),
+                    format = Some("text"))
+            )
+        ),
+        head = Some(
+            Seq(
+                HeadCell(
+                    content = Text("Head 1")
+                ),
+                HeadCell(
+                    content = Text("Head 2")
+                ),
+                HeadCell(
+                    content = Text("Make me hidden")
+                )
+            )
+       ),
+       caption = Some("Header"),
+       captionClasses = "govuk-table__caption--m",
+       firstCellIsHeader = true,
+       classes = "govuk-!-margin-bottom-9"
+    )
+)
+
+
+@actionContent(changeAction: ActionItem, removeAction: ActionItem) = {
+    <dd class="govuk-summary-list__actions hmrc-summary-list__actions" style="padding: 0px;">
+        <ul class="govuk-summary-list__actions-list">
+            <li class="govuk-summary-list__actions-list-item">@actionLink(changeAction)</li>
+            <li class="govuk-summary-list__actions-list-item">@actionLink(removeAction)</li>
+        </ul>
+    </dd>
+}
+
+
+@actionLink(action: ActionItem) = {<a class="govuk-link @{action.classes}" href="@action.href">@action.content.asHtml</a>}
