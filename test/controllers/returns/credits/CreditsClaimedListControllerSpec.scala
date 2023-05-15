@@ -22,6 +22,7 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
@@ -104,13 +105,12 @@ class CreditsClaimedListControllerSpec
     "getting the claims from UserAnswer" ignore { // TODO
 
       val rows = Seq(
-        SummaryListRow(
-          key = Key(Text("exported")),
-          value = Value(Text("answer")),
-          actions = Some(Actions(items = Seq(
-            ActionItem("/foo", Text("change")),
-            ActionItem("/remove", Text("remove"))
-          ))))
+        CreditSummaryRow(
+          label = "exported",
+          value = "answer",
+          change = ActionItem("/foo", Text("change")),
+          remove = ActionItem("/remove", Text("remove"))
+        )
       )
       val boundForm = mock[Form[Boolean]]
       when(request.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(boundForm)

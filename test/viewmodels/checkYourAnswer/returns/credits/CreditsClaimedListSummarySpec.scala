@@ -17,6 +17,7 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import models.UserAnswers
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
@@ -74,15 +75,17 @@ class CreditsClaimedListSummarySpec extends PlaySpec
     val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
 
     rows mustBe Seq(
-      SummaryListRow(
-        key = Key(Text("2023-01-01-2023-03-31")),
-        value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))))
+      CreditSummaryRow(
+        label = "2023-01-01-2023-03-31",
+        value = "0",
+        change = ActionItem("change-url", Text("site.change")),
+        remove = ActionItem("remove-url", Text("site.remove")),
       ),
-      SummaryListRow(
-        key = Key(Text("2023-04-01-2024-03-31")),
-        value = Value(Text("0")),
-        actions = Some(Actions(items = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))))
+      CreditSummaryRow(
+        label = "2023-04-01-2024-03-31",
+        value = "0",
+        change = ActionItem("change-url", Text("site.change")),
+        remove = ActionItem("remove-url", Text("site.remove"))
       )
     )
   }

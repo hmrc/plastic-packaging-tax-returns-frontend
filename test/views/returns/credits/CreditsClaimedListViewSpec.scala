@@ -19,14 +19,11 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.scalatest.BeforeAndAfterEach
+import models.returns.credits.CreditSummaryRow
 import play.api.data.Form
 import play.twirl.api.Html
 import support.ViewAssertions
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import views.html.returns.credits.CreditsClaimedListView
 
@@ -35,16 +32,15 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
   private val page = inject[CreditsClaimedListView]
   private val form = new CreditsClaimedListFormProvider()()
 
-  private val summaryRows = Seq(
-    SummaryListRow(
-      key = Key(Text("exported")),
-      value = Value(Text("answer")),
-      actions = Some(Actions(items = Seq(
-        ActionItem("/foo", Text("change")),
-        ActionItem("/remove", Text("remove"))
-      ))))
+  private val rows = Seq(
+    CreditSummaryRow(
+      label = "exported",
+      value = "answer",
+      change = ActionItem("/foo", Text("change")),
+      remove = ActionItem("/remove", Text("remove"))
+    )
   )
-  private def createView(form: Form[_]): Html = page(form, summaryRows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(form, rows, NormalMode)(request, messages)
 
   "View" should {
 
@@ -52,7 +48,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       createView(form).select("h1").text mustBe messages("creditsSummary.title-heading")
     }
     "show a claimed credit" in {
-      createView(form).getElementsByClass("govuk-summary-list__row").size() must be  > 0
+      createView(form).getElementsByClass("govuk-table__row").size() must be  > 0
     }
 
     "show an error" when {

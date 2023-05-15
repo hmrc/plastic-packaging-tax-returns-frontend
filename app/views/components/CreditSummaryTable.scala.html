@@ -62,12 +62,10 @@
 
 
 @actionContent(changeAction: ActionItem, removeAction: ActionItem) = {
-    <dd class="govuk-summary-list__actions hmrc-summary-list__actions" style="padding: 0px;">
-        <ul class="govuk-summary-list__actions-list">
-            <li class="govuk-summary-list__actions-list-item">@actionLink(changeAction)</li>
-            <li class="govuk-summary-list__actions-list-item">@actionLink(removeAction)</li>
-        </ul>
-    </dd>
+    <ul class="govuk-summary-list__actions-list" style="text-align: right; padding: 0px;">
+        <li class="govuk-summary-list__actions-list-item">@actionLink(changeAction)</li>
+        <li class="govuk-summary-list__actions-list-item">@actionLink(removeAction)</li>
+    </ul>
 }
 
 
