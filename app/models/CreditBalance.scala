@@ -31,7 +31,7 @@ case class CreditBalance(
   canBeClaimed: Boolean,
   credit: Map[String, TaxablePlastic],
 ) {
-  def taxRateFor(key: String): BigDecimal = credit(key).taxRate // TODO
+  def creditForYear(key: String): TaxablePlastic = credit(key)
 }
 
 object CreditBalance {
