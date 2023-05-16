@@ -16,8 +16,10 @@
 
 package controllers.returns.credits
 
+import akka.actor.FSM.Normal
 import base.utils.JourneyActionAnswer
 import connectors.{CalculateCreditsConnector, DownstreamServiceError}
+import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.CreditBalance
@@ -32,9 +34,11 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
+import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
-import play.api.mvc.{AnyContent, RequestHeader}
+import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -44,6 +48,7 @@ import views.html.returns.credits.CreditsClaimedListView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
 class CreditsClaimedListControllerSpec
   extends PlaySpec
@@ -130,6 +135,44 @@ class CreditsClaimedListControllerSpec
 
       intercept[DownstreamServiceError] {
         await(sut.onPageLoad(NormalMode)(request))
+      }
+    }
+  }
+
+  "onSubmit" should {
+    "invoke the journey action" in {
+      sut.onSubmit(NormalMode)
+      verify(journeyAction).async(any)
+    }
+
+    "redirect" in {
+      val form = mock[Form[Boolean]]
+      val boundForm = Form("value" -> boolean).fill(true)
+      when(formProvider.apply()).thenReturn(form)
+      when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+      when(navigator.creditClaimedList(any, any,any)).thenAnswer(Call(GET, "/foo"))
+
+      val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
+
+      status(result) mustBe SEE_OTHER
+
+      withClue("call navigator") {
+        verify(navigator).creditClaimedList(NormalMode, true, request.userAnswers)
+      }
+    }
+
+    "error" when {
+      "error on form" in {
+        setUpMock()
+        val form = mock[Form[Boolean]]
+        val boundForm = Form("value" -> boolean).withError("error", "error message")
+        when(formProvider.apply()).thenReturn(form)
+        when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+
+        val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
+
+        status(result) mustBe BAD_REQUEST
+        verify(view).apply(eqTo(boundForm), eqTo(expectedCreditSummary), eqTo(NormalMode))(any, any)
       }
     }
   }

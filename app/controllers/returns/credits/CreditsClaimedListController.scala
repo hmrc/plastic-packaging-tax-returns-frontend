@@ -22,7 +22,9 @@ import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.{CreditBalance, Mode}
 import models.requests.DataRequest.headerCarrier
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
@@ -31,7 +33,7 @@ import viewmodels.checkAnswers.returns.credits.{CreditTotalSummary, CreditsClaim
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CreditsClaimedListController @Inject()(
   override val messagesApi: MessagesApi,
@@ -53,15 +55,20 @@ class CreditsClaimedListController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-
       formProvider().bindFromRequest().fold(
-        formWithErrors =>
-          BadRequest(view(formWithErrors, Seq.empty, mode)),
-
+        formWithErrors => {
+          //todo: is there a better way to display the view without calling the API again?
+          calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+            creditBalance.fold(
+              error => throw error,
+              balance => BadRequest(view(formWithErrors, createCreditSummary(balance), mode)),
+            )
+          }
+        },
         isAddingAnotherYear =>
-          Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers))
+          Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
       )
   }
 
@@ -69,10 +76,15 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    val rows = CreditsClaimedListSummary.createRows(request.userAnswers, navigator) match {
+    Ok(view(formProvider(), createCreditSummary(creditBalance), mode))
+  }
+
+  private def createCreditSummary(
+    creditBalance: CreditBalance
+  )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
+    CreditsClaimedListSummary.createRows(request.userAnswers, navigator) match {
       case Nil => Seq.empty
       case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
     }
-    Ok(view(formProvider(), rows, mode))
   }
 }
