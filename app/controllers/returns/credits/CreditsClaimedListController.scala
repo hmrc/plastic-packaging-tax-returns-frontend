@@ -16,13 +16,13 @@
 
 package controllers.returns.credits
 
-import connectors.{CalculateCreditsConnector, ServiceError}
+import connectors.CalculateCreditsConnector
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
-import models.{CreditBalance, Mode}
 import models.requests.DataRequest.headerCarrier
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
@@ -60,16 +60,23 @@ class CreditsClaimedListController @Inject()(
       formProvider().bindFromRequest().fold(
         formWithErrors => {
           //todo: is there a better way to display the view without calling the API again?
-          calcCreditsConnector.get(request.pptReference).map { creditBalance =>
-            creditBalance.fold(
-              error => throw error,
-              balance => BadRequest(view(formWithErrors, createCreditSummary(balance), mode)),
-            )
-          }
+          handleFormError(formWithErrors, mode)
         },
         isAddingAnotherYear =>
           Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
       )
+  }
+
+  private def handleFormError(
+    formWithErrors: Form[Boolean],
+    mode: Mode,
+  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+      creditBalance.fold(
+        error => throw error,
+        balance => BadRequest(view(formWithErrors, createCreditSummary(balance), mode)),
+      )
+    }
   }
 
   private def displayView(
