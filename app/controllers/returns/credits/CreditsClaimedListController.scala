@@ -16,15 +16,18 @@
 
 package controllers.returns.credits
 
-import connectors.CacheConnector
+import connectors.{CalculateCreditsConnector, ServiceError}
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
-import models.Mode
+import models.requests.DataRequest
+import models.{CreditBalance, Mode}
+import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import viewmodels.checkAnswers.returns.credits.{CreditTotalSummary, CreditsClaimedListSummary}
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
@@ -32,17 +35,22 @@ import scala.concurrent.ExecutionContext
 
 class CreditsClaimedListController @Inject()(
   override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
+  calcCreditsConnector: CalculateCreditsConnector,
   navigator: ReturnsJourneyNavigator,
   journeyAction: JourneyAction,
   formProvider: CreditsClaimedListFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: CreditsClaimedListView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      Ok(view(formProvider(), CreditsClaimedListSummary.createRows(request.userAnswers, navigator), mode))
+      calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+        creditBalance.fold(
+          error => throw error,
+          balance => displayView(mode, balance)
+        )
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {
@@ -55,5 +63,16 @@ class CreditsClaimedListController @Inject()(
         isAddingAnotherYear =>
           Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers))
       )
+  }
+
+  private def displayView(
+    mode: Mode,
+    creditBalance: CreditBalance
+  )(implicit request: DataRequest[AnyContent]): Result = {
+    val rows = CreditsClaimedListSummary.createRows(request.userAnswers, navigator) match {
+      case Nil => Seq.empty
+      case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
+    }
+    Ok(view(formProvider(), rows, mode))
   }
 }

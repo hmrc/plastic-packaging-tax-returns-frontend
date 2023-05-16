@@ -24,23 +24,29 @@ import play.api.libs.json.{JsObject, JsPath}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
+
 object CreditsClaimedListSummary {
 
-  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator) 
+  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator)
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
-    answers.get[Map[String,JsObject]](JsPath \ "credit").map {
-      answer: Map[String, JsObject] =>
-
-        answer.map(item => {
-          CreditSummaryRow(
-            item._1,
-            "0",
-            change = ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
-            remove = ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
-          )
-        })
-    }.getOrElse(Seq.empty).toSeq
+    answers.get[Map[String,JsObject]](JsPath \ "credit")
+      .map { answer => answer.map(item => creditSummary(navigator, item._1, "0"))}
+      .fold[Seq[CreditSummaryRow]](Seq.empty)(_.toSeq)
   }
 
+  private def creditSummary(
+    navigator: ReturnsJourneyNavigator,
+    key: String,
+    value: String)
+  (implicit messages: Messages): CreditSummaryRow = {
+    CreditSummaryRow(
+      key,
+      value,
+      actions = Seq(
+        ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
+        ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+      )
+    )
+  }
 }

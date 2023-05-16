@@ -74,20 +74,47 @@ class CreditsClaimedListSummarySpec extends PlaySpec
 
     val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
 
-    rows mustBe Seq(
+    rows mustBe expectedResult
+  }
+
+  "return an empty list" when {
+    "no credit found" in {
+      val userAnswer = UserAnswers("123", JsObject.empty)
+
+      val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
+
+      rows mustBe Seq.empty
+    }
+
+    "credit is empty" in {
+      val userAnswer = UserAnswers("123", Json.parse("""{
+          "credit" : {}
+          |}""".stripMargin).as[JsObject])
+
+      val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
+
+      rows mustBe Seq.empty
+    }
+  }
+
+  private def expectedResult: Seq[CreditSummaryRow] = {
+    Seq(
       CreditSummaryRow(
         label = "2023-01-01-2023-03-31",
         value = "0",
-        change = ActionItem("change-url", Text("site.change")),
-        remove = ActionItem("remove-url", Text("site.remove")),
+        actions = Seq(
+          ActionItem("change-url", Text("site.change")),
+          ActionItem("remove-url", Text("site.remove"))
+        )
       ),
       CreditSummaryRow(
         label = "2023-04-01-2024-03-31",
         value = "0",
-        change = ActionItem("change-url", Text("site.change")),
-        remove = ActionItem("remove-url", Text("site.remove"))
+        actions = Seq(
+          ActionItem("change-url", Text("site.change")),
+          ActionItem("remove-url", Text("site.remove"))
+        )
       )
     )
   }
-
 }

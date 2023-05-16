@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package models.returns.credits
+package viewmodels.checkAnswers.returns.credits
 
-import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
+import models.returns.credits.CreditSummaryRow
+import viewmodels.PrintBigDecimal
 
+object CreditTotalSummary {
 
-case class CreditSummaryRow(
-  label: String,
-  value: String,
-  actions: Seq[ActionItem] = Seq.empty
-)
+  val key = "Credit total [Use Key]"
+  def createRow(totalWeightInPound: BigDecimal): CreditSummaryRow = {
+    CreditSummaryRow(key, totalWeightInPound.asPounds)
+  }
+}

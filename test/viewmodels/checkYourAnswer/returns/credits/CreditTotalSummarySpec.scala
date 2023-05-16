@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package models.returns.credits
+package viewmodels.checkYourAnswer.returns.credits
 
-import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
+import models.returns.credits.CreditSummaryRow
+import org.scalatestplus.play.PlaySpec
+import viewmodels.PrintBigDecimal
+import viewmodels.checkAnswers.returns.credits.CreditTotalSummary
 
+class CreditTotalSummarySpec extends PlaySpec {
 
-case class CreditSummaryRow(
-  label: String,
-  value: String,
-  actions: Seq[ActionItem] = Seq.empty
-)
+  "createRow" should {
+    "create a row" in {
+      CreditTotalSummary.createRow(200) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
+    }
+  }
+
+}

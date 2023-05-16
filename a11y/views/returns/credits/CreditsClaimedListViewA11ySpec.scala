@@ -34,14 +34,18 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
     CreditSummaryRow(
       label = "2023-01-01-2023-03-31",
       value = "0",
-      change = ActionItem("change-url", Text("site.change")),
-      remove = ActionItem("remove-url", Text("site.remove")),
+      actions = Seq(
+        ActionItem("change-url", Text("site.change")),
+        ActionItem("remove-url", Text("site.remove"))
+      )
     ),
     CreditSummaryRow(
       label = "2023-04-01-2024-03-31",
       value = "0",
-      change = ActionItem("change-url", Text("site.change")),
-      remove = ActionItem("remove-url", Text("site.remove"))
+      actions = Seq(
+        ActionItem("change-url", Text("site.change")),
+        ActionItem("remove-url", Text("site.remove"))
+      )
     )
   )
 

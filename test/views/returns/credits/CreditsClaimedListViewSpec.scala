@@ -36,8 +36,14 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
     CreditSummaryRow(
       label = "exported",
       value = "answer",
-      change = ActionItem("/foo", Text("change")),
-      remove = ActionItem("/remove", Text("remove"))
+      actions = Seq(
+        ActionItem("/foo", Text("change")),
+        ActionItem("/remove", Text("remove"))
+      )
+    ),
+    CreditSummaryRow(
+      label = "exported",
+      value = "answer"
     )
   )
   private def createView(form: Form[_]): Html = page(form, rows, NormalMode)(request, messages)
@@ -49,6 +55,12 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
     }
     "show a claimed credit" in {
       createView(form).getElementsByClass("govuk-table__row").size() must be  > 0
+    }
+
+    "not show change/remove link" in {
+      createView(form).getElementsByClass("govuk-table__row")
+        .last()
+        .select("td").last().text mustBe ""
     }
 
     "show an error" when {

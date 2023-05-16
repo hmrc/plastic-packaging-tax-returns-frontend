@@ -36,9 +36,10 @@
                     content =  Text(row.value),
                     format = Some("text")
                 ),
-               TableRow(
-                    content = HtmlContent(actionContent(row.change, row.remove)),
+                TableRow(
+                    content = HtmlContent(actionContent(row.actions)),
                     format = Some("text"))
+
             )
         ),
         head = Some(
@@ -60,12 +61,11 @@
 )
 
 
-@actionContent(changeAction: ActionItem, removeAction: ActionItem) = {
-    <ul class="govuk-summary-list__actions-list" style="text-align: right; padding: 0px;">
-        <li class="govuk-summary-list__actions-list-item">@actionLink(changeAction)</li>
-        <li class="govuk-summary-list__actions-list-item">@actionLink(removeAction)</li>
-    </ul>
+@actionContent(actions: Seq[ActionItem]) = {
+    @actions match {
+        case actions  => {<ul class="govuk-summary-list__actions-list" style="text-align: right; padding: 0px;">@for(action <- actions) {<li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>}</ul>}
+        case Nil => {HtmlFormat.empty}
+    }
 }
-
 
 @actionLink(action: ActionItem) = {<a class="govuk-link @{action.classes}" href="@action.href">@action.content.asHtml</a>}
