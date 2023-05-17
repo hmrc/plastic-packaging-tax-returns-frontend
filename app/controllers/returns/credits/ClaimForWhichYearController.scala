@@ -24,8 +24,8 @@ import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
-import play.api.mvc.Results.Ok
+import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ClaimForWhichYearView
 
@@ -49,9 +49,15 @@ class ClaimForWhichYearController @Inject()(
     journeyAction.async { implicit request =>
       //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
       availableCreditYearsConnector.get(request.pptReference).map {
-        availableYears => //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
-          val form = formProvider(availableYears)
-          Ok(view(form, availableYears, mode))
+        availableYears =>
+          val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
+          val options = availableYears.filterNot(y => alreadyUsedYears.contains(y.key))
+          if (options.isEmpty) {
+            Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode))
+          } else {
+            val form = formProvider(options)
+            Ok(view(form, options, mode))
+          }
       }
 
     }
@@ -60,10 +66,12 @@ class ClaimForWhichYearController @Inject()(
     journeyAction.async { implicit request =>
       availableCreditYearsConnector.get(request.pptReference).flatMap {
         availableYears =>
-          formProvider(availableYears)
+          val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
+          val options = availableYears.filterNot(y => alreadyUsedYears.contains(y.key))
+          formProvider(options)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
+              formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, options, mode))),
               selectedRange => {
                 request.userAnswers
                   .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
