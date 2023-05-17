@@ -16,41 +16,30 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.{CreditBalance, UserAnswers}
-import models.returns.CreditsAnswer
+import models.CreditBalance
 import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, JsPath}
-import viewmodels.{PrintBigDecimal, PrintLong}
+import viewmodels.PrintBigDecimal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 
 object CreditsClaimedListSummary {
 
-  def createRows(answers: UserAnswers, creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
+  def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
-    answers.get[Map[String,JsObject]](JsPath \ "credit")
-      .map { answer =>
-        answer.map(item => creditSummary(navigator, item._1, creditBalance.creditForYear(item._1).moneyInPounds.asPounds))
-      }
-      .fold[Seq[CreditSummaryRow]](Seq.empty)(_.toSeq)
+    creditBalance.credit.map { 
+      case (key, taxablePlastic) =>
+        creditSummary(navigator, key, taxablePlastic.moneyInPounds.asPounds)
+    }
+      .toSeq
   }
 
-  private def calculateTotalCredit(item: (String, JsObject)): Option[Long] = {
-    for {
-      exportedWeight <- (item._2 \ "exportedCredits").asOpt[CreditsAnswer]
-      convertedWeight <- (item._2 \ "convertedCredits").asOpt[CreditsAnswer]
-    } yield exportedWeight.weightValue + convertedWeight.weightValue
-  }
-
-  private def creditSummary(
-    navigator: ReturnsJourneyNavigator,
-    key: String,
-    value: String)
-                           (implicit messages: Messages): CreditSummaryRow = {
+  private def creditSummary(navigator: ReturnsJourneyNavigator, key: String, value: String) 
+    (implicit messages: Messages): CreditSummaryRow = {
+    
     CreditSummaryRow(
       key,
       value,

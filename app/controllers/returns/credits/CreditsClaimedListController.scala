@@ -89,7 +89,7 @@ class CreditsClaimedListController @Inject()(
   private def createCreditSummary(
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
-    CreditsClaimedListSummary.createRows(request.userAnswers, creditBalance, navigator) match {
+    CreditsClaimedListSummary.createRows(creditBalance, navigator) match {
       case Nil => Seq.empty
       case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
     }
