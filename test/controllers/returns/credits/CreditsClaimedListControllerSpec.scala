@@ -81,7 +81,7 @@ class CreditsClaimedListControllerSpec
 
     reset(view, request, navigator, journeyAction, calcCreditsConnector)
 
-    when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }

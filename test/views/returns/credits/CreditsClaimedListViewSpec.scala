@@ -46,7 +46,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       value = "answer"
     )
   )
-  private def createView(form: Form[_]): Html = page(form, rows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(form, true, rows, NormalMode)(request, messages)
 
   "View" should {
 
@@ -61,6 +61,12 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       createView(form).getElementsByClass("govuk-table__row")
         .last()
         .select("td").last().text mustBe ""
+    }
+
+    "Show claiming to much credit" when {
+      "canBeClaimed is false" in {
+        //todo
+      }
     }
 
     "show an error" when {

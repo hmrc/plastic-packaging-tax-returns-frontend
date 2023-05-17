@@ -74,7 +74,7 @@ class CreditsClaimedListController @Inject()(
     calcCreditsConnector.get(request.pptReference).map { creditBalance =>
       creditBalance.fold(
         error => throw error,
-        balance => BadRequest(view(formWithErrors, createCreditSummary(balance), mode)),
+        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, createCreditSummary(balance), mode)),
       )
     }
   }
@@ -83,7 +83,7 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), createCreditSummary(creditBalance), mode))
+    Ok(view(formProvider(), creditBalance.canBeClaimed, createCreditSummary(creditBalance), mode))
   }
 
   private def createCreditSummary(
