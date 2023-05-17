@@ -25,7 +25,7 @@ object TaxablePlastic {
   implicit val format: OFormat[TaxablePlastic] = Json.format[TaxablePlastic]
 }
 
-case class CreditBalance(
+case class  CreditBalance(
   availableCreditInPounds: BigDecimal,
   totalRequestedCreditInPounds: BigDecimal,
   totalRequestedCreditInKilograms: Long,

@@ -16,25 +16,25 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.UserAnswers
+import models.{CreditBalance, UserAnswers}
 import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsPath}
-import viewmodels.PrintLong
+import viewmodels.{PrintBigDecimal, PrintLong}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 
 object CreditsClaimedListSummary {
 
-  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator)
+  def createRows(answers: UserAnswers, creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     answers.get[Map[String,JsObject]](JsPath \ "credit")
       .map { answer =>
-        answer.map(item => creditSummary(navigator, item._1, calculateTotalCredit(item).getOrElse(0L).asKg))
+        answer.map(item => creditSummary(navigator, item._1, creditBalance.creditForYear(item._1).moneyInPounds.asPounds))
       }
       .fold[Seq[CreditSummaryRow]](Seq.empty)(_.toSeq)
   }

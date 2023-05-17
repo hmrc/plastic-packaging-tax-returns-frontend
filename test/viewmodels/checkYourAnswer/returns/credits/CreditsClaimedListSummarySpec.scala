@@ -16,7 +16,7 @@
 
 package viewmodels.checkYourAnswer.returns.credits
 
-import models.UserAnswers
+import models.{CreditBalance, UserAnswers}
 import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
@@ -35,6 +35,8 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
 
   private val message    = mock[Messages]
   private val navigator  = mock[ReturnsJourneyNavigator]
+  private val userAnswer = mock[UserAnswers]
+  private val creditBalance = mock[CreditBalance]
 
 
   override protected def beforeEach(): Unit = {
@@ -43,31 +45,13 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     when(navigator.creditSummaryRemove(any)) thenReturn "remove-url"
   }
 
-  "create a list of row" when {
-    val table = Table(
-      ("description", "exportedCredit", "convertedCredit", "result") ,
-      ("valid exported and converted credit", CreditsAnswer(true, Some(20L)), CreditsAnswer(true, Some(200)), "220kg"),
-      ("convertedCredit is false", CreditsAnswer(true, Some(20L)), CreditsAnswer(false, Some(200)), "20kg"),
-      ("exportedCredit is false", CreditsAnswer(false, Some(20L)), CreditsAnswer(true, Some(200)), "200kg"),
-      ("both converted and exported credit are false", CreditsAnswer(false, Some(20L)), CreditsAnswer(false, Some(200)), "0kg")
-    )
+  "create a list of row" in {
+    when(message.apply(any[String])).thenAnswer((s: String) => s)
 
-    forAll(table) {
-      (
-        description: String,
-        exportedCredit: CreditsAnswer,
-        convertedCredit: CreditsAnswer,
-        result: String
+    val rows = CreditsClaimedListSummary.createRows(createJsonUserAnswer(exportedCredit, convertedCredit), navigator)(message)
 
-      ) =>
-        s"$description" in {
-          when(message.apply(any[String])).thenAnswer((s: String) => s)
+    rows mustBe expectedResult(result)
 
-          val rows = CreditsClaimedListSummary.createRows(createJsonUserAnswer(exportedCredit, convertedCredit), navigator)(message)
-
-          rows mustBe expectedResult(result)
-        }
-    }
   }
 
   "return an empty list" when {

@@ -196,6 +196,6 @@ class CreditsClaimedListControllerSpec
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
     when(calcCreditsConnector.get(any)(any))
-      .thenReturn(Future.successful(Right(CreditBalance(10, 20, 5L, true, 200))))
+      .thenReturn(Future.successful(Right(CreditBalance(10, 20, 5L, true, Map.empty))))
   }
 }
