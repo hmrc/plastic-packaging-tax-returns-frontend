@@ -17,10 +17,12 @@
 package viewmodels.checkAnswers.returns.credits
 
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsPath}
+import viewmodels.PrintLong
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -31,15 +33,24 @@ object CreditsClaimedListSummary {
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     answers.get[Map[String,JsObject]](JsPath \ "credit")
-      .map { answer => answer.map(item => creditSummary(navigator, item._1, "0"))}
+      .map { answer =>
+        answer.map(item => creditSummary(navigator, item._1, calculateTotalCredit(item).getOrElse(0L).asKg))
+      }
       .fold[Seq[CreditSummaryRow]](Seq.empty)(_.toSeq)
+  }
+
+  private def calculateTotalCredit(item: (String, JsObject)): Option[Long] = {
+    for {
+      exportedWeight <- (item._2 \ "exportedCredits").asOpt[CreditsAnswer]
+      convertedWeight <- (item._2 \ "convertedCredits").asOpt[CreditsAnswer]
+    } yield exportedWeight.weightValue + convertedWeight.weightValue
   }
 
   private def creditSummary(
     navigator: ReturnsJourneyNavigator,
     key: String,
     value: String)
-  (implicit messages: Messages): CreditSummaryRow = {
+                           (implicit messages: Messages): CreditSummaryRow = {
     CreditSummaryRow(
       key,
       value,

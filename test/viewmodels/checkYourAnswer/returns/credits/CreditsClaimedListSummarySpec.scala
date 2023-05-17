@@ -17,6 +17,7 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import models.UserAnswers
+import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
@@ -26,55 +27,47 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.govukfrontend.views.Aliases._
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class CreditsClaimedListSummarySpec extends PlaySpec 
-  with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
+class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
-  private val message = mock[Messages]
-  private val navigator = mock[ReturnsJourneyNavigator]
+  private val message    = mock[Messages]
+  private val navigator  = mock[ReturnsJourneyNavigator]
+
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(navigator.creditSummaryChange(any)) thenReturn "change-url"
     when(navigator.creditSummaryRemove(any)) thenReturn "remove-url"
   }
-  
-  "create a list of row" in {
 
-    val userAnswer = UserAnswers("123", Json.parse("""{
-          "credit" : {
-          |  "2023-01-01-2023-03-31" : {
-          |     "endDate" : "2023-03-31",
-          |     "exportedCredits" : {
-          |       "yesNo" : true,
-          |       "weight" : 34
-          |     },
-          |     "convertedCredits" : {
-          |       "yesNo" : true,
-          |       "weight" : 545
-          |     }
-          |   },
-          |   "2023-04-01-2024-03-31" : {
-          |     "endDate" : "2024-03-31",
-          |       "exportedCredits" : {
-          |         "yesNo" : true,
-          |         "weight" : 30
-          |       },
-          |       "convertedCredits" : {
-          |         "yesNo" : true,
-          |         "weight" : 545
-          |        }
-          |      }
-          |   }
-          |}""".stripMargin).as[JsObject])
+  "create a list of row" when {
+    val table = Table(
+      ("description", "exportedCredit", "convertedCredit", "result") ,
+      ("valid exported and converted credit", CreditsAnswer(true, Some(20L)), CreditsAnswer(true, Some(200)), "220kg"),
+      ("convertedCredit is false", CreditsAnswer(true, Some(20L)), CreditsAnswer(false, Some(200)), "20kg"),
+      ("exportedCredit is false", CreditsAnswer(false, Some(20L)), CreditsAnswer(true, Some(200)), "200kg"),
+      ("both converted and exported credit are false", CreditsAnswer(false, Some(20L)), CreditsAnswer(false, Some(200)), "0kg")
+    )
 
-    when(message.apply(any[String])).thenAnswer((s: String) => s)
+    forAll(table) {
+      (
+        description: String,
+        exportedCredit: CreditsAnswer,
+        convertedCredit: CreditsAnswer,
+        result: String
 
-    val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
+      ) =>
+        s"$description" in {
+          when(message.apply(any[String])).thenAnswer((s: String) => s)
 
-    rows mustBe expectedResult
+          val rows = CreditsClaimedListSummary.createRows(createJsonUserAnswer(exportedCredit, convertedCredit), navigator)(message)
+
+          rows mustBe expectedResult(result)
+        }
+    }
   }
 
   "return an empty list" when {
@@ -97,24 +90,45 @@ class CreditsClaimedListSummarySpec extends PlaySpec
     }
   }
 
-  private def expectedResult: Seq[CreditSummaryRow] = {
+  private def createJsonUserAnswer(exported: CreditsAnswer, converted: CreditsAnswer) = UserAnswers("123",
+    Json.parse(s"""{
+          "credit" : {
+                  |  "2023-01-01-2023-03-31" : {
+                  |     "endDate" : "2023-03-31",
+                  |     "exportedCredits" : {
+                  |       "yesNo" : ${exported.yesNo},
+                  |       "weight" : ${exported.weightValue}
+                  |     },
+                  |     "convertedCredits" : {
+                  |       "yesNo" : ${converted.yesNo},
+                  |       "weight" : ${converted.weightValue}
+                  |     }
+                  |   },
+                  |   "2023-04-01-2024-03-31" : {
+                  |     "endDate" : "2024-03-31",
+                  |       "exportedCredits" : {
+                  |         "yesNo" : true,
+                  |         "weight" : 30
+                  |       },
+                  |       "convertedCredits" : {
+                  |         "yesNo" : true,
+                  |         "weight" : 545
+                  |        }
+                  |      }
+                  |   }
+                  |}""".stripMargin).as[JsObject])
+  private def expectedResult(value: String): Seq[CreditSummaryRow] =
     Seq(
       CreditSummaryRow(
         label = "2023-01-01-2023-03-31",
-        value = "0",
-        actions = Seq(
-          ActionItem("change-url", Text("site.change")),
-          ActionItem("remove-url", Text("site.remove"))
-        )
+        value = value,
+        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
       ),
       CreditSummaryRow(
         label = "2023-04-01-2024-03-31",
-        value = "0",
-        actions = Seq(
-          ActionItem("change-url", Text("site.change")),
-          ActionItem("remove-url", Text("site.remove"))
-        )
+        value = "575kg",
+        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
       )
     )
-  }
+
 }
