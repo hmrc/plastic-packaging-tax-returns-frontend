@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{LinkButtonWithCancel, SectionH2Heading, SectionH3Heading, paragraph, paragraphBody, Link, LinkButton, heading, Strong}
+@import components._
 @import viewmodels._
 @import models.Mode
 
@@ -40,7 +40,8 @@
     canClaim: Boolean,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
-    mode: Mode)(implicit request: Request[_], messages: Messages)
+    mode: Mode
+)(implicit request: Request[_], messages: Messages)
 
 @previousSubmittedReturnsLink = {
     @link(

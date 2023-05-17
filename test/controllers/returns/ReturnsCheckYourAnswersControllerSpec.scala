@@ -25,7 +25,7 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers._
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -256,7 +256,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
-    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, 0.30)),
+    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, Map(
+      "a-key" -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
     when(mockTaxReturnConnector.getCalculationReturns(any())(any()))
