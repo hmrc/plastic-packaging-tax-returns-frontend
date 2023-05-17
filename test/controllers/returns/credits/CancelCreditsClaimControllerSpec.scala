@@ -79,7 +79,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(view.apply(any, any, any)(any, any)) thenReturn Html("the view")
     when(formProvider.apply()) thenReturn form
 
-    when(navigator.cancelCredit(any)) thenReturn Call(GET, "/next-page")
+    when(navigator.cancelCredit()) thenReturn Call(GET, "/next-page")
     when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
 
     val x = request.userAnswers
@@ -124,7 +124,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
       verify(request.userAnswers).removePath(eqTo(JsPath \ "credit" \ "year-key"))
       verify(request.userAnswers).save(any)(any)
-      verify(navigator).cancelCredit("year-key")
+      verify(navigator).cancelCredit()
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
@@ -136,7 +136,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
       verify(request.userAnswers, never).removePath(any)
       verify(request.userAnswers, never).save(any)(any)
-      verify(navigator).cancelCredit("year-key")
+      verify(navigator).cancelCredit()
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe SEE_OTHER

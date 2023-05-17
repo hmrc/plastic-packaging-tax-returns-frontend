@@ -230,7 +230,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   
   "credit summary" should {
     "change a claim for a year" in {
-      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", CheckMode).url
+      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("a-key", CheckMode).url
     }
     "remove a claim for a year" in {
       navigator.creditSummaryRemove("a-key") mustBe creditRoutes.CancelCreditsClaimController.onPageLoad("a-key").url
@@ -238,7 +238,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "cancelCredit" in {
-    navigator.cancelCredit("year-key") mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
+    navigator.cancelCredit() mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
   "start your return" should {

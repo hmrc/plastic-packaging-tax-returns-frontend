@@ -16,50 +16,82 @@
 
 package controllers.returns.credits
 
-import connectors.CacheConnector
+import connectors.CalculateCreditsConnector
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
-import models.Mode
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
+import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import viewmodels.checkAnswers.returns.credits.{CreditTotalSummary, CreditsClaimedListSummary}
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CreditsClaimedListController @Inject()(
   override val messagesApi: MessagesApi,
-  cacheConnector: CacheConnector,
+  calcCreditsConnector: CalculateCreditsConnector,
   navigator: ReturnsJourneyNavigator,
   journeyAction: JourneyAction,
   formProvider: CreditsClaimedListFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: CreditsClaimedListView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      Ok(createView(formProvider(), mode))
+      calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+        creditBalance.fold(
+          error => throw error,
+          balance => displayView(mode, balance)
+        )
+      }
   }
 
-  private def createView(form: Form[Boolean], mode: Mode) (implicit request: DataRequest[_]) = {
-    view(form, CreditsClaimedListSummary.createRows(request.userAnswers, navigator), mode)
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction {
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-
       formProvider().bindFromRequest().fold(
-        formWithErrors =>
-          BadRequest(createView(formWithErrors, mode)),
-
+        formWithErrors => {
+          //todo: is there a better way to display the view without calling the API again?
+          handleFormError(formWithErrors, mode)
+        },
         isAddingAnotherYear =>
-          Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers))
+          Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
       )
+  }
+
+  private def handleFormError(
+    formWithErrors: Form[Boolean],
+    mode: Mode,
+  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+      creditBalance.fold(
+        error => throw error,
+        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, createCreditSummary(balance), mode)),
+      )
+    }
+  }
+
+  private def displayView(
+    mode: Mode,
+    creditBalance: CreditBalance
+  )(implicit request: DataRequest[AnyContent]): Result = {
+    Ok(view(formProvider(), creditBalance.canBeClaimed, createCreditSummary(creditBalance), mode))
+  }
+
+  private def createCreditSummary(
+    creditBalance: CreditBalance
+  )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
+    CreditsClaimedListSummary.createRows(creditBalance, navigator) match {
+      case Nil => Seq.empty
+      case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
+    }
   }
 }

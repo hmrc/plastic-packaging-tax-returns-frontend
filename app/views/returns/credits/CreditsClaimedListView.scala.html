@@ -15,6 +15,8 @@
  *@
 
 @import views.html.components._
+@import models.returns.credits.CreditSummaryRow
+
 
 @this(
     layout: templates.Layout,
@@ -24,10 +26,15 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton, 
     paragraphBody: paragraphBody,
-    heading: heading
+    paragraph: paragraph,
+    sectionH2Heading: SectionH2Heading,
+    sectionH3Heading: SectionH3Heading,
+    link: Link,
+    heading: heading,
+    creditSummaryTable: CreditSummaryTable
 )
 
-@(form: Form[_], summaryRows: Seq[SummaryListRow], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], canBeClaimed: Boolean, summaryRows: Seq[CreditSummaryRow], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("creditsSummary.title-heading"))) {
 
@@ -38,9 +45,21 @@
         }
 
         @heading("creditsSummary.title-heading")
-        @govukSummaryList(SummaryList(rows = summaryRows))
+        @creditSummaryTable(summaryRows)
         @paragraphBody(messages("creditsSummary.paragraph.credit-will-be-applied"))
 
+        @if(!canBeClaimed){
+            @sectionH2Heading(messages("confirmPackagingCredit.tooMuchCredit.heading"))
+            @paragraphBody("blah blah blah")
+            @sectionH3Heading(messages("confirmPackagingCredit.tooMuchCredit.h3"))
+            @paragraph(content = Html(messages("confirmPackagingCredit.tooMuchCredit.p2", link(
+                id = "previous-submitted-return",
+                text = messages("confirmPackagingCredit.previousSubmittedReturn.link"),
+                href = controllers.amends.routes.SubmittedReturnsController.onPageLoad().url
+                ))))
+            @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p3"))
+            @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p4"))
+        } else {
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
@@ -51,5 +70,6 @@
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
+    }
     }
 }

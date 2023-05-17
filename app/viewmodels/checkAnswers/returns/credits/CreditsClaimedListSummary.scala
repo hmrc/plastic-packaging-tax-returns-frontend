@@ -16,51 +16,37 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.Mode.CheckMode
-import models.UserAnswers
-import models.returns.CreditsAnswer
+import models.CreditBalance
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, JsPath}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintBigDecimal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-
-import java.time.LocalDate
-
-
-//case class Credits(credits: Seq[Credit])
-//
-//
-//case class Credit
-//(
-//  endDate: LocalDate,
-//  exportedCredit: CreditsAnswer,
-//  convertedCredit: CreditsAnswer
-//)
 
 
 object CreditsClaimedListSummary {
 
-  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator) 
-    (implicit messages: Messages): Seq[SummaryListRow] = {
+  def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
+    (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
-    answers.get[Map[String,JsObject]](JsPath \ "credit").map {
-      answer: Map[String, JsObject] =>
-
-        answer.map(item => {
-          SummaryListRowViewModel(
-            key = item._1,
-            value = ValueViewModel("0"),
-            actions = Seq(
-              ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
-              ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
-            )
-          )
-
-        })
-
-    }.getOrElse(Seq.empty).toSeq
+    creditBalance.credit.map { 
+      case (key, taxablePlastic) =>
+        creditSummary(navigator, key, taxablePlastic.moneyInPounds.asPounds)
+    }
+      .toSeq
   }
 
+  private def creditSummary(navigator: ReturnsJourneyNavigator, key: String, value: String) 
+    (implicit messages: Messages): CreditSummaryRow = {
+    
+    CreditSummaryRow(
+      key,
+      value,
+      actions = Seq(
+        ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
+        ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+      )
+    )
+  }
 }
