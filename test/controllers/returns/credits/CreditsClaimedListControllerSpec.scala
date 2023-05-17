@@ -16,13 +16,12 @@
 
 package controllers.returns.credits
 
-import akka.actor.FSM.Normal
 import base.utils.JourneyActionAnswer
 import connectors.{CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
-import models.CreditBalance
+import models.{CreditBalance, TaxablePlastic}
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import models.returns.credits.CreditSummaryRow
@@ -37,8 +36,7 @@ import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
-import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
-import play.api.test.FakeRequest
+import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -48,7 +46,6 @@ import views.html.returns.credits.CreditsClaimedListView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
 
 class CreditsClaimedListControllerSpec
   extends PlaySpec
@@ -195,7 +192,11 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
-    when(calcCreditsConnector.get(any)(any))
-      .thenReturn(Future.successful(Right(CreditBalance(10, 20, 5L, true, Map.empty))))
+    
+    when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(
+      CreditBalance(10, 20, 5L, true, Map(
+        "key1" -> TaxablePlastic(0, 20, 0)
+      ))
+    ))
   }
 }

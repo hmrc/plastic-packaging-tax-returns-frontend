@@ -122,12 +122,12 @@ class ReturnsJourneyNavigator @Inject()(
       returnRoutes.NowStartYourReturnController.onPageLoad
 
   def creditSummaryChange(yearKey: String): String =
-    creditRoutes.ExportedCreditsController.onPageLoad(yearKey, CheckMode).url
+    creditRoutes.ConfirmPackagingCreditController.onPageLoad(yearKey, CheckMode).url
 
   def creditSummaryRemove(yearKey: String): String =
     creditRoutes.CancelCreditsClaimController.onPageLoad(yearKey).url
 
-  def cancelCredit(key: String): Call = {
+  def cancelCredit(): Call = {
     creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 

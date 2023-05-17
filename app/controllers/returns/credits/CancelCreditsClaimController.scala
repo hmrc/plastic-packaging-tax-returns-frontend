@@ -67,7 +67,7 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
               .removePath(JsPath \ "credit" \ key)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           } else {Future.unit}
-          }.map(_ => Redirect(navigator.cancelCredit(key)))
+          }.map(_ => Redirect(navigator.cancelCredit()))
         }
       )
   }
