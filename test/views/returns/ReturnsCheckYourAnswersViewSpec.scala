@@ -20,9 +20,9 @@ import base.ViewSpecBase
 import config.FrontendAppConfig
 import controllers.returns.routes
 import models.Mode.CheckMode
-import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
+import models.returns.Credits.NoCreditAvailable
 import models.returns._
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -282,7 +282,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       haveHref(appConfig.creditsGuidanceUrl)
   }
 
-  private def createCreditBalance = CreditBalance(10, 40, 300L, true, 0.30)
+  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")

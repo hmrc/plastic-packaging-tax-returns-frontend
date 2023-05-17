@@ -49,10 +49,9 @@ class ClaimForWhichYearController @Inject()(
     journeyAction.async { implicit request =>
       //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
       availableCreditYearsConnector.get(request.pptReference).map {
-        case Right(availableYears) => //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
+        availableYears => //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
           val form = formProvider(availableYears)
           Ok(view(form, availableYears, mode))
-        case Left(error) => throw error
       }
 
     }
@@ -60,7 +59,7 @@ class ClaimForWhichYearController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
       availableCreditYearsConnector.get(request.pptReference).flatMap {
-        case Right(availableYears) =>
+        availableYears =>
           formProvider(availableYears)
             .bindFromRequest()
             .fold(
@@ -73,7 +72,6 @@ class ClaimForWhichYearController @Inject()(
                 )
               }
             )
-        case Left(error) => throw error
       }
 
 

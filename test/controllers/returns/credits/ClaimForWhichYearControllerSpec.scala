@@ -105,7 +105,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "take in a value from form & return view" in {
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -126,7 +126,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val ua = dataRequest.userAnswers
       val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
       val availableYears = Seq(creditRangeOption)
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
       when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(ua)
@@ -144,7 +144,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     "redirect to the next page" in {
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
       when(dataRequest.pptReference).thenReturn("hello")
@@ -164,7 +164,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "display any form errors" in {
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Right(availableYears)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
@@ -179,7 +179,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "throw error when couldn't get available years" in {
       val error = DownstreamServiceError("error", new Exception())
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Left(error)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.failed(error))
 
       val exception = intercept[DownstreamServiceError](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       exception mustBe error

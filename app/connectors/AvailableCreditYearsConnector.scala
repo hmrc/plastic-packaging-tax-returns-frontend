@@ -16,6 +16,7 @@
 
 package connectors
 
+import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.CreditRangeOption
 import play.api.Logging
@@ -24,23 +25,20 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AvailableCreditYearsConnector @Inject()(httpClient: HttpClient, appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
+class AvailableCreditYearsConnector @Inject() (
+  httpClient: HttpClient, 
+  appConfig: FrontendAppConfig,
+  metrics: Metrics
+) (implicit ec: ExecutionContext) extends Logging {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Seq[CreditRangeOption]]] = {
-
+  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
+    val timer = metrics.defaultRegistry.timer("ppt.availableCreditYears.get.timer").time()
     httpClient.GET[Seq[CreditRangeOption]](appConfig.pptAvailableCreditYearsUrl(pptReferenceNumber))
-      .map {
-        response =>
-          Right(response)
-      }
+      .andThen { case _ => timer.stop() }
       .recover {
-        case ex: Exception =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to get available credit years for ppt reference number [$pptReferenceNumber]",
-              ex
-            )
-          )
+        case exception: Exception =>
+          throw DownstreamServiceError(s"Failed to get available credit years for ppt reference number" +
+            s" [$pptReferenceNumber]", exception)
       }
   }
 

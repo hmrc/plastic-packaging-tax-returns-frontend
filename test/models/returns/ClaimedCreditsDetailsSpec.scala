@@ -16,13 +16,11 @@
 
 package models.returns
 
-import models.{CreditBalance, UserAnswers}
-import models.returns.CreditsClaimedDetails._
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
-import viewmodels.PrintLong
 
 class ClaimedCreditsDetailsSpec extends PlaySpec {
 
@@ -48,7 +46,8 @@ class ClaimedCreditsDetailsSpec extends PlaySpec {
             .set(ExportedCreditsPage("year-key"), CreditsAnswer(exported, exportedWeight)).get
             .set(ConvertedCreditsPage("year-key"), CreditsAnswer(converted, convertedWeight)).get
 
-          val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true, 0.30))
+          val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true, 
+            Map("a-key" -> TaxablePlastic(1, 2, 0.30))))
 
           //TODO show all years?
 

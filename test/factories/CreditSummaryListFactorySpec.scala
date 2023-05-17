@@ -17,21 +17,26 @@
 package factories
 
 import models.returns.CreditsAnswer
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
-class CreditSummaryListFactorySpec extends PlaySpec {
+class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val sut = new CreditSummaryListFactory();
-  private val answer = mock[UserAnswers]
+  private val sut = new CreditSummaryListFactory()
+  private val userAnswers = mock[UserAnswers]
   private val messages = mock[Messages]
 
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+  }
+  
   "factory" should {
     "a summary list containing credit details" in {
       when(messages.apply(meq("confirmPackagingCredit.taxRate"))).thenReturn("Tax Rate")
@@ -41,10 +46,10 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       when(messages.apply(meq("confirmPackagingCredit.converted.weight"))).thenReturn("converted weight")
       when(messages.apply(meq("confirmPackagingCredit.totalPlastic"))).thenReturn("total plastic")
       when(messages.apply(meq("confirmPackagingCredit.creditAmount"))).thenReturn("credit amount")
-      when(answer.get(meq(ExportedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
-      when(answer.get(meq(ConvertedCreditsPage("year-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
+      when(userAnswers.get(meq(ExportedCreditsPage("a-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
+      when(userAnswers.get(meq(ConvertedCreditsPage("a-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
 
-      val res = sut.createSummaryList(CreditBalance(10, 200, 20, true, 0.30) ,"year-key" , answer)(messages)
+      val res = sut.createSummaryList(TaxablePlastic(1, 2, 0.30), "a-key", userAnswers)(messages)
 
       res(0).key.content.asInstanceOf[Text].value mustBe "Tax Rate"
       res(1).key.content.asInstanceOf[Text].value mustBe "exported"
@@ -55,4 +60,5 @@ class CreditSummaryListFactorySpec extends PlaySpec {
       res(6).key.content.asInstanceOf[Text].value mustBe "credit amount"
     }
   }
+
 }
