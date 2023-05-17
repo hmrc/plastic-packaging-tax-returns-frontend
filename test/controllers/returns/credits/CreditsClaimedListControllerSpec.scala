@@ -179,7 +179,7 @@ class CreditsClaimedListControllerSpec
 
   private def expectedCreditSummary = {
     Seq(
-      CreditSummaryRow("key1", "0", Seq(
+      CreditSummaryRow("key1", "0kg", Seq(
         ActionItem("/change", Text("site.change")),
         ActionItem("/remove", Text("site.remove"))
       )),
