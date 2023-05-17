@@ -59,7 +59,7 @@
             RadiosViewModel.apply(
                 field = form("value"),
                 legend = LegendViewModel(HtmlContent(hiddenContent("claim-for-which-year.credits.title-heading"))),
-                items = options.zipWithIndex.map{ case (year, i) =>
+                items = options.sortBy(_.from).zipWithIndex.map{ case (year, i) =>
                     RadioItem(id = Some(s"option-$i"), value = Some(year.key), content =  Text(radioContent(year.from, year.to)))
                 }
             )
