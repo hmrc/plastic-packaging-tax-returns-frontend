@@ -65,10 +65,11 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
 
     //Todo: Pass to the view the fromDate and toDate the user is claiming
     // credit for.
+    val singleYear = creditBalance.creditForYear(key)
     Ok(confirmCreditView(
         key,
-        creditBalance.totalRequestedCreditInPounds,
-        creditBalance.canBeClaimed,
+        singleYear.moneyInPounds,
+        canClaim = true, // TODO rigged to "can claim" to avoid a multi-year claim stopping here (this page is about a single year) 
         creditSummaryListFactory.createSummaryList(creditBalance, key: String, request.userAnswers),
         returnsJourneyNavigator.confirmCredit(mode),
         mode

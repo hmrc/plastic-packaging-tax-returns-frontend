@@ -21,6 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 case class TaxablePlastic(weight: Long, moneyInPounds: BigDecimal, taxRate: BigDecimal)
 
 object TaxablePlastic {
+  def zero = TaxablePlastic(0, 0, 0) 
   implicit val format: OFormat[TaxablePlastic] = Json.format[TaxablePlastic]
 }
 
@@ -31,7 +32,7 @@ case class CreditBalance(
   canBeClaimed: Boolean,
   credit: Map[String, TaxablePlastic],
 ) {
-  def creditForYear(key: String): TaxablePlastic = credit(key)
+  def creditForYear(key: String): TaxablePlastic = credit.getOrElse(key, TaxablePlastic.zero)
 }
 
 object CreditBalance {
