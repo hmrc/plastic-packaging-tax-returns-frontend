@@ -533,8 +533,8 @@ submit-return.check-your-answers.credits.converted.answer = Tax paid on plastic 
 submit-return.check-your-answers.credits.converted.weight = Weight of converted plastic packaging
 submit-return.check-your-answers.credits.total.weight = Total weight
 submit-return.check-your-answers.credits.total = Credit total
-submit-return.check-your-answers.credits.change.text.link = Change any answer from credits
-submit-return.check-your-answers.credits.remove.text.link = Remove credits
+submit-return.check-your-answers.credits.change.text.link = Change, remove or add credits
+
 credits.caption = Credits
 credits.period.caption = Credit for {0} to {1}
 

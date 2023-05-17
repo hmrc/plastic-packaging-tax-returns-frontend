@@ -24,7 +24,7 @@
     paragraph: paragraph
 )
 
-@(credit: Credits, changeUrl: String, removeUrl: String)(implicit request: Request[_], messages: Messages)
+@(credit: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
 @boldLastRow(list: Seq[SummaryListRow]) = @{
     list.zipWithIndex.map {
@@ -52,13 +52,5 @@
         id = "change-credit-link",
         text = messages("submit-return.check-your-answers.credits.change.text.link"),
         href = changeUrl
-    )
-)
-
-@paragraph(
-    content = link(
-        id = "remove-credit-link",
-        text = messages("submit-return.check-your-answers.credits.remove.text.link"),
-        href = removeUrl
     )
 )

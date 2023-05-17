@@ -48,5 +48,6 @@ object CreditsClaimedListSummary {
         ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
       )
     )
+          )
   }
 }
