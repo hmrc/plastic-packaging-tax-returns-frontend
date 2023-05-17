@@ -19,14 +19,13 @@ package navigation
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.{routes => returnRoutes}
 import controllers.returns.credits.{routes => creditRoutes}
-import models.returns.CreditRangeOption
+import controllers.returns.{routes => returnRoutes}
 import models.Mode.{CheckMode, NormalMode}
+import models.returns.CreditRangeOption
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
-import pages.returns.credits.ConvertedCreditsPage
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -83,18 +82,16 @@ class ReturnsJourneyNavigator @Inject()(
   def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
     creditRoutes.ExportedCreditsController.onPageLoad(year.key, mode)
 
-  def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {
-    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
-    (isCheckMode, isYes) match {
+  def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean): Call = {
+    (mode, isYes) match {
       case (_, true) => creditRoutes.ExportedCreditsWeightController.onPageLoad(key, mode)
-      case (false, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
-      case (true, false) =>  creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
+      case (NormalMode, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
+      case (CheckMode, false) => creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     }
   }
 
-  def exportedCreditsWeight(key: String, mode: Mode, userAnswers: UserAnswers): Call = {
-    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
-    if(isCheckMode)
+  def exportedCreditsWeight(key: String, mode: Mode): Call = {
+    if (mode == CheckMode)
       creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     else
       creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)

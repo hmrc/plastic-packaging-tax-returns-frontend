@@ -125,7 +125,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "get the weight from the form" in {
       when(form.bindFromRequest() (any, any)) thenReturn Form("value" -> longNumber).fill(10L)
-      when(navigator.exportedCreditsWeight("year-key", NormalMode, userAnswers)).thenReturn(Call(GET, "foo"))
+      when(navigator.exportedCreditsWeight("year-key", NormalMode)).thenReturn(Call(GET, "foo"))
       await(sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest))
       verify(dataRequest.userAnswers).setOrFail(eqTo(ExportedCreditsPage("year-key")),
         eqTo(CreditsAnswer(true, Some(10))), any) (any)
@@ -155,7 +155,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       val result = sut.onSubmit("year-key", NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      verify(navigator).exportedCreditsWeight("year-key", NormalMode, dataRequest.userAnswers)
+      verify(navigator).exportedCreditsWeight("year-key", NormalMode)
     }
 
     "return an error" when {
@@ -184,6 +184,6 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(dataRequest.pptReference).thenReturn("123")
-    when(navigator.exportedCreditsWeight(any, any, any)).thenReturn(Call(GET, "foo"))
+    when(navigator.exportedCreditsWeight(any, any)).thenReturn(Call(GET, "foo"))
   }
 }
