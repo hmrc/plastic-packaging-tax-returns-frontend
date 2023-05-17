@@ -26,10 +26,9 @@ import models.requests.DataRequest
 import models.returns.CreditsAnswer
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
@@ -55,7 +54,7 @@ class ConfirmPackagingCreditControllerSpec
     with BeforeAndAfterEach
     with ResetMocksAfterEachTest {
 
-  private val creditBalance = CreditBalance(10, 5, 500, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
+  private val creditBalance = CreditBalance(10, 5, 500, true, Map("year-key" -> TaxablePlastic(1, 2, 0.30)))
   private val saveAnsFun = mock[SaveUserAnswerFunc]
   private val answer = mock[UserAnswers]
   private val dataRequest = mock[DataRequest[AnyContent]]
@@ -83,12 +82,11 @@ class ConfirmPackagingCreditControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(dataRequest, mockView, creditSummaryListFactory)
-
     when(dataRequest.userAnswers).thenReturn(answer)
     when(dataRequest.pptReference).thenReturn("123")
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
+    when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
   }
 
 
@@ -112,12 +110,11 @@ class ConfirmPackagingCreditControllerSpec
       setUpMockForConfirmCreditsView()
 
       val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
-
       when(creditSummaryListFactory.createSummaryList(any, any, any)(any)).thenReturn(summaryList)
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
-      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
 
-      verify(mockView).apply(meq("year-key"), meq(BigDecimal(5)), any, meq(summaryList), any, any)(any, any)
+      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
+      verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(summaryList), any, any)(any, any)
     }
 
     "pass a summary list to view with the data" in {
@@ -129,24 +126,29 @@ class ConfirmPackagingCreditControllerSpec
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
       await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
 
-      verify(creditSummaryListFactory).createSummaryList(meq(creditBalance),meq("year-key"), any)(any)
-      verify(creditSummaryListFactory).createSummaryList(meq(creditBalance),meq("year-key"), meq(answer))(any)
+      verify(creditSummaryListFactory).createSummaryList(eqTo(TaxablePlastic(1, 2, 0.30)), eqTo("year-key"), any)(any)
+      verify(creditSummaryListFactory).createSummaryList(eqTo(TaxablePlastic(1, 2, 0.30)), eqTo("year-key"), eqTo(answer))(any)
     }
 
 
     "return the ConfirmPackagingCreditView with the credit amount on page loading" when {
+
+      val call = Call("Hi", "You")
+
       "total requested credit is less than available credit - (NormalMode)" in {
-        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn Call("Hi", "You")
+        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
-        verify(mockView).apply(meq("year-key"), meq(BigDecimal(5)), any, any, meq(Call("Hi", "You")), meq(NormalMode))(any,any)
+        verify(returnsJourneyNavigator).confirmCredit(NormalMode)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(NormalMode))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
-        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn Call("get", "cheese")
+        when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", CheckMode)(dataRequest))
-        verify(mockView).apply(meq("year-key"), meq(BigDecimal(5)), any, any, meq(Call("get", "cheese")), meq(CheckMode))(any,any)
+        verify(returnsJourneyNavigator).confirmCredit(CheckMode)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(CheckMode))(any,any)
       }
     }
 
@@ -170,8 +172,8 @@ class ConfirmPackagingCreditControllerSpec
     forAll(table){
       (description, exportedCreditsPage, convertedCreditsPage) =>
         s"redirect to submit-return-or-claim-credit page when ${description} hasn't been answered" in {
-          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ExportedCreditsPage("year-key")))(any)).thenReturn(exportedCreditsPage)
-          when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ConvertedCreditsPage("year-key")))(any)).thenReturn(convertedCreditsPage)
+          when(dataRequest.userAnswers.get(eqTo(ExportedCreditsPage("year-key")))(any)).thenReturn(exportedCreditsPage)
+          when(dataRequest.userAnswers.get(eqTo(ConvertedCreditsPage("year-key")))(any)).thenReturn(convertedCreditsPage)
           val result = sut.onPageLoad("year-key", NormalMode)(dataRequest)
 
           status(result) mustBe SEE_OTHER
@@ -188,6 +190,8 @@ class ConfirmPackagingCreditControllerSpec
       .thenReturn(Future.successful(Right(creditBalance)))
   }
 
+  // TODO are we missing a test for cancelling?
+  
   private def setUpMockForCancelCredit(ans: UserAnswers): Unit = {
     when(ans.save(any)(any)).thenReturn(Future.successful(ans))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)

@@ -49,8 +49,7 @@ class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
       when(userAnswers.get(meq(ExportedCreditsPage("a-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(10L)))
       when(userAnswers.get(meq(ConvertedCreditsPage("a-key")))(any)).thenReturn(Some(CreditsAnswer.answerWeightWith(20L)))
 
-      val creditBalance = CreditBalance(10, 200, 20, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
-      val res = sut.createSummaryList(creditBalance, "a-key", userAnswers)(messages)
+      val res = sut.createSummaryList(TaxablePlastic(1, 2, 0.30), "a-key", userAnswers)(messages)
 
       res(0).key.content.asInstanceOf[Text].value mustBe "Tax Rate"
       res(1).key.content.asInstanceOf[Text].value mustBe "exported"
