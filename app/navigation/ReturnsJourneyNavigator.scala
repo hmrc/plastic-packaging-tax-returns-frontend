@@ -124,7 +124,6 @@ class ReturnsJourneyNavigator @Inject()(
   def creditSummaryChange(yearKey: String): String =
     creditRoutes.ExportedCreditsController.onPageLoad(yearKey, CheckMode).url
 
-  //todo: go mach to What do you want to do page if all item are removed
   def creditSummaryRemove(yearKey: String): String =
     creditRoutes.CancelCreditsClaimController.onPageLoad(yearKey).url
 
