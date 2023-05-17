@@ -16,9 +16,9 @@
 
 package viewmodels.checkYourAnswer.returns.credits
 
-import models.{CreditBalance, UserAnswers}
 import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
@@ -29,13 +29,11 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
   private val message    = mock[Messages]
   private val navigator  = mock[ReturnsJourneyNavigator]
-  private val userAnswer = mock[UserAnswers]
   private val creditBalance = mock[CreditBalance]
 
 
@@ -47,18 +45,15 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
 
   "create a list of row" in {
     when(message.apply(any[String])).thenAnswer((s: String) => s)
-
-    val rows = CreditsClaimedListSummary.createRows(createJsonUserAnswer(exportedCredit, convertedCredit), navigator)(message)
-
+    val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
     rows mustBe expectedResult(result)
-
   }
 
   "return an empty list" when {
     "no credit found" in {
       val userAnswer = UserAnswers("123", JsObject.empty)
 
-      val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
+      val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
 
       rows mustBe Seq.empty
     }
@@ -68,7 +63,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
           "credit" : {}
           |}""".stripMargin).as[JsObject])
 
-      val rows = CreditsClaimedListSummary.createRows(userAnswer, navigator)(message)
+      val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
 
       rows mustBe Seq.empty
     }
