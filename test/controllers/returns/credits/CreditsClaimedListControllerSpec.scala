@@ -21,10 +21,10 @@ import connectors.{CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
-import models.{CreditBalance, TaxablePlastic}
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
@@ -35,7 +35,6 @@ import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -105,7 +104,7 @@ class CreditsClaimedListControllerSpec
 
       await(sut.onPageLoad(NormalMode)(request))
 
-      verify(view).apply(eqTo(boundForm), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
+      verify(view).apply(eqTo(boundForm), eqTo(true), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
     }
 
     "getting the total weight in pound from API" in {
@@ -114,16 +113,6 @@ class CreditsClaimedListControllerSpec
       await(sut.onPageLoad(NormalMode)(request))
 
       verify(calcCreditsConnector).get(any)(any)
-    }
-
-    "view should have an empty list of credit" in {
-      setUpMock()
-      when(formProvider.apply()).thenReturn(mock[Form[Boolean]])
-      when(request.userAnswers.get[Any](any[JsPath])(any)).thenReturn(Some(Map.empty))
-
-      await(sut.onPageLoad(NormalMode)(request))
-
-      verify(view).apply(any, eqTo(Seq.empty), any)(any,any)
     }
 
     "should throw if API return an error" in {
@@ -169,14 +158,14 @@ class CreditsClaimedListControllerSpec
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
 
         status(result) mustBe BAD_REQUEST
-        verify(view).apply(eqTo(boundForm), eqTo(expectedCreditSummary), eqTo(NormalMode))(any, any)
+        verify(view).apply(eqTo(boundForm), any, eqTo(expectedCreditSummary), eqTo(NormalMode))(any, any)
       }
     }
   }
 
   private def expectedCreditSummary = {
     Seq(
-      CreditSummaryRow("key1", "0kg", Seq(
+      CreditSummaryRow("key1", "£20.00", Seq(
         ActionItem("/change", Text("site.change")),
         ActionItem("/remove", Text("site.remove"))
       )),
@@ -185,8 +174,6 @@ class CreditsClaimedListControllerSpec
   }
 
   private def setUpMock(): Unit = {
-    val credit = Map("key1" -> JsObject.empty)
-    when(request.userAnswers.get[Any](any[JsPath])(any)).thenReturn(Some(credit))
     when(request.pptReference).thenReturn("123")
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")

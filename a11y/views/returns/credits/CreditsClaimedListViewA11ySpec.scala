@@ -49,18 +49,22 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
     )
   )
 
-  def render(form: Form[Boolean]): String =
-    page(form, years, NormalMode)(request, messages).toString()
+  def render(form: Form[Boolean], canBeClaimed: Boolean): String =
+    page(form, canBeClaimed, years, NormalMode)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {
-      "no error" in {
-        render(form) must passAccessibilityChecks
+      "can claim credit" in {
+        render(form, true) must passAccessibilityChecks
+      }
+
+      "cannot claim credit" in {
+        render(form, false) must passAccessibilityChecks
       }
     }
 
     "with error" in {
-      render(form.withError("test", "message")) must passAccessibilityChecks
+      render(form.withError("test", "message"), true) must passAccessibilityChecks
     }
   }
 }

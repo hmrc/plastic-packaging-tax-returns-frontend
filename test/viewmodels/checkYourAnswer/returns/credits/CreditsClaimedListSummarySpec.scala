@@ -16,9 +16,8 @@
 
 package viewmodels.checkYourAnswer.returns.credits
 
-import models.returns.CreditsAnswer
 import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
@@ -26,7 +25,6 @@ import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
@@ -44,70 +42,36 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   }
 
   "create a list of row" in {
+    val credit = Map(
+      "2023-01-01-2023-03-31" -> TaxablePlastic(200L, 200, 0.2),
+      "2023-04-01-2024-03-31" -> TaxablePlastic(100L, 150, 0.3)
+    )
     when(message.apply(any[String])).thenAnswer((s: String) => s)
+    when(creditBalance.credit).thenReturn(credit)
+
     val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
-//    rows mustBe expectedResult(result)
+    rows mustBe expectedResult
   }
 
-  "return an empty list" when {
-    "no credit found" in {
-      val userAnswer = UserAnswers("123", JsObject.empty)
+  "return an empty list" in {
+      when(creditBalance.credit).thenReturn(Map.empty)
 
       val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
 
       rows mustBe Seq.empty
-    }
-
-    "credit is empty" ignore { // TODO
-      val userAnswer = UserAnswers("123", Json.parse("""{
-          "credit" : {}
-          |}""".stripMargin).as[JsObject])
-
-      val rows = CreditsClaimedListSummary.createRows(creditBalance, navigator)(message)
-
-      rows mustBe Seq.empty
-    }
   }
 
-  private def createJsonUserAnswer(exported: CreditsAnswer, converted: CreditsAnswer) = UserAnswers("123",
-    Json.parse(s"""{
-          "credit" : {
-                  |  "2023-01-01-2023-03-31" : {
-                  |     "endDate" : "2023-03-31",
-                  |     "exportedCredits" : {
-                  |       "yesNo" : ${exported.yesNo},
-                  |       "weight" : ${exported.weightValue}
-                  |     },
-                  |     "convertedCredits" : {
-                  |       "yesNo" : ${converted.yesNo},
-                  |       "weight" : ${converted.weightValue}
-                  |     }
-                  |   },
-                  |   "2023-04-01-2024-03-31" : {
-                  |     "endDate" : "2024-03-31",
-                  |       "exportedCredits" : {
-                  |         "yesNo" : true,
-                  |         "weight" : 30
-                  |       },
-                  |       "convertedCredits" : {
-                  |         "yesNo" : true,
-                  |         "weight" : 545
-                  |        }
-                  |      }
-                  |   }
-                  |}""".stripMargin).as[JsObject])
-  private def expectedResult(value: String): Seq[CreditSummaryRow] =
+  private def expectedResult: Seq[CreditSummaryRow] =
     Seq(
       CreditSummaryRow(
         label = "2023-01-01-2023-03-31",
-        value = value,
+        value = "£200.00",
         actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
       ),
       CreditSummaryRow(
         label = "2023-04-01-2024-03-31",
-        value = "575kg",
+        value = "£150.00",
         actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
       )
     )
-
 }
