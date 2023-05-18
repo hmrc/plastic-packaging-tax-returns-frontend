@@ -83,19 +83,9 @@ class ReturnsCheckYourAnswersController @Inject()(
           }
     }
 
-  def onRemoveCreditsClaim(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        request.userAnswers
-          .setOrFail(WhatDoYouWantToDoPage, false)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(routes.ReturnsCheckYourAnswersController.onPageLoad()))
-    }
-
-  private def callCalculationAndCreditApi(
-                                          request: DataRequest[_]
-                                        )
-                                        (implicit hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+  private def callCalculationAndCreditApi(request: DataRequest[_]) (implicit messages: Messages, 
+    hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+    
     val fCalculations = returnsConnector.getCalculationReturns(request.pptReference)
     val fIsFirstReturn = taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference)
 
@@ -120,7 +110,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   }
 
   private def getCredits(request: DataRequest[_], isFirstReturn: Boolean)
-                        (implicit hc: HeaderCarrier): Future[Either[ServiceError, Credits]] =
+                        (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
     if (isFirstReturn || !appConfig.isCreditsForReturnsFeatureEnabled)
       Future.successful(Right(NoCreditAvailable))
     else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))

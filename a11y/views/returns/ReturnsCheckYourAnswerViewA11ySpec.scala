@@ -55,10 +55,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     TaxReturnViewModel(answers, "123", aTaxObligation, calculations)
   }
 
-  val credits = CreditsClaimedDetails(
-    CreditsAnswer(false, None), 
-    CreditsAnswer(true, Some(0L)), 
-    0L, 0)
+  val credits = CreditsClaimedDetails(Seq())
 
   "view" should {
     "pass accessibility tests" when {

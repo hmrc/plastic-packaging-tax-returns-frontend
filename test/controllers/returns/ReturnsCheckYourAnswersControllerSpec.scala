@@ -25,6 +25,7 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
+import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers._
@@ -36,7 +37,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -122,16 +123,12 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "view claimed credits on pageLoading" in {
       setUpMockConnector()
-
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
-
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
-        exported = CreditsAnswer.noClaim, //todo CYA does not have a break down
-        converted = CreditsAnswer.noClaim, //todo CYA does not have a break down
-        totalWeight = 500L,
-        totalCredits = 20L
-      )
+      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails((Seq(
+        CreditSummaryRow("a-key", "£2.00", Seq()), 
+        CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()), 
+      )))
     }
 
     "handle credits no claimed on pageLoading" in {
