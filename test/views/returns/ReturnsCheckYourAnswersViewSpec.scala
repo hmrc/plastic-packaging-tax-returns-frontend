@@ -66,7 +66,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   private def createView (
-    credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
+    credits: Credits = CreditsClaimedDetails(createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
     page(taxReturn, credits, "/change")(request, messages)

@@ -113,12 +113,12 @@ class ExportedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
-      when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
+      when(mockNavigator.exportedCreditsYesNo(any, any, any)) thenReturn Call("me", "mr")
 
       val result = await { sut.onSubmit("year-key", NormalMode)(request) }
-      verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
+      verify(mockCacheConnector).saveUserAnswerFunc(any)(any) // TODO check values passed
       verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
-      verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
+      verify(mockNavigator).exportedCreditsYesNo(any, any, any)
       
       result.header.status mustEqual SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "mr"

@@ -94,55 +94,37 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "exportedCreditsYesNo" must {
     "correctly redirect" when {
       "user answer is yes, in normal mode" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
-        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, true, userAnswers)
+        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, true)
         call mustBe controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
 
       "user answer is yes, in check mode" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
-        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, true, userAnswers)
+        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, true)
         call mustBe controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
 
-      "user answer is no, it is in normal mode" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
-        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, false, userAnswers)
+      "user answer is no, in normal mode" in {
+        val call = navigator.exportedCreditsYesNo("year-key", NormalMode, false)
         call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
       }
-      "user answer is no, it is in Check mode but converted questions have not been done" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn None
-        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
-        call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", CheckMode)
-      }
-      "user answer is no, it is in Check mode and converted questions have been done" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
-        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
+
+      "user answer is no, in check mode" in {
+        val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false)
         call mustBe controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
       }
     }
   }
-  
-  "exportedCreditsWeight" must {
 
-    "redirect to converted yes-no page" when {
-      "in normal mode" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn None
-        val call = navigator.exportedCreditsWeight("year-key", NormalMode, userAnswers)
-        call mustBe creditRoutes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
-      }
+  "exportedCreditsWeight" when {
 
-      "in check mode and Converted questions are NOT done" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn None
-        val call = navigator.exportedCreditsWeight("year-key", CheckMode, userAnswers)
-        call mustBe creditRoutes.ConvertedCreditsController.onPageLoad("year-key", CheckMode)
-      }
+    "in normal mode" in {
+      val call = navigator.exportedCreditsWeight("year-key", NormalMode)
+      call mustBe creditRoutes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
+    }
 
-      "in check mode and Converted questions are done" in {
-        when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
-        val call = navigator.exportedCreditsWeight("year-key", CheckMode, userAnswers)
-        call mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
-      }
+    "in check mode" in {
+      val call = navigator.exportedCreditsWeight("year-key", CheckMode)
+      call mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
     }
   }
 
@@ -150,11 +132,11 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(NormalMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(CheckMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }

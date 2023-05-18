@@ -27,26 +27,36 @@ import viewmodels.implicits._
 
 object CreditsClaimedListSummary {
 
+  def createCreditSummary(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator]) 
+    (implicit messages: Messages): Seq[CreditSummaryRow] = {
+
+    CreditsClaimedListSummary.createRows(creditBalance, maybeNavigator) ++ 
+      Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds))
+  }
+
   def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
+    (implicit messages: Messages): Seq[CreditSummaryRow] = createRows(creditBalance, Some(navigator))
+  
+  def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     creditBalance.credit.map { 
-      case (key, taxablePlastic) =>
-        creditSummary(navigator, key, taxablePlastic.moneyInPounds.asPounds)
-    }
-      .toSeq
+      case (key, taxablePlastic) => creditSummary(maybeNavigator, key, taxablePlastic.moneyInPounds.asPounds)
+    }.toSeq
   }
 
-  private def creditSummary(navigator: ReturnsJourneyNavigator, key: String, value: String) 
+  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 
     (implicit messages: Messages): CreditSummaryRow = {
     
     CreditSummaryRow(
       key,
       value,
-      actions = Seq(
-        ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
-        ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
-      )
+      actions = maybeNavigator.map { navigator =>
+        Seq(
+          ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
+          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+        )
+      }.getOrElse(Seq())
     )
   }
 }

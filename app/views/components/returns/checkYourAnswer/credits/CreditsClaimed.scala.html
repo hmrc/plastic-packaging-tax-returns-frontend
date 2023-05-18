@@ -17,40 +17,23 @@
 @import components.{Link, paragraph}
 @import models.returns.Credits
 @import viewmodels._
+@import views.html.components.CreditSummaryTable
 
 @this(
     govukSummaryList: GovukSummaryList,
     link: Link,
-    paragraph: paragraph
+    paragraph: paragraph,
+    creditSummaryTable: CreditSummaryTable
 )
 
 @(credit: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
-@boldLastRow(list: Seq[SummaryListRow]) = @{
-    list.zipWithIndex.map {
-        case (v, i) => if(i.equals(list.size - 1)) v.bold else v
-    }
-}
-
-@createSummaryListFromCredit = @{
-    credit.summaryList.map(o => SummaryListRow(
-        key = Key(
-            messages(o._1),
-            classes = s"govuk-!-font-weight-regular ${InputWidth.OneHalf}"
-        ),
-        value = Value(o._2, classes = "govuk-table__cell--numeric")
-    ))
-}
-
-@govukSummaryList(SummaryList(
-    rows = boldLastRow(createSummaryListFromCredit),
-    attributes = Map("id" -> "exported-answer")
-))
+@creditSummaryTable(credit.summaryList, showHeading = false)
 
 @paragraph(
     content = link(
         id = "change-credit-link",
-        text = messages("submit-return.check-your-answers.credits.change.text.link"),
+        text = messages("submit-return.check-your-answers.credits.change.text.link "),
         href = changeUrl
     )
 )

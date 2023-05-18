@@ -16,50 +16,31 @@
 
 package models.returns
 
-import models.returns.CreditsClaimedDetails._
-import models.{CreditBalance, UserAnswers}
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
-import viewmodels.{PrintBigDecimal, PrintLong}
+import models.CreditBalance
+import models.returns.credits.CreditSummaryRow
+import play.api.i18n.Messages
+import play.twirl.api.Html
+import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
 case class CreditsClaimedDetails(
-                                  exported: CreditsAnswer,
-                                  converted: CreditsAnswer,
-                                  totalWeight: Long,
-                                  totalCredits: BigDecimal
+  override val summaryList: Seq[CreditSummaryRow], 
+  totalClaimAmount: BigDecimal
 ) extends Credits {
-
-  override def summaryList: Seq[(String, String)] =
-    Seq(
-      "CREDITS CYA" -> "TODO",
-      "SHOULD BE MULTI YEAR BREAK DOWN" -> "TODO"
-    )
-//      CreditExportedAnswerPartialKey -> exported.yesNoMsgKey -> true,
-//      CreditExportedWeightPartialKey -> exported.weightValue.asKg -> exported.yesNo,
-//      CreditConvertedAnswerPartialKey -> converted.yesNoMsgKey -> true,
-//      CreditConvertedWeightPartialKey -> converted.weightValue.asKg -> converted.yesNo,
-//      CreditsTotalWeightPartialKey -> totalWeight.asKg -> true,
-//      CreditTotalPartialKey -> totalCredits.asPounds -> true
-//    ).collect{case (tuple, show) if show => tuple}
+  
+  def ifClaiming(claimAmountToHtml: BigDecimal => Html): Html = 
+    if (totalClaimAmount > 0)
+      claimAmountToHtml(totalClaimAmount)
+    else
+      Html(None)
 
 }
 
 object CreditsClaimedDetails {
 
-  //todo remove these?
-  val CreditExportedAnswerPartialKey = "submit-return.check-your-answers.credits.exported.answer"
-  val CreditExportedWeightPartialKey = "submit-return.check-your-answers.credits.exported.weight"
-  val CreditConvertedAnswerPartialKey = "submit-return.check-your-answers.credits.converted.answer"
-  val CreditConvertedWeightPartialKey = "submit-return.check-your-answers.credits.converted.weight"
-  val CreditsTotalWeightPartialKey = "submit-return.check-your-answers.credits.total.weight"
-  val CreditTotalPartialKey = "submit-return.check-your-answers.credits.total"
-
-    //todo final CYA does not have a break down
-  def apply(userAnswer: UserAnswers, creditBalance: CreditBalance): CreditsClaimedDetails = {
+  def apply(creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      CreditsAnswer.noClaim, //todo
-      CreditsAnswer.noClaim, //todo
-      creditBalance.totalRequestedCreditInKilograms,
-      creditBalance.totalRequestedCreditInPounds,
+      CreditsClaimedListSummary.createCreditSummary(creditBalance, None),
+      totalClaimAmount = creditBalance.totalRequestedCreditInPounds
     )
   }
 }
