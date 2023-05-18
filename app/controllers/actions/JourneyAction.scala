@@ -37,7 +37,7 @@ class JourneyAction @Inject()(
     build.apply(function)
   }
 
-  private def build: ActionBuilder[DataRequest, AnyContent] = {
+  def build: ActionBuilder[DataRequest, AnyContent] = {
     identifierAction.andThen(dataRetrievalAction.andThen(dataAction))
   }
 }

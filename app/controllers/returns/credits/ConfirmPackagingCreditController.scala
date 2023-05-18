@@ -25,17 +25,20 @@ import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
 import views.html.returns.credits.ConfirmPackagingCreditView
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
   journeyAction: JourneyAction,
+  checkKey: CheckCreditKeyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
   cacheConnector: CacheConnector,
@@ -44,7 +47,7 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
 )(implicit ec: ExecutionContext)  extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
+    (journeyAction.build andThen checkKey(key)).async {
       implicit request =>
         if (!isUserAnswerValid(key)) {
           Future.successful(Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(mode)))

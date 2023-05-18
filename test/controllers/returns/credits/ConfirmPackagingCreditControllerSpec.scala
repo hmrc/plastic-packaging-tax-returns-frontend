@@ -18,7 +18,8 @@ package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
-import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.RequestAsyncFunction
+import controllers.actions.{CheckCreditKeyAction, JourneyAction}
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
@@ -34,7 +35,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.{Action, ActionBuilder, ActionFilter, AnyContent, Call, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
@@ -66,12 +67,14 @@ class ConfirmPackagingCreditControllerSpec
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val edgeOfSystem = mock[EdgeOfSystem]
   private val journeyAction = mock[JourneyAction]
+  private val creditAction = mock[CheckCreditKeyAction]
   private val creditSummaryListFactory = mock[CreditSummaryListFactory]
 
   private val sut = new ConfirmPackagingCreditController(
     mockMessagesApi,
     mockCalculateCreditConnector,
     journeyAction,
+    creditAction,
     controllerComponents,
     mockView,
     cacheConnector, 
@@ -84,7 +87,14 @@ class ConfirmPackagingCreditControllerSpec
 
     when(dataRequest.userAnswers).thenReturn(answer)
     when(dataRequest.pptReference).thenReturn("123")
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    val mockBuild = mock[ActionBuilder[DataRequest, AnyContent]]
+    when(journeyAction.build).thenReturn(mockBuild)
+    val x = mock[ActionBuilder[DataRequest, AnyContent]]
+    when(mockBuild.andThen[DataRequest](any)).thenReturn(x)
+    val y = mock[ActionFilter[DataRequest]]
+    when(creditAction.apply(any)).thenReturn(y)
+
+    when(x.async(any[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
     when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
   }
@@ -94,7 +104,8 @@ class ConfirmPackagingCreditControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(creditAction).apply("year-key")
+      verify(journeyAction).build
     }
 
     "return OK" in {
