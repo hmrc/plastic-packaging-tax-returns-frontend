@@ -67,7 +67,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       "canBeClaimed is false" in {
         val view = page(form, canBeClaimed = false, true, rows, NormalMode)(request, messages)
 
-        //todo
+        view.getElementsByTag("h2").text() must include(messages("confirmPackagingCredit.tooMuchCredit.heading"))
       }
     }
 
@@ -75,7 +75,12 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       "moreYearsLeftToClaim is false" in {
         val view = page(form, true, moreYearsLeftToClaim = false, rows, NormalMode)(request, messages)
 
-        //todo
+        view.text() must not include(messages("creditsSummary.add-to-list"))
+        
+        val defaultNoInput = view.getElementById("defaultNoInput")
+        defaultNoInput.attr("name") mustBe "value"
+        defaultNoInput.attr("type") mustBe "hidden"
+        defaultNoInput.attr("value") mustBe "false"
       }
     }
 
