@@ -66,7 +66,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         def render: Html = page(
           createViewModel(userAnswer),
           CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, Map())), 
-          "/change", "/remove"
+          "/change"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -77,7 +77,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         def render: Html = page(
           createViewModel(ans),
           NoCreditsClaimed,
-          "/change", "/remove"
+          "/change"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -92,7 +92,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 
-        def render: Html = page(createViewModel(ans), NoCreditAvailable, "/change", "/remove")(request, messages)
+        def render: Html = page(createViewModel(ans), NoCreditAvailable, "/change")(request, messages)
 
         render.toString() must passAccessibilityChecks
       }

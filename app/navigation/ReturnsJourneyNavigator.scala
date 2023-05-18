@@ -236,7 +236,4 @@ class ReturnsJourneyNavigator @Inject()(
   def cyaChangeCredits: String =
     creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
 
-  def cyaRemoveCredits: String =
-    creditRoutes.RemoveCreditController.onPageLoad().url
-
 }

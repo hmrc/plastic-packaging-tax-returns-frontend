@@ -546,8 +546,7 @@ submit-return.check-your-answers.credits.converted.answer = Treth a dalwyd ar dd
 submit-return.check-your-answers.credits.converted.weight = Pwysau’r deunydd pacio plastig a droswyd
 submit-return.check-your-answers.credits.total.weight = Cyfanswm y pwysau
 submit-return.check-your-answers.credits.total = Cyfanswm y credyd
-submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o’r adran credydau
-submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
+submit-return.check-your-answers.credits.change.text.link = Newid, tynnu neu ychwanegu credydau
 
 credits.caption = Credydau
 credits.period.caption = [WELSH NEEDED] Credit for {0} to {1}

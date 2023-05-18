@@ -69,7 +69,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
-    page(taxReturn, credits, "/change", "/remove")(request, messages)
+    page(taxReturn, credits, "/change")(request, messages)
 
   "View" should {
 
@@ -123,22 +123,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   "Credits section" should {
       //todo how should credit section work on big CYA
-
-    "can remove a credit" when {
-      "credit is claimed" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(
-          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, createCreditBalance)
-        )
-
-        getText(view, "remove-credit-link") mustBe "Remove credits"
-        getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
-
-        view.getElementById("remove-credit-link").select("a").first() must
-          haveHref("/remove")
-      }
-    }
-
   }
 
   "Exported Plastic Packaging section" should {
