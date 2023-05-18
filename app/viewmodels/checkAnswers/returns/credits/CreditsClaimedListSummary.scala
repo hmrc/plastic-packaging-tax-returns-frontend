@@ -16,20 +16,24 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.CreditBalance
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
+import play.api.libs.json.JsPath
 import viewmodels.PrintBigDecimal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+import views.ViewUtils
+
+import java.time.LocalDate
 
 
 object CreditsClaimedListSummary {
   
   // TODO can this be made simpler?
 
-  def createCreditSummary(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator]) 
+  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     val isActionColumnHidden = maybeNavigator.isEmpty
@@ -37,7 +41,6 @@ object CreditsClaimedListSummary {
       Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
   }
 
-  def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
     (implicit messages: Messages): Seq[CreditSummaryRow] = createRows(creditBalance, Some(navigator))
   
   def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
@@ -45,8 +48,21 @@ object CreditsClaimedListSummary {
 
     creditBalance.credit.map { 
       case (key, taxablePlastic) => creditSummary(maybeNavigator, key, taxablePlastic.moneyInPounds.asPounds)
-    }.toSeq
+        creditSummary(navigator, displayDates(userAnswer, key), taxablePlastic.moneyInPounds.asPounds)
   }
+  }
+
+  //todo: We have two places were at the moment we getting the from and to date
+  // (userAnswer and the key in CreditBalance). We may want to get this from one
+  // place only. So we may want to put these in the CreditBalance -> TaxablePlastic
+  private def displayDates(userAnswer: UserAnswers, key: String)(implicit message: Messages): String = {
+    val fromDate = userAnswer.get[String](JsPath \ "credit" \ key \ "fromDate")
+      .fold[LocalDate](throw new IllegalArgumentException)(LocalDate.parse(_))
+
+    val toDate: LocalDate = userAnswer.get[String](JsPath \ "credit" \ key \ "endDate")
+      .fold[LocalDate](throw new IllegalArgumentException)(LocalDate.parse(_))
+
+    ViewUtils.displayDateRangeTo(fromDate, toDate)
 
   private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 
     (implicit messages: Messages): CreditSummaryRow = {

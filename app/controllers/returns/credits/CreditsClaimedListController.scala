@@ -18,6 +18,7 @@ package controllers.returns.credits
 
 import connectors.CalculateCreditsConnector
 import controllers.actions._
+import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
@@ -30,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createCreditSummary
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
@@ -43,7 +43,8 @@ class CreditsClaimedListController @Inject()(
   journeyAction: JourneyAction,
   formProvider: CreditsClaimedListFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: CreditsClaimedListView
+  view: CreditsClaimedListView,
+  creditFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
@@ -77,6 +78,10 @@ class CreditsClaimedListController @Inject()(
         error => throw error,
         balance => BadRequest(view(formWithErrors, balance.canBeClaimed, moreYearsLeftToClaim, 
           createCreditSummary(balance, Some(navigator)), mode)),
+          balance.canBeClaimed,
+          creditFactory.createClaimedCreditsList(request.userAnswers, balance, navigator),
+          mode)
+        ),
       )
     }
   }
@@ -94,6 +99,4 @@ class CreditsClaimedListController @Inject()(
     val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
 
     alreadyUsedYears != availableYears.map(_.key).toSet
-  }
-
 }
