@@ -115,7 +115,7 @@ class ReturnsCheckYourAnswersController @Inject()(
       Future.successful(Right(NoCreditAvailable))
     else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))
         creditsCalculatorConnector.get(request.pptReference).map {
-          case Right(creditBalance) => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
+          case Right(creditBalance) => Right(CreditsClaimedDetails(creditBalance = creditBalance))
           case Left(error) => Left(error)
         }
     else

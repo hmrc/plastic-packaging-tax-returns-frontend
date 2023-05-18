@@ -18,6 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
+import models.returns.credits.CreditSummaryRow
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import models.{CreditBalance, UserAnswers}
 import pages.returns._
@@ -55,14 +56,20 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     TaxReturnViewModel(answers, "123", aTaxObligation, calculations)
   }
 
-  val credits = CreditsClaimedDetails(Seq())
+  val credits = CreditsClaimedDetails(
+    summaryList = Seq(
+      CreditSummaryRow("a-key", "£2.00", Seq()),
+      CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()),
+    ),
+    totalClaimAmount = 20
+  )
 
   "view" should {
     "pass accessibility tests" when {
       "credits is claimed" ignore {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, Map())), 
+          CreditsClaimedDetails(CreditBalance(0,0,0L,true, Map())), 
           "/change"
         )(request, messages)
 

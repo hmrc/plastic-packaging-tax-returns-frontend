@@ -49,7 +49,7 @@ class ClaimedCreditsDetailsSpec extends PlaySpec with MockitoSugar {
             .set(ExportedCreditsPage("year-key"), CreditsAnswer(exported, exportedWeight)).get
             .set(ConvertedCreditsPage("year-key"), CreditsAnswer(converted, convertedWeight)).get
 
-          val credits = CreditsClaimedDetails(newAns, CreditBalance(10, 4, 200, true, 
+          val credits = CreditsClaimedDetails(CreditBalance(10, 4, 200, true, 
             Map("a-key" -> TaxablePlastic(1, 2, 0.30))))(messages)
 
           //TODO show all years?

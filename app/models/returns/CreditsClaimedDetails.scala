@@ -16,23 +16,31 @@
 
 package models.returns
 
+import models.CreditBalance
 import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, UserAnswers}
 import play.api.i18n.Messages
+import play.twirl.api.Html
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
 case class CreditsClaimedDetails(
-  override val summaryList: Seq[CreditSummaryRow]
+  override val summaryList: Seq[CreditSummaryRow], 
+  totalClaimAmount: BigDecimal
 ) extends Credits {
   
-  // TODO used somewhere in view??
-  def totalCredits: BigDecimal = 0
+  def ifClaiming(claimAmountToHtml: BigDecimal => Html): Html = 
+    if (totalClaimAmount > 0)
+      claimAmountToHtml(totalClaimAmount)
+    else
+      Html(None)
 
 }
 
 object CreditsClaimedDetails {
 
-  def apply(userAnswer: UserAnswers, creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
-    CreditsClaimedDetails(CreditsClaimedListSummary.createCreditSummary(creditBalance, None))
+  def apply(creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
+    CreditsClaimedDetails(
+      CreditsClaimedListSummary.createCreditSummary(creditBalance, None),
+      totalClaimAmount = creditBalance.totalRequestedCreditInPounds
+    )
   }
 }

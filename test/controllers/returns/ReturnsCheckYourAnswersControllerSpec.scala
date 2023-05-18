@@ -125,10 +125,13 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       setUpMockConnector()
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
-      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails((Seq(
-        CreditSummaryRow("a-key", "£2.00", Seq()), 
-        CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()), 
-      )))
+      verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
+        summaryList = Seq(
+          CreditSummaryRow("a-key", "£2.00", Seq()), 
+          CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()), 
+        ),
+        totalClaimAmount = 20
+      )
     }
 
     "handle credits no claimed on pageLoading" in {
