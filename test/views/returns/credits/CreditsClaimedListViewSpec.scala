@@ -46,7 +46,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       value = "answer"
     )
   )
-  private def createView(form: Form[_]): Html = page(form, true, rows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(form, true, true,rows, NormalMode)(request, messages)
 
   "View" should {
 
@@ -65,6 +65,16 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "Show claiming to much credit" when {
       "canBeClaimed is false" in {
+        val view = page(form, canBeClaimed = false, true, rows, NormalMode)(request, messages)
+
+        //todo
+      }
+    }
+
+    "hide the yes/no " when {
+      "moreYearsLeftToClaim is false" in {
+        val view = page(form, true, moreYearsLeftToClaim = false, rows, NormalMode)(request, messages)
+
         //todo
       }
     }

@@ -24,9 +24,11 @@ import models.requests.DataRequest.headerCarrier
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.AvailableYears
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import viewmodels.checkAnswers.returns.credits.{CreditTotalSummary, CreditsClaimedListSummary}
@@ -74,7 +76,7 @@ class CreditsClaimedListController @Inject()(
     calcCreditsConnector.get(request.pptReference).map { creditBalance =>
       creditBalance.fold(
         error => throw error,
-        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, createCreditSummary(balance), mode)),
+        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, moreYearsLeftToClaim, createCreditSummary(balance), mode)),
       )
     }
   }
@@ -83,7 +85,14 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), creditBalance.canBeClaimed, createCreditSummary(creditBalance), mode))
+    Ok(view(formProvider(), creditBalance.canBeClaimed, moreYearsLeftToClaim, createCreditSummary(creditBalance), mode))
+  }
+
+  private def moreYearsLeftToClaim(implicit request: DataRequest[AnyContent]) ={
+    val availableYears = request.userAnswers.getOrFail(AvailableYears)
+    val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
+
+    alreadyUsedYears != availableYears.map(_.key).toSet
   }
 
   private def createCreditSummary(
