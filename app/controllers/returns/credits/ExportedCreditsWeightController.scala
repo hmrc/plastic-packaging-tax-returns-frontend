@@ -60,7 +60,7 @@ class ExportedCreditsWeightController @Inject()(
             request.userAnswers
               .setOrFail(ExportedCreditsPage(key), CreditsAnswer.answerWeightWith(formValue))
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(key, mode)))
+              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(key, mode, request.userAnswers)))
           }
       )
     }
