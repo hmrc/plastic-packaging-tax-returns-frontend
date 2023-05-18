@@ -18,10 +18,10 @@ package controllers.returns.credits
 
 import connectors.CalculateCreditsConnector
 import controllers.actions._
+import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
@@ -29,7 +29,6 @@ import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.{CreditTotalSummary, CreditsClaimedListSummary}
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
@@ -42,7 +41,8 @@ class CreditsClaimedListController @Inject()(
   journeyAction: JourneyAction,
   formProvider: CreditsClaimedListFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: CreditsClaimedListView
+  view: CreditsClaimedListView,
+  creditFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
@@ -74,7 +74,12 @@ class CreditsClaimedListController @Inject()(
     calcCreditsConnector.get(request.pptReference).map { creditBalance =>
       creditBalance.fold(
         error => throw error,
-        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, createCreditSummary(balance), mode)),
+        balance => BadRequest(view(
+          formWithErrors,
+          balance.canBeClaimed,
+          creditFactory.createClaimedCreditsList(request.userAnswers, balance, navigator),
+          mode)
+        ),
       )
     }
   }
@@ -83,15 +88,11 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), creditBalance.canBeClaimed, createCreditSummary(creditBalance), mode))
-  }
-
-  private def createCreditSummary(
-    creditBalance: CreditBalance
-  )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
-    CreditsClaimedListSummary.createRows(creditBalance, navigator) match {
-      case Nil => Seq.empty
-      case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
-    }
+    Ok(view(
+      formProvider(),
+      creditBalance.canBeClaimed,
+      creditFactory.createClaimedCreditsList(request.userAnswers, creditBalance, navigator),
+      mode)
+    )
   }
 }

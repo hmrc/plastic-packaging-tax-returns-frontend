@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.{CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
@@ -60,6 +61,7 @@ class CreditsClaimedListControllerSpec
   private val formProvider = mock[CreditsClaimedListFormProvider]
   private val view = mock[CreditsClaimedListView]
   private val calcCreditsConnector = mock[CalculateCreditsConnector]
+  private val creditFactory = mock[CreditSummaryListFactory]
 
 
   private val sut = new CreditsClaimedListController(
@@ -69,7 +71,8 @@ class CreditsClaimedListControllerSpec
     journeyAction,
     formProvider,
     stubMessagesControllerComponents(),
-    view
+    view,
+    creditFactory
   )
 
   override def beforeEach(): Unit = {
@@ -100,6 +103,7 @@ class CreditsClaimedListControllerSpec
     "return a view" in {
       val boundForm = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(boundForm)
+      when(creditFactory.createClaimedCreditsList(any, any,any)(any)).thenReturn(expectedCreditSummary)
       setUpMock()
 
       await(sut.onPageLoad(NormalMode)(request))
@@ -154,6 +158,7 @@ class CreditsClaimedListControllerSpec
         val boundForm = Form("value" -> boolean).withError("error", "error message")
         when(formProvider.apply()).thenReturn(form)
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
+        when(creditFactory.createClaimedCreditsList(any,any,any)(any)).thenReturn(expectedCreditSummary)
 
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
 
