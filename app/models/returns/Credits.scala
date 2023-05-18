@@ -16,16 +16,18 @@
 
 package models.returns
 
+import models.returns.credits.CreditSummaryRow
+
 trait Credits {
-  def summaryList: Seq[(String, String)]
+  def summaryList: Seq[CreditSummaryRow]
 }
 
 object Credits {
   case object NoCreditsClaimed extends Credits {
-    override def summaryList: Seq[(String, String)] = Seq.empty
+    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
   }
 
   case object NoCreditAvailable extends Credits {
-    override def summaryList: Seq[(String, String)] = Seq.empty
+    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
   }
 }

@@ -132,11 +132,11 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(NormalMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(CheckMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }

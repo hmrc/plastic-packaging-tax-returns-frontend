@@ -19,53 +19,51 @@
 @import models.returns.credits.CreditSummaryRow
 
 @this(
-    govukTable : GovukTable
+        govukTable: GovukTable
 )
 
-@(list: Seq[CreditSummaryRow])
+@(list: Seq[CreditSummaryRow], showHeading: Boolean = true)
+
+@headingRow = @{
+    if (showHeading)
+        Some(Seq(
+            HeadCell(content = Text("Head 1")),
+            HeadCell(content = Text("Head 2")),
+            HeadCell(content = Text("Make me hidden"))
+        ))
+    else
+        None
+}
 
 @govukTable(
     Table(
-        rows = list.map( row =>
+        rows = list.map(row =>
             Seq(
-                TableRow(
-                    content = Text(row.label),
-                    format = Some("text")
-                ),
-                TableRow(
-                    content =  Text(row.value),
-                    format = Some("text")
-                ),
-                TableRow(
-                    content = HtmlContent(actionContent(row.actions)),
-                    format = Some("text"))
-
+                TableRow(content = Text(row.label), format = Some("text")),
+                TableRow(content = Text(row.value), format = Some("text")),
+                TableRow(content = HtmlContent(actionContent(row.actions)), format = Some("text"))
             )
         ),
-        head = Some(
-            Seq(
-                HeadCell(
-                    content = Text("Head 1")
-                ),
-                HeadCell(
-                    content = Text("Head 2")
-                ),
-                HeadCell(
-                    content = Text("Make me hidden")
-                )
-            )
-       ),
-       firstCellIsHeader = true,
-       classes = "govuk-!-margin-bottom-9"
+        head = headingRow,
+        firstCellIsHeader = true,
+        classes = "govuk-!-margin-bottom-9"
     )
 )
 
-
 @actionContent(actions: Seq[ActionItem]) = {
-    @actions match {
-        case actions  => {<ul class="govuk-summary-list__actions-list" style="text-align: right; padding: 0px;">@for(action <- actions) {<li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>}</ul>}
-        case Nil => {HtmlFormat.empty}
+@actions match {
+    case actions => {
+        <ul class="govuk-summary-list__actions-list" style="text-align: right;
+            padding: 0px;">@for(action <- actions) {
+            <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
+        }</ul>
     }
+    case Nil => {HtmlFormat.empty}
+}
 }
 
-@actionLink(action: ActionItem) = {<a class="govuk-link @{action.classes}" href="@action.href">@action.content.asHtml</a>}
+@actionLink(action: ActionItem) = {
+    <a class="govuk-link @{
+        action.classes
+    }" href="@action.href">@action.content.asHtml</a>
+}
