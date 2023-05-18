@@ -46,20 +46,11 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        if (!isUserAnswerValid(key)) {
-          Future.successful(Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(mode)))
-        } else {
-          creditConnector.get(request.pptReference).map { //todo does this make sense to call here?
-            case Right(response) => displayView(response, key, mode)
-            case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
-          }
+        creditConnector.get(request.pptReference).map {
+          case Right(response) => displayView(response, key, mode)
+          case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
         }
     }
-
-  private def isUserAnswerValid(key: String)(implicit request: DataRequest[_]) = {
-    request.userAnswers.get(ExportedCreditsPage(key)).isDefined &&
-      request.userAnswers.get(ConvertedCreditsPage(key)).isDefined
-  }
 
   private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
 

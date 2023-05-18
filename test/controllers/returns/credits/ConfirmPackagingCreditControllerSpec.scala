@@ -162,25 +162,6 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
-
-    val table = Table(
-      ("description", "ExportedCreditsPage", "ConvertedCreditsPage"),
-      ("exported credit", None, Some(CreditsAnswer.answerWeightWith(1L))),
-      ("converted credit", Some(CreditsAnswer.answerWeightWith(2L)), None),
-      ("exported and converted", None, None),
-    )
-    forAll(table){
-      (description, exportedCreditsPage, convertedCreditsPage) =>
-        s"redirect to submit-return-or-claim-credit page when ${description} hasn't been answered" in {
-          when(dataRequest.userAnswers.get(eqTo(ExportedCreditsPage("year-key")))(any)).thenReturn(exportedCreditsPage)
-          when(dataRequest.userAnswers.get(eqTo(ConvertedCreditsPage("year-key")))(any)).thenReturn(convertedCreditsPage)
-          val result = sut.onPageLoad("year-key", NormalMode)(dataRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(NormalMode).url
-        }
-    }
-
   }
 
   private def setUpMockForConfirmCreditsView(): Unit = {
