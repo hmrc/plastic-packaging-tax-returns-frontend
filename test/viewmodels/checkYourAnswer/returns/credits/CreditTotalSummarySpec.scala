@@ -18,14 +18,13 @@ package viewmodels.checkYourAnswer.returns.credits
 
 import models.returns.credits.CreditSummaryRow
 import org.scalatestplus.play.PlaySpec
-import viewmodels.PrintBigDecimal
 import viewmodels.checkAnswers.returns.credits.CreditTotalSummary
 
 class CreditTotalSummarySpec extends PlaySpec {
 
   "createRow" should {
     "create a row" in {
-      CreditTotalSummary.createRow(200) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
+      CreditTotalSummary.createRow(200, isActionColumnHidden = false) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
     }
   }
 

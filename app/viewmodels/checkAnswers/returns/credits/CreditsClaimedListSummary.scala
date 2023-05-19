@@ -26,12 +26,15 @@ import viewmodels.implicits._
 
 
 object CreditsClaimedListSummary {
+  
+  // TODO can this be made simpler?
 
   def createCreditSummary(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator]) 
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
+    val isActionColumnHidden = maybeNavigator.isEmpty
     CreditsClaimedListSummary.createRows(creditBalance, maybeNavigator) ++ 
-      Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds))
+      Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
   }
 
   def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
@@ -56,7 +59,8 @@ object CreditsClaimedListSummary {
           ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
           ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
         )
-      }.getOrElse(Seq())
+      }.getOrElse(Seq()), 
+      isActionColumnHidden = maybeNavigator.isEmpty
     )
   }
 }

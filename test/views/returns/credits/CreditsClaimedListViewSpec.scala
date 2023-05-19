@@ -57,7 +57,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       createView(form).getElementsByClass("govuk-table__row").size() must be  > 0
     }
 
-    "not show change/remove link" in {
+    "not show change/remove link in total row" in {
       createView(form).getElementsByClass("govuk-table__row")
         .last()
         .select("td").last().text mustBe ""
