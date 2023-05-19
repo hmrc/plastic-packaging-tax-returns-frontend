@@ -21,14 +21,16 @@ import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ExportedCreditsPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ExportedCreditsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,17 +50,23 @@ class ExportedCreditsController @Inject()
       implicit request =>
 
         val preparedForm = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
-        Results.Ok(view(preparedForm, key, mode))
+        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+        Results.Ok(view(preparedForm, key, mode, creditRangeOption))
     }
   }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
+        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key, mode))),
+            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key, mode, creditRangeOption))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
               request.userAnswers.changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)

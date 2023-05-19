@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components.SectionHeader
-@import models.returns.CreditRangeOption
-@import views._
+package models.returns
 
-@this(sectionHeader: SectionHeader)
+import org.scalatestplus.play.PlaySpec
 
-@(dateRange: CreditRangeOption)(implicit messages: Messages)
+import java.time.LocalDate
 
-@*****************************************************************************
-todo: change credits period to be dynamic. For now this will be static
-*****************************************************************************@
-@sectionHeader(messages("credits.caption", ViewUtils.displayQuarterTo(dateRange.from, dateRange.to)))
+class CreditRangeOptionSpec extends PlaySpec {
+  "apply" should {
+    "create a creditRangeOption object from a string" in {
+      CreditRangeOption.createFromString("2022-04-01-2023-03-31") mustBe
+        CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023,3,31))
+    }
+  }
+
+}

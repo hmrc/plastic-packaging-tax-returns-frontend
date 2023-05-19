@@ -23,7 +23,7 @@ import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.Mockito.verifyNoInteractions
@@ -38,11 +38,13 @@ import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -79,7 +81,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
 
     when(formProvider.apply()).thenReturn(initialForm)
     when(initialForm.bindFromRequest()(any, any)).thenReturn(preparedForm)
-    when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
 
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
     when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
@@ -87,6 +89,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
   }
   
   "onPageLoad" must {
@@ -109,10 +113,11 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     }
     
     "render the page" in {
+      val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3,31))
       when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
       controller.onPageLoad("year-key", NormalMode) (request)
       verify(messagesApi).preferred(request)
-      verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)
+      verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
     }
     
     "200 ok the client" in {
@@ -151,7 +156,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 
       val result = await { controller.onSubmit("year-key", NormalMode)(request) }
-      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode)) (eqTo(request), eqTo(messages))
+      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode), any) (eqTo(request), eqTo(messages))
       verifyNoInteractions(request.userAnswers)
 
       result.header.status mustBe Status.BAD_REQUEST

@@ -549,8 +549,7 @@ submit-return.check-your-answers.credits.total = Cyfanswm y credyd
 submit-return.check-your-answers.credits.change.text.link = Newid unrhyw ateb o’r adran credydau
 submit-return.check-your-answers.credits.remove.text.link = Tynnu credydau
 
-credits.caption = Credydau
-credits.period.caption = [WELSH NEEDED] Credit for {0} to {1}
+credits.caption = [WELSH NEEDED] Credit for {0}
 exportedCredits.heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was exported
 exportedCredits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
 exportedCredits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.

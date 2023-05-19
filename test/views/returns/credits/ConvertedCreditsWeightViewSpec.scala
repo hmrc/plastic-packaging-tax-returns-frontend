@@ -53,7 +53,7 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
     }
 
     "have a caption" in {
-      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.period.caption"), any(), any())
+      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.caption"), any(), any())
       view.getElementById("section-header").text must include ("Credit for")
     }
 
