@@ -32,6 +32,7 @@ month.11 = Tachwedd
 month.12 = Rhagfyr
 
 return.quarter = {0} i {1} {2}
+return.quarter = {0} [WELSH AND] {1} {2}
 caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio

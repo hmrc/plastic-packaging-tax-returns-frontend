@@ -32,6 +32,7 @@ month.11 = November
 month.12 = December
 
 return.quarter = {0} to {1} {2}
+return.quarter.and = {0} and {1} {2}
 caption.total.plastic = Total plastic packaging
 caption.exported.plastic = Exported plastic packaging
 caption.non.exported.plastic = Non-exported plastic packaging
