@@ -35,28 +35,30 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   private val creditBalance = mock[CreditBalance]
   private val key1 = "2022-04-01-2023-03-31"
   private val key2 = "2023-04-01-2024-03-31"
+  private val key3 =  "2024-04-01-2025-03-31"
   val credit = Map(
+    key3 -> TaxablePlastic(300L, 350, 0.4),
+    key2 -> TaxablePlastic(100L, 150, 0.3),
     key1 -> TaxablePlastic(200L, 200, 0.2),
-    key2 -> TaxablePlastic(100L, 150, 0.3)
   )
 
   val userAnswer = UserAnswers(
     "123",
     Json.parse(
     s"""{
-      |   "credit" : {
-      |  "$key1" : {
-      |     "fromDate": "2022-04-01",
-      |     "endDate" : "2023-03-31",
-      |     "exportedCredits" : {
-      |       "yesNo" : true,
-      |       "weight" : 34
-      |     },
-      |     "convertedCredits" : {
-      |       "yesNo" : true,
-      |       "weight" : 545
-      |     }
-      |   },
+      |  "credit" : {
+      |    "$key3" : {
+      |      "fromDate": "2024-04-01",
+      |      "endDate" : "2025-03-31",
+      |      "exportedCredits" : {
+      |        "yesNo" : true,
+      |        "weight" : 34
+      |      },
+      |      "convertedCredits" : {
+      |        "yesNo" : true,
+      |        "weight" : 545
+      |      }
+      |    },
       |   "$key2" : {
       |     "fromDate": "2023-04-01",
       |     "endDate" : "2024-03-31",
@@ -67,9 +69,21 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       |       "convertedCredits" : {
       |         "yesNo" : true,
       |         "weight" : 545
-      |        }
-      |      }
+      |       }
+      |    },
+      |   "$key1" : {
+      |     "fromDate": "2022-04-01",
+      |     "endDate" : "2023-03-31",
+      |     "exportedCredits" : {
+      |       "yesNo" : true,
+      |       "weight" : 34
+      |     },
+      |     "convertedCredits" : {
+      |       "yesNo" : true,
+      |       "weight" : 545
+      |     }
       |   }
+      | }
       |}""".stripMargin).as[JsObject])
 
 
@@ -81,12 +95,13 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     when(navigator.creditSummaryRemove(any)) thenReturn "remove-url"
   }
 
-  "create a list of row" in {
+  "create a chronological ordered list of row" in {
     when(message.apply(any[String])).thenAnswer((s: String) =>  s)
     when(message.apply(eqTo("return.quarter"), any[Seq[String]]))
       .thenReturn(
         "1 April 2022 to 31 March 2023",
-        "1 April 2023 to 31 March 2024")
+        "1 April 2023 to 31 March 2024",
+        "1 April 2024 to 31 March 2025")
 
 
     when(creditBalance.credit).thenReturn(credit)
@@ -133,6 +148,11 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       CreditSummaryRow(
         label = "1 April 2023 to 31 March 2024",
         value = "£150.00",
+        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
+      ),
+      CreditSummaryRow(
+        label = "1 April 2024 to 31 March 2025",
+        value = "£350.00",
         actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
       )
     )

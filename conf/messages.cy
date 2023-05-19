@@ -711,3 +711,12 @@ converted-credits-weight.hint = [NEEDS WELSH] Enter the weight in kilograms. 1 t
 cancelCreditsClaim.title = [NEEDS WELSH]Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
 cancelCreditsClaim.heading = [NEEDS WELSH] Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
 cancelCreditsClaim.error.required = [NEEDS WELSH] Select yes if you want to cancel this credit
+
+creditsSummary.title-heading = [NEEDS WELSH] Credit summary
+creditsSummary.add-to-list = [NEEDS WELSH] Do you want to claim tax back as credit for another year?
+creditsSummary.paragraph.credit-will-be-applied = [NEEDS WELSH] Your credit will be applied against your total balance in your Plastic Packaging Tax account.
+creditsSummary.error.required = [NEEDS WELSH] Select yes if you want to claim tax back as credit for another year
+creditsSummary.total = [NEEDS WELSH] Credit total
+creditsSummary.table.header.dates = [NEEDS WELSH] Dates
+creditsSummary.table.header.amount = [NEEDS WELSH] Amount
+creditsSummary.header.hidden.text = [NEEDS WELSH] change or remove
