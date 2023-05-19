@@ -34,7 +34,7 @@
     creditSummaryTable: CreditSummaryTable
 )
 
-@(form: Form[_], canBeClaimed: Boolean, summaryRows: Seq[CreditSummaryRow], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], canBeClaimed: Boolean, moreYearsLeftToClaim: Boolean, summaryRows: Seq[CreditSummaryRow], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("creditsSummary.title-heading"))) {
 
@@ -60,16 +60,21 @@
             @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p3"))
             @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p4"))
         } else {
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("creditsSummary.add-to-list"))
-            )
-        )
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
-    }
+            @if(moreYearsLeftToClaim){
+                @govukRadios(
+                    RadiosViewModel.yesNo(
+                        field = form("value"),
+                        legend = LegendViewModel(messages("creditsSummary.add-to-list"))
+                    )
+                )
+            }else{
+                <input id="defaultNoInput" name="value" type="hidden" value="false">
+            }
+
+            @govukButton(
+                ButtonViewModel(messages("site.continue"))
+            )
+        }
     }
 }

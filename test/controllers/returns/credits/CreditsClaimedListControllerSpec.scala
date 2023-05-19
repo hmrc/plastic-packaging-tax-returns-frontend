@@ -23,6 +23,7 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
+import models.returns.CreditRangeOption
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
@@ -32,17 +33,21 @@ import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.AvailableYears
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.ActionItem
 import viewmodels.checkAnswers.returns.credits.CreditTotalSummary
 import views.html.returns.credits.CreditsClaimedListView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -77,7 +82,7 @@ class CreditsClaimedListControllerSpec
 
     reset(view, request, navigator, journeyAction, calcCreditsConnector)
 
-    when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(view.apply(any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
@@ -104,7 +109,7 @@ class CreditsClaimedListControllerSpec
 
       await(sut.onPageLoad(NormalMode)(request))
 
-      verify(view).apply(eqTo(boundForm), eqTo(true), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
+      verify(view).apply(eqTo(boundForm), eqTo(true), eqTo(true), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
     }
 
     "getting the total weight in pound from API" in {
@@ -122,6 +127,18 @@ class CreditsClaimedListControllerSpec
       intercept[DownstreamServiceError] {
         await(sut.onPageLoad(NormalMode)(request))
       }
+    }
+
+    "calculate if all years are being claimed" in {
+      setUpMock()
+      val alreadyUsed = CreditRangeOption(LocalDate.now(), LocalDate.now())
+      when(request.userAnswers.getOrFail(any[Gettable[Any]])(any, any)).thenReturn(Seq(alreadyUsed))
+      when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any))
+        .thenReturn(Some(Map(alreadyUsed.key -> JsObject.empty)))
+
+      await(sut.onPageLoad(NormalMode)(request))
+
+      verify(view).apply(any, any, eqTo(false), any, any)(any, any)
     }
   }
 
@@ -158,7 +175,7 @@ class CreditsClaimedListControllerSpec
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
 
         status(result) mustBe BAD_REQUEST
-        verify(view).apply(eqTo(boundForm), any, eqTo(expectedCreditSummary), eqTo(NormalMode))(any, any)
+        verify(view).apply(eqTo(boundForm), any, any, eqTo(expectedCreditSummary), eqTo(NormalMode))(any, any)
       }
     }
   }
@@ -179,7 +196,10 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
-    
+
+    when(request.userAnswers.getOrFail(any[Gettable[Any]])(any, any)).thenReturn(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+    when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
+
     when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(
       CreditBalance(10, 20, 5L, true, Map(
         "key1" -> TaxablePlastic(0, 20, 0)

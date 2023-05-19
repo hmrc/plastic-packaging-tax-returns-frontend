@@ -23,12 +23,14 @@ import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.AvailableYears
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
+import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createCreditSummary
 import views.html.returns.credits.CreditsClaimedListView
 
 import javax.inject.Inject
@@ -73,8 +75,8 @@ class CreditsClaimedListController @Inject()(
     calcCreditsConnector.get(request.pptReference).map { creditBalance =>
       creditBalance.fold(
         error => throw error,
-        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, 
-          CreditsClaimedListSummary.createCreditSummary(balance, Some(navigator)), mode)),
+        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, moreYearsLeftToClaim, 
+          createCreditSummary(balance, Some(navigator)), mode)),
       )
     }
   }
@@ -83,8 +85,15 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), creditBalance.canBeClaimed, 
-      CreditsClaimedListSummary.createCreditSummary(creditBalance, Some(navigator)), mode))
+    Ok(view(formProvider(), creditBalance.canBeClaimed, moreYearsLeftToClaim, 
+      createCreditSummary(creditBalance, Some(navigator)), mode))
+  }
+
+  private def moreYearsLeftToClaim(implicit request: DataRequest[AnyContent]) ={
+    val availableYears = request.userAnswers.getOrFail(AvailableYears)
+    val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
+
+    alreadyUsedYears != availableYears.map(_.key).toSet
   }
 
 }

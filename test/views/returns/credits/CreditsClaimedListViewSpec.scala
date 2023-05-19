@@ -46,7 +46,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       value = "answer"
     )
   )
-  private def createView(form: Form[_]): Html = page(form, true, rows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(form, true, true,rows, NormalMode)(request, messages)
 
   "View" should {
 
@@ -65,7 +65,22 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "Show claiming to much credit" when {
       "canBeClaimed is false" in {
-        //todo
+        val view = page(form, canBeClaimed = false, true, rows, NormalMode)(request, messages)
+
+        view.getElementsByTag("h2").text() must include(messages("confirmPackagingCredit.tooMuchCredit.heading"))
+      }
+    }
+
+    "hide the yes/no " when {
+      "moreYearsLeftToClaim is false" in {
+        val view = page(form, true, moreYearsLeftToClaim = false, rows, NormalMode)(request, messages)
+
+        view.text() must not include(messages("creditsSummary.add-to-list"))
+        
+        val defaultNoInput = view.getElementById("defaultNoInput")
+        defaultNoInput.attr("name") mustBe "value"
+        defaultNoInput.attr("type") mustBe "hidden"
+        defaultNoInput.attr("value") mustBe "false"
       }
     }
 
