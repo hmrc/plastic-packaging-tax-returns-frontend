@@ -57,10 +57,10 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       createView(form).getElementsByClass("govuk-table__row").size() must be  > 0
     }
 
-    "not show change/remove link" in { // TODO but we do want actions on the page? Is this actually a test for CreditSummaryRow?
+    "not show change/remove link in total row" in {
       createView(form).getElementsByClass("govuk-table__row")
         .last()
-        .select("td").last().text mustBe "answer" // that is, the last cell is the value, not an action
+        .select("td").last().text mustBe ""
     }
 
     "Show claiming to much credit" when {
