@@ -37,14 +37,7 @@
 
 @govukTable(
     Table(
-        rows = list.map(row => row.createContent(actions => actionContent(actions), isActionColumnHidden = true)),
-//        rows = list.map(row =>
-//            Seq(
-//                TableRow(content = Text(row.label), format = Some("text")),
-//                TableRow(content = Text(row.value), format = Some("text")),
-//                TableRow(content = HtmlContent(actionContent(row.actions)), format = Some("text"), classes = "govuk-table__cell--numeric govuk-summary-list__value")
-//            )
-//        ),
+        rows = list.map(row => row.createContent(actions => actionContent(actions))),
         head = headingRow,
         firstCellIsHeader = true
     )

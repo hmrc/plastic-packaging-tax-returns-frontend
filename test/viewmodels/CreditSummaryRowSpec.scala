@@ -39,23 +39,23 @@ class CreditSummaryRowSpec extends PlaySpec
   "it" should {
     
     "render a two column version with no actions" in {
-      val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq())
+      val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq(), isActionColumnHidden = true)
       val result = creditSummaryRow.createContent(createAction)
       verifyZeroInteractions(createAction)
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
-        TableRow(Text("a-value"), Some("text"))
+        TableRow(Text("a-value"), Some("text"), classes = "govuk-table__cell--numeric")
       )
     }
     
     "render a three column version with actions" in {
       val creditSummaryRow = CreditSummaryRow("a-label", "a-value", Seq(ActionItem()))
-      val result = creditSummaryRow.createContent(createAction, isActionColumnHidden = true)
+      val result = creditSummaryRow.createContent(createAction)
       verify(createAction).apply(Seq(ActionItem()))
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
         TableRow(Text("a-value"), Some("text")), 
-        TableRow(HtmlContent(Html("action-html")), Some("text"), "govuk-table__cell--numeric govuk-summary-list__value")
+        TableRow(HtmlContent(Html("action-html")), Some("text"), "govuk-table__cell--numeric")
       )
     }
   }

@@ -22,7 +22,7 @@ import viewmodels.PrintBigDecimal
 object CreditTotalSummary {
 
   val key = "Credit total [Use Key]"
-  def createRow(totalWeightInPound: BigDecimal): CreditSummaryRow = {
-    CreditSummaryRow(key, totalWeightInPound.asPounds)
+  def createRow(totalWeightInPound: BigDecimal, isActionColumnHidden: Boolean): CreditSummaryRow = {
+    CreditSummaryRow(key, totalWeightInPound.asPounds, Seq(), isActionColumnHidden)
   }
 }

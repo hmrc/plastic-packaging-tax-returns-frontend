@@ -25,24 +25,23 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 case class CreditSummaryRow(
   label: String,
   value: String,
-  actions: Seq[ActionItem] = Seq.empty
+  actions: Seq[ActionItem] = Seq.empty,
+  isActionColumnHidden: Boolean = false
 ) {
 
-  def createContent(createActionsContent: Seq[ActionItem] => Html, isActionColumnHidden: Boolean = false): Seq[TableRow] = {
-    val alignRight = "" // if (isActionColumnHidden) "govuk-table__cell--numeric" else ""  
+  def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
+    val alignRight = if (isActionColumnHidden) "govuk-table__cell--numeric" else ""  
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), classes = alignRight), // classes = "govuk-table__cell--numeric govuk-summary-list__value")
-    ) ++ createActionsCell(createActionsContent, isActionColumnHidden)
+      TableRow(content = Text(value), format = Some("text"), classes = alignRight),
+    ) ++ createActionsCell(createActionsContent)
   }
 
-  // ++ (if (row.actions.isEmpty) Seq() else Seq())
-  //  TableRow(content = HtmlContent(actionContent(row.actions)), format = Some("text"))
-
-  private def createActionsCell(f: Seq[Aliases.ActionItem] => Html, isActionColumnHidden: Boolean) = {
+  private def createActionsCell(createActionsContent: Seq[Aliases.ActionItem] => Html) = {
     if (isActionColumnHidden)
-      Seq(TableRow(content = HtmlContent(f(actions)), format = Some("text"), classes = "govuk-table__cell--numeric govuk-summary-list__value"))
-    else
       Seq()
+    else
+      Seq(TableRow(content = HtmlContent(createActionsContent(actions)), format = Some("text"), 
+        classes = "govuk-table__cell--numeric"))
   }
 }
