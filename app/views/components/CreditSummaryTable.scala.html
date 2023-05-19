@@ -37,13 +37,14 @@
 
 @govukTable(
     Table(
-        rows = list.map(row =>
-            Seq(
-                TableRow(content = Text(row.label), format = Some("text")),
-                TableRow(content = Text(row.value), format = Some("text")),
-                TableRow(content = HtmlContent(actionContent(row.actions)), format = Some("text"))
-            )
-        ),
+        rows = list.map(row => row.createContent(actions => actionContent(actions), isActionColumnHidden = true)),
+//        rows = list.map(row =>
+//            Seq(
+//                TableRow(content = Text(row.label), format = Some("text")),
+//                TableRow(content = Text(row.value), format = Some("text")),
+//                TableRow(content = HtmlContent(actionContent(row.actions)), format = Some("text"), classes = "govuk-table__cell--numeric govuk-summary-list__value")
+//            )
+//        ),
         head = headingRow,
         firstCellIsHeader = true
     )
@@ -52,8 +53,7 @@
 @actionContent(actions: Seq[ActionItem]) = {
 @actions match {
     case actions => {
-        <ul class="govuk-summary-list__actions-list" style="text-align: right;
-            padding: 0px;">@for(action <- actions) {
+        <ul class="govuk-summary-list__actions-list">@for(action <- actions) {
             <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
         }</ul>
     }
