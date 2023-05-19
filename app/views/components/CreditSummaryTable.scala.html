@@ -22,14 +22,14 @@
         govukTable: GovukTable
 )
 
-@(list: Seq[CreditSummaryRow], showHeading: Boolean = true)
+@(list: Seq[CreditSummaryRow], showHeading: Boolean = true)(implicit messages: Messages)
 
 @headingRow = @{
     if (showHeading)
         Some(Seq(
             HeadCell(content = Text("Head 1")),
             HeadCell(content = Text("Head 2")),
-            HeadCell(content = Text("Make me hidden"))
+            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">messages("creditsSummary.header.hidden.text")</span>""")))
         ))
     else
         None
