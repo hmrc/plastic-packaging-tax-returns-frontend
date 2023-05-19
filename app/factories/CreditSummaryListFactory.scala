@@ -16,9 +16,7 @@
 
 package factories
 
-import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, TaxablePlastic, UserAnswers}
-import navigation.ReturnsJourneyNavigator
+import models.{TaxablePlastic, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.returns.credits._
@@ -39,16 +37,4 @@ class CreditSummaryListFactory {
       )
   }
 
-  def createClaimedCreditsList
-  (
-    userAnswer: UserAnswers,
-    creditBalance: CreditBalance,
-    navigator: ReturnsJourneyNavigator
-  )(implicit message: Messages): Seq[CreditSummaryRow] = {
-    CreditsClaimedListSummary.createRows(userAnswer, creditBalance, navigator) match {
-      case Nil => Seq.empty
-      case list => list :+ CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
-    }
-
-  }
 }

@@ -29,11 +29,16 @@ import views.ViewUtils
 import java.time.LocalDate
 
 
-object CreditsClaimedListSummary {
+case object CreditsClaimedListSummary {
   
   // TODO can this be made simpler?
 
-  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
+
+    createRows(userAnswer, creditBalance, maybeNavigator) :+
+      CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
+  }
+
+  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, navigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     val isActionColumnHidden = maybeNavigator.isEmpty
@@ -44,12 +49,20 @@ object CreditsClaimedListSummary {
   
   def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
-    creditBalance.credit.toSeq.map {case (key, taxablePlastic) =>
+    creditBalance.credit.toSeq.map { case (key, taxablePlastic) =>
       extractDateAndAmount(userAnswer, key, taxablePlastic)}
       .sortBy(_._1)
-      .map {case (fromDate, toDate, amount) =>
-        creditSummary(navigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)}
+      .map { case (fromDate, toDate, amount) =>
+        creditSummary(navigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
+      }
   }
+  def createRows
+  (
+    userAnswers: UserAnswers,
+    creditBalance: CreditBalance,
+    navigator: ReturnsJourneyNavigator
+  )(implicit messages: Messages): Seq[CreditSummaryRow] = {
+    createRows(userAnswers, creditBalance, Some(navigator))
 
   }
 
@@ -61,13 +74,12 @@ object CreditsClaimedListSummary {
     key: String,
     taxablePlastic: TaxablePlastic
   ): (LocalDate, LocalDate, BigDecimal) = {
-    val fromDate = userAnswer.get[String](JsPath \ "credit" \ key \ "fromDate")
-      .fold[LocalDate](throw new IllegalArgumentException)(LocalDate.parse(_))
+    val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
+    val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
 
-    val toDate: LocalDate = userAnswer.get[String](JsPath \ "credit" \ key \ "endDate")
-      .fold[LocalDate](throw new IllegalArgumentException)(LocalDate.parse(_))
 
     (fromDate, toDate, taxablePlastic.moneyInPounds)
+  }
 
   private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 
     (implicit messages: Messages): CreditSummaryRow = {

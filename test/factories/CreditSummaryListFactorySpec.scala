@@ -17,9 +17,7 @@
 package factories
 
 import models.returns.CreditsAnswer
-import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, TaxablePlastic, UserAnswers}
-import navigation.ReturnsJourneyNavigator
+import models.{TaxablePlastic, UserAnswers}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
@@ -27,7 +25,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
@@ -63,33 +60,4 @@ class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
       res(6).key.content.asInstanceOf[Text].value mustBe "credit amount"
     }
   }
-
-  "createClaimedCreditsList" should {
-    "return an instance of CreditSummaryRow" in {
-
-      val creditBalance = mock[CreditBalance]
-      when(creditBalance.credit).thenReturn(Map("2022-04-01-2023-03-31" -> TaxablePlastic.zero))
-      when(creditBalance.totalRequestedCreditInPounds).thenReturn(200)
-      val navigator = mock[ReturnsJourneyNavigator]
-      when(navigator.creditSummaryChange(any)).thenReturn("/change")
-      when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
-      when(userAnswers.get[String](any[JsPath])(any)).thenReturn(Some("2022-04-01"))
-      when(messages.apply(any[String])).thenAnswer((s: String) => s)
-
-      val result = sut.createClaimedCreditsList(userAnswers, creditBalance, navigator)(messages)
-
-      result.isInstanceOf[Seq[CreditSummaryRow]]
-      result.length mustBe 2
-    }
-
-    "return an empty List" in {
-      val creditBalance = mock[CreditBalance]
-      when(creditBalance.credit).thenReturn(Map.empty)
-
-      val result = sut.createClaimedCreditsList(mock[UserAnswers], creditBalance, mock[ReturnsJourneyNavigator])(messages)
-
-      result mustBe Seq.empty
-    }
-  }
-
 }

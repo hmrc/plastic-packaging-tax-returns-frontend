@@ -27,9 +27,9 @@
 @headingRow = @{
     if (showHeading)
         Some(Seq(
-            HeadCell(content = Text("Head 1")),
-            HeadCell(content = Text("Head 2")),
-            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">messages("creditsSummary.header.hidden.text")</span>""")))
+            HeadCell(content = Text(messages("creditsSummary.table.header.dates"))),
+            HeadCell(content = Text(messages("creditsSummary.table.header.amount"))),
+            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("creditsSummary.header.hidden.text")}</span>""")))
         ))
     else
         None

@@ -28,16 +28,17 @@ import models.returns._
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers._
-import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
-import org.mockito.MockitoSugar.mock
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logger
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -72,6 +73,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private val mockView = mock[ReturnsCheckYourAnswersView]
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val message = mock[Messages]
   private val controllerComponents = stubMessagesControllerComponents()
   private val mockSessionRepository = mock[SessionRepository]
   private val mockTaxReturnConnector = mock[TaxReturnsConnector]
@@ -80,6 +82,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val mockTaxReturnHelper = mock[TaxReturnHelper]
   private val appConfig = mock[FrontendAppConfig]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val keyString = "a-key"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -91,18 +94,20 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
     when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
+    when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
   }
 
   "Returns Check Your Answers Controller" should {
 
     "return OK and the correct view for a GET" in {
       setUpMockConnector()
+      when(message.apply(any[String])).thenAnswer((s: String) => s)
 
-      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
-      verify(mockView).apply(any(), any(), any())(any(), any())
+      verify(mockView).apply(any, any, any)(any, any)
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
@@ -115,15 +120,17 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "call tax return API" in {
       setUpMockConnector()
 
-      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
-      verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any())
+      verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any)
     }
 
     "view claimed credits on pageLoading" in {
       setUpMockConnector()
-      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
+      when(message.apply(any[String], any)).thenReturn("any-key")
+
+      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         summaryList = Seq(
@@ -137,7 +144,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "handle credits no claimed on pageLoading" in {
       setUpMockConnector()
 
-      val ans = setUserAnswer().set(WhatDoYouWantToDoPage, false).get
+      val ans = setUserAnswer.set(WhatDoYouWantToDoPage, false).get
       val result = createSut(Some(ans)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
@@ -157,14 +164,14 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
 
     "must cache payment ref and redirect for a POST" in {
-      when(mockSessionRepository.set(any(), any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockTaxReturnConnector.submit(any())(any())).thenReturn(Future.successful(Right(Some("12345"))))
+      when(mockSessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
+      when(mockTaxReturnConnector.submit(any)(any)).thenReturn(Future.successful(Right(Some("12345"))))
 
-      val result = createSut(Some(setUserAnswer())).onSubmit()(FakeRequest(POST, "/foo"))
+      val result = createSut(Some(setUserAnswer)).onSubmit()(FakeRequest(POST, "/foo"))
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(true).url
-      verify(mockSessionRepository).set(any(), ArgumentMatchers.eq(Paths.ReturnChargeRef), ArgumentMatchers.eq(Some("12345")))(any())
+      verify(mockSessionRepository).set(any, ArgumentMatchers.eq(Paths.ReturnChargeRef), ArgumentMatchers.eq(Some("12345")))(any)
     }
   }
 
@@ -175,8 +182,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
 
     status(result) mustEqual OK
-    verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any())
-    verify(mockTaxReturnHelper).nextOpenObligationAndIfFirst(ArgumentMatchers.eq("123"))(any())
+    verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any)
+    verify(mockTaxReturnHelper).nextOpenObligationAndIfFirst(ArgumentMatchers.eq("123"))(any)
     verifyNoInteractions(mockCalculateCreditConnector)
     verifyAndCaptorCreditDetails mustBe NoCreditAvailable
   }
@@ -192,7 +199,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       )
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
@@ -205,16 +212,16 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       )
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
     "nextOpenObligationAndIfFirst return an error" in {
       setUpMockConnector()
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenThrow(new RuntimeException("Error"))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenThrow(new RuntimeException("Error"))
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
@@ -223,17 +230,17 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         taxReturnConnectorResult = Left(DownstreamServiceError("Tax return calculation error", new Exception("error"))),
         creditConnectorResult = Left(DownstreamServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
       )
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenThrow(new RuntimeException("Error"))
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenThrow(new RuntimeException("Error"))
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
   }
   
   "navigate" should {
     
-    val controller = createSut(Some(setUserAnswer()))
+    val controller = createSut(Some(setUserAnswer))
     
     "link to change credit answers" in {
       when(navigator.cyaChangeCredits) thenReturn "/change-me"
@@ -241,7 +248,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       await {
         controller.onPageLoad()(FakeRequest(GET, "/foo"))
       }
-      verify(mockView).apply(any(), any(), eqTo("/change-me"))(any(), any())
+      verify(mockView).apply(any, any, eqTo("/change-me"))(any, any)
     }
   }
 
@@ -251,20 +258,20 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       "a-key" -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
-    when(mockTaxReturnConnector.getCalculationReturns(any())(any()))
+    when(mockTaxReturnConnector.getCalculationReturns(any)(any))
       .thenReturn(Future.successful(taxReturnConnectorResult))
 
-    when(mockCalculateCreditConnector.get(any())(any()))
+    when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(creditConnectorResult))
 
-    when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any())(any())).thenReturn(
+    when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(
       Future.successful(Some(taxReturnOb, isFirstReturnResult))
     )
   }
 
   private def verifyAndCaptorCreditDetails: Credits = {
     val captor = ArgumentCaptor.forClass(classOf[Credits])
-    verify(mockView).apply(any(), captor.capture(), any())(any(), any())
+    verify(mockView).apply(any, captor.capture(), any)(any, any)
     captor.getValue
   }
   
@@ -288,11 +295,40 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
   }
 
-  private def setUserAnswer(): UserAnswers = {
-    userAnswers
+  private def setUserAnswer: UserAnswers = {
+
+    val t = UserAnswers("123", Json.parse(
+      s"""
+        {
+        |   "obligation":{
+        |      "fromDate":"2022-04-01",
+        |      "toDate":"2022-06-30",
+        |      "dueDate":"2022-08-25",
+        |      "periodKey":"00XX"
+        |   },
+        |   "credit":{
+        |      "$keyString":{
+        |         "fromDate": "2022-04-01",
+        |         "endDate" : "2023-03-31",
+        |         "exportedCredits":{
+        |            "yesNo":true,
+        |            "weight":200
+        |         },
+        |         "convertedCredits":{
+        |            "yesNo":true,
+        |            "weight":300
+        |         }
+        |      }
+        |   },
+        |   "whatDoYouWantToDo":true
+        |}
+        |""".stripMargin).as[JsObject])
+    val v = userAnswers
       .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
       .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(300L)).get
       .set(WhatDoYouWantToDoPage, true).get
+
+    t
   }
 
 }

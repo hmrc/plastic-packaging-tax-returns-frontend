@@ -66,8 +66,6 @@ class CreditsClaimedListControllerSpec
   private val formProvider = mock[CreditsClaimedListFormProvider]
   private val view = mock[CreditsClaimedListView]
   private val calcCreditsConnector = mock[CalculateCreditsConnector]
-  private val creditFactory = mock[CreditSummaryListFactory]
-
 
   private val sut = new CreditsClaimedListController(
     messagesApi,
@@ -76,8 +74,7 @@ class CreditsClaimedListControllerSpec
     journeyAction,
     formProvider,
     stubMessagesControllerComponents(),
-    view,
-    creditFactory
+    view
   )
 
   override def beforeEach(): Unit = {
@@ -88,6 +85,7 @@ class CreditsClaimedListControllerSpec
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(request.userAnswers.getOrFail[String](any[JsPath])(any, any)).thenReturn("2023-04-01")
   }
 
   "onPageLoad" should {
@@ -108,7 +106,6 @@ class CreditsClaimedListControllerSpec
     "return a view" in {
       val boundForm = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(boundForm)
-      when(creditFactory.createClaimedCreditsList(any, any,any)(any)).thenReturn(expectedCreditSummary)
       setUpMock()
 
       await(sut.onPageLoad(NormalMode)(request))
@@ -175,7 +172,6 @@ class CreditsClaimedListControllerSpec
         val boundForm = Form("value" -> boolean).withError("error", "error message")
         when(formProvider.apply()).thenReturn(form)
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
-        when(creditFactory.createClaimedCreditsList(any,any,any)(any)).thenReturn(expectedCreditSummary)
 
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
 
@@ -187,7 +183,7 @@ class CreditsClaimedListControllerSpec
 
   private def expectedCreditSummary = {
     Seq(
-      CreditSummaryRow("key1", "£20.00", Seq(
+      CreditSummaryRow("return.quarter", "£20.00", Seq(
         ActionItem("/change", Text("site.change")),
         ActionItem("/remove", Text("site.remove"))
       )),
@@ -200,6 +196,7 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+   // when(messages.apply(any[String])).thenAnswer((s: String) => s)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
     when(request.userAnswers.getOrFail(any[Gettable[Any]])(any, any)).thenReturn(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())))

@@ -123,7 +123,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     "fromDate is invalid" in {
       when(creditBalance.credit).thenReturn(credit)
 
-      intercept[IllegalArgumentException] {
+      intercept[IllegalStateException] {
         CreditsClaimedListSummary.createRows(userAnswerWithInvalidFromDate, creditBalance, navigator)(message)
       }
     }
@@ -131,7 +131,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     "endDate is invalid" in {
       when(creditBalance.credit).thenReturn(credit)
 
-      intercept[IllegalArgumentException] {
+      intercept[IllegalStateException] {
         CreditsClaimedListSummary.createRows(userAnswerWithInvalidendDate, creditBalance, navigator)(message)
       }
     }
