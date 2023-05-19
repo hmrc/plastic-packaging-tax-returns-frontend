@@ -22,7 +22,7 @@
     govukTable : GovukTable
 )
 
-@(list: Seq[CreditSummaryRow])
+@(list: Seq[CreditSummaryRow])(implicit messages: Messages)
 
 @govukTable(
     Table(
@@ -45,14 +45,12 @@
         head = Some(
             Seq(
                 HeadCell(
-                    content = Text("Head 1")
+                    content = Text(messages("creditsSummary.table.header.dates"))
                 ),
                 HeadCell(
-                    content = Text("Head 2")
+                    content = Text(messages("creditsSummary.table.header.amount"))
                 ),
-                HeadCell(
-                    content = Text("Make me hidden")
-                )
+                HeadCell(HtmlContent(Html(s"""<span class="govuk-visually-hidden">messages("creditsSummary.header.hidden.text")</span>""")))
             )
        ),
        firstCellIsHeader = true,

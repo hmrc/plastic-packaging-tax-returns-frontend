@@ -710,3 +710,7 @@ creditsSummary.checkYourAnswersLabel = creditsSummary
 creditsSummary.paragraph.credit-will-be-applied = Your credit will be applied against your total balance in your Plastic Packaging Tax account.
 creditsSummary.error.required = Select yes if you want to claim tax back as credit for another year
 creditsSummary.change.hidden = CreditsSummary
+creditsSummary.total = Credit total
+creditsSummary.table.header.dates = Dates
+creditsSummary.table.header.amount = Amount
+creditsSummary.header.hidden.text = change or remove
