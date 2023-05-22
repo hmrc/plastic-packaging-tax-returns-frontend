@@ -23,6 +23,6 @@ import javax.inject.Inject
 
 class DoYouWantToClaimFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] = Form("value" -> boolean("do-you-want-to-claim.error.required"))
+  def apply(): Form[Boolean] = Form("value" -> boolean("whatDoYouWantToDo.error.required"))
 
 }

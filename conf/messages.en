@@ -575,6 +575,15 @@ do-you-want-to-claim.p3.b2.a = records you need to keep
 do-you-want-to-claim.question = Do you want to claim tax back as credit?
 do-you-want-to-claim.error.required = Select yes if you want to claim tax back as credit
 
+whatDoYouWantToDo.title = What do you want to do?
+whatDoYouWantToDo.p1 = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
+whatDoYouWantToDo.radio.claimCredit = Claim tax back from previous returns as credit, then start {0} return
+whatDoYouWantToDo.radio.startReturn = Start {0} return
+whatDoYouWantToDo.p2 = Find out about {0}.
+whatDoYouWantToDo.p2.link = claiming tax back as credit for packaging you’ve paid tax on
+whatDoYouWantToDo.error.required = Select what you want to do
+
+
 nowStartYourReturn.heading = Now start your return for {0}
 nowStartYourReturn.paragraph.1 = Your answers have been saved. To submit them, you must complete your return.
 nowStartYourReturn.button-text = Start your return

@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.returns.credits.DoYouWantToClaimView
+import views.html.returns.credits.{DoYouWantToClaimView, WhatDoYouWantToDoView} //todo delete DoYouWantToClaimView and its messages if we really don't want it
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class WhatDoYouWantToDoController @Inject() (
                                               journeyAction: JourneyAction,
                                               formProvider: DoYouWantToClaimFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              view: DoYouWantToClaimView,
+                                              view: WhatDoYouWantToDoView,
                                               returnsNavigator: ReturnsJourneyNavigator
 ) (implicit ec: ExecutionContext) extends I18nSupport {
 

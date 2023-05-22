@@ -39,7 +39,7 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import queries.Gettable
-import views.html.returns.credits.DoYouWantToClaimView
+import views.html.returns.credits.{DoYouWantToClaimView, WhatDoYouWantToDoView}
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val journeyAction = mock[JourneyAction]
   private val formProvider = mock[DoYouWantToClaimFormProvider]
   private val controllerComponents = stubMessagesControllerComponents()
-  private val view = mock[DoYouWantToClaimView]
+  private val view = mock[WhatDoYouWantToDoView]
   private val navigator = mock[ReturnsJourneyNavigator]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[Boolean]]
