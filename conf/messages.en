@@ -544,7 +544,6 @@ exportedCredits.paragraph.2 = You can also claim tax back as credit if another b
 exportedCredits.error.required = Select yes if you paid tax on plastic packaging before it was exported
 
 exportedCreditsWeight.heading = How much plastic packaging did you pay tax on before it was exported?
-exportedCreditsWeight.caption = Credit for {0} to {1}
 exportedCreditsWeight.hint = Enter the weight in kilograms. 1 tonne is 1,000kg.
 exportedCreditsWeight.error.required = Enter the weight, in kilograms
 exportedCreditsWeight.error.wholeNumber = Weight must not include decimals

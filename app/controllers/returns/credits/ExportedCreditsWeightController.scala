@@ -21,15 +21,17 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest.headerCarrier
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ExportedCreditsPage
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ExportedCreditsWeightView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,14 +50,20 @@ class ExportedCreditsWeightController @Inject()(
     journeyAction {
       implicit request =>
         val form = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-        Ok(view(form, key, mode))
+        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+        Ok(view(form, key, mode, creditRangeOption))
     }
 
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] = journeyAction.async {
       implicit request =>
+        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
         formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, key, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, key, mode, creditRangeOption))),
           formValue => {
             request.userAnswers
               .setOrFail(ExportedCreditsPage(key), CreditsAnswer.answerWeightWith(formValue))

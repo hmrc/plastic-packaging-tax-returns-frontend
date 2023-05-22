@@ -25,7 +25,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -40,6 +40,7 @@ import play.api.data.Form
 import play.api.data.Forms.{ignored, longNumber}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents}
@@ -47,6 +48,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import queries.Settable
 import views.html.returns.credits.ExportedCreditsWeightView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -62,6 +64,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
   private val view = mock[ExportedCreditsWeightView]
   private val formProvider = mock[ExportedCreditsWeightFormProvider]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val sut = new ExportedCreditsWeightController(
     messagesApi,
@@ -79,9 +82,11 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     reset(journeyAction, view, dataRequest, navigator, form, cacheConnector, saveFunction, userAnswers)
 
     when(formProvider.apply()).thenReturn(form)
-    when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
 
   }
   "onPageLoad" should {
@@ -112,7 +117,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       val boundForm = Form("value" -> longNumber).fill(10L)
       when(dataRequest.userAnswers.fillWithFunc(any, any[Form[Long]], any) (any)) thenReturn boundForm
       await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
-      verify(view).apply(eqTo(boundForm), eqTo("year-key"), eqTo(NormalMode)) (any, any)
+      verify(view).apply(eqTo(boundForm), eqTo("year-key"), eqTo(NormalMode), eqTo(creditRangeOption)) (any, any)
     }
   }
 
@@ -160,7 +165,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return an error" when {
       "error on form" in {
-        when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+        when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
         val firmWithError = Form("value" -> ignored(1L)).withError("key", "error")
         when(form.bindFromRequest()(any, any)).thenReturn(firmWithError)
 
@@ -170,7 +175,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
         withClue("pass an error to the view") {
           contentAsString(result) mustBe "correct view"
-          verify(view).apply(meq(firmWithError), meq("year-key"), meq(NormalMode))(any,any)
+          verify(view).apply(meq(firmWithError), meq("year-key"), meq(NormalMode), meq(creditRangeOption))(any,any)
         }
       }
     }

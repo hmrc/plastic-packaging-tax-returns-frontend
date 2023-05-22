@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -26,13 +27,16 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ExportedCreditsWeightView
 
+import java.time.LocalDate
+
 class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: ExportedCreditsWeightView = inject[ExportedCreditsWeightView]
   val form = new ExportedCreditsWeightFormProvider()()
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private def createView(form: Form[Long] = form): Html =
-    page(form,"year-key", NormalMode)(request, messages)
+    page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
 
   "view" should {
     val view = createView(form)
@@ -47,8 +51,8 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
     }
 
     "have a caption" in {
-      view.getElementById("section-header").text() mustBe "Credit for 1 April 2022 to 31 March 2023"
-      view.getElementById("section-header").text() mustBe messages("exportedCreditsWeight.caption", "1 April 2022", "31 March 2023")
+      view.getElementById("section-header").text() mustBe "Credit for 1 April 2023 to 31 March 2024"
+      view.getElementById("section-header").text() mustBe messages("credits.caption", "1 April 2023 to 31 March 2024")
     }
 
     "have a hint" in {
