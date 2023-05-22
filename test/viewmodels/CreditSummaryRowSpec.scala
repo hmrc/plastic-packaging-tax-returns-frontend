@@ -39,7 +39,7 @@ class CreditSummaryRowSpec extends PlaySpec
   "it" should {
     
     "render a two column version with no actions" in {
-      val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq(), isActionColumnHidden = true)
+      val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq())
       val result = creditSummaryRow.createContent(createAction)
       verifyZeroInteractions(createAction)
       result mustBe Seq(

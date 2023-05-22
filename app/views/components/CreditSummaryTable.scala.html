@@ -24,12 +24,13 @@
 
 @(list: Seq[CreditSummaryRow], showHeading: Boolean = true)(implicit messages: Messages)
 
+
 @headingRow = @{
     if (showHeading)
         Some(Seq(
-            HeadCell(content = Text(messages("creditsSummary.table.header.dates"))),
-            HeadCell(content = Text(messages("creditsSummary.table.header.amount"))),
-            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("creditsSummary.header.hidden.text")}</span>""")))
+            HeadCell(content = Text(messages("creditsSummary.table.heading.1"))),
+            HeadCell(content = Text(messages("creditsSummary.table.heading.2")), attributes = Map("style" -> "text-align: right;")),
+            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("creditsSummary.table.heading.3.hidden")}</span>""")))
         ))
     else
         None
@@ -44,14 +45,14 @@
 )
 
 @actionContent(actions: Seq[ActionItem]) = {
-@actions match {
-    case actions => {
-        <ul class="govuk-summary-list__actions-list">@for(action <- actions) {
-            <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
-        }</ul>
+    @actions match {
+        case Nil => {@HtmlFormat.empty}
+        case actions => {
+            <ul class="govuk-summary-list__actions-list">@for(action <- actions) {
+                <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
+            }</ul>
+        }
     }
-    case Nil => {HtmlFormat.empty}
-}
 }
 
 @actionLink(action: ActionItem) = {

@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
+import models.{CreditBalance, TaxablePlastic}
 import models.returns.credits.CreditSummaryRow
 import play.api.data.Form
 import play.twirl.api.Html
@@ -27,10 +28,16 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import views.html.returns.credits.CreditsClaimedListView
 
+import java.time.LocalDate
+
 class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
   private val page = inject[CreditsClaimedListView]
   private val form = new CreditsClaimedListFormProvider()()
+
+  val creditBalance = CreditBalance(10, 20, 5L, true, Map(
+    "key1" -> TaxablePlastic(0, 20, 0)
+  ))
 
   private val rows = Seq(
     CreditSummaryRow(
@@ -46,7 +53,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       value = "answer"
     )
   )
-  private def createView(form: Form[_]): Html = page(form, true, true,rows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(form, creditBalance, LocalDate.now(), true, rows, NormalMode)(request, messages)
 
   "View" should {
 
@@ -65,7 +72,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "Show claiming to much credit" when {
       "canBeClaimed is false" in {
-        val view = page(form, canBeClaimed = false, true, rows, NormalMode)(request, messages)
+        val view = page(form, creditBalance.copy(canBeClaimed = false), LocalDate.now(), true, rows, NormalMode)(request, messages)
 
         view.getElementsByTag("h2").text() must include(messages("confirmPackagingCredit.tooMuchCredit.heading"))
       }
@@ -73,7 +80,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "hide the yes/no " when {
       "moreYearsLeftToClaim is false" in {
-        val view = page(form, true, moreYearsLeftToClaim = false, rows, NormalMode)(request, messages)
+        val view = page(form, creditBalance, LocalDate.now(),  moreYearsLeftToClaim = false, rows, NormalMode)(request, messages)
 
         view.text() must not include(messages("creditsSummary.add-to-list"))
         

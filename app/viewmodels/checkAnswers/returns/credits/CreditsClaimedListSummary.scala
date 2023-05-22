@@ -28,6 +28,8 @@ import views.ViewUtils
 
 import java.time.LocalDate
 
+import java.time.LocalDate
+
 
 case object CreditsClaimedListSummary {
   
@@ -35,9 +37,8 @@ case object CreditsClaimedListSummary {
   def createCreditSummary(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
                          (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
-    val isActionColumnHidden = maybeNavigator.isEmpty
-    CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) ++
-      Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
+    CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) :+
+      CreditSummaryRow(messages("creditsSummary.table.total"), creditBalance.totalRequestedCreditInPounds.asPounds, Seq.empty)
   }
 
   
@@ -73,19 +74,21 @@ case object CreditsClaimedListSummary {
     (fromDate, toDate, taxablePlastic.moneyInPounds, key)
   }
 
-  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, dateRange: String, value: String) 
+  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, dateRange: String, value: String)
     (implicit messages: Messages): CreditSummaryRow = {
-    
+
+
+    val (from, to) = LocalDate.parse(key.take(10)) -> LocalDate.parse(key.takeRight(10)) //todo take these from useranswers
+
     CreditSummaryRow(
-      dateRange,
+      ViewUtils.displayDateRangeTo(from, to),
       value,
       actions = maybeNavigator.map { navigator =>
         Seq(
           ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
           ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
         )
-      }.getOrElse(Seq()), 
-      isActionColumnHidden = maybeNavigator.isEmpty
+      }.getOrElse(Seq())
     )
   }
 }
