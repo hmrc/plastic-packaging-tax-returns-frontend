@@ -18,17 +18,23 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CreditBalance(
+case class TaxablePlastic(weight: Long, moneyInPounds: BigDecimal, taxRate: BigDecimal)
+
+object TaxablePlastic {
+  def zero = TaxablePlastic(0, 0, 0) 
+  implicit val format: OFormat[TaxablePlastic] = Json.format[TaxablePlastic]
+}
+
+case class  CreditBalance(
   availableCreditInPounds: BigDecimal,
   totalRequestedCreditInPounds: BigDecimal,
   totalRequestedCreditInKilograms: Long,
   canBeClaimed: Boolean,
-  taxRate: BigDecimal
-)
+  credit: Map[String, TaxablePlastic],
+) {
+  def creditForYear(key: String): TaxablePlastic = credit.getOrElse(key, TaxablePlastic.zero)
+}
 
 object CreditBalance {
-
-  implicit val format: OFormat[CreditBalance] =
-    Json.format[CreditBalance]
-
+  implicit val format: OFormat[CreditBalance] = Json.format[CreditBalance]
 }

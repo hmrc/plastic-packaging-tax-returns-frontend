@@ -18,6 +18,7 @@ package views.returns
 
 import base.ViewSpecBase
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
+import models.returns.credits.CreditSummaryRow
 import models.returns.{Calculations, CreditsAnswer, CreditsClaimedDetails, TaxReturnObligation}
 import models.{CreditBalance, UserAnswers}
 import pages.returns._
@@ -56,17 +57,20 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
   }
 
   val credits = CreditsClaimedDetails(
-    CreditsAnswer(false, None), 
-    CreditsAnswer(true, Some(0L)), 
-    0L, 0)
+    summaryList = Seq(
+      CreditSummaryRow("a-key", "£2.00", Seq()),
+      CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()),
+    ),
+    totalClaimAmount = 20
+  )
 
   "view" should {
     "pass accessibility tests" when {
       "credits is claimed" ignore {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, 0)), 
-          "/change", "/remove"
+          CreditsClaimedDetails(CreditBalance(0,0,0L,true, Map())), 
+          "/change"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -77,7 +81,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
         def render: Html = page(
           createViewModel(ans),
           NoCreditsClaimed,
-          "/change", "/remove"
+          "/change"
         )(request, messages)
 
         render.toString() must passAccessibilityChecks
@@ -92,7 +96,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
           .set(NonExportedHumanMedicinesPlasticPackagingPage, false).get
           .set(NonExportedRecycledPlasticPackagingPage, false).get
 
-        def render: Html = page(createViewModel(ans), NoCreditAvailable, "/change", "/remove")(request, messages)
+        def render: Html = page(createViewModel(ans), NoCreditAvailable, "/change")(request, messages)
 
         render.toString() must passAccessibilityChecks
       }

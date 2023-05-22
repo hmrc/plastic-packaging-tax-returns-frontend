@@ -69,7 +69,8 @@ class ExportedCreditsController @Inject()
             formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key, mode, creditRangeOption))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-              request.userAnswers.changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+              request.userAnswers
+                .changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
                 .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
             }
           )

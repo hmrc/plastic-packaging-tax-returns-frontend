@@ -46,30 +46,23 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        if (!isUserAnswerValid(key)) {
-          Future.successful(Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad(mode)))
-        } else {
-          creditConnector.get(request.pptReference).map { //todo does this make sense to call here?
-            case Right(response) => displayView(response, key, mode)
-            case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
-          }
+        creditConnector.get(request.pptReference).map {
+          case Right(response) => displayView(response, key, mode)
+          case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
         }
     }
-
-  private def isUserAnswerValid(key: String)(implicit request: DataRequest[_]) = {
-    request.userAnswers.get(ExportedCreditsPage(key)).isDefined &&
-      request.userAnswers.get(ConvertedCreditsPage(key)).isDefined
-  }
 
   private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
 
     //Todo: Pass to the view the fromDate and toDate the user is claiming
     // credit for.
+    val singleYear = creditBalance.creditForYear(key)
+    val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
     Ok(confirmCreditView(
         key,
-        creditBalance.totalRequestedCreditInPounds,
-        creditBalance.canBeClaimed,
-        creditSummaryListFactory.createSummaryList(creditBalance, key: String, request.userAnswers),
+        singleYear.moneyInPounds,
+        canClaim = true, // TODO rigged to "can claim" to avoid a multi-year claim stopping here (this page is about a single year) 
+        summaryList,
         returnsJourneyNavigator.confirmCredit(mode),
         mode
       )

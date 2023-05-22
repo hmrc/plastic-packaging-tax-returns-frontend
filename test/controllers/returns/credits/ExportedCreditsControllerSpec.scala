@@ -121,7 +121,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
       when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
 
       val result = await { sut.onSubmit("year-key", NormalMode)(request) }
-      verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
+      verify(mockCacheConnector).saveUserAnswerFunc(any)(any) // TODO check values passed
       verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
       

@@ -19,10 +19,10 @@ package navigation
 import com.google.inject.Inject
 import config.{Features, FrontendAppConfig}
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.{routes => returnRoutes}
 import controllers.returns.credits.{routes => creditRoutes}
-import models.returns.CreditRangeOption
+import controllers.returns.{routes => returnRoutes}
 import models.Mode.{CheckMode, NormalMode}
+import models.returns.CreditRangeOption
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
@@ -83,8 +83,17 @@ class ReturnsJourneyNavigator @Inject()(
   def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
     creditRoutes.ExportedCreditsController.onPageLoad(year.key, mode)
 
+  private def isConvertCreditQuestionAnswered(key: String, userAnswers: UserAnswers) = {
+    // It's possible to be changing credit answers whilst changing a year, whilst in CheckMode from the final CYA 
+    // page. To emulate this kind of double / nested check mode, we check to see if the converted question has 
+    // been answered as a proxy. If it hasn't, we assume you're adding another year to the claim, so continue as 
+    // normal mode would. If it has been answered, then we assume that you are in the nested-check mode and go 
+    // back to the single year, mini-cya
+    userAnswers.get(ConvertedCreditsPage(key)).isDefined
+  }
+
   def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {
-    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
+    val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
     (isCheckMode, isYes) match {
       case (_, true) => creditRoutes.ExportedCreditsWeightController.onPageLoad(key, mode)
       case (false, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
@@ -93,7 +102,7 @@ class ReturnsJourneyNavigator @Inject()(
   }
 
   def exportedCreditsWeight(key: String, mode: Mode, userAnswers: UserAnswers): Call = {
-    val isCheckMode = mode == CheckMode && userAnswers.get(ConvertedCreditsPage(key)).isDefined
+    val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
     if(isCheckMode)
       creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     else
@@ -122,12 +131,12 @@ class ReturnsJourneyNavigator @Inject()(
       returnRoutes.NowStartYourReturnController.onPageLoad
 
   def creditSummaryChange(yearKey: String): String =
-    creditRoutes.ExportedCreditsController.onPageLoad(yearKey, CheckMode).url
+    creditRoutes.ConfirmPackagingCreditController.onPageLoad(yearKey, CheckMode).url
 
   def creditSummaryRemove(yearKey: String): String =
     creditRoutes.CancelCreditsClaimController.onPageLoad(yearKey).url
 
-  def cancelCredit(key: String): Call = {
+  def cancelCredit(): Call = {
     creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
@@ -235,8 +244,5 @@ class ReturnsJourneyNavigator @Inject()(
 
   def cyaChangeCredits: String =
     creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
-
-  def cyaRemoveCredits: String =
-    creditRoutes.RemoveCreditController.onPageLoad().url
 
 }

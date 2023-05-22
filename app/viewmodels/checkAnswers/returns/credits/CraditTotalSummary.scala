@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package models.returns
+package viewmodels.checkAnswers.returns.credits
 
 import models.returns.credits.CreditSummaryRow
+import viewmodels.PrintBigDecimal
 
-trait Credits {
-  def summaryList: Seq[CreditSummaryRow]
-}
+object CreditTotalSummary {
 
-object Credits {
-  case object NoCreditsClaimed extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
-  }
-
-  case object NoCreditAvailable extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
+  val key = "Credit total [Use Key]"
+  def createRow(totalWeightInPound: BigDecimal, isActionColumnHidden: Boolean): CreditSummaryRow = {
+    CreditSummaryRow(key, totalWeightInPound.asPounds, Seq(), isActionColumnHidden)
   }
 }

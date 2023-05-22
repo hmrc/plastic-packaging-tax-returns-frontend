@@ -19,7 +19,7 @@ package connectors
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import models.CreditBalance
+import models.{CreditBalance, TaxablePlastic}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -44,7 +44,7 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
   "Get" should {
     "return a credit for a pptReference" in {
-      val expectedCredit = CreditBalance(10, 5, 200, true, 0.30)
+      val expectedCredit = CreditBalance(10, 5, 200, true, Map("a-key" -> TaxablePlastic(1, 2, 3)))
       stubCalculateCreditApi(
         Status.OK,
         pptReference,

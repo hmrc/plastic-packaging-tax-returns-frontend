@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package models.returns
+package viewmodels.checkYourAnswer.returns.credits
 
 import models.returns.credits.CreditSummaryRow
+import org.scalatestplus.play.PlaySpec
+import viewmodels.checkAnswers.returns.credits.CreditTotalSummary
 
-trait Credits {
-  def summaryList: Seq[CreditSummaryRow]
-}
+class CreditTotalSummarySpec extends PlaySpec {
 
-object Credits {
-  case object NoCreditsClaimed extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
+  "createRow" should {
+    "create a row" in {
+      CreditTotalSummary.createRow(200, isActionColumnHidden = false) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
+    }
   }
 
-  case object NoCreditAvailable extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
-  }
 }

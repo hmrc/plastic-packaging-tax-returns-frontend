@@ -20,13 +20,17 @@ import connectors.{AvailableCreditYearsConnector, CacheConnector}
 import controllers.actions.JourneyAction
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditRangeOption
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.AvailableYears
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
-import play.api.mvc.Results.Ok
+import play.api.libs.json.{JsObject, JsPath}
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.returns.credits.ClaimForWhichYearView
 
 import javax.inject.Inject
@@ -44,27 +48,27 @@ class ClaimForWhichYearController @Inject()(
   availableCreditYearsConnector: AvailableCreditYearsConnector
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
-  //todo this needs check mode, else you loose the state coming from finalCYA
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      //todo should availableYears be put in to useranswers/session cache as future pages will need to hmm :thinking:
-      availableCreditYearsConnector.get(request.pptReference).map {
-        case Right(availableYears) => //todo availableYears.filter() for ones that are already filled in. Also what if this leaves, None or One?
-          val form = formProvider(availableYears)
-          Ok(view(form, availableYears, mode))
-        case Left(error) => throw error
+      availableRemainingOptions.map {
+        options =>
+        if (options.isEmpty) {
+          Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode))
+        } else {
+          val form = formProvider(options)
+          Ok(view(form, options, mode))
+        }
       }
-
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      availableCreditYearsConnector.get(request.pptReference).flatMap {
-        case Right(availableYears) =>
-          formProvider(availableYears)
+      availableRemainingOptions.flatMap {
+        options =>
+          formProvider(options)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, availableYears, mode))),
+              formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, options, mode))),
               selectedRange => {
                 request.userAnswers
                   .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
@@ -74,9 +78,28 @@ class ClaimForWhichYearController @Inject()(
                 )
               }
             )
-        case Left(error) => throw error
       }
-
-
     }
+
+  private def availableRemainingOptions(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
+    availableYears.map{ availableYears =>
+      val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
+      availableYears.filterNot(y => alreadyUsedYears.contains(y.key))
+    }
+  }
+
+  private def availableYears(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
+    request.userAnswers.get(AvailableYears).map(Future.successful)
+      .getOrElse{
+        availableCreditYearsConnector.get(request.pptReference).flatMap {
+          availableYears =>
+            request
+              .userAnswers
+              .setOrFail(AvailableYears, availableYears)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map{
+              _ => availableYears
+            }
+        }
+      }
+  }
 }

@@ -20,9 +20,9 @@ import base.ViewSpecBase
 import config.FrontendAppConfig
 import controllers.returns.routes
 import models.Mode.CheckMode
-import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
+import models.returns.Credits.NoCreditAvailable
 import models.returns._
-import models.{CreditBalance, UserAnswers}
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -66,10 +66,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   private def createView (
-    credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
+    credits: Credits = CreditsClaimedDetails(createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
-    page(taxReturn, credits, "/change", "/remove")(request, messages)
+    page(taxReturn, credits, "/change")(request, messages)
 
   "View" should {
 
@@ -123,22 +123,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   "Credits section" should {
       //todo how should credit section work on big CYA
-
-    "can remove a credit" when {
-      "credit is claimed" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-        val view = createView(
-          credits = CreditsClaimedDetails(createUserAnswerForClaimedCredit, createCreditBalance)
-        )
-
-        getText(view, "remove-credit-link") mustBe "Remove credits"
-        getText(view, "remove-credit-link") mustBe messages("submit-return.check-your-answers.credits.remove.text.link")
-
-        view.getElementById("remove-credit-link").select("a").first() must
-          haveHref("/remove")
-      }
-    }
-
   }
 
   "Exported Plastic Packaging section" should {
@@ -282,7 +266,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       haveHref(appConfig.creditsGuidanceUrl)
   }
 
-  private def createCreditBalance = CreditBalance(10, 40, 300L, true, 0.30)
+  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
 
   private def createUserAnswerForClaimedCredit: UserAnswers =
     UserAnswers("123")

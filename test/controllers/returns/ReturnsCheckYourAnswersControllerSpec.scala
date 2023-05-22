@@ -25,7 +25,8 @@ import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
 import models.returns._
-import models.{CreditBalance, UserAnswers}
+import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers._
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -36,7 +37,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -90,7 +91,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockView
     )
 
-    when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(new Html(""))
+    when(mockView.apply(any(), any(), any())(any(), any())).thenReturn(new Html(""))
     when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
   }
 
@@ -101,7 +102,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
-      verify(mockView).apply(any(), any(), any(), any())(any(), any())
+      verify(mockView).apply(any(), any(), any())(any(), any())
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
@@ -122,15 +123,14 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "view claimed credits on pageLoading" in {
       setUpMockConnector()
-
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
-
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
-        exported = CreditsAnswer.noClaim, //todo CYA does not have a break down
-        converted = CreditsAnswer.noClaim, //todo CYA does not have a break down
-        totalWeight = 500L,
-        totalCredits = 20L
+        summaryList = Seq(
+          CreditSummaryRow("a-key", "£2.00", Seq(), isActionColumnHidden = true), 
+          CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq(), isActionColumnHidden = true), 
+        ),
+        totalClaimAmount = 20
       )
     }
 
@@ -241,22 +241,14 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       await {
         controller.onPageLoad()(FakeRequest(GET, "/foo"))
       }
-      verify(mockView).apply(any(), any(), eqTo("/change-me"), any())(any(), any())
-    }
-
-    "link to credit remove" in {
-      when(navigator.cyaRemoveCredits) thenReturn "/remove-me"
-      setUpMockConnector()
-      await {
-        controller.onPageLoad()(FakeRequest(GET, "/foo"))
-      }
-      verify(mockView).apply(any(), any(), any(), eqTo("/remove-me"))(any(), any())
+      verify(mockView).apply(any(), any(), eqTo("/change-me"))(any(), any())
     }
   }
 
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
-    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, 0.30)),
+    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, Map(
+      "a-key" -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
     when(mockTaxReturnConnector.getCalculationReturns(any())(any()))
@@ -272,7 +264,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def verifyAndCaptorCreditDetails: Credits = {
     val captor = ArgumentCaptor.forClass(classOf[Credits])
-    verify(mockView).apply(any(), captor.capture(), any(), any())(any(), any())
+    verify(mockView).apply(any(), captor.capture(), any())(any(), any())
     captor.getValue
   }
   

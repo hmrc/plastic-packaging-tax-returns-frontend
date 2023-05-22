@@ -110,11 +110,13 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         val call = navigator.exportedCreditsYesNo("year-key", NormalMode, false, userAnswers)
         call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
       }
+      
       "user answer is no, it is in Check mode but converted questions have not been done" in {
         when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn None
         val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
         call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", CheckMode)
       }
+      
       "user answer is no, it is in Check mode and converted questions have been done" in {
         when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
         val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
@@ -150,11 +152,11 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(NormalMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key",  true)
+        val call = navigator.convertedCreditsYesNo(CheckMode, "year-key", true)
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }
@@ -230,7 +232,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   
   "credit summary" should {
     "change a claim for a year" in {
-      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", CheckMode).url
+      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("a-key", CheckMode).url
     }
     "remove a claim for a year" in {
       navigator.creditSummaryRemove("a-key") mustBe creditRoutes.CancelCreditsClaimController.onPageLoad("a-key").url
@@ -238,7 +240,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "cancelCredit" in {
-    navigator.cancelCredit("year-key") mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
+    navigator.cancelCredit() mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
   "start your return" should {
@@ -477,9 +479,6 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "big CYA" should {
     "link to change credit answers" in {
       navigator.cyaChangeCredits mustBe creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
-    }
-    "link to remove credit answers" in {
-      navigator.cyaRemoveCredits mustBe creditRoutes.RemoveCreditController.onPageLoad().url
     }
   } 
 }

@@ -32,13 +32,13 @@
     noCreditsAvailable: NoCreditsAvailable
 )
 
-@(key: String, credits: Credits, changeUrl: String, removeUrl: String)(implicit request: Request[_], messages: Messages)
+@(key: String, credits: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
 @selectView = @{
     credits match {
         case Credits.NoCreditsClaimed => noCreditsClaimed()
         case Credits.NoCreditAvailable => noCreditsAvailable()
-        case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl, removeUrl)
+        case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
     }
 }
 

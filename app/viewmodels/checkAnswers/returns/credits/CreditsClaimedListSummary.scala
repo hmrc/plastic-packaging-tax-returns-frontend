@@ -16,51 +16,51 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.Mode.CheckMode
-import models.UserAnswers
-import models.returns.CreditsAnswer
+import models.CreditBalance
+import models.returns.credits.CreditSummaryRow
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, JsPath}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.PrintBigDecimal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-import java.time.LocalDate
-
-
-//case class Credits(credits: Seq[Credit])
-//
-//
-//case class Credit
-//(
-//  endDate: LocalDate,
-//  exportedCredit: CreditsAnswer,
-//  convertedCredit: CreditsAnswer
-//)
-
 
 object CreditsClaimedListSummary {
+  
+  // TODO can this be made simpler?
 
-  def createRows(answers: UserAnswers, navigator: ReturnsJourneyNavigator) 
-    (implicit messages: Messages): Seq[SummaryListRow] = {
+  def createCreditSummary(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator]) 
+    (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
-    answers.get[Map[String,JsObject]](JsPath \ "credit").map {
-      answer: Map[String, JsObject] =>
-
-        answer.map(item => {
-          SummaryListRowViewModel(
-            key = item._1,
-            value = ValueViewModel("0"),
-            actions = Seq(
-              ActionItemViewModel("site.change", navigator.creditSummaryChange(item._1)),
-              ActionItemViewModel("site.remove", navigator.creditSummaryRemove(item._1))
-            )
-          )
-
-        })
-
-    }.getOrElse(Seq.empty).toSeq
+    val isActionColumnHidden = maybeNavigator.isEmpty
+    CreditsClaimedListSummary.createRows(creditBalance, maybeNavigator) ++ 
+      Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
   }
 
+  def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
+    (implicit messages: Messages): Seq[CreditSummaryRow] = createRows(creditBalance, Some(navigator))
+  
+  def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
+    (implicit messages: Messages): Seq[CreditSummaryRow] = {
+
+    creditBalance.credit.map { 
+      case (key, taxablePlastic) => creditSummary(maybeNavigator, key, taxablePlastic.moneyInPounds.asPounds)
+    }.toSeq
+  }
+
+  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 
+    (implicit messages: Messages): CreditSummaryRow = {
+    
+    CreditSummaryRow(
+      key,
+      value,
+      actions = maybeNavigator.map { navigator =>
+        Seq(
+          ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
+          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+        )
+      }.getOrElse(Seq()), 
+      isActionColumnHidden = maybeNavigator.isEmpty
+    )
+  }
 }

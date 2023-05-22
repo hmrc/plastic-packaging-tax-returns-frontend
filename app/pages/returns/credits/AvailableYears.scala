@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package models.returns
+package pages.returns.credits
 
-import models.returns.credits.CreditSummaryRow
+import models.returns.CreditRangeOption
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-trait Credits {
-  def summaryList: Seq[CreditSummaryRow]
-}
-
-object Credits {
-  case object NoCreditsClaimed extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
-  }
-
-  case object NoCreditAvailable extends Credits {
-    override def summaryList: Seq[CreditSummaryRow] = Seq.empty
-  }
+case object AvailableYears extends QuestionPage[Seq[CreditRangeOption]] {
+  override def path: JsPath = JsPath \ "creditAvailableYears"
 }
