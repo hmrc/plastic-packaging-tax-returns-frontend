@@ -32,9 +32,6 @@
 @layout(pageTitle = title(form, messages("converted-credits-weight.heading-title"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = submitCall, 'autoComplete -> "off") {
-        @*****************************************************************************
-        todo: change credits period to be dynamic. For now this will be static
-        *****************************************************************************@
 
         @creditsJourneyCaption(dateRange)
         @weightInputLayout(

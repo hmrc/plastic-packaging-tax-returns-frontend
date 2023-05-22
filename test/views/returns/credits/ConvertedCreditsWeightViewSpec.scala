@@ -45,7 +45,7 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
   private def createView: Html = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
-  "AnotherBusinessExportWeightView" should {
+  "It" should {
     
     // Note as this only runs once, no mocks are reset
     val view = createView
@@ -57,8 +57,8 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
     }
 
     "have a caption" in {
-      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.caption"), any(), any())
-      view.getElementById("section-header").text must include ("Credit for")
+      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.caption"), any())
+      view.getElementById("section-header").text mustBe ("Credit for 1 April 2023 to 31 March 2024")
     }
 
     "have a hint" in {
