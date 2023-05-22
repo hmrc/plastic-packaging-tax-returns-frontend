@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@import templates.WeightInputLayout
+@import components._
+@import templates._
+@import viewmodels._
 @import models.returns.CreditRangeOption
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
-    weightInputLayout: WeightInputLayout
+    weightInputLayout: WeightInputLayout,
+    creditsJourneyCaption: CreditsJourneyCaption,
 )
 
 @(form: Form[Long], submitCall: Call, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
@@ -33,8 +36,9 @@
         todo: change credits period to be dynamic. For now this will be static
         *****************************************************************************@
 
+        @creditsJourneyCaption(dateRange)
         @weightInputLayout(
-            sectionHeading = Some(messages("credits.caption", "1 April 2022", "31 March 2023")),
+            sectionHeading = None,
             heading = messages("converted-credits-weight.heading-title"),
             hintText = Some(messages("converted-credits-weight.hint")),
             form = form
