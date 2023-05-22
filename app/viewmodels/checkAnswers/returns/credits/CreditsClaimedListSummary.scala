@@ -32,28 +32,22 @@ import java.time.LocalDate
 case object CreditsClaimedListSummary {
   
   // TODO can this be made simpler?
-
-
-    createRows(userAnswer, creditBalance, maybeNavigator) :+
-      CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds)
-  }
-
-  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, navigator: Option[ReturnsJourneyNavigator])
-    (implicit messages: Messages): Seq[CreditSummaryRow] = {
+  def createCreditSummary(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
+                         (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     val isActionColumnHidden = maybeNavigator.isEmpty
-    CreditsClaimedListSummary.createRows(creditBalance, maybeNavigator) ++ 
+    CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) ++
       Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
   }
 
   
-  def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
+  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
     creditBalance.credit.toSeq.map { case (key, taxablePlastic) =>
       extractDateAndAmount(userAnswer, key, taxablePlastic)}
       .sortBy(_._1)
       .map { case (fromDate, toDate, amount) =>
-        creditSummary(navigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
+        creditSummary(maybeNavigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
       }
   }
   def createRows
@@ -76,7 +70,6 @@ case object CreditsClaimedListSummary {
   ): (LocalDate, LocalDate, BigDecimal) = {
     val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
     val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
-
 
     (fromDate, toDate, taxablePlastic.moneyInPounds)
   }

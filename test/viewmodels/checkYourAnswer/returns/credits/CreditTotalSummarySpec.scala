@@ -30,7 +30,7 @@ class CreditTotalSummarySpec extends PlaySpec {
   "createRow" should {
     "create a row" in {
     when(message.apply(any[String])).thenAnswer((s: String) => s)      
-    CreditTotalSummary.createRow(200, isActionColumnHidden = false) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
+    CreditTotalSummary.createRow(200, isActionColumnHidden = false)(message) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
     }
   }
 
