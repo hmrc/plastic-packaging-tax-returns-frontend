@@ -26,6 +26,7 @@ import models.returns.CreditRangeOption
 import models.{Mode, UserAnswers}
 import pages._
 import pages.returns._
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.mvc.Call
 
 import javax.inject.Singleton
@@ -82,16 +83,27 @@ class ReturnsJourneyNavigator @Inject()(
   def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
     creditRoutes.ExportedCreditsController.onPageLoad(year.key, mode)
 
-  def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean): Call = {
-    (mode, isYes) match {
+  private def isConvertCreditQuestionAnswered(key: String, userAnswers: UserAnswers) = {
+    // It's possible to be changing credit answers whilst changing a year, whilst in CheckMode from the final CYA 
+    // page. To emulate this kind of double / nested check mode, we check to see if the converted question has 
+    // been answered as a proxy. If it hasn't, we assume you're adding another year to the claim, so continue as 
+    // normal mode would. If it has been answered, then we assume that you are in the nested-check mode and go 
+    // back to the single year, mini-cya
+    userAnswers.get(ConvertedCreditsPage(key)).isDefined
+  }
+
+  def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {
+    val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
+    (isCheckMode, isYes) match {
       case (_, true) => creditRoutes.ExportedCreditsWeightController.onPageLoad(key, mode)
-      case (NormalMode, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
-      case (CheckMode, false) => creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
+      case (false, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
+      case (true, false) =>  creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     }
   }
 
-  def exportedCreditsWeight(key: String, mode: Mode): Call = {
-    if (mode == CheckMode)
+  def exportedCreditsWeight(key: String, mode: Mode, userAnswers: UserAnswers): Call = {
+    val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
+    if(isCheckMode)
       creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     else
       creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)

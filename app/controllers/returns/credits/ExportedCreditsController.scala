@@ -63,7 +63,7 @@ class ExportedCreditsController @Inject()
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
               request.userAnswers
                 .changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
-                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue)))
+                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
             }
           )
     }
