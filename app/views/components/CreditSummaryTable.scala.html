@@ -40,7 +40,8 @@
     Table(
         rows = list.map(row => row.createContent(actions => actionContent(actions))),
         head = headingRow,
-        firstCellIsHeader = true
+        firstCellIsHeader = true,
+        attributes = Map("id" -> "credit-summary-table")
     )
 )
 

@@ -39,7 +39,10 @@ case class CreditSummaryRow(
     if (actions.isEmpty)
       Seq(TableRow(attributes=Map("aria-hidden" -> "true")))
     else
-      Seq(TableRow(content = HtmlContent(createActionsContent(actions)), format = Some("text"), 
-        classes = "govuk-table__cell--numeric"))
+      Seq(TableRow(
+        content = HtmlContent(createActionsContent(actions)),
+        format = Some("text"),
+        attributes = Map("style" -> "text-align:right;")
+      ))
   }
 }

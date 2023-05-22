@@ -18,12 +18,15 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import models.{CreditBalance, TaxablePlastic}
 import models.returns.credits.CreditSummaryRow
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.CreditsClaimedListView
+
+import java.time.LocalDate
 
 class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
@@ -49,22 +52,30 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
     )
   )
 
-  def render(form: Form[Boolean], canBeClaimed: Boolean): String =
-    page(form, canBeClaimed, true, years, NormalMode)(request, messages).toString()
+  val creditBalance = CreditBalance(10, 20, 5L, true, Map(
+    s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(0, 20, 0)
+  ))
+
+  def render(form: Form[Boolean], creditBalance: CreditBalance): String =
+    page(form, creditBalance, LocalDate.now(), true, years, NormalMode)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {
       "can claim credit" in {
-        render(form, true) must passAccessibilityChecks
+        render(form, creditBalance) must passAccessibilityChecks
       }
 
       "cannot claim credit" in {
-        render(form, false) must passAccessibilityChecks
+        render(form, creditBalance.copy(canBeClaimed = false)) must passAccessibilityChecks
+      }
+
+      "no more years to claim" in {
+        page(form, creditBalance, LocalDate.now(), false, years, NormalMode)(request, messages).toString() must passAccessibilityChecks
       }
     }
 
     "with error" in {
-      render(form.withError("test", "message"), true) must passAccessibilityChecks
+      render(form.withError("test", "message"), creditBalance) must passAccessibilityChecks
     }
   }
 }

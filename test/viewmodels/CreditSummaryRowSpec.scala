@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, TableRow, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, HtmlContent}
 
 class CreditSummaryRowSpec extends PlaySpec 
   with MockitoSugar with ResetMocksAfterEachTest with BeforeAndAfterEach {
@@ -37,25 +37,25 @@ class CreditSummaryRowSpec extends PlaySpec
   }
   
   "it" should {
-    
     "render a two column version with no actions" in {
       val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq())
       val result = creditSummaryRow.createContent(createAction)
       verifyZeroInteractions(createAction)
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
-        TableRow(Text("a-value"), Some("text"), classes = "govuk-table__cell--numeric")
+        TableRow(Text("a-value"), Some("text"), attributes = Map("style" -> "text-align:right;")),
+        TableRow(Empty, None, "", None, None, Map("aria-hidden" -> "true"))
       )
     }
-    
+
     "render a three column version with actions" in {
       val creditSummaryRow = CreditSummaryRow("a-label", "a-value", Seq(ActionItem()))
       val result = creditSummaryRow.createContent(createAction)
       verify(createAction).apply(Seq(ActionItem()))
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
-        TableRow(Text("a-value"), Some("text")), 
-        TableRow(HtmlContent(Html("action-html")), Some("text"), "govuk-table__cell--numeric")
+        TableRow(Text("a-value"), Some("text"), attributes = Map("style" -> "text-align:right;")),
+        TableRow(HtmlContent(Html("action-html")), Some("text"), attributes = Map("style" -> "text-align:right;"))
       )
     }
   }
