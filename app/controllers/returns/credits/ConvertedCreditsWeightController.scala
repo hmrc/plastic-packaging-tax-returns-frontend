@@ -22,16 +22,18 @@ import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ConvertedCreditsWeightView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +56,10 @@ class ConvertedCreditsWeightController @Inject()(
     }
 
   private def createView(form: Form[Long], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
-    view(form, routes.ConvertedCreditsWeightController.onSubmit(key, mode))
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    view(form, routes.ConvertedCreditsWeightController.onSubmit(key, mode), creditRangeOption)
   }
 
   def onSubmit(key: String, mode: Mode) : Action[AnyContent] =
@@ -67,10 +72,8 @@ class ConvertedCreditsWeightController @Inject()(
 
   private def formIsGood(key: String, mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
     request.userAnswers
-      .changeWithFunc(ConvertedCreditsPage(key),
-        (_: Option[CreditsAnswer]) => CreditsAnswer.answerWeightWith(answer), 
-        cacheConnector.saveUserAnswerFunc(request.pptReference)
-      )
+      .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
+      .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
       .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
   }
 

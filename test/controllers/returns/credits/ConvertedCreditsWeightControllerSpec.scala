@@ -25,6 +25,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar._
@@ -39,11 +40,13 @@ import play.api.data.Forms.longNumber
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, RequestHeader}
 import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConvertedCreditsWeightView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -57,6 +60,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   private val formProvider = mock[ConvertedCreditsWeightFormProvider]
   private val cacheConnector = mock[CacheConnector]
   private val navigator = mock[ReturnsJourneyNavigator]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val controller = new ConvertedCreditsWeightController(
     messagesApi,
@@ -71,6 +75,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
   private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
   private val form = mock[Form[Long]]
   private val messages = mock[Messages]
+  private val updatedUserAnswers = mock[UserAnswers]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -80,8 +85,12 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     
     when(formProvider.apply()) thenReturn form
     
-    when(view.apply(any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
+    when(view.apply(any, any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
     when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
+    when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
+    when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
   }
 
   "onPageLoad" should {
@@ -96,7 +105,8 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       status {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       } mustBe Status.OK
-      verify(view).apply(form, routes.ConvertedCreditsWeightController.onSubmit("year-key", NormalMode)) (request, messages)
+      val call = routes.ConvertedCreditsWeightController.onSubmit("year-key", NormalMode)
+      verify(view).apply(eqTo(form), eqTo(call), eqTo(creditRangeOption)) (eqTo(request), eqTo(messages))
     }
     
     "use an existing user-answer if present" in {
@@ -117,22 +127,17 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
-      
-      val updatedUserAnswers = mock[UserAnswers] 
-      when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
-      when(request.userAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
 
       when(navigator.convertedCreditsWeight(any, any)).thenReturn(Call(GET, "/foo"))
 
       await(controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveFunction)) (any, any) // TODO could improve
+      verify(request.userAnswers).setOrFail(eqTo(ConvertedCreditsPage("year-key")), eqTo(CreditsAnswer.answerWeightWith(1L)), any) (any) // TODO could improve
     }
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
       when(navigator.convertedCreditsWeight(any, any)).thenReturn(Call(GET, "/foo"))
-      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
 
       val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
@@ -147,7 +152,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe BAD_REQUEST
-      verify(view).apply(meq(boundFormWithError), any)(any, any)
+      verify(view).apply(meq(boundFormWithError), any, any)(any, any)
     }
     
   }
