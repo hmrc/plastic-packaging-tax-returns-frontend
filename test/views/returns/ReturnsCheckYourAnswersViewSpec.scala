@@ -23,6 +23,7 @@ import models.Mode.CheckMode
 import models.returns.Credits.NoCreditAvailable
 import models.returns._
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -44,7 +45,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
   private val appConfig                      = mock[FrontendAppConfig]
-  private val dateKey = "date-key"
+  private val dateKey = s"${LocalDate.now()}-${LocalDate.now()}"
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
     LocalDate.of(2022, 4, 1),
@@ -115,16 +116,24 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     }
   }
 
-  "display guidance" when {
-    "is first return" in {
-      when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
-      val view = createView(credits = NoCreditAvailable)
-      assertNoCreditsAvailable(view)
-    }
-  }
-
   "Credits section" should {
-      //todo how should credit section work on big CYA
+    "display guidance" when {
+      "is first return" in {
+        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
+        val view = createView(credits = NoCreditAvailable)
+        assertNoCreditsAvailable(view)
+      }
+    }
+
+    "show table" in {
+      val view = createView()
+      val doc = Jsoup.parse(view.toString())
+
+      val creditTable = doc.getElementById("credit-summary-table")
+      creditTable.text() must include("Credit total")
+      val creditLink = doc.getElementById("change-credit-link")
+      creditLink.text() must include("Change, remove or add credits")
+    }
   }
 
   "Exported Plastic Packaging section" should {
@@ -270,8 +279,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map(dateKey -> TaxablePlastic(1, 2, 0.30)))
 
-  private def getCreditRow(view: Html, row: Int): Element =
-    view.getElementById("exported-answer").child(row)
 
   private def getText(view: Html, id: String): String =
     view.getElementById(id).text()
@@ -290,8 +297,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
     .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
     .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
-      .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
-      .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
+    .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
+    .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
     .set(WhatDoYouWantToDoPage, true).get
 
     v
