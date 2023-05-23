@@ -22,7 +22,7 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.MockitoSugar
@@ -36,11 +36,13 @@ import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import views.html.returns.credits.ExportedCreditsView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -60,6 +62,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
   private val initialForm = mock[Form[Boolean]]("initial form")
   private val messages = mock[Messages]
   private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   val sut: ExportedCreditsController = new ExportedCreditsController(
     messagesApi,
@@ -76,11 +79,13 @@ class ExportedCreditsControllerSpec extends PlaySpec
     when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     
-    when(view.apply(any, any, any)(any, any)) thenReturn Html("correct view")
+    when(view.apply(any, any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
     when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
   }
 
   "onPageLoad" must {
@@ -89,7 +94,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
       val result = sut.onPageLoad("year-key", NormalMode)(request)
       await(result)
 
-      verify(view).apply(preparedForm, "year-key", NormalMode)(request, messages)
+      verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
 
       val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
       verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
@@ -130,7 +135,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithError
 
       val result = await { sut.onSubmit("year-key", NormalMode)(request) }
-      verify(view).apply(formWithError, "year-key", NormalMode) (request, messages)
+      verify(view).apply(formWithError, "year-key", NormalMode, creditRangeOption) (request, messages)
 
       result.header.status mustEqual BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"

@@ -18,6 +18,7 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
+import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -30,6 +31,8 @@ import support.{ViewAssertions, ViewMatchers}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ConvertedCreditsWeightView
 
+import java.time.LocalDate
+
 class ConvertedCreditsWeightViewSpec extends ViewSpecBase
   with ViewAssertions
   with ViewMatchers
@@ -39,9 +42,10 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
   override val messages = spy(super.messages)
   private val form = new ConvertedCreditsWeightFormProvider()()
   private val page = inject[ConvertedCreditsWeightView]
-  private def createView: Html = page(form, Call("method", "/submit-url"))(request, messages)
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private def createView: Html = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
-  "AnotherBusinessExportWeightView" should {
+  "It" should {
     
     // Note as this only runs once, no mocks are reset
     val view = createView
@@ -53,8 +57,8 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
     }
 
     "have a caption" in {
-      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.period.caption"), any(), any())
-      view.getElementById("section-header").text must include ("Credit for")
+      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.caption"), any())
+      view.getElementById("section-header").text mustBe ("Credit for 1 April 2023 to 31 March 2024")
     }
 
     "have a hint" in {

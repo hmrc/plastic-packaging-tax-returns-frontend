@@ -14,26 +14,28 @@
  * limitations under the License.
  *@
 
-@import templates.WeightInputLayout
+@import models.returns.CreditRangeOption
+@import components._
+@import templates._
+@import viewmodels._
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
-    weightInputLayout: WeightInputLayout
+    weightInputLayout: WeightInputLayout,
+    creditsJourneyCaption: CreditsJourneyCaption
 )
 
-@(form: Form[Long], yearKey: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Long], yearKey: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("exportedCreditsWeight.heading"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
 
-        @***********************************************************
-            todo: get caption date dynamically
-        ***********************************************************@
+        @creditsJourneyCaption(dateRange)
         @weightInputLayout(
-                sectionHeading = Some(messages("exportedCreditsWeight.caption", "1 April 2022", "31 March 2023")),
+                sectionHeading = None,
                 heading = messages("exportedCreditsWeight.heading"),
                 hintText = Some(messages("exportedCreditsWeight.hint")),
                 form = form

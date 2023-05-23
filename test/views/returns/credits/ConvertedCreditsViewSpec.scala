@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -27,13 +28,16 @@ import support.{ViewAssertions, ViewMatchers}
 import views.ViewUtils
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
+
 class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
   val form = new ConvertedCreditsFormProvider()()
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private def createView(form: Form[Boolean] = form): Html =
-    page(form,"year-key", NormalMode)(request, messages)
+    page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
 
   "Converted Credits View" should {
 
@@ -49,7 +53,8 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe "Credit for 1 April 2022 to 31 March 2023"
+      view.getElementById("section-header").text mustBe "Credit for 1 April 2023 to 31 March 2024"
+      view.getElementById("section-header").text mustBe messages("credits.caption", "1 April 2023 to 31 March 2024")
     }
 
     "have paragraph content" in {
