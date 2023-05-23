@@ -61,16 +61,17 @@ class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.text() must include(messages("do-you-want-to-claim.p1.b1"))
       view.text() must include(messages("do-you-want-to-claim.p1.b2"))
       view.text() must include(messages("do-you-want-to-claim.p2"))
-      view.text() must include(messages("do-you-want-to-claim.p2.b1"))
-      view.text() must include(messages("do-you-want-to-claim.p2.b2"))
       view.text() must include(messages("do-you-want-to-claim.p3"))
+      view.text() must include(messages("do-you-want-to-claim.p3.b1"))
+      view.text() must include(messages("do-you-want-to-claim.p3.b2"))
+      view.text() must include(messages("do-you-want-to-claim.p4"))
     }
 
     "have the links to guidance" in {
-      view.getElementById("credit-info-link").text() mustBe messages("do-you-want-to-claim.p3.b1.a")
+      view.getElementById("credit-info-link").text() mustBe messages("do-you-want-to-claim.p4.b1.a")
       view.getElementById("credit-info-link").attr("href") mustBe "https://www.gov.uk/guidance/claim-a-credit-or-defer-paying-plastic-packaging-tax#components-youve-already-paid-tax-on-which-are-exported-or-converted"
 
-      view.getElementById("records-info-link").text() mustBe messages("do-you-want-to-claim.p3.b2.a")
+      view.getElementById("records-info-link").text() mustBe messages("do-you-want-to-claim.p4.b2.a")
       view.getElementById("records-info-link").attr("href") mustBe "https://www.gov.uk/guidance/record-keeping-and-accounts-for-plastic-packaging-tax#records-to-keep-to-claim-a-credit"
     }
 
