@@ -563,11 +563,11 @@ exportedCreditsWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â c
 exportedCreditsWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 exportedCreditsWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
-converted-credits-yes-no.title-heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was converted 
-converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later convert it into different chargeable plastic packaging components, you can claim tax back as credit.
-converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business converts it.
-converted-credits-yes-no.question = [WELSH NEEDED] Did you pay tax on plastic packaging between April 2022 and March 2023 before it was converted?
-converted-credits-yes-no.error.required = [WELSH NEEDED] Select yes if you’ve already paid tax on plastic packaging that has since been converted
+converted-credits-yes-no.title-heading = Deunydd pacio plastig gwnaethoch dalu treth arno cyn iddo gael ei drosi
+converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you paid tax on plastic packaging and then you converted it into different chargeable plastic packaging components, you can claim tax back as credit.
+converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business converted it.
+converted-credits-yes-no.question = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei drosi?
+converted-credits-yes-no.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei drosi
 
 do-you-want-to-claim.title = [NEED WELSH]Claiming tax back as credit
 do-you-want-to-claim.p1 =[NEED WELSH] You can claim tax back as credit if you pay tax on plastic packaging before you or another business:
@@ -704,8 +704,12 @@ amendExportedByAnotherBusiness.error.required = Nodwch y pwysau, mewn cilogramau
 amendExportedByAnotherBusiness.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 amendExportedByAnotherBusiness.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
-converted-credits-weight.heading-title = [NEEDS WELSH] How much plastic packaging did you pay tax on before it was converted?
-converted-credits-weight.hint = [NEEDS WELSH] Enter the weight in kilograms. 1 tonne is 1,000kg.
+converted-credits-weight.heading-title = Faint o ddeunydd pacio plastig wnaethoch chi dalu treth arno cyn iddo gael ei drosi?
+converted-credits-weight.hint = Nodwch y pwysau mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+converted-credits-weight.error.required = Nodwch y pwysau, mewn cilogramau
+converted-credits-weight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+converted-credits-weight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
+converted-credits-weight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
 cancelCreditsClaim.title = [NEEDS WELSH]Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
 cancelCreditsClaim.heading = [NEEDS WELSH] Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?
