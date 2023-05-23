@@ -17,6 +17,8 @@
 package views.returns.credits
 
 import base.ViewSpecBase
+import models.returns.CreditsAnswer
+import models.returns.credits.SingleYearClaim
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.mvc.Call
@@ -24,13 +26,19 @@ import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.CancelCreditsClaimView
 
+import java.time.LocalDate
+
 class CancelCreditsClaimViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   private val page = inject[CancelCreditsClaimView]
   private def render: Html = page(
     Form("value" -> boolean).fill(true),
     Call("POST", "call-url"), 
-    "year-range"
+    SingleYearClaim(
+      fromDate = LocalDate.of(1, 2, 3), 
+      endDate = LocalDate.of(4, 5, 6), 
+      exportedCredits = Some(CreditsAnswer(true, Some(7L))), 
+      convertedCredits = Some(CreditsAnswer(true, Some(8L))))
   ) (request, messages)
 
   "view" should {

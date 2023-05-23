@@ -76,6 +76,6 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
 
   private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean]) (implicit request: Request[_]) = {
     val singleYearClaim = SingleYearClaim.readFrom(userAnswers, key) 
-    view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim.toDateRangeString)
+    view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim)
   }
 }
