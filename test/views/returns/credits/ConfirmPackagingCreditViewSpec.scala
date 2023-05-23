@@ -33,7 +33,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
   private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
   private val requestedCredit = BigDecimal(500)
   private val continueCall = Call("TEST", "/end-point")
-  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val summaryList = Seq(
     SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
