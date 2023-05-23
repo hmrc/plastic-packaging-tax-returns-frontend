@@ -21,16 +21,18 @@ import controllers.actions._
 import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditRangeOption
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
 import views.html.returns.credits.ConfirmPackagingCreditView
 
+import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
   override val messagesApi: MessagesApi,
@@ -58,13 +60,17 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
     // credit for.
     val singleYear = creditBalance.creditForYear(key)
     val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
     Ok(confirmCreditView(
         key,
         singleYear.moneyInPounds,
         canClaim = true, // TODO rigged to "can claim" to avoid a multi-year claim stopping here (this page is about a single year) 
         summaryList,
         returnsJourneyNavigator.confirmCredit(mode),
-        mode
+        mode,
+      creditRangeOption
       )
     )
   }

@@ -43,11 +43,10 @@ case object CreditsClaimedListSummary {
   
   def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
-    creditBalance.credit.toSeq.map { case (key, taxablePlastic) =>
-      extractDateAndAmount(userAnswer, key, taxablePlastic)}
+    creditBalance.credit.toSeq.map { case (key, taxablePlastic) => extractDateAndAmount(userAnswer, key, taxablePlastic) }
       .sortBy(_._1)
-      .map { case (fromDate, toDate, amount) =>
-        creditSummary(maybeNavigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
+      .map { case (fromDate, toDate, amount, key) =>
+        creditSummary(maybeNavigator, key, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
       }
   }
   def createRows
@@ -67,18 +66,18 @@ case object CreditsClaimedListSummary {
     userAnswer: UserAnswers,
     key: String,
     taxablePlastic: TaxablePlastic
-  ): (LocalDate, LocalDate, BigDecimal) = {
+  ): (LocalDate, LocalDate, BigDecimal, String) = {
     val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
     val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
 
-    (fromDate, toDate, taxablePlastic.moneyInPounds)
+    (fromDate, toDate, taxablePlastic.moneyInPounds, key)
   }
 
-  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 
+  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, dateRange: String, value: String) 
     (implicit messages: Messages): CreditSummaryRow = {
     
     CreditSummaryRow(
-      key,
+      dateRange,
       value,
       actions = maybeNavigator.map { navigator =>
         Seq(

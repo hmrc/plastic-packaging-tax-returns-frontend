@@ -548,8 +548,7 @@ submit-return.check-your-answers.credits.total.weight = Cyfanswm y pwysau
 submit-return.check-your-answers.credits.total = Cyfanswm y credyd
 submit-return.check-your-answers.credits.change.text.link = Newid, tynnu neu ychwanegu credydau
 
-credits.caption = Credydau
-credits.period.caption = [WELSH NEEDED] Credit for {0} to {1}
+credits.caption = [WELSH NEEDED] Credit for {0}
 exportedCredits.heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was exported
 exportedCredits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
 exportedCredits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
@@ -557,7 +556,6 @@ exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as cred
 exportedCredits.error.required = [WELSH NEEDED] Select yes if you paid tax on plastic packaging before it was exported
 
 exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
-exportedCreditsWeight.caption = [WELSH NEEDED] Credit for {0} to {1}
 exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
 exportedCreditsWeight.error.required = [WELSH NEEDED] Enter the weight, in kilograms
 exportedCreditsWeight.error.wholeNumber = [WELSH NEEDED] Weight must not include decimals

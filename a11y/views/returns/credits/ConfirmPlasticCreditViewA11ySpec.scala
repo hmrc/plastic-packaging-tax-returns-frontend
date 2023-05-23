@@ -18,15 +18,19 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ConfirmPackagingCreditView
 
+import java.time.LocalDate
+
 class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   private val page = inject[ConfirmPackagingCreditView]
-  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), canClaimCredit, Seq.empty, Call("GET", "/test"), NormalMode)(request, messages)
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), canClaimCredit, Seq.empty, Call("GET", "/test"), NormalMode, creditRangeOption)(request, messages)
 
   "ConfirmPackagingCreditView" should {
     "pass accessibility checks" when {

@@ -20,15 +20,19 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc._
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,7 +53,7 @@ class ConvertedCreditsController @Inject()
     journeyAction {
       implicit request =>
         val preparedForm = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
-        Results.Ok(view(preparedForm, key, mode))
+        Results.Ok(createView(preparedForm, key, mode))
     }
   }
 
@@ -59,7 +63,7 @@ class ConvertedCreditsController @Inject()
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key,  mode))),
+            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, key,  mode))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
               request.userAnswers.changeWithFunc(ConvertedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
@@ -67,5 +71,12 @@ class ConvertedCreditsController @Inject()
             }
           )
     }
+
+  private def createView(form: Form[Boolean], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    view(form, key, mode, creditRangeOption)
+  }
 
 }

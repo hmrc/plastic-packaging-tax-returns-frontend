@@ -19,6 +19,7 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -26,13 +27,16 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ExportedCreditsView
 
+import java.time.LocalDate
+
 class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
   //todo add tests
   val page: ExportedCreditsView = inject[ExportedCreditsView]
   val form = new ExportedCreditsFormProvider()()
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private def createView(form: Form[Boolean] = form): Html =
-    page(form, "year-key", NormalMode)(request, messages)
+    page(form, "year-key", NormalMode, creditRangeOption)(request, messages)
 
   "Exported Credits View" should {
 
@@ -49,8 +53,8 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe messages("Credit for 1 April 2022 to 31 March 2023")
-      view.getElementById("section-header").text mustBe messages("credits.period.caption", "1 April 2022", "31 March 2023")
+      view.getElementById("section-header").text mustBe messages("Credit for 1 April 2023 to 31 March 2024")
+      view.getElementById("section-header").text mustBe messages("credits.caption", "1 April 2023 to 31 March 2024")
     }
 
     "have a field set legend" in {

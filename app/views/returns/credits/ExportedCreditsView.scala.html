@@ -17,6 +17,8 @@
 @import components._
 @import templates._
 @import viewmodels._
+@import models.returns.CreditRangeOption
+@import java.time.LocalDate
 
 
 @this(
@@ -34,7 +36,11 @@
     creditsJourneyCaption: CreditsJourneyCaption
 )
 
-@(form: Form[Boolean], yearKey: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], yearKey: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
+
+@dateRangeMessage = {
+    ViewUtils.displayReturnQuarter(dateRange.from, dateRange.to)
+}
 
 
 @paraContent = {
@@ -49,14 +55,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @creditsJourneyCaption()
+        @creditsJourneyCaption(dateRange)
         @heading("exportedCredits.heading")
         @paraContent
+
+@*****************************************************************************
+todo: legend date range still static needs to be dynamic
+*****************************************************************************@
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(HtmlContent(messages("exportedCredits.heading.2")))
+                legend = LegendViewModel(HtmlContent(messages("exportedCredits.heading.2", dateRangeMessage)))
                     .withCssClass(LegendSize.Medium.toString)
             )
         )
