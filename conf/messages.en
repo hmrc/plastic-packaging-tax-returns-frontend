@@ -514,12 +514,12 @@ submit-return.check-your-answers.deductions.row5 = Deductions total
 
 submit-return.check-your-answers.credits.heading = Credits
 submit-return.check-your-answers.credits.line1 = You cannot claim tax back as credit yet. This is because this is your first return.
-submit-return.check-your-answers.credits.line2 = You may be able to claim tax back as credit in the future if packaging you’ve paid tax on is either:
-submit-return.check-your-answers.credits.line3 = exported
-submit-return.check-your-answers.credits.line4 = converted into different packaging
+submit-return.check-your-answers.credits.line2 = You may be able to claim tax back as credit in the future if you have paid tax on plastic packaging and this packaging is then: 
+submit-return.check-your-answers.credits.line3 = exported by you or another business
+submit-return.check-your-answers.credits.line4 = converted into different chargeable plastic packaging components by you or another business
 submit-return.check-your-answers.credits.line5 = Find out more about {0}.
 submit-return.check-your-answers.credits.line5.link-text = claiming tax back as credit (opens in new tab)
-submit-return.check-your-answers.credits.not.claimed.hint = If you want to claim tax back as credit, you must do this when you submit your return. If you do not claim it now, you must wait until your next return.
+submit-return.check-your-answers.credits.not.claimed.hint = If you want to claim tax back as credit, you must do this when you submit your return.
 submit-return.check-your-answers.credits.not.claimed.link = Claim tax back as credit
 
 submit-return.check-your-answers.now-send.heading = Now send your return

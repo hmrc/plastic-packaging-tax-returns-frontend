@@ -527,12 +527,12 @@ submit-return.check-your-answers.deductions.row5 = Cyfanswm y didyniadau
 
 submit-return.check-your-answers.credits.heading = Credydau
 submit-return.check-your-answers.credits.line1 = Ni allwch hawlio treth yn ôl fel credyd eto. Y rheswm dros hyn yw mai dyma’ch Ffurflen Treth Deunydd Pacio Plastig gyntaf.
-submit-return.check-your-answers.credits.line2 = Mae’n bosibl y gallwch hawlio treth yn ôl fel credyd yn y dyfodol os yw’r deunydd pacio rydych wedi talu treth arno naill ai:
-submit-return.check-your-answers.credits.line3 = wedi’i allforio
-submit-return.check-your-answers.credits.line4 = wedi’i drosi’n ddeunydd pacio gwahanol
+submit-return.check-your-answers.credits.line2 = [NEEDS WELSH]
+submit-return.check-your-answers.credits.line3 = [NEEDS WELSH]
+submit-return.check-your-answers.credits.line4 = [NEEDS WELSH]
 submit-return.check-your-answers.credits.line5 = Dysgwch ragor am {0}.
 submit-return.check-your-answers.credits.line5.link-text = hawlio treth yn ôl fel credyd (yn agor tab newydd)
-submit-return.check-your-answers.credits.not.claimed.hint = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth. Os na fyddwch yn ei hawlio nawr, bydd yn rhaid i chi aros tan eich Ffurflen Dreth nesaf.
+submit-return.check-your-answers.credits.not.claimed.hint = Os hoffech hawlio treth yn ôl fel credyd, mae’n rhaid i chi wneud hyn wrth gyflwyno’ch Ffurflen Dreth.
 submit-return.check-your-answers.credits.not.claimed.link = Hawlio treth yn ôl fel credyd
 
 submit-return.check-your-answers.now-send.heading = Nawr anfonwch eich datganiad tollau
