@@ -17,6 +17,8 @@
 @import components._
 @import viewmodels._
 @import models.Mode
+@import views._
+@import models.returns.CreditRangeOption
 
 @this(
     layout: templates.Layout,
@@ -40,7 +42,8 @@
     canClaim: Boolean,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
-    mode: Mode
+    mode: Mode,
+    dateRange: CreditRangeOption
 )(implicit request: Request[_], messages: Messages)
 
 @previousSubmittedReturnsLink = {
@@ -83,11 +86,11 @@
 }
 
 @layout(pageTitle = titleNoForm(
-                        messages("confirmPackagingCredit.title"),
+                        messages("confirmPackagingCredit.title", ViewUtils.displayQuarterTo(dateRange.from, dateRange.to)),
                         Some(messages("return.title.tail")))) {
 
 
-    @heading(messages("confirmPackagingCredit.title"))
+    @heading(messages("confirmPackagingCredit.heading", ViewUtils.displayQuarterTo(dateRange.from, dateRange.to)))
 
     @govukSummaryList(SummaryList(rows = summaryRows))
 

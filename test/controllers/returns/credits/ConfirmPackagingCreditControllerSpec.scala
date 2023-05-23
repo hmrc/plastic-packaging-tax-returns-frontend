@@ -23,7 +23,7 @@ import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
@@ -34,6 +34,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -43,7 +44,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListR
 import util.EdgeOfSystem
 import views.html.returns.credits.ConfirmPackagingCreditView
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -67,6 +68,7 @@ class ConfirmPackagingCreditControllerSpec
   private val edgeOfSystem = mock[EdgeOfSystem]
   private val journeyAction = mock[JourneyAction]
   private val creditSummaryListFactory = mock[CreditSummaryListFactory]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val sut = new ConfirmPackagingCreditController(
     mockMessagesApi,
@@ -87,6 +89,8 @@ class ConfirmPackagingCreditControllerSpec
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
     when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
+    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
   }
 
 
@@ -114,7 +118,7 @@ class ConfirmPackagingCreditControllerSpec
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
 
       await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
-      verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(summaryList), any, any)(any, any)
+      verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(summaryList), any, any, eqTo(creditRangeOption))(any, any)
     }
 
     "pass a summary list to view with the data" in {
@@ -140,7 +144,7 @@ class ConfirmPackagingCreditControllerSpec
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
         verify(returnsJourneyNavigator).confirmCredit(NormalMode)
-        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(NormalMode))(any,any)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(NormalMode), eqTo(creditRangeOption))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
@@ -148,7 +152,7 @@ class ConfirmPackagingCreditControllerSpec
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", CheckMode)(dataRequest))
         verify(returnsJourneyNavigator).confirmCredit(CheckMode)
-        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(CheckMode))(any,any)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(CheckMode), eqTo(creditRangeOption))(any,any)
       }
     }
 
@@ -166,7 +170,7 @@ class ConfirmPackagingCreditControllerSpec
 
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
-    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(Right(creditBalance)))
   }

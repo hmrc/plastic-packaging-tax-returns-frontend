@@ -33,9 +33,6 @@
 
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
 
-        @***********************************************************
-            todo: get caption date dynamically
-        ***********************************************************@
         @creditsJourneyCaption(dateRange)
         @weightInputLayout(
                 sectionHeading = None,

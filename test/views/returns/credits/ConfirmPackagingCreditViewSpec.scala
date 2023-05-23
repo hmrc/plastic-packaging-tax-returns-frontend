@@ -18,6 +18,7 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -25,11 +26,14 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 import views.html.returns.credits.ConfirmPackagingCreditView
 
+import java.time.LocalDate
+
 class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
 
   private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
   private val requestedCredit = BigDecimal(500)
   private val continueCall = Call("TEST", "/end-point")
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val summaryList = Seq(
     SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
@@ -39,20 +43,20 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
   )
   private def createView(canClaim: Boolean = true): Html =
-    page("year-key", requestedCredit, canClaim, summaryList, continueCall, NormalMode)(request, messages)
+    page("year-key", requestedCredit, canClaim, summaryList, continueCall, NormalMode, creditRangeOption)(request, messages)
 
   "View" should {
 
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() must include("Confirm credit for 1 April 2022 to 31 March 2023 - Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text() must include(messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023"))
+      view.select("title").text() must include("Confirm credit for 1 April 2023 to 31 March 2024 - Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text() must include(messages("confirmPackagingCredit.title", "1 April 2023 to 31 March 2024"))
     }
 
     "have a header" in {
-      view.select("h1").text mustBe s"Confirm credit for 1 April 2022 to 31 March 2023"
-      view.select("h1").text mustBe messages("confirmPackagingCredit.title", "1 April 2022", "31 March 2023")
+      view.select("h1").text mustBe s"Confirm credit for 1 April 2023 to 31 March 2024"
+      view.select("h1").text mustBe messages("confirmPackagingCredit.heading", "1 April 2023 to 31 March 2024")
     }
 
     "display summary list row" in {
