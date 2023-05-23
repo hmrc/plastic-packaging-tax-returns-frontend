@@ -22,4 +22,4 @@
 
 @(dateRange: CreditRangeOption)(implicit messages: Messages)
 
-@sectionHeader(messages("credits.caption", ViewUtils.displayQuarterTo(dateRange.from, dateRange.to)))
+@sectionHeader(messages("credits.caption", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to)))

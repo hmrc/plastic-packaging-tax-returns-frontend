@@ -31,6 +31,7 @@ import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoY
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsPath
 import play.twirl.api.Html
 import repositories.SessionRepository
 import support.{ViewAssertions, ViewMatchers}
@@ -43,6 +44,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
   private val appConfig                      = mock[FrontendAppConfig]
+  private val dateKey = "date-key"
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
     LocalDate.of(2022, 4, 1),
@@ -66,7 +68,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   private def createView (
-    credits: Credits = CreditsClaimedDetails(createCreditBalance),
+    credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
     page(taxReturn, credits, "/change")(request, messages)
@@ -266,62 +268,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       haveHref(appConfig.creditsGuidanceUrl)
   }
 
-  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map("a-key" -> TaxablePlastic(1, 2, 0.30)))
-
-  private def createUserAnswerForClaimedCredit: UserAnswers =
-    UserAnswers("123")
-      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(100L)).get
-      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
-      .set(DirectlyExportedWeightPage, 100L).get
-      .set(WhatDoYouWantToDoPage, true).get
-
-  private def assertExportedCreditsAnswer(view: Html, expectedValue: String, expectedKey: String): Unit = {
-    getCreditCellText(view, 0, "dt") mustBe "Tax paid on plastic packaging that has since been exported"
-    getCreditCellText(view, 0, "dt") mustBe messages("submit-return.check-your-answers.credits.exported.answer")
-    getCreditCellText(view, 0, "dd") mustBe expectedValue
-    getCreditCellText(view, 0, "dd") mustBe messages(expectedKey)
-  }
-
-  private def assertExportedCreditsWeight(view: Html, value: String): Unit = {
-    getCreditCellText(view, 1, "dt") mustBe "Weight of exported plastic packaging"
-    getCreditCellText(view, 1, "dt") mustBe messages("submit-return.check-your-answers.credits.exported.weight")
-    getCreditCellText(view, 1, "dd") mustBe value
-  }
-
-  private def assertConvertedCreditsAnswer(view: Html, row: Int, expectedValue: String, expectedKey: String): Unit = {
-    getCreditCellText(view, row, "dt") mustBe "Tax paid on plastic packaging that has since been converted"
-    getCreditCellText(view, row, "dt") mustBe messages("submit-return.check-your-answers.credits.converted.answer")
-    getCreditCellText(view, row, "dd") mustBe expectedValue
-    getCreditCellText(view, row, "dd") mustBe messages(expectedKey)
-  }
-
-  private def assertConvertedCreditsWeight(view: Html): Unit = {
-    getCreditCellText(view, 3, "dt") mustBe "Weight of converted plastic packaging"
-    getCreditCellText(view, 3, "dt") mustBe messages("submit-return.check-your-answers.credits.converted.weight")
-    getCreditCellText(view, 3, "dd") mustBe "200kg"
-  }
-
-  private def assertCreditsTotalWight(view: Html, row: Int): Unit = {
-    getCreditCellText(view, row, "dt") mustBe "Total weight"
-    getCreditCellText(view, row, "dt") mustBe messages("submit-return.check-your-answers.credits.total.weight")
-    getCreditCellText(view, row, "dd") mustBe "300kg"
-  }
-
-  private def assertTotalCredits(view: Html, row: Int): Unit = {
-    getCreditCellText(view, row, "dt") mustBe "Credit total"
-    getCreditCellText(view, row, "dt") mustBe messages("submit-return.check-your-answers.credits.total")
-    assertIfCellIsBold(view, row, "dt")
-    getCreditCellText(view, row, "dd") mustBe "£40.00"
-    assertIfCellIsBold(view, row, "dd")
-  }
-
-  private def assertIfCellIsBold(view: Html, row: Int, cell: String): Unit = {
-    getCreditRow(view, row).select(cell).first().getElementsByClass(
-      "govuk-!-font-weight-bold"
-    ).size() mustBe 1
-  }
-  private def getCreditCellText(view: Html, row: Int, cell: String) =
-    getCreditRow(view, row).select(cell).text()
+  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map(dateKey -> TaxablePlastic(1, 2, 0.30)))
 
   private def getCreditRow(view: Html, row: Int): Element =
     view.getElementById("exported-answer").child(row)
@@ -329,7 +276,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   private def getText(view: Html, id: String): String =
     view.getElementById(id).text()
 
-  private def createUserAnswer = UserAnswers("reg-number")
+  private def createUserAnswer = {
+    val v = UserAnswers("reg-number")
     .set(ManufacturedPlasticPackagingPage, false).get
     .set(ImportedPlasticPackagingPage, false).get
     .set(DirectlyExportedPage, true).get
@@ -340,8 +288,13 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
     .set(NonExportedRecycledPlasticPackagingPage, true).get
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(ExportedCreditsPage("year-key"), CreditsAnswer(false, Some(100L))).get
-    .set(ConvertedCreditsPage("year-key"), CreditsAnswer(true, Some(0L))).get
+    .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
+    .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
+      .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
+      .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
     .set(WhatDoYouWantToDoPage, true).get
+
+    v
+  }
 }
 

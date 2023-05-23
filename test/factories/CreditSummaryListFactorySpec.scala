@@ -17,7 +17,7 @@
 package factories
 
 import models.returns.CreditsAnswer
-import models.{CreditBalance, TaxablePlastic, UserAnswers}
+import models.{TaxablePlastic, UserAnswers}
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, when}
@@ -37,7 +37,7 @@ class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
     super.beforeEach()
   }
   
-  "factory" should {
+  "createSummaryList" should {
     "a summary list containing credit details" in {
       when(messages.apply(meq("confirmPackagingCredit.taxRate"))).thenReturn("Tax Rate")
       when(messages.apply(meq("confirmPackagingCredit.exported.answer"))).thenReturn("exported")
@@ -60,5 +60,4 @@ class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
       res(6).key.content.asInstanceOf[Text].value mustBe "credit amount"
     }
   }
-
 }
