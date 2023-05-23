@@ -85,7 +85,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn initialForm
     when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
   }
 
   "onPageLoad" must {

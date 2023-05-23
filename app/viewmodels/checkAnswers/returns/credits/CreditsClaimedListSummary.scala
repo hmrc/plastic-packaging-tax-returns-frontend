@@ -62,7 +62,7 @@ case object CreditsClaimedListSummary {
     (implicit messages: Messages): CreditSummaryRow = {
 
     val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
-    val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
+    val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "toDate"))
 
     CreditSummaryRow(
       ViewUtils.displayDateRangeTo(fromDate, toDate),

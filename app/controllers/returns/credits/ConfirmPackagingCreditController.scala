@@ -61,7 +61,7 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
     val singleYear = creditBalance.creditForYear(key)
     val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
     val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
     val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
     Ok(confirmCreditView(
         key,

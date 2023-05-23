@@ -63,7 +63,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
   private val saveFunction = mock[SaveUserAnswerFunc]
 
   private val exampleSingleYearClaim = SingleYearClaim(
-    fromDate = LocalDate.of(1, 2, 3), endDate = LocalDate.of(4, 5, 6), exportedCredits = None, convertedCredits = None)
+    fromDate = LocalDate.of(1, 2, 3), toDate = LocalDate.of(4, 5, 6), exportedCredits = None, convertedCredits = None)
 
   private val sut = new CancelCreditsClaimController(
     messagesApi,

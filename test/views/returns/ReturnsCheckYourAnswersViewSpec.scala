@@ -298,7 +298,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
     .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
     .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
-    .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
+      .setOrFail[String](JsPath \ "credit" \ dateKey \ "toDate", "2023-03-31")
     .set(WhatDoYouWantToDoPage, true).get
 
     v

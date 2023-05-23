@@ -36,7 +36,7 @@ class CancelCreditsClaimViewA11ySpec extends ViewSpecBase with AccessibilityMatc
     Call("POST", "call-url"), 
     SingleYearClaim(
       fromDate = LocalDate.of(1, 2, 3), 
-      endDate = LocalDate.of(4, 5, 6), 
+      toDate = LocalDate.of(4, 5, 6),
       exportedCredits = Some(CreditsAnswer(true, Some(7L))), 
       convertedCredits = Some(CreditsAnswer(true, Some(8L))))
   ) (request, messages)
