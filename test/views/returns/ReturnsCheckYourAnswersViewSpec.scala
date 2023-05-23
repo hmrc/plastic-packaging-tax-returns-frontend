@@ -249,7 +249,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     paragraphText must include(messages("submit-return.check-your-answers.credits.line1"))
 
     paragraphText must include(
-     "You may be able to claim tax back as credit in the future if packaging you’ve paid tax on is either:"
+     "You may be able to claim tax back as credit in the future if you have paid tax on plastic packaging and this packaging is then:"
     )
     paragraphText must include(messages("submit-return.check-your-answers.credits.line2"))
     paragraphText must include("Find out more about claiming tax back as credit (opens in new tab).")
@@ -261,7 +261,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     val bulletListText = view.getElementsByClass("govuk-list--bullet").text()
     bulletListText must include("exported")
     bulletListText must include(messages("submit-return.check-your-answers.credits.line3"))
-    bulletListText must include("converted into different packaging")
+    bulletListText must include("converted into different chargeable plastic packaging components by you or another business")
     bulletListText must include(messages("submit-return.check-your-answers.credits.line4"))
 
     view.getElementById("credits-line-5").select("a").first() must
