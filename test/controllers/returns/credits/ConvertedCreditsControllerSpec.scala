@@ -63,6 +63,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
   private val messagesApi = mock[MessagesApi]
   private val messages = mock[Messages]
   private val saveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3,31))
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -113,7 +114,6 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     }
     
     "render the page" in {
-      val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3,31))
       when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
       controller.onPageLoad("year-key", NormalMode) (request)
       verify(messagesApi).preferred(request)
@@ -156,8 +156,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 
       val result = await { controller.onSubmit("year-key", NormalMode)(request) }
-      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode), any) (eqTo(request), eqTo(messages))
-      verifyNoInteractions(request.userAnswers)
+      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode), eqTo(creditRangeOption)) (eqTo(request), eqTo(messages))
 
       result.header.status mustBe Status.BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"

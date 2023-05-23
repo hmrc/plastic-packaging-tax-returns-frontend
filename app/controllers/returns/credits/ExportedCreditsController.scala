@@ -20,10 +20,12 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ExportedCreditsPage
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
@@ -50,23 +52,17 @@ class ExportedCreditsController @Inject()
       implicit request =>
 
         val preparedForm = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
-        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
-        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
-        Results.Ok(view(preparedForm, key, mode, creditRangeOption))
+        Results.Ok(createView(preparedForm, key, mode))
     }
   }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-        val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
-        val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, key, mode, creditRangeOption))),
+            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, key, mode))),
             formValue => {
               val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
               request.userAnswers
@@ -75,5 +71,12 @@ class ExportedCreditsController @Inject()
             }
           )
     }
+
+  private def createView(form: Form[Boolean], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    view(form, key, mode, creditRangeOption)
+  }
     
 }
