@@ -16,36 +16,62 @@
 
 package viewmodels.checkAnswers.returns.credits
 
-import models.CreditBalance
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
+import play.api.libs.json.JsPath
 import viewmodels.PrintBigDecimal
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+import views.ViewUtils
+
+import java.time.LocalDate
 
 
-object CreditsClaimedListSummary {
+case object CreditsClaimedListSummary {
   
   // TODO can this be made simpler?
-
-  def createCreditSummary(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator]) 
-    (implicit messages: Messages): Seq[CreditSummaryRow] = {
+  def createCreditSummary(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
+                         (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     val isActionColumnHidden = maybeNavigator.isEmpty
-    CreditsClaimedListSummary.createRows(creditBalance, maybeNavigator) ++ 
+    CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) ++
       Seq(CreditTotalSummary.createRow(creditBalance.totalRequestedCreditInPounds, isActionColumnHidden))
   }
 
-  def createRows(creditBalance: CreditBalance, navigator: ReturnsJourneyNavigator)
-    (implicit messages: Messages): Seq[CreditSummaryRow] = createRows(creditBalance, Some(navigator))
   
-  def createRows(creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
+  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
+    creditBalance.credit.toSeq.map { case (key, taxablePlastic) =>
+      extractDateAndAmount(userAnswer, key, taxablePlastic)}
+      .sortBy(_._1)
+      .map { case (fromDate, toDate, amount) =>
+        creditSummary(maybeNavigator, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
+      }
+  }
+  def createRows
+  (
+    userAnswers: UserAnswers,
+    creditBalance: CreditBalance,
+    navigator: ReturnsJourneyNavigator
+  )(implicit messages: Messages): Seq[CreditSummaryRow] = {
+    createRows(userAnswers, creditBalance, Some(navigator))
 
-    creditBalance.credit.map { 
-      case (key, taxablePlastic) => creditSummary(maybeNavigator, key, taxablePlastic.moneyInPounds.asPounds)
-    }.toSeq
+  }
+
+  //todo: We have two places were at the moment we getting the from and to date
+  // (userAnswer and the key in CreditBalance). We may want to get this from one
+  // place only. So we may want to put these in the CreditBalance -> TaxablePlastic
+  private def extractDateAndAmount(
+    userAnswer: UserAnswers,
+    key: String,
+    taxablePlastic: TaxablePlastic
+  ): (LocalDate, LocalDate, BigDecimal) = {
+    val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
+    val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
+
+    (fromDate, toDate, taxablePlastic.moneyInPounds)
   }
 
   private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, value: String) 

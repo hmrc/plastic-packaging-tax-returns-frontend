@@ -69,7 +69,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       "credits is claimed" ignore {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(CreditBalance(0,0,0L,true, Map())), 
+          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, Map())),
           "/change"
         )(request, messages)
 

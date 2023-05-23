@@ -53,6 +53,15 @@ object ViewUtils {
     )
   }
 
+  def displayDateRangeTo(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
+    // TODO move to Obligation
+    messages("return.quarter",
+      displayLocalDate(from),
+      s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
+      to.getYear.toString
+    )
+  }
+
   def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
     displayReturnQuarter(obligation.fromDate, obligation.toDate)
 

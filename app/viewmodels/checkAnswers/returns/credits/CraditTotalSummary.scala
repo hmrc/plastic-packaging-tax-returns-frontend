@@ -17,12 +17,13 @@
 package viewmodels.checkAnswers.returns.credits
 
 import models.returns.credits.CreditSummaryRow
+import play.api.i18n.Messages
 import viewmodels.PrintBigDecimal
 
 object CreditTotalSummary {
 
-  val key = "Credit total [Use Key]"
-  def createRow(totalWeightInPound: BigDecimal, isActionColumnHidden: Boolean): CreditSummaryRow = {
-    CreditSummaryRow(key, totalWeightInPound.asPounds, Seq(), isActionColumnHidden)
+  val key = "creditsSummary.total"
+  def createRow(totalWeightInPound: BigDecimal, isActionColumnHidden: Boolean)(implicit messages: Messages): CreditSummaryRow = {
+    CreditSummaryRow(messages(key), totalWeightInPound.asPounds, Seq(), isActionColumnHidden)
   }
 }

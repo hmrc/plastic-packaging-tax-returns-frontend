@@ -36,4 +36,5 @@ class CreditSummaryListFactory {
         CreditAmountSummary(singleYear.moneyInPounds)
       )
   }
+
 }
