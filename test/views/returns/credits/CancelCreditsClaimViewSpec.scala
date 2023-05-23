@@ -18,38 +18,45 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import forms.returns.credits.CancelCreditsClaimFormProvider
+import models.returns.credits.SingleYearClaim
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.CancelCreditsClaimView
 
-class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-  val page = inject[CancelCreditsClaimView]
-  val form = new CancelCreditsClaimFormProvider()()
+class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers with MockitoSugar {
+  
+  private val page = inject[CancelCreditsClaimView]
+  private val form = new CancelCreditsClaimFormProvider()()
 
-  private def createView(form: Form[Boolean]): Html = page(form, Call("POST", "call-url"), "year-key")(request, messages)
+  private val singleYearClaim = mock[SingleYearClaim]
 
-  // TODO test for actual content
+  private def createView(form: Form[Boolean]): Html = {
+    when(singleYearClaim.toDateRangeString(any)) thenReturn "date-range-string"
+    page(form, Call("POST", "call-url"), singleYearClaim)(request, messages)
+  }
   
   "CancelCreditsClaimView" should {
     
     val view = createView(form)
     
     "have a title" in {
-//      view.select("title").text mustBe
-//        "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023? - Submit return - Plastic Packaging Tax - GOV.UK"
-      view.select("title").text must include(messages("cancelCreditsClaim.title-heading", "year-key"))
+      view.select("title").text mustBe
+        "Are you sure you want to remove this credit for date-range-string? - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select("title").text must include(messages("cancelCreditsClaim.title-heading", "date-range-string"))
     }
 
     "have a heading" in {
-//      view.select("h1").text mustBe "Are you sure you want to cancel this credit for 1 April 2022 to 31 March 2023?"
-      view.select("h1").text mustBe messages("cancelCreditsClaim.title-heading", "year-key")
+      view.select("h1").text mustBe "Are you sure you want to remove this credit for date-range-string?"
+      view.select("h1").text mustBe messages("cancelCreditsClaim.title-heading", "date-range-string")
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Continue"
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.button.continue")
+      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+      view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
     }
 
 

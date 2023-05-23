@@ -16,7 +16,7 @@
 
 package models.returns.credits
 
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -25,23 +25,32 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 case class CreditSummaryRow(
   label: String,
   value: String,
-  actions: Seq[ActionItem] = Seq.empty,
-  isActionColumnHidden: Boolean = false
+  actions: Seq[ActionItem] = Seq.empty
 ) {
 
-  def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
-    val alignRight = if (isActionColumnHidden) "govuk-table__cell--numeric" else ""  
+  def createCYAContent = {
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), classes = alignRight),
+      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+    )
+  }
+
+  def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
+    Seq(
+      TableRow(content = Text(label), format = Some("text")),
+      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
     ) ++ createActionsCell(createActionsContent)
   }
 
   private def createActionsCell(createActionsContent: Seq[Aliases.ActionItem] => Html) = {
-    if (isActionColumnHidden)
-      Seq()
-    else
-      Seq(TableRow(content = HtmlContent(createActionsContent(actions)), format = Some("text"), 
-        classes = "govuk-table__cell--numeric"))
+    if (actions.isEmpty) {
+      Seq(TableRow(attributes=Map("aria-hidden" -> "true")))
+    } else {
+      Seq(TableRow(
+        content = HtmlContent(createActionsContent(actions)),
+        format = Some("text"),
+        attributes = Map("style" -> "text-align:right;")
+      ))
+    }
   }
 }

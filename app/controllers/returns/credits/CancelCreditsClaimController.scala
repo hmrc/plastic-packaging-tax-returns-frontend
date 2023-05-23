@@ -19,7 +19,9 @@ package controllers.returns.credits
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.CancelCreditsClaimFormProvider
+import models.UserAnswers
 import models.requests.DataRequest.headerCarrier
+import models.returns.credits.SingleYearClaim
 import navigation.ReturnsJourneyNavigator
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
@@ -52,14 +54,14 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
   def onPageLoad(key: String): Action[AnyContent] = journeyAction {
     implicit request =>
       //todo view is hardcoded, it should pull back the date range in question
-      Ok(createView(key, formProvider()))
+      Ok(createView(request.userAnswers, key, formProvider()))
   }
 
   def onSubmit(key: String): Action[AnyContent] = journeyAction.async {
     implicit request =>
 
       formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(createView(key, formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(createView(request.userAnswers, key, formWithErrors))),
         
         isRemovingYear => {
           {if (isRemovingYear) {
@@ -72,8 +74,8 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
       )
   }
 
-  private def createView(key: String, form: Form[Boolean]) (implicit request: Request[_]) = {
-    val dateRange = key
-    view(form, routes.CancelCreditsClaimController.onSubmit(key), dateRange)
+  private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean]) (implicit request: Request[_]) = {
+    val singleYearClaim = SingleYearClaim.readFrom(userAnswers, key) 
+    view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim)
   }
 }

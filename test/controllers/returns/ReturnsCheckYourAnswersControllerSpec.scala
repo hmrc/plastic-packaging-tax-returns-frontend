@@ -82,7 +82,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val mockTaxReturnHelper = mock[TaxReturnHelper]
   private val appConfig = mock[FrontendAppConfig]
   private val navigator = mock[ReturnsJourneyNavigator]
-  private val keyString = "a-key"
+  private val keyString = s"${LocalDate.now()}-${LocalDate.now()}"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -94,6 +94,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockView
     )
 
+    when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
+    when(message.apply(any[String], any)).thenReturn("messages")
     when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
     when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
@@ -134,8 +136,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         summaryList = Seq(
-          CreditSummaryRow("any-key", "£2.00", Seq(), isActionColumnHidden = true),
-          CreditSummaryRow("any-key", "£20.00", Seq(), isActionColumnHidden = true),
+          CreditSummaryRow("any-key", "£2.00", Seq()),
+          CreditSummaryRow("any-key", "£20.00", Seq()),
         ),
         totalClaimAmount = 20
       )
@@ -237,11 +239,10 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       }
     }
   }
-  
+
   "navigate" should {
-    
+
     val controller = createSut(Some(setUserAnswer))
-    
     "link to change credit answers" in {
       when(navigator.cyaChangeCredits) thenReturn "/change-me"
       setUpMockConnector()
@@ -255,7 +256,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
     creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, Map(
-      "a-key" -> TaxablePlastic(1, 2, 0.30)))),
+      keyString -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
     when(mockTaxReturnConnector.getCalculationReturns(any)(any))
@@ -295,9 +296,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
   }
 
-  private def setUserAnswer: UserAnswers = {
-
-    val t = UserAnswers("123", Json.parse(
+  private def setUserAnswer: UserAnswers =
+      UserAnswers("123", Json.parse(
       s"""
         {
         |   "obligation":{
@@ -323,12 +323,5 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         |   "whatDoYouWantToDo":true
         |}
         |""".stripMargin).as[JsObject])
-    val v = userAnswers
-      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
-      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(300L)).get
-      .set(WhatDoYouWantToDoPage, true).get
-
-    t
-  }
 
 }

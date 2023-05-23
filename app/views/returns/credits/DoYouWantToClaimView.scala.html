@@ -59,17 +59,19 @@
 
         @paragraphBody(messages("do-you-want-to-claim.p2"))
 
-        @bulletList(elements = Seq(
-            Html(messages("do-you-want-to-claim.p2.b1")),
-            Html(messages("do-you-want-to-claim.p2.b2"))
-            )
-        )
-
         @paragraphBody(messages("do-you-want-to-claim.p3"))
 
         @bulletList(elements = Seq(
-            link(id = "credit-info-link", text = messages("do-you-want-to-claim.p3.b1.a"), href = appConfig.creditsGuidanceUrl),
-            link(id = "records-info-link", text = messages("do-you-want-to-claim.p3.b2.a"), href = appConfig.recordsToKeepGuidanceUrl)
+            Html(messages("do-you-want-to-claim.p3.b1")),
+            Html(messages("do-you-want-to-claim.p3.b2"))
+            )
+        )
+
+        @paragraphBody(messages("do-you-want-to-claim.p4"))
+
+        @bulletList(elements = Seq(
+            link(id = "credit-info-link", text = messages("do-you-want-to-claim.p4.b1.a"), href = appConfig.creditsGuidanceUrl),
+            link(id = "records-info-link", text = messages("do-you-want-to-claim.p4.b2.a"), href = appConfig.recordsToKeepGuidanceUrl)
             ),
             classes = "govuk-list govuk-list--bullet govuk-!-margin-bottom-7"
         )

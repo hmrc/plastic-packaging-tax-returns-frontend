@@ -30,7 +30,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createCreditSummary
 import views.html.returns.credits.CreditsClaimedListView
 
@@ -76,7 +75,7 @@ class CreditsClaimedListController @Inject()(
     calcCreditsConnector.get(request.pptReference).map { creditBalance =>
       creditBalance.fold(
         error => throw error,
-        balance => BadRequest(view(formWithErrors, balance.canBeClaimed, moreYearsLeftToClaim, 
+        balance => BadRequest(view(formWithErrors, balance, earliestCreditDate, moreYearsLeftToClaim,
           createCreditSummary(request.userAnswers, balance, Some(navigator)), mode))
       )
     }
@@ -86,9 +85,11 @@ class CreditsClaimedListController @Inject()(
     mode: Mode,
     creditBalance: CreditBalance
   )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), creditBalance.canBeClaimed, moreYearsLeftToClaim, 
-      createCreditSummary(request.userAnswers, creditBalance, Some(navigator)), mode))
+    Ok(view(formProvider(), creditBalance, earliestCreditDate, moreYearsLeftToClaim, createCreditSummary(request.userAnswers, creditBalance, Some(navigator)), mode))
   }
+
+  def earliestCreditDate(implicit request: DataRequest[AnyContent]) =
+    request.userAnswers.getOrFail(AvailableYears).minBy(_.from).from
 
   private def moreYearsLeftToClaim(implicit request: DataRequest[AnyContent]) = {
     val availableYears = request.userAnswers.getOrFail(AvailableYears)

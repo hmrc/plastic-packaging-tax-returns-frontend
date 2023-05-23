@@ -54,7 +54,6 @@ object ViewUtils {
   }
 
   def displayDateRangeTo(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
-    // TODO move to Obligation
     messages("return.quarter",
       displayLocalDate(from),
       s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
@@ -63,7 +62,6 @@ object ViewUtils {
   }
 
   def displayDateRangeAnd(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
-    // TODO move to Obligation
     messages("return.quarter.and",
       displayLocalDate(from),
       displayLocalDate(to),

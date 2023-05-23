@@ -49,7 +49,7 @@
     @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "option-0")))
         }
 
         @heading(messages("claim-for-which-year.credits.title-heading"))
