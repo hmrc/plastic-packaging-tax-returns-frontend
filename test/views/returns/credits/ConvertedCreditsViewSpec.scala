@@ -64,7 +64,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
 
     "have a question" in {
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.question")
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.question", "1 April 2023 and 31 March 2024")
     }
 
     "have radios" in {

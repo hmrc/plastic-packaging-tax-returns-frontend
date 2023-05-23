@@ -19,6 +19,7 @@
 @import viewmodels._
 @import models.returns.CreditRangeOption
 @import java.time.LocalDate
+@import views._
 
 
 @this(
@@ -39,7 +40,7 @@
 @(form: Form[Boolean], yearKey: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
 
 @dateRangeMessage = {
-    ViewUtils.displayReturnQuarter(dateRange.from, dateRange.to)
+    @ViewUtils.displayDateRangeAnd(dateRange.from, dateRange.to)
 }
 
 
@@ -58,10 +59,6 @@
         @creditsJourneyCaption(dateRange)
         @heading("exportedCredits.heading")
         @paraContent
-
-@*****************************************************************************
-todo: legend date range still static needs to be dynamic
-*****************************************************************************@
 
         @govukRadios(
             RadiosViewModel.yesNo(

@@ -18,6 +18,8 @@
 @import templates._
 @import viewmodels._
 @import models.returns.CreditRangeOption
+@import java.time.LocalDate
+@import views._
 
 @this(
     layout: templates.Layout,
@@ -32,6 +34,10 @@
 )
 
 @(form: Form[Boolean], key: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
+
+@dateRangeMessage = {
+@ViewUtils.displayDateRangeAnd(dateRange.from, dateRange.to)
+}
 
 @layout(pageTitle = title(form, messages("converted-credits-yes-no.title-heading"), Some(messages("return.title.tail")))) {
 
@@ -50,7 +56,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(HtmlContent(messages("converted-credits-yes-no.question")))
+                legend = LegendViewModel(HtmlContent(messages("converted-credits-yes-no.question", dateRangeMessage)))
                             .withCssClass(LegendSize.Medium.toString)
             )
         )

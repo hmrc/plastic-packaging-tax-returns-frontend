@@ -64,8 +64,7 @@ object ViewUtils {
   def displayDateRangeAnd(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
     messages("return.quarter.and",
       displayLocalDate(from),
-      s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
-      to.getYear.toString
+      displayLocalDate(to),
     )
   }
 
