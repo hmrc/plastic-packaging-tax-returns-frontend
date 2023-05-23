@@ -24,7 +24,6 @@ import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.Results.{Ok, Redirect}
@@ -33,7 +32,7 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
   override val messagesApi: MessagesApi,
