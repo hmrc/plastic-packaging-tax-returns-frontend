@@ -74,7 +74,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       "canBeClaimed is false" in {
         val view = page(form, creditBalance.copy(canBeClaimed = false), LocalDate.now(), true, rows, NormalMode)(request, messages)
 
-        view.getElementsByTag("h2").text() must include(messages("confirmPackagingCredit.tooMuchCredit.heading"))
+        view.getElementsByTag("h2").text() must include(messages("creditsSummary.tooMuch.heading"))
       }
     }
 

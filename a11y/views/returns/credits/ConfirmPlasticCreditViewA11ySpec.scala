@@ -30,7 +30,7 @@ class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMa
 
   private val page = inject[ConfirmPackagingCreditView]
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
-  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), canClaimCredit, Seq.empty, Call("GET", "/test"), NormalMode, creditRangeOption)(request, messages)
+  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), Seq.empty, Call("GET", "/test"), NormalMode, creditRangeOption)(request, messages)
 
   "ConfirmPackagingCreditView" should {
     "pass accessibility checks" when {
