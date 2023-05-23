@@ -583,9 +583,10 @@ do-you-want-to-claim.p3.b2.a = [NEED WELSH]records you need to keep
 do-you-want-to-claim.question = [NEED WELSH]Do you want to claim tax back as credit?
 do-you-want-to-claim.error.required = [NEED WELSH]Select yes if you want to claim tax back as credit
 
-claim-for-which-year.credits.title-heading = [NEED WELSH]vWhich year do you want to claim tax back as credit for?
-claim-for-which-year.credits.paragraph.1 = [NEED WELSH] Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate.
+claim-for-which-year.credits.title-heading = [NEED WELSH] Which year do you want to claim tax back as credit for?
+claim-for-which-year.credits.paragraph.1 = Mae cyfraddau treth deunydd pacio plastig wedi newid. Mae’n rhaid i ni sicrhau eich bod yn hawlio treth yn ôl ar y gyfradd gywir.
 claim-for-which-year.credits.paragraph.2 = [NEED WELSH] If you need to claim tax back as credit for more than one year you will be given the option to do this later.
+claim-for-which-year.error.required = [NEEDS WELSH] Select the date range you want to claim tax back as credit for
 
 nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
 nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
