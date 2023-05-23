@@ -58,15 +58,15 @@ class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with View
     }
 
     "have a field set legend" in {
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exportedCredits.heading.2")
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("exportedCredits.heading.2", "1 April 2023 and 31 March 2024")
     }
 
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.text() must include("If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.")
+      doc.text() must include("If you paid tax on plastic packaging and then you exported it, you can claim tax back as credit.")
       doc.text() must include(messages("exportedCredits.paragraph.1"))
-      doc.text() must include("You can also claim tax back as credit if another business exports it.")
+      doc.text() must include("You can also claim tax back as credit if another business exported it.")
       doc.text() must include(messages("exportedCredits.paragraph.2"))
 
     }

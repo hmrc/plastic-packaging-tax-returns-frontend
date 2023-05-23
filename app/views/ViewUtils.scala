@@ -62,6 +62,14 @@ object ViewUtils {
     )
   }
 
+  def displayDateRangeAnd(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
+    // TODO move to Obligation
+    messages("return.quarter.and",
+      displayLocalDate(from),
+      displayLocalDate(to),
+    )
+  }
+
   def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
     displayReturnQuarter(obligation.fromDate, obligation.toDate)
 

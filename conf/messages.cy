@@ -32,6 +32,7 @@ month.11 = Tachwedd
 month.12 = Rhagfyr
 
 return.quarter = {0} i {1} {2}
+return.quarter.and = {0} a {1}
 caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
 caption.non.exported.plastic = Deunydd pacio plastig heb ei allforio
@@ -548,12 +549,12 @@ submit-return.check-your-answers.credits.total.weight = Cyfanswm y pwysau
 submit-return.check-your-answers.credits.total = Cyfanswm y credyd
 submit-return.check-your-answers.credits.change.text.link = Newid, tynnu neu ychwanegu credydau
 
-credits.caption = [WELSH NEEDED] Credit for {0}
-exportedCredits.heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was exported
-exportedCredits.heading.2 = A ydych eisoes wedi talu treth ar ddeunydd pacio plastig sydd bellach wedi’i allforio?
-exportedCredits.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later export it, you can claim tax back as credit.
-exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exports it.
-exportedCredits.error.required = [WELSH NEEDED] Select yes if you paid tax on plastic packaging before it was exported
+credits.caption = Credyd ar gyfer {0}
+exportedCredits.heading = Deunydd pacio plastig gwnaethoch dalu treth arno cyn iddo gael ei allforio
+exportedCredits.heading.2 = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei allforio?
+exportedCredits.paragraph.1 = [WELSH NEEDED] If you paid tax on plastic packaging and then you exported it, you can claim tax back as credit.
+exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exported it.
+exportedCredits.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei allforio
 
 exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
 exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
@@ -563,7 +564,7 @@ exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered a
 exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
 
 converted-credits-yes-no.title-heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was converted 
-converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later convert it into different chargeable plastic packaging components, you can claim tax back as credit. 
+converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later convert it into different chargeable plastic packaging components, you can claim tax back as credit.
 converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business converts it.
 converted-credits-yes-no.question = [WELSH NEEDED] Did you pay tax on plastic packaging between April 2022 and March 2023 before it was converted?
 converted-credits-yes-no.error.required = [WELSH NEEDED] Select yes if you’ve already paid tax on plastic packaging that has since been converted
