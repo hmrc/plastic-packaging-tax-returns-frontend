@@ -82,7 +82,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val mockTaxReturnHelper = mock[TaxReturnHelper]
   private val appConfig = mock[FrontendAppConfig]
   private val navigator = mock[ReturnsJourneyNavigator]
-  private val keyString = "a-key"
+  private val keyString = s"${LocalDate.now()}-${LocalDate.now()}"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -256,7 +256,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
     creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, Map(
-      s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(1, 2, 0.30)))),
+      keyString -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
     when(mockTaxReturnConnector.getCalculationReturns(any)(any))
@@ -296,9 +296,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
   }
 
-  private def setUserAnswer: UserAnswers = {
-
-    val t = UserAnswers("123", Json.parse(
+  private def setUserAnswer: UserAnswers =
+      UserAnswers("123", Json.parse(
       s"""
         {
         |   "obligation":{
@@ -324,12 +323,5 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         |   "whatDoYouWantToDo":true
         |}
         |""".stripMargin).as[JsObject])
-    val v = userAnswers
-      .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(200L)).get
-      .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(300L)).get
-      .set(WhatDoYouWantToDoPage, true).get
-
-    t
-  }
 
 }

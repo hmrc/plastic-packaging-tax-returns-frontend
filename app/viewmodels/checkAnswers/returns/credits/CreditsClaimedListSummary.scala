@@ -28,8 +28,6 @@ import views.ViewUtils
 
 import java.time.LocalDate
 
-import java.time.LocalDate
-
 
 case object CreditsClaimedListSummary {
   
@@ -44,10 +42,10 @@ case object CreditsClaimedListSummary {
   
   def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
-    creditBalance.credit.toSeq.map { case (key, taxablePlastic) => extractDateAndAmount(userAnswer, key, taxablePlastic) }
-      .sortBy(_._1)
-      .map { case (fromDate, toDate, amount, key) =>
-        creditSummary(maybeNavigator, key, ViewUtils.displayDateRangeTo(fromDate, toDate), amount.asPounds)
+    creditBalance.credit.toSeq
+      .sortBy{case (key, _) => userAnswer.getOrFail[LocalDate](JsPath \ "credit" \ key \ "fromDate")}
+      .map { case (key, taxablePlastic) =>
+        creditSummary(maybeNavigator, key, userAnswer, taxablePlastic.moneyInPounds.asPounds)
       }
   }
   def createRows
@@ -60,28 +58,14 @@ case object CreditsClaimedListSummary {
 
   }
 
-  //todo: We have two places were at the moment we getting the from and to date
-  // (userAnswer and the key in CreditBalance). We may want to get this from one
-  // place only. So we may want to put these in the CreditBalance -> TaxablePlastic
-  private def extractDateAndAmount(
-    userAnswer: UserAnswers,
-    key: String,
-    taxablePlastic: TaxablePlastic
-  ): (LocalDate, LocalDate, BigDecimal, String) = {
+  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, userAnswer: UserAnswers, value: String)
+    (implicit messages: Messages): CreditSummaryRow = {
+
     val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
     val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "endDate"))
 
-    (fromDate, toDate, taxablePlastic.moneyInPounds, key)
-  }
-
-  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, dateRange: String, value: String)
-    (implicit messages: Messages): CreditSummaryRow = {
-
-
-    val (from, to) = LocalDate.parse(key.take(10)) -> LocalDate.parse(key.takeRight(10)) //todo take these from useranswers
-
     CreditSummaryRow(
-      ViewUtils.displayDateRangeTo(from, to),
+      ViewUtils.displayDateRangeTo(fromDate, toDate),
       value,
       actions = maybeNavigator.map { navigator =>
         Seq(
