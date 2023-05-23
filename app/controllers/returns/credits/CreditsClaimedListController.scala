@@ -30,7 +30,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createCreditSummary
 import views.html.returns.credits.CreditsClaimedListView
 
