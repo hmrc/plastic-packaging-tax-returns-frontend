@@ -16,7 +16,7 @@
 
 package models.returns
 
-import models.CreditBalance
+import models.{CreditBalance, UserAnswers}
 import models.returns.credits.CreditSummaryRow
 import play.api.i18n.Messages
 import play.twirl.api.Html
@@ -37,9 +37,9 @@ case class CreditsClaimedDetails(
 
 object CreditsClaimedDetails {
 
-  def apply(creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
+  def apply(userAnswer: UserAnswers,  creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
     CreditsClaimedDetails(
-      CreditsClaimedListSummary.createCreditSummary(creditBalance, None),
+      CreditsClaimedListSummary.createCreditSummary(userAnswer, creditBalance, None),
       totalClaimAmount = creditBalance.totalRequestedCreditInPounds
     )
   }

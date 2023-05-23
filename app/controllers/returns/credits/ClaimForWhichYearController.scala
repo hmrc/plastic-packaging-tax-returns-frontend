@@ -72,6 +72,7 @@ class ClaimForWhichYearController @Inject()(
               selectedRange => {
                 request.userAnswers
                   .setOrFail(JsPath \ "credit" \ selectedRange.key \ "endDate", selectedRange.to)
+                  .setOrFail(JsPath \ "credit" \ selectedRange.key \ "fromDate", selectedRange.from)
                   .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
                   Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
                 )

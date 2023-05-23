@@ -17,14 +17,20 @@
 package viewmodels.checkYourAnswer.returns.credits
 
 import models.returns.credits.CreditSummaryRow
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{mock, when}
 import org.scalatestplus.play.PlaySpec
+import play.api.i18n.Messages
 import viewmodels.checkAnswers.returns.credits.CreditTotalSummary
 
 class CreditTotalSummarySpec extends PlaySpec {
 
+  private val message = mock[Messages]
+
   "createRow" should {
     "create a row" in {
-      CreditTotalSummary.createRow(200, isActionColumnHidden = false) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
+    when(message.apply(any[String])).thenAnswer((s: String) => s)      
+    CreditTotalSummary.createRow(200, isActionColumnHidden = false)(message) mustBe CreditSummaryRow(CreditTotalSummary.key, "£200.00")
     }
   }
 

@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.{CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
@@ -66,7 +67,6 @@ class CreditsClaimedListControllerSpec
   private val view = mock[CreditsClaimedListView]
   private val calcCreditsConnector = mock[CalculateCreditsConnector]
 
-
   private val sut = new CreditsClaimedListController(
     messagesApi,
     calcCreditsConnector,
@@ -85,6 +85,7 @@ class CreditsClaimedListControllerSpec
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(request.userAnswers.getOrFail[String](any[JsPath])(any, any)).thenReturn("2023-04-01")
   }
 
   "onPageLoad" should {
@@ -182,7 +183,7 @@ class CreditsClaimedListControllerSpec
 
   private def expectedCreditSummary = {
     Seq(
-      CreditSummaryRow("key1", "£20.00", Seq(
+      CreditSummaryRow("return.quarter", "£20.00", Seq(
         ActionItem("/change", Text("site.change")),
         ActionItem("/remove", Text("site.remove"))
       )),
@@ -195,6 +196,7 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+   // when(messages.apply(any[String])).thenAnswer((s: String) => s)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
     when(request.userAnswers.getOrFail(any[Gettable[Any]])(any, any)).thenReturn(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())))
