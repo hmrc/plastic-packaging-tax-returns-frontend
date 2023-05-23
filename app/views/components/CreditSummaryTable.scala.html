@@ -30,7 +30,7 @@
         Some(Seq(
             HeadCell(content = Text(messages("creditsSummary.table.heading.1"))),
             HeadCell(content = Text(messages("creditsSummary.table.heading.2")), attributes = Map("style" -> "text-align: right;")),
-            HeadCell(content = HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("creditsSummary.table.heading.3.hidden")}</span>""")))
+            HeadCell(content = Text(messages("creditsSummary.table.heading.3")), attributes = Map("style" -> "text-align: right;"))
         ))
     else
         None

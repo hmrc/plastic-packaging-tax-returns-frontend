@@ -202,10 +202,8 @@ amend.confirmation.paragraph.3 = when it’s been updated, to find out how much 
 
 confirmPackagingCredit.title = Confirm credit for {0}
 confirmPackagingCredit.heading = Confirm credit for {0}
-confirmPackagingCredit.subHeading = Credits
 confirmPackagingCredit.taxRate = Tax rate
 confirmPackagingCredit.taxRate.value = {0} per tonne
-confirmPackagingCredit.hiddenText = You cannot change this field
 confirmPackagingCredit.exported.answer = Paid tax on plastic packaging before it was exported
 confirmPackagingCredit.exported.weight = Weight of plastic packaging you paid tax on before it was exported
 confirmPackagingCredit.converted.answer = Paid tax on plastic packaging before it was converted
@@ -213,14 +211,7 @@ confirmPackagingCredit.converted.weight = Weight of plastic packaging you paid t
 confirmPackagingCredit.totalPlastic = Total plastic packaging
 confirmPackagingCredit.creditAmount = Credit amount
 confirmPackagingCredit.requestedCredits = Your {0} credit will be applied against your total balance in your Plastic Packaging Tax account.
-confirmPackagingCredit.tooMuchCredit.heading = You are claiming too much credit
-confirmPackagingCredit.tooMuchCredit.p1 = This credit amount is more than the total tax you paid between 1 April 2022 and 31 March 2023.
-confirmPackagingCredit.tooMuchCredit.p2 = To continue, you need to change one or more of your answers. Check how much plastic packaging you paid tax on between 1 April 2022 and 31 March 2023. You might need to check more than one{0}.
-confirmPackagingCredit.previousSubmittedReturn.link =previously submitted return
-confirmPackagingCredit.tooMuchCredit.p3 = We have saved your answers. You can check your records and come back later.
-confirmPackagingCredit.tooMuchCredit.p4 = You must have sufficient evidence to claim tax back as credit.
-confirmPackagingCredit.tooMuchCredit.h3 = What you need to do
-confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link = Cancel credit claim
+
 
 directlyExportedComponents.title = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
 directlyExportedComponents.heading = Did you export any of your {0} of finished plastic packaging components in this period yourself, or do you intend to within 12 months?
@@ -708,7 +699,7 @@ cancelCreditsClaim.error.required = Select yes if you want to remove this credit
 creditsSummary.title-heading = Credit summary
 creditsSummary.table.heading.1 = Dates
 creditsSummary.table.heading.2 = Amount
-creditsSummary.table.heading.3.hidden = Action
+creditsSummary.table.heading.3 = Action
 creditsSummary.table.total = Credit total
 creditsSummary.paragraph.credit-will-be-applied = Your {0} credit will be applied against your total balance in your Plastic Packaging Tax account.
 creditsSummary.add-to-list = Do you want to claim tax back as credit for another date range?
