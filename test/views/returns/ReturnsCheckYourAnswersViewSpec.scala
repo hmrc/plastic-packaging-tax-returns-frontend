@@ -45,7 +45,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
   private val appConfig                      = mock[FrontendAppConfig]
-  private val dateKey = "date-key"
+  private val dateKey = s"${LocalDate.now()}-${LocalDate.now()}"
 
   private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
     LocalDate.of(2022, 4, 1),
@@ -277,7 +277,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       haveHref(appConfig.creditsGuidanceUrl)
   }
 
-  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map(s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(1, 2, 0.30)))
+  private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map(dateKey -> TaxablePlastic(1, 2, 0.30)))
 
 
   private def getText(view: Html, id: String): String =
@@ -297,8 +297,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
     .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
     .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
-      .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
-      .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
+    .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
+    .setOrFail[String](JsPath \ "credit" \ dateKey \ "endDate", "2023-03-31")
     .set(WhatDoYouWantToDoPage, true).get
 
     v
