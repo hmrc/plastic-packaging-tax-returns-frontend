@@ -16,7 +16,7 @@
 
 package models.returns.credits
 
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -28,6 +28,13 @@ case class CreditSummaryRow(
   actions: Seq[ActionItem] = Seq.empty
 ) {
 
+  def createCYAContent = {
+    Seq(
+      TableRow(content = Text(label), format = Some("text")),
+      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+    )
+  }
+
   def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
     Seq(
       TableRow(content = Text(label), format = Some("text")),
@@ -36,13 +43,14 @@ case class CreditSummaryRow(
   }
 
   private def createActionsCell(createActionsContent: Seq[Aliases.ActionItem] => Html) = {
-    if (actions.isEmpty)
+    if (actions.isEmpty) {
       Seq(TableRow(attributes=Map("aria-hidden" -> "true")))
-    else
+    } else {
       Seq(TableRow(
         content = HtmlContent(createActionsContent(actions)),
         format = Some("text"),
         attributes = Map("style" -> "text-align:right;")
       ))
+    }
   }
 }

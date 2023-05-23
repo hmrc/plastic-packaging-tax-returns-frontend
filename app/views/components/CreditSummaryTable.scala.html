@@ -38,7 +38,7 @@
 
 @govukTable(
     Table(
-        rows = list.map(row => row.createContent(actions => actionContent(actions))),
+        rows = list.map(row => if(showHeading) row.createContent(actions => actionContent(actions)) else row.createCYAContent),
         head = headingRow,
         firstCellIsHeader = true,
         attributes = Map("id" -> "credit-summary-table")
