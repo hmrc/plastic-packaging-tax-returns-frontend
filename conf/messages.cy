@@ -556,12 +556,12 @@ exportedCredits.paragraph.1 = [WELSH NEEDED] If you paid tax on plastic packagin
 exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exported it.
 exportedCredits.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei allforio
 
-exportedCreditsWeight.heading = [WELSH NEEDED] How much plastic packaging did you pay tax on before it was exported?
-exportedCreditsWeight.hint = [WELSH NEEDED] Enter the weight in kilograms. 1 tonne is 1,000kg.
-exportedCreditsWeight.error.required = [WELSH NEEDED] Enter the weight, in kilograms
-exportedCreditsWeight.error.wholeNumber = [WELSH NEEDED] Weight must not include decimals
-exportedCreditsWeight.error.nonNumeric = [WELSH NEEDED] Weight must be entered as numbers
-exportedCreditsWeight.error.outOfRange = [WELSH NEEDED] Weight must be between 0kg and 99,999,999,999kg
+exportedCreditsWeight.heading = Faint o ddeunydd pacio plastig wnaethoch chi dalu treth arno cyn iddo gael ei allforio?
+exportedCreditsWeight.hint = Nodwch y pwysau mewn cilogramau. Mae 1 dunnell yn 1,000kg.
+exportedCreditsWeight.error.required = Nodwch y pwysau, mewn cilogramau
+exportedCreditsWeight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
+exportedCreditsWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
+exportedCreditsWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
 converted-credits-yes-no.title-heading = [WELSH NEEDED] Plastic packaging you paid tax on before it was converted 
 converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you pay tax on plastic packaging and you later convert it into different chargeable plastic packaging components, you can claim tax back as credit.
