@@ -552,8 +552,8 @@ submit-return.check-your-answers.credits.change.text.link = Newid, tynnu neu ych
 credits.caption = Credyd ar gyfer {0}
 exportedCredits.heading = Deunydd pacio plastig gwnaethoch dalu treth arno cyn iddo gael ei allforio
 exportedCredits.heading.2 = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei allforio?
-exportedCredits.paragraph.1 = [WELSH NEEDED] If you paid tax on plastic packaging and then you exported it, you can claim tax back as credit.
-exportedCredits.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business exported it.
+exportedCredits.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod wedi ei allforio’n ddiweddarach, gallwch hawlio treth yn ôl fel credyd.
+exportedCredits.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os gwnaeth busnes arall ei allforio.
 exportedCredits.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei allforio
 
 exportedCreditsWeight.heading = Faint o ddeunydd pacio plastig wnaethoch chi dalu treth arno cyn iddo gael ei allforio?
@@ -564,8 +564,8 @@ exportedCreditsWeight.error.nonNumeric = Rhaid nodi’r pwysau fel rhifau
 exportedCreditsWeight.error.outOfRange = Mae’n rhaid i’r pwysau fod rhwng 0kg a 99,999,999,999kg
 
 converted-credits-yes-no.title-heading = Deunydd pacio plastig gwnaethoch dalu treth arno cyn iddo gael ei drosi
-converted-credits-yes-no.paragraph.1 = [WELSH NEEDED] If you paid tax on plastic packaging and then you converted it into different chargeable plastic packaging components, you can claim tax back as credit.
-converted-credits-yes-no.paragraph.2 = [WELSH NEEDED] You can also claim tax back as credit if another business converted it.
+converted-credits-yes-no.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod wedi ei drosi’n gydrannau deunydd pacio plastig taladwy gwahanol, gallwch hawlio treth yn ôl fel credyd.
+converted-credits-yes-no.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os gwnaeth busnes arall ei drosi.
 converted-credits-yes-no.question = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei drosi?
 converted-credits-yes-no.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei drosi
 
