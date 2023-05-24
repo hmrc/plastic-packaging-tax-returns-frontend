@@ -39,51 +39,11 @@
 @(
     key: String,
     requestedCredit: BigDecimal,
-    canClaim: Boolean,
     summaryRows: Seq[SummaryListRow],
     continueCall: Call,
     mode: Mode,
     dateRange: CreditRangeOption
 )(implicit request: Request[_], messages: Messages)
-
-@previousSubmittedReturnsLink = {
-    @link(
-        id = "previous-submitted-return",
-        text = messages("confirmPackagingCredit.previousSubmittedReturn.link"),
-        href = controllers.amends.routes.SubmittedReturnsController.onPageLoad().url
-    )
-}
-
-@cancelText = @{
-    if(canClaim) {
-        messages("site.cancel")
-    } else {
-        messages("confirmPackagingCredit.tooMuchCredit.cancel.credit.claim.link")
-    }
-}
-
-@claimCreditContent = {
-    @paragraphBody(messages("confirmPackagingCredit.requestedCredits", strong(requestedCredit.asPounds)))
-
-    @linkButtonWithCancel(
-        buttonKey = "site.continue.confirm",
-        buttonUrl = continueCall.url,
-        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url)
-}
-
-@tooMuchCreditContent = {
-    @sectionH2Heading(messages("confirmPackagingCredit.tooMuchCredit.heading"))
-    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p1"))
-    @sectionH3Heading(messages("confirmPackagingCredit.tooMuchCredit.h3"))
-    @paragraph(content = Html(messages("confirmPackagingCredit.tooMuchCredit.p2", previousSubmittedReturnsLink)))
-    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p3"))
-    @paragraphBody(messages("confirmPackagingCredit.tooMuchCredit.p4"))
-
-    @paragraph(content = link(
-            id = "cancel-credit-claim",
-            text = cancelText,
-            href = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url))
-}
 
 @layout(pageTitle = titleNoForm(
                         messages("confirmPackagingCredit.title", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to)),
@@ -94,9 +54,12 @@
 
     @govukSummaryList(SummaryList(rows = summaryRows))
 
-    @if(canClaim) {
-        @claimCreditContent
-    } else {
-        @tooMuchCreditContent
-    }
+    @paragraphBody(messages("confirmPackagingCredit.requestedCredits", strong(requestedCredit.asPounds)))
+
+    @linkButtonWithCancel(
+        buttonKey = "site.continue.confirm",
+        buttonUrl = continueCall.url,
+        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url
+    )
+
 }

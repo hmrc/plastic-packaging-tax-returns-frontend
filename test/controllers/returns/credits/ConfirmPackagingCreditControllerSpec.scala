@@ -118,7 +118,7 @@ class ConfirmPackagingCreditControllerSpec
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
 
       await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
-      verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(summaryList), any, any, eqTo(creditRangeOption))(any, any)
+      verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), eqTo(summaryList), any, any, eqTo(creditRangeOption))(any, any)
     }
 
     "pass a summary list to view with the data" in {
@@ -144,7 +144,7 @@ class ConfirmPackagingCreditControllerSpec
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
         verify(returnsJourneyNavigator).confirmCredit(NormalMode)
-        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(NormalMode), eqTo(creditRangeOption))(any,any)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(NormalMode), eqTo(creditRangeOption))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
@@ -152,7 +152,7 @@ class ConfirmPackagingCreditControllerSpec
         setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", CheckMode)(dataRequest))
         verify(returnsJourneyNavigator).confirmCredit(CheckMode)
-        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, any, eqTo(call), eqTo(CheckMode), eqTo(creditRangeOption))(any,any)
+        verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(CheckMode), eqTo(creditRangeOption))(any,any)
       }
     }
 
@@ -170,7 +170,7 @@ class ConfirmPackagingCreditControllerSpec
 
   private def setUpMockForConfirmCreditsView(): Unit = {
     when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
-    when(mockView.apply(any, any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
     when(mockCalculateCreditConnector.get(any)(any))
       .thenReturn(Future.successful(Right(creditBalance)))
   }

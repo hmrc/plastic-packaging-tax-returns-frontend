@@ -69,8 +69,8 @@ case object CreditsClaimedListSummary {
       value,
       actions = maybeNavigator.map { navigator =>
         Seq(
-          ActionItemViewModel("site.change", navigator.creditSummaryChange(key)),
-          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+          ActionItemViewModel("site.change", navigator.creditSummaryChange(key)), //todo add .withVisuallyHiddenText() here
+          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key)) //todo add .withVisuallyHiddenText() here
         )
       }.getOrElse(Seq())
     )

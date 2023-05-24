@@ -42,8 +42,8 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       value = Value(Text("answer")),
       actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
   )
-  private def createView(canClaim: Boolean = true): Html =
-    page("year-key", requestedCredit, canClaim, summaryList, continueCall, NormalMode, creditRangeOption)(request, messages)
+  private def createView(): Html =
+    page("year-key", requestedCredit, summaryList, continueCall, NormalMode, creditRangeOption)(request, messages)
 
   "View" should {
 
@@ -72,38 +72,6 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
           view.select("h2").text() must not include("You are claiming too much credit")
         }
       }
-
-      "one year to claim back and too much credits" in {
-        val tooMuchCreditView = createView(false)
-        tooMuchCreditView.select("h2").text() must include("You are claiming too much credit")
-        tooMuchCreditView.getElementsByClass("govuk-body").text must include("This credit amount is more than the total tax you paid between 1 April 2022 and 31 March 2023.")
-        tooMuchCreditView.select("h3").text must include("What you need to do")
-        tooMuchCreditView.getElementsByClass("govuk-body").text must
-          include("To continue, you need to change one or more of your answers. Check how much plastic packaging you paid tax on between 1 April 2022 and 31 March 2023. You might need to check more than one previously submitted return .")
-
-        tooMuchCreditView.getElementById("previous-submitted-return").select("a").get(0) must
-          haveHref(controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)
-
-        tooMuchCreditView.getElementsByClass("govuk-body").text must
-          include("We have saved your answers. You can check your records and come back later.")
-
-        tooMuchCreditView.getElementsByClass("govuk-body").text must
-          include("You must have sufficient evidence to claim tax back as credit.")
-
-        withClue("should not show available credit applied mnessage") {
-          tooMuchCreditView.getElementsByClass("govuk-body").text() must not include("Your £500.00 credit will be applied against your total balance in your Plastic Packaging Tax account.")
-        }
-      }
-    }
-
-    "show cancel credit claim link when too much credit" in {
-      createView(false).getElementById("cancel-credit-claim").text() mustBe "Cancel credit claim"
-      createView(false).getElementById("cancel-credit-claim").select("a").get(0) must
-        haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad("year-key").url)
-    }
-
-    "should not show button when too much credit" in {
-      createView(false).getElementById("link-button") mustBe null
     }
 
     "show cancel button when can claim credit" in {
