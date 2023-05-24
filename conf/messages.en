@@ -701,6 +701,7 @@ creditsSummary.table.heading.1 = Dates
 creditsSummary.table.heading.2 = Amount
 creditsSummary.table.heading.3 = Action
 creditsSummary.table.total = Credit total
+creditSummary.for = credit for {0}
 creditsSummary.paragraph.credit-will-be-applied = Your {0} credit will be applied against your total balance in your Plastic Packaging Tax account.
 creditsSummary.add-to-list = Do you want to claim tax back as credit for another date range?
 creditsSummary.checkYourAnswersLabel = creditsSummary

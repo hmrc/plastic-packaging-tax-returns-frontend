@@ -63,14 +63,17 @@ case object CreditsClaimedListSummary {
 
     val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
     val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "toDate"))
+    val label = ViewUtils.displayDateRangeTo(fromDate, toDate)
 
     CreditSummaryRow(
-      ViewUtils.displayDateRangeTo(fromDate, toDate),
+      label,
       value,
       actions = maybeNavigator.map { navigator =>
         Seq(
-          ActionItemViewModel("site.change", navigator.creditSummaryChange(key)), //todo add .withVisuallyHiddenText() here
-          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key)) //todo add .withVisuallyHiddenText() here
+          ActionItemViewModel("site.change", navigator.creditSummaryChange(key))
+            .withVisuallyHiddenText(messages("creditSummary.for", label)),
+          ActionItemViewModel("site.remove", navigator.creditSummaryRemove(key))
+            .withVisuallyHiddenText(messages("creditSummary.for", label))
         )
       }.getOrElse(Seq())
     )
