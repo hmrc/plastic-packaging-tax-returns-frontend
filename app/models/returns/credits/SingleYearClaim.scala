@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 case class SingleYearClaim(
   fromDate: LocalDate,
-  toDate: LocalDate, // TODO also correct to toDate when that change happens
+  toDate: LocalDate,
   exportedCredits: Option[CreditsAnswer],
   convertedCredits: Option[CreditsAnswer]
 ) {
