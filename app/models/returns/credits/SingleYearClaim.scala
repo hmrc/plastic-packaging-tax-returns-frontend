@@ -27,11 +27,11 @@ import java.time.LocalDate
 
 case class SingleYearClaim(
   fromDate: LocalDate,
-  endDate: LocalDate, // TODO also correct to toDate when that change happens 
+  toDate: LocalDate, // TODO also correct to toDate when that change happens
   exportedCredits: Option[CreditsAnswer],
   convertedCredits: Option[CreditsAnswer]
 ) {
-  def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, endDate)
+  def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, toDate)
 }
 
 object SingleYearClaim {

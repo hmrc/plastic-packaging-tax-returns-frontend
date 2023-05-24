@@ -71,7 +71,7 @@ class ExportedCreditsWeightController @Inject()(
 
   private def createView(form: Form[Long], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
     val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "endDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
     val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
     view(form, key, mode, creditRangeOption)
   }

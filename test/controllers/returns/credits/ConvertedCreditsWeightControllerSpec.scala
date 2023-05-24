@@ -88,7 +88,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(view.apply(any, any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
     when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "endDate"))(any, any)).thenReturn("2024-03-31")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
     when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
   }

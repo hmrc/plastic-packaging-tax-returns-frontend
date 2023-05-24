@@ -179,7 +179,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       verify(journeyAction).async(any)
     }
 
-    "set the endDate in the UserAnswers" in {
+    "set the toDate in the UserAnswers" in {
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
       val ua = dataRequest.userAnswers
       val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
@@ -195,7 +195,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers, atLeastOnce()).setOrFail(JsPath \ "credit" \ "1000-01-01-1996-03-27" \ "endDate", LocalDate.of(1996, 3, 27))
+      verify(dataRequest.userAnswers, atLeastOnce()).setOrFail(JsPath \ "credit" \ "1000-01-01-1996-03-27" \ "toDate", LocalDate.of(1996, 3, 27))
       verify(mockCache).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
     }
 

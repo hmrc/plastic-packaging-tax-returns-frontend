@@ -49,7 +49,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       |  "credit" : {
       |    "$key3" : {
       |      "fromDate": "2024-04-01",
-      |      "endDate" : "2025-03-31",
+      |      "toDate" : "2025-03-31",
       |      "exportedCredits" : {
       |        "yesNo" : true,
       |        "weight" : 34
@@ -61,7 +61,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       |    },
       |   "$key2" : {
       |     "fromDate": "2023-04-01",
-      |     "endDate" : "2024-03-31",
+      |     "toDate" : "2024-03-31",
       |       "exportedCredits" : {
       |         "yesNo" : true,
       |         "weight" : 30
@@ -73,7 +73,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       |    },
       |   "$key1" : {
       |     "fromDate": "2022-04-01",
-      |     "endDate" : "2023-03-31",
+      |     "toDate" : "2023-03-31",
       |     "exportedCredits" : {
       |       "yesNo" : true,
       |       "weight" : 34
@@ -128,7 +128,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       }
     }
 
-    "endDate is invalid" in {
+    "toDate is invalid" in {
       when(creditBalance.credit).thenReturn(credit)
 
       intercept[IllegalStateException] {
@@ -163,7 +163,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
         | "credit": {
         |   "key1": {
         |     "fromDate": "2022-3-2",
-        |     "endDate": "2023-04-31"
+        |     "toDate": "2023-04-31"
         |    }
         | }
         |}""".stripMargin).as[JsObject])
@@ -174,7 +174,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       """{
         | "credit": {
         |   "key1": {
-        |     "endDate": "2022-3-2",
+        |     "toDate": "2022-3-2",
         |     "fromDate": "2023-04-31"
         |    }
         | }

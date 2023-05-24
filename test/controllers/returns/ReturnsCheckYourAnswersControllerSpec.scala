@@ -309,7 +309,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         |   "credit":{
         |      "$keyString":{
         |         "fromDate": "2022-04-01",
-        |         "endDate" : "2023-03-31",
+        |         "toDate" : "2023-03-31",
         |         "exportedCredits":{
         |            "yesNo":true,
         |            "weight":200
