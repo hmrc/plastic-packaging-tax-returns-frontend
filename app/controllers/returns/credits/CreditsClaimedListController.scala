@@ -22,6 +22,7 @@ import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
+import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
@@ -29,9 +30,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createCreditSummary
+import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.{createCreditSummary, createTotalCreditRow}
 import views.html.returns.credits.CreditsClaimedListView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -92,10 +94,19 @@ class CreditsClaimedListController @Inject()(
         mode)
       )
     )
+    creditBalance: CreditBalance
+  )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
+    request.userAnswers.get(AvailableYears) match {
+      case Some(list) if (!list.isEmpty) => createCreditSummary(request.userAnswers, creditBalance, Some(navigator))
+      case _ => Seq(createTotalCreditRow(creditBalance.totalRequestedCreditInPounds))
+    }
   }
 
   def earliestCreditDate(available: Seq[CreditRangeOption]) =
     available.minBy(_.from).from
+      case Some(list) if(!list.isEmpty) => list.minBy(_.from).from
+      case _ => LocalDate.of(2022, 4, 1)
+    }
 
   private def remainingOptions(available: Seq[CreditRangeOption])(implicit request: DataRequest[AnyContent]): Seq[CreditRangeOption] = {
     val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet

@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer
 import connectors.{AvailableCreditYearsConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
@@ -44,6 +43,7 @@ import play.twirl.api.Html
 import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.ActionItem
+import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.createTotalCreditRow
 import views.html.returns.credits.CreditsClaimedListView
 
 import java.time.LocalDate
@@ -147,6 +147,26 @@ class CreditsClaimedListControllerSpec
 
       verify(view).apply(any, eqTo(creditBalance), any, eqTo(Seq.empty), any, any)(any, any)
     }
+
+    "view empty list" when {
+      "no available years in userAnswer" in {
+        setUpMock()
+        when(request.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(None)
+
+        await(sut.onPageLoad(NormalMode)(request))
+
+        expectedResultForNullAvailableYears()
+      }
+
+      "no available years" in {
+        setUpMock()
+        when(request.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq.empty))
+
+        await(sut.onPageLoad(NormalMode)(request))
+
+        expectedResultForNullAvailableYears()
+      }
+    }
   }
 
   "onSubmit" should {
@@ -204,12 +224,25 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
-   // when(messages.apply(any[String])).thenAnswer((s: String) => s)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
     when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
+      .thenReturn(Some(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))))
     when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
     when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))
+  }
+
+  private def expectedResultForNullAvailableYears(): Unit = {
+    val t = Seq(createTotalCreditRow(creditBalance.totalRequestedCreditInPounds)(messages))
+
+    verify(view).apply(
+      any,
+      eqTo(creditBalance),
+      any,
+      any,
+      eqTo(t),
+      any
+    )(any, any)
   }
 }

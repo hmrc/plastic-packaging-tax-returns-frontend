@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.returns.credits
 
 import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, TaxablePlastic, UserAnswers}
+import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
@@ -36,10 +36,12 @@ case object CreditsClaimedListSummary {
                          (implicit messages: Messages): Seq[CreditSummaryRow] = {
 
     CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) :+
-      CreditSummaryRow(messages("creditsSummary.table.total"), creditBalance.totalRequestedCreditInPounds.asPounds, Seq.empty)
+      createTotalCreditRow(creditBalance.totalRequestedCreditInPounds)
   }
 
-  
+  def createTotalCreditRow(totalRequestedCreditInPounds: BigDecimal)(implicit messages: Messages): CreditSummaryRow =
+    CreditSummaryRow(messages("creditsSummary.table.total"), totalRequestedCreditInPounds.asPounds, Seq.empty)
+
   def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
     (implicit messages: Messages): Seq[CreditSummaryRow] = {
     creditBalance.credit.toSeq
