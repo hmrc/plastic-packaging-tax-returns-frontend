@@ -80,7 +80,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
     )
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
+    when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
     when(formProvider.apply()).thenReturn(form)
     when(dataRequest.userAnswers.getOrFail(meq(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
 
@@ -89,12 +89,12 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
   "onPageLoad" must {
     "use the journey action" in {
       when(journeyAction.apply(any)).thenReturn(mock[Action[AnyContent]])
-      sut.onPageLoad(NormalMode)
+      sut.onPageLoad
       verify(journeyAction).apply(any)
     }
 
     "return a 200" in {
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result = sut.onPageLoad(dataRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
     }
@@ -103,28 +103,28 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       val validForm = Form("value" -> boolean).fill(true)
       when(dataRequest.userAnswers.fill(any[Gettable[Boolean]], any)(any)).thenReturn(validForm)
 
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result = sut.onPageLoad(dataRequest)
       status(result) mustBe OK
       verify(dataRequest.userAnswers).fill(meq(WhatDoYouWantToDoPage), meq(form))(any)
-      verify(view).apply(meq(validForm), meq(obligation), meq(NormalMode))(any, any)
+      verify(view).apply(meq(validForm), meq(obligation))(any, any)
     }
   }
 
   "onSubmit" must {
     "use the journey action" in {
       when(journeyAction.async(any)).thenReturn(mock[Action[AnyContent]])
-      sut.onSubmit(NormalMode)
+      sut.onSubmit
       verify(journeyAction).async(any)
     }
 
     "redirect to the next page" in {
-      when(navigator.whatDoYouWantDo(any, any)).thenReturn(Call(GET, "/foo"))
+      when(navigator.whatDoYouWantDo(any)).thenReturn(Call(GET, "/foo"))
       when(form.bindFromRequest()(any,any)).thenReturn(Form("value" -> boolean).fill(true))
       when(dataRequest.userAnswers.change(any, any, any)(any)).thenReturn(Future.successful(true))
 
-      val result = await(sut.onSubmit(NormalMode)(dataRequest))
+      val result = await(sut.onSubmit(dataRequest))
       verify(cacheConnector).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
-      verify(navigator).whatDoYouWantDo(meq(NormalMode), meq(true))
+      verify(navigator).whatDoYouWantDo(meq(true))
       verify(dataRequest.userAnswers, never).getOrFail(meq(ReturnObligationCacheable))(any, any)
 
       result.header.status mustBe SEE_OTHER
@@ -135,9 +135,9 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       val formWithErrors = Form("v" -> boolean).withError("key", "message")
       when(form.bindFromRequest()(any,any)).thenReturn(formWithErrors)
 
-      val result = await(sut.onSubmit(NormalMode)(dataRequest))
+      val result = await(sut.onSubmit(dataRequest))
       verify(dataRequest.userAnswers).getOrFail(meq(ReturnObligationCacheable))(any, any)
-      verify(view).apply(meq(formWithErrors), meq(obligation), meq(NormalMode))(any, any)
+      verify(view).apply(meq(formWithErrors), meq(obligation))(any, any)
 
       result.header.status mustBe BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"

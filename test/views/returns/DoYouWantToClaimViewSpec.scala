@@ -19,13 +19,11 @@ package views.returns
 import base.ViewSpecBase
 import config.FrontendAppConfig
 import forms.returns.credits.DoYouWantToClaimFormProvider
-import models.Mode.NormalMode
 import models.returns.TaxReturnObligation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.ViewUtils
 import views.html.returns.credits.DoYouWantToClaimView
 
 import java.time.LocalDate
@@ -43,7 +41,7 @@ class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "PK1")
 
   private def createView: Html =
-    page(form, aTaxObligation, NormalMode)(request, messages)
+    page(form, aTaxObligation)(request, messages)
 
   "view" should {
     val view = createView
@@ -87,7 +85,7 @@ class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "have the error summary when form error" in {
       val errorForm = form.withError("error-key", "error message")
-      val errorView = page(errorForm, aTaxObligation, NormalMode)(request, messages)
+      val errorView = page(errorForm, aTaxObligation)(request, messages)
 
       val doc: Document = Jsoup.parse(errorView.toString())
 

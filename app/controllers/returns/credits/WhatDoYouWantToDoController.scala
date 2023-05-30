@@ -44,32 +44,32 @@ class WhatDoYouWantToDoController @Inject() (
                                               returnsNavigator: ReturnsJourneyNavigator
 ) (implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     journeyAction {
       implicit request =>
         val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
-        Ok(view(preparedForm, obligation, mode))
+        Ok(view(preparedForm, obligation))
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
+  def onSubmit: Action[AnyContent] =
     journeyAction.async {
       implicit request =>
 
         formProvider().bindFromRequest().fold(
           formWithErrors => {
             val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
-            Future.successful(BadRequest(view(formWithErrors, obligation, mode)))
+            Future.successful(BadRequest(view(formWithErrors, obligation)))
           },
-          newAnswer => updateAnswersAndGotoNextPage(mode, request.pptReference, request.userAnswers, newAnswer)
+          newAnswer => updateAnswersAndGotoNextPage(request.pptReference, request.userAnswers, newAnswer)
         )
     }
 
-  private def updateAnswersAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
+  private def updateAnswersAndGotoNextPage(pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
     (implicit hc: HeaderCarrier) = 
     previousAnswers
       .change(WhatDoYouWantToDoPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
-      .map(_ => Redirect(returnsNavigator.whatDoYouWantDo(mode, newAnswer)))
+      .map(_ => Redirect(returnsNavigator.whatDoYouWantDo(newAnswer)))
   
 }
