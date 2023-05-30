@@ -29,7 +29,7 @@ import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.Results.{Ok, Redirect}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.returns.credits.ClaimForWhichYearView
 
@@ -50,14 +50,12 @@ class ClaimForWhichYearController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      availableRemainingOptions.map {
-        options =>
-        if (options.isEmpty) {
-          Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode))
-        } else {
+      availableRemainingOptions.flatMap {
+        case Nil => Future.successful(Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode)))
+        case Seq(onlyOption) => selectDateRange(onlyOption, mode)
+        case options =>
           val form = formProvider(options)
-          Ok(view(form, options, mode))
-        }
+          Future.successful(Ok(view(form, options, mode)))
       }
     }
 
@@ -69,17 +67,18 @@ class ClaimForWhichYearController @Inject()(
             .bindFromRequest()
             .fold(
               formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, options, mode))),
-              selectedRange => {
-                request.userAnswers
-                  .setOrFail(JsPath \ "credit" \ selectedRange.key \ "toDate", selectedRange.to)
-                  .setOrFail(JsPath \ "credit" \ selectedRange.key \ "fromDate", selectedRange.from)
-                  .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
-                  Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
-                )
-              }
+              selectedRange => selectDateRange(selectedRange, mode)
             )
       }
     }
+
+  private def selectDateRange(selectedRange: CreditRangeOption, mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    request.userAnswers
+      .setOrFail(JsPath \ "credit" \ selectedRange.key \ "toDate", selectedRange.to)
+      .setOrFail(JsPath \ "credit" \ selectedRange.key \ "fromDate", selectedRange.from)
+      .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map(_ =>
+      Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
+    )
 
   private def availableRemainingOptions(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
     availableYears.map{ availableYears =>

@@ -29,7 +29,7 @@ import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.{atLeastOnce, verifyNoInteractions}
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -90,7 +90,8 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       mockNavigator,
       dataRequest,
       messages,
-      mockCache
+      mockCache,
+      availableYearsConnector
     )
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
@@ -107,10 +108,9 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     }
 
     "take in a value from form & return view" in {
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))))
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
-      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -119,9 +119,20 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     }
 
     "get the available years from userAnswers" in {
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))))
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
+      val answers = dataRequest.userAnswers // avoid unfinished stubbing error
+      when(dataRequest.userAnswers.setOrFail(any, any)(any)) thenReturn answers
+      when(answers.save(any)(any)) thenReturn Future.successful(answers)
+
+      await(sut.onPageLoad(NormalMode)(dataRequest))
+
+      verifyNoInteractions(availableYearsConnector)
     }
+
     "get the available years from backend, and store them in userAnswers" in {
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
       when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(None)
@@ -149,8 +160,8 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     "filter out already used options" in {
       val alreadyUsed = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map(alreadyUsed.key -> JsObject.empty)))
-      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), alreadyUsed)
-      val options = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
+      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now), alreadyUsed)
+      val options = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
       when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
@@ -168,6 +179,23 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       redirectLocation(result) mustBe Some(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url)
+    }
+
+    "redirect if there is only ONE option" in {
+      val onlyOption = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map.empty))
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
+      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq(onlyOption)))
+      when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
+      val answers = dataRequest.userAnswers // avoid unfinished stubbing error
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
+      when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(answers)
+      when(answers.save(any)(any)).thenReturn(Future.successful(answers))
+
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
+
+      redirectLocation(result) mustBe Some("/next/page")
+      verify(mockNavigator).claimForWhichYear(meq(onlyOption), meq(NormalMode))
     }
   }
 
