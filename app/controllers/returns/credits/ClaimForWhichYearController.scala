@@ -24,7 +24,6 @@ import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.AvailableYears
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
@@ -80,25 +79,10 @@ class ClaimForWhichYearController @Inject()(
       Results.Redirect(navigator.claimForWhichYear(selectedRange, mode))
     )
 
-  private def availableRemainingOptions(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
-    availableYears.map{ availableYears =>
+  private def availableRemainingOptions(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] =
+    availableCreditYearsConnector.get(request.pptReference).map{ availableYears =>
       val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
       availableYears.filterNot(y => alreadyUsedYears.contains(y.key))
     }
-  }
 
-  private def availableYears(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
-    request.userAnswers.get(AvailableYears).map(Future.successful)
-      .getOrElse{
-        availableCreditYearsConnector.get(request.pptReference).flatMap {
-          availableYears =>
-            request
-              .userAnswers
-              .setOrFail(AvailableYears, availableYears)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference)).map{
-              _ => availableYears
-            }
-        }
-      }
-  }
 }

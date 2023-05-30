@@ -17,7 +17,7 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
-import connectors.{CalculateCreditsConnector, DownstreamServiceError}
+import connectors.{AvailableCreditYearsConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
 import factories.CreditSummaryListFactory
@@ -64,14 +64,18 @@ class CreditsClaimedListControllerSpec
   private val formProvider = mock[CreditsClaimedListFormProvider]
   private val view = mock[CreditsClaimedListView]
   private val calcCreditsConnector = mock[CalculateCreditsConnector]
+  private val mockAvailableCreditYearsConnector = mock[AvailableCreditYearsConnector]
 
   val creditBalance = CreditBalance(10, 20, 5L, true, Map(
     s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(0, 20, 0)
   ))
 
+  val availableOptions = Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))
+
   private val sut = new CreditsClaimedListController(
     messagesApi,
     calcCreditsConnector,
+    mockAvailableCreditYearsConnector,
     navigator,
     journeyAction,
     formProvider,
@@ -107,12 +111,12 @@ class CreditsClaimedListControllerSpec
 
     "return a view" in {
       val boundForm = mock[Form[Boolean]]
-      when(formProvider.apply()).thenReturn(boundForm)
+      when(formProvider.apply(any)(any)).thenReturn(boundForm)
       setUpMock()
 
       await(sut.onPageLoad(NormalMode)(request))
 
-      verify(view).apply(eqTo(boundForm), eqTo(creditBalance), any, eqTo(true), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
+      verify(view).apply(eqTo(boundForm), eqTo(creditBalance), any, eqTo(availableOptions), eqTo(expectedCreditSummary), eqTo(NormalMode))(any,any)
     }
 
     "getting the total weight in pound from API" in {
@@ -141,7 +145,7 @@ class CreditsClaimedListControllerSpec
 
       await(sut.onPageLoad(NormalMode)(request))
 
-      verify(view).apply(any, eqTo(creditBalance), any, eqTo(false), any, any)(any, any)
+      verify(view).apply(any, eqTo(creditBalance), any, eqTo(Seq.empty), any, any)(any, any)
     }
   }
 
@@ -152,9 +156,11 @@ class CreditsClaimedListControllerSpec
     }
 
     "redirect" in {
+      when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
+      when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
       val form = mock[Form[Boolean]]
       val boundForm = Form("value" -> boolean).fill(true)
-      when(formProvider.apply()).thenReturn(form)
+      when(formProvider.apply(any)(any)).thenReturn(form)
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       when(navigator.creditClaimedList(any, any,any)).thenAnswer(Call(GET, "/foo"))
 
@@ -172,7 +178,7 @@ class CreditsClaimedListControllerSpec
         setUpMock()
         val form = mock[Form[Boolean]]
         val boundForm = Form("value" -> boolean).withError("error", "error message")
-        when(formProvider.apply()).thenReturn(form)
+        when(formProvider.apply(any)(any)).thenReturn(form)
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
 
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
@@ -201,7 +207,7 @@ class CreditsClaimedListControllerSpec
    // when(messages.apply(any[String])).thenAnswer((s: String) => s)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
-    when(request.userAnswers.getOrFail(any[Gettable[Any]])(any, any)).thenReturn(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+    when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
     when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
     when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))

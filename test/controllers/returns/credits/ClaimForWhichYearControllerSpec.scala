@@ -34,7 +34,6 @@ import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.AvailableYears
 import play.api.data.Form
 import play.api.data.Forms.ignored
 import play.api.http.Status
@@ -109,8 +108,9 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "take in a value from form & return view" in {
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
@@ -118,39 +118,19 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       verify(mockView).apply(meq(form), meq(availableYears), meq(NormalMode))(any, any)
     }
 
-    "get the available years from userAnswers" in {
-      val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
-      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
-
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
-      val answers = dataRequest.userAnswers // avoid unfinished stubbing error
-      when(dataRequest.userAnswers.setOrFail(any, any)(any)) thenReturn answers
-      when(answers.save(any)(any)) thenReturn Future.successful(answers)
-
-      await(sut.onPageLoad(NormalMode)(dataRequest))
-
-      verifyNoInteractions(availableYearsConnector)
-    }
-
-    "get the available years from backend, and store them in userAnswers" in {
+    "get the available years from backend" in {
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(None)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
-      val answers = dataRequest.userAnswers // avoid unfinished stubbing error
-      when(dataRequest.userAnswers.setOrFail(any, any)(any)) thenReturn answers
-      when(answers.save(any)(any)) thenReturn Future.successful(answers)
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map.empty))
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
       verify(availableYearsConnector).get(eqTo(dataRequest.pptReference))(any)
-      verify(dataRequest.userAnswers).setOrFail(AvailableYears, availableYears)
+
     }
 
     "throw error when couldn't get available years" in {
       val error = DownstreamServiceError("error", new Exception())
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(None)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.failed(error))
 
       val exception = intercept[DownstreamServiceError](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
@@ -162,8 +142,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map(alreadyUsed.key -> JsObject.empty)))
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now), alreadyUsed)
       val options = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
-
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustBe OK
@@ -174,8 +153,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val alreadyUsed = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map(alreadyUsed.key -> JsObject.empty)))
       val availableYears = Seq(alreadyUsed)
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
-
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
       val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       redirectLocation(result) mustBe Some(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url)
@@ -185,7 +163,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val onlyOption = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map.empty))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq(onlyOption)))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Seq(onlyOption)))
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       val answers = dataRequest.userAnswers // avoid unfinished stubbing error
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
@@ -212,7 +190,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       val ua = dataRequest.userAnswers
       val creditRangeOption = CreditRangeOption(LocalDate.of(1000, 1, 1), LocalDate.of(1996, 3, 27))
       val availableYears = Seq(creditRangeOption)
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
       when(dataRequest.userAnswers.setOrFail(any[JsPath], any)(any)).thenReturn(ua)
@@ -231,7 +209,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveUserAnswerFunc)
       when(dataRequest.pptReference).thenReturn("hello")
@@ -252,7 +230,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
     "display any form errors" in {
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
@@ -270,7 +248,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map(alreadyUsed.key -> JsObject.empty)))
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), alreadyUsed)
       val options = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(availableYears))
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
       val formWithErrors = testForm.withError("key", "message")
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors

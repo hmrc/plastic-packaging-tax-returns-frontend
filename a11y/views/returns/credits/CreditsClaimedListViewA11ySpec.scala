@@ -18,10 +18,11 @@ package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import models.{CreditBalance, TaxablePlastic}
 import models.returns.credits.CreditSummaryRow
 import play.api.data.Form
-import play.api.data.Forms.boolean
+import play.api.data.Forms.{boolean, localDate}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.CreditsClaimedListView
@@ -52,12 +53,14 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
     )
   )
 
+  val creditRangeOption = CreditRangeOption(LocalDate.now(), LocalDate.now())
+
   val creditBalance = CreditBalance(10, 20, 5L, true, Map(
-    s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(0, 20, 0)
+    creditRangeOption.key -> TaxablePlastic(0, 20, 0)
   ))
 
   def render(form: Form[Boolean], creditBalance: CreditBalance): String =
-    page(form, creditBalance, LocalDate.now(), true, years, NormalMode)(request, messages).toString()
+    page(form, creditBalance, LocalDate.now(), Seq(creditRangeOption), years, NormalMode)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {
@@ -70,7 +73,7 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
       }
 
       "no more years to claim" in {
-        page(form, creditBalance, LocalDate.now(), false, years, NormalMode)(request, messages).toString() must passAccessibilityChecks
+        page(form, creditBalance, LocalDate.now(), Seq.empty, years, NormalMode)(request, messages).toString() must passAccessibilityChecks
       }
     }
 
