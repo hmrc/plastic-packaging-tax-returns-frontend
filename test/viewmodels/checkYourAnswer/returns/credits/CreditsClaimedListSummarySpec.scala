@@ -97,6 +97,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
 
   "create a chronological ordered list of row" in {
     when(message.apply(any[String])).thenAnswer((s: String) =>  s)
+    when(message.apply(eqTo("creditSummary.for"), any)).thenReturn("creditSummary.for")
     when(message.apply(eqTo("return.quarter"), any[Seq[String]]))
       .thenReturn(
         "1 April 2022 to 31 March 2023",
@@ -143,17 +144,26 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       CreditSummaryRow(
         label = "1 April 2022 to 31 March 2023",
         value = "£200.00",
-        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
+        actions = Seq(
+          ActionItem("change-url", Text("site.change"), visuallyHiddenText = Some("creditSummary.for")),
+          ActionItem("remove-url", Text("site.remove"), visuallyHiddenText = Some("creditSummary.for"))
+        )
       ),
       CreditSummaryRow(
         label = "1 April 2023 to 31 March 2024",
         value = "£150.00",
-        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
+        actions = Seq(
+          ActionItem("change-url", Text("site.change"), visuallyHiddenText = Some("creditSummary.for")),
+          ActionItem("remove-url", Text("site.remove"), visuallyHiddenText = Some("creditSummary.for"))
+        )
       ),
       CreditSummaryRow(
         label = "1 April 2024 to 31 March 2025",
         value = "£350.00",
-        actions = Seq(ActionItem("change-url", Text("site.change")), ActionItem("remove-url", Text("site.remove")))
+        actions = Seq(
+          ActionItem("change-url", Text("site.change"), visuallyHiddenText = Some("creditSummary.for")),
+          ActionItem("remove-url", Text("site.remove"), visuallyHiddenText = Some("creditSummary.for"))
+        )
       )
     )
 

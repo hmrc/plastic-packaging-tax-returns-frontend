@@ -59,5 +59,8 @@
 @actionLink(action: ActionItem) = {
     <a class="govuk-link @{
         action.classes
-    }" href="@action.href">@action.content.asHtml</a>
+    }" href="@action.href">
+        @action.content.asHtml
+        <span class="govuk-visually-hidden">@action.visuallyHiddenText</span>
+    </a>
 }

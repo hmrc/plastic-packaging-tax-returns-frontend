@@ -712,6 +712,7 @@ creditsSummary.table.heading.1 = [NEEDS WELSH] Dates
 creditsSummary.table.heading.2 = [NEEDS WELSH] Amount
 creditsSummary.table.heading.3 = Camau i’w cymryd
 creditsSummary.table.total = Cyfanswm y credyd
+creditSummary.for = [NEEDS WELSH] credit for {0}
 creditsSummary.paragraph.credit-will-be-applied = Bydd eich {0} credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 creditsSummary.add-to-list = [NEEDS WELSH] Do you want to claim tax back as credit for another date range?
 creditsSummary.checkYourAnswersLabel = creditsSummary

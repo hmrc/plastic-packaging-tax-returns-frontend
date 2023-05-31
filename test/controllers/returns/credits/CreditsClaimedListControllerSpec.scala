@@ -186,8 +186,8 @@ class CreditsClaimedListControllerSpec
   private def expectedCreditSummary = {
     Seq(
       CreditSummaryRow("return.quarter", "£20.00", Seq(
-        ActionItem("/change", Text("site.change")),
-        ActionItem("/remove", Text("site.remove"))
+        ActionItem("/change", Text("site.change"), visuallyHiddenText = Some("creditSummary.for")),
+        ActionItem("/remove", Text("site.remove"), visuallyHiddenText = Some("creditSummary.for"))
       )),
       CreditSummaryRow("creditsSummary.table.total", "£20.00")
     )
