@@ -16,15 +16,14 @@
 
 package controllers.returns.credits
 
-import connectors.CalculateCreditsConnector
+import connectors.{AvailableCreditYearsConnector, CalculateCreditsConnector}
 import controllers.actions._
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditRangeOption
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.AvailableYears
-import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
@@ -39,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditsClaimedListController @Inject()(
   override val messagesApi: MessagesApi,
   calcCreditsConnector: CalculateCreditsConnector,
+  availableCreditYearsConnector: AvailableCreditYearsConnector,
   navigator: ReturnsJourneyNavigator,
   journeyAction: JourneyAction,
   formProvider: CreditsClaimedListFormProvider,
@@ -48,7 +48,7 @@ class CreditsClaimedListController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+      calcCreditsConnector.get(request.pptReference).flatMap { creditBalance =>
         creditBalance.fold(
           error => throw error,
           balance => displayView(mode, balance)
@@ -58,43 +58,49 @@ class CreditsClaimedListController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      formProvider().bindFromRequest().fold(
-        formWithErrors => {
-          //todo: is there a better way to display the view without calling the API again?
-          handleFormError(formWithErrors, mode)
-        },
-        isAddingAnotherYear =>
-          Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
-      )
-  }
+      availableCreditYearsConnector.get(request.pptReference).flatMap{ options =>
+        val remainingOpts = remainingOptions(options)
+        formProvider(remainingOpts).bindFromRequest().fold(
+          formWithErrors => {
+            calcCreditsConnector.get(request.pptReference).map { creditBalance =>
+              creditBalance.fold(
+                error => throw error,
+                balance => BadRequest(view(formWithErrors, balance, earliestCreditDate(options), remainingOpts,
+                  createCreditSummary(request.userAnswers, balance, Some(navigator)), mode))
+              )
+            }
 
-  private def handleFormError(
-    formWithErrors: Form[Boolean],
-    mode: Mode,
-  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    calcCreditsConnector.get(request.pptReference).map { creditBalance =>
-      creditBalance.fold(
-        error => throw error,
-        balance => BadRequest(view(formWithErrors, balance, earliestCreditDate, moreYearsLeftToClaim,
-          createCreditSummary(request.userAnswers, balance, Some(navigator)), mode))
-      )
-    }
+          },
+          isAddingAnotherYear =>
+            Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
+        )
+      }
+
   }
 
   private def displayView(
     mode: Mode,
     creditBalance: CreditBalance
-  )(implicit request: DataRequest[AnyContent]): Result = {
-    Ok(view(formProvider(), creditBalance, earliestCreditDate, moreYearsLeftToClaim, createCreditSummary(request.userAnswers, creditBalance, Some(navigator)), mode))
+  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    availableCreditYearsConnector.get(request.pptReference).map(options =>
+      Ok(view(
+        formProvider(remainingOptions(options)),
+        creditBalance,
+        earliestCreditDate(options),
+        remainingOptions(options),
+        createCreditSummary(request.userAnswers, creditBalance, Some(navigator)),
+        mode)
+      )
+    )
   }
 
-  def earliestCreditDate(implicit request: DataRequest[AnyContent]) =
-    request.userAnswers.getOrFail(AvailableYears).minBy(_.from).from
+  def earliestCreditDate(available: Seq[CreditRangeOption]) =
+    available.minBy(_.from).from
 
-  private def moreYearsLeftToClaim(implicit request: DataRequest[AnyContent]) = {
-    val availableYears = request.userAnswers.getOrFail(AvailableYears)
+  private def remainingOptions(available: Seq[CreditRangeOption])(implicit request: DataRequest[AnyContent]): Seq[CreditRangeOption] = {
     val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
 
-    alreadyUsedYears != availableYears.map(_.key).toSet
+    available.collect{case y if !alreadyUsedYears.contains(y.key) => y}
   }
+
 }
