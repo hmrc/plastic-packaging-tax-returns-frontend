@@ -41,7 +41,7 @@
 
 @(form: Form[_], creditBalance: CreditBalance, earliestCreditDate: LocalDate, rangeOptionsRemaining: Seq[CreditRangeOption], summaryRows: Seq[CreditSummaryRow], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("creditsSummary.title-heading"))) {
+@layout(pageTitle = title(form, messages("creditsSummary.title-heading"), Some(messages("return.title.tail")))) {
 
     @formHelper(action = controllers.returns.credits.routes.CreditsClaimedListController.onSubmit(mode), 'autoComplete -> "off") {
 

@@ -75,7 +75,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     }
 
     "show cancel button when can claim credit" in {
-      createView().getElementById("link-cancel").text() mustBe "Cancel"
+      createView().getElementById("link-cancel").text() mustBe "Cancel credit claim"
       createView().getElementById("link-cancel").select("a").get(0) must
         haveHref(controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad("year-key").url)
     }

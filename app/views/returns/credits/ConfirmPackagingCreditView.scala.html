@@ -59,7 +59,8 @@
     @linkButtonWithCancel(
         buttonKey = "site.continue.confirm",
         buttonUrl = continueCall.url,
-        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url
+        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url,
+        cancelKey = "site.cancelCredit"
     )
 
 }
