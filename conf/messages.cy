@@ -712,6 +712,7 @@ creditsSummary.table.heading.1 = Dyddiadau
 creditsSummary.table.heading.2 = Swm
 creditsSummary.table.heading.3 = Camau i’w cymryd
 creditsSummary.table.total = Cyfanswm y credyd
+creditSummary.for = [NEEDS WELSH] credit for {0}
 creditsSummary.paragraph.credit-will-be-applied = Bydd eich {0} credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 creditsSummary.add-to-list = A ydych am hawlio treth yn ôl fel credyd ar gyfer cyfnod arall?
 creditsSummary.checkYourAnswersLabel = creditsSummary
