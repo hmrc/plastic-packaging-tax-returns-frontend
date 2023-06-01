@@ -3,6 +3,7 @@ service.name = Plastic Packaging Tax
 site.back = Back
 site.remove = Remove
 site.cancel = Cancel
+site.cancelCredit = Cancel credit claim
 site.change = Change
 site.no = No
 site.yes = Yes
