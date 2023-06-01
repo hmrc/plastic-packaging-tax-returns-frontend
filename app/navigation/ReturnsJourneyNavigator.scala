@@ -60,24 +60,12 @@ class ReturnsJourneyNavigator @Inject()(
     case _ => _ => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
   }
 
-  def startYourReturn(doesUserWantToStartReturn: Boolean, isFirstReturn: Boolean): Call =
-    if (doesUserWantToStartReturn) {
-      if (appConfig.isFeatureEnabled(Features.creditsForReturnsEnabled) && !isFirstReturn)
-        creditRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-      else
-        firstPageOfReturnSection
-    } else
-      returnRoutes.NotStartOtherReturnsController.onPageLoad()
-
-  private def firstPageOfReturnSection =
+  def firstPageOfReturnSection =
     returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
-  def whatDoYouWantDo(mode: Mode, isClaimingCredit: Boolean): Call = {
-    (mode, isClaimingCredit) match {
-      case (_, true) => creditRoutes.ClaimForWhichYearController.onPageLoad(mode)
-      case (NormalMode, false) => firstPageOfReturnSection
-      case (CheckMode, false) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-    }
+  def whatDoYouWantDo(isClaimingCredit: Boolean): Call = {
+    if(isClaimingCredit) creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
+    else firstPageOfReturnSection
   }
 
   def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
@@ -140,8 +128,11 @@ class ReturnsJourneyNavigator @Inject()(
     creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
-  def startYourReturn: Call =
-    firstPageOfReturnSection
+  def startYourReturn(doesUserWantToStartReturn: Boolean): Call =
+    if (doesUserWantToStartReturn)
+        firstPageOfReturnSection
+    else
+      returnRoutes.NotStartOtherReturnsController.onPageLoad()
 
   def manufacturedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
     if (mode.equals(NormalMode))

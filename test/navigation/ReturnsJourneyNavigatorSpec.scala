@@ -46,39 +46,23 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
   //todo add in credits navigation that is currently tested in controllers
   
-  "The start your return page" must {
-    "goto the what do you want to do page" in {
-      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
-      navigator.startYourReturn(true, false) mustBe 
-        creditRoutes.WhatDoYouWantToDoController.onPageLoad(NormalMode)
-    }
-    "except when the credits feature is disabled" in {
-      when(frontendConfig.isFeatureEnabled(any)) thenReturn false
-      navigator.startYourReturn(true, false) mustBe
+  "startYourReturn" must {
+    "go to manufactured-components page when answer is yes"in {
+      navigator.startYourReturn(true) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
-    "except when it is the users first return" in {
-      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
-      navigator.startYourReturn(true, isFirstReturn = true) mustBe
-        returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-    }
-    "go back to the account home page" in {
-      when(frontendConfig.isFeatureEnabled(any)) thenReturn true
-      navigator.startYourReturn(doesUserWantToStartReturn = false, false) mustBe
+    "go back to the account home page when answer is no" in {
+      navigator.startYourReturn(false) mustBe
         returnsRoutes.NotStartOtherReturnsController.onPageLoad()
     }
   }
   
   "what do you want to do page" should {
     "go to claim for which year" in {
-      navigator.whatDoYouWantDo(NormalMode, isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
-      navigator.whatDoYouWantDo(CheckMode, isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
+      navigator.whatDoYouWantDo(isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
     }
     "skip credit, go to the first page of the return" in {
-      navigator.whatDoYouWantDo(NormalMode, isClaimingCredit = false) mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-    }
-    "go back to return CYA" in {
-      navigator.whatDoYouWantDo(CheckMode, isClaimingCredit = false) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+      navigator.whatDoYouWantDo(isClaimingCredit = false) mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
   }
   
@@ -243,9 +227,9 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     navigator.cancelCredit() mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
-  "start your return" should {
+  "firstPageOfReturnSection" should {
     "go to the first page of the return" in {
-      navigator.startYourReturn mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      navigator.firstPageOfReturnSection mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
   }
 

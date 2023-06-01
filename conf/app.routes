@@ -99,10 +99,8 @@ GET         /deregistered                                           controllers.
 GET         /return-accounting-period                               controllers.returns.StartYourReturnController.onPageLoad()
 POST        /return-accounting-period                               controllers.returns.StartYourReturnController.onSubmit()
 
-GET         /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
-POST        /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
-GET         /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+GET         /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad
+POST        /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onSubmit
 
 GET         /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
 POST        /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = NormalMode)
