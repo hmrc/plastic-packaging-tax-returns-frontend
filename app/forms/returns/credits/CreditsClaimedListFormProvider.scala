@@ -17,14 +17,24 @@
 package forms.returns.credits
 
 import forms.mappings.Mappings
+import models.returns.CreditRangeOption
 import play.api.data.Form
+import play.api.i18n.Messages
+import views.ViewUtils
 
 import javax.inject.Inject
 
-class CreditsClaimedListFormProvider @Inject() extends Mappings {
+class CreditsClaimedListFormProvider extends Mappings {
 
-  def apply(): Form[Boolean] =
+  val standardError = "creditsSummary.error.required"
+  val onlyOneRemainingError = "creditsSummary.error.required.one-remaining"
+
+  def apply(options: Seq[CreditRangeOption])(implicit messages: Messages): Form[Boolean] = {
     Form(
-      "value" -> boolean("creditsSummary.error.required")
-  )
+      options match {
+        case Seq(onlyOption) => "value" -> boolean(onlyOneRemainingError, args = Seq(ViewUtils.displayDateRangeTo(onlyOption.from, onlyOption.to)))
+        case _ => "value" -> boolean(standardError)
+      }
+    )
+  }
 }
