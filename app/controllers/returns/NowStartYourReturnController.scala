@@ -45,7 +45,7 @@ class NowStartYourReturnController @Inject()
         request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
           case Some(obligation) => 
             val returnQuarter = obligation.toReturnQuarter
-            val nextPage = returnsNavigator.startYourReturn
+            val nextPage = returnsNavigator.firstPageOfReturnSection
 
             Ok(view(returnQuarter, true, nextPage))
           case None => Redirect(controllers.routes.IndexController.onPageLoad)

@@ -47,11 +47,6 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   //todo add in credits navigation that is currently tested in controllers
   
   "startYourReturn" must {
-    "go to manufactured-components page"in {
-      navigator.startYourReturn mustBe
-        returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
-    }
-
     "go to manufactured-components page when answer is yes"in {
       navigator.startYourReturn(true) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
@@ -232,9 +227,9 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     navigator.cancelCredit() mustBe creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
   }
 
-  "start your return" should {
+  "firstPageOfReturnSection" should {
     "go to the first page of the return" in {
-      navigator.startYourReturn mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      navigator.firstPageOfReturnSection mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
   }
 

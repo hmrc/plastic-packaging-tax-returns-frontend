@@ -102,10 +102,6 @@ POST        /return-accounting-period                               controllers.
 GET         /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad
 POST        /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onSubmit
 
-#todo: do  we need that (maybe not)? Can I delete them?
-#GET         /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-#POST        /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
-
 GET         /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
 POST        /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = NormalMode)
 GET         /change-claim-for-which-date-range                      controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = CheckMode)

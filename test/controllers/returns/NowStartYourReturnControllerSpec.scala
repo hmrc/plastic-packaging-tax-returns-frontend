@@ -79,7 +79,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     }
 
     "return 200" in {
-      when(returnsNavigator.startYourReturn).thenReturn(Call(GET, "foo"))
+      when(returnsNavigator.firstPageOfReturnSection).thenReturn(Call(GET, "foo"))
 
       val result = sut.onPageLoad()(request)
 
@@ -95,7 +95,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     "display a view" in {
       val nextPage = Call(GET, "foo")
 
-      when(returnsNavigator.startYourReturn).thenReturn(nextPage)
+      when(returnsNavigator.firstPageOfReturnSection).thenReturn(nextPage)
       when(messages.apply(any[String], any)).thenReturn("date")
       when(request.userAnswers.getOrFail(eqTo(WhatDoYouWantToDoPage))(any, any)).thenReturn(true)
 
