@@ -40,6 +40,8 @@
     Table(
         rows = list.map(row => if(showHeading) row.createContent(actions => actionContent(actions)) else row.createCYAContent),
         head = headingRow,
+        caption = Some(messages("creditsSummary.title-heading")),
+        captionClasses = "govuk-visually-hidden",
         firstCellIsHeader = true,
         attributes = Map("id" -> "credit-summary-table")
     )
