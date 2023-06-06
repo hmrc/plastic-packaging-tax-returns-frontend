@@ -102,7 +102,7 @@ td.govuk-table__cell.row-border {
   }
 
   &__link {
-    @include hmrc-white-link();
+    color: govuk-colour("white") !important;
   }
 
   &--show {
@@ -110,7 +110,7 @@ td.govuk-table__cell.row-border {
   }
 
   &__close {
-    @include hmrc-white-link();
+    color: govuk-colour("white") !important;
     @include govuk-responsive-margin(2, "top");
 
     outline: 0;
