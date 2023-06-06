@@ -56,6 +56,8 @@
 
         @paragraphBody(messages("claim-for-which-year.credits.paragraph.1"))
 
+        @paragraphBody(messages("claim-for-which-year.credits.paragraph.2"))
+
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
@@ -65,8 +67,6 @@
                 }
             )
         )
-
-        @paragraphBody(messages("claim-for-which-year.credits.paragraph.2"))
 
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
