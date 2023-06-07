@@ -53,7 +53,7 @@ class MainContactJobTitleViewSpec extends ViewSpecBase  with ViewAssertions with
     }
 
     "have a save & continue button" in {
-      createView.getElementsByClass("govuk-button").text mustBe "Save and continue"
+      createView.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
 

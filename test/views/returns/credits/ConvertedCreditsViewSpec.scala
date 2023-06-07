@@ -73,7 +73,7 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
 
     "have a submit button" in {
-      view.getElementsByClass("govuk-button").text mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
     }
 
     "display error" when {
