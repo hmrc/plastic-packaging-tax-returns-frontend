@@ -57,7 +57,7 @@
         @if(!creditBalance.canBeClaimed){
             @sectionH2Heading(messages("creditsSummary.tooMuch.heading"))
             @paragraphBody(messages("creditsSummary.tooMuch.p1", displayLocalDate(earliestCreditDate)))
-            @sectionH3Heading(messages("creditsSummary.tooMuch.h3"))
+            @sectionH3Heading(messages("creditsSummary.tooMuch.h3"), size = "s")
             @paragraph(content = Html(messages("creditsSummary.tooMuch.p2",
                 displayLocalDate(earliestCreditDate),
                 link(
