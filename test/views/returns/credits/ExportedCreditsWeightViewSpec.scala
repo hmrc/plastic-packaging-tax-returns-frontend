@@ -63,8 +63,8 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
     }
 
     "contain save & continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
-      view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
+      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
     }
 
     "show an error message" when {

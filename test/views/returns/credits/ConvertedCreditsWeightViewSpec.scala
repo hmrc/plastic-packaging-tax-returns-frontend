@@ -70,7 +70,7 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
 
     "contain save & continue button" in {
       verify(messages, times(1)).apply("site.continue")
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
   }
 

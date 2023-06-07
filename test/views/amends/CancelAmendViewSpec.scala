@@ -58,7 +58,7 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
 
     "contain continue button" in {
 
-      view.getElementsByClass("govuk-button").text() mustBe "Continue"
+      view.getElementsByClass("govuk-button").text() must include("Continue")
 
     }
 

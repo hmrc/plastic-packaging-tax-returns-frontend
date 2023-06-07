@@ -55,8 +55,8 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
 

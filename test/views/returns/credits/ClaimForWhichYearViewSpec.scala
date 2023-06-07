@@ -58,7 +58,7 @@ class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with Vi
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
 
   }

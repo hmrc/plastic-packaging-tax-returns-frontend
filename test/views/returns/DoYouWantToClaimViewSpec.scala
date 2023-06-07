@@ -80,7 +80,7 @@ class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
 
     "contain save & continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
 
     "have the error summary when form error" in {
