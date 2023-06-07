@@ -28,7 +28,7 @@
 
 @(credit: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
-@creditSummaryTable(credit.summaryList, showHeading = false)
+@govukSummaryList(SummaryList(rows = credit.summaryList.map(_.toSummaryListRow)))
 
 @paragraph(
     content = link(

@@ -18,8 +18,9 @@ package models.returns.credits
 
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases
-import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
 case class CreditSummaryRow(
@@ -27,6 +28,12 @@ case class CreditSummaryRow(
   value: String,
   actions: Seq[ActionItem] = Seq.empty
 ) {
+
+  def toSummaryListRow =
+    SummaryListRow(
+      Key(Text(label)),
+      Value(Text(value), classes = "govuk-!-width-one-quarter govuk-table__cell--numeric")
+    )
 
   def createCYAContent = {
     Seq(

@@ -125,14 +125,25 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       }
     }
 
-    "show table" in {
+    "show summary list for credits" in {
+      val view = createView()
+
+      val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(1).text()
+      view.select("h2").text() must include("Credits")
+
+      summaryListTexts must include("1 April 2022 to 31 March 2023")
+      summaryListTexts must include("£2.00")
+      summaryListTexts must include("Credit total")
+      summaryListTexts must include("£40.00")
+    }
+
+    "show change link for credits" in {
       val view = createView()
       val doc = Jsoup.parse(view.toString())
 
-      val creditTable = doc.getElementById("credit-summary-table")
-      creditTable.text() must include("Credit total")
-      val creditLink = doc.getElementById("change-credit-link")
-      creditLink.text() must include("Change, remove or add credits")
+      val link = doc.getElementById("change-credit-link")
+      link.text() mustBe messages("submit-return.check-your-answers.credits.change.text.link")
+      link.attr("href") mustBe "/change"
     }
   }
 
