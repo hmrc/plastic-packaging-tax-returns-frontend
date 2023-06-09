@@ -94,19 +94,10 @@ class CreditsClaimedListController @Inject()(
         mode)
       )
     )
-    creditBalance: CreditBalance
-  )(implicit request: DataRequest[AnyContent]): Seq[CreditSummaryRow] = {
-    request.userAnswers.get(AvailableYears) match {
-      case Some(list) if (!list.isEmpty) => createCreditSummary(request.userAnswers, creditBalance, Some(navigator))
-      case _ => Seq(createTotalCreditRow(creditBalance.totalRequestedCreditInPounds))
-    }
   }
 
   def earliestCreditDate(available: Seq[CreditRangeOption]) =
     available.minBy(_.from).from
-      case Some(list) if(!list.isEmpty) => list.minBy(_.from).from
-      case _ => LocalDate.of(2022, 4, 1)
-    }
 
   private def remainingOptions(available: Seq[CreditRangeOption])(implicit request: DataRequest[AnyContent]): Seq[CreditRangeOption] = {
     val alreadyUsedYears = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet

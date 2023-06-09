@@ -147,26 +147,6 @@ class CreditsClaimedListControllerSpec
 
       verify(view).apply(any, eqTo(creditBalance), any, eqTo(Seq.empty), any, any)(any, any)
     }
-
-    "view empty list" when {
-      "no available years in userAnswer" in {
-        setUpMock()
-        when(request.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(None)
-
-        await(sut.onPageLoad(NormalMode)(request))
-
-        expectedResultForNullAvailableYears()
-      }
-
-      "no available years" in {
-        setUpMock()
-        when(request.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Seq.empty))
-
-        await(sut.onPageLoad(NormalMode)(request))
-
-        expectedResultForNullAvailableYears()
-      }
-    }
   }
 
   "onSubmit" should {
@@ -227,7 +207,6 @@ class CreditsClaimedListControllerSpec
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
     when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
-      .thenReturn(Some(Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))))
     when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
     when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))
