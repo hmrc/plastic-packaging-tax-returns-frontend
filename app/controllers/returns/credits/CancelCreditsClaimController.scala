@@ -34,13 +34,6 @@ import views.html.returns.credits.CancelCreditsClaimView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-/*
-  Todo: There is already a RemoveCreditController, used by the ReturnsCheckYourAnswer page
-  which only reset to false the WhatDoYouWantToDoPage page. We may could consolidate
-  this CancelCreditsClaimController and the RemoveCreditController into one.
-  Not done it at this point as we have not looked into the ReturnsCheckYourAnswer page
-  which will need to change.
- */
 class CancelCreditsClaimController @Inject()( //todo name better this will remove one year of credit
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
