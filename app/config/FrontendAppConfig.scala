@@ -182,6 +182,6 @@ class FrontendAppConfig @Inject() (
     * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     * @see [[EdgeOfSystem.localDateTimeNow]]
     */
-  def overrideSystemDateTime: Option[String] =
-    configuration.getOptional[String]("features.override-system-date-time")
+  def overrideSystemDateTime: Option[String] = Some("2025-04-01T00:00:00")
+//    configuration.getOptional[String]("features.override-system-date-time")
 }
