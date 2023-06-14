@@ -31,6 +31,10 @@ final case class TaxReturnObligation(
   def toReturnQuarter(implicit messages: Messages): String = {
     ViewUtils.displayReturnQuarter(fromDate, toDate)
   }
+
+  //todo is this sufficient?
+  def tooOldToAmend: Boolean =
+    dueDate.isBefore(LocalDate.now().minusYears(4))
 }
 
 object TaxReturnObligation {

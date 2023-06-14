@@ -18,6 +18,8 @@
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 @import config.FrontendAppConfig
 @import viewmodels._
+@import controllers.amends.ViewReturnSummaryController.Unamendable
+@import controllers.amends.ViewReturnSummaryController.Unamendable._
 
 @this(
     layout: templates.Layout,
@@ -30,7 +32,7 @@
     paragraphBody: paragraphBody
 )
 
-@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Either[Unamendable, Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
@@ -53,11 +55,19 @@
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
 
     @if(appConfig.isAmendsFeatureEnabled){
-        @amendCall.fold{
-            <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
-            <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
-        }{ amendCall =>
-            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall)</p>
+        @amendCall match {
+            case Right(call) => {
+                <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call)</p>
+            }
+            case Left(DDInProgress) => {
+                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
+                <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
+            }
+            case Left(TooOld) => {
+                <!--//todo proper content-->
+                <h2 class="govuk-heading-m">No amends</h2>
+                <p>more than 4 years</p>
+            }
         }
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>

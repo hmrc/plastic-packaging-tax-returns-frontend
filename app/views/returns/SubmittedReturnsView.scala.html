@@ -34,10 +34,12 @@
 
 
 @*TODO: order the Seq by obligation dates before operating on*@
-
+<!--//todo what order newest on top or oldeest?? -->
 @returnsLine = @{
-    obligations.zipWithIndex.map {
-        case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, messages("submittedReturns.vieworamendreturn"))
+    obligations.sortBy(_.fromDate).zipWithIndex.map {
+        case (o,i) =>
+            val linkText = messages(if(o.tooOldToAmend) "submittedReturns.viewreturn" else "submittedReturns.vieworamendreturn")
+            taxReturnLink(displayReturnQuarter(o), o, i, linkText)
     }
 }
 

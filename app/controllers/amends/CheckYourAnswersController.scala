@@ -55,6 +55,8 @@ class CheckYourAnswersController @Inject()
         }
         else {
           request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
+            case Some(obligation) if obligation.tooOldToAmend =>
+              throw new IllegalStateException(s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}")
             case Some(obligation) =>
               returnsConnector.getCalculationAmends(request.pptReference).map {
                 case Right(calculations) => displayPage(request, obligation, calculations)
