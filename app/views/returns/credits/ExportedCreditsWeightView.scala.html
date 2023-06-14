@@ -18,13 +18,13 @@
 @import components._
 @import templates._
 @import viewmodels._
+@import views._
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
-    weightInputLayout: WeightInputLayout,
-    creditsJourneyCaption: CreditsJourneyCaption
+    weightInputLayout: WeightInputLayout
 )
 
 @(form: Form[Long], yearKey: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
@@ -33,9 +33,8 @@
 
     @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
 
-        @creditsJourneyCaption(dateRange)
         @weightInputLayout(
-                sectionHeading = None,
+                sectionHeading = Some(messages("credits.caption", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to))),
                 heading = messages("exportedCreditsWeight.heading"),
                 hintText = Some(messages("exportedCreditsWeight.hint")),
                 form = form

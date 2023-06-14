@@ -18,13 +18,13 @@
 @import templates._
 @import viewmodels._
 @import models.returns.CreditRangeOption
+@import views._
 
 @this(
     formHelper: FormWithCSRF,
     layout: templates.Layout,
     govukButton: GovukButton,
-    weightInputLayout: WeightInputLayout,
-    creditsJourneyCaption: CreditsJourneyCaption,
+    weightInputLayout: WeightInputLayout
 )
 
 @(form: Form[Long], submitCall: Call, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
@@ -33,9 +33,8 @@
 
     @formHelper(action = submitCall, 'autoComplete -> "off") {
 
-        @creditsJourneyCaption(dateRange)
         @weightInputLayout(
-            sectionHeading = None,
+            sectionHeading = Some(messages("credits.caption", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to))),
             heading = messages("converted-credits-weight.heading-title"),
             hintText = Some(messages("converted-credits-weight.hint")),
             form = form
