@@ -66,7 +66,13 @@
                         )
                 }}
 
-
+@amendValue(value: String) = @{
+    if(amendmentMade) {
+        Text(value)
+    } else {
+        HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages("AmendsCheckYourAnswers.hiddenCell.newAnswer.2")}</span>"""))
+    }
+}
 
 @layout(pageTitle = titleNoForm(messages("AmendsCheckYourAnswers.title", displayReturnQuarter(obligation))), 
     showBackLink = false) {
@@ -75,38 +81,35 @@
 
     @cyaTable(totalRows, messages("AmendsCheckYourAnswers.totalPlastic"))
 
-    <!--//todo proper margin bottom on tables so dont need br br-->
-    <br>
-    <br>
-
     @cyaTable(deductionsRows, messages("AmendsCheckYourAnswers.deductions"))
 
-    <br>
-    <br>
-
     <!--calculations-->
+    @sectionH2Heading(messages("AmendsCheckYourAnswers.calculation"))
+
+    @paragraphBody(messages("AmendsCheckYourAnswers.calculation.taxRate", calculations.amend.taxRate.asPoundPerTonne))
+
     @govukTable(
         Table(
             rows = Seq(
                 Seq(
                     TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.totalPackaging")),format = Some("text")),
                     TableRow(content =  Text(calculations.original.packagingTotal.asKg),format = Some("text")),
-                    TableRow(content =  Text(calculations.amend.packagingTotal.asKg),format = Some("text"))
+                    TableRow(content =  amendValue(calculations.amend.packagingTotal.asKg), format = Some("text"))
                 ),
                 Seq(
                     TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.deductions")),format = Some("text")),
                     TableRow(content =  Text(calculations.original.deductionsTotal.asKg),format = Some("text")),
-                    TableRow(content =  Text(calculations.amend.deductionsTotal.asKg),format = Some("text"))
+                    TableRow(content =  amendValue(calculations.amend.deductionsTotal.asKg),format = Some("text"))
                 ),
                 Seq(
                     TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.chargeable")),format = Some("text")),
                     TableRow(content =  Text(calculations.original.chargeableTotal.asKg),format = Some("text")),
-                    TableRow(content =  Text(calculations.amend.chargeableTotal.asKg),format = Some("text"))
+                    TableRow(content =  amendValue(calculations.amend.chargeableTotal.asKg),format = Some("text"))
                 ),
                 Seq(
                     TableRow(content = Text(messages("AmendsCheckYourAnswers.calculation.row.taxDue")),format = Some("text")),
                     TableRow(content =  Text(calculations.original.taxDue.asPounds),format = Some("text")),
-                    TableRow(content =  Text(calculations.amend.taxDue.asPounds),format = Some("text"))
+                    TableRow(content =  amendValue(calculations.amend.taxDue.asPounds),format = Some("text"))
                 )
             ),
             head = Some(
@@ -122,26 +125,24 @@
                     )
                 )
            ),
-           caption = Some(messages("AmendsCheckYourAnswers.calculation")),
-           captionClasses = "govuk-table__caption--m",
-           firstCellIsHeader = true
+           firstCellIsHeader = true,
+           classes = "govuk-!-margin-bottom-9"
         )
     )
 
-    <br>
-    <br>
-
     <h2 class="govuk-heading-m">@messages("AmendsCheckYourAnswers.credits.heading")</h2>
-    @paragraphBody(message = messages("AmendsCheckYourAnswers.credit.paragraph"))
-    <br>
+    @paragraphBody(
+        message = messages("AmendsCheckYourAnswers.credit.paragraph"),
+        classes = "govuk-body govuk-!-margin-bottom-8"
+    )
 
     @if(amendmentMade){ @submitContent }else{ @noAmendmentsMadeContent }
 
 
 
-    @paragraph(content = link(id = "cancel-link", text = messages("AmendsCheckYourAnswers.cancel.link.text"),
-        call = controllers.amends.routes.CancelAmendController.onPageLoad))
-
-    <br /><!--bottom margin-->
-
+    @paragraph(
+        content = link(id = "cancel-link",
+        text = messages("AmendsCheckYourAnswers.cancel.link.text"),
+        call = controllers.amends.routes.CancelAmendController.onPageLoad),
+        classes = "govuk-body govuk-!-margin-bottom-6")
 }

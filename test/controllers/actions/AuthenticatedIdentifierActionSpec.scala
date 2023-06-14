@@ -16,300 +16,136 @@
 
 package controllers.actions
 
-import base.{FakeAuthConnector, MetricsMocks, SpecBase}
 import config.FrontendAppConfig
-import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
-import controllers.{routes => agentRoutes}
-import controllers.home.{routes => homeRoutes}
-import models.SignedInUser
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.pptEnrolmentKey
+import controllers.actions.AuthenticatedIdentifierActionSpec.RetrievalSugar
 import models.Mode.NormalMode
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.{BodyParsers, Headers, Results}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.mock
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Results.Ok
+import play.api.mvc.{Result, Results}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import support.AuthHelper.expectedAcceptableCredentialsPredicate
-import support.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
-import support.{FakeCustomRequest, PptTestData}
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.AgentSelectedPPTRef
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, internalId}
+import uk.gov.hmrc.auth.core.retrieve.~
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
 
-class AuthenticatedIdentifierActionSpec
-    extends SpecBase with GuiceOneAppPerSuite with FakeCustomRequest with MetricsMocks {
+class AuthenticatedIdentifierActionSpec extends PlaySpec with BeforeAndAfterEach {
 
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  val mockAuthConnector = mock[AuthConnector]
+  val mockConfig = mock[FrontendAppConfig]
+  val mockSessionRepository = mock[SessionRepository]
 
-  val application = applicationBuilder(userAnswers = None).build()
-  val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-  val appConfig   = application.injector.instanceOf[FrontendAppConfig]
-
-  class Harness(authAction: AuthenticatedIdentifierAction) {
-    def onPageLoad() = authAction(_ => Results.Ok)
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuthConnector, mockSessionRepository, mockConfig)
+    when(mockConfig.loginUrl).thenReturn("test-login-url")
   }
 
-  "Identifier Action" - {
+  val emptyEnrolments: Enrolments = Enrolments.apply(Set.empty)
 
-    "redirect to not enrolled page when enrolment id is missing" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("")))
+  val pptEnrolment: Enrolments = Enrolments(
+    Set(Enrolment("HMRC-PPT-ORG").withIdentifier("EtmpRegistrationNumber", "ppt-enrolment-ref"))
+  )
 
-      running(application) {
-        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+  val sut: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+    mockAuthConnector,
+    mockConfig,
+    mockSessionRepository,
+    stubControllerComponents()
+  )(global)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled.url)
-      }
-    }
+  def test(): Future[Result] = sut(request => Ok(request.pptReference))(FakeRequest("GET", "/target"))
 
-    "redirect agents to client identification page if we can see client identifier on the agents session" in {
-      val agent = PptTestData.newAgent("456")
+  def mockAuthRetrieval[A](authResponse: Future[A]) =
+    when(mockAuthConnector.authorise[A](any(), any())(any(), any()))
+      .thenReturn(authResponse)
 
-      running(application) {
-        val result = runAuth(agent, FakeAuthConnector.createSuccessAuthConnector(agent))
+  "invokeBlock" must {
+    "invoke the block" when {
+      "the user is a ppt enrolled user" in{
+        val retrieval: Option[String] ~ Option[AffinityGroup] ~ Enrolments =
+          Some("user-internal-id") AND Some(AffinityGroup.Organisation) AND pptEnrolment
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          agentRoutes.AgentsController.onPageLoad(NormalMode).url
-        )
-      }
-    }
+        mockAuthRetrieval(Future.successful(retrieval))
 
-    "process request when enrolment id is present on a normal user's auth response" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
-
-      running(application) {
-        status(runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))) mustBe OK
-      }
-    }
-
-    "process request when an authorised client identifier is seen on an agents session" in {
-      val agent    = PptTestData.newAgent("456")
-      val fakeAuth = FakeAuthConnector.createSuccessAuthConnector(agent)
-      val agentDelegatedAuthPredicate =
-        Enrolment("HMRC-PPT-ORG").withIdentifier(pptEnrolmentIdentifierName,
-                                                 "XMPPT0000000123"
-        ).withDelegatedAuthRule("ppt-auth").and(expectedAcceptableCredentialsPredicate)
-
-      running(application) {
-        val result = runAuth(agent, fakeAuth, Some("XMPPT0000000123"))
+        val result = test()
 
         status(result) mustBe OK
-        fakeAuth.predicate.get mustBe agentDelegatedAuthPredicate
+        contentAsString(result) mustBe "ppt-enrolment-ref"
+
+        verify(mockAuthConnector).authorise(
+          refEq(AffinityGroup.Agent.or(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong)))),
+          refEq(internalId and affinityGroup and allEnrolments)
+        )(any(), any())
       }
-    }
 
-    "process request when enrolment id is present and multiple identifier exist for same key" in {
-      val user = PptTestData.newUser(
-        "123",
-        Option(
-          newEnrolments(newEnrolment(pptEnrolmentKey, pptEnrolmentIdentifierName, "555"),
-                        newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
-          )
-        )
-      )
+      "the user is an agent" in{
+        val retrieval: Option[String] ~ Option[AffinityGroup] ~ Enrolments =
+          Some("agent-internal-id") AND Some(AffinityGroup.Agent) AND emptyEnrolments
 
-      running(application) {
-        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+        mockAuthRetrieval(Future.successful(retrieval))
+        when(mockSessionRepository.get[String]("agent-internal-id", AgentSelectedPPTRef))
+          .thenReturn(Future.successful(Some("AGENT-PPT-REF")))
+
+        val result = test()
 
         status(result) mustBe OK
+        contentAsString(result) mustBe "AGENT-PPT-REF"
       }
     }
 
-    "redirect to not enrolled page when enrolment id is not present and multiple identifier exist for same key" in {
-      val user =
-        PptTestData.newUser("123",
-                            Some(
-                              newEnrolments(newEnrolment(pptEnrolmentKey, "DEF-NAME", "555"),
-                                            newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
-                              )
-                            )
-        )
+    "redirect to Agent select client page" when {
+      "the Agent does not have a client ppt cached " in{
+        val retrieval: Option[String] ~ Option[AffinityGroup] ~ Enrolments =
+          Some("agent-internal-id") AND Some(AffinityGroup.Agent) AND emptyEnrolments
 
-      running(application) {
-        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+        mockAuthRetrieval(Future.successful(retrieval))
+        when(mockSessionRepository.get[String]("agent-internal-id", AgentSelectedPPTRef))
+          .thenReturn(Future.successful(None))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
+        val result = test()
+
+        redirectLocation(result) mustBe Some(controllers.routes.AgentsController.onPageLoad(NormalMode).url)
       }
     }
 
-    "redirect to not enrolled page when enrolment id is present but no ppt enrolment key found" in {
-      val user = PptTestData.newUser(
-        "123",
-        Some(
-          newEnrolments(newEnrolment("SOME-OTHER-KEY", pptEnrolmentIdentifierName, "555"),
-                        newEnrolment(pptEnrolmentKey, "ABC-Name", "999")
-          )
-        )
-      )
+    "redirect to auth pages" when {
+      "the user has NoActiveSession" in{
+        mockAuthRetrieval(Future.failed(BearerTokenExpired("this is one of many NoActiveSession exceptions")))
 
-      running(application) {
-        val result = runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
+        val result = test()
 
-        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.notEnrolled().url)
-      }
-    }
-
-    "time calls to authorisation" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
-
-      running(application) {
-        runAuth(user, FakeAuthConnector.createSuccessAuthConnector(user))
-        metricsMock.defaultRegistry.timer("ppt.returns.upstream.auth.timer").getCount must be > 0L
-      }
-    }
-
-    "process request when enrolment id is present and allowed" in {
-      val enrolmentId = "555"
-      val user        = PptTestData.newUser("123", Some(pptEnrolment(enrolmentId)))
-
-      running(application) {
-        val result = runAuth(user,
-                             FakeAuthConnector.createSuccessAuthConnector(user),
-                             None,
-                             new PptReferenceAllowedList(Seq(enrolmentId))
-        )
-
-        status(result) mustBe OK
-      }
-    }
-
-    "redirect to home when enrolment id is present but not allowed" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
-
-      running(application) {
-        val result = runAuth(user,
-                             FakeAuthConnector.createSuccessAuthConnector(user),
-                             None,
-                             new PptReferenceAllowedList(Seq("someOtherEnrolmentId"))
-        )
-        redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised().url)
-      }
-    }
-
-    "when the user hasn't logged in" - {
-
-      "must redirect the user to log in " in {
-        running(application) {
-          val result = runAuth(PptTestData.newUser(),
-                               FakeAuthConnector.createFailingAuthConnector(new MissingBearerToken)
-          )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value must startWith(appConfig.loginUrl)
+        redirectLocation(result).get must startWith("test-login-url")
+        withClue("the target url should be a query param for auth to continue to"){
+          redirectLocation(result).get must include("?continue=%2Ftarget")
         }
       }
     }
 
-    "the user's session has expired" - {
+    "redirect to not enrolled pages" when {
+      "the user is not enrolled for PPT" in{
+        mockAuthRetrieval(Future.failed(InsufficientEnrolments("the user is not enrolled")))
 
-      "must redirect the user to log in " in {
-        running(application) {
-          val result = runAuth(PptTestData.newUser(),
-                               FakeAuthConnector.createFailingAuthConnector(new BearerTokenExpired)
-          )
+        val result = test()
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value must startWith(appConfig.loginUrl)
-        }
-      }
-    }
-
-    "the user doesn't have sufficient enrolments" - {
-
-      "must redirect the user to the unauthorised page" in {
-        running(application) {
-          val result =
-            runAuth(PptTestData.newUser(),
-                    FakeAuthConnector.createFailingAuthConnector(new InsufficientEnrolments)
-            )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.notEnrolled.url
-        }
-      }
-    }
-
-    "the user doesn't have sufficient confidence level" - {
-
-      "must redirect the user to the unauthorised page" in {
-        running(application) {
-          val result =
-            runAuth(PptTestData.newUser(),
-                    FakeAuthConnector.createFailingAuthConnector(new InsufficientConfidenceLevel)
-            )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
-        }
-      }
-    }
-
-    "the user used an unaccepted auth provider" - {
-
-      "must redirect the user to the unauthorised page" in {
-        running(application) {
-          val result =
-            runAuth(PptTestData.newUser(),
-                    FakeAuthConnector.createFailingAuthConnector(new UnsupportedAuthProvider)
-            )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe homeRoutes.UnauthorisedController.unauthorised.url
-        }
-      }
-    }
-
-    "the user has an unsupported affinity group" - {
-
-      "must redirect the user to the unauthorised page" in {
-        running(application) {
-          val result =
-            runAuth(PptTestData.newUser(),
-                    FakeAuthConnector.createFailingAuthConnector(new UnsupportedAffinityGroup)
-            )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised.url)
-        }
-      }
-    }
-
-    "the user has an unsupported credential role" - {
-
-      "must redirect the user to the unauthorised page" in {
-        running(application) {
-          val result =
-            runAuth(PptTestData.newUser(),
-                    FakeAuthConnector.createFailingAuthConnector(new UnsupportedCredentialRole)
-            )
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(homeRoutes.UnauthorisedController.unauthorised.url)
-        }
+        redirectLocation(result) mustBe Some(controllers.home.routes.UnauthorisedController.notEnrolled().url)
       }
     }
   }
 
-  private def runAuth(
-    user: SignedInUser,
-    authConnector: AuthConnector,
-    pptClient: Option[String] = None,
-    pptReferenceAllowedList: PptReferenceAllowedList = new PptReferenceAllowedList(Seq.empty)
-  ) = {
-    val authAction = createIdentifierAction(authConnector, pptReferenceAllowedList)
-    val controller = new Harness(authAction)
+}
 
-    controller.onPageLoad()(authRequest(Headers(), user, pptClient))
+object AuthenticatedIdentifierActionSpec {
+  implicit class RetrievalSugar[A](val a: A) extends AnyVal {
+    def AND[B](b: B): A ~ B = new ~(a, b)
   }
-
-  private def createIdentifierAction(
-    fakeAuth: AuthConnector,
-    pptReferenceAllowedList: PptReferenceAllowedList
-  ) =
-    new AuthenticatedIdentifierAction(fakeAuth,
-                                      pptReferenceAllowedList,
-                                      appConfig,
-                                      metricsMock,
-                                      bodyParsers
-    )
-
 }

@@ -34,7 +34,7 @@ class FakeIdentifierActionWithEnrolment @Inject() (bodyParsers: PlayBodyParsers)
     block: IdentifiedRequest[A] => Future[Result]
   ): Future[Result] = {
     val pptLoggedInUser = SignedInUser(pptEnrolment("123"), IdentityData(internalId = "SomeId"))
-    block(IdentifiedRequest(request, pptLoggedInUser, Some("123")))
+    block(IdentifiedRequest(request, pptLoggedInUser, "123"))
   }
 
   override def parser: BodyParser[AnyContent] =

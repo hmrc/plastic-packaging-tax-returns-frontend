@@ -31,12 +31,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
-import viewmodels.PrintLong
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()
 (override val messagesApi: MessagesApi,
@@ -47,7 +45,7 @@ class CheckYourAnswersController @Inject()
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
-) extends I18nSupport {
+) (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     journeyAction.async {
@@ -73,28 +71,17 @@ class CheckYourAnswersController @Inject()
     val totalRows: Seq[AmendSummaryRow] = Seq(
       AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
       AmendImportedPlasticPackagingSummary.apply(request.userAnswers),
-      AmendSummaryRow(
-        "AmendsCheckYourAnswers.packagingTotal",
-        calculations.original.packagingTotal.asKg,
-        Some(calculations.amend.packagingTotal.asKg),
-        None
-      )
+      AmendTotalPlasticPackagingSummary(calculations, request.userAnswers)
     )
 
     val deductionsRows: Seq[AmendSummaryRow] = Seq(
       AmendDirectExportPlasticPackagingSummary.apply(request.userAnswers),
       AmendHumanMedicinePlasticPackagingSummary.apply(request.userAnswers),
       AmendRecycledPlasticPackagingSummary.apply(request.userAnswers),
-      AmendSummaryRow(
-        "AmendsCheckYourAnswers.deductionsTotal",
-        calculations.original.deductionsTotal.asKg,
-        Some(calculations.amend.deductionsTotal.asKg),
-        None
-      )
+      AmendTotalDeductionSummary.apply(calculations, request.userAnswers)
     )
 
     val amendmentMade = comparisonService.hasMadeChangesOnAmend(request.userAnswers)
-
     Ok(view(obligation, totalRows, deductionsRows, calculations, amendmentMade))
   }
 

@@ -16,7 +16,7 @@
 
 @import models.returns.TaxReturnObligation
 @import models.obligations.PPTObligations
-@import views.html.components.{TaxReturnLink, Link, heading}
+@import views.html.components.{TaxReturnLink, Link, heading, paragraphBody}
 @import components.ReturnsSectionHeading
 @import views.ViewUtils.displayReturnQuarter
 
@@ -25,7 +25,8 @@
         govukButton: GovukButton,
         link: Link,
         taxReturnLink:TaxReturnLink,
-        heading: heading
+        heading: heading,
+        paragraphBody: paragraphBody
 )
 
 
@@ -35,12 +36,16 @@
 @*TODO: order the Seq by obligation dates before operating on*@
 
 @returnsLine = @{
-    if(obligations.isEmpty) {
-        messages("submittedReturns.nothingsubmitted")
+    obligations.zipWithIndex.map {
+        case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, messages("submittedReturns.vieworamendreturn"))
+    }
+}
+
+@returnsSummary = {
+    @if(obligations.isEmpty) {
+        @paragraphBody(messages("submittedReturns.nothingsubmitted"))
     } else {
-        obligations.zipWithIndex.map {
-            case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, messages("submittedReturns.vieworamendreturn"))
-        }
+        <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
     }
 }
 
@@ -48,7 +53,7 @@
 
     @heading("submittedReturns.heading")
 
-    <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
+    @returnsSummary
 
     <p class="govuk-body">
         @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)

@@ -39,32 +39,34 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
     10, 2, 3, 4, 5, 6, debitForPeriod, 8, 9, 10
   )
 
-  private val submittedReturn = ReturnDisplayApi(
+  private val displayReturn = ReturnDisplayApi(
     "2019-08-28T09:30:47Z",
     IdDetails("XMPPT0000000001", "00-11-submission-id"),
     Some(returnDisplayChargeDetails),
     returnDetails
   )
 
-  val summaryRow = ViewReturnSummaryViewModel(submittedReturn)(messages)
+  val summaryRow = ViewReturnSummaryViewModel(displayReturn)(messages)
 
   def createView: Html = {
-    page("anyPeriod", summaryRow, Some(Call(GET, "/foo")))(request, messages)
+    page("anyPeriod", summaryRow, Some(Call(GET, "/foo")), "£300")(request, messages)
   }
 
   "view" should {
+    val view = createView
     "contains a credits section" in {
-      val view = createView
-
       view.select("h3").text() must include("Credits")
       view.select("h3").text() must include(messages("viewReturnSummary.credit.heading"))
     }
 
     "display Total Credits claimed" in {
-      val view = createView
-
       view.getElementsByClass("govuk-summary-list__row").select("dt").text() must include("Credit total")
       view.getElementsByClass("govuk-summary-list__row").get(2).select("dd").text() mustBe "£100.00"
+    }
+
+
+    "contain a how much the plastic is charged for tonne" in {
+      view.select("p").text() must include("For this period, tax is charged at a rate of £300 per tonne.")
     }
   }
 

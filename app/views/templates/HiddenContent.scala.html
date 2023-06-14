@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers.actions
+@this()
 
-import config.FrontendAppConfig
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+@(key: String)(implicit messages: Messages)
 
-trait CommonAuth {
-  def appConfig: FrontendAppConfig
-
-  protected val authData =
-    credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
-      agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
-      credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
-
-}
+<span class="govuk-visually-hidden">@messages(key)</span>

@@ -16,94 +16,157 @@
 
 package controllers
 
-import base.SpecBase
+import akka.stream.testkit.NoMaterializer
+import base.FakeAuthAction
+import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import forms.AgentsFormProvider
 import models.Mode.NormalMode
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.Call
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.play.PlaySpec
+import play.api.data.{Form, Forms}
+import play.api.data.format.Formats
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.AgentSelectedPPTRef
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, InsufficientEnrolments}
 import views.html.AgentsView
 
-class AgentsControllerSpec extends SpecBase with MockitoSugar {
+import scala.concurrent.ExecutionContext.global
+import scala.concurrent.Future
 
-  def onwardRoute = Call("GET", "/foo")
-  val formProvider = new AgentsFormProvider()
+class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
-  lazy val agentsRoute = routes.AgentsController.onPageLoad(NormalMode).url
+  val formProvider = mock[AgentsFormProvider]
+  val mockForm = mock[Form[String]]
+  val view = mock[AgentsView]
 
-  "Agents Controller" - {
+  val mockAuthConnector = mock[AuthConnector]
+  val mockSessionRepository = mock[SessionRepository]
 
-    "must return OK and the correct view for a GET" in {
+  val fakeForm: Form[String] = Form[String]("value" -> Forms.of[String](Formats.stringFormat))
 
-      val application = applicationBuilderAgent().build()
+  val sut = new AgentsController(
+    stubMessagesControllerComponents().messagesApi,
+    mockAuthConnector,
+    mockSessionRepository,
+    new FakeAuthAction(stubPlayBodyParsers(NoMaterializer)),
+    formProvider,
+    stubMessagesControllerComponents(),
+    view
+  )(global)
 
-      running(application) {
-        val request = FakeRequest(GET, agentsRoute)
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuthConnector, mockSessionRepository, formProvider, view, mockForm)
+    when(view.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
+    when(formProvider.apply()).thenReturn(mockForm)
+  }
 
-        val result = route(application, request).value
+  "onPageLoad" must {
+    "display the form" in {
+      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(None))
+      when(mockForm.fill("")).thenReturn(fakeForm)
 
-        val view = application.injector.instanceOf[AgentsView]
+      val result: Future[Result] = sut.onPageLoad(NormalMode)(FakeRequest())
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, messages(application)).toString
+      status(result) mustBe OK
+      contentAsString(result) mustBe "Test View"
+      verify(view).apply(refEq(fakeForm), any())(any(), any())
+    }
+
+    "display the form pre-populated" in {
+      val filledForm = fakeForm.fill("selected-ref")
+      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some("selected-ref")))
+      when(mockForm.fill("selected-ref")).thenReturn(filledForm)
+
+      val result: Future[Result] = sut.onPageLoad(NormalMode)(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe "Test View"
+      verify(view).apply(refEq(filledForm), any())(any(), any())
+    }
+  }
+
+  "onSubmit" must {
+    "return BadRequest" when {
+      "the form is filled incorrectly" in {
+        val erroredForm = fakeForm.withError("key", "message")
+        when(mockForm.bindFromRequest()(any(), any())).thenReturn(erroredForm)
+
+        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe "Test View"
+        verify(view).apply(refEq(erroredForm), any())(any(), any())
+      }
+
+      "auth rejects the selected identifier" in {
+        val filledForm = fakeForm.fill("selected")
+        when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
+        when(mockForm.fill(any())).thenReturn(filledForm)
+        when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))
+          .thenReturn(Future.failed(InsufficientEnrolments("")))
+
+        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
+
+        val customErrorFrom = filledForm.withError("value", "agents.client.identifier.auth.error")
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe "Test View"
+        verify(view).apply(refEq(customErrorFrom), any())(any(), any())
+
+        verifyNoInteractions(mockSessionRepository)
+        verify(mockAuthConnector).authorise(
+          refEq(Enrolment(pptEnrolmentKey)
+            .withIdentifier(pptEnrolmentIdentifierName, "selected")
+            .withDelegatedAuthRule("ppt-auth")),
+          refEq(EmptyRetrieval))(any(), any())
       }
     }
 
-    "must redirect to account page when valid data is submitted" in {
+    "redirect to home page" when{
+      "The form is filled, auth validates and the ref is cached" in {
+        val filledForm = fakeForm.fill("selected")
+        when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
+        when(mockAuthConnector.authorise[Unit](any(), any())(any(), any())).thenReturn(Future.unit)
+        when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any())).thenReturn(Future.successful(true))
 
-      val application = applicationBuilderAgent().build()
+        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
 
-      running(application) {
-        val request =
-          FakeRequest(POST, agentsRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
+        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "error" when {
+      "caching fails" in {
+        object TestException extends Exception("test")
+        val filledForm = fakeForm.fill("selected")
+        when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
+        when(mockAuthConnector.authorise[Unit](any(), any())(any(), any())).thenReturn(Future.unit)
+        when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any()))
+          .thenReturn(Future.failed(TestException))
 
-      val application = applicationBuilderAgent().build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, agentsRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = formProvider().bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[AgentsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        intercept[TestException.type](await(sut.onSubmit(NormalMode)(FakeRequest())))
       }
-    }
 
-    "show error" - {
+      "auth fails" in {
+        object TestException extends Exception("test")
+        val filledForm = fakeForm.fill("selected")
+        when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
+        when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))
+          .thenReturn(Future.failed(TestException))
 
-      "not enrolled has flashed an auth error" in {
-
-        val application = applicationBuilderAgent().build()
-
-        running(application) {
-          val request =
-            FakeRequest(GET, agentsRoute)
-              .withFormUrlEncodedBody(("value", "answer"))
-              .withFlash(data = ("clientPPTFailed", "true"))
-
-          val result = route(application, request).value
-
-          status(result) mustEqual FORBIDDEN
-
-        }
+        intercept[TestException.type](await(sut.onSubmit(NormalMode)(FakeRequest())))
       }
     }
   }
+
 }

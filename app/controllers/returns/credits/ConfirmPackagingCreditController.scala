@@ -18,35 +18,38 @@ package controllers.returns.credits
 
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
-import models.{CreditBalance, Mode}
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
+import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.Results.{Ok, Redirect}
+import play.api.mvc._
+import util.EdgeOfSystem
 import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
 
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ConfirmPackagingCreditController @Inject()(
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
   tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
-  returnsJourneyNavigator: ReturnsJourneyNavigator
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+  returnsJourneyNavigator: ReturnsJourneyNavigator,
+  edgeOfSystem: EdgeOfSystem
+)(implicit ec: ExecutionContext)  extends I18nSupport {
+
+  private val midnight1stApril2023 = LocalDateTime.of(2023, 4, 1, 0, 0, 0)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request: DataRequest[AnyContent] =>
+    journeyAction.async {
+      implicit request =>
         creditConnector.get(request.pptReference).map {
           case Right(response) => displayView(response, mode)
           case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
@@ -55,13 +58,15 @@ class ConfirmPackagingCreditController @Inject()(
 
 
   private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
+    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
     if (creditBalance.canBeClaimed) {
       val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
       Ok(confirmCreditView(
         creditBalance.totalRequestedCreditInPounds,
         creditBalance.totalRequestedCreditInKilograms,
         continueCall,
-        mode)
+        mode,
+        isBeforeApril2023)
       )
     } else {
       val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
@@ -71,12 +76,11 @@ class ConfirmPackagingCreditController @Inject()(
   }
 
   def onCancelClaim(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    journeyAction.async {
       implicit request =>
         request.userAnswers
           .setOrFail(WhatDoYouWantToDoPage, false)
           .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
     }
-
 }

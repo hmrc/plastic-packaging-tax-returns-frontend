@@ -22,7 +22,8 @@ import config.FrontendAppConfig
 import connectors.{DownstreamServiceError, TaxReturnsConnector}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import models.amends.AmendSummaryRow
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
+import models.amends.AmendNewAnswerType.AnswerWithValue
 import models.requests.DataRequest
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.Answers
@@ -46,6 +47,7 @@ import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
@@ -106,7 +108,7 @@ class CheckYourAnswersControllerSpec
     }
 
     "return 200" in {
-      val calc = Calculations(1, 2, 3, 4, true)
+      val calc = Calculations(1, 2, 3, 4, true, 200.0)
       when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
 
@@ -116,7 +118,7 @@ class CheckYourAnswersControllerSpec
     }
 
     "return view" in {
-      val calc = Calculations(1, 2, 3, 4, true)
+      val calc = Calculations(1, 2, 3, 4, true, 200.0)
       when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
       when(comparisonService.hasMadeChangesOnAmend(any)).thenReturn(true)
@@ -219,33 +221,48 @@ class CheckYourAnswersControllerSpec
 
   private def createExpectedCalculationsRow = {
     AmendsCalculations(
-      Calculations(1, 2, 3, 4, true),
-      Calculations(1, 2, 3, 4, true)
+      Calculations(1, 2, 3, 4, true, 200.0),
+      Calculations(1, 2, 3, 4, true, 200.0)
     )
   }
 
   private def createExpectedDeductionRows = {
     Seq(
       AmendSummaryRow(
-        "amendDirectExportPlasticPackaging.checkYourAnswersLabel", "4kg", Some("70kg"),
-        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)),
+        "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
+        "4kg",
+        AmendNewAnswerType(Some("70kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+      ),
       AmendSummaryRow(
-        "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel", "3kg", Some("30kg"),
-        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)),
+        "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
+        "3kg",
+        AmendNewAnswerType(Some("30kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+      ),
       AmendSummaryRow(
-        "amendRecycledPlasticPackaging.checkYourAnswersLabel", "5kg", Some("20kg"),
-        Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)),
+        "amendRecycledPlasticPackaging.checkYourAnswersLabel",
+        "5kg",
+        AmendNewAnswerType(Some("20kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
+      ),
       totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal"))
   }
 
   private def createExpectedTotalRows = {
     Seq(
       AmendSummaryRow(
-        "amendManufacturedPlasticPackaging.checkYourAnswersLabel", "0kg", Some("300kg"),
-        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)),
+        "amendManufacturedPlasticPackaging.checkYourAnswersLabel",
+        "0kg",
+        AmendNewAnswerType(Some("300kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
+      ),
       AmendSummaryRow(
-        "amendImportedPlasticPackaging.checkYourAnswersLabel", "1kg", Some("200kg"),
-        Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)),
+        "amendImportedPlasticPackaging.checkYourAnswersLabel",
+        "1kg",
+        AmendNewAnswerType(Some("200kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
+      ),
       totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal"))
   }
 
@@ -259,117 +276,11 @@ class CheckYourAnswersControllerSpec
       .set(AmendRecycledPlasticPackagingPage, 20L).get
   }
 
-//  "(Amend journey) Check Your Answers Controller" - {
-//
-//    "must redirect to account page when amends toggle is disabled" in{
-//      when(config.isAmendsFeatureEnabled).thenReturn(false)
-//
-//      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//
-//        val result: Future[Result] = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-//         }
-//    }
-//
-//    "must return OK and the correct view for a GET" in {
-//      when(config.isAmendsFeatureEnabled).thenReturn(true)
-//      when(config.userResearchUrl).thenReturn("some Url")
-//
-//      val calc = Calculations(1, 2, 3, 4, true)
-//
-//      when(mockTaxReturnConnector.getCalculationAmends(any())(any())).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//
-//        val result = route(application, request).value
-//
-//        val totalRows: Seq[AmendSummaryRow] = Seq(
-//          AmendSummaryRow(
-//            "amendManufacturedPlasticPackaging.checkYourAnswersLabel", "0kg", None,
-//            Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
-//          ),
-//          AmendSummaryRow(
-//            "amendImportedPlasticPackaging.checkYourAnswersLabel", "1kg", None,
-//            Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
-//          ),
-//          totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal")(messages(application))
-//        )
-//
-//        val deductionsRows: Seq[AmendSummaryRow] = Seq(
-//          AmendSummaryRow(
-//            "amendDirectExportPlasticPackaging.checkYourAnswersLabel", "4kg", None,
-//           Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad().url)
-//          ),
-//          AmendSummaryRow(
-//            "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel", "3kg", None,
-//            Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
-//          ),
-//          AmendSummaryRow(
-//            "amendRecycledPlasticPackaging.checkYourAnswersLabel", "5kg", None,
-//            Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
-//          ),
-//          totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal")(messages(application))
-//        )
-//
-//        val calculationsRows = AmendsCalculations(
-//          Calculations(1, 2, 3, 4, true),
-//          Calculations(1, 2, 3, 4, true)
-//        )
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustBe expectedHtml.toString()
-//        verify(mockView).apply(
-//          refEq(taxReturnOb),
-//          refEq(totalRows),
-//          refEq(deductionsRows),
-//          refEq(calculationsRows),any())(any(), any())
-//
-//      }
-//    }
-//
-//    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-//      when(config.isAmendsFeatureEnabled).thenReturn(true)
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
-//      }
-//    }
-//
-//    "must redirect when previous tax return is not in user answers" in {
-//      when(config.isAmendsFeatureEnabled).thenReturn(true)
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET,  routes.CheckYourAnswersController.onPageLoad.url)
-//
-//        val result = route(application, request).value
-//
-//        redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
-//      }
-//    }
-//  }
-
   private def totalRow(originalTotal: Long, amendedTotal: Long, key: String) = {
     AmendSummaryRow(
       key,
       originalTotal.asKg,
-      Some(amendedTotal.asKg),
+      AnswerWithValue(amendedTotal.asKg),
       None
     )
   }

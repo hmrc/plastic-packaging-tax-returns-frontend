@@ -23,6 +23,8 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import support.PptTestData.pptEnrolment
 
+
+//todo delete?
 trait FakeCustomRequest {
 
   def authRequest(
@@ -43,7 +45,7 @@ trait FakeCustomRequest {
                           e.getIdentifier(IdentifierAction.pptEnrolmentIdentifierName).map(
                             i => i.value
                           )
-                      )
+                      ).get
     )
   }
 

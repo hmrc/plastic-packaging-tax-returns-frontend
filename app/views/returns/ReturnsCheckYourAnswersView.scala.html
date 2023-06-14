@@ -40,10 +40,6 @@
 
 @(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
 
-@hiddenText(key: String) = @{
-    HtmlContent(Html(s"""<span class="govuk-visually-hidden">${messages(key)}</span>"""))
-}
-
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
 }
@@ -183,7 +179,7 @@
 
     <!-- Tax calculation -->
     @sectionH3Heading(messages("submit-return.check-your-answers.tax-calc.heading"))
-    @para("tax-calc.footnote")
+    @paragraphBody(messages("submit-return.check-your-answers.tax-calc.footnote", taxReturn.taxRate))
     @govukSummaryList(SummaryList(
         rows = Seq(
             summaryRowFromString("tax-calc.row1", taxReturn.packagingTotal),

@@ -116,7 +116,7 @@ class IndexPageViewSpec
     }
 
     "contain ppt Reference number" in {
-      val pptReference = view.getElementById("id-ppt-reference")
+      val pptReference = view.getElementsByClass("govuk-body")
 
       pptReference.text() must include(messages("account.homePage.registrationNumber", "XMPPT0000000001"))
       pptReference.text() must include(singleEntitySubscription.entityName)

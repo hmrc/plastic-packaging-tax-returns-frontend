@@ -36,7 +36,7 @@ class MainContactNameFormProvider {
 
 object MainContactNameFormProvider {
   private val MaxLength = 160
-  private val AllowedCharacterRegex = "^[A-z '.-]*$"
+  private val AllowedCharacterRegex = "^[A-Za-z '.-]*$"
   val EmptyError = "mainContactName.error.required"
   val LengthError = "mainContactName.error.length"
   val InvalidError = "mainContactName.error.invalid"

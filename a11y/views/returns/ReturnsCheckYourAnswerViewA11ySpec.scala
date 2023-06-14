@@ -51,7 +51,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     "PK1")
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
-    val calculations = Calculations(1, 2L, 3L, 5L, true)
+    val calculations = Calculations(1, 2L, 3L, 5L, true, 0.2)
     TaxReturnViewModel(answers, "123", aTaxObligation, calculations)
   }
 

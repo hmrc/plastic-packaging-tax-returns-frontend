@@ -15,6 +15,7 @@
  *@
 
 @import components.{heading, SectionHeader}
+@import viewmodels.govuk.fieldset
 
 @this(
     govukRadios: GovukRadios,
@@ -22,7 +23,10 @@
     headingLabel: heading,
     sectionHeader: SectionHeader,
     govukErrorSummary: GovukErrorSummary,
+    hiddenContent: HiddenContent
 )
+
+
 
 @(sectionHeading: Option[String], heading: String, paragraphText: Html = HtmlFormat.empty, hintText: Option[String] = None, form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
@@ -35,7 +39,10 @@
     @paragraphText
 
     @govukRadios(
-        RadiosViewModel.yesNo(field = form("value"))
+        RadiosViewModel.yesNo(
+            field = form("value"),
+            legend = LegendViewModel(HtmlContent(hiddenContent(heading)))
+        )
         .withHint(Hint(content = hintText.fold[Content](Empty)(HtmlContent(_))))
     )
 

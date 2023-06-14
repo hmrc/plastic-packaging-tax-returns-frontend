@@ -24,11 +24,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 case class IdentifiedRequest[+A](
   request: Request[A],
   user: SignedInUser,
-  private val enrolmentId: Option[String]
+  pptReference: String
 ) extends WrappedRequest[A](request) {
-  
+
   def headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-  def pptReference: String = enrolmentId.getOrElse(throw new IllegalStateException("enrolmentId is missing from request"))
-  def cacheKey: String     = s"${user.identityData.internalId}-$pptReference"
+
+  def cacheKey: String = s"${user.identityData.internalId}-$pptReference"
 
 }

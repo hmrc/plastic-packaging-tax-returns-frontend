@@ -24,10 +24,21 @@ object EisError {
   implicit val format: OFormat[EisError] = Json.format[EisError]
 }
 
-case class EisFailure(failures: Option[Seq[EisError]]){
+case class EisFailure(failures: Option[Seq[EisError]]) {
 
+  /**
+    * @return true when response can be inferred to mean ppt account has been de-registered
+    * @note only correct for responses from the view subscription api
+    */
   def isDeregistered: Boolean =
     failures.exists(_.exists(_.code == "NO_DATA_FOUND"))
+
+  /**
+    * @return true if a reason matches that expected from a bad-gateway or service-unavailable failure 
+    * @note intended for use on response from view subscription api, but may also work for others - check the specs
+    */
+  def isDependentSystemsNotResponding: Boolean =
+    failures.exists(_.exists(_.reason == "Dependent systems are currently not responding."))
 }
 
 object EisFailure {

@@ -28,7 +28,7 @@ class NewGroupLeadEnterContactAddressFormProviderSpec extends StringFieldBehavio
   val allowChars = ('A' to 'Z').toList ++
     ('a' to 'z').toList ++
     ('0' to '9').toList ++
-    Seq('&', '-', '`', ''', ',', '.')
+    Seq('&', '-', '`', '\'', ',', '.')
 
   val notAllowedChar = ('!' to '~').mkString.filter(o => !allowChars.contains(o))
 

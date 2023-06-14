@@ -16,11 +16,8 @@
 
 package base
 
-import controllers.actions.AuthCheckAction
-import models.SignedInUser
-import models.requests.{IdentifiedRequest, IdentityData}
+import controllers.actions.{AuthCheckAction, AuthedUser}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.Enrolments
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,11 +26,8 @@ class FakeAuthActionNotEnrolled @Inject() (bodyParsers: PlayBodyParsers) extends
 
   override def invokeBlock[A](
     request: Request[A],
-    block: IdentifiedRequest[A] => Future[Result]
-  ): Future[Result] = {
-    val pptLoggedInUser = SignedInUser(Enrolments(Set.empty), IdentityData(internalId = "SomeId"))
-    block(IdentifiedRequest(request, pptLoggedInUser, None))
-  }
+    block: AuthedUser[A] => Future[Result]
+  ): Future[Result] = block(AuthedUser("SomeId", request))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default
