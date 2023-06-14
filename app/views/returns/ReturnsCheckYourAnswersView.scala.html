@@ -147,7 +147,7 @@
     @if(taxReturn.canEditExported) {
         @changeLink("exported-packaging.change-link-text", taxReturn.exportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.exported-packaging.no-change-reason")</p>
+        @paragraphBody(messages("submit-return.check-your-answers.exported-packaging.no-change-reason"))
     }
 
     <!-- Non-exported packaging -->
@@ -163,7 +163,7 @@
     @if(taxReturn.canEditNonExported) {
         @changeLink("nonexported-packaging.change-link-text", taxReturn.nonexportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason")</p>
+        @paragraphBody(messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason"))
     }
 
     <!-- Deductions -->
