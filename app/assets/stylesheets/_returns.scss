@@ -80,3 +80,11 @@ td.govuk-table__cell.row-border {
   clear: both;
 }
 
+ul.actions-min-size a,
+ul.actions-min-size strong,
+ul.actions-min-size span {
+	display: block;
+	line-height:24px;
+	min-height:24px;
+	min-width: 24px;
+}
