@@ -19,7 +19,7 @@ package connectors
 import com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector.ALREADY_REPORTED
+import connectors.TaxReturnsConnector.RETURN_ALREADY_SUBMITTED
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.apache.http.HttpException
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -116,7 +116,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       
       "the return obligation is already fulfilled" in {
         when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
-          HttpResponse(ALREADY_REPORTED, """{"returnAlreadyReceived": "12A3","pptReference": "ppt-reference"}""")
+          HttpResponse(RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3","pptReference": "ppt-reference"}""")
         )
         await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }

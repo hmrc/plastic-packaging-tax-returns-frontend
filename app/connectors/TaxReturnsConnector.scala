@@ -18,7 +18,7 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector.ALREADY_REPORTED
+import connectors.TaxReturnsConnector.RETURN_ALREADY_SUBMITTED
 import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, ReturnDisplayApi, SubmittedReturn}
 import play.api.Logger
 import play.api.http.Status
@@ -78,15 +78,15 @@ class TaxReturnsConnector @Inject()(
       .andThen { case _ => timer.stop() }
       .map { response =>
         response.status match {
-          case OK =>
+          case OK                       =>
             val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
             logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
             Right(chargeReference)
-          case ALREADY_REPORTED =>
+          case RETURN_ALREADY_SUBMITTED =>
             val periodKey = (response.json \ "returnAlreadyReceived").as[String]
             logger.info(s"Return for period [$periodKey] already submitted for $pptReference")
             Left(AlreadySubmitted)
-          case _ => throw new HttpException(response.body, response.status)
+          case _                        => throw new HttpException(response.body, response.status)
         }
       }
       .recover {
@@ -114,5 +114,7 @@ class TaxReturnsConnector @Inject()(
 }
 
 object TaxReturnsConnector {
-  val ALREADY_REPORTED = 208
+  object StatusCode {
+    val RETURN_ALREADY_SUBMITTED = 208
+  }
 }
