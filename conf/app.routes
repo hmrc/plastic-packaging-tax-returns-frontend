@@ -52,11 +52,6 @@ POST        /amend-manufactured-weight                              controllers.
 GET         /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST        /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET         /confirm-or-correct-credit                              controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit                       controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(mode: Mode = CheckMode)
-GET         /confirm-or-correct-credit/cancel                       controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit/cancel                controllers.returns.credits.ConfirmPackagingCreditController.onCancelClaim(mode: Mode = CheckMode)
-
 GET         /start-return                                           controllers.returns.NowStartYourReturnController.onPageLoad
 
 GET         /directly-exported-components                           controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
@@ -104,10 +99,13 @@ GET         /deregistered                                           controllers.
 GET         /return-accounting-period                               controllers.returns.StartYourReturnController.onPageLoad()
 POST        /return-accounting-period                               controllers.returns.StartYourReturnController.onSubmit()
 
-GET         /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = NormalMode)
-POST        /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = NormalMode)
-GET         /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-submit-return-or-claim-credit                   controllers.returns.credits.WhatDoYouWantToDoController.onSubmit(mode: Mode = CheckMode)
+GET         /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onPageLoad
+POST        /submit-return-or-claim-credit                          controllers.returns.credits.WhatDoYouWantToDoController.onSubmit
+
+GET         /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = NormalMode)
+POST        /claim-for-which-date-range                             controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = NormalMode)
+GET         /change-claim-for-which-date-range                      controllers.returns.credits.ClaimForWhichYearController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-claim-for-which-date-range                      controllers.returns.credits.ClaimForWhichYearController.onSubmit(mode: Mode = CheckMode)
 
 GET         /start-date-not-recognised                              controllers.returns.NotStartOtherReturnsController.onPageLoad()
 
@@ -139,15 +137,28 @@ POST        /change-non-exported-medicines-packaging-weight         controllers.
 GET         /cancel-amend                                           controllers.amends.CancelAmendController.onPageLoad()
 POST        /cancel-amend                                           controllers.amends.CancelAmendController.onSubmit()
 
-GET         /credit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST        /credit-for-exported                                    controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET         /change-credit-for-exported                             controllers.returns.credits.ExportedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-credit-for-exported                             controllers.returns.credits.ExportedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /credit-for-exported/:key               controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-exported/:key               controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-exported/:key        controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-exported/:key        controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = CheckMode)
 
-GET         /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = NormalMode)
-POST        /credit-for-converted                                   controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = NormalMode)
-GET         /change-credit-for-converted                            controllers.returns.credits.ConvertedCreditsController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-credit-for-converted                            controllers.returns.credits.ConvertedCreditsController.onSubmit(mode: Mode = CheckMode)
+GET         /credit-for-exported-weight/:key               controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-exported-weight/:key               controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-exported-weight/:key        controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-exported-weight/:key        controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
+
+GET         /credit-for-converted/:key               controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-converted/:key               controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-converted/:key        controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-converted/:key        controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = CheckMode)
+
+GET         /credit-for-converted-weight/:key               controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-converted-weight/:key               controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-converted-weight/:key        controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-converted-weight/:key        controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
+
+GET         /confirm-or-correct-credit/:key                              controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = NormalMode)
+GET         /change-confirm-or-correct-credit/:key                       controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = CheckMode)
 
 GET         /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onPageLoad()
 POST        /cancel-credit                                          controllers.returns.credits.RemoveCreditController.onSubmit()
@@ -194,3 +205,14 @@ POST       /amending-exported-plastic-packaging                     controllers.
 GET        /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad
 POST       /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onSubmit
 
+# Todo: on the SoT this route is cancel-credit. This already exist and it it handled by
+# the RemoveCeeditController. For the momemnt I have renamed this as below. We may later
+# want to reuse the RemoveCeeditController for this, but I have not touched that as this
+# is used by the ReturnsCheckYourAnswer page which will change in near future.
+GET        /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
+POST       /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
+
+GET        /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
+POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)

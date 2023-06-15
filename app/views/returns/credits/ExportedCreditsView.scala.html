@@ -15,7 +15,12 @@
  *@
 
 @import components._
-@import viewmodels.InputWidth._
+@import templates._
+@import viewmodels._
+@import models.returns.CreditRangeOption
+@import java.time.LocalDate
+@import views._
+
 
 @this(
     layout: templates.Layout,
@@ -25,44 +30,44 @@
     govukButton: GovukButton,
     govukInput: GovukInput,
     sectionHeader: SectionHeader,
-    conditionalYesNo: conditionalYesNoRadio,
+    yesNoLayout: YesNoLayout,
     paragraphBody: paragraphBody,
     heading: heading,
-    h2heading: SectionH2Heading
+    h2heading: SectionH2Heading,
+    creditsJourneyCaption: CreditsJourneyCaption
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], yearKey: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
 
-@ifYes = {
-    @govukInput(
-        InputViewModel(
-                field = form("exported-credits-weight"),
-                label = LabelViewModel(messages("exported.credits.weight.label"))
-            )
-            .asKg()
-            .withWidth(Fixed10)
-            .withId("exported-credits-weight")
-            .withHint(Hint(content = "exported.credits.weight.hint"))
-
-    )
+@dateRangeMessage = {
+    @ViewUtils.displayDateRangeAnd(dateRange.from, dateRange.to)
 }
+
 
 @paraContent = {
-    @paragraphBody(messages("exported.credits.paragraph.1"))
-    @paragraphBody(messages("exported.credits.paragraph.2"))
-    @paragraphBody(messages("exported.credits.paragraph.3"))
+    @paragraphBody(messages("exportedCredits.paragraph.1"))
+    @paragraphBody(messages("exportedCredits.paragraph.2"))
 }
 
 
-@layout(pageTitle = title(form, messages("exported.credits.title"), Some(messages("return.title.tail")))) {
-    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
+@layout(pageTitle = title(form, messages("exportedCredits.heading"), Some(messages("return.title.tail")))) {
+    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        @sectionHeader(messages("credits.caption"))
-        @heading("exported.credits.heading")
+
+        @creditsJourneyCaption(dateRange)
+        @heading("exportedCredits.heading")
         @paraContent
-        @conditionalYesNo(form, Some(messages("exported.credits.heading.2")), Some(ifYes))
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(HtmlContent(messages("exportedCredits.heading.2", dateRangeMessage)))
+                    .withCssClass(LegendSize.Medium.toString)
+            )
+        )
+
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
 }

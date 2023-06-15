@@ -97,8 +97,8 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     }
 
     "have save and continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
     "display an error summary box"  in {

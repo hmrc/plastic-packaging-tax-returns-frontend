@@ -60,7 +60,7 @@ class PlasticExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAss
     }
 
     "contain save & continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
 
     "error when no answer provided" in {

@@ -33,9 +33,9 @@
  @paragraphBody(messages("amendAlreadyCancelledView.para"))
  @bulletList(elements = Seq(
    link("account-link", messages("amendAlreadyCancelledView.link-text.1"),
-   controllers.routes.IndexController.onPageLoad),
+   controllers.routes.IndexController.onPageLoad.url),
    link("view-return-link", messages("amendAlreadyCancelledView.link-text.2"),
-   controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+   controllers.amends.routes.SubmittedReturnsController.onPageLoad.url)
  ))
 
 }

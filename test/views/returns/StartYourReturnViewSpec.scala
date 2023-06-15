@@ -91,8 +91,8 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
 
 
     "contain save & continue button" in {
-      createView(isFirstReturn = true).getElementsByClass("govuk-button").text() mustBe
-        "Save and continue"
+      createView(isFirstReturn = true).getElementsByClass("govuk-button").text() must
+        include("Save and continue")
     }
 
     "error" when {

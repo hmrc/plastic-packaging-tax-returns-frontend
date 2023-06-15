@@ -19,21 +19,25 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.CreditsAnswer
+import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
+import views.ViewUtils
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
+
 class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-//todo add tests
+
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
   val form = new ConvertedCreditsFormProvider()()
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
-  private def createView(form: Form[CreditsAnswer] = form): Html =
-    page(form, NormalMode)(request, messages)
+  private def createView(form: Form[Boolean] = form): Html =
+    page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
 
   "Converted Credits View" should {
 
@@ -41,79 +45,45 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "have a title" in {
       view.select("title").text must include("- Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text must include(messages("converted.credits.title"))
+      view.select("title").text must include(messages("converted-credits-yes-no.title-heading"))
     }
 
     "have a heading" in {
-      view.select("h1").text mustBe messages("converted.credits.heading")
+      view.select("h1").text mustBe messages("converted-credits-yes-no.title-heading")
     }
 
     "have a caption/section header" in {
-      view.getElementById("section-header").text mustBe messages("credits.caption")
-    }
-
-    "have a fieldset legend" in {
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted.credits.heading.2")
-    }
-
-    "have a hint" in {
-      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe "How much weight, in kilograms?"
-      view.getElementsByAttributeValue("for", "converted-credits-weight").text() mustBe messages("converted.credits.weight.label")
-      view.getElementById("converted-credits-weight-hint").text mustBe messages("1 tonne is 1,000kg.")
-      view.getElementById("converted-credits-weight-hint").text mustBe messages("converted.credits.weight.hint")
+      view.getElementById("section-header").text mustBe "Credit for 1 April 2023 to 31 March 2024"
+      view.getElementById("section-header").text mustBe messages("credits.caption", "1 April 2023 to 31 March 2024")
     }
 
     "have paragraph content" in {
       val doc: Document = Jsoup.parse(view.toString())
+      doc.text() must include(messages("converted-credits-yes-no.paragraph.1"))
+      doc.text() must include(messages("converted-credits-yes-no.paragraph.2"))
+    }
 
-      doc.text() must include(messages("converted.credits.paragraph.1"))
-      doc.text() must include(messages("converted.credits.paragraph.2"))
-      doc.text() must include(messages("converted.credits.paragraph.3"))
+    "have a question" in {
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.question", "1 April 2023 and 31 March 2024")
+    }
 
+    "have radios" in {
+      view.select(".govuk-radios__item").get(0).text mustBe messages("site.yes")
+      view.select(".govuk-radios__item").get(1).text mustBe messages("site.no")
     }
 
     "have a submit button" in {
-      view.getElementsByClass("govuk-button").text mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
     }
 
     "display error" when {
 
-      "nothing has been checked" in {
-        //todo: change to a generic error or bind the form to an empty value to see the proper error.
-        /*
-          If the intent here is to test that we get the converted.credits.error.required error message
-          then we should bind the form to an empty value
-
-          Else if the intent is just to test we get any error message when the form has an error then we
-          should use any generic test error message as using the real one it may make the intent
-          of the test obscured.
-        */
-        val boundForm = form.withError("requiredKey", "converted.credits.error.required")
+      "the form has an error" in {
+        val boundForm = form.withError("requiredKey", "converted-credits-yes-no.error.required")
         val view = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.text() must include("Select yes if you’ve already paid tax on plastic packaging that has since been converted")
-      }
-
-      "letters with no numbers" in {
-        val boundForm: Form[CreditsAnswer] = form.bind(Map("answer" -> "true", "converted-credits-weight" -> "agdhjsfvjsw"))
-        val view: Html = createView(boundForm)
-
-        view.getElementById("converted-credits-weight-error").text() must include("Weight must be entered as numbers")
-        view.getElementById("converted-credits-weight-error").text() must include(
-          messages("converted.credits.error.non.numeric")
-        )
-      }
-      "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(0L))))
-
-        view.getElementById("converted-credits-weight-error").text() must include("Weight must be 1kg or more")
-      }
-
-      "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(CreditsAnswer(true,Some(100000000000L))))
-
-        view.getElementById("converted-credits-weight-error").text() mustBe "Error: Weight must be between 0kg and 99,999,999,999kg"
+        doc.getElementsByClass("govuk-error-summary").text() must include("Select yes if you paid tax on plastic packaging before it was converted")
       }
     }
   }

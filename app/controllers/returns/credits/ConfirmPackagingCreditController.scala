@@ -18,69 +18,59 @@ package controllers.returns.credits
 
 import connectors.{CacheConnector, CalculateCreditsConnector}
 import controllers.actions._
+import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditRangeOption
 import models.{CreditBalance, Mode}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc._
-import util.EdgeOfSystem
-import views.html.returns.credits.{ConfirmPackagingCreditView, TooMuchCreditClaimedView}
+import views.html.returns.credits.ConfirmPackagingCreditView
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ConfirmPackagingCreditController @Inject()(
+class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   confirmCreditView: ConfirmPackagingCreditView,
-  tooMuchCreditView: TooMuchCreditClaimedView,
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
-  edgeOfSystem: EdgeOfSystem
+  creditSummaryListFactory: CreditSummaryListFactory
 )(implicit ec: ExecutionContext)  extends I18nSupport {
 
-  private val midnight1stApril2023 = LocalDateTime.of(2023, 4, 1, 0, 0, 0)
-
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         creditConnector.get(request.pptReference).map {
-          case Right(response) => displayView(response, mode)
+          case Right(response) => displayView(response, key, mode)
           case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
         }
     }
 
+  private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
 
-  private def displayView(creditBalance: CreditBalance, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val isBeforeApril2023 = midnight1stApril2023.isAfter(edgeOfSystem.localDateTimeNow) 
-    if (creditBalance.canBeClaimed) {
-      val continueCall = returnsJourneyNavigator.confirmCreditRoute(mode)
-      Ok(confirmCreditView(
-        creditBalance.totalRequestedCreditInPounds,
-        creditBalance.totalRequestedCreditInKilograms,
-        continueCall,
+    //Todo: Pass to the view the fromDate and toDate the user is claiming
+    // credit for.
+    val singleYear = creditBalance.creditForYear(key)
+    val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    Ok(confirmCreditView(
+        key,
+        singleYear.moneyInPounds,
+        summaryList,
+        returnsJourneyNavigator.confirmCredit(mode),
         mode,
-        isBeforeApril2023)
+      creditRangeOption
       )
-    } else {
-      val changeWeightCall: Call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
-      val cancelClaimCall: Call = controllers.returns.credits.routes.ConfirmPackagingCreditController.onCancelClaim(mode)
-      Ok(tooMuchCreditView(changeWeightCall, cancelClaimCall))
-    }  
+    )
   }
-
-  def onCancelClaim(mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        request.userAnswers
-          .setOrFail(WhatDoYouWantToDoPage, false)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(returnsJourneyNavigator.confirmCreditRoute(mode)))
-    }
 }

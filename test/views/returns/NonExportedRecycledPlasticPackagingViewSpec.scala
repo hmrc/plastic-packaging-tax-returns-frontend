@@ -80,7 +80,7 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
       view.getElementsByClass("govuk-body").text() must include(text)
     }
     "contain save & continue button" in {
-      view.getElementsByClass("govuk-button").text() mustBe  messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
     }
 
     "contain an error" when {

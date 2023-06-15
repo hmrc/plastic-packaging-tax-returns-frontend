@@ -32,5 +32,5 @@
 
     <h1 class="govuk-heading-l">@messages("deregistered.heading")</h1>
 
-    @paragraph(content = link(id = "bta-link", text = messages("deregistered.bta.link"), call = Call("GET", appConfig.businessAccountUrl)))
+    @paragraph(content = link(id = "bta-link", text = messages("deregistered.bta.link"), href = appConfig.businessAccountUrl))
 }

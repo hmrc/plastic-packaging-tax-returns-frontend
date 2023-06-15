@@ -1,0 +1,68 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.returns.credits.CreditSummaryRow
+
+@this(
+        govukTable: GovukTable
+)
+
+@(list: Seq[CreditSummaryRow], showHeading: Boolean = true)(implicit messages: Messages)
+
+
+@headingRow = @{
+    if (showHeading)
+        Some(Seq(
+            HeadCell(content = Text(messages("creditsSummary.table.heading.1"))),
+            HeadCell(content = Text(messages("creditsSummary.table.heading.2")), attributes = Map("style" -> "text-align: right;")),
+            HeadCell(content = Text(messages("creditsSummary.table.heading.3")), attributes = Map("style" -> "text-align: right;"))
+        ))
+    else
+        None
+}
+
+@govukTable(
+    Table(
+        rows = list.map(row => if(showHeading) row.createContent(actions => actionContent(actions)) else row.createCYAContent),
+        head = headingRow,
+        caption = Some(messages("creditsSummary.title-heading")),
+        captionClasses = "govuk-visually-hidden",
+        firstCellIsHeader = true,
+        attributes = Map("id" -> "credit-summary-table")
+    )
+)
+
+@actionContent(actions: Seq[ActionItem]) = {
+    @actions match {
+        case Nil => {@HtmlFormat.empty}
+        case actions => {
+            <ul class="govuk-summary-list__actions-list actions-min-size">@for(action <- actions) {
+                <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
+            }</ul>
+        }
+    }
+}
+
+@actionLink(action: ActionItem) = {
+    <a class="govuk-link @{
+        action.classes
+    }" href="@action.href">
+        @action.content.asHtml
+        <span class="govuk-visually-hidden">@action.visuallyHiddenText</span>
+    </a>
+}

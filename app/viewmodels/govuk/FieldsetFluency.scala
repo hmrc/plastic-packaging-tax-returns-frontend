@@ -69,5 +69,4 @@ trait FieldsetFluency {
       legend copy (classes = s"${legend.classes} $newClass")
 
   }
-
 }
