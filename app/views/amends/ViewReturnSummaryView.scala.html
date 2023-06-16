@@ -61,12 +61,12 @@
             }
             case Left(DDInProgress) => {
                 <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
-                <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
+                @paragraphBody(messages("viewReturnSummary.amend.notamendable.p1"))
             }
             case Left(TooOld) => {
                 <!--//todo proper content-->
                 <h2 class="govuk-heading-m">No amends</h2>
-                <p>more than 4 years</p>
+                @paragraphBody("more than 4 years")
             }
         }
     } else {
