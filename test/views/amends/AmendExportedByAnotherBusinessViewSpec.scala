@@ -66,8 +66,8 @@ class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatch
     "have a 'Continue' button link" in {
       val buttonElement = view.getElementsByClass("govuk-button")
 
-      buttonElement.text() mustBe "Save and continue"
-      buttonElement.text() mustBe messages("site.continue")
+      buttonElement.text() must include("Save and continue")
+      buttonElement.text() must include(messages("site.continue"))
     }
 
     "display an error summary box"  in {

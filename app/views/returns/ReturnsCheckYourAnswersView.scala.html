@@ -20,6 +20,7 @@
 @import models.returns.{Credits, CreditsClaimedDetails}
 @import viewmodels._
 @import views.ViewUtils.RichSummaryListRow
+@import models.returns.CreditsClaimedDetails
 
 @this(
     layout: templates.Layout,
@@ -38,7 +39,7 @@
     heading: heading
 )
 
-@(taxReturn: TaxReturnViewModel, credits: Credits)(implicit request: Request[_], messages: Messages)
+@(taxReturn: TaxReturnViewModel, credits: Credits, changeUrl:String)(implicit request: Request[_], messages: Messages)
 
 @toLongKey(shortKey: String) = @{
     "submit-return.check-your-answers." + shortKey
@@ -82,7 +83,7 @@
     paragraph(content = Html(messages(toLongKey(paraShortKey), link(
         id = toLongKey(linkShortKey),
         text = text(linkShortKey),
-        call = Call("GET", url),
+        href = url,
         newTab = true
     ))),
         id = paragraphId
@@ -94,7 +95,7 @@
     val linkId = linkTextShortKey.split("\\.")(0)
 
     paragraph(
-        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), call = Call("GET", url)),
+        content = link(id=linkId, text = messages(toLongKey(linkTextShortKey)), href = url),
     )
 }
 
@@ -115,7 +116,7 @@
     <!-- Credits -->
     @sectionH2Heading(messages("submit-return.check-your-answers.credits.heading"), id = Some("credit-section-header"), 
         size = "l")
-    @creditsSection(credits)
+    @creditsSection(credits, changeUrl)
         
     <!-- Rest of return -->
     @sectionH2Heading(messages("submit-return.check-your-answers.rest-of-return.heading"), size="l")
@@ -146,7 +147,7 @@
     @if(taxReturn.canEditExported) {
         @changeLink("exported-packaging.change-link-text", taxReturn.exportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.exported-packaging.no-change-reason")</p>
+        @paragraphBody(messages("submit-return.check-your-answers.exported-packaging.no-change-reason"))
     }
 
     <!-- Non-exported packaging -->
@@ -162,7 +163,7 @@
     @if(taxReturn.canEditNonExported) {
         @changeLink("nonexported-packaging.change-link-text", taxReturn.nonexportedStartUrl)
     } else {
-        <p>@messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason")</p>
+        @paragraphBody(messages("submit-return.check-your-answers.nonexported-packaging.no-change-reason"))
     }
 
     <!-- Deductions -->
@@ -190,12 +191,12 @@
     ))
 
     @{credits match {
-        case c: CreditsClaimedDetails if c.totalCredits > BigDecimal(0) =>
-            paragraphBody(
-                messages("submit-return.check-your-answers.tax-calc.footnote.2",
-                        strong(messages("submit-return.check-your-answers.tax-calc.credit.of", c.totalCredits.asPounds))
+        case c: CreditsClaimedDetails => // TODO can remove case?
+            c.ifClaiming(claimAmount => paragraphBody(
+                messages("submit-return.check-your-answers.tax-calc.footnote.2", strong(messages(
+                    "submit-return.check-your-answers.tax-calc.credit.of", claimAmount.asPounds))
                 )
-            )
+            ))
         case _ => ()
     }}
 

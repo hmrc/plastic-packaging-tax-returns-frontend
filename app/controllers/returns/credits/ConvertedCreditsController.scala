@@ -20,14 +20,19 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode
+import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
-import pages.returns.credits.{ConvertedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.ConvertedCreditsPage
+import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc._
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,27 +49,34 @@ class ConvertedCreditsController @Inject()
   extends I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = {
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
     journeyAction {
       implicit request =>
-        val preparedForm = request.userAnswers.fill(ConvertedCreditsPage, formProvider.apply())
-        Results.Ok(view(preparedForm, mode))
+        val preparedForm = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        Results.Ok(createView(preparedForm, key, mode))
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, mode))),
-          formValue => {
-            request.userAnswers
-              .setOrFail(ConvertedCreditsPage, formValue)
-              .setOrFail(WhatDoYouWantToDoPage, true)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers => Results.Redirect(navigator.convertedCreditsRoute(mode, ClaimedCredits(updatedAnswers))))
-          }
-        )
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] =
+    journeyAction.async {
+      implicit request =>
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, key,  mode))),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithFunc(ConvertedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, key, formValue)))
+            }
+          )
+    }
+
+  private def createView(form: Form[Boolean], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    view(form, key, mode, creditRangeOption)
   }
+
 }

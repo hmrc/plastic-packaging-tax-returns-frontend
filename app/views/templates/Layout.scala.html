@@ -19,7 +19,6 @@
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 
 @this(
@@ -35,7 +34,6 @@
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
     hmrcScripts: HmrcScripts,
     stdBanner: StandardBetaBanner,
-    hmrcUserResearchBanner: HmrcUserResearchBanner,
     utils: LanguageUtils
 )
 
@@ -44,7 +42,6 @@
 @head = {
 
     @hmrcHead(
-        nonce     = CSPNonce.get,
         headBlock = if(timeout) { Some(
             hmrcTimeoutDialog(TimeoutDialog(
                 timeout             = Some(appConfig.timeout),
@@ -127,7 +124,6 @@
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
     scriptsBlock       = Some(hmrcScripts(
-        nonce        = CSPNonce.get,
         scriptsBlock = Some(additionalScripts)
     )),
     mainContentLayout = Some(fullSizeContent)

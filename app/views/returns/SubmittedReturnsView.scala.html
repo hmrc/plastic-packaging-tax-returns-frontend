@@ -19,6 +19,7 @@
 @import views.html.components.{TaxReturnLink, Link, heading, paragraphBody}
 @import components.ReturnsSectionHeading
 @import views.ViewUtils.displayReturnQuarter
+@import util.EdgeOfSystem
 
 @this(
         layout: templates.Layout,
@@ -27,7 +28,7 @@
         taxReturnLink:TaxReturnLink,
         heading: heading,
         paragraphBody: paragraphBody
-)
+)(implicit edgeOfSystem: EdgeOfSystem)
 
 
 @(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
@@ -58,7 +59,7 @@
     @returnsSummary
 
     <p class="govuk-body">
-        @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad)
+        @link("account-homepage", messages("submittedReturns.accounthomelink"), routes.IndexController.onPageLoad.url)
     </p>
 
 }

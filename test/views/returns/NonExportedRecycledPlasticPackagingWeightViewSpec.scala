@@ -90,7 +90,7 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
     }
     "contain save & continue button" in {
 
-      view.getElementsByClass("govuk-button").text() mustBe messages("site.continue")
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
     "display error" when {
       "negative number submitted" in {

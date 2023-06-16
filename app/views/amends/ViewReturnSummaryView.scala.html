@@ -52,12 +52,12 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad())</p>
+    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
 
     @if(appConfig.isAmendsFeatureEnabled){
         @amendCall match {
             case Right(call) => {
-                <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call)</p>
+                <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call.url)</p>
             }
             case Left(DDInProgress) => {
                 <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>

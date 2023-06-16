@@ -16,48 +16,54 @@
 
 package controllers.returns.credits
 
+import base.utils.JourneyActionAnswer._
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
-import org.mockito.MockitoSugar.{when => scalaWhen}
+import org.mockito.ArgumentMatchersSugar._
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar
+import org.mockito.captor.ArgCaptor
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
+import play.api.data.Forms.boolean
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc._
+import play.api.libs.json.JsPath
+import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Gettable
 import views.html.returns.credits.ConvertedCreditsView
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
+class ConvertedCreditsControllerSpec extends PlaySpec 
+  with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
 
   private val mockCacheConnector: CacheConnector = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   private val view = mock[ConvertedCreditsView]
   private val formProvider = mock[ConvertedCreditsFormProvider]
-  private val form = mock[Form[CreditsAnswer]]
-  private val userAnswers = mock[UserAnswers]
+  private val initialForm = mock[Form[Boolean]]("initial form")
+  private val preparedForm = mock[Form[Boolean]]("prepared form")
   private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]]
+  private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
   private val messagesApi = mock[MessagesApi]
   private val messages = mock[Messages]
+  private val saveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3,31))
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -71,70 +77,51 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     view
   )
 
-  private def any[T] = ArgumentMatchers.any[T]()
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    scalaWhen(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    scalaWhen(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(
-      messagesApi,
-      mockCacheConnector,
-      mockNavigator, 
-      view,
-      journeyAction,
-      formProvider,
-      form,
-      userAnswers,
-      dataRequest,
-      messages
-    )
-    when(userAnswers.fill[CreditsAnswer](any[Gettable[CreditsAnswer]], any)(any)) thenReturn form
-    when(userAnswers.setOrFail(any, any, any)(any)) thenReturn userAnswers
-    when(userAnswers.save(any)(any)) thenReturn Future.successful(userAnswers)
 
-    when(formProvider.apply()).thenReturn(form)
-    when(form.bindFromRequest()(any, any)).thenReturn(form)
-    when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
+    when(formProvider.apply()).thenReturn(initialForm)
+    when(initialForm.bindFromRequest()(any, any)).thenReturn(preparedForm)
+    when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
 
-    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(false))
-    when(mockNavigator.convertedCreditsRoute(any, any)).thenReturn(Call("GET", "/next/page"))
-
-    when(dataRequest.userAnswers) thenReturn userAnswers
+    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
+    when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
     
-    scalaWhen(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    scalaWhen(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
   }
   
   "onPageLoad" must {
     
     "use the journey action" in {
-      controller.onPageLoad(NormalMode)
+      controller.onPageLoad("year-key", NormalMode)
       verify(journeyAction).apply(any)
     }
     
     "fill the form with user's previous answer" in {
-      controller.onPageLoad(NormalMode) (dataRequest)
-      verify(userAnswers).fill[CreditsAnswer](ConvertedCreditsPage, form)
+      controller.onPageLoad("year-key", NormalMode) (request)
+      val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function) (any)
+      
+      withClue("using correct function") {
+        val creditsAnswer = mock[CreditsAnswer]
+        function.value(creditsAnswer)
+        verify(creditsAnswer).yesNo
+      }
     }
     
     "render the page" in {
-      controller.onPageLoad(NormalMode) (dataRequest)
-      verify(messagesApi).preferred(dataRequest)
-      verify(view).apply(form, NormalMode)(dataRequest, messages)
+      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+      controller.onPageLoad("year-key", NormalMode) (request)
+      verify(messagesApi).preferred(request)
+      verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
     }
     
     "200 ok the client" in {
-      val futureResult = controller.onPageLoad(NormalMode) (dataRequest)
+      val futureResult = controller.onPageLoad("year-key", NormalMode) (request)
       status(futureResult) mustBe Status.OK
       contentAsString(futureResult) mustBe "correct view"
     }
@@ -143,45 +130,36 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
   "onSubmit" must {
 
     "remember the user's answers" in {
-      
       // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(true, Some(20))))
-      await(controller.onSubmit(NormalMode) (dataRequest))
-      verify(userAnswers).setOrFail(meq(ConvertedCreditsPage), meq(CreditsAnswer(true, Some(20))), meq(false))(any)
-      verify(userAnswers).save(any)(any)
+      when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
+      await(controller.onSubmit("year-key", NormalMode) (request))
+      
+      // TODO tweak CreditsAnswer.changeYesNoTo so we can test for it here
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc)) (any, any)
     }
 
     "redirect to the next page" in {
       // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
-      val result = controller.onSubmit(NormalMode) (dataRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustBe Some("/next/page")
-      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), any)
+      when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
+      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
+      
+      val result = await { controller.onSubmit("year-key", NormalMode) (request) }
+      verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo("year-key"), eqTo(true))
+      
+      result.header.status mustBe Status.SEE_OTHER
+      redirectLocation(Future.successful(result)) mustBe Some("/next/page")
     }
     
-    "pass the two credit claim answers to the navigator" in {
-      when(userAnswers.getOrFail(meq(ExportedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(11))
-      when(userAnswers.getOrFail(meq(ConvertedCreditsPage))(any)) thenReturn CreditsAnswer(true, Some(22))
-
-      // Invokes the "form is good" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[CreditsAnswer => Future[Result]](1).apply(CreditsAnswer(false, None)))
-      await(controller.onSubmit(NormalMode) (dataRequest))
-
-      val expectedCreditsClaim = ClaimedCredits(CreditsAnswer(true, Some(11)), CreditsAnswer(true, Some(22)))
-      verify(mockNavigator).convertedCreditsRoute(meq(NormalMode), meq(expectedCreditsClaim))
-    }
-
     "display any errors" in {
       // Invokes the "form is bad" side of the fold() call
-      when(form.fold(any, any)).thenAnswer(i => i.getArgument[Form[CreditsAnswer] => Future[Result]](0).apply(form))
-      val result = controller.onSubmit(NormalMode) (dataRequest)
+      val formWithErrors = Form("v" -> boolean).withError("key", "message")
+      when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 
-      status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustBe "correct view"
-      
-      verify(view).apply(meq(form), meq(NormalMode))(any, any)
-      verifyNoInteractions(userAnswers)
+      val result = await { controller.onSubmit("year-key", NormalMode)(request) }
+      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode), eqTo(creditRangeOption)) (eqTo(request), eqTo(messages))
+
+      result.header.status mustBe Status.BAD_REQUEST
+      contentAsString(Future.successful(result)) mustBe "correct view"
     }
 
   }

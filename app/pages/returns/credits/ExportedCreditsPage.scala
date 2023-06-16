@@ -20,9 +20,6 @@ import models.returns.CreditsAnswer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ExportedCreditsPage extends QuestionPage[CreditsAnswer] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "exportedCredits"
+case class ExportedCreditsPage(yearKey: String) extends QuestionPage[CreditsAnswer] {
+  override def path: JsPath = JsPath \ "credit" \ yearKey \ "exportedCredits"
 }

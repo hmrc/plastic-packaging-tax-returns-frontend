@@ -14,25 +14,33 @@
  * limitations under the License.
  */
 
-package views
+package views.returns.credits
 
 import base.ViewSpecBase
 import models.Mode.NormalMode
+import models.returns.CreditRangeOption
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ConfirmPackagingCreditView
 
+import java.time.LocalDate
+
 class ConfirmPlasticCreditViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
+  private val page = inject[ConfirmPackagingCreditView]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private def render(canClaimCredit: Boolean ): Html = page("year-key", BigDecimal(200), Seq.empty, Call("GET", "/test"), NormalMode, creditRangeOption)(request, messages)
+
   "ConfirmPackagingCreditView" should {
-    "pass accessibility checks" in {
+    "pass accessibility checks" when {
+      "can claim credit" in {
+        render(true).toString() must passAccessibilityChecks
+      }
 
-      val page = inject[ConfirmPackagingCreditView]
-
-      def render: Html = page(BigDecimal(200), 1200L, Call("GET", "/test"), NormalMode, false)(request, messages)
-
-      render.toString() must passAccessibilityChecks
+      "cannot claim credit" in {
+        render(false).toString() must passAccessibilityChecks
+      }
     }
   }
 }

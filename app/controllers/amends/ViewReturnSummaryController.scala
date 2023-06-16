@@ -29,6 +29,7 @@ import models.returns.{DDInProgressApi, ReturnDisplayApi, SubmittedReturn, TaxRe
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{NotFound, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import util.EdgeOfSystem
 import viewmodels.PrintTaxRate
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
@@ -45,8 +46,7 @@ class ViewReturnSummaryController @Inject() (
   taxReturnHelper: TaxReturnHelper,
   returnsConnector: TaxReturnsConnector,
   errorHandler: ErrorHandler
-
-)(implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
 
   def onPageLoad(periodKey: String): Action[AnyContent] =
     journeyAction.async {
@@ -131,7 +131,7 @@ class ViewReturnSummaryController @Inject() (
     obligation: TaxReturnObligation
   )(implicit request: DataRequest[_]): Future[UserAnswers] = {
     request.userAnswers
-      .reset
+      .removeAll()
       .setOrFail(AmendSelectedPeriodKey, periodKey)
       .setOrFail(AmendObligationCacheable, obligation)
       .setOrFail(ReturnDisplayApiCacheable, submittedReturn)

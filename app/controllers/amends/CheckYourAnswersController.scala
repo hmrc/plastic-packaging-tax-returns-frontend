@@ -31,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
+import util.EdgeOfSystem
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
 
@@ -45,7 +46,7 @@ class CheckYourAnswersController @Inject()
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
-) (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     journeyAction.async {

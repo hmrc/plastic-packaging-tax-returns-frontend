@@ -39,8 +39,8 @@
     @paragraphBody(messages("return-already-submitted.para.1", returnPeriodDescription))
     @paragraphBody(messages("return-already-submitted.para.2"))
     @bulletList(elements = Seq(
-            link(id = "view-previous-returns", text = messages("return-already-submitted.list.1"), call = controllers.amends.routes.SubmittedReturnsController.onPageLoad),
-            link(id = "account-link", text = messages("return-already-submitted.list.2"), call = routes.IndexController.onPageLoad)
+            link(id = "view-previous-returns", text = messages("return-already-submitted.list.1"), href = controllers.amends.routes.SubmittedReturnsController.onPageLoad.url),
+            link(id = "account-link", text = messages("return-already-submitted.list.2"), href = routes.IndexController.onPageLoad.url)
         ),
         classes = "govuk-list govuk-list--bullet govuk-!-margin-bottom-7"
     )

@@ -17,22 +17,30 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
-import play.twirl.api.Html
+import models.Mode.NormalMode
+import play.api.data.Form
+import play.api.data.Forms.text
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import views.html.returns.credits.TooMuchCreditClaimedView
+import views.html.returns.credits.ClaimForWhichYearView
 
-class TooMuchCreditClaimedViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
+class ClaimForWhichYearViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val page = inject[TooMuchCreditClaimedView]
+  private val form = Form("value" -> text())
+  private val page = inject[ClaimForWhichYearView]
 
-  "view" should {
-    "pass accessibility tests" in {
-      def render: Html = page(Call(GET,"/change-weight"),Call(GET,"/cancel-claim"))(request, messages)
-
-      render.toString() must passAccessibilityChecks
-    }
+  private def render(form: Form[_]) = {
+    page(form, Seq.empty, NormalMode)(request, messages).toString()
   }
 
+  "view" should {
+    "pass accessibility tests" when {
+      "no error" in {
+        render(form) must passAccessibilityChecks
+      }
+
+      "error on form" in {
+        render(form.withError("error", "error message")) must passAccessibilityChecks
+      }
+    }
+  }
 }

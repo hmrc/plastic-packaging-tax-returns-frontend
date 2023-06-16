@@ -14,68 +14,53 @@
  * limitations under the License.
  *@
 
-@import components.{SectionHeader, paragraph, Link, LinkButton, heading}
+@import components._
 @import viewmodels._
 @import models.Mode
+@import views._
+@import models.returns.CreditRangeOption
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukButton: GovukButton,
-    sectionHeader: SectionHeader,
+    govukSummaryList: GovukSummaryList,
+    paragraphBody: paragraphBody,
     paragraph: paragraph,
+    sectionH2Heading: SectionH2Heading,
+    sectionH3Heading: SectionH3Heading,
     link: Link,
     linkButton: LinkButton,
-    heading: heading
+    heading: heading,
+    strong: Strong,
+    linkButtonWithCancel: LinkButtonWithCancel
 )
 
-@(requestedCredit: BigDecimal, weight: Long, continueCall: Call, mode: Mode, isBefore1stApril2023: Boolean)(implicit request: Request[_], messages: Messages)
+@(
+    key: String,
+    requestedCredit: BigDecimal,
+    summaryRows: Seq[SummaryListRow],
+    continueCall: Call,
+    mode: Mode,
+    dateRange: CreditRangeOption
+)(implicit request: Request[_], messages: Messages)
 
-@taxRateMessage = @{
-    if(isBefore1stApril2023) {
-        "confirmPackagingCredit.hint.p2"
-    } else {
-        "confirmPackagingCredit.hint.afterFirstApril2023"
-    }
-}
 @layout(pageTitle = titleNoForm(
-                        messages("confirmPackagingCredit.title"),
+                        messages("confirmPackagingCredit.title", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to)),
                         Some(messages("return.title.tail")))) {
 
-    @sectionHeader(messages("confirmPackagingCredit.subHeading"))
 
-    @heading("confirmPackagingCredit.heading", requestedCredit.asPounds)
+    @heading(messages("confirmPackagingCredit.heading", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to)))
 
-    @paragraph(
-        content = Html(messages("confirmPackagingCredit.hint.p1", weight.asKg)),
-        id = Some("paragraph-body-1")
+    @govukSummaryList(SummaryList(rows = summaryRows))
+
+    @paragraphBody(messages("confirmPackagingCredit.requestedCredits", strong(requestedCredit.asPounds)))
+
+    @linkButtonWithCancel(
+        buttonKey = "site.continue.confirm",
+        buttonUrl = continueCall.url,
+        cancelUrl = controllers.returns.credits.routes.CancelCreditsClaimController.onPageLoad(key).url,
+        cancelKey = "site.cancelCredit"
     )
 
-    @paragraph(
-        content = Html(messages(taxRateMessage)),
-        id = Some("paragraph-body-2")
-    )
-
-    @paragraph(content = {
-        Html(messages("confirmPackagingCredit.hint.p3", <strong>{requestedCredit.asPounds}</strong>))
-        }, id = Some("paragraph-body-3")
-    )
-
-    @paragraph(
-        content = Html(messages("confirmPackagingCredit.hint.p4")),
-        id = Some("paragraph-body-4")
-    )
-
-    <p class="govuk-body">
-        @link(
-            id = "change-credit-amount",
-            text = messages("confirmPackagingCredit.change.credit.paragraph"),
-            call = controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(mode)
-        )
-    </p>
-
-    @linkButton(
-        messageKey = "confirmPackagingCredit.confirm.credit.button",
-        linkUrl = continueCall.url
-    )
 }

@@ -19,18 +19,21 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
-import models.returns.CreditsAnswer
+import models.returns.CreditRangeOption
 import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ExportedCreditsView
+
+import java.time.LocalDate
 
 class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   val form = new ExportedCreditsFormProvider()()
   val page = inject[ExportedCreditsView]
+  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
-  def render(form: Form[CreditsAnswer]): String =
-    page(form, NormalMode)(request, messages).toString()
+  def render(form: Form[Boolean]): String =
+    page(form,"year-key", NormalMode, creditRangeOption)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {

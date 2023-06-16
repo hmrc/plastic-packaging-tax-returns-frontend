@@ -107,6 +107,9 @@ class FrontendAppConfig @Inject() (
   def pptCalculateCreditsUrl(pptReference: String): String =
     s"$pptServiceHost/credits/calculate/$pptReference"
 
+  def pptAvailableCreditYearsUrl(pptReference: String): String =
+    s"$pptServiceHost/credits/available-years/$pptReference"
+
   def isDeRegistrationFeatureEnabled: Boolean =
     isFeatureEnabled(Features.deRegistrationEnabled)
 
@@ -160,8 +163,8 @@ class FrontendAppConfig @Inject() (
   def creditsGuidanceUrl: String =
     configuration.get[String]("urls.pptCreditsGuidanceLink")
 
-  def claimingCreditGuidanceUrl: String =
-    configuration.get[String]("urls.claimingCreditGuidanceUrl")
+  def recordsToKeepGuidanceUrl: String =
+    configuration.get[String]("urls.recordsToKeepGuidanceLink")
 
   def addMemberToGroupUrl: String =
     configuration.get[String]("urls.addMemberToGroup")

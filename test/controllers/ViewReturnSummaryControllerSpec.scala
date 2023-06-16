@@ -20,6 +20,7 @@ import base.utils.JourneyActionAnswer
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions.JourneyAction
 import controllers.amends.ViewReturnSummaryController
+import controllers.amends.ViewReturnSummaryController.Unamendable
 import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
 import models.UserAnswers
@@ -41,9 +42,11 @@ import play.twirl.api.{Html, HtmlFormat}
 import queries.{Gettable, Settable}
 import support.AmendExportedData
 import uk.gov.hmrc.http.HttpResponse
+import util.EdgeOfSystem
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -63,12 +66,19 @@ class ViewReturnSummaryControllerSpec
   private val taxReturnHelper = mock[TaxReturnHelper]
   private val returnsConnector = mock[TaxReturnsConnector]
   private val errorHandler = mock[ErrorHandler]
+  private implicit val edgeOfSystem = mock[EdgeOfSystem]
 
   val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
   val submittedReturn = SubmittedReturn(
     0.3,
     ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
   )
+
+  override val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
+    LocalDate.now(),
+    LocalDate.now().plusWeeks(4),
+    LocalDate.now().plusWeeks(8),
+    "00XX")
 
   private val sut = new ViewReturnSummaryController(
     messagesApi,
@@ -91,6 +101,7 @@ class ViewReturnSummaryControllerSpec
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
+    when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
 
   "onPageLoad" should {
@@ -118,7 +129,7 @@ class ViewReturnSummaryControllerSpec
       verify(view).apply(
         meq("any-period"),
         meq(expected),
-        meq(Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn("22C2"))),
+        meq(Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn("22C2"))),
         meq("£300")
       )(any, any)
     }
@@ -134,7 +145,29 @@ class ViewReturnSummaryControllerSpec
       verify(view).apply(
         meq("any-period"),
         meq(expected),
-        meq(None),
+        meq(Left(Unamendable.DDInProgress)),
+        meq("£300")
+      )(any, any)
+    }
+
+    "return the right view with an empty callback when return is too old" in {
+
+      val mockObligation = mock[TaxReturnObligation]
+      setUpAPiCalls(false, Some(mockObligation))
+      when(messages.apply(anyString, any)).thenReturn("any-period")
+      when(mockObligation.tooOldToAmend).thenReturn(true)
+      when(mockObligation.fromDate).thenReturn(LocalDate.now())
+      when(mockObligation.toDate).thenReturn(LocalDate.now())
+
+
+      await(sut.onPageLoad("22C2")(dataRequest))
+
+      val expected = ViewReturnSummaryViewModel(submittedReturn.displayReturnJson)(messages)
+
+      verify(view).apply(
+        meq("any-period"),
+        meq(expected),
+        meq(Left(Unamendable.TooOld)),
         meq("£300")
       )(any, any)
     }
@@ -173,7 +206,7 @@ class ViewReturnSummaryControllerSpec
       val userAnswer = mock[UserAnswers]
 
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
-      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
       when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
@@ -187,7 +220,7 @@ class ViewReturnSummaryControllerSpec
       val userAnswer = mock[UserAnswers]
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
-      when(dataRequest.userAnswers.reset).thenReturn(userAnswer)
+      when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
       when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
 
@@ -204,7 +237,7 @@ class ViewReturnSummaryControllerSpec
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-      verifyZeroInteractions(dataRequest.userAnswers.reset)
+      verifyZeroInteractions(dataRequest.userAnswers.removeAll())
       verifyZeroInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
     }
 

@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.returns.credits
+package forms.returns.credits
 
-import models.UserAnswers
-import models.returns.CreditsAnswer
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import forms.mappings.Mappings
+import models.returns.CreditRangeOption
+import play.api.data.Form
 
-case class ClaimedCredits(exported: CreditsAnswer, converted: CreditsAnswer) {
 
-  def hasMadeClaim: Boolean =
-    exported.yesNo || converted.yesNo
+class ClaimForWhichYearFormProvider extends Mappings {
 
+  def apply(options: Seq[CreditRangeOption]): Form[CreditRangeOption] =
+    Form("value" ->
+      text("claim-for-which-year.error.required")
+        .verifying("claim-for-which-year.error.required", key => options.exists(_.key == key))
+        .transform[CreditRangeOption](key => options.find(_.key == key).get, _.key)
+    )
 }
 
-object ClaimedCredits {
-
-  def apply(userAnswers: UserAnswers): ClaimedCredits = {
-    ClaimedCredits(userAnswers.getOrFail(ExportedCreditsPage), userAnswers.getOrFail(ConvertedCreditsPage))
-
-  }
-}

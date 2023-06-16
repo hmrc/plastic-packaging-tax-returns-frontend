@@ -16,7 +16,7 @@
 
 package viewmodels.govuk
 
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Content, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 
 object summarylist extends SummaryListFluency
@@ -105,7 +105,6 @@ trait SummaryListFluency {
 
     def withCssClass(className: String): Value =
       value copy (classes = s"${value.classes} $className")
-
   }
 
 }

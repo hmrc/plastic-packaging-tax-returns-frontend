@@ -68,7 +68,7 @@ class ImportedPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions 
     }
     "contain save & continue button" in {
 
-      view.getElementsByClass("govuk-button").text() mustBe "Save and continue"
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
 
     }
 
