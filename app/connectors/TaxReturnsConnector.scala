@@ -18,14 +18,13 @@ package connectors
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector.RETURN_ALREADY_SUBMITTED
-import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, ReturnDisplayApi, SubmittedReturn}
+import connectors.TaxReturnsConnector.StatusCode
+import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, SubmittedReturn}
 import play.api.Logger
-import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.libs.json.{JsString, JsValue}
+import play.api.libs.json.JsString
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, Upstream4xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,15 +77,15 @@ class TaxReturnsConnector @Inject()(
       .andThen { case _ => timer.stop() }
       .map { response =>
         response.status match {
-          case OK                       =>
+          case OK =>
             val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
             logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
             Right(chargeReference)
-          case RETURN_ALREADY_SUBMITTED =>
+          case StatusCode.RETURN_ALREADY_SUBMITTED =>
             val periodKey = (response.json \ "returnAlreadyReceived").as[String]
             logger.info(s"Return for period [$periodKey] already submitted for $pptReference")
             Left(AlreadySubmitted)
-          case _                        => throw new HttpException(response.body, response.status)
+          case _ => throw new HttpException(response.body, response.status)
         }
       }
       .recover {

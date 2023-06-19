@@ -19,7 +19,7 @@ package connectors
 import com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import connectors.TaxReturnsConnector.RETURN_ALREADY_SUBMITTED
+import connectors.TaxReturnsConnector.StatusCode
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.apache.http.HttpException
 import org.mockito.ArgumentMatchers.{eq => meq}
@@ -30,9 +30,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.OK
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream5xxResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -116,7 +116,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       
       "the return obligation is already fulfilled" in {
         when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
-          HttpResponse(RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3","pptReference": "ppt-reference"}""")
+          HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
         )
         await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }
