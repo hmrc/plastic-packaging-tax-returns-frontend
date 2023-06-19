@@ -57,11 +57,11 @@
         } else None
     )
 
-    <link href="@routes.Assets.versioned("stylesheets/application.css").url" media="screen" rel="stylesheet" type="text/css" />
+    <link @{CSPNonce.attr} href="@routes.Assets.versioned("stylesheets/application.css").url" media="screen" rel="stylesheet" type="text/css" />
 }
 
 @additionalScripts = {
-    <script src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
 }
 
 @beforeContent = {
