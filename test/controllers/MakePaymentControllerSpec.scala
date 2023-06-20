@@ -33,11 +33,6 @@ import scala.concurrent.Future
 class MakePaymentControllerSpec extends SpecBase {
 
   val mockFinancialsConnector: FinancialsConnector = mock[FinancialsConnector]
-  val app: Application = applicationBuilder()
-    .overrides(
-      bind[FinancialsConnector].toInstance(mockFinancialsConnector)
-    )
-    .build()
 
     "redirect" - {
       "must redirect" - {
