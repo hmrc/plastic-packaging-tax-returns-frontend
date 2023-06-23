@@ -308,11 +308,13 @@ NonExportRecycledPlasticPackagingWeight.paragraph = This will show as a deductio
 
 viewReturnSummary.sectionHeader = Submitted return for
 viewReturnSummary.amendLink = Amend this return
-viewReturnSummary.amend.notamendable.h2 = You cannot amend this return yet
-viewReturnSummary.amend.notamendable.p1 = You have a Direct Debit payment due within 3 working days. You can amend this return once this payment has been made.
+viewReturnSummary.amend.notamendable.ddinprogress.h2 = You cannot amend this return yet
+viewReturnSummary.amend.notamendable.ddinprogress.p1 = You have a Direct Debit payment due within 3 working days. You can amend this return once this payment has been made.
+viewReturnSummary.amend.notamendable.tooold.h2 = You cannot amend this return
+viewReturnSummary.amend.notamendable.tooold.p1 = This return is more than 4 years old. You can only amend a return if it is within 4 years of the oringal return's due date.
 viewReturnSummary.amend.inset.text = If you need to make changes to your return, you’ll need to {0}.
 viewReturnSummary.amend.inset.link = submit a new return using this online form
-viewReturnSummary.viewReturnsLink = View or amend all submitted returns
+viewReturnSummary.viewReturnsLink = View or amend submitted returns
 viewReturnSummary.summary.heading = Summary
 viewReturnSummary.summary.field.liability = Tax due on this return
 viewReturnSummary.summary.field.processed = Date return submitted

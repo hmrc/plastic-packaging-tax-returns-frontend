@@ -60,13 +60,12 @@
                 <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call.url)</p>
             }
             case Left(DDInProgress) => {
-                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
-                @paragraphBody(messages("viewReturnSummary.amend.notamendable.p1"))
+                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.ddinprogress.h2")</h2>
+                @paragraphBody(messages("viewReturnSummary.amend.notamendable.ddinprogress.p1"))
             }
             case Left(TooOld) => {
-                <!--//todo proper content-->
-                <h2 class="govuk-heading-m">No amends</h2>
-                @paragraphBody("more than 4 years")
+                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.tooold.h2")</h2>
+                @paragraphBody(messages("viewReturnSummary.amend.notamendable.tooold.p1"))
             }
         }
     } else {
@@ -94,5 +93,5 @@
     <h3 class="govuk-heading-m">@messages(vm.detailsSection.calculation.titleKey)</h3>
     @govukSummaryList(vm.detailsSection.calculation.summaryList)
 
-    <p>@messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne)</p>
+    @paragraphBody(messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne))
 }
