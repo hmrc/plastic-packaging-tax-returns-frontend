@@ -79,7 +79,7 @@ class ImportedPlasticPackagingController @Inject()
 
     previousAnswers
       .change(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
-      .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackagingRoute(mode, hasAnswerChanged, newAnswer)))
+      .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackaging(mode, hasAnswerChanged, newAnswer)))
   }
 
 }

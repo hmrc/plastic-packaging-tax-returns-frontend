@@ -217,7 +217,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
 
   private def setUpMocks = {
     when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
-    when(userAnswer.reset).thenReturn(userAnswer)
+    when(userAnswer.removeAll()).thenReturn(userAnswer)
     when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
     when(dataRequest.request.pptReference) thenReturn ("123")
     when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)

@@ -28,7 +28,7 @@ import views.ViewUtils
 
 case class RowInfo(key: String, value: String)
 
-case class TaxReturnViewModel(
+case class  TaxReturnViewModel(
   userAnswers: UserAnswers,
   pptReference: String,
   obligation: TaxReturnObligation,

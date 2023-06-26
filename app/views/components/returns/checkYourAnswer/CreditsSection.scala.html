@@ -19,6 +19,7 @@
 @import config.FrontendAppConfig
 @import models.returns.Credits
 @import models.returns.CreditsClaimedDetails
+@import models.returns.CreditsClaimedDetails
 
 @this(
     appConfig: FrontendAppConfig,
@@ -32,13 +33,13 @@
     noCreditsAvailable: NoCreditsAvailable
 )
 
-@(credits: Credits)(implicit request: Request[_], messages: Messages)
+@(credits: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
 @selectView = @{
     credits match {
         case Credits.NoCreditsClaimed => noCreditsClaimed()
         case Credits.NoCreditAvailable => noCreditsAvailable()
-        case c: CreditsClaimedDetails => creditsClaimed(c)
+        case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
     }
 }
 

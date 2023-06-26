@@ -22,6 +22,7 @@ import forms.returns.credits.RemoveCreditFormProvider
 import navigation.Navigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsPath
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.credits.RemoveCreditView
@@ -29,7 +30,7 @@ import views.html.returns.credits.RemoveCreditView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RemoveCreditController @Inject()(
+class RemoveCreditController @Inject()( //todo name better this will remove ALL years of credit
                                          override val messagesApi: MessagesApi,
                                          cacheConnector: CacheConnector,
                                          navigator: Navigator,
@@ -56,6 +57,7 @@ class RemoveCreditController @Inject()(
         remove =>
           (if (remove){
             request.userAnswers
+              .removePath(JsPath \ "credit" )
               .setOrFail(WhatDoYouWantToDoPage, false)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
           } else Future.unit).map(_ =>

@@ -68,7 +68,7 @@
 @singleEntityManagement = {
 <div id="core-management" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-single", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        link = link(id = "amend-single", text = link1Text, href = appConfig.pptRegistrationAmendUrl),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
@@ -77,13 +77,13 @@
 @groupManagement = {
 <div id="core-management" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-group", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        link = link(id = "amend-group", text = link1Text, href = appConfig.pptRegistrationAmendUrl),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
 <div id="additional-management" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManageGroupUrl)),
+        link = link(id = "amend-additional", text = link2Text, href = appConfig.pptRegistrationManageGroupUrl),
         body = messages("account.homePage.card.registration.details.2.body.group")
     )
 </div>
@@ -92,13 +92,13 @@
 @partnershipManagement = {
 <div id="core-management" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-partner-core", text = link1Text, call = Call("GET", appConfig.pptRegistrationAmendUrl)),
+        link = link(id = "amend-partner-core", text = link1Text, href = appConfig.pptRegistrationAmendUrl),
         body = messages("account.homePage.card.registration.details.1.body")
     )
 </div>
 <div id="additional-management" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-partner-additional", text = link2Text, call = Call("GET", appConfig.pptRegistrationManagePartnersUrl)),
+        link = link(id = "amend-partner-additional", text = link2Text, href = appConfig.pptRegistrationManagePartnersUrl),
         body = messages("account.homePage.card.registration.details.2.body.partnership")
     )
 </div>
@@ -107,7 +107,7 @@
 @deregister = {
 <div id="deregister" class="account-grid-column">
     @cardSection(
-        link = link(id = "amend-deregister", text = messages("account.homePage.card.deregister.link"), call = Call("GET", appConfig.pptRegistrationDeregisterUrl)),
+        link = link(id = "amend-deregister", text = messages("account.homePage.card.deregister.link"), href = appConfig.pptRegistrationDeregisterUrl),
         body = messages("account.homePage.card.deregister.body")
     )
 </div>
@@ -169,7 +169,7 @@
     obligations.flatMap { obligations =>
         if(obligations.displaySubmitReturnsLink) {
             val linkContentKey = "account.homePage.card.makeReturn.line3.createLink" + {if(isFirstReturn) "" else ".andCredits"}
-            Some(link(id = "start-date-return-link", text = messages(linkContentKey), call = controllers.returns.routes.StartYourReturnController.onPageLoad()))
+            Some(link(id = "start-date-return-link", text = messages(linkContentKey), href = controllers.returns.routes.StartYourReturnController.onPageLoad().url))
         } else {
             None
         }
@@ -180,7 +180,7 @@
     link(
         id = "view-submitted-returns-link",
         text = messages("account.homePage.card.history.viewamendreturnslink"),
-        call = controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+        href = controllers.amends.routes.SubmittedReturnsController.onPageLoad.url)
 }
 
 @layout(
@@ -207,7 +207,7 @@
             ).filter(_.isDefined).flatten,
             links = Seq[Option[Html]](
                 returnsLink,
-                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), call = Call("GET", appConfig.pptCompleteReturnGuidanceUrl), newTab = true))
+                Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), href = appConfig.pptCompleteReturnGuidanceUrl, newTab = true))
             ).filter(_.isDefined).flatten
         )
 
@@ -217,8 +217,8 @@
                 paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))
             ),
             links = if (appConfig.isFeatureEnabled(Features.paymentsEnabled)) Seq(
-                link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), call = controllers.routes.MakePaymentController.redirectLink()),
-                link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), call = controllers.payments.routes.DirectDebitController.redirectLink())
+                link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), href = controllers.routes.MakePaymentController.redirectLink().url),
+                link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), href = controllers.payments.routes.DirectDebitController.redirectLink().url)
             ) else Seq()
         )
 

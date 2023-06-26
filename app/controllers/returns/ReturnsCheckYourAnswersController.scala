@@ -26,7 +26,8 @@ import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.Credits._
 import models.returns._
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -51,7 +52,8 @@ class ReturnsCheckYourAnswersController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
   view: ReturnsCheckYourAnswersView, 
-  cacheConnector: CacheConnector
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
@@ -67,7 +69,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val userAnswers: UserAnswers = request.userAnswers
-        ensureCreditAnswersConsistency(userAnswers, request.pptReference).flatMap { isUserClaimingCredit =>
+        val  isUserClaimingCredit = userAnswers.get(WhatDoYouWantToDoPage).getOrElse(false)
           returnsConnector.submit(request.pptReference).flatMap {
             case Right(optChargeRef) =>
               sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef).map {
@@ -79,37 +81,11 @@ class ReturnsCheckYourAnswersController @Inject()(
                 Redirect(routes.AlreadySubmittedController.onPageLoad())
               }
           }
-        }
     }
 
-  def onRemoveCreditsClaim(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        request.userAnswers
-          .setOrFail(WhatDoYouWantToDoPage, false)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(_ => Redirect(routes.ReturnsCheckYourAnswersController.onPageLoad()))
-    }
-
-  /** TODO quick fix for user removing any previous credit claim
-    * @return true if the user is claiming a credit
-    */
-  private def ensureCreditAnswersConsistency(userAnswers: UserAnswers, pptReference: String)(implicit hc: HeaderCarrier)
-  : Future[Boolean] =
-    userAnswers.get(WhatDoYouWantToDoPage) match {
-      case Some(true) => Future.successful(true)
-      case _          =>
-        userAnswers
-          .setOrFail(ExportedCreditsPage, CreditsAnswer.noClaim)
-          .setOrFail(ConvertedCreditsPage, CreditsAnswer.noClaim)
-          .save(cacheConnector.saveUserAnswerFunc(pptReference))
-          .map(_ => false)
-    }
-
-  private def callCalculationAndCreditApi(
-                                          request: DataRequest[_]
-                                        )
-                                        (implicit hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+  private def callCalculationAndCreditApi(request: DataRequest[_]) (implicit messages: Messages, 
+    hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+    
     val fCalculations = returnsConnector.getCalculationReturns(request.pptReference)
     val fIsFirstReturn = taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference)
 
@@ -129,12 +105,12 @@ class ReturnsCheckYourAnswersController @Inject()(
     callCalculationAndCreditApi(request).map {
       case (calculations, credits) =>
         val returnViewModel = TaxReturnViewModel(request.userAnswers, request.pptReference, obligation, calculations)
-        Ok(view(returnViewModel, credits)(request, messages))
+        Ok(view(returnViewModel, credits, navigator.cyaChangeCredits)(request, messages))
     }
   }
 
   private def getCredits(request: DataRequest[_], isFirstReturn: Boolean)
-                        (implicit hc: HeaderCarrier): Future[Either[ServiceError, Credits]] =
+                        (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
     if (isFirstReturn || !appConfig.isCreditsForReturnsFeatureEnabled)
       Future.successful(Right(NoCreditAvailable))
     else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))

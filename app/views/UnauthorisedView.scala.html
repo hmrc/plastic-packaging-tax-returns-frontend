@@ -30,7 +30,7 @@
 @link(
         id = "register_for_ppt_link",
         text = messages("unauthorised.paragraph.1.link"),
-        call = Call("GET", config.pptRegistrationUrl)
+        href = config.pptRegistrationUrl
     )
 }
 
@@ -38,7 +38,7 @@
 @link(
         id = "find_out_about_ppt_link",
         text = messages("unauthorised.paragraph.2.link"),
-        call = Call("GET", config.pptRegistrationInfoUrl)
+        href = config.pptRegistrationInfoUrl
     )
 }
 

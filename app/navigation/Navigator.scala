@@ -23,6 +23,7 @@ import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
+@deprecated("Use navigator for the corresponding journey", since = "1.0")
 @Singleton
 class Navigator @Inject()(
                            returns: ReturnsJourneyNavigator
@@ -34,7 +35,7 @@ class Navigator @Inject()(
   private val checkRouteMap: PartialFunction[Page, UserAnswers => Call] =
     returns.checkRoutes
 
-  @deprecated("Just call the method direct, dont come through nextPage")
+  @deprecated("Just call the method direct, dont come through nextPage", since = "1.0")
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
       case NormalMode =>

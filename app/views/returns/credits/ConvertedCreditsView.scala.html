@@ -15,7 +15,11 @@
  *@
 
 @import components._
-@import viewmodels.InputWidth._
+@import templates._
+@import viewmodels._
+@import models.returns.CreditRangeOption
+@import java.time.LocalDate
+@import views._
 
 @this(
     layout: templates.Layout,
@@ -23,46 +27,40 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukInput: GovukInput,
     sectionHeader: SectionHeader,
-    conditionalYesNo: conditionalYesNoRadio,
     heading: heading,
-    h2heading: SectionH2Heading,
-    paragraphBody: paragraphBody
-
+    paragraphBody: paragraphBody,
+    creditsJourneyCaption: CreditsJourneyCaption, 
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], key: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
 
-@ifYes = {
-    @govukInput(
-        InputViewModel(
-                field = form("converted-credits-weight"),
-                label = LabelViewModel(messages("converted.credits.weight.label"))
-            )
-            .asKg()
-            .withWidth(Fixed10)
-            .withId("converted-credits-weight")
-            .withHint(Hint(content = "converted.credits.weight.hint"))
-    )
+@dateRangeMessage = {
+@ViewUtils.displayDateRangeAnd(dateRange.from, dateRange.to)
 }
 
-@paraContent = {
-    @paragraphBody(messages("converted.credits.paragraph.1"))
-    @paragraphBody(messages("converted.credits.paragraph.2"))
-    @paragraphBody(messages("converted.credits.paragraph.3"))
-}
+@layout(pageTitle = title(form, messages("converted-credits-yes-no.title-heading"), Some(messages("return.title.tail")))) {
 
-@layout(pageTitle = title(form, messages("converted.credits.title"), Some(messages("return.title.tail")))) {
-
-    @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(key, mode), 'autoComplete -> "off") {
+        
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        @sectionHeader(messages("credits.caption"))
-        @heading("converted.credits.heading")
-        @paraContent
-        @conditionalYesNo(form, Some(messages("converted.credits.heading.2")), Some(ifYes))
+        
+        @creditsJourneyCaption(dateRange)
+        @heading("converted-credits-yes-no.title-heading")
+
+        @paragraphBody(messages("converted-credits-yes-no.paragraph.1"))
+        @paragraphBody(messages("converted-credits-yes-no.paragraph.2"))
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(HtmlContent(messages("converted-credits-yes-no.question", dateRangeMessage)))
+                            .withCssClass(LegendSize.Medium.toString)
+            )
+        )
+
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
 }

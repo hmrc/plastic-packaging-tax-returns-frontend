@@ -21,13 +21,18 @@ import controllers.actions._
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ExportedCreditsPage
+import play.api.data.Form
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.libs.json.JsPath
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ExportedCreditsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,39 +41,42 @@ class ExportedCreditsController @Inject()
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  journeyAction: JourneyAction,
   formProvider: ExportedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ExportedCreditsView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
-      val userAnswers = request.userAnswers
-      val preparedForm = userAnswers.get(ExportedCreditsPage) match {
-        case None => formProvider()
-        case Some(value) => formProvider().fill(value)
-      }
-      Ok(view(preparedForm, mode))
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
+    journeyAction {
       implicit request =>
 
+        val preparedForm = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        Results.Ok(createView(preparedForm, key, mode))
+    }
+  }
+
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] =
+    journeyAction.async {
+      implicit request =>
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ExportedCreditsPage, value))
-                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-              } yield Redirect(navigator.exportedCreditsRoute(mode))
+            formWithErrors => Future.successful(Results.BadRequest(createView(formWithErrors, key, mode))),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers
+                .changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
+            }
           )
     }
+
+  private def createView(form: Form[Boolean], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
+    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
+    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
+    view(form, key, mode, creditRangeOption)
+  }
+    
 }

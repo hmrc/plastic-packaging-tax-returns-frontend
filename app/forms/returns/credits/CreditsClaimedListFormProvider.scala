@@ -17,14 +17,24 @@
 package forms.returns.credits
 
 import forms.mappings.Mappings
+import models.returns.CreditRangeOption
 import play.api.data.Form
+import play.api.i18n.Messages
+import views.ViewUtils
 
 import javax.inject.Inject
 
-//todo: We may want something different from a boolean. Maubt a enum with
-// StartReturn and ClaimTaxBack
-class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
+class CreditsClaimedListFormProvider extends Mappings {
 
-  def apply(): Form[Boolean] = Form("value" -> boolean("what-do-you-want-to-do.error.required"))
+  val standardError = "creditsSummary.error.required"
+  val onlyOneRemainingError = "creditsSummary.error.required.one-remaining"
 
+  def apply(options: Seq[CreditRangeOption])(implicit messages: Messages): Form[Boolean] = {
+    Form(
+      options match {
+        case Seq(onlyOption) => "value" -> boolean(onlyOneRemainingError, args = Seq(ViewUtils.displayDateRangeTo(onlyOption.from, onlyOption.to)))
+        case _ => "value" -> boolean(standardError)
+      }
+    )
+  }
 }

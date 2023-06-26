@@ -41,7 +41,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "not allow to submit return when deduction greater than accretion" in {
       val view = createView(calculation = createCalculations(false), amendmentMade = true)
 
-      view.getElementsByClass("govuk-button") mustBe empty
+      view.getElementsByClass("govuk-button").text() must not include("Submit amended return")
       view.getElementById("submit-amend-return-header-error").text() mustBe "Submitting your amended return"
       view.getElementById("submit-amend-return-header-error").text() mustBe messages("AmendsCheckYourAnswers.error.heading")
       view.getElementById(
@@ -59,7 +59,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "display the Confirm and Continue button" in {
       createView(calculation = createCalculations(true), amendmentMade = true)
-        .getElementsByClass("govuk-button") must not be empty
+        .getElementsByClass("govuk-button").text() must include("Submit amended return")
     }
 
     "display send now message when deduction less equal then accretion" in {
