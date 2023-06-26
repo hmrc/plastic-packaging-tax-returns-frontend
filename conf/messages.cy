@@ -707,6 +707,8 @@ converted-credits-weight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio �
 cancelCreditsClaim.error.required = Dewiswch ‘Iawn’ os ydych am ganslo’r credyd hwn
 cancelCreditsClaim.title-heading = A ydych yn siŵr eich bod am ganslo’r credyd hwn ar gyfer {0}?
 
+cancelCreditsClaimError.title-heading = Mae‘r credyd hwn wedi cael ei dynnu
+
 creditsSummary.title-heading = Crynodeb o’r credyd
 creditsSummary.table.heading.1 = Dyddiadau
 creditsSummary.table.heading.2 = Swm

@@ -202,8 +202,8 @@ POST       /amending-exported-plastic-packaging                     controllers.
 GET        /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad
 POST       /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onSubmit
 
-GET        /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
-POST       /cancel-credit-claim/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
+GET        /credit-removed/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
+POST       /credit-removed/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
 
 GET        /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
 POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
