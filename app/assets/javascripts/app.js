@@ -4,8 +4,13 @@ if (window.history && window.history.replaceState && typeof window.history.repla
 }
 
 // handle back click
-document.querySelector('.govuk-back-link').addEventListener('click', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  window.history.back();
-});
+var backLinkElem = document.querySelector('.govuk-back-link');
+
+if(backLinkElem != null) {
+    backLinkElem.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        window.history.back();
+    });
+}
+
