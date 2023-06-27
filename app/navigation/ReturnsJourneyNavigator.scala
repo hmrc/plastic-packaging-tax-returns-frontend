@@ -113,7 +113,7 @@ class ReturnsJourneyNavigator @Inject()(
   def creditClaimedList(mode: Mode, isAddingAnotherYear: Boolean, userAnswers: UserAnswers) =
     if (isAddingAnotherYear)
       creditRoutes.ClaimForWhichYearController.onPageLoad(mode)
-    else if (mode.equals(CheckMode) && nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers))
+    else if (nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers))
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else
       returnRoutes.NowStartYourReturnController.onPageLoad

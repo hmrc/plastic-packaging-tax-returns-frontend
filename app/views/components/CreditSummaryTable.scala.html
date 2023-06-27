@@ -51,7 +51,7 @@
     @actions match {
         case Nil => {@HtmlFormat.empty}
         case actions => {
-            <ul class="govuk-summary-list__actions-list">@for(action <- actions) {
+            <ul class="govuk-summary-list__actions-list actions-min-size">@for(action <- actions) {
                 <li class="govuk-summary-list__actions-list-item">@actionLink(action)</li>
             }</ul>
         }

@@ -19,7 +19,6 @@
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 
 @this(
@@ -35,7 +34,6 @@
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
     hmrcScripts: HmrcScripts,
     stdBanner: StandardBetaBanner,
-    hmrcUserResearchBanner: HmrcUserResearchBanner,
     utils: LanguageUtils
 )
 
@@ -59,11 +57,11 @@
         } else None
     )
 
-    <link href="@routes.Assets.versioned("stylesheets/application.css").url" media="screen" rel="stylesheet" type="text/css" />
+    <link @{CSPNonce.attr} href="@routes.Assets.versioned("stylesheets/application.css").url" media="screen" rel="stylesheet" type="text/css" />
 }
 
 @additionalScripts = {
-    <script src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
 }
 
 @beforeContent = {
@@ -77,7 +75,7 @@
     }
 
     @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible"))
+        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withAttribute(("id" -> "back-link")))
     }
 }
 
