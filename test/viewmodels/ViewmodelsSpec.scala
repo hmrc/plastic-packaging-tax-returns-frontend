@@ -64,12 +64,8 @@ class ViewmodelsSpec extends PlaySpec {
   }
 
   "asPoundPerTonne" should {
-    "return pounds with no decimal place" in {
-      BigDecimal(0.3).asPoundPerTonne mustBe "£300"
-    }
-
-    "return pounds in the thousend with comma and no decimal place" in {
-      BigDecimal(30).asPoundPerTonne mustBe "£30,000"
+    "return pounds in the thousand with comma" in {
+      BigDecimal(30).asPoundPerTonne mustBe "£30,000.00"
     }
 
     "return pounds with two decimal places" in {

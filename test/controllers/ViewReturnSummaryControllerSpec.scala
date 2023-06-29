@@ -119,7 +119,7 @@ class ViewReturnSummaryControllerSpec
         meq("any-period"),
         meq(expected),
         meq(Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn("22C2"))),
-        meq("£300")
+        meq("£300.00")
       )(any, any)
     }
 
@@ -135,7 +135,7 @@ class ViewReturnSummaryControllerSpec
         meq("any-period"),
         meq(expected),
         meq(None),
-        meq("£300")
+        meq("£300.00")
       )(any, any)
     }
 

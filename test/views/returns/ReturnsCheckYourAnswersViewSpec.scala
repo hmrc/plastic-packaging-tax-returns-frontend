@@ -254,9 +254,9 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     }
 
     "display tax rate" in {
-      view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300 per tonne.")
+      view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300.00 per tonne.")
       view.getElementsByClass("govuk-body").text() must include(
-        messages("submit-return.check-your-answers.tax-calc.footnote", "£300"))
+        messages("submit-return.check-your-answers.tax-calc.footnote", "£300.00"))
     }
   }
 
