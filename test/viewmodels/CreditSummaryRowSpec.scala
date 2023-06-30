@@ -43,7 +43,7 @@ class CreditSummaryRowSpec extends PlaySpec
       verifyZeroInteractions(createAction)
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
-        TableRow(Text("a-value"), Some("text"), attributes = Map("style" -> "text-align:right;")),
+        TableRow(Text("a-value"), Some("text")),
         TableRow(Empty, None, "", None, None, Map("aria-hidden" -> "true"))
       )
     }
@@ -54,7 +54,7 @@ class CreditSummaryRowSpec extends PlaySpec
       verify(createAction).apply(Seq(ActionItem()))
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
-        TableRow(Text("a-value"), Some("text"), attributes = Map("style" -> "text-align:right;")),
+        TableRow(Text("a-value"), Some("text")),
         TableRow(HtmlContent(Html("action-html")), Some("text"), attributes = Map("style" -> "text-align:right;"))
       )
     }

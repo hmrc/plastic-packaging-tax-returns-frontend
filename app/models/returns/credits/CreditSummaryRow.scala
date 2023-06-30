@@ -16,7 +16,7 @@
 
 package models.returns.credits
 
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -38,14 +38,14 @@ case class CreditSummaryRow(
   def createCYAContent = {
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+      TableRow(content = Text(value), format = Some("text")),
     )
   }
 
   def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+      TableRow(content = Text(value), format = Some("text")),
     ) ++ createActionsCell(createActionsContent)
   }
 
