@@ -84,5 +84,5 @@
     <h3 class="govuk-heading-m">@messages(vm.detailsSection.calculation.titleKey)</h3>
     @govukSummaryList(vm.detailsSection.calculation.summaryList)
 
-    <p>@messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne)</p>
+    @paragraphBody(messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne))
 }
