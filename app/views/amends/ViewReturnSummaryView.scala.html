@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{SectionHeader, Link, paragraphBody}
+@import views.html.components._
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 @import config.FrontendAppConfig
 @import viewmodels._
@@ -27,7 +27,8 @@
     sectionHeader: SectionHeader,
     link: Link,
     appConfig: FrontendAppConfig,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody, 
+    paragraph: paragraph
 )
 
 @(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
@@ -50,14 +51,14 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
+    @paragraph(link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url))
 
     @if(appConfig.isAmendsFeatureEnabled){
         @amendCall.fold{
             <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
-            <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
+            @paragraphBody(messages("viewReturnSummary.amend.notamendable.p1"))
         }{ amendCall =>
-            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall.url)</p>
+            @paragraph(link("amend-return", messages("viewReturnSummary.amendLink"), amendCall.url))
         }
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{Link, heading, paragraphBody}
+@import components._
 @import config.FrontendAppConfig
 @import models.subscription.{GroupMembers, Member}
 @import templates.HiddenContent
@@ -27,6 +27,7 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
     link: Link,
     appConfig: FrontendAppConfig,
     hiddenContent: HiddenContent
@@ -56,12 +57,11 @@
 
         @paragraphBody(messages("select-new-representative.paragraph"), id = Some("paragraph"))
 
-        <p>
-        @link(id = "add-new-member-to-group",
-            text = messages("select-new-representative.link"),
-            href = appConfig.addMemberToGroupUrl)
-        </p>
-
+        @paragraph(
+            link(id = "add-new-member-to-group",
+                text = messages("select-new-representative.link"),
+                href = appConfig.addMemberToGroupUrl)
+        )
 
         @govukButton(ButtonViewModel(messages("site.continue")))
     }
