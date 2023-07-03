@@ -19,7 +19,9 @@ package connectors
 import com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
+import connectors.TaxReturnsConnector.StatusCode
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import org.apache.http.HttpException
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -27,9 +29,10 @@ import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.http.Status.OK
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream5xxResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +62,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     when(frontendAppConfig.pptReturnSubmissionUrl(any)) thenReturn "return-submission-url"
     when(metrics2.defaultRegistry.timer(any).time()) thenReturn timerContext
     when(httpClient2.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(JsObject.empty)
-    when(httpClient2.POSTEmpty[Any](any, any)(any, any, any)) thenReturn Future.successful(JsObject.empty)
+    when(httpClient2.POSTEmpty[Any](any, any)(any, any, any)) thenReturn Future.successful(HttpResponse(OK, JsObject.empty.toString()))
   }
 
   "Tax Returns Connector" should {
@@ -98,31 +101,31 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
       
       "there is a charge reference" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.successful(
-          Json.parse("""{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+          HttpResponse(OK, """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
         )
         await(connector.submit("ppt-reference")) mustBe Right(Some("PANTESTPAN"))
       }
 
       "there is no charge reference" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.successful(
-          Json.parse("""{"chargeDetails": null}""")
+        when(httpClient2.GET[HttpResponse](any, any, any)(any, any, any)) thenReturn Future.successful(
+          HttpResponse(OK, """{"chargeDetails": {}}""")
         )
         await(connector.submit("ppt-reference")) mustBe Right(None)
       }
       
-      "the obligation is no longer open" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(Upstream4xxResponse(
-          message = "exception-message", upstreamResponseCode = 417, reportAs = 417
-        ))
+      "the return obligation is already fulfilled" in {
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+          HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
+        )
         await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }
 
-      "ETMP says the return has already been submitted" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(Upstream4xxResponse(
-          message = "exception-message", upstreamResponseCode = 422, reportAs = 422
+      "Something goes wrong" in {
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(new HttpException(
+          "exception-message", new Exception("Something went wrong.")
         ))
-        await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
+        intercept[DownstreamServiceError](await(connector.submit("ppt-reference")))
       }
     }
 
