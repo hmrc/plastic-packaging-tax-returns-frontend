@@ -55,9 +55,10 @@ class ViewReturnSummaryController @Inject() (
         fetchData(periodKey).map {
           case Right((_, submittedReturn, obligation, ddInProgress)) =>
             val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
-            val amendCall = Either
-              .cond(!obligation.tooOldToAmend, controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey), Unamendable.TooOld)
-              .filterOrElse(_ => !ddInProgress, Unamendable.DDInProgress)
+            val amendCall =
+              Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey))
+                .filterOrElse(_ => !obligation.tooOldToAmend, Unamendable.TooOld)
+                .filterOrElse(_ => !ddInProgress, Unamendable.DDInProgress)
             Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn.displayReturnJson), amendCall, submittedReturn.taxRate.asPoundPerTonne))
           case Left(result) => result
         }
