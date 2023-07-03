@@ -97,7 +97,6 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
     when(message.apply(any[String], any)).thenReturn("messages")
     when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
-    when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
   }
 
@@ -175,19 +174,6 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(true).url
       verify(mockSessionRepository).set(any, ArgumentMatchers.eq(Paths.ReturnChargeRef), ArgumentMatchers.eq(Some("12345")))(any)
     }
-  }
-
-  "show no credits section on page Load" in {
-    setUpMockConnector()
-    when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(false)
-
-    val result = createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo"))
-
-    status(result) mustEqual OK
-    verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any)
-    verify(mockTaxReturnHelper).nextOpenObligationAndIfFirst(ArgumentMatchers.eq("123"))(any)
-    verifyNoInteractions(mockCalculateCreditConnector)
-    verifyAndCaptorCreditDetails mustBe NoCreditAvailable
   }
 
   "return an error" when {

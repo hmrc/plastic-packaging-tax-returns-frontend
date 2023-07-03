@@ -24,7 +24,6 @@ import models.returns.Credits.NoCreditAvailable
 import models.returns._
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.returns._
@@ -79,7 +78,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     when(appConfig.userResearchUrl).thenReturn("/foo")
 
     "have a Credits section" in {
-      when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
       val view = createView()
 
       getText(view, "credit-section-header") mustBe "Credits"
@@ -119,7 +117,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   "Credits section" should {
     "display guidance" when {
       "is first return" in {
-        when(appConfig.isCreditsForReturnsFeatureEnabled).thenReturn(true)
         val view = createView(credits = NoCreditAvailable)
         assertNoCreditsAvailable(view)
       }
@@ -148,7 +145,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Exported Plastic Packaging section" should {
-    val view = createView()
+    val view = createView(credits = NoCreditAvailable)
     val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(2).text()
 
     "display header" in {
@@ -211,7 +208,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Deduction section" should {
-    val view = createView()
+    val view = createView(credits = NoCreditAvailable)
     val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(4).text()
 
     "display header" in {

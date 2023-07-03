@@ -111,7 +111,7 @@ class ReturnsCheckYourAnswersController @Inject()(
 
   private def getCredits(request: DataRequest[_], isFirstReturn: Boolean)
                         (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
-    if (isFirstReturn || !appConfig.isCreditsForReturnsFeatureEnabled)
+    if (isFirstReturn)
       Future.successful(Right(NoCreditAvailable))
     else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))
         creditsCalculatorConnector.get(request.pptReference).map {
