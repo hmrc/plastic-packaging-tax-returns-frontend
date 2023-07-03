@@ -29,18 +29,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import views.html.returns.credits.CancelCreditsClaimView
+import play.twirl.api.Html
+import views.html.returns.credits.{CancelCreditsClaimErrorView, CancelCreditsClaimView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-/*
-  Todo: There is already a RemoveCreditController, used by the ReturnsCheckYourAnswer page
-  which only reset to false the WhatDoYouWantToDoPage page. We may could consolidate
-  this CancelCreditsClaimController and the RemoveCreditController into one.
-  Not done it at this point as we have not looked into the ReturnsCheckYourAnswer page
-  which will need to change.
- */
 class CancelCreditsClaimController @Inject()( //todo name better this will remove one year of credit
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
@@ -48,7 +42,8 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
   journeyAction: JourneyAction,
   formProvider: CancelCreditsClaimFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: CancelCreditsClaimView
+  view: CancelCreditsClaimView,
+  errorView: CancelCreditsClaimErrorView
 ) (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(key: String): Action[AnyContent] = journeyAction {
@@ -74,8 +69,13 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
       )
   }
 
-  private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean]) (implicit request: Request[_]) = {
-    val singleYearClaim = SingleYearClaim.readFrom(userAnswers, key) 
-    view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim)
+  private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean]) (implicit request: Request[_]): Html = {
+    SingleYearClaim.maybeReadFrom(userAnswers, key)
+      .fold(
+        ifEmpty = errorView(navigator.cancelCredit().url)
+      )(
+        singleYearClaim => view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim)
+      )
   }
+  
 }

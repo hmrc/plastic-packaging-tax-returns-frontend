@@ -697,6 +697,8 @@ converted-credits-weight.error.wholeNumber = Weight must not include decimals
 cancelCreditsClaim.title-heading = Are you sure you want to remove this credit for {0}?
 cancelCreditsClaim.error.required = Select yes if you want to remove this credit
 
+cancelCreditsClaimError.title-heading = This credit has been removed
+
 creditsSummary.title-heading = Credit summary
 creditsSummary.table.heading.1 = Dates
 creditsSummary.table.heading.2 = Amount
