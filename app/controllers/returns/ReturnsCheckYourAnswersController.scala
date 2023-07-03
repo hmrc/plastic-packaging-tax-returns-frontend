@@ -59,7 +59,7 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
+        request.userAnswers.get(ReturnObligationCacheable) match {
           case Some(obligation) => displayPage(request, obligation)
           case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
