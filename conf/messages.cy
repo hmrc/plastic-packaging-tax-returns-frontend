@@ -32,7 +32,7 @@ month.10 = Hydref
 month.11 = Tachwedd
 month.12 = Rhagfyr
 
-return.quarter = {0} i {1} {2}
+return.quarter = {0} i fis {1} {2}
 return.quarter.and = {0} a {1}
 caption.total.plastic = Cyfanswm y deunydd pacio plastig
 caption.exported.plastic = Deunydd pacio plastig a allforiwyd
@@ -216,7 +216,7 @@ confirmPackagingCredit.converted.answer = Treth wedi’i thalu ar ddeunydd pacio
 confirmPackagingCredit.converted.weight = Pwysau’r deunydd pacio plastig y gwnaethoch dalu treth arno cyn iddo gael ei drosi
 confirmPackagingCredit.totalPlastic = Cyfanswm y deunydd pacio plastig
 confirmPackagingCredit.creditAmount = Swm y credyd
-confirmPackagingCredit.requestedCredits = Bydd eich {0} credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+confirmPackagingCredit.requestedCredits = Bydd eich {0} o gredyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
 
 
 directlyExportedComponents.title = A wnaethoch allforio unrhyw faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig yn y cyfnod hwn eich hun, neu a ydych yn bwriadu gwneud hynny cyn pen 12 mis?
@@ -546,7 +546,7 @@ exportedCredits.heading = Deunydd pacio plastig gwnaethoch dalu treth arno cyn i
 exportedCredits.heading.2 = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei allforio?
 exportedCredits.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod wedi ei allforio’n ddiweddarach, gallwch hawlio treth yn ôl fel credyd.
 exportedCredits.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os gwnaeth busnes arall ei allforio.
-exportedCredits.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei allforio
+exportedCredits.error.required = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei allforio
 
 exportedCreditsWeight.heading = Faint o ddeunydd pacio plastig wnaethoch chi dalu treth arno cyn iddo gael ei allforio?
 exportedCreditsWeight.hint = Nodwch y pwysau mewn cilogramau. Mae 1 dunnell yn 1,000kg.
@@ -559,28 +559,28 @@ converted-credits-yes-no.title-heading = Deunydd pacio plastig gwnaethoch dalu t
 converted-credits-yes-no.paragraph.1 = Os ydych wedi talu treth ar ddeunydd pacio plastig a’ch bod wedi ei drosi’n gydrannau deunydd pacio plastig taladwy gwahanol, gallwch hawlio treth yn ôl fel credyd.
 converted-credits-yes-no.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os gwnaeth busnes arall ei drosi.
 converted-credits-yes-no.question = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei drosi?
-converted-credits-yes-no.error.required = Dewiswch ’Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei drosi
+converted-credits-yes-no.error.required = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei drosi
 
 do-you-want-to-claim.title = Hawlio treth yn ôl fel credyd
 do-you-want-to-claim.p1 = Os ydych wedi talu treth ar ddeunydd pacio plastig, gallwch hawlio’r dreth hon yn ôl fel credyd os yw’r naill neu’r llall o’r canlynol yn wir am y deunydd pacio:
 do-you-want-to-claim.p1.b1 = mae’n cael ei allforio gennych chi neu fusnes arall
-do-you-want-to-claim.p1.b2 = mae’n cael ei drosi’n gydrannau deunydd pacio plastig taladwy gwahanol
+do-you-want-to-claim.p1.b2 = mae’n cael ei drosi’n gydrannau deunydd pacio plastig taladwy gennych chi neu fusnes arall
 do-you-want-to-claim.p2 = I gyfrifo faint o dreth y gallwch ei hawlio’n ôl fel credyd, bydd angen i chi roi gwybod i ni beth oedd pwysau’r deunydd pacio plastig y gwnaethoch dalu treth arno cyn iddo gael ei allforio neu ei drosi.
 do-you-want-to-claim.p3 = I hawlio’r credyd, mae’n rhaid eich bod:
 do-you-want-to-claim.p3.b1 = wedi derbyn tystiolaeth o allforio neu drosi pecynnau plastig cyn pen 2 flynedd i’r dyddiad mewnforio neu weithgynhyrchu
 do-you-want-to-claim.p3.b2 = yn gwneud hawliad pan fyddwch yn cyflwyno Ffurflen Treth Deunydd Pacio Plastig ar gyfer y cyfnod cyfrifyddu pan ddaeth y dystiolaeth i law
 do-you-want-to-claim.p4 = Dysgwch ragor am:
 do-you-want-to-claim.p4.b1.a = hawlio treth yn ôl fel credyd
-do-you-want-to-claim.p4.b2.a = cofnodion a thystiolaeth sydd eu hngen arnoch
+do-you-want-to-claim.p4.b2.a = cofnodion a thystiolaeth sydd eu hangen arnoch
 do-you-want-to-claim.question = A ydych am hawlio treth yn ôl fel credyd?
-do-you-want-to-claim.error.required = Dewiswch ’Iawn’ os ydych am hawlio treth yn ôl fel credyd
+do-you-want-to-claim.error.required = Dewiswch ‘Iawn’ os ydych am hawlio treth yn ôl fel credyd
 
 claim-for-which-year.credits.title-heading = Pa gyfnod rydych am hawlio treth yn ôl fel credyd ar ei chyfer?
 claim-for-which-year.credits.paragraph.1 = Mae cyfraddau treth deunydd pacio plastig wedi newid. Mae’n rhaid i ni sicrhau eich bod yn hawlio treth yn ôl ar y gyfradd gywir.
 claim-for-which-year.credits.paragraph.2 = Os oes angen i chi hawlio treth yn ôl fel credyd ar gyfer mwy nag o’r cyfnodau hyn, byddwch yn cael yr opsiwn i wneud hynny yn nes ymlaen.
 claim-for-which-year.error.required = Dewiswch y cyfnod yr ydych am hawlio treth yn ôl fel credyd ar ei gyfer
 
-nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer {0} nawr
+nowStartYourReturn.heading = Dechreuwch eich Ffurflen Dreth ar gyfer mis {0} nawr
 nowStartYourReturn.paragraph.1 = Mae’ch atebion wedi’u cadw. Er mwyn eu cyflwyno, mae’n rhaid i chi gwblhau’ch Ffurflen Dreth.
 nowStartYourReturn.button-text = Dechrau’ch Ffurflen Dreth
 
@@ -707,17 +707,17 @@ converted-credits-weight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio �
 cancelCreditsClaim.error.required = Dewiswch ‘Iawn’ os ydych am ganslo’r credyd hwn
 cancelCreditsClaim.title-heading = A ydych yn siŵr eich bod am ganslo’r credyd hwn ar gyfer {0}?
 
-creditsSummary.title-heading = Crynodeb o’r credyd
+creditsSummary.title-heading = Crynodeb o’r o gredyd
 creditsSummary.table.heading.1 = Dyddiadau
 creditsSummary.table.heading.2 = Swm
 creditsSummary.table.heading.3 = Camau i’w cymryd
 creditsSummary.table.total = Cyfanswm y credyd
 creditSummary.for = credyd ar gyfer {0}
-creditsSummary.paragraph.credit-will-be-applied = Bydd eich {0} credyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
-creditsSummary.add-to-list = A ydych am hawlio treth yn ôl fel credyd ar gyfer cyfnod arall?
-creditsSummary.add-last-remaining-option = A ydych am hawlio treth yn ôl fel credyd ar gyfer {0}?
+creditsSummary.paragraph.credit-will-be-applied = Bydd eich {0} o gredyd yn cael ei osod yn erbyn cyfanswm y balans yn eich cyfrif Treth Deunydd Pacio Plastig.
+creditsSummary.add-to-list = A ydych am hawlio treth yn ôl fel o gredyd ar gyfer cyfnod arall?
+creditsSummary.add-last-remaining-option = A ydych am hawlio treth yn ôl fel o gredyd ar gyfer {0}?
 creditsSummary.checkYourAnswersLabel = creditsSummary
-creditsSummary.error.required = Dewiswch ‘Iawn’ os ydych am hawlio treth yn ôl fel credyd ar gyfer cyfnod arall
+creditsSummary.error.required = Dewiswch ‘Iawn’ os ydych am hawlio treth yn ôl fel o gredyd ar gyfer cyfnod arall
 creditsSummary.error.required.one-remaining = Dewiswch ‘Iawn’ os ydych am hawlio treth yn ôl fel credyd ar gyfer {0}
 creditsSummary.tooMuch.heading = Rydych yn hawlio gormod o gredyd
 creditsSummary.tooMuch.p1 = Mae cyfanswm y credyd yn fwy na chyfanswm y dreth a dalwyd gennych ers {0}.
