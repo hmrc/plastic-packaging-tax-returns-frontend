@@ -407,6 +407,7 @@ submittedReturns.title = View or amend submitted returns
 submittedReturns.heading = View or amend submitted returns
 submittedReturns.vieworamendreturn = View or amend return
 submittedReturns.viewreturn = View return
+submittedReturns.amend.info.p1 = You can only amend a return if it is within 4 years of the original return's due date.
 submittedReturns.nothingsubmitted = You have not submitted any returns yet.
 submittedReturns.accounthomelink = Go to your Plastic Packaging Tax account
 
