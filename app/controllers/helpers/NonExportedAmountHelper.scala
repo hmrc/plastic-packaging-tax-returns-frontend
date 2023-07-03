@@ -49,10 +49,12 @@ class NonExportedAmountHelper { //todo rename?
   }
 
   def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
-    val value = nonExportedAmount(userAnswers).get
-    val isDirectExportYesNo = userAnswers.get(DirectlyExportedPage).get
-    val isAnotherBusinessYesNo = userAnswers.get(AnotherBusinessExportedPage).getOrElse(false) // default to no if not answered
-    Some(value, isDirectExportYesNo, isAnotherBusinessYesNo)
+    for {
+      value <- nonExportedAmount(userAnswers)
+      isDirectExportYesNo = userAnswers.get(DirectlyExportedPage).get
+      isAnotherBusinessYesNo = userAnswers.get(AnotherBusinessExportedPage).getOrElse(false) // default to no if not answered
+    }
+    yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(

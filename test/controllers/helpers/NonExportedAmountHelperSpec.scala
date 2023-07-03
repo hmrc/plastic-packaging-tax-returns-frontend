@@ -246,19 +246,49 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
 
-  "getAmountAndDirectlyExportedAnswer" should {
+  "getAmountAndDirectlyExportedAnswer" when {
     "return amount and Directly exported plus Exported by another business answer" in {
       sut.getAmountAndDirectlyExportedAnswer(userAnswer) mustBe Some((100L, true, true))
     }
 
-    "when AnotherBusinessExportedPage is missing" in {
+    "AnotherBusinessExportedPage is missing" in {
       val ans = userAnswer.remove(AnotherBusinessExportedPage).get
       sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some(200, true, false)
     }
 
-    "when AnotherBusinessExportedWeightPage is missing" in {
+    "AnotherBusinessExportedWeightPage is missing" in {
       val ans = userAnswer.remove(AnotherBusinessExportedWeightPage).get
       sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some(200, true, true)
+    }
+    
+    "manufactured yes-no answer is missing" in {
+      val changedAnswers = userAnswer.remove(ManufacturedPlasticPackagingPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
+    }
+    
+    "manufactured weight answer is missing" in {
+      val changedAnswers = userAnswer.remove(ManufacturedPlasticPackagingWeightPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
+    }
+    
+    "imported yes-no answer is missing" in {
+      val changedAnswers = userAnswer.remove(ImportedPlasticPackagingPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
+    }
+    
+    "imported weight answer is missing" in {
+      val changedAnswers = userAnswer.remove(ImportedPlasticPackagingWeightPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
+    }
+    
+    "directly exported yes-no answer is missing" in {
+      val changedAnswers = userAnswer.remove(DirectlyExportedPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
+    }
+    
+    "directly exported weight answer is missing" in {
+      val changedAnswers = userAnswer.remove(DirectlyExportedWeightPage).get
+      sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
   }
 
