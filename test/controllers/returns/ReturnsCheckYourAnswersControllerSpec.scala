@@ -34,8 +34,9 @@ import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
+import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logger
+import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.RequestHeader
@@ -106,7 +107,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       setUpMockConnector()
       when(message.apply(any[String])).thenAnswer((s: String) => s)
 
-      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
+      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
       verify(mockView).apply(any, any, any)(any, any)
     }
@@ -121,7 +122,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "call tax return API" in {
       setUpMockConnector()
 
-      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
+      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
       verify(mockTaxReturnConnector).getCalculationReturns(ArgumentMatchers.eq("123"))(any)
@@ -131,7 +132,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       setUpMockConnector()
       when(message.apply(any[String], any)).thenReturn("any-key")
 
-      val result = createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo"))
+      val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         summaryList = Seq(
@@ -145,12 +146,23 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     "handle credits no claimed on pageLoading" in {
       setUpMockConnector()
 
-      val ans = setUserAnswer.set(WhatDoYouWantToDoPage, false).get
+      val ans = setUserAnswer().set(WhatDoYouWantToDoPage, false).get
       val result = createSut(Some(ans)).onPageLoad()(FakeRequest(GET, "/foo"))
 
       status(result) mustEqual OK
       verifyNoInteractions(mockCalculateCreditConnector)
       verifyAndCaptorCreditDetails mustBe NoCreditsClaimed
+    }
+
+
+    "handle claim-credit yes-no answer missing" in {
+      setUpMockConnector()
+
+      val ans = setUserAnswer().remove(WhatDoYouWantToDoPage).get
+      val result = createSut(Some(ans)).onPageLoad()(FakeRequest(GET, "/foo"))
+
+      status(result) mustEqual Status.SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
 
 
@@ -168,7 +180,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       when(mockSessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
       when(mockTaxReturnConnector.submit(any)(any)).thenReturn(Future.successful(Right(Some("12345"))))
 
-      val result = createSut(Some(setUserAnswer)).onSubmit()(FakeRequest(POST, "/foo"))
+      val result = createSut(Some(setUserAnswer())).onSubmit()(FakeRequest(POST, "/foo"))
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(true).url
@@ -187,7 +199,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       )
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
@@ -200,7 +212,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       )
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
@@ -208,8 +220,9 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       setUpMockConnector()
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenThrow(new RuntimeException("Error"))
 
+      val userAnswers = setUserAnswer().remove(WhatDoYouWantToDoPage).get
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(userAnswers)).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
 
@@ -221,14 +234,14 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenThrow(new RuntimeException("Error"))
 
       intercept[RuntimeException] {
-        await(createSut(Some(setUserAnswer)).onPageLoad()(FakeRequest(GET, "/foo")))
+        await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
       }
     }
   }
 
   "navigate" should {
 
-    val controller = createSut(Some(setUserAnswer))
+    val controller = createSut(Some(setUserAnswer()))
     "link to change credit answers" in {
       when(navigator.cyaChangeCredits) thenReturn "/change-me"
       setUpMockConnector()
@@ -282,7 +295,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
   }
 
-  private def setUserAnswer: UserAnswers =
+  private def setUserAnswer(): UserAnswers =
       UserAnswers("123", Json.parse(
       s"""
         {

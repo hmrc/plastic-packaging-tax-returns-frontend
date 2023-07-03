@@ -83,37 +83,47 @@ class ReturnsCheckYourAnswersController @Inject()(
           }
     }
 
-  private def callCalculationAndCreditApi(request: DataRequest[_]) (implicit messages: Messages, 
-    hc: HeaderCarrier): Future[(Calculations, Credits)] = {
-    
-    val fCalculations = returnsConnector.getCalculationReturns(request.pptReference)
-    val fIsFirstReturn = taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference)
+  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
+    (implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
 
-    for {
-      calculations <- fCalculations
-      obligation <- fIsFirstReturn
-      isFirstReturn = obligation.fold(false)(_._2)
-      credits <- getCredits(request, isFirstReturn)
-    } yield (calculations, credits) match {
-      case (Right(calculations), Right(credits)) => (calculations, credits)
-      case _ => throw new RuntimeException("Error: There was a problem retrieving return calculation or the credits balance")
+    request.userAnswers.get(WhatDoYouWantToDoPage) match {
+      case Some(isUserClaimingCredit) => displayPage2(request, obligation, isUserClaimingCredit, false) // TODO making an assumption here, is it sound?
+      case None =>
+        taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference).flatMap {
+          case Some((_, true)) => displayPage2(request, obligation, false, true)
+          case _ => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        }
     }
   }
-  private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)
-                         (implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
 
-    callCalculationAndCreditApi(request).map {
+  private def displayPage2(request: DataRequest[_], obligation: TaxReturnObligation, isUserClaimingCredit: Boolean,
+    isFirstReturn: Boolean) (implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
+
+    callCalculationAndCreditApi(request, isUserClaimingCredit, isFirstReturn).map {
       case (calculations, credits) =>
         val returnViewModel = TaxReturnViewModel(request.userAnswers, request.pptReference, obligation, calculations)
         Ok(view(returnViewModel, credits, navigator.cyaChangeCredits)(request, messages))
     }
   }
 
-  private def getCredits(request: DataRequest[_], isFirstReturn: Boolean)
-                        (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
+  private def callCalculationAndCreditApi(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
+    (implicit messages: Messages, hc: HeaderCarrier): Future[(Calculations, Credits)] = {
+    
+    for {
+      calculations <- returnsConnector.getCalculationReturns(request.pptReference)
+      credits <- getCredits(request, isUserClaimingCredit, isFirstReturn)
+    } yield (calculations, credits) match {
+      case (Right(calculations), Right(credits)) => (calculations, credits)
+      case _ => throw new RuntimeException("Error: There was a problem retrieving return calculation or the credits balance")
+    }
+  }
+
+  private def getCredits(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
+    (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
+    
     if (isFirstReturn)
       Future.successful(Right(NoCreditAvailable))
-    else if(request.userAnswers.getOrFail(WhatDoYouWantToDoPage))
+    else if (isUserClaimingCredit)
         creditsCalculatorConnector.get(request.pptReference).map {
           case Right(creditBalance) => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
           case Left(error) => Left(error)
