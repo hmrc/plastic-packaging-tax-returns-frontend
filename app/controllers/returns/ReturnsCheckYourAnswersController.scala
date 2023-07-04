@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
+import models.ReturnsUserAnswers
 import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.Credits._
@@ -59,9 +60,8 @@ class ReturnsCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        request.userAnswers.get(ReturnObligationCacheable) match {
-          case Some(obligation) => displayPage(request, obligation)
-          case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        ReturnsUserAnswers.checkObligation(request) {
+          obligation => displayPage(request, obligation)
         }
     }
   

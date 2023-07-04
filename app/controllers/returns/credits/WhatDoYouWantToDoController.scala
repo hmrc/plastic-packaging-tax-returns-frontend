@@ -21,7 +21,7 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.requests.DataRequest.headerCarrier
-import models.{Mode, UserAnswers}
+import models.{ReturnsUserAnswers, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.FormBinding.Implicits.formBinding
@@ -47,10 +47,10 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad: Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
-
-        val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
-        Ok(view(preparedForm, obligation))
+        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+          val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
+          Ok(view(preparedForm, obligation))
+        }
     }
 
   def onSubmit: Action[AnyContent] =
