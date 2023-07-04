@@ -19,7 +19,7 @@ package controllers.returns.credits
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsWeightFormProvider
-import models.Mode
+import models.{Mode, ReturnsUserAnswers}
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.{CreditRangeOption, CreditsAnswer}
@@ -51,8 +51,10 @@ class ExportedCreditsWeightController @Inject()(
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        val form = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-        Ok(createView(form, key, mode))
+        ReturnsUserAnswers.checkObligationSync(request) { _ =>
+          val form = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+          Ok(createView(form, key, mode))
+        }
     }
 
 
