@@ -31,12 +31,8 @@ class CalculateCreditsConnector @Inject()(httpClient: HttpClient, appConfig: Fro
 
     val timer = metrics.defaultRegistry.timer("ppt.exportcredits.open.get.timer").time()
     httpClient.GET[CreditBalance](appConfig.pptCalculateCreditsUrl(pptReferenceNumber))
-      .map {
-        response =>
-          logger.info(s"Calculate credits for ppt reference number [$pptReferenceNumber]")
-          Right(response)
-      }
       .andThen { case _ => timer.stop() }
+      .map(Right(_))
       .recover {
         case ex: Exception =>
           Left(
