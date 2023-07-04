@@ -29,7 +29,7 @@ object ReturnsUserAnswers {
   /** Fetches the obligation for the current journey, or redirects to the account page 
     * @param request the current DataRequest (with current user answers)
     * @param block a function to call with the obligation
-    * @return whatever block returns if obligation found, otherwise a rediect to the account page 
+    * @return whatever block returns if obligation found, otherwise a redirect to the account page 
     */
   def checkObligation(request: DataRequest[_])(block: TaxReturnObligation => Future[Result]) =
     request.userAnswers.get(ReturnObligationCacheable) match {
