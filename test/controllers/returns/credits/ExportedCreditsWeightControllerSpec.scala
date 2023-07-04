@@ -26,6 +26,7 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
+import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
@@ -87,15 +88,26 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
     
     val aDate = LocalDate.of(2000, 1, 2)
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(
       TaxReturnObligation(aDate, aDate, aDate, "period-key")
     )
 
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any))
+      .thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any))
+      .thenReturn("2024-03-31")
+    when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key")) (any)) thenReturn Some(
+      SingleYearClaim(
+        fromDate = LocalDate.of(2023, 4, 1), 
+        toDate = LocalDate.of(2024, 3, 31), 
+        exportedCredits = None, 
+        convertedCredits = None)
+    )
   }
+
+
   "onPageLoad" should {
 
     "use the journey action" in {
@@ -127,11 +139,18 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       verify(view).apply(eqTo(boundForm), eqTo("year-key"), eqTo(NormalMode), eqTo(creditRangeOption)) (any, any)
     }
     
-    "redirect if obligation is missing" in {
+    "redirect if obligation is missing from user answers" in {
       when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
       val result = sut.onPageLoad("year-key", NormalMode)(request)
       status(result) mustBe Status.SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+    }
+    
+    "redirect if year is missing from user answers" in {
+      when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key")) (any)) thenReturn None
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
+      status(result) mustBe Status.SEE_OTHER
+      redirectLocation(result).value mustBe routes.CreditsClaimedListController.onPageLoad(NormalMode).url
     }
   }
 

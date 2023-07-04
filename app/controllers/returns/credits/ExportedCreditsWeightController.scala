@@ -51,9 +51,9 @@ class ExportedCreditsWeightController @Inject()(
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction {
       implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { _ =>
+        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
           val form = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-          Ok(createView(form, key, mode))
+          Ok(view(form, key, mode, singleYearClaim.createCreditRangeOption()))
         }
     }
 

@@ -17,7 +17,7 @@
 package models.returns.credits
 
 import models.UserAnswers
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, Json, OFormat}
 import views.ViewUtils
@@ -32,13 +32,18 @@ case class SingleYearClaim(
   convertedCredits: Option[CreditsAnswer]
 ) {
   def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, toDate)
+  def createCreditRangeOption(): CreditRangeOption = CreditRangeOption(fromDate, toDate)
 }
 
 object SingleYearClaim {
 
   def readFrom(userAnswers: UserAnswers, key: String): SingleYearClaim = {
-    // TODO de-dupe with viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary.extractDateAndAmount
+    // TODO possible de-dupes elsewhere?
     userAnswers.getOrFail[SingleYearClaim](JsPath \ "credit" \ key)
+  }
+
+  def maybeReadFrom(userAnswers: UserAnswers, key: String): Option[SingleYearClaim] = {
+    userAnswers.get[SingleYearClaim](JsPath \ "credit" \ key)
   }
   
   implicit val formats: OFormat[SingleYearClaim] = Json.format[SingleYearClaim]
