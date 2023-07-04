@@ -20,7 +20,6 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.returns.TaxReturnObligation
 import models.{Mode, ReturnsUserAnswers, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.ImportedPlasticPackagingPage
@@ -61,10 +60,7 @@ class ImportedPlasticPackagingController @Inject()
       implicit request =>
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
-
-        val obligation = request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         formProvider().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),

@@ -58,10 +58,7 @@ class ImportedPlasticPackagingWeightController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-
-        val obligation = request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
