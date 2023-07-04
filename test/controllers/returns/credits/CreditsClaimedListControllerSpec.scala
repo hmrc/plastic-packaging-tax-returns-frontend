@@ -17,14 +17,14 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
+import cacheables.ReturnObligationCacheable
 import connectors.{AvailableCreditYearsConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import factories.CreditSummaryListFactory
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import models.returns.CreditRangeOption
+import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
@@ -32,6 +32,7 @@ import org.mockito.Answers
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.enablers.Messaging
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
@@ -66,11 +67,14 @@ class CreditsClaimedListControllerSpec
   private val calcCreditsConnector = mock[CalculateCreditsConnector]
   private val mockAvailableCreditYearsConnector = mock[AvailableCreditYearsConnector]
 
-  val creditBalance = CreditBalance(10, 20, 5L, true, Map(
+  private val creditBalance = CreditBalance(10, 20, 5L, true, Map(
     s"${LocalDate.now()}-${LocalDate.now()}" -> TaxablePlastic(0, 20, 0)
   ))
 
-  val availableOptions = Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))
+  private val availableOptions = Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))
+  
+  // Resolves an ambiguity in implicits for Messaging used by test framework
+  private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] = Messaging.messagingNatureOfThrowable
 
   private val sut = new CreditsClaimedListController(
     messagesApi,
@@ -91,7 +95,20 @@ class CreditsClaimedListControllerSpec
     when(view.apply(any, any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+
+    when(request.pptReference).thenReturn("123")
     when(request.userAnswers.getOrFail[String](any[JsPath])(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
+    
+    val aDate = LocalDate.of(2000, 1, 2)
+    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(
+      TaxReturnObligation(aDate, aDate, aDate, "period-key")
+    )
+
+    when(calcCreditsConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
+    when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))
+
+    when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
   }
 
   "onPageLoad" should {
@@ -121,19 +138,16 @@ class CreditsClaimedListControllerSpec
 
     "getting the total weight in pound from API" in {
       setUpMock()
-
       await(sut.onPageLoad(NormalMode)(request))
-
-      verify(calcCreditsConnector).get(any)(any)
+      verify(calcCreditsConnector).getEventually(eqTo("123"))(any)
     }
 
     "should throw if API return an error" in {
-      when(calcCreditsConnector.get(any)(any))
-        .thenReturn(Future.successful(Left(DownstreamServiceError("error", new Exception("exception")))))
-
-      intercept[DownstreamServiceError] {
-        await(sut.onPageLoad(NormalMode)(request))
-      }
+      setUpMock()
+      when(calcCreditsConnector.getEventually(any)(any)) thenReturn Future.failed(
+        DownstreamServiceError("error", new Exception("inner"))
+      )
+      the [DownstreamServiceError] thrownBy await(sut.onPageLoad(NormalMode)(request)) must have message "error"
     }
 
     "calculate if all years are being claimed" in {
@@ -200,16 +214,11 @@ class CreditsClaimedListControllerSpec
   }
 
   private def setUpMock(): Unit = {
-    when(request.pptReference).thenReturn("123")
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
    // when(messages.apply(any[String])).thenAnswer((s: String) => s)
     when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
 
-    when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
-    when(request.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
-
-    when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))
   }
 }

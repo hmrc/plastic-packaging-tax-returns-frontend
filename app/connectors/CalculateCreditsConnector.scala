@@ -43,5 +43,16 @@ class CalculateCreditsConnector @Inject()(httpClient: HttpClient, appConfig: Fro
           )
       }
   }
+  
+  def getEventually(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[CreditBalance] = {
+
+    val timer = metrics.defaultRegistry.timer("ppt.exportcredits.open.get.timer").time()
+    httpClient.GET[CreditBalance](appConfig.pptCalculateCreditsUrl(pptReferenceNumber))
+      .andThen { case _ => timer.stop() }
+      .recover {
+        case ex: Exception => throw DownstreamServiceError(s"Failed to calculate credits for ppt reference number" +
+          s" [$pptReferenceNumber]", ex)
+      }
+  }
 
 }

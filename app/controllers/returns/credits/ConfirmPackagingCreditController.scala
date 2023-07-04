@@ -22,7 +22,7 @@ import factories.CreditSummaryListFactory
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
-import models.{CreditBalance, Mode}
+import models.{CreditBalance, Mode, ReturnsUserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsPath
@@ -48,9 +48,11 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        creditConnector.get(request.pptReference).map {
-          case Right(response) => displayView(response, key, mode)
-          case Left(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
+        // Although we don't use the obligation here, the backend will fail without it
+        ReturnsUserAnswers.checkObligation(request) { _ =>
+          creditConnector.getEventually(request.pptReference)
+            .map(response => displayView(response, key, mode))
+            .recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)) // TODO do we want to do this?
         }
     }
 

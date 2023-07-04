@@ -22,7 +22,7 @@ import forms.returns.credits.CreditsClaimedListFormProvider
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
-import models.{CreditBalance, Mode}
+import models.{CreditBalance, Mode, ReturnsUserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,11 +48,11 @@ class CreditsClaimedListController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      calcCreditsConnector.get(request.pptReference).flatMap { creditBalance =>
-        creditBalance.fold(
-          error => throw error,
+      // Although we don't use the obligation here, the backend will fail without it
+      ReturnsUserAnswers.checkObligation(request) { _ =>
+        calcCreditsConnector.getEventually(request.pptReference).flatMap {
           balance => displayView(mode, balance)
-        )
+        }
       }
   }
 
