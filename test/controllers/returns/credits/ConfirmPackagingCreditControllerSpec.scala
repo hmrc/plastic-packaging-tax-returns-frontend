@@ -22,7 +22,6 @@ import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceE
 import controllers.actions.JourneyAction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
-import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
@@ -93,6 +92,9 @@ class ConfirmPackagingCreditControllerSpec
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(
       TaxReturnObligation(aDate, aDate, aDate, "period-key")
     )
+
+    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
   }
 
 
@@ -104,14 +106,11 @@ class ConfirmPackagingCreditControllerSpec
     }
 
     "return OK" in {
-      setUpMockForConfirmCreditsView()
       val result = sut.onPageLoad("year-key", NormalMode)(request)
       status(result) mustBe OK
     }
 
     "display a view" in {
-      setUpMockForConfirmCreditsView()
-
       val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
       when(creditSummaryListFactory.createSummaryList(any, any, any)(any)).thenReturn(summaryList)
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
@@ -121,8 +120,6 @@ class ConfirmPackagingCreditControllerSpec
     }
 
     "pass a summary list to view with the data" in {
-      setUpMockForConfirmCreditsView()
-
       val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
 
       when(creditSummaryListFactory.createSummaryList(any, any, any)(any)).thenReturn(summaryList)
@@ -140,7 +137,6 @@ class ConfirmPackagingCreditControllerSpec
 
       "total requested credit is less than available credit - (NormalMode)" in {
         when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
-        setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", NormalMode)(request))
         verify(returnsJourneyNavigator).confirmCredit(NormalMode)
         verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(NormalMode), eqTo(creditRangeOption))(any,any)
@@ -148,7 +144,6 @@ class ConfirmPackagingCreditControllerSpec
 
       "total requested credit is less than available credit - (CheckMode)" in {
         when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
-        setUpMockForConfirmCreditsView()
         await(sut.onPageLoad("year-key", CheckMode)(request))
         verify(returnsJourneyNavigator).confirmCredit(CheckMode)
         verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(CheckMode), eqTo(creditRangeOption))(any,any)
@@ -163,10 +158,5 @@ class ConfirmPackagingCreditControllerSpec
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
-  }
-
-  private def setUpMockForConfirmCreditsView(): Unit = {
-    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
-    when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
   }
 }
