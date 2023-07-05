@@ -39,7 +39,7 @@ object ReturnsUserAnswers {
       case None => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
     }
 
-  /** Future free version of [[models.ReturnsUserAnswers#checkObligation]]
+  /** Future-free version of [[models.ReturnsUserAnswers#checkObligation]]
     */
   def checkObligationSync(request: DataRequest[_])(block: TaxReturnObligation => Result) =
     request.userAnswers.get(ReturnObligationCacheable) match {
@@ -56,11 +56,15 @@ object ReturnsUserAnswers {
     *  - or if obligation missing, a redirect to the account page
     *  - or if year missing, a redirect to the credit summary page
     */
-  def checkCreditYear(request: DataRequest[AnyContent], key: String, mode: Mode)(block: SingleYearClaim => Result) =
-    checkObligationSync(request) { _ =>
+  def checkCreditYear(request: DataRequest[AnyContent], key: String, mode: Mode)
+    (block: SingleYearClaim => Future[Result]): Future[Result] =
+    
+    checkObligation(request) { _ =>
       SingleYearClaim.maybeReadFrom(request.userAnswers, key) match {
         case Some(claim) => block(claim)
-        case None => Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode))
+        case None => Future.successful(
+          Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode))
+        )
       }
     }
 

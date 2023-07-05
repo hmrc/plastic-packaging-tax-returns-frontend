@@ -112,7 +112,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "use the journey action" in {
       sut.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).apply(any)
+      verify(journeyAction).async(any)
     }
 
     "return 200" in {
