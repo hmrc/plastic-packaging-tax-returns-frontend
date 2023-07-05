@@ -135,7 +135,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
       )
 
       def render(returnPeriod: String): Html =
-        page(returnPeriod, vm, Some(Call("", "")), "£200")(request, messages)
+        page(returnPeriod, vm, Right(Call("", "")), "£200")(request, messages)
 
       render("PK1").toString() must passAccessibilityChecks
     }

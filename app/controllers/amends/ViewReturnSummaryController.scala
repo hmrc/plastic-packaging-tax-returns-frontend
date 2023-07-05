@@ -19,6 +19,7 @@ package controllers.amends
 import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDisplayApiCacheable}
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
+import controllers.amends.ViewReturnSummaryController.Unamendable
 import models.requests.DataRequest.headerCarrier
 import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
@@ -27,7 +28,8 @@ import models.requests.DataRequest
 import models.returns.{DDInProgressApi, ReturnDisplayApi, SubmittedReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{NotFound, Ok, Redirect}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import util.EdgeOfSystem
 import viewmodels.PrintTaxRate
 import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 import views.html.amends.ViewReturnSummaryView
@@ -44,8 +46,7 @@ class ViewReturnSummaryController @Inject() (
   taxReturnHelper: TaxReturnHelper,
   returnsConnector: TaxReturnsConnector,
   errorHandler: ErrorHandler
-
-)(implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
 
   def onPageLoad(periodKey: String): Action[AnyContent] =
     journeyAction.async {
@@ -54,7 +55,10 @@ class ViewReturnSummaryController @Inject() (
         fetchData(periodKey).map {
           case Right((_, submittedReturn, obligation, ddInProgress)) =>
             val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
-            val amendCall: Option[Call] = Some(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey)).filter(_ => !ddInProgress)
+            val amendCall =
+              Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey))
+                .filterOrElse(_ => !obligation.tooOldToAmend, Unamendable.TooOld)
+                .filterOrElse(_ => !ddInProgress, Unamendable.DDInProgress)
             Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn.displayReturnJson), amendCall, submittedReturn.taxRate.asPoundPerTonne))
           case Left(result) => result
         }
@@ -136,3 +140,11 @@ class ViewReturnSummaryController @Inject() (
   }
 
 }
+ object ViewReturnSummaryController {
+
+   sealed trait Unamendable
+   object Unamendable {
+     case object TooOld extends Unamendable
+     case object DDInProgress extends Unamendable
+   }
+ }
