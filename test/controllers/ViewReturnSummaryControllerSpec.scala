@@ -94,7 +94,7 @@ class ViewReturnSummaryControllerSpec
   override def beforeEach() = {
     super.beforeEach()
 
-    reset(journeyAction, view, cacheConnector, dataRequest, errorHandler)
+    reset(journeyAction, view, cacheConnector, dataRequest, errorHandler, edgeOfSystem)
 
     when(dataRequest.pptReference).thenReturn("123")
     when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
@@ -130,7 +130,7 @@ class ViewReturnSummaryControllerSpec
         meq("any-period"),
         meq(expected),
         meq(Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn("22C2"))),
-        meq("£300")
+        meq("£300.00")
       )(any, any)
     }
 
@@ -146,7 +146,7 @@ class ViewReturnSummaryControllerSpec
         meq("any-period"),
         meq(expected),
         meq(Left(Unamendable.DDInProgress)),
-        meq("£300")
+        meq("£300.00")
       )(any, any)
     }
 
@@ -168,7 +168,7 @@ class ViewReturnSummaryControllerSpec
         meq("any-period"),
         meq(expected),
         meq(Left(Unamendable.TooOld)),
-        meq("£300")
+        meq("£300.00")
       )(any, any)
     }
 

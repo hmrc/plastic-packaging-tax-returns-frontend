@@ -53,7 +53,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     when(messages.apply("part-of-a-key")).thenReturn("part-of-a-key") 
   }
 
-  "exportedWeigh" should {
+  "exportedWeight" should {
     "return rowInfo" in {
       when(userAnswers.get(DirectlyExportedWeightPage)) thenReturn Some(200L)
       val result = sut.exportedWeight("part-of-a-key")
@@ -186,7 +186,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     "return the taxRate in pounds per tonne" in {
       when(calculations.taxRate).thenReturn(0.3)
 
-      sut.taxRate mustBe "£300"
+      sut.taxRate mustBe "£300.00"
     }
   }
 }
