@@ -18,6 +18,8 @@
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
 @import config.FrontendAppConfig
 @import viewmodels._
+@import controllers.amends.ViewReturnSummaryController.Unamendable
+@import controllers.amends.ViewReturnSummaryController.Unamendable._
 
 @this(
     layout: templates.Layout,
@@ -30,7 +32,7 @@
     paragraphBody: paragraphBody
 )
 
-@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Option[Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
+@(returnPeriod: String, vm: ViewReturnSummaryViewModel, amendCall: Either[Unamendable, Call], taxRateInPoundPerTonne: String)(implicit request: Request[_], messages: Messages)
 
 @guidanceLink = {<a href="https://www.tax.service.gov.uk/submissions/new-form/plastic-packaging-tax-return" class="govuk-link" id="govuk-guidance-link">@messages("viewReturnSummary.amend.inset.link")</a>}
 
@@ -53,11 +55,18 @@
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
 
     @if(appConfig.isAmendsFeatureEnabled){
-        @amendCall.fold{
-            <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.h2")</h2>
-            <p>@messages("viewReturnSummary.amend.notamendable.p1")</p>
-        }{ amendCall =>
-            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), amendCall.url)</p>
+        @amendCall match {
+            case Right(call) => {
+                <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call.url)</p>
+            }
+            case Left(DDInProgress) => {
+                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.ddinprogress.h2")</h2>
+                @paragraphBody(messages("viewReturnSummary.amend.notamendable.ddinprogress.p1"))
+            }
+            case Left(TooOld) => {
+                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.tooold.h2")</h2>
+                @paragraphBody(messages("viewReturnSummary.amend.notamendable.tooold.p1"))
+            }
         }
     } else {
         <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>
@@ -84,5 +93,5 @@
     <h3 class="govuk-heading-m">@messages(vm.detailsSection.calculation.titleKey)</h3>
     @govukSummaryList(vm.detailsSection.calculation.summaryList)
 
-    <p>@messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne)</p>
+    @paragraphBody(messages("viewReturnSummary.calculation.field.paragraph.1", taxRateInPoundPerTonne))
 }

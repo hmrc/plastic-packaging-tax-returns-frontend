@@ -18,6 +18,7 @@ package models.returns
 
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import util.EdgeOfSystem
 import views.ViewUtils
 
 import java.time.LocalDate
@@ -30,6 +31,11 @@ final case class TaxReturnObligation(
 ) {
   def toReturnQuarter(implicit messages: Messages): String = {
     ViewUtils.displayReturnQuarter(fromDate, toDate)
+  }
+
+  def tooOldToAmend(implicit edgeOfSystem: EdgeOfSystem): Boolean = {
+    val today = edgeOfSystem.localDateTimeNow.toLocalDate
+    dueDate.isBefore(today.minusYears(4))
   }
 }
 

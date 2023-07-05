@@ -43,10 +43,12 @@ import repositories.SessionRepository
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
 import support.AmendExportedData
+import util.EdgeOfSystem
 import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -68,6 +70,7 @@ class CheckYourAnswersControllerSpec
   private val comparisonService = mock[AmendReturnAnswerComparisonService]
   private val sessionRepository = mock[SessionRepository]
   private val view = mock[CheckYourAnswersView]
+  private implicit val edgeOfSystem = mock[EdgeOfSystem]
 
   private val sut = new CheckYourAnswersController(
     messagesApi,
@@ -97,6 +100,7 @@ class CheckYourAnswersControllerSpec
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
 
 
