@@ -70,7 +70,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
         value =>
           request.userAnswers
-            .setOrFail(AnotherBusinessExportedWeightPage, value, isCleanUp(mode))
+            .setOrFail(AnotherBusinessExportedWeightPage, value, mode != CheckMode)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
             .map(updatedUserAnswers =>
               Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
@@ -79,7 +79,4 @@ class AnotherBusinessExportWeightController @Inject()(
             )
         )
   }
-
-  private def isCleanUp(mode: Mode) =
-    if(mode == CheckMode) false else true
 }
