@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-//TODO: Multi services in here, break it down now, funk soul brother
+
 class TaxReturnHelper @Inject()(
                                  returnsConnector: TaxReturnsConnector,
                                  obligationsConnector: ObligationsConnector
