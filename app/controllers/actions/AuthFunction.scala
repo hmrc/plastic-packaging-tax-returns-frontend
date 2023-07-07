@@ -18,7 +18,7 @@ package controllers.actions
 
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
-import controllers.home.{routes => homeRoutes}
+import controllers.actions.AuthFunction.QueryParamKeys
 import play.api.mvc.{Request, Result, Results, WrappedRequest}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -29,10 +29,8 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 case class AuthedUser[A](internalId: String, request: Request[A]) extends WrappedRequest[A](request)
 
-//VERY BASIC auth function.
 class AuthFunction @Inject() (
   override val authConnector: AuthConnector,
   appConfig: FrontendAppConfig,
@@ -56,15 +54,23 @@ class AuthFunction @Inject() (
         block(AuthedUser(internalId, request))
     } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(target)))
+        Results.Redirect(appConfig.loginUrl, Map(QueryParamKeys.continue -> Seq(target)))
 
       case _: IncorrectCredentialStrength =>
         Results.Redirect(appConfig.mfaUpliftUrl,
-          Map("origin"      -> Seq(appConfig.serviceIdentifier),
-            "continueUrl" -> Seq(target)
+          Map(QueryParamKeys.origin -> Seq(appConfig.serviceIdentifier),
+            QueryParamKeys.continueUrl -> Seq(target)
           )
         )
     }
   }
 
+}
+
+object AuthFunction {
+  object QueryParamKeys {
+    val continue = "continue"
+    val origin = "origin"
+    val continueUrl = "continueUrl"
+  }
 }

@@ -19,6 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
+import controllers.actions.AuthenticatedIdentifierAction.ContinueQueryParamKey
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import models.Mode.NormalMode
 import models.SignedInUser
@@ -91,7 +92,7 @@ class AuthenticatedIdentifierAction @Inject() (
         }
     } recover {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("continue" -> Seq(request.target.path)))
+        Redirect(appConfig.loginUrl, Map(ContinueQueryParamKey -> Seq(request.target.path)))
 
       case _: InsufficientEnrolments =>
         Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
@@ -109,6 +110,7 @@ class AuthenticatedIdentifierAction @Inject() (
 }
 
 object AuthenticatedIdentifierAction {
+  val ContinueQueryParamKey = "continue"
   object IdentifierAction {
     val pptEnrolmentKey = "HMRC-PPT-ORG"
     val pptEnrolmentIdentifierName = "EtmpRegistrationNumber"

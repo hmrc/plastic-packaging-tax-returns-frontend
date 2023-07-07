@@ -18,7 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import connectors.{DownstreamServiceError, SubscriptionConnector}
-import models.PPTSubscriptionDetails
+import models.{EisFailure, PPTSubscriptionDetails}
 import models.requests.IdentifiedRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
@@ -46,7 +46,7 @@ class SubscriptionFilter @Inject()(
           case Left(eisFailure) if eisFailure.isDeregistered =>
             Future.successful(Some(Redirect(controllers.routes.DeregisteredController.onPageLoad())))
           case Left(eisFailure) if eisFailure.isDependentSystemsNotResponding =>
-            throw DownstreamServiceError("Dependent systems are currently not responding.", new ServiceUnavailableException(eisFailure.failures.toString))
+            throw DownstreamServiceError(EisFailure.DependantSystemReason, new ServiceUnavailableException(eisFailure.failures.toString))
           case Left(eisFailure) =>
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
