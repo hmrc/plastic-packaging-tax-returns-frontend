@@ -630,7 +630,6 @@ newGroupLeadEnterContactAddress.addressLine3.label = Address line 3 (optional)
 newGroupLeadEnterContactAddress.addressLine4.label = Town or city
 newGroupLeadEnterContactAddress.postalCode.label = Postcode (required for UK addresses)
 newGroupLeadEnterContactAddress.countryCode.label = Country
-newGroupLeadEnterContactAddress.error.addressLine.required = Enter the contact address for your organisation
 newGroupLeadEnterContactAddress.error.addressLine1.required = Enter the first line of the organisation’s contact address
 newGroupLeadEnterContactAddress.error.addressLine4.required = Enter a town or city
 newGroupLeadEnterContactAddress.error.addressLine1.length = Address line 1 must be 35 characters or fewer
@@ -644,8 +643,6 @@ newGroupLeadEnterContactAddress.error.addressLine4.invalid.line = Town or city m
 newGroupLeadEnterContactAddress.error.postalCode.inRange = Enter a postcode in the correct format, like AB1 2CD
 newGroupLeadEnterContactAddress.error.postalCode.required = Enter the postcode for your organisation
 newGroupLeadEnterContactAddress.error.countryCode.required = Enter a country
-newGroupLeadEnterContactAddress.error.countryCode.length = Country must be 35 characters or fewer
-newGroupLeadEnterContactAddress.error.countryCode.invalid = Country must only include letters, numbers, ampersands, hyphens, apostrophes, commas and full stops
 newGroupLeadEnterContactAddress.error.nonUkPostCode.length = Postcode must be 10 characters or fewer
 
 mainContactJobTitle.title = What is the main contact’s job title?

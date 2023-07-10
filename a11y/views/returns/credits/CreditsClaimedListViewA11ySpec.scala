@@ -19,10 +19,10 @@ package views.returns.credits
 import base.ViewSpecBase
 import models.Mode.NormalMode
 import models.returns.CreditRangeOption
-import models.{CreditBalance, TaxablePlastic}
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, TaxablePlastic}
 import play.api.data.Form
-import play.api.data.Forms.{boolean, localDate}
+import play.api.data.Forms.boolean
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Text}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.CreditsClaimedListView

@@ -18,7 +18,6 @@ package controllers.amends
 
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
-import models.Mode.CheckMode
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach

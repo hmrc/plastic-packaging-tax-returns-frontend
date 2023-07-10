@@ -25,7 +25,6 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import views.ViewUtils
 import views.html.returns.credits.ConvertedCreditsView
 
 import java.time.LocalDate

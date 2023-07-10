@@ -18,15 +18,12 @@ package controllers.helpers
 
 import models.UserAnswers
 import models.returns.{Calculations, TaxReturnObligation}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.{AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage, DirectlyExportedWeightPage}
 import play.api.i18n.Messages
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import viewmodels.{RowInfo, TaxReturnViewModel}
-
-import java.text.DecimalFormat
-import scala.math.BigDecimal.RoundingMode
 
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 

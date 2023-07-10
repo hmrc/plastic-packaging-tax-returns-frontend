@@ -19,12 +19,11 @@ package auditor
 import audit.Auditor
 import audit.returns.{AmendStarted, ReturnStarted}
 import base.utils.ConnectorISpec
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{times, verify}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 
 import java.time.ZonedDateTime
 

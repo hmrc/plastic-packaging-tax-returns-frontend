@@ -18,7 +18,7 @@ package support
 
 import cacheables.{AmendObligationCacheable, ReturnDisplayApiCacheable}
 import models.UserAnswers
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails, TaxReturnObligation}
+import models.returns._
 
 import java.time.LocalDate
 

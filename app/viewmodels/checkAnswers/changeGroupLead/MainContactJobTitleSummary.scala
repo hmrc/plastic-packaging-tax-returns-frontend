@@ -17,8 +17,8 @@
 package viewmodels.checkAnswers.changeGroupLead
 
 import controllers.changeGroupLead.routes
-import models.UserAnswers
 import models.Mode.CheckMode
+import models.UserAnswers
 import pages.changeGroupLead.MainContactJobTitlePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat

@@ -22,8 +22,6 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import views.ViewUtils
 
-import javax.inject.Inject
-
 class CreditsClaimedListFormProvider extends Mappings {
 
   val standardError = "creditsSummary.error.required"

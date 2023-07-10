@@ -27,8 +27,8 @@ import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import play.api.data.{Form, Forms}
 import play.api.data.format.Formats
+import play.api.data.{Form, Forms}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

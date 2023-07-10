@@ -23,8 +23,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentMatchers, MockitoSugar}
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
-import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}

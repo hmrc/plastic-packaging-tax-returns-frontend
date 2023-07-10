@@ -16,7 +16,7 @@
 
 package base
 
-import cacheables.{ReturnObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ReturnDisplayApiCacheable, ReturnObligationCacheable}
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._

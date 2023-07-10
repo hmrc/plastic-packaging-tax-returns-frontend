@@ -16,8 +16,8 @@
 
 package models.returns
 
-import models.{CreditBalance, UserAnswers}
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, UserAnswers}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary

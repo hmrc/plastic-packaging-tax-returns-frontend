@@ -19,18 +19,17 @@ package controllers.changeGroupLead
 import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.MainContactNameFormProvider
-
-import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest._
+import navigation.ChangeGroupLeadNavigator
 import pages.changeGroupLead.{ChooseNewGroupLeadPage, MainContactNamePage}
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.data.FormBinding.Implicits.formBinding
-import models.requests.DataRequest._
-import navigation.ChangeGroupLeadNavigator
 import views.html.changeGroupLead.MainContactNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class MainContactNameController @Inject()(

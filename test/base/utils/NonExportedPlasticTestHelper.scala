@@ -17,7 +17,7 @@
 package base.utils
 
 import models.UserAnswers
-import pages.returns.{AnotherBusinessExportedWeightPage, DirectlyExportedPage, DirectlyExportedWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, AnotherBusinessExportedPage}
+import pages.returns._
 
 object NonExportedPlasticTestHelper {
 

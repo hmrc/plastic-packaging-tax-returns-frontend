@@ -17,7 +17,6 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import models.requests.IdentifiedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 

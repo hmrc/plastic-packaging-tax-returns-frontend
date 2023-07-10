@@ -21,9 +21,7 @@ import models.requests.IdentityData
 import models.subscription._
 import models.subscription.subscriptionDisplay.{ChangeOfCircumstanceDetails, SubscriptionDisplayResponse}
 import models.{SignedInUser, subscription}
-import org.joda.time.{DateTime, LocalDate}
-import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 import java.time.ZoneOffset.UTC

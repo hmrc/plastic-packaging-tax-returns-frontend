@@ -24,8 +24,8 @@ import models.Mode
 import models.Mode.CheckMode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import play.api.data.FormBinding.Implicits.formBinding
 import pages.returns.AnotherBusinessExportedWeightPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import services.ExportedPlasticAnswer

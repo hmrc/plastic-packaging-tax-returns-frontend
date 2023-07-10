@@ -18,8 +18,8 @@ package controllers.actions
 
 import com.google.inject.Inject
 import connectors.{DownstreamServiceError, SubscriptionConnector}
-import models.{EisFailure, PPTSubscriptionDetails}
 import models.requests.IdentifiedRequest
+import models.{EisFailure, PPTSubscriptionDetails}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
 import repositories.SessionRepository

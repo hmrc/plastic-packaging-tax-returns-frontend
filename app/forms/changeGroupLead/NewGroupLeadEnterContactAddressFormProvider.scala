@@ -109,7 +109,6 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val postalCodeMaxLength = 10
   val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
 
-  val addressLineRequiredKey = "newGroupLeadEnterContactAddress.error.addressLine.required"
   val addressLine1RequiredKey = "newGroupLeadEnterContactAddress.error.addressLine1.required"
   val addressLine1LengthKey = "newGroupLeadEnterContactAddress.error.addressLine1.length"
   val addressLine1InvalidCharKey = "newGroupLeadEnterContactAddress.error.addressLine1.invalid.line"
@@ -124,6 +123,4 @@ object NewGroupLeadEnterContactAddressFormProvider {
   val nonUkPostalCodeMaxLengthKey = "newGroupLeadEnterContactAddress.error.nonUkPostCode.length"
   val postalCodeRequiredKey = "newGroupLeadEnterContactAddress.error.postalCode.required"
   val countryCodeRequiredKey = "newGroupLeadEnterContactAddress.error.countryCode.required"
-  val countryCodeLengthKey = "newGroupLeadEnterContactAddress.error.countryCode.length"
-  val countryCodeInvalidCharKey = "newGroupLeadEnterContactAddress.error.countryCode.invalid"
 }

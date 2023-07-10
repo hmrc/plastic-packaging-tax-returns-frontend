@@ -17,7 +17,7 @@
 package navigation
 
 import com.google.inject.Inject
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.{routes => creditRoutes}
 import controllers.returns.{routes => returnRoutes}

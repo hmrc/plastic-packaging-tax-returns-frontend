@@ -29,7 +29,7 @@ import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, theSame
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Logger
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 
 import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -72,7 +72,7 @@ class AvailableCreditYearsConnectorSpec extends AnyWordSpec
     }
 
     "return an error" in {
-      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse("message", 500, 500))
+      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse("message", 500, 500))
       a [DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
       withClue("stop the timer") {
         verify(timer).stop

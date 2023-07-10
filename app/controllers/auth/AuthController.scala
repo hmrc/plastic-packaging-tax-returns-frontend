@@ -17,14 +17,14 @@
 package controllers.auth
 
 import config.FrontendAppConfig
+import controllers.actions.AuthLoggedInAction
+import controllers.auth.AuthController.QueryParamContinueKey
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.actions.AuthLoggedInAction
-import controllers.auth.AuthController.QueryParamContinueKey
 
 class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,

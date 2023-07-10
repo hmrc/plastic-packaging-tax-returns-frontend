@@ -20,8 +20,8 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.DoYouWantToClaimFormProvider
+import models.UserAnswers
 import models.requests.DataRequest.headerCarrier
-import models.{Mode, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.FormBinding.Implicits.formBinding

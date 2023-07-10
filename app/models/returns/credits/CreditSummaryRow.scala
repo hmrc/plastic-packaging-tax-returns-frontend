@@ -16,7 +16,7 @@
 
 package models.returns.credits
 
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}

@@ -17,9 +17,7 @@
 package views
 
 import base.ViewSpecBase
-import config.FrontendAppConfig
 import forms.AgentsFormProvider
-import forms.changeGroupLead.MainContactNameFormProvider
 import models.Mode.NormalMode
 import play.api.data.Form
 import play.twirl.api.Html

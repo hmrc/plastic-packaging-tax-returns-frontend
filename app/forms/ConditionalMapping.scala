@@ -16,8 +16,8 @@
 
 package forms
 
-import play.api.data.{FormError, Mapping}
 import play.api.data.validation.Constraint
+import play.api.data.{FormError, Mapping}
 import uk.gov.voa.play.form.Condition
 
 case class ConditionalMapping[T](

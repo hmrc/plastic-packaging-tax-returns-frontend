@@ -31,7 +31,6 @@ import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import views.html.returns.StartYourReturnView

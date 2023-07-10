@@ -16,7 +16,6 @@
 
 package viewmodels
 
-import org.mockito.MockitoSugar.when
 import org.scalatestplus.play.PlaySpec
 
 class ViewmodelsSpec extends PlaySpec {

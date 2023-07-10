@@ -17,10 +17,9 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import models.returns.CreditRangeOption
 import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.Mode.NormalMode
-import play.api.mvc.Call
+import models.returns.CreditRangeOption
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.ClaimForWhichYearView

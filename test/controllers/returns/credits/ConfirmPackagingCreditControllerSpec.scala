@@ -27,12 +27,10 @@ import models.returns.{CreditRangeOption, CreditsAnswer}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.mockito.MockitoSugar
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}

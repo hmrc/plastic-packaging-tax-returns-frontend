@@ -22,8 +22,8 @@ import config.FrontendAppConfig
 import connectors.{DownstreamServiceError, TaxReturnsConnector}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.amends.AmendNewAnswerType.AnswerWithValue
+import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.requests.DataRequest
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.Answers
@@ -48,7 +48,6 @@ import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
-import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try

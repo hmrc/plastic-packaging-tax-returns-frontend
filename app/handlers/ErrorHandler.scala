@@ -23,7 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.http.{HttpException, Upstream5xxResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.http.{ApplicationException, FrontendErrorHandler}
 import views.html.ErrorTemplate
 

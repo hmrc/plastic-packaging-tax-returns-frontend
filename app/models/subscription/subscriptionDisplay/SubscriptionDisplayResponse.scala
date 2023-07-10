@@ -17,13 +17,7 @@
 package models.subscription.subscriptionDisplay
 
 import models.subscription.group.GroupPartnershipSubscription
-import models.subscription.{
-  AddressDetails,
-  Declaration,
-  LegalEntityDetails,
-  PrimaryContactDetails,
-  PrincipalPlaceOfBusinessDetails
-}
+import models.subscription._
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionDisplayResponse(
