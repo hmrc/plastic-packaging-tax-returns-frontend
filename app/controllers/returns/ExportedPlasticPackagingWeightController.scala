@@ -70,7 +70,7 @@ class ExportedPlasticPackagingWeightController @Inject()(
             Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
           value =>
             request.userAnswers
-              .setOrFail(DirectlyExportedWeightPage, value, isCleanUp(mode))
+              .setOrFail(DirectlyExportedWeightPage, value, mode != CheckMode)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
               .map(updatedAnswers =>
                 Redirect(navigator.exportedPlasticPackagingWeightRoute(
@@ -89,6 +89,4 @@ class ExportedPlasticPackagingWeightController @Inject()(
     )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
   }
 
-  private def isCleanUp(mode: Mode) =
-    if(mode == CheckMode) false else true
 }
