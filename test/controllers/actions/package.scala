@@ -20,7 +20,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 
 package object actions {
 
-  implicit class RichGeneric[A](val a: A) extends AnyVal {
+  implicit class RetrievalSugar[A](val a: A) extends AnyVal {
     def and[B](b: B): A ~ B = new ~(a, b)
   }
 
