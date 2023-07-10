@@ -124,9 +124,8 @@ class ReturnsCheckYourAnswersController @Inject()(
     if (isFirstReturn)
       Future.successful(Right(NoCreditAvailable))
     else if (isUserClaimingCredit)
-        creditsCalculatorConnector.get(request.pptReference).map {
-          case Right(creditBalance) => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
-          case Left(error) => Left(error)
+        creditsCalculatorConnector.getEventually(request.pptReference).map {
+          creditBalance => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
         }
     else
       Future.successful(Right(NoCreditsClaimed))

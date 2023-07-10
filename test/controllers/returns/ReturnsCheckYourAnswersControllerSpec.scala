@@ -54,14 +54,14 @@ import scala.concurrent.Future
 
 class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFluency with BeforeAndAfterEach {
 
-  private val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
+  private val taxReturnObligation: TaxReturnObligation = TaxReturnObligation(
     LocalDate.parse("2022-04-01"),
     LocalDate.parse("2022-06-30"),
     LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
 
   private val userAnswers = UserAnswers("123")
-    .set(ReturnObligationCacheable, taxReturnOb).get
+    .set(ReturnObligationCacheable, taxReturnObligation).get
 
   private val calculations = Calculations(
     taxDue = 17,
@@ -99,6 +99,10 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(message.apply(any[String], any)).thenReturn("messages")
     when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
+
+    when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(
+      CreditBalance(10, 20, 500L, true, Map(keyString -> TaxablePlastic(1, 2, 0.30)))
+    )
   }
 
   "Returns Check Your Answers Controller" should {
@@ -190,13 +194,10 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   "return an error" when {
     "cannot get credit" in {
-      setUpMockConnector(
-        taxReturnConnectorResult = Right(calculations),
-        creditConnectorResult = Left(
-          DownstreamServiceError("Credit Balance API error",
-            new Exception("Credit Balance API error"))
-        )
+      when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.failed(
+        DownstreamServiceError("Credit Balance API error",new Exception("Credit Balance API error"))
       )
+      setUpMockConnector(taxReturnConnectorResult = Right(calculations))
 
       intercept[RuntimeException] {
         await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
@@ -204,13 +205,9 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
 
     "cannot get tax return calculation" in {
-      setUpMockConnector(
-        taxReturnConnectorResult = Left(
-          DownstreamServiceError("Tax return calculation error",
-            new Exception("error"))
-        )
-      )
-
+      setUpMockConnector(taxReturnConnectorResult = Left(
+          DownstreamServiceError("Tax return calculation error", new Exception("error"))
+      ))
       intercept[RuntimeException] {
         await(createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo")))
       }
@@ -227,9 +224,11 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     }
 
     "all api return an error" in {
+      when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.failed(
+        DownstreamServiceError("Credit Balance API error", new Exception("Credit Balance API error"))
+      )
       setUpMockConnector(
         taxReturnConnectorResult = Left(DownstreamServiceError("Tax return calculation error", new Exception("error"))),
-        creditConnectorResult = Left(DownstreamServiceError("Credit Balance API error", new Exception("Credit Balance API error")))
       )
       when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenThrow(new RuntimeException("Error"))
 
@@ -254,18 +253,11 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
   private def setUpMockConnector(
     taxReturnConnectorResult: Either[ServiceError, Calculations] = Right(calculations),
-    creditConnectorResult: Either[ServiceError, CreditBalance] = Right(CreditBalance(10, 20, 500L, true, Map(
-      keyString -> TaxablePlastic(1, 2, 0.30)))),
     isFirstReturnResult: Boolean = false
   ): Unit = {
-    when(mockTaxReturnConnector.getCalculationReturns(any)(any))
-      .thenReturn(Future.successful(taxReturnConnectorResult))
-
-    when(mockCalculateCreditConnector.get(any)(any))
-      .thenReturn(Future.successful(creditConnectorResult))
-
-    when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(
-      Future.successful(Some(taxReturnOb, isFirstReturnResult))
+    when(mockTaxReturnConnector.getCalculationReturns(any)(any)) thenReturn Future.successful(taxReturnConnectorResult)
+    when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)) thenReturn Future.successful(
+      Some((taxReturnObligation, isFirstReturnResult))
     )
   }
 
