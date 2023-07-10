@@ -52,8 +52,6 @@
         @heading("creditsSummary.title-heading")
         @creditSummaryTable(summaryRows)
 
-        @paragraphBody(messages("creditsSummary.paragraph.credit-will-be-applied", strong(creditBalance.totalRequestedCreditInPounds.asPounds)))
-
         @if(!creditBalance.canBeClaimed){
             @sectionH2Heading(messages("creditsSummary.tooMuch.heading"))
             @paragraphBody(messages("creditsSummary.tooMuch.p1", displayLocalDate(earliestCreditDate)))
@@ -68,6 +66,8 @@
             @paragraphBody(messages("creditsSummary.tooMuch.p3"))
             @paragraphBody(messages("creditsSummary.tooMuch.p4"))
         } else {
+
+            @paragraphBody(messages("creditsSummary.paragraph.credit-will-be-applied", strong(creditBalance.totalRequestedCreditInPounds.asPounds)))
 
             @rangeOptionsRemaining match {
                 case Nil => { <input id="defaultNoInput" name="value" type="hidden" value="false"> }

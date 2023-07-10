@@ -26,12 +26,6 @@ trait CommonFormValidators {
 
   val maxLength = 100
 
-  def nonEmptyString(errorKey: String): Mapping[String] =
-    optional(text)
-      .verifying(errorKey, _.nonEmpty)
-      .transform[String](_.get, Some.apply)
-      .verifying(errorKey, _.trim.nonEmpty)
-
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
   val isDigitsOnly: String => Boolean = value =>
@@ -59,14 +53,8 @@ trait CommonFormValidators {
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.trim.length <= maxLength
 
-  val isValidName: String => Boolean = (name: String) =>
-    name.isEmpty || isMatchingPattern(name, namePattern)
-
   protected val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
-
-  private val namePattern =
-    Pattern.compile("^[a-zA-Z0-9À-ÿ !#$%&''‘’\\\"“”«»()*+,./:;=?@\\[\\]£€¥\\\\—–‐-]{1,160}$")
 
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 

@@ -319,9 +319,11 @@ viewReturnSummary.sectionHeader = Cyflwynwyd Ffurflen Dreth ar gyfer
 viewReturnSummary.amendLink = Diwygio’r Ffurflen Dreth hon
 viewReturnSummary.amend.notamendable.h2 = Ni allwch ddiwygio’r Ffurflen Dreth hon eto
 viewReturnSummary.amend.notamendable.p1 = Mae gennych daliad Debyd Uniongyrchol sy’n ddyledus cyn pen 3 diwrnod gwaith. Gallwch ddiwygio’r Ffurflen Dreth hon ar ôl i’r taliad hwn gael ei wneud.
+viewReturnSummary.amend.notamendable.tooold.h2 = Ni allwch ddiwygio’r datganiad hwn
+viewReturnSummary.amend.notamendable.tooold.p1 = Roedd dyddiad cau y Ffurflen Treth Deunydd Pacio Plastig hon dros 4 blynedd yn ôl. Gallwch ond diwygio Ffurflen Treth Deunydd Pacio Plastig cyn pen 4 blynedd o’i dyddiad cau gwreiddiol.
 viewReturnSummary.amend.inset.text = Os oes angen i chi wneud newidiadau i’ch Ffurflen Dreth, bydd angen i chi {0}.
 viewReturnSummary.amend.inset.link = gyflwyno Ffurflen Dreth newydd gan ddefnyddio’r ffurflen ar-lein hon
-viewReturnSummary.viewReturnsLink = Bwrw golwg dros Ffurflenni Treth a gyflwynwyd o gyfnodau eraill
+viewReturnSummary.viewReturnsLink = Bwrw golwg dros neu ddiwygio’r holl Ffurflenni Treth a gyflwynwyd
 viewReturnSummary.summary.heading = Crynodeb
 viewReturnSummary.summary.field.liability = Treth sy’n ddyledus ar y Ffurflen Dreth hon
 viewReturnSummary.summary.field.processed = Dyddiad cyflwyno’r Ffurflen Dreth
@@ -415,6 +417,8 @@ account.homePage.card.deregister.body = Canslo’ch cofrestriad ar gyfer y Dreth
 submittedReturns.title = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 submittedReturns.heading = Bwrw golwg dros y Ffurflenni Treth a gyflwynwyd
 submittedReturns.vieworamendreturn = Bwrw golwg dros y Ffurflen Dreth
+submittedReturns.viewreturn = Bwrw golwg dros y datganiad
+submittedReturns.amend.info.p1 = Gallwch ond diwygio Ffurflen Treth Deunydd Pacio Plastig cyn pen 4 blynedd o’i dyddiad cau gwreiddiol.
 submittedReturns.nothingsubmitted = Nid ydych wedi cyflwyno unrhyw Ffurflenni Treth hyd yn hyn.
 submittedReturns.accounthomelink = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
 
@@ -706,6 +710,8 @@ converted-credits-weight.error.wholeNumber = Mae’n rhaid i’r pwysau beidio �
 
 cancelCreditsClaim.error.required = Dewiswch ‘Iawn’ os ydych am ganslo’r credyd hwn
 cancelCreditsClaim.title-heading = A ydych yn siŵr eich bod am ganslo’r credyd hwn ar gyfer {0}?
+
+cancelCreditsClaimError.title-heading = Mae‘r credyd hwn wedi cael ei dynnu
 
 creditsSummary.title-heading = Crynodeb o’r o gredyd
 creditsSummary.table.heading.1 = Dyddiadau

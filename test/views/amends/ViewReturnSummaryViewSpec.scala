@@ -49,7 +49,7 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
   val summaryRow = ViewReturnSummaryViewModel(displayReturn)(messages)
 
   def createView: Html = {
-    page("anyPeriod", summaryRow, Some(Call(GET, "/foo")), "£300")(request, messages)
+    page("anyPeriod", summaryRow, Right(Call(GET, "/foo")), "£300")(request, messages)
   }
 
   "view" should {

@@ -42,7 +42,7 @@ import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status, stubMessagesControllerComponents}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HttpVerbs.GET
-import views.html.returns.credits.CancelCreditsClaimView
+import views.html.returns.credits.{CancelCreditsClaimErrorView, CancelCreditsClaimView}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.global
@@ -58,6 +58,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
   private val formProvider = mock[CancelCreditsClaimFormProvider]
   private val controllerComponents = stubMessagesControllerComponents()
   private val view = mock[CancelCreditsClaimView]
+  private val errorView = mock[CancelCreditsClaimErrorView]
   private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[Boolean]]
   private val saveFunction = mock[SaveUserAnswerFunc]
@@ -72,7 +73,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     journeyAction,
     formProvider,
     controllerComponents,
-    view
+    view,
+    errorView
   )(global)
 
   override def beforeEach(): Unit = {
@@ -82,6 +84,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(view.apply(any, any, any)(any, any)) thenReturn Html("the view")
+    when(errorView.apply(any)(any, any)) thenReturn Html("the error view")
     when(formProvider.apply()) thenReturn form
 
     when(navigator.cancelCredit()) thenReturn Call(GET, "/next-page")
@@ -91,7 +94,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
     when(request.userAnswers.removePath(any)) thenReturn x
     when(request.userAnswers.save(any)(any)) thenReturn Future.successful(x)
 
-    when(request.userAnswers.getOrFail[Any](any[JsPath])(any, any)) thenReturn exampleSingleYearClaim
+    when(request.userAnswers.get[Any](any[JsPath])(any)) thenReturn Some(exampleSingleYearClaim)
   }
 
   "onPageLoad" should {
@@ -113,6 +116,16 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       sut.onPageLoad("year-key")(request)
       val expectedCall = routes.CancelCreditsClaimController.onSubmit("year-key")
       verify(view).apply(eqTo(form), eqTo(expectedCall), eqTo(exampleSingleYearClaim))(any, any)
+    }
+    
+    "display an error if there is no claim for the given key" in {
+      when(request.userAnswers.get[Any](any[JsPath])(any)) thenReturn None // key not found
+      
+      val result = sut.onPageLoad("year-key")(request)
+      verify(navigator).cancelCredit()
+      verify(errorView).apply(eqTo("/next-page"))(any, any)
+      
+      contentAsString(result) mustBe "the error view"
     }
 
   }

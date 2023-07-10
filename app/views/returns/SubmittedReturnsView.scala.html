@@ -19,6 +19,7 @@
 @import views.html.components.{TaxReturnLink, Link, heading, paragraphBody}
 @import components.ReturnsSectionHeading
 @import views.ViewUtils.displayReturnQuarter
+@import util.EdgeOfSystem
 
 @this(
         layout: templates.Layout,
@@ -27,17 +28,16 @@
         taxReturnLink:TaxReturnLink,
         heading: heading,
         paragraphBody: paragraphBody
-)
+)(implicit edgeOfSystem: EdgeOfSystem)
 
 
 @(obligations: Seq[TaxReturnObligation])(implicit request: Request[_], messages: Messages)
 
-
-@*TODO: order the Seq by obligation dates before operating on*@
-
 @returnsLine = @{
-    obligations.zipWithIndex.map {
-        case (o,i) => taxReturnLink(displayReturnQuarter(o), o, i, messages("submittedReturns.vieworamendreturn"))
+    obligations.sortBy(_.fromDate).reverse.zipWithIndex.map {
+        case (o,i) =>
+            val linkText = messages(if(o.tooOldToAmend) "submittedReturns.viewreturn" else "submittedReturns.vieworamendreturn")
+            taxReturnLink(displayReturnQuarter(o), o, i, linkText)
     }
 }
 
@@ -45,6 +45,10 @@
     @if(obligations.isEmpty) {
         @paragraphBody(messages("submittedReturns.nothingsubmitted"))
     } else {
+        <div class="govuk-inset-text">
+            @paragraphBody(messages("submittedReturns.amend.info.p1"))
+        </div>
+
         <ul id="previous-returns-list" class="govuk-body">@returnsLine</ul>
     }
 }

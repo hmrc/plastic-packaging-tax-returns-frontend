@@ -101,7 +101,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
       "display tax rate" in {
         val view = createView(calculation = createCalculations(false), amendmentMade = true)
 
-        view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300 per tonne.")
+        view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300.00 per tonne.")
       }
       "amended" in {
         val view = createView(calculation = createCalculations(true), amendmentMade = true)

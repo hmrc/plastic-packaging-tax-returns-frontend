@@ -31,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
+import util.EdgeOfSystem
 import viewmodels.checkAnswers.amends._
 import views.html.amends.CheckYourAnswersView
 
@@ -45,7 +46,7 @@ class CheckYourAnswersController @Inject()
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
  view: CheckYourAnswersView,
-) (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     journeyAction.async {
@@ -55,6 +56,8 @@ class CheckYourAnswersController @Inject()
         }
         else {
           request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
+            case Some(obligation) if obligation.tooOldToAmend =>
+              throw new IllegalStateException(s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}")
             case Some(obligation) =>
               returnsConnector.getCalculationAmends(request.pptReference).map {
                 case Right(calculations) => displayPage(request, obligation, calculations)
