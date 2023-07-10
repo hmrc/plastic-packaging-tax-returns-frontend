@@ -22,12 +22,11 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//todo only used in one controller... Agent Selcted PPTRef
+
 class AuthAgentActionImpl @Inject() (
   authorisedFun: AuthFunction,
   mcc: MessagesControllerComponents
-)(implicit ec: ExecutionContext)
-    extends AuthAgentAction {
+) extends AuthAgentAction {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser

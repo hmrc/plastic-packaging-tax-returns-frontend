@@ -23,13 +23,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.actions.AuthCheckAction
+import controllers.actions.AuthLoggedInAction
 import controllers.auth.AuthController.QueryParamContinueKey
 
 class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   config: FrontendAppConfig,
-  authenticate: AuthCheckAction
+  authenticate: AuthLoggedInAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
