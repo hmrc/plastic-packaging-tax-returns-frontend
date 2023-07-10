@@ -87,10 +87,12 @@ class ReturnsCheckYourAnswersController @Inject()(
     (implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
 
     request.userAnswers.get(WhatDoYouWantToDoPage) match {
-      case Some(isUserClaimingCredit) => displayPage2(request, obligation, isUserClaimingCredit, false) // TODO making an assumption here, is it sound?
+      // Assumption - if user has answered this question, then it cannot be their first return
+      case Some(isUserClaimingCredit) => displayPage2(request, obligation, isUserClaimingCredit, isFirstReturn = false)
       case None =>
         taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference).flatMap {
-          case Some((_, true)) => displayPage2(request, obligation, false, true)
+          // User's first return, so they cannot claim credit
+          case Some((_, true)) => displayPage2(request, obligation, isUserClaimingCredit = false, isFirstReturn = true)
           case _ => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
         }
     }
@@ -113,21 +115,21 @@ class ReturnsCheckYourAnswersController @Inject()(
       calculations <- returnsConnector.getCalculationReturns(request.pptReference)
       credits <- getCredits(request, isUserClaimingCredit, isFirstReturn)
     } yield (calculations, credits) match {
-      case (Right(calculations), Right(credits)) => (calculations, credits)
+      case (Right(calculations), credits) => (calculations, credits)
       case _ => throw new RuntimeException("Error: There was a problem retrieving return calculation or the credits balance")
     }
   }
 
   private def getCredits(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
-    (implicit hc: HeaderCarrier, messages: Messages): Future[Either[ServiceError, Credits]] =
+    (implicit hc: HeaderCarrier, messages: Messages): Future[Credits] =
     
     if (isFirstReturn)
-      Future.successful(Right(NoCreditAvailable))
+      Future.successful(NoCreditAvailable)
     else if (isUserClaimingCredit)
-        creditsCalculatorConnector.getEventually(request.pptReference).map {
-          creditBalance => Right(CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance))
-        }
+      creditsCalculatorConnector.getEventually(request.pptReference).map {
+        creditBalance => CreditsClaimedDetails(request.userAnswers, creditBalance = creditBalance)
+      }
     else
-      Future.successful(Right(NoCreditsClaimed))
+      Future.successful(NoCreditsClaimed)
 
 }
