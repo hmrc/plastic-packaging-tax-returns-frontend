@@ -25,7 +25,7 @@ import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -57,7 +57,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
   private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
   private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[Navigator]
+  private val mockNavigator = mock[ReturnsJourneyNavigator]
   private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
@@ -113,7 +113,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     "redirect to the next page" in {
       def onwardRoute = Call("GET", "/foo")
       val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = 8L).get
-      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
+      when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(any())) thenReturn onwardRoute
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
 
       val result = createSut(Some(userAnswersWithExportAmount)).onSubmit(NormalMode)(
@@ -148,7 +148,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     }
 
     "set the cache" in {
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(Call(GET, "foo"))
+      when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(any())).thenReturn(Call(GET, "foo"))
       when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mock[HttpResponse]))
 
       await(createSut(Some(nonExportedAnswer)).onSubmit(NormalMode)(
