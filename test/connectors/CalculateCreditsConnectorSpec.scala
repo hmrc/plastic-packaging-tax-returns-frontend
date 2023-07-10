@@ -44,7 +44,8 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
     super.afterAll()
   }
 
-  "Get" should {
+  "it" should {
+    
     "return a credit for a pptReference" in {
       val creditBalance = CreditBalance(10, 5, 200, true, Map("a-key" -> TaxablePlastic(1, 2, 3)))
       

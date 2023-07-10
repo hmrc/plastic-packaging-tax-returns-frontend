@@ -106,7 +106,7 @@ class CreditsClaimedListControllerSpec
     )
 
     when(calcCreditsConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
-    when(calcCreditsConnector.get(any)(any)) thenReturn Future.successful(Right(creditBalance))
+    when(calcCreditsConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
 
     when(mockAvailableCreditYearsConnector.get(any)(any)).thenReturn(Future.successful(availableOptions))
   }

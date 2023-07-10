@@ -62,20 +62,15 @@ class CreditsClaimedListController @Inject()(
         val remainingOpts = remainingOptions(options)
         formProvider(remainingOpts).bindFromRequest().fold(
           formWithErrors => {
-            calcCreditsConnector.get(request.pptReference).map { creditBalance =>
-              creditBalance.fold(
-                error => throw error,
-                balance => BadRequest(view(formWithErrors, balance, earliestCreditDate(options), remainingOpts,
-                  createCreditSummary(request.userAnswers, balance, Some(navigator)), mode))
-              )
+            calcCreditsConnector.getEventually(request.pptReference).map { creditBalance =>
+              BadRequest(view(formWithErrors, creditBalance, earliestCreditDate(options), remainingOpts,
+                createCreditSummary(request.userAnswers, creditBalance, Some(navigator)), mode))
             }
-
           },
           isAddingAnotherYear =>
             Future.successful(Redirect(navigator.creditClaimedList(mode, isAddingAnotherYear, request.userAnswers)))
         )
       }
-
   }
 
   private def displayView(
