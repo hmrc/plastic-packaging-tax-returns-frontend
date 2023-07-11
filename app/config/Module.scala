@@ -34,8 +34,8 @@ class Module extends AbstractModule {
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
 
-    bind(classOf[AuthCheckAction])
-      .to(classOf[AuthCheckActionImpl]).asEagerSingleton()
+    bind(classOf[AuthLoggedInAction])
+      .to(classOf[AuthLoggedInActionImpl]).asEagerSingleton()
 
     bind(classOf[AuthAgentAction])
       .to(classOf[AuthAgentActionImpl]).asEagerSingleton()

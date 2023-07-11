@@ -23,16 +23,15 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{ImATeapot, Ok}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout, stubMessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 import scala.concurrent.Future
 
 
-class AuthAgentActionSpec extends PlaySpec {
-
+class AuthLoggedInActionSpec extends PlaySpec {
   val authFun: AuthFunction = mock[AuthFunction]
 
-  val sut = new AuthAgentActionImpl(
+  val sut = new AuthLoggedInActionImpl(
     authFun,
     stubMessagesControllerComponents()
   )
@@ -46,7 +45,7 @@ class AuthAgentActionSpec extends PlaySpec {
 
       await(sut.invokeBlock(request, block))
 
-      verify(authFun).authorised(AffinityGroup.Agent, request, block)
+      verify(authFun).authorised(EmptyPredicate, request, block)
     }
   }
 }
