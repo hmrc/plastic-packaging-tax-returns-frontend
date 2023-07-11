@@ -25,7 +25,7 @@ import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -50,7 +50,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   def onwardRoute = Call("GET", "/foo")
   private val mockMessageApi = mock[MessagesApi]
   private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[Navigator]
+  private val mockNavigator = mock[ReturnsJourneyNavigator]
   private val mockView = mock[NonExportedRecycledPlasticPackagingView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
@@ -115,7 +115,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
     "redirect to the next page when valid data is submitted" in {
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
-      when(mockNavigator.nextPage(any(),any(),any())).thenReturn(onwardRoute)
+      when(mockNavigator.nonExportedRecycledPlasticPackagingPage(any(),any())).thenReturn(onwardRoute)
 
       val result = createSut(userAnswer = Some(UserAnswers("123"))).onSubmit(NormalMode)(
         FakeRequest(POST, recycledPlasticPackagingRoute)

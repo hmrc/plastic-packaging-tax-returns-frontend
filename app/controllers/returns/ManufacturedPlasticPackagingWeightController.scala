@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.returns.ManufacturedPlasticPackagingWeightFormProvider
 import models.Mode
 import models.returns.TaxReturnObligation
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.ManufacturedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,7 +36,7 @@ class ManufacturedPlasticPackagingWeightController @Inject()
 (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
+  navigator: ReturnsJourneyNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -77,7 +77,7 @@ class ManufacturedPlasticPackagingWeightController @Inject()
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(ManufacturedPlasticPackagingWeightPage, mode, updatedAnswers)
+              navigator.manufacturedPlasticPackagingWeightPage(mode)
             )
         )
     }

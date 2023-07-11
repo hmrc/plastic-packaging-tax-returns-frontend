@@ -22,7 +22,7 @@ import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode
 import models.requests.DataRequest
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.NonExportedHumanMedicinesPlasticPackagingWeightPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
+  navigator: ReturnsJourneyNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -61,7 +61,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))
                 _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-            } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingWeightPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(mode))
         )
   }
 

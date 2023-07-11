@@ -26,7 +26,7 @@ import controllers.{routes => appRoutes}
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -61,7 +61,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[Navigator]
+  private val mockNavigator = mock[ReturnsJourneyNavigator]
   private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
@@ -122,7 +122,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     "redirect to the next page when valid data is submitted" in {
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
-      when(mockNavigator.nextPage(any(),any(),any())).thenReturn(Call(GET, "/faa"))
+      when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingPage(any(), any())).thenReturn(Call(GET, "/faa"))
 
       val result = createSut(userAnswer = Some(nonExportedAnswer))
         .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
@@ -131,12 +131,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         status(result) mustEqual SEE_OTHER
 
       val expectedAnswer = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingPage, true).get
-        verify(mockNavigator).nextPage(
-          ArgumentMatchers.eq(NonExportedHumanMedicinesPlasticPackagingPage),
-            ArgumentMatchers.eq(NormalMode),
-            ArgumentMatchers.eq(expectedAnswer)
-      )
-
+      verify(mockNavigator).nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, true)
       verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedAnswer))(any())
     }
 

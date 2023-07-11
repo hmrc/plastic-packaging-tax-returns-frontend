@@ -153,7 +153,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
       status(result) mustBe SEE_OTHER
-      verify(returnsNavigator).exportedByAnotherBusinessRoute(dataRequest.userAnswers, NormalMode)
+      verify(returnsNavigator).exportedByAnotherBusinessRoute(true, NormalMode)
     }
 
     "should save answer to the cache" in {

@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.NonExportedRecycledPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonExportedRecycledPlasticPackagingWeightController @Inject()(
                                                                      override val messagesApi: MessagesApi,
                                                                      cacheConnector: CacheConnector,
-                                                                     navigator: Navigator,
+                                                                     navigator: ReturnsJourneyNavigator,
                                                                      identify: IdentifierAction,
                                                                      getData: DataRetrievalAction,
                                                                      requireData: DataRequiredAction,
@@ -80,7 +80,7 @@ class NonExportedRecycledPlasticPackagingWeightController @Inject()(
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              navigator.nextPage(NonExportedRecycledPlasticPackagingWeightPage, mode, updatedAnswers)
+              navigator.nonExportedRecycledPlasticPackagingWeightPage()
             )
         )
     }

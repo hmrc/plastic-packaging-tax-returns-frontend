@@ -55,7 +55,67 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         returnsRoutes.NotStartOtherReturnsController.onPageLoad()
     }
   }
-  
+
+  "nonExportedHumanMedicinesPlasticPackagingWeightPage" should {
+    "navigate in NormalMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(NormalMode) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+    }
+    "navigate in CheckMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(CheckMode) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
+    }
+  }
+
+  "nonExportedRecycledPlasticPackagingPage" should {
+    "navigate when yes NormalMode" in{
+      navigator.nonExportedRecycledPlasticPackagingPage(NormalMode, true) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+    }
+    "navigate when yes CheckMode" in{
+      navigator.nonExportedRecycledPlasticPackagingPage(CheckMode, true) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode)
+    }
+    "navigate when no NormalMode" in{
+      navigator.nonExportedRecycledPlasticPackagingPage(NormalMode, false) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    }
+    "navigate when no CheckMode" in{
+      navigator.nonExportedRecycledPlasticPackagingPage(CheckMode, false) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  "nonExportedRecycledPlasticPackagingWeightPage" should {
+    "navigate" in {
+      navigator.nonExportedRecycledPlasticPackagingWeightPage() mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  "importedPlasticPackagingWeightPage" should {
+    "navigate" in {
+      navigator.importedPlasticPackagingWeightPage() mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+    }
+  }
+
+  "manufacturedPlasticPackagingWeightPage" should {
+    "navigate when normalmode" in{
+      navigator.manufacturedPlasticPackagingWeightPage(NormalMode) mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+    }
+    "navigate when checkmode" in{
+      navigator.manufacturedPlasticPackagingWeightPage(CheckMode) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+    }
+  }
+
+  "nonExportedHumanMedicinesPlasticPackagingPage" should {
+    "navigate when answer is yes NormalMode" in{
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, true) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+    }
+    "navigate when answer is yes CheckMode" in{
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(CheckMode, true) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode)
+    }
+    "navigate when answer is no NormalMode" in{
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, false) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+    }
+    "navigate when answer is no CheckMode" in{
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(CheckMode, false) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
+    }
+  }
+
   "what do you want to do page" should {
     "go to claim for which year" in {
       navigator.whatDoYouWantDo(isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
@@ -236,47 +296,47 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     
     "redirect to manufacturedWeight page in normal mode" when {
       "answer is Yes" in {
-        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = true, usersAnswer = true)
+        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = true, yesNo = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
       "answer is Yes and not been changed" in {
-        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = false, usersAnswer = true)
+        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = false, yesNo = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
     }
 
     "redirect to to Imported yes/no page in normal mode" when {
       "answer is No" in {
-        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = true, usersAnswer = false)
+        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = true, yesNo = false)
         call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
       }
 
       "answer is No and not been changed" in {
-        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = false, usersAnswer = false)
+        val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = false, yesNo = false)
         call mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
       }
     }
 
     "redirect to manufacturedWeight for check mode" when {
       "answer is Yes and has been changed" in {
-        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = true, usersAnswer = true)
+        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = true, yesNo = true)
         call mustBe returnsRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
       }
     }
 
     "redirect to check your answers page for check mode" when {
       "answer is No and has been changed" in {
-        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = true, usersAnswer = false)
+        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = true, yesNo = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
       "answer is Yes and has not been changed" in {
-        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = false, usersAnswer = true)
+        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = false, yesNo = true)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
       "answer is No" in {
-        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = false, usersAnswer = false)
+        val call = navigator.manufacturedPlasticPackaging(CheckMode, hasAnswerChanged = false, yesNo = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
     }
@@ -286,25 +346,25 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "redirect to imported weight page in  normal mode" when {
 
       "answer is Yes and has changed" in {
-        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = true, usersAnswer = true)
+        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = true, yesNo = true)
         call mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
 
       "answer is Yes and has not changed" in {
-        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = false, usersAnswer = true)
+        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = false, yesNo = true)
         call mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode)
       }
     }
     "redirect to imported weight page in  normal mode" when {
 
       "answer is No and has changed" in {
-        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = true, usersAnswer = false)
+        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = true, yesNo = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
 
       "answer is No and has not changed" in {
-        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = false, usersAnswer = false)
+        val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = false, yesNo = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
     }
@@ -381,22 +441,22 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "for check mode" when {
 
     "when answer is Yes and has been changed" in {
-      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = true, usersAnswer = true)
+      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = true, yesNo = true)
       call mustBe returnsRoutes.ImportedPlasticPackagingWeightController.onPageLoad(CheckMode)
     }
 
     "when answer is Yes and has not been changed" in {
-      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = false, usersAnswer = true)
+      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = false, yesNo = true)
       call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
 
     "when answer is No and has has been changed" in {
-      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = true, usersAnswer = false)
+      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = true, yesNo = false)
       call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
 
     "when answer is No and has has not been changed" in {
-      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = false, usersAnswer = false)
+      val call = navigator.importedPlasticPackaging(CheckMode, hasAnswerChanged = false, yesNo = false)
       call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
 
@@ -429,36 +489,26 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   "exportedByAnotherBusinessRoute" when {
     
     "answer is yes in normal mode" in {
-      when(userAnswers.get(any[Gettable[Boolean]])(any)) thenReturn Some(true)
-      navigator.exportedByAnotherBusinessRoute(userAnswers, NormalMode) mustBe 
+      navigator.exportedByAnotherBusinessRoute(true, NormalMode) mustBe
         returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(NormalMode)
     }
     
     "answer is yes in check mode" in {
-      when(userAnswers.get(any[Gettable[Boolean]])(any)) thenReturn Some(true)
-      navigator.exportedByAnotherBusinessRoute(userAnswers, CheckMode) mustBe
+      navigator.exportedByAnotherBusinessRoute(true, CheckMode) mustBe
         returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(CheckMode)
     }
 
     "answer is no in normal mode" in {
-      when(userAnswers.get(any[Gettable[Boolean]])(any)) thenReturn Some(false)
-      navigator.exportedByAnotherBusinessRoute(userAnswers, NormalMode) mustBe
+      navigator.exportedByAnotherBusinessRoute(false, NormalMode) mustBe
         returnsRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode)
     }
 
     "answer is no in check mode" in {
-      when(userAnswers.get(any[Gettable[Boolean]])(any)) thenReturn Some(false)
-      navigator.exportedByAnotherBusinessRoute(userAnswers, CheckMode) mustBe
+      navigator.exportedByAnotherBusinessRoute(false, CheckMode) mustBe
         returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
   }
-  
-  "manufacturedPlasticPackagingWeightRoute" in {
-    when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(1L)
-    navigator.manufacturedPlasticPackagingWeight(userAnswers) mustBe 
-      returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad     
-  }
-  
+
   "big CYA" should {
     "link to change credit answers" in {
       navigator.cyaChangeCredits mustBe creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
