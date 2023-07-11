@@ -35,7 +35,7 @@ class AuthLoggedInActionImpl @Inject()(
     request: Request[A],
     block: AuthedUser[A] => Future[Result]
   ): Future[Result] =
-    authorisedFun.authorised(EmptyPredicate, request, block) // these are used for sign out let anyone do that!
+    authorisedFun.authorised(EmptyPredicate, request, block)
 
 }
 
