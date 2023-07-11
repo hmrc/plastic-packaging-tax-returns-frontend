@@ -65,7 +65,6 @@ class CheckYourAnswersControllerSpec
   private val messagesApi = mock[MessagesApi]
   private val journeyAction = mock[JourneyAction]
   private val returnsConnector = mock[TaxReturnsConnector]
-  private val appConfig = mock[FrontendAppConfig]
   private val comparisonService = mock[AmendReturnAnswerComparisonService]
   private val sessionRepository = mock[SessionRepository]
   private val view = mock[CheckYourAnswersView]
@@ -75,7 +74,6 @@ class CheckYourAnswersControllerSpec
     messagesApi,
     journeyAction,
     returnsConnector,
-    appConfig,
     comparisonService,
     stubMessagesControllerComponents(),
     sessionRepository,
@@ -88,14 +86,12 @@ class CheckYourAnswersControllerSpec
     reset( messagesApi,
       journeyAction,
       returnsConnector,
-      appConfig,
       comparisonService,
       sessionRepository,
       view,
       dataRequest
     )
 
-    when(appConfig.isAmendsFeatureEnabled).thenReturn(true)
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)

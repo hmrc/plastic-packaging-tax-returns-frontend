@@ -15,7 +15,7 @@
  *@
 
 @import components.{card, cardSection, Link, paragraph, SectionHeader}
-@import config.{Features, FrontendAppConfig}
+@import config.FrontendAppConfig
 @import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 @import models.subscription.LegalEntityDetails
 @import models.obligations.PPTObligations
@@ -125,9 +125,7 @@
 
 @managementCards = {
     @entityManagementCards
-    @if(appConfig.isDeRegistrationFeatureEnabled) {
-        @deregister
-    }
+    @deregister
 }
 
 @returnsLine1 = @{
@@ -214,10 +212,10 @@
             lines = Seq(
                 paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))
             ),
-            links = if (appConfig.isFeatureEnabled(Features.paymentsEnabled)) Seq(
+            links = Seq(
                 link(id = "payment-link", text = messages("account.homePage.card.payments.payment.link"), href = controllers.routes.MakePaymentController.redirectLink().url),
                 link(id = "direct-debit-link", text = messages("account.homePage.card.payments.direct.debit.link"), href = controllers.payments.routes.DirectDebitController.redirectLink().url)
-            ) else Seq()
+            )
         )
 
         @card(header = messages(

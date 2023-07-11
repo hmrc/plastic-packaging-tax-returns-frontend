@@ -17,7 +17,7 @@
 package views
 
 import base.ViewSpecBase
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.payments.{routes => paymentRoute}
 import controllers.returns.routes
 import models.obligations.PPTObligations
@@ -77,9 +77,6 @@ class IndexPageViewSpec
   when(appConfig.pptRegistrationAmendUrl).thenReturn("pptRegistrationAmendUrl")
   when(appConfig.pptRegistrationManageGroupUrl).thenReturn("pptRegistrationManageGroupUrl")
   when(appConfig.userResearchUrl).thenReturn("ur-url")
-  when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
-  when(appConfig.isFeatureEnabled(Features.paymentsEnabled)).thenReturn(true)
-
 
   private def createView(
     subscription: LegalEntityDetails,
@@ -342,28 +339,10 @@ class IndexPageViewSpec
         }
     }
 
-    "not render the de-registration link" when {
-      "deregistration enabled feature flag is false" in {
+    "render the de-registration link" in {
+      val view: Html = createView(groupSubscription, Some(oneDueOneOverdue))
 
-        when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(false)
-
-        val view: Html = createView(groupSubscription, Some(oneDueOneOverdue))
-
-        view.getElementById("deregister") mustBe null
-
-      }
-    }
-
-    "render the de-registration link" when {
-      "deregistration enabled feature flag is true" in {
-
-        when(appConfig.isDeRegistrationFeatureEnabled).thenReturn(true)
-
-        val view: Html = createView(groupSubscription, Some(oneDueOneOverdue))
-
-        view.getElementById("deregister") must not be null
-
-      }
+      view.getElementById("deregister") must not be null
     }
   }
 

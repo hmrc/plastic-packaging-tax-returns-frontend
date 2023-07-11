@@ -35,16 +35,8 @@
 
 @(credits: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
-@selectView = @{
-    credits match {
-        case Credits.NoCreditsClaimed => noCreditsClaimed()
-        case Credits.NoCreditAvailable => noCreditsAvailable()
-        case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
-    }
-}
-
-@if(appConfig.isCreditsForReturnsFeatureEnabled) {
-    @selectView
-} else {
-    @noCreditsAvailable()
-}
+@{credits match {
+    case Credits.NoCreditsClaimed => noCreditsClaimed()
+    case Credits.NoCreditAvailable => noCreditsAvailable()
+    case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
+}}

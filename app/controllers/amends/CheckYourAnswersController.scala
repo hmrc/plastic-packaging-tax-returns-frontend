@@ -41,7 +41,6 @@ class CheckYourAnswersController @Inject()
 (override val messagesApi: MessagesApi,
  journeyAction: JourneyAction,
  returnsConnector: TaxReturnsConnector,
- appConfig: FrontendAppConfig,
  comparisonService: AmendReturnAnswerComparisonService,
  val controllerComponents: MessagesControllerComponents,
  sessionRepository: SessionRepository,
@@ -51,20 +50,15 @@ class CheckYourAnswersController @Inject()
   def onPageLoad(): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        if (!appConfig.isAmendsFeatureEnabled) {
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-        }
-        else {
-          request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
-            case Some(obligation) if obligation.tooOldToAmend =>
-              throw new IllegalStateException(s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}")
-            case Some(obligation) =>
-              returnsConnector.getCalculationAmends(request.pptReference).map {
-                case Right(calculations) => displayPage(request, obligation, calculations)
-                case Left(error) => throw error
-              }
-            case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
-          }
+        request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
+          case Some(obligation) if obligation.tooOldToAmend =>
+            throw new IllegalStateException(s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}")
+          case Some(obligation) =>
+            returnsConnector.getCalculationAmends(request.pptReference).map {
+              case Right(calculations) => displayPage(request, obligation, calculations)
+              case Left(error) => throw error
+            }
+          case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
         }
     }
 
