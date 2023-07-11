@@ -30,7 +30,7 @@ import views.html.returns.credits.ExportedCreditsView
 import java.time.LocalDate
 
 class ExportedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
-  //todo add tests
+
   val page: ExportedCreditsView = inject[ExportedCreditsView]
   val form = new ExportedCreditsFormProvider()()
   val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))

@@ -16,21 +16,12 @@
 
 package models.returns
 
-import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import views.ViewUtils
 
 import java.time.LocalDate
 
 final case class CreditRangeOption(from: LocalDate, to: LocalDate) {
-  def key: String = from.toString + "-" + to.toString //todo how do we want to represnt these?
-  def getPrintedDataRange (implicit messages: Messages)=
-    messages(
-      "return.quarter",
-      ViewUtils.displayLocalDate(from),
-      ViewUtils.displayLocalDate(to),
-      to.getYear.toString
-    )
+  def key: String = from.toString + "-" + to.toString
 }
 
 object CreditRangeOption {

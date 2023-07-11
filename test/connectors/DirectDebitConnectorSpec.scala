@@ -17,6 +17,11 @@
 package connectors
 
 import base.utils.ConnectorISpec
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.Json
+import play.api.test.Helpers.await
 
 class DirectDebitConnectorSpec extends ConnectorISpec {
 
@@ -24,7 +29,7 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    stopWireMockServer
+    startWireMockServer
   }
 
   override protected def afterAll(): Unit = {
@@ -32,6 +37,34 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
     super.afterAll()
   }
 
-  //TODO: Reimplement unit tests for DD
+  "getDirectDebitLink" must {
+    "return the link" in {
+      stubDDFor(OK,  Json.obj("journeyId" -> "id", "nextUrl" -> "/expected-url").toString())
+
+      val result = await(connector.getDirectDebitLink("ppt-ref", "/home-url"))
+
+      result mustBe "/expected-url"
+    }
+
+    "error when fails" in {
+      stubDDFor(INTERNAL_SERVER_ERROR,  Json.obj("go" -> "boom").toString())
+
+      val ex = intercept[DownstreamServiceError](await(connector.getDirectDebitLink("ppt-ref", "/home-url")))
+
+      ex.getMessage mustBe "Error trying to get Direct Debit link"
+
+    }
+  }
+
+  def stubDDFor(status: Int, body: String) = {
+    stubFor(
+      WireMock.post("/direct-debit-backend/ppt-homepage/ppt/journey/start")
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(body)
+        )
+    )
+  }
 
 }

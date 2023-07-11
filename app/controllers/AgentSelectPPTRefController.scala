@@ -19,7 +19,6 @@ package controllers
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.actions._
 import forms.AgentsFormProvider
-import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -33,8 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//todo rename? AgentSelectPPTRef And auth controller? BLAH
-class AgentsController @Inject()(
+class AgentSelectPPTRefController @Inject()(
                                   override val messagesApi: MessagesApi,
                                   authConnector: AuthConnector,
                                   sessionRepository: SessionRepository,
@@ -45,9 +43,7 @@ class AgentsController @Inject()(
                                 )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
-
-  //todo mode????
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
       sessionRepository
         .get[String](request.internalId, AgentSelectedPPTRef)
@@ -55,16 +51,16 @@ class AgentsController @Inject()(
           val preparedForm = form().fill(
             maybeSelectedClientIdentifier.getOrElse("")
           )
-          Ok(view(preparedForm, mode))
+          Ok(view(preparedForm))
         }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = identify.async {
+  def onSubmit(): Action[AnyContent] = identify.async {
     implicit request =>
       form()
         .bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors))),
         selectedClientIdentifier => {
           for {
             _ <- authConnector.authorise(
@@ -73,16 +69,16 @@ class AgentsController @Inject()(
                 .withDelegatedAuthRule("ppt-auth"),
               EmptyRetrieval
             )
-            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier) // this should only happen if authConnector.authorise does NOT fail
+            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier) // this will only happen if authConnector.authorise does NOT fail
           } yield
             Redirect(routes.IndexController.onPageLoad)
-              .addingToSession("clientPPT" -> selectedClientIdentifier) //todo we dont want to do this, but reg needs it
+              .addingToSession("clientPPT" -> selectedClientIdentifier)
           }.recover{
             case _: InsufficientEnrolments =>
               val errorForm = form()
                 .fill(selectedClientIdentifier)
                 .withError("value", "agents.client.identifier.auth.error")
-              BadRequest(view(errorForm, mode))
+              BadRequest(view(errorForm))
           }
       )
   }

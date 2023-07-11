@@ -72,6 +72,6 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
         case (amount, directlyExported, exportedByThirdParty) =>
           responseStatus(view(amount, form, mode, directlyExported, exportedByThirdParty))
       }
-      .get // TODO make no longer optional?
+      .getOrElse(Redirect(controllers.routes.IndexController.onPageLoad))
 
 }

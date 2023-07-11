@@ -42,7 +42,7 @@ import views.html.AgentsView
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
+class AgentSelectPPTRefControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   val formProvider = mock[AgentsFormProvider]
   val mockForm = mock[Form[String]]
@@ -53,7 +53,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   val fakeForm: Form[String] = Form[String]("value" -> Forms.of[String](Formats.stringFormat))
 
-  val sut = new AgentsController(
+  val sut = new AgentSelectPPTRefController(
     stubMessagesControllerComponents().messagesApi,
     mockAuthConnector,
     mockSessionRepository,
@@ -66,7 +66,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector, mockSessionRepository, formProvider, view, mockForm)
-    when(view.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
+    when(view.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
     when(formProvider.apply()).thenReturn(mockForm)
   }
 
@@ -75,11 +75,11 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(None))
       when(mockForm.fill("")).thenReturn(fakeForm)
 
-      val result: Future[Result] = sut.onPageLoad(NormalMode)(FakeRequest())
+      val result: Future[Result] = sut.onPageLoad()(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe "Test View"
-      verify(view).apply(refEq(fakeForm), any())(any(), any())
+      verify(view).apply(refEq(fakeForm))(any(), any())
     }
 
     "display the form pre-populated" in {
@@ -87,11 +87,11 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some("selected-ref")))
       when(mockForm.fill("selected-ref")).thenReturn(filledForm)
 
-      val result: Future[Result] = sut.onPageLoad(NormalMode)(FakeRequest())
+      val result: Future[Result] = sut.onPageLoad()(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe "Test View"
-      verify(view).apply(refEq(filledForm), any())(any(), any())
+      verify(view).apply(refEq(filledForm))(any(), any())
     }
   }
 
@@ -101,11 +101,11 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
         val erroredForm = fakeForm.withError("key", "message")
         when(mockForm.bindFromRequest()(any(), any())).thenReturn(erroredForm)
 
-        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
+        val result: Future[Result] = sut.onSubmit()(FakeRequest())
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe "Test View"
-        verify(view).apply(refEq(erroredForm), any())(any(), any())
+        verify(view).apply(refEq(erroredForm))(any(), any())
       }
 
       "auth rejects the selected identifier" in {
@@ -115,13 +115,13 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments("")))
 
-        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
+        val result: Future[Result] = sut.onSubmit()(FakeRequest())
 
         val customErrorFrom = filledForm.withError("value", "agents.client.identifier.auth.error")
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe "Test View"
-        verify(view).apply(refEq(customErrorFrom), any())(any(), any())
+        verify(view).apply(refEq(customErrorFrom))(any(), any())
 
         verifyNoInteractions(mockSessionRepository)
         verify(mockAuthConnector).authorise(
@@ -139,7 +139,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any())).thenReturn(Future.unit)
         when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any())).thenReturn(Future.successful(true))
 
-        val result: Future[Result] = sut.onSubmit(NormalMode)(FakeRequest())
+        val result: Future[Result] = sut.onSubmit()(FakeRequest())
 
         redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
       }
@@ -154,7 +154,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any()))
           .thenReturn(Future.failed(TestException))
 
-        intercept[TestException.type](await(sut.onSubmit(NormalMode)(FakeRequest())))
+        intercept[TestException.type](await(sut.onSubmit()(FakeRequest())))
       }
 
       "auth fails" in {
@@ -164,7 +164,7 @@ class AgentsControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))
           .thenReturn(Future.failed(TestException))
 
-        intercept[TestException.type](await(sut.onSubmit(NormalMode)(FakeRequest())))
+        intercept[TestException.type](await(sut.onSubmit()(FakeRequest())))
       }
     }
   }

@@ -56,7 +56,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi = mock[MessagesApi]
   private val messages = mock[Messages]
-  private val featureGuard = mock[FeatureGuard]
   private val navigator = mock[ChangeGroupLeadNavigator]
   private val subscriptionConnector = mock[SubscriptionConnector]
   private val countryService = mock[CountryService]
@@ -64,7 +63,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   private val sut = new NewGroupLeadCheckYourAnswerController(
     messagesApi,
     journeyAction,
-    featureGuard,
     countryService,
     subscriptionConnector,
     stubMessagesControllerComponents(),
@@ -75,7 +73,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(view, journeyAction, featureGuard, dataRequest, navigator, subscriptionConnector)
+    reset(view, journeyAction, dataRequest, navigator, subscriptionConnector)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
@@ -139,26 +137,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
       verifyAndCaptureValue.last.value.content.asHtml.body must include("United Kingdom")
     }
-
-    "check feature flag" in {
-      when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
-        .thenReturn(Some(Member("test test", "1")))
-
-      await(sut.onPageLoad.skippingJourneyAction(dataRequest))
-
-      verify(featureGuard).check()
-    }
-
-    "do nothing if feature flag is not set" in {
-      when(featureGuard.check()).thenThrow(new Exception("error"))
-
-      intercept[Exception] {
-        await(sut.onPageLoad.skippingJourneyAction(dataRequest))
-      }
-
-      verifyNoInteractions(dataRequest)
-      verifyNoInteractions(view)
-    }
   }
 
   private def createAddressDetails(countryCode: String) = {
@@ -187,11 +165,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       verify(navigator).checkYourAnswers
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual "over-there"
-    }
-
-    "check feature flag" in {
-      await(sut.onSubmit.skippingJourneyAction(dataRequest))
-      verify(featureGuard).check()
     }
 
     "call the subscription change group lead" in {

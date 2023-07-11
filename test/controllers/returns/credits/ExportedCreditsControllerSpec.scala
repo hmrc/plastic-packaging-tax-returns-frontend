@@ -113,15 +113,14 @@ class ExportedCreditsControllerSpec extends PlaySpec
   
   "onSubmit" must {
 
-    "must redirect to the next page using the navigator" in { 
-      // Follow the "form is good" side
+    "must redirect to the next page using the navigator" in {
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
       when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
 
       val result = await { sut.onSubmit("year-key", NormalMode)(request) }
-      verify(mockCacheConnector).saveUserAnswerFunc(any)(any) // TODO check values passed
+      verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
       verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
       
@@ -130,7 +129,6 @@ class ExportedCreditsControllerSpec extends PlaySpec
     }
 
     "handle answer that fails form validation" in {
-      // Follow the "form is bad" side
       val formWithError = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithError
 

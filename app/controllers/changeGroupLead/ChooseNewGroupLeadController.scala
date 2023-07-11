@@ -43,7 +43,6 @@ class ChooseNewGroupLeadController @Inject() (
   view: ChooseNewGroupLeadView,
   form: SelectNewGroupLeadForm,
   cacheConnector: CacheConnector,
-  featureGuard: FeatureGuard,
   subscriptionService: SubscriptionService,
   navigator: ChangeGroupLeadNavigator
 )
@@ -51,7 +50,6 @@ class ChooseNewGroupLeadController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
         val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
         Results.Ok(createView(preparedForm, members, mode))
@@ -65,7 +63,6 @@ class ChooseNewGroupLeadController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap{ members =>
         form(members.membersNames)
           .bindFromRequest()

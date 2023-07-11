@@ -30,8 +30,7 @@ import java.time.LocalDate
 
 
 case object CreditsClaimedListSummary {
-  
-  // TODO can this be made simpler? Yes now it is only used on summary page not big CYA
+
   def createCreditSummary(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
                          (implicit messages: Messages): Seq[CreditSummaryRow] = {
 

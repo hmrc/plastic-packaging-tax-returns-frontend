@@ -38,14 +38,12 @@ class MainContactNameController @Inject()(
   journeyAction: JourneyAction,
   form: MainContactNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  featureGuard: FeatureGuard,
   navigator: ChangeGroupLeadNavigator,
   view: MainContactNameView
 )(implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
-      featureGuard.check()
       val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(MainContactNamePage, form())
 
@@ -54,7 +52,6 @@ class MainContactNameController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       form().bindFromRequest().fold(

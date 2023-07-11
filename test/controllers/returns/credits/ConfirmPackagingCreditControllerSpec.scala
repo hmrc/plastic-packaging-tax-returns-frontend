@@ -21,9 +21,8 @@ import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceE
 import controllers.actions.JourneyAction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
-import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.returns.CreditRangeOption
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
@@ -36,7 +35,7 @@ import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.{Gettable, Settable}
+import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
@@ -54,7 +53,6 @@ class ConfirmPackagingCreditControllerSpec
     with ResetMocksAfterEachTest {
 
   private val creditBalance = CreditBalance(10, 5, 500, true, Map("year-key" -> TaxablePlastic(1, 2, 0.30)))
-  private val saveAnsFun = mock[SaveUserAnswerFunc]
   private val answer = mock[UserAnswers]
   private val dataRequest = mock[DataRequest[AnyContent]]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
@@ -173,13 +171,4 @@ class ConfirmPackagingCreditControllerSpec
       .thenReturn(Future.successful(Right(creditBalance)))
   }
 
-  // TODO are we missing a test for cancelling?
-  
-  private def setUpMockForCancelCredit(ans: UserAnswers): Unit = {
-    when(ans.save(any)(any)).thenReturn(Future.successful(ans))
-    when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
-    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(ans)
-    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
-    when(returnsJourneyNavigator.confirmCredit(NormalMode)).thenReturn(Call("GET", "/foo"))
-  }
 }

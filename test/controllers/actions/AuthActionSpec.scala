@@ -104,7 +104,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
 
         val result = sut.invokeBlock(request, testBlock)
 
-        redirectLocation(result) mustBe Some(controllers.routes.AgentsController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(controllers.routes.AgentSelectPPTRefController.onPageLoad().url)
         verifyNoInteractions(testBlock)
         verify(sessionRepository).get(refEq("internalId"), refEq(SessionRepository.Paths.AgentSelectedPPTRef))(any)
       }

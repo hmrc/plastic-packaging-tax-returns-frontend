@@ -29,7 +29,7 @@ class AgentsA11ySpec extends ViewSpecBase with AccessibilityMatchers {
     val form: Form[String] = new AgentsFormProvider()()
     val page: AgentsView = inject[AgentsView]
 
-    def render(form: Form[String]) = page(form, NormalMode)(request, messages).toString()
+    def render(form: Form[String]) = page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks

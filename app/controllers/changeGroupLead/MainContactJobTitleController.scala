@@ -37,7 +37,6 @@ class MainContactJobTitleController @Inject()(
                                        cacheConnector: CacheConnector,
                                        navigator: ChangeGroupLeadNavigator,
                                        journeyAction: JourneyAction,
-                                       featureGuard: FeatureGuard,
                                        form: MainContactJobTitleFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: MainContactJobTitleView
@@ -45,7 +44,6 @@ class MainContactJobTitleController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
     implicit request =>
-      featureGuard.check()
       val contactName = request.userAnswers.getOrFail(MainContactNamePage)
       val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form())
 
@@ -54,7 +52,6 @@ class MainContactJobTitleController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       val contactName = request.userAnswers.getOrFail(MainContactNamePage)
 
       form().bindFromRequest().fold(

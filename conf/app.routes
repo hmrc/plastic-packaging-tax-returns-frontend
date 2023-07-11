@@ -113,10 +113,8 @@ GET         /return-submitted/:isUserClaimingCredit                 controllers.
 
 GET         /return-received                                        controllers.returns.AlreadySubmittedController.onPageLoad()
 
-GET         /agents                                                 controllers.AgentsController.onPageLoad(mode: Mode = NormalMode)
-POST        /agents                                                 controllers.AgentsController.onSubmit(mode: Mode = NormalMode)
-GET         /changeAgents                                           controllers.AgentsController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeAgents                                           controllers.AgentsController.onSubmit(mode: Mode = CheckMode)
+GET         /agents                                                 controllers.AgentSelectPPTRefController.onPageLoad()
+POST        /agents                                                 controllers.AgentSelectPPTRefController.onSubmit()
 
 GET         /make-a-payment                                         controllers.MakePaymentController.redirectLink()
 GET         /direct-debit                                           controllers.payments.DirectDebitController.redirectLink()

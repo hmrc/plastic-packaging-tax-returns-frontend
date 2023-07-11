@@ -57,7 +57,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
   private val mockFormProvider = mock[NewGroupLeadEnterContactAddressFormProvider]
   private val mockCache = mock[CacheConnector]
   private val journeyAction = mock[JourneyAction]
-  private val featureGuard = mock[FeatureGuard]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[NewGroupLeadAddressDetails]]
   private val mockNavigator =  mock[ChangeGroupLeadNavigator]
@@ -68,7 +67,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     mockCache,
     mockNavigator,
     journeyAction,
-    featureGuard,
     mockFormProvider,
     mockCountryService,
     controllerComponents,
@@ -85,7 +83,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       mockCache,
       mockNavigator,
       journeyAction,
-      featureGuard,
       mockFormProvider,
       form,
       mockView,
@@ -127,11 +124,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       verify(journeyAction).async(any)
     }
 
-    "invoke feature guard" in {
-      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(featureGuard).check()
-    }
-
     "return OK and correct view" in {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
       status(result) mustBe OK
@@ -154,11 +146,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
       verify(journeyAction).async(any)
-    }
-
-    "invoke feature guard" in {
-      Try(await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
-      verify(featureGuard).check()
     }
 
     "bind the form and error" in {

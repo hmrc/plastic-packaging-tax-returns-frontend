@@ -72,7 +72,7 @@ class AuthenticatedIdentifierAction @Inject() (
           case Some(AffinityGroup.Agent) =>
             sessionRepository.get[String](internalId, AgentSelectedPPTRef).flatMap(
               _.fold(
-                Future.successful(Redirect(agentRoutes.AgentsController.onPageLoad(NormalMode)))
+                Future.successful(Redirect(agentRoutes.AgentSelectPPTRefController.onPageLoad()))
               ) {
                 pptEnrolmentIdentifier =>
                   block(IdentifiedRequest(request, pptLoggedInUser, pptEnrolmentIdentifier))

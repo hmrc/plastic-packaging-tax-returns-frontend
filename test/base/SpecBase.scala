@@ -111,13 +111,6 @@ trait SpecBase
         bind[SessionRepository].toInstance(mock[SessionRepository])
       )
 
-  protected def applicationBuilderAgent(): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[AuthAgentAction].to[FakeAgentIdentifierAction],
-        bind[SessionRepository].toInstance(mock[SessionRepository])
-      )
-
   protected def applicationBuilderFailedAuth(
     userAnswers: Option[UserAnswers] = None
   ): GuiceApplicationBuilder =

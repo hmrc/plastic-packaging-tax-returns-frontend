@@ -129,16 +129,13 @@ class ConvertedCreditsControllerSpec extends PlaySpec
   "onSubmit" must {
 
     "remember the user's answers" in {
-      // Invokes the "form is good" side of the fold() call
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       await(controller.onSubmit("year-key", NormalMode) (request))
-      
-      // TODO tweak CreditsAnswer.changeYesNoTo so we can test for it here
+
       verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc)) (any, any)
     }
 
     "redirect to the next page" in {
-      // Invokes the "form is good" side of the fold() call
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
       
@@ -150,7 +147,6 @@ class ConvertedCreditsControllerSpec extends PlaySpec
     }
     
     "display any errors" in {
-      // Invokes the "form is bad" side of the fold() call
       val formWithErrors = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 

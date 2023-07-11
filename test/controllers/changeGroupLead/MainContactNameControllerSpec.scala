@@ -54,7 +54,6 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
   private val mockFormProvider = mock[MainContactNameFormProvider]
   private val mockCache = mock[CacheConnector]
   private val journeyAction = mock[JourneyAction]
-  private val featureGuard = mock[FeatureGuard]
   private val mockNavigator = mock[ChangeGroupLeadNavigator]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[String]]
@@ -65,7 +64,6 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
     journeyAction,
     mockFormProvider,
     controllerComponents,
-    featureGuard,
     mockNavigator,
     mockView
   )(global)
@@ -80,7 +78,6 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       mockView,
       mockFormProvider,
       mockCache,
-      featureGuard,
       form,
       mockNavigator,
       dataRequest
@@ -113,11 +110,6 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       verify(journeyAction).apply(any)
     }
 
-    "invoke feature guard" in {
-      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(featureGuard).check()
-    }
-
     "return a view" in {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
       status(result) mustBe OK
@@ -142,11 +134,6 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
       verify(journeyAction).async(any)
-    }
-
-    "invoke feature guard" in {
-      Try(await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
-      verify(featureGuard).check()
     }
 
     "bind the form and error" in {

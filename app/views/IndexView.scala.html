@@ -149,7 +149,6 @@
     obligations.flatMap { obligations =>
         obligations.nextObligation.map { nextObligation =>
             messages("account.homePage.card.makeReturn.line2.due",
-              // TODO move to methods on the model?
                 ViewUtils.displayReturnQuarter(nextObligation),
                 ViewUtils.displayLocalDate(nextObligation.dueDate.minusDays(nextObligation.dueDate.getDayOfMonth - 1)),
                 ViewUtils.displayLocalDate(nextObligation.dueDate))
@@ -211,7 +210,6 @@
             ).filter(_.isDefined).flatten
         )
 
-        @* <!-- todo should the link always show? --> *@
         @card(header = messages("account.homePage.card.payments.header"),
             lines = Seq(
                 paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))

@@ -91,11 +91,12 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(formProvider().bind(Map("value" -> "0")))
     }
 
-    "complain if given None" in { // TODO remove optional getAmountAndDirectlyExportedAnswer 
+    "redirect if given None" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val result = createSut(Some(userAnswers))
-        .onPageLoad(NormalMode)(FakeRequest(GET, ""))
-      a [NoSuchElementException] must be thrownBy status(result)
+      val result = createSut(Some(userAnswers)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
     }
 
     "redirect to Journey Recovery if no existing data is found" in {

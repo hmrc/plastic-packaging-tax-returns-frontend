@@ -43,8 +43,6 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     reset(userAnswers, frontendConfig, nonExportedAmountHelper)
   }
 
-  //todo add in credits navigation that is currently tested in controllers
-  
   "startYourReturn" must {
     "go to manufactured-components page when answer is yes"in {
       navigator.startYourReturn(true) mustBe
