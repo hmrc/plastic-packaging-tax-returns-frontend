@@ -110,10 +110,12 @@ class ReturnsCheckYourAnswersController @Inject()(
 
   private def callCalculationAndCreditApi(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
     (implicit messages: Messages, hc: HeaderCarrier): Future[(Calculations, Credits)] = {
-    
+
+    val eventualCalculations = returnsConnector.getCalculationReturns(request.pptReference)
+    val eventualCredits = getCredits(request, isUserClaimingCredit, isFirstReturn)
     for {
-      calculations <- returnsConnector.getCalculationReturns(request.pptReference)
-      credits <- getCredits(request, isUserClaimingCredit, isFirstReturn)
+      calculations <- eventualCalculations
+      credits <- eventualCredits
     } yield (calculations, credits) match {
       case (Right(calculations), credits) => (calculations, credits)
       case _ => throw new RuntimeException("Error: There was a problem retrieving return calculation or the credits balance")
