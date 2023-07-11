@@ -18,11 +18,10 @@ package views.templates
 
 import base.ViewSpecBase
 import play.api.data.Form
-import play.twirl.api.HtmlFormat
-import views.html.templates.YesNoLayout
-import forms.mappings.Mappings
 import play.api.data.Forms.boolean
+import play.twirl.api.HtmlFormat
 import support.ViewMatchers
+import views.html.templates.YesNoLayout
 
 class YesNoLayoutSpec extends ViewSpecBase with ViewMatchers {
 

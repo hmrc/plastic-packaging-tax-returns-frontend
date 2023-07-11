@@ -46,12 +46,6 @@ class CountryService @Inject() (languageUtils: LanguageUtils) {
     }
   }
 
-  def getKeyForName(countryName: String) (implicit request: Request[_]): Option[String] = {
-    val allCountries = getAll
-
-    allCountries.map(_.swap).get(countryName)
-  }
-
   private def parseCountriesResource(languageCode: String): Map[String, String] = {
 
     val stream = getClass.getResourceAsStream(s"/resources/countries$languageCode.json")

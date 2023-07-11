@@ -16,8 +16,8 @@
 
 package base
 
-import controllers.actions.IdentifierAction
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.actions.IdentifierAction
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.mvc._

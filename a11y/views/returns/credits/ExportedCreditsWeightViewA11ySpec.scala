@@ -21,7 +21,6 @@ import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode.NormalMode
 import models.returns.CreditRangeOption
 import play.api.data.Form
-import play.api.data.Forms.longNumber
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ExportedCreditsWeightView
 

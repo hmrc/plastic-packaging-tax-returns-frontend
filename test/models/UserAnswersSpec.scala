@@ -29,7 +29,6 @@ import play.api.libs.json.Json.obj
 import play.api.libs.json._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
-import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try

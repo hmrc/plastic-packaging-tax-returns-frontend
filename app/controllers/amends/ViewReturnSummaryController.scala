@@ -20,11 +20,11 @@ import cacheables.{AmendObligationCacheable, AmendSelectedPeriodKey, ReturnDispl
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import controllers.amends.ViewReturnSummaryController.Unamendable
-import models.requests.DataRequest.headerCarrier
 import controllers.helpers.TaxReturnHelper
 import handlers.ErrorHandler
 import models.UserAnswers
 import models.requests.DataRequest
+import models.requests.DataRequest.headerCarrier
 import models.returns.{DDInProgressApi, ReturnDisplayApi, SubmittedReturn, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{NotFound, Ok, Redirect}

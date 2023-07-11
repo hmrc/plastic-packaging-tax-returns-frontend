@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.amends.{AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage}
 import queries.Gettable
-import viewmodels.checkAnswers.amends.{AmendTotalDeductionSummary, AmendTotalPlasticPackagingSummary}
+import viewmodels.checkAnswers.amends.AmendTotalPlasticPackagingSummary
 
 class AmendTotalPlasticPackagingSummarySpec extends PlaySpec with BeforeAndAfterEach {
 

@@ -17,8 +17,8 @@
 package viewmodels.checkAnswers.returns
 
 import controllers.returns.routes
-import models.UserAnswers
 import models.Mode.CheckMode
+import models.UserAnswers
 import pages.returns.ManufacturedPlasticPackagingPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._

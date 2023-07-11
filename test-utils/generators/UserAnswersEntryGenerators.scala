@@ -21,9 +21,9 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.amends._
+import pages.changeGroupLead._
 import pages.returns._
 import pages.returns.credits._
-import pages.changeGroupLead._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {

@@ -21,7 +21,6 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.DoYouWantToClaimFormProvider
-import models.Mode.NormalMode
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator

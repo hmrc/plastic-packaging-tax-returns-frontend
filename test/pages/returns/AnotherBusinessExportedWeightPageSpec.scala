@@ -18,7 +18,6 @@ package pages.returns
 
 import models.UserAnswers
 import pages.behaviours.PageBehaviours
-import pages.returns.{AnotherBusinessExportedWeightPage, DirectlyExportedPage, DirectlyExportedWeightPage, ImportedPlasticPackagingPage, ImportedPlasticPackagingWeightPage, ManufacturedPlasticPackagingPage, ManufacturedPlasticPackagingWeightPage, NonExportedHumanMedicinesPlasticPackagingPage, NonExportedHumanMedicinesPlasticPackagingWeightPage, NonExportedRecycledPlasticPackagingPage, NonExportedRecycledPlasticPackagingWeightPage, AnotherBusinessExportedPage}
 
 import scala.util.Success
 

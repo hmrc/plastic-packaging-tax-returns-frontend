@@ -24,7 +24,6 @@ import models.returns.Credits.NoCreditAvailable
 import models.returns._
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.returns._

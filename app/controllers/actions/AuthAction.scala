@@ -30,9 +30,9 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.AgentSelectedPPTRef
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, internalId}
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

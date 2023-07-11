@@ -34,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage, AnotherBusinessExportedPage}
+import pages.returns.{AnotherBusinessExportedPage, DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest

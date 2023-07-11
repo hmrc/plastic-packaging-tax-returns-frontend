@@ -47,7 +47,6 @@ class FrontendAppConfig @Inject() (
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
-  lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
 
   lazy val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
@@ -83,8 +82,6 @@ class FrontendAppConfig @Inject() (
 
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
-  lazy val pptRecycledPlasticGuidanceLink: String = configuration.get[String]("urls.pptRecycledPlasticGuidanceLink")
-
 
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"

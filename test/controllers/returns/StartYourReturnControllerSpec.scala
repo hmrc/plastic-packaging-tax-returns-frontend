@@ -23,13 +23,11 @@ import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
-import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -37,12 +35,10 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import queries.{Gettable, Settable}
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import views.html.returns.StartYourReturnView
 
 import java.time.LocalDate

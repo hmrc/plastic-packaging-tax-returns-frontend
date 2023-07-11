@@ -29,7 +29,7 @@ import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.{atLeastOnce, verifyNoInteractions}
+import org.mockito.Mockito.atLeastOnce
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -38,12 +38,11 @@ import play.api.data.Form
 import play.api.data.Forms.ignored
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsObject, JsPath, JsString}
+import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.{Gettable, Settable}
 import views.html.returns.credits.ClaimForWhichYearView
 
 import java.time.LocalDate

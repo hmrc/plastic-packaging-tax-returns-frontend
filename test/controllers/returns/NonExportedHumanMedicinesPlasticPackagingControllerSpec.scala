@@ -34,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingPage, AnotherBusinessExportedPage}
+import pages.returns.{AnotherBusinessExportedPage, DirectlyExportedPage, NonExportedHumanMedicinesPlasticPackagingPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call

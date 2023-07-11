@@ -16,7 +16,7 @@
 
 package forms.changeGroupLead
 
-import models.subscription.{GroupMembers, Member}
+import models.subscription.Member
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 
