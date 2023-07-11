@@ -113,9 +113,6 @@ class FrontendAppConfig @Inject() (
   def isAmendsFeatureEnabled: Boolean =
     isFeatureEnabled(Features.amendsEnabled)
 
-  def isCreditsForReturnsFeatureEnabled: Boolean =
-    isFeatureEnabled(Features.creditsForReturnsEnabled)
-
   def isFeatureEnabledChangeOfGroupLead: Boolean =
     isFeatureEnabled(Features.changeOfGroupLead)
 

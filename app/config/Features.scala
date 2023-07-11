@@ -17,7 +17,6 @@
 package config
 
 object Features {
-  val creditsForReturnsEnabled: String = "creditsForReturnsEnabled"
   val paymentsEnabled: String       = "paymentsEnabled"
   val deRegistrationEnabled: String = "deRegistrationEnabled"
   val amendsEnabled: String         = "amendsEnabled"

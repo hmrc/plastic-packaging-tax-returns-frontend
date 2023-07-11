@@ -17,7 +17,7 @@
 package models.returns.credits
 
 import models.UserAnswers
-import models.returns.CreditsAnswer
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, Json, OFormat}
 import views.ViewUtils
@@ -32,6 +32,7 @@ case class SingleYearClaim(
   convertedCredits: Option[CreditsAnswer]
 ) {
   def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, toDate)
+  def createCreditRangeOption(): CreditRangeOption = CreditRangeOption(fromDate, toDate)
 }
 
 object SingleYearClaim {

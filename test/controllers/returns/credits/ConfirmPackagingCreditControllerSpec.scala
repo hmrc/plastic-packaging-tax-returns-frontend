@@ -17,13 +17,13 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer
+import cacheables.ReturnObligationCacheable
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.actions.JourneyAction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
-import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
@@ -36,7 +36,6 @@ import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.{Gettable, Settable}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import util.EdgeOfSystem
@@ -54,9 +53,8 @@ class ConfirmPackagingCreditControllerSpec
     with ResetMocksAfterEachTest {
 
   private val creditBalance = CreditBalance(10, 5, 500, true, Map("year-key" -> TaxablePlastic(1, 2, 0.30)))
-  private val saveAnsFun = mock[SaveUserAnswerFunc]
   private val answer = mock[UserAnswers]
-  private val dataRequest = mock[DataRequest[AnyContent]]
+  private val request = mock[DataRequest[AnyContent]]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val controllerComponents = stubMessagesControllerComponents()
@@ -82,13 +80,21 @@ class ConfirmPackagingCreditControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(dataRequest.userAnswers).thenReturn(answer)
-    when(dataRequest.pptReference).thenReturn("123")
+    when(request.userAnswers).thenReturn(answer)
+    when(request.pptReference).thenReturn("123")
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
     when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
-    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(dataRequest.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
+    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
+
+    val aDate = LocalDate.of(2000, 1, 2)
+    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(
+      TaxReturnObligation(aDate, aDate, aDate, "period-key")
+    )
+
+    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
+    when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(creditBalance)
   }
 
 
@@ -100,33 +106,25 @@ class ConfirmPackagingCreditControllerSpec
     }
 
     "return OK" in {
-
-      setUpMockForConfirmCreditsView()
-
-      val result = sut.onPageLoad("year-key", NormalMode)(dataRequest)
-
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
       status(result) mustBe OK
     }
 
     "display a view" in {
-      setUpMockForConfirmCreditsView()
-
       val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
       when(creditSummaryListFactory.createSummaryList(any, any, any)(any)).thenReturn(summaryList)
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
 
-      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
+      await(sut.onPageLoad("year-key", NormalMode)(request))
       verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), eqTo(summaryList), any, any, eqTo(creditRangeOption))(any, any)
     }
 
     "pass a summary list to view with the data" in {
-      setUpMockForConfirmCreditsView()
-
       val summaryList = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
 
       when(creditSummaryListFactory.createSummaryList(any, any, any)(any)).thenReturn(summaryList)
       when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2023, 3, 31, 23, 59, 59) // One sec before midnight
-      await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
+      await(sut.onPageLoad("year-key", NormalMode)(request))
 
       verify(creditSummaryListFactory).createSummaryList(eqTo(TaxablePlastic(1, 2, 0.30)), eqTo("year-key"), any)(any)
       verify(creditSummaryListFactory).createSummaryList(eqTo(TaxablePlastic(1, 2, 0.30)), eqTo("year-key"), eqTo(answer))(any)
@@ -139,47 +137,26 @@ class ConfirmPackagingCreditControllerSpec
 
       "total requested credit is less than available credit - (NormalMode)" in {
         when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
-        setUpMockForConfirmCreditsView()
-        await(sut.onPageLoad("year-key", NormalMode)(dataRequest))
+        await(sut.onPageLoad("year-key", NormalMode)(request))
         verify(returnsJourneyNavigator).confirmCredit(NormalMode)
         verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(NormalMode), eqTo(creditRangeOption))(any,any)
       }
 
       "total requested credit is less than available credit - (CheckMode)" in {
         when(returnsJourneyNavigator.confirmCredit(any)) thenReturn call
-        setUpMockForConfirmCreditsView()
-        await(sut.onPageLoad("year-key", CheckMode)(dataRequest))
+        await(sut.onPageLoad("year-key", CheckMode)(request))
         verify(returnsJourneyNavigator).confirmCredit(CheckMode)
         verify(mockView).apply(eqTo("year-key"), eqTo(BigDecimal(2)), any, eqTo(call), eqTo(CheckMode), eqTo(creditRangeOption))(any,any)
       }
     }
 
     "return an error page" in {
-      when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
-      when(mockCalculateCreditConnector.get(any)(any))
-        .thenReturn(Future.successful(Left(DownstreamServiceError("Error", new Exception("error")))))
-
-      val result = sut.onPageLoad("year-key", NormalMode)(dataRequest)
-
+      when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.failed(
+        DownstreamServiceError("Error", new Exception("error"))
+      )
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
-  }
-
-  private def setUpMockForConfirmCreditsView(): Unit = {
-    when(dataRequest.userAnswers.get(any[Gettable[Boolean]])(any)).thenReturn(Some(true))
-    when(mockView.apply(any, any, any, any, any, any)(any,any)).thenReturn(Html("correct view"))
-    when(mockCalculateCreditConnector.get(any)(any))
-      .thenReturn(Future.successful(Right(creditBalance)))
-  }
-
-  // TODO are we missing a test for cancelling?
-  
-  private def setUpMockForCancelCredit(ans: UserAnswers): Unit = {
-    when(ans.save(any)(any)).thenReturn(Future.successful(ans))
-    when(dataRequest.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans)
-    when(dataRequest.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(ans)
-    when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveAnsFun)
-    when(returnsJourneyNavigator.confirmCredit(NormalMode)).thenReturn(Call("GET", "/foo"))
   }
 }

@@ -27,24 +27,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CalculateCreditsConnector @Inject()(httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit ec: ExecutionContext) extends Logging {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, CreditBalance]] = {
+  def getEventually(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[CreditBalance] = {
 
     val timer = metrics.defaultRegistry.timer("ppt.exportcredits.open.get.timer").time()
     httpClient.GET[CreditBalance](appConfig.pptCalculateCreditsUrl(pptReferenceNumber))
-      .map {
-        response =>
-          logger.info(s"Calculate credits for ppt reference number [$pptReferenceNumber]")
-          Right(response)
-      }
       .andThen { case _ => timer.stop() }
       .recover {
-        case ex: Exception =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to calculate credits for ppt reference number [$pptReferenceNumber]",
-              ex
-            )
-          )
+        case ex: Exception => throw DownstreamServiceError(s"Failed to calculate credits for ppt reference number" +
+          s" [$pptReferenceNumber]", ex)
       }
   }
 
