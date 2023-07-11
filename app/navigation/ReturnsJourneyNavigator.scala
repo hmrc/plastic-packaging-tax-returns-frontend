@@ -17,7 +17,7 @@
 package navigation
 
 import com.google.inject.Inject
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.helpers.NonExportedAmountHelper
 import controllers.returns.credits.{routes => creditRoutes}
 import controllers.returns.{routes => returnRoutes}
@@ -37,28 +37,26 @@ class ReturnsJourneyNavigator @Inject()(
   nonExportedAmountHelper: NonExportedAmountHelper
 ) {
 
-  @deprecated("Call direct route method on this class instead", since = "19th July 2022")
-  val normalRoutes: PartialFunction[Page, UserAnswers => Call] = {
-    case ManufacturedPlasticPackagingWeightPage =>
-      _ => returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
-    case ImportedPlasticPackagingWeightPage            =>
-      _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case NonExportedHumanMedicinesPlasticPackagingPage => nonExportedHumanMedicinesPlasticPackagingRoute(_, mode = NormalMode)
-    case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
-    case NonExportedRecycledPlasticPackagingPage => nonExportedRecycledPlasticPackagingPageRoute(_, mode = NormalMode)
-    case NonExportedRecycledPlasticPackagingWeightPage => _ => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-    case x => throw new IllegalStateException(s"Navigation for '$x' not found (normal mode)")
-  }
+  def nonExportedRecycledPlasticPackagingWeightPage() =
+    returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
 
-  @deprecated("Call direct route method on this class instead", since = "19th July 2022")
-  val checkRoutes: PartialFunction[Page, UserAnswers => Call] = {
-    case ManufacturedPlasticPackagingWeightPage => answers => manufacturedPlasticPackagingWeight(answers)
-    case ImportedPlasticPackagingWeightPage            => _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-    case NonExportedHumanMedicinesPlasticPackagingPage => answers => nonExportedHumanMedicinesPlasticPackagingRoute(answers, mode = CheckMode)
-    case NonExportedHumanMedicinesPlasticPackagingWeightPage => _ => returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
-    case NonExportedRecycledPlasticPackagingPage => answers => nonExportedRecycledPlasticPackagingPageRoute(answers, mode = CheckMode)
-    case _ => _ => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-  }
+  def importedPlasticPackagingWeightPage() =
+    returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+
+  def manufacturedPlasticPackagingWeightPage(mode: Mode) =
+    if (mode == NormalMode) returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+    else returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+
+  def nonExportedHumanMedicinesPlasticPackagingPage(mode: Mode, yesNo: Boolean) =
+      if (yesNo) returnRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
+      else returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
+
+  def nonExportedHumanMedicinesPlasticPackagingWeightPage(mode: Mode) =
+    returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
+
+  def nonExportedRecycledPlasticPackagingPage(mode: Mode, yesNo: Boolean) =
+    if (yesNo) returnRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode)
+    else returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
 
   def firstPageOfReturnSection =
     returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
@@ -134,50 +132,23 @@ class ReturnsJourneyNavigator @Inject()(
     else
       returnRoutes.NotStartOtherReturnsController.onPageLoad()
 
-  def manufacturedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call = {
-    if (mode.equals(NormalMode))
-      manufacturedRouteForNormalMode(usersAnswer)
-    else
-      manufacturedRouteForCheckMode(hasAnswerChanged, usersAnswer)
-  }
-
-  private def manufacturedRouteForCheckMode(hasAnswerChanged: Boolean, usersAnswer: Boolean) = {
-    if (usersAnswer && hasAnswerChanged)
-      returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
-    else
-      returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-  }
-
-  private def manufacturedRouteForNormalMode(usersAnswer: Boolean) = {
-    if (usersAnswer)
-      returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
-    else
-      returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
-  }
-
-  def manufacturedPlasticPackagingWeight(answers: UserAnswers): Call =
-    answers.get(ManufacturedPlasticPackagingWeightPage) match {
-      case Some(_) => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-      case _ => throw new Exception("Unable to navigate to page")
+  def manufacturedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, yesNo: Boolean): Call = {
+    (mode, hasAnswerChanged, yesNo) match {
+      case (NormalMode, _, true) => returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
+      case (NormalMode, _, _) => returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+      case (_, true, true) => returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
+      case _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
+  }
 
-  def importedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean): Call =
-    if (mode.equals(NormalMode))
-      importedPlasticPackagingRouteNormalMode(mode, usersAnswer)
-    else
-      importedPlasticPackagingRouteCheckMode(mode, hasAnswerChanged, usersAnswer)
-
-  private def importedPlasticPackagingRouteCheckMode(mode: Mode, hasAnswerChanged: Boolean, usersAnswer: Boolean) =
-    if (usersAnswer && hasAnswerChanged)
-      returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-    else
-      returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-
-  private def importedPlasticPackagingRouteNormalMode(mode: Mode, usersAnswer: Boolean) =
-    if (usersAnswer)
-      returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-    else
-      returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+  def importedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, yesNo: Boolean): Call = {
+    (mode, hasAnswerChanged, yesNo) match {
+      case (NormalMode, _, true) => returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case (NormalMode, _, _) => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (_,true, true) => returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+    }
+  }
 
   def confirmTotalPlasticPackagingRoute(answers: UserAnswers): Call = {
     nonExportedAmountHelper.totalPlasticAdditions(answers) match {
@@ -202,12 +173,11 @@ class ReturnsJourneyNavigator @Inject()(
     else 
       returnRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
 
-  def exportedByAnotherBusinessRoute(answers: UserAnswers, mode: Mode): Call =
-    (answers.get(AnotherBusinessExportedPage), mode) match {
-      case (Some(true), _) => returnRoutes.AnotherBusinessExportWeightController.onPageLoad(mode)
-      case (Some(false), NormalMode) => returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
-      case (Some(false), CheckMode) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-      case _ => throw new Exception("Unable to navigate to page")
+  def exportedByAnotherBusinessRoute(answer: Boolean, mode: Mode): Call =
+    (answer, mode) match {
+      case (true, _) => returnRoutes.AnotherBusinessExportWeightController.onPageLoad(mode)
+      case (false, NormalMode) => returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
+      case (false, CheckMode) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
 
   def exportedByAnotherBusinessWeightRoute(isAllPlasticExported: Boolean, mode: Mode): Call = {
@@ -218,20 +188,6 @@ class ReturnsJourneyNavigator @Inject()(
     else 
       returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
   }
-
-  private def nonExportedHumanMedicinesPlasticPackagingRoute(answers: UserAnswers, mode: Mode): Call =
-    answers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
-      case Some(true) => returnRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
-      case Some(false) => returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
-      case _ => throw new Exception("Unable to navigate to page")
-    }
-
-  private def nonExportedRecycledPlasticPackagingPageRoute(answers: UserAnswers, mode: Mode): Call =
-    answers.get(NonExportedRecycledPlasticPackagingPage) match {
-      case Some(true) => returnRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(mode)
-      case Some(false) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-      case _ => throw new Exception("Unable to navigate to page")
-    }
 
   def cyaChangeCredits: String =
     creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url

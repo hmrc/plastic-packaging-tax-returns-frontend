@@ -17,10 +17,10 @@
 package services
 
 import connectors.SubscriptionConnector
-import models.{EisError, EisFailure}
 import models.subscription.group.{GroupPartnershipDetails, GroupPartnershipSubscription}
-import models.subscription.{AddressDetails, ContactDetails, CustomerDetails, CustomerType, Declaration, GroupMembers, LegalEntityDetails, Member, OrganisationDetails, PrimaryContactDetails, PrincipalPlaceOfBusinessDetails}
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
+import models.subscription._
+import models.{EisError, EisFailure}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
 import org.mockito.MockitoSugar.{mock, verify, when}

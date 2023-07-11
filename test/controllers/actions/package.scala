@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.returns
+package controllers
 
-import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.auth.core.retrieve.~
 
-case class ImportedPlasticWeight(totalKg: Long)
+package object actions {
 
-object ImportedPlasticWeight {
-  implicit val format: OFormat[ImportedPlasticWeight] = Json.format[ImportedPlasticWeight]
+  implicit class RetrievalSugar[A](val a: A) extends AnyVal {
+    def and[B](b: B): A ~ B = new ~(a, b)
+  }
+
 }

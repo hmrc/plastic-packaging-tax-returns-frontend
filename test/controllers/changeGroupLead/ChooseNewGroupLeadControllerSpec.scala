@@ -33,7 +33,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
-import play.api.data.Forms.{ignored, text}
+import play.api.data.Forms.ignored
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest

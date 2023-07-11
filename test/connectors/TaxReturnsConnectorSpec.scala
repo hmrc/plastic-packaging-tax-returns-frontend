@@ -32,7 +32,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, JsValue}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -155,22 +155,22 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
     "throw" when {
       "get request fails" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
-          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
+          message = "exception-message", statusCode = 500, reportAs = 500
         ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference", "period-key")))
       }
 
       "submit response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
-          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
+          message = "exception-message", statusCode = 500, reportAs = 500
         ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.submit("ppt-reference")))
       }
 
       "amend response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(Upstream5xxResponse(
-          message = "exception-message", upstreamResponseCode = 500, reportAs = 500
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
+          message = "exception-message", statusCode = 500, reportAs = 500
         ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
       }

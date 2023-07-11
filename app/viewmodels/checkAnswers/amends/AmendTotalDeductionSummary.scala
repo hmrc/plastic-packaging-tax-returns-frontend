@@ -19,12 +19,7 @@ package viewmodels.checkAnswers.amends
 import models.UserAnswers
 import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.returns.AmendsCalculations
-import pages.amends.{
-  AmendDirectExportPlasticPackagingPage,
-  AmendExportedByAnotherBusinessPage,
-  AmendHumanMedicinePlasticPackagingPage,
-  AmendRecycledPlasticPackagingPage
-}
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage, AmendHumanMedicinePlasticPackagingPage, AmendRecycledPlasticPackagingPage}
 import viewmodels.PrintLong
 
 object AmendTotalDeductionSummary {

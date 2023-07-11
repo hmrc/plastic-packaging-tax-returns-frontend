@@ -26,7 +26,7 @@ import controllers.{routes => appRoutes}
 import forms.returns.NonExportedRecycledPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -34,7 +34,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.{DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage, AnotherBusinessExportedPage}
+import pages.returns.{AnotherBusinessExportedPage, DirectlyExportedPage, NonExportedRecycledPlasticPackagingWeightPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -66,7 +66,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
 
   private val mockMessagesApi= mock[MessagesApi]
   private val mockCacheConnector= mock[CacheConnector]
-  private val mockNavigator =  mock[Navigator]
+  private val mockNavigator =  mock[ReturnsJourneyNavigator]
   private val mockView = mock[NonExportedRecycledPlasticPackagingWeightView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
@@ -162,7 +162,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "redirect to the next page when valid data is submitted" in {
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(onwardRoute)
+      when(mockNavigator.nonExportedRecycledPlasticPackagingWeightPage()).thenReturn(onwardRoute)
 
       val result = createSut(Some(UserAnswers("123")))
         .onSubmit(NormalMode)(fakePostRequestWithBody(("value", validAnswer.toString)))
@@ -173,7 +173,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
 
     "set up the cache" in {
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(onwardRoute)
+      when(mockNavigator.nonExportedRecycledPlasticPackagingWeightPage()).thenReturn(onwardRoute)
 
       await(
         createSut(Some(nonExportedAnswer))

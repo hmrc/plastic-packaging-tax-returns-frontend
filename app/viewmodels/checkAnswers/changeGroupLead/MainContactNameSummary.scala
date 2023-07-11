@@ -17,11 +17,10 @@
 package viewmodels.checkAnswers.changeGroupLead
 
 import controllers.changeGroupLead.routes
-import models.UserAnswers
 import models.Mode.CheckMode
+import models.UserAnswers
 import pages.changeGroupLead.MainContactNamePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._

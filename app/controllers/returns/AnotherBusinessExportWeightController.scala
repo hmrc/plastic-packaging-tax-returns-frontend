@@ -24,8 +24,8 @@ import models.Mode
 import models.Mode.CheckMode
 import models.requests.DataRequest.headerCarrier
 import navigation.ReturnsJourneyNavigator
-import play.api.data.FormBinding.Implicits.formBinding
 import pages.returns.AnotherBusinessExportedWeightPage
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import services.ExportedPlasticAnswer
@@ -70,7 +70,7 @@ class AnotherBusinessExportWeightController @Inject()(
 
         value =>
           request.userAnswers
-            .setOrFail(AnotherBusinessExportedWeightPage, value, isCleanUp(mode))
+            .setOrFail(AnotherBusinessExportedWeightPage, value, mode != CheckMode)
             .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
             .map(updatedUserAnswers =>
               Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
@@ -79,7 +79,4 @@ class AnotherBusinessExportWeightController @Inject()(
             )
         )
   }
-
-  private def isCleanUp(mode: Mode) =
-    if(mode == CheckMode) false else true
 }

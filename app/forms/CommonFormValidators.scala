@@ -17,8 +17,6 @@
 package forms
 
 import com.google.common.base.Strings
-import play.api.data.Forms.{optional, text}
-import play.api.data.Mapping
 
 import java.util.regex.Pattern
 

@@ -17,29 +17,28 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
+import controllers.actions.AuthenticatedIdentifierAction.ContinueQueryParamKey
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
+import controllers.home.{routes => homeRoutes}
+import controllers.{routes => agentRoutes}
 import models.Mode.NormalMode
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.Logging
-import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParser, BodyParsers, ControllerComponents, PlayBodyParsers, Request, Result, Results}
 import play.api.mvc.Results.Redirect
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisationException, AuthorisedFunctions, CredentialStrength, Enrolment, Enrolments, InsufficientEnrolments, NoActiveSession}
+import play.api.mvc._
+import repositories.SessionRepository
+import repositories.SessionRepository.Paths.AgentSelectedPPTRef
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, internalId}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import controllers.{routes => agentRoutes}
-import controllers.home.{routes => homeRoutes}
-import repositories.SessionRepository
-import repositories.SessionRepository.Paths.AgentSelectedPPTRef
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, internalId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//used almost everywhere
 trait AuthAction
   extends ActionBuilder[IdentifiedRequest, AnyContent]
     with ActionFunction[Request, IdentifiedRequest]
@@ -91,7 +90,7 @@ class AuthenticatedIdentifierAction @Inject() (
         }
     } recover {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("continue" -> Seq(request.target.path)))
+        Redirect(appConfig.loginUrl, Map(ContinueQueryParamKey -> Seq(request.target.path)))
 
       case _: InsufficientEnrolments =>
         Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())
@@ -102,13 +101,14 @@ class AuthenticatedIdentifierAction @Inject() (
     allEnrolments
       .getEnrolment(pptEnrolmentKey)
       .flatMap(_.getIdentifier(pptEnrolmentIdentifierName))
-      .filter(_.value.trim.nonEmpty) //is this necessary??
+      .filter(_.value.trim.nonEmpty)
       .map(_.value)
   }
 
 }
 
 object AuthenticatedIdentifierAction {
+  val ContinueQueryParamKey = "continue"
   object IdentifierAction {
     val pptEnrolmentKey = "HMRC-PPT-ORG"
     val pptEnrolmentIdentifierName = "EtmpRegistrationNumber"

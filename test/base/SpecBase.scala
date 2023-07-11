@@ -16,7 +16,7 @@
 
 package base
 
-import cacheables.{ReturnObligationCacheable, ReturnDisplayApiCacheable}
+import cacheables.{ReturnDisplayApiCacheable, ReturnObligationCacheable}
 import config.FrontendAppConfig
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
@@ -106,7 +106,7 @@ trait SpecBase
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[AuthCheckAction].to[FakeAuthActionNotEnrolled],
+        bind[AuthLoggedInAction].to[FakeAuthActionNotEnrolled],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SessionRepository].toInstance(mock[SessionRepository])
       )

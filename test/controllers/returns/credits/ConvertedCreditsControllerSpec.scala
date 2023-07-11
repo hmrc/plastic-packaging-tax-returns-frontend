@@ -26,7 +26,6 @@ import models.requests.DataRequest
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
-import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar
 import org.mockito.captor.ArgCaptor
 import org.mockito.integrations.scalatest.ResetMocksAfterEachTest

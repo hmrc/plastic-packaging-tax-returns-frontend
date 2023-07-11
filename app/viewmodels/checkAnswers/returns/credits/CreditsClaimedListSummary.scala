@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.returns.credits
 
 import models.returns.credits.CreditSummaryRow
-import models.{CreditBalance, TaxablePlastic, UserAnswers}
+import models.{CreditBalance, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath

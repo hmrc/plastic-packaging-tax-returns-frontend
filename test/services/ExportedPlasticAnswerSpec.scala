@@ -21,10 +21,10 @@ import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
-import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
 import pages.returns._
 
 class ExportedPlasticAnswerSpec extends PlaySpec {

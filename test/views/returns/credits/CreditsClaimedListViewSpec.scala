@@ -20,8 +20,8 @@ import base.ViewSpecBase
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.returns.CreditRangeOption
-import models.{CreditBalance, TaxablePlastic}
 import models.returns.credits.CreditSummaryRow
+import models.{CreditBalance, TaxablePlastic}
 import play.api.data.Form
 import play.twirl.api.Html
 import support.ViewAssertions

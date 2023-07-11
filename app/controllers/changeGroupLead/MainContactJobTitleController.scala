@@ -20,10 +20,10 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.changeGroupLead.MainContactJobTitleFormProvider
 import models.Mode
+import models.requests.DataRequest._
 import navigation.ChangeGroupLeadNavigator
 import pages.changeGroupLead.{MainContactJobTitlePage, MainContactNamePage}
 import play.api.data.FormBinding.Implicits.formBinding
-import models.requests.DataRequest._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

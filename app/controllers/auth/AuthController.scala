@@ -17,31 +17,36 @@
 package controllers.auth
 
 import config.FrontendAppConfig
+import controllers.actions.AuthLoggedInAction
+import controllers.auth.AuthController.QueryParamContinueKey
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.actions.AuthCheckAction
 
 class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   config: FrontendAppConfig,
-  authenticate: AuthCheckAction
+  authenticate: AuthLoggedInAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController with I18nSupport {
 
   def signOut(): Action[AnyContent] =
     authenticate.async {
       implicit request => 
-        Future.successful(Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl))))
+        Future.successful(Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.exitSurveyUrl))))
     }
 
   def signOutNoSurvey(): Action[AnyContent] =
     authenticate.async {
       implicit request =>
-        Future.successful(Redirect(config.signOutUrl, Map("continue" -> Seq(config.signedOutUrl))))
+        Future.successful(Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.signedOutUrl))))
     }
 
+}
+
+object AuthController {
+  val QueryParamContinueKey = "continue"
 }

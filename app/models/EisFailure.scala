@@ -16,6 +16,7 @@
 
 package models
 
+import models.EisFailure.DependantSystemReason
 import play.api.libs.json.{Json, OFormat}
 
 case class EisError(code: String, reason: String)
@@ -38,9 +39,10 @@ case class EisFailure(failures: Option[Seq[EisError]]) {
     * @note intended for use on response from view subscription api, but may also work for others - check the specs
     */
   def isDependentSystemsNotResponding: Boolean =
-    failures.exists(_.exists(_.reason == "Dependent systems are currently not responding."))
+    failures.exists(_.exists(_.reason == DependantSystemReason ))
 }
 
 object EisFailure {
+  val DependantSystemReason = "Dependent systems are currently not responding."
   implicit val format: OFormat[EisFailure] = Json.format[EisFailure]
 }

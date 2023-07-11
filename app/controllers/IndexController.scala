@@ -48,7 +48,7 @@ class IndexController @Inject() (
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
       val pptReference = request.pptReference
-        for { //this is not async do we care?
+        for {
           legalEntity      <- sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive)
           paymentStatement <- getPaymentsStatement(pptReference)
           obligations      <- getObligationsDetail(pptReference)

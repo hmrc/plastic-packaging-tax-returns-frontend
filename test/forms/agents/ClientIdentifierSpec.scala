@@ -16,10 +16,10 @@
 
 package forms.agents
 
+import forms.agents.ClientIdentifier.{formatError, identifier, identifierEmptyError, lengthError}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.agents.ClientIdentifier.{formatError, identifier, identifierEmptyError, lengthError}
 
 class ClientIdentifierSpec extends AnyWordSpec with Matchers {
 

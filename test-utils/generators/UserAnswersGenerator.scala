@@ -24,8 +24,6 @@ import pages._
 import pages.amends._
 import pages.changeGroupLead._
 import pages.returns._
-import pages.returns.credits._
-
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {

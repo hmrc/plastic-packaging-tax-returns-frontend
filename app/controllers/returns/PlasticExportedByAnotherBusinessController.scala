@@ -69,7 +69,7 @@ class PlasticExportedByAnotherBusinessController @Inject()(
             request.userAnswers
               .setOrFail(AnotherBusinessExportedPage, value)
               .save(cacheConnector.saveUserAnswerFunc(pptId))
-              .map(updatedAnswer => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(updatedAnswer, mode)))
+              .map(_ => Redirect(returnsNavigator.exportedByAnotherBusinessRoute(value, mode)))
       )
   }
 }

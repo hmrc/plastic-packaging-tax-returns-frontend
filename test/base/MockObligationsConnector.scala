@@ -18,14 +18,14 @@ package base
 
 import connectors.ObligationsConnector
 import models.obligations.PPTObligations
+import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, reset}
+import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
-import models.returns.TaxReturnObligation
 
 trait MockObligationsConnector extends MockitoSugar {
   self: Suite =>

@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns.NonExportedRecycledPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonExportedRecycledPlasticPackagingController @Inject()(
                                                                override val messagesApi: MessagesApi,
                                                                cacheConnector: CacheConnector,
-                                                               navigator: Navigator,
+                                                               navigator: ReturnsJourneyNavigator,
                                                                identify: IdentifierAction,
                                                                getData: DataRetrievalAction,
                                                                requireData: DataRequiredAction,
@@ -72,7 +72,7 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedRecycledPlasticPackagingPage, value))
             _ <- cacheConnector.set(request.pptReference, updatedAnswers)
-          } yield Redirect(navigator.nextPage(NonExportedRecycledPlasticPackagingPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nonExportedRecycledPlasticPackagingPage(mode, value))
       )
   }
 }

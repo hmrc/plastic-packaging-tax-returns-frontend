@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.returns
+package cacheables
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
+import queries.{Gettable, Settable}
 
-case class RecycledPlasticWeight(totalKg: Long)
+case object IsFirstReturnCacheable extends Gettable[Boolean] with Settable[Boolean] {
+    override def path: JsPath = JsPath \ toString
 
-object RecycledPlasticWeight {
-  implicit val format: OFormat[RecycledPlasticWeight] = Json.format[RecycledPlasticWeight]
-}
+    override def toString: String = "isFirstReturn"
+  }
+

@@ -16,13 +16,13 @@
 
 package base
 
-import controllers.actions.{AuthCheckAction, AuthedUser}
+import controllers.actions.{AuthLoggedInAction, AuthedUser}
 import play.api.mvc._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAuthActionNotEnrolled @Inject() (bodyParsers: PlayBodyParsers) extends AuthCheckAction {
+class FakeAuthActionNotEnrolled @Inject() (bodyParsers: PlayBodyParsers) extends AuthLoggedInAction {
 
   override def invokeBlock[A](
     request: Request[A],

@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.ReturnsJourneyNavigator
 import pages.returns._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
-  navigator: Navigator,
+  navigator: ReturnsJourneyNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -76,7 +76,7 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value))
               _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-            } yield Redirect(navigator.nextPage(NonExportedHumanMedicinesPlasticPackagingPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nonExportedHumanMedicinesPlasticPackagingPage(mode, value))
         )
     }
 }

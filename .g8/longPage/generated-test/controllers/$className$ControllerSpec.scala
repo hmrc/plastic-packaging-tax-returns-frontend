@@ -5,7 +5,7 @@ import connectors.CacheConnector
 import forms.$className$FormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
-import navigation.{FakeNavigator, Navigator}
+import navigation.FakeNavigator
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar

@@ -19,7 +19,7 @@ package models.subscription
 import models.subscription.group.GroupPartnershipSubscription
 import play.api.libs.json.{Json, OFormat}
 
-case class Subscription( //  Duplicate?
+case class Subscription(
   legalEntityDetails: LegalEntityDetails,
   principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails,
   primaryContactDetails: PrimaryContactDetails,

@@ -1,5 +1,4 @@
 import play.sbt.routes.RoutesKeys
-import sbt.BasicCommands.alias
 import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings

@@ -17,10 +17,10 @@
 package controllers
 
 import base.SpecBase
+import controllers.home.{routes => homeRoutes}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.UnauthorisedView
-import controllers.home.{routes => homeRoutes}
 
 class UnauthorisedControllerSpec extends SpecBase {
 

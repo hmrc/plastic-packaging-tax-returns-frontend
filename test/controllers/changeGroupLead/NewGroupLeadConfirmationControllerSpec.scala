@@ -16,7 +16,6 @@
 
 package controllers.changeGroupLead
 
-import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach

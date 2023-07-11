@@ -16,10 +16,9 @@
 
 package models.subscription.group
 
-import models.subscription.{AddressDetails, IndividualDetails, OrganisationDetails}
-import play.api.libs.json.{Json, OFormat}
-import models.subscription.ContactDetails
 import models.subscription.group.GroupPartnershipDetails.Representative
+import models.subscription.{AddressDetails, ContactDetails, IndividualDetails, OrganisationDetails}
+import play.api.libs.json.{Json, OFormat}
 
 case class GroupPartnershipDetails(
   relationship: String,

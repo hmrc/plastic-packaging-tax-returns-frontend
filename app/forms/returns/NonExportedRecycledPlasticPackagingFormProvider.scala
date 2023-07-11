@@ -16,10 +16,10 @@
 
 package forms.returns
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class NonExportedRecycledPlasticPackagingFormProvider @Inject() extends Mappings {
 

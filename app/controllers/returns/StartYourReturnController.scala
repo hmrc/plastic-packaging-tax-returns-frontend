@@ -17,7 +17,7 @@
 package controllers.returns
 
 import audit.Auditor
-import cacheables.ReturnObligationCacheable
+import cacheables.{IsFirstReturnCacheable, ReturnObligationCacheable}
 import connectors.CacheConnector
 import controllers.actions._
 import controllers.helpers.TaxReturnHelper
@@ -31,7 +31,6 @@ import pages.returns.StartYourReturnPage
 import play.api.Logging
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import views.html.returns.StartYourReturnView
@@ -67,7 +66,7 @@ class StartYourReturnController @Inject() (
   private def viewCredit(
     taxReturnObligation: TaxReturnObligation
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    saveUserAnswer(false, taxReturnObligation)
+    saveUserAnswer(isFirstReturn = false, taxReturnObligation)
       .map(_ => Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad))
   }
 
@@ -76,7 +75,7 @@ class StartYourReturnController @Inject() (
                                )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.fill(StartYourReturnPage, form())
 
-    saveUserAnswer(true, taxReturnObligation)
+    saveUserAnswer(isFirstReturn = true, taxReturnObligation)
       .map(_ => Ok(view(preparedForm, taxReturnObligation, true)))
   }
 
@@ -86,7 +85,7 @@ class StartYourReturnController @Inject() (
   )(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
     request.userAnswers
       .setOrFail(ReturnObligationCacheable, taxReturnObligation)
-      .setOrFail(JsPath \ "isFirstReturn", isFirstReturn)
+      .setOrFail(IsFirstReturnCacheable, isFirstReturn)
       .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
   }
 
@@ -96,7 +95,7 @@ class StartYourReturnController @Inject() (
         val userAnswers   = request.userAnswers
         val pptReference  = request.pptReference
         val obligation    = userAnswers.getOrFail(ReturnObligationCacheable)
-        val isFirstReturn = userAnswers.getOrFail[Boolean](JsPath \ "isFirstReturn")
+        val isFirstReturn = userAnswers.getOrFail[Boolean](IsFirstReturnCacheable)
 
         form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation, isFirstReturn))),

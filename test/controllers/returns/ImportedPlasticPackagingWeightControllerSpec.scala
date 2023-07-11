@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.CacheConnector
 import forms.returns.ImportedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -42,6 +42,9 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
   lazy val importedPlasticPackagingWeightRoute =
     controllers.returns.routes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+
+  val navigator = mock[ReturnsJourneyNavigator]
+  when(navigator.importedPlasticPackagingWeightPage()).thenReturn(onwardRoute)
 
   "ImportedPlasticPackagingWeight Controller" - {
 
@@ -95,7 +98,8 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          .overrides(
+            bind[ReturnsJourneyNavigator].toInstance(navigator),
             bind[CacheConnector].toInstance(mockCacheConnector)
           )
           .build()

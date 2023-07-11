@@ -38,7 +38,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
 import views.html.IndexView
-import play.api.test.Helpers.{await, defaultAwaitTimeout, status, stubMessagesControllerComponents}
 
 import java.time.LocalDate.now
 import scala.concurrent.ExecutionContext.global
