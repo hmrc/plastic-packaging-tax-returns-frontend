@@ -50,11 +50,11 @@ class NonExportedAmountHelper { //todo rename?
 
   def getAmountAndDirectlyExportedAnswer(userAnswers: UserAnswers): Option[(Long, Boolean, Boolean)] = {
     for {
-      value <- nonExportedAmount(userAnswers)
-      isDirectExportYesNo = userAnswers.get(DirectlyExportedPage).get
+      nonExportedAmount <- nonExportedAmount(userAnswers)
+      isDirectExportYesNo <- userAnswers.get(DirectlyExportedPage)
       isAnotherBusinessYesNo = userAnswers.get(AnotherBusinessExportedPage).getOrElse(false) // default to no if not answered
     }
-    yield (value, isDirectExportYesNo, isAnotherBusinessYesNo)
+    yield (nonExportedAmount, isDirectExportYesNo, isAnotherBusinessYesNo)
   }
 
   private def getAmount(
