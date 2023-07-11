@@ -39,7 +39,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//used almost everywhere
 trait AuthAction
   extends ActionBuilder[IdentifiedRequest, AnyContent]
     with ActionFunction[Request, IdentifiedRequest]
@@ -102,7 +101,7 @@ class AuthenticatedIdentifierAction @Inject() (
     allEnrolments
       .getEnrolment(pptEnrolmentKey)
       .flatMap(_.getIdentifier(pptEnrolmentIdentifierName))
-      .filter(_.value.trim.nonEmpty) //is this necessary??
+      .filter(_.value.trim.nonEmpty)
       .map(_.value)
   }
 
