@@ -52,9 +52,6 @@ class FrontendAppConfig @Inject() (
   lazy val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
   lazy val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
 
-  lazy val languageTranslationEnabled: Boolean =
-    configuration.get[Boolean]("features.welsh-translation")
-
   def languageMap: Map[String, Lang] = Map("en" -> Lang("en"), "cy" -> Lang("cy"))
 
   def contactFrontEnd = contactHost
@@ -106,18 +103,6 @@ class FrontendAppConfig @Inject() (
 
   def pptAvailableCreditYearsUrl(pptReference: String): String =
     s"$pptServiceHost/credits/available-years/$pptReference"
-
-  def isDeRegistrationFeatureEnabled: Boolean =
-    isFeatureEnabled(Features.deRegistrationEnabled)
-
-  def isAmendsFeatureEnabled: Boolean =
-    isFeatureEnabled(Features.amendsEnabled)
-
-  def isFeatureEnabledChangeOfGroupLead: Boolean =
-    isFeatureEnabled(Features.changeOfGroupLead)
-
-  def isFeatureEnabled(name: String): Boolean =
-    configuration.getOptional[Boolean](s"features.$name").getOrElse(false)
 
   def pptSubscriptionUrl(pptReference: String): String =
     s"$pptServiceHost/subscriptions/$pptReference"

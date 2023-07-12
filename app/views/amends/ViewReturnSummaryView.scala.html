@@ -16,7 +16,6 @@
 
 @import views.html.components.{SectionHeader, Link, paragraphBody}
 @import viewmodels.checkAnswers.ViewReturnSummaryViewModel
-@import config.FrontendAppConfig
 @import viewmodels._
 @import controllers.amends.ViewReturnSummaryController.Unamendable
 @import controllers.amends.ViewReturnSummaryController.Unamendable._
@@ -28,7 +27,6 @@
     govukButton: GovukButton,
     sectionHeader: SectionHeader,
     link: Link,
-    appConfig: FrontendAppConfig,
     paragraphBody: paragraphBody
 )
 
@@ -54,25 +52,18 @@
 
     <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
 
-    @if(appConfig.isAmendsFeatureEnabled){
-        @amendCall match {
-            case Right(call) => {
-                <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call.url)</p>
-            }
-            case Left(DDInProgress) => {
-                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.ddinprogress.h2")</h2>
-                @paragraphBody(messages("viewReturnSummary.amend.notamendable.ddinprogress.p1"))
-            }
-            case Left(TooOld) => {
-                <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.tooold.h2")</h2>
-                @paragraphBody(messages("viewReturnSummary.amend.notamendable.tooold.p1"))
-            }
+    @amendCall match {
+        case Right(call) => {
+            <p>@link("amend-return", messages("viewReturnSummary.amendLink"), call.url)</p>
         }
-    } else {
-        <h2 class="govuk-heading-m">@messages("viewReturnSummary.amendLink")</h2>
-        <div class="govuk-inset-text">
-            @paragraphContent
-        </div>
+        case Left(DDInProgress) => {
+            <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.ddinprogress.h2")</h2>
+            @paragraphBody(messages("viewReturnSummary.amend.notamendable.ddinprogress.p1"))
+        }
+        case Left(TooOld) => {
+            <h2 class="govuk-heading-m">@messages("viewReturnSummary.amend.notamendable.tooold.h2")</h2>
+            @paragraphBody(messages("viewReturnSummary.amend.notamendable.tooold.p1"))
+        }
     }
 
     <h2 class="govuk-heading-l">@messages(vm.summarySection.titleKey)</h2>

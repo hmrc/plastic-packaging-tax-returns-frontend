@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.{FinancialsConnector, ObligationsConnector}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.PPTSubscriptionDetails
@@ -67,13 +67,9 @@ class IndexController @Inject() (
   private def getPaymentsStatement(
     pptReference: String
   )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
-    if (appConfig.isFeatureEnabled(Features.paymentsEnabled)) {
-      financialsConnector.getPaymentStatement(pptReference).map(
-        response => Some(response.paymentStatement()(messages))
-      ).recover { case _ => None}
-    } else {
-      Future.successful(Some(PPTFinancials(None, None, None).paymentStatement()(messages)))
-    }
+    financialsConnector.getPaymentStatement(pptReference).map(
+      response => Some(response.paymentStatement()(messages))
+    ).recover { case _ => None}
 
   private def isFirstReturn(pptReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     obligationsConnector.getFulfilled(pptReference).map(_.isEmpty).recoverWith {

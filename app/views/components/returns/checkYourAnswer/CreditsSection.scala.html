@@ -34,10 +34,8 @@
 
 @(credits: Credits, changeUrl: String)(implicit request: Request[_], messages: Messages)
 
-@{
-    credits match {
-        case Credits.NoCreditsClaimed => noCreditsClaimed()
-        case Credits.NoCreditAvailable => noCreditsAvailable()
-        case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
-    }
-}
+@{credits match {
+    case Credits.NoCreditsClaimed => noCreditsClaimed()
+    case Credits.NoCreditAvailable => noCreditsAvailable()
+    case creditClaim: CreditsClaimedDetails => creditsClaimed(creditClaim, changeUrl)
+}}

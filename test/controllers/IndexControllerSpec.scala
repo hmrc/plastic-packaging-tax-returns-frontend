@@ -18,7 +18,7 @@ package controllers
 
 import akka.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
-import config.{Features, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.{FinancialsConnector, ObligationsConnector}
 import controllers.actions.FakeDataRetrievalAction
 import models.PPTSubscriptionDetails
@@ -27,7 +27,7 @@ import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import models.subscription.LegalEntityDetails
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -74,8 +74,6 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   "onPageLoad" must {
     "construct and return the account home page" in {
-      when(mockAppConfig.isFeatureEnabled(Features.paymentsEnabled)).thenReturn(true)
-
       when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
       when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(mockPPTFinancials))
       when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
@@ -110,7 +108,6 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "calculate ifFirstReturn to be false, when fulfilled obligation is nonEmpty" in {
-      when(mockAppConfig.isFeatureEnabled(Features.paymentsEnabled)).thenReturn(true)
       when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
       when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
       when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
@@ -127,23 +124,6 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
         any(),
         any()
       )(any(), any())
-    }
-
-    "default payments when toggled off" in {
-      when(mockAppConfig.isFeatureEnabled(Features.paymentsEnabled)).thenReturn(false)
-
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq.empty))
-
-
-      val result = sut.onPageLoad()(FakeRequest())
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe "test view"
-      withClue("should not call financials connector"){
-        verify(mockFinancialsConnector, never()).getPaymentStatement(any())(any())
-      }
     }
   }
 

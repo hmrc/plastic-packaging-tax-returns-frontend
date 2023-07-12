@@ -108,7 +108,7 @@ class ReturnsCheckYourAnswersController @Inject()(
     }
   }
 
-  private def callCalculationAndCreditApi(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
+  private def callCalculationAndCreditApi(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean)
     (implicit messages: Messages, hc: HeaderCarrier): Future[(Calculations, Credits)] = {
 
     val eventualCalculations = returnsConnector.getCalculationReturns(request.pptReference)
@@ -122,9 +122,9 @@ class ReturnsCheckYourAnswersController @Inject()(
     }
   }
 
-  private def getCredits(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean) 
+  private def getCredits(request: DataRequest[_], isUserClaimingCredit: Boolean, isFirstReturn: Boolean)
     (implicit hc: HeaderCarrier, messages: Messages): Future[Credits] =
-    
+
     if (isFirstReturn)
       Future.successful(NoCreditAvailable)
     else if (isUserClaimingCredit)
