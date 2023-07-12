@@ -16,14 +16,13 @@
 
 package controllers.returns
 
-import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
 import controllers.actions.JourneyAction
-import models.returns.TaxReturnObligation
+import models.ReturnsUserAnswers
 import navigation.ReturnsJourneyNavigator
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{Ok, Redirect}
+import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.returns.NowStartYourReturnView
 
@@ -41,14 +40,10 @@ class NowStartYourReturnController @Inject()
   def onPageLoad(): Action[AnyContent] =
     journeyAction {
       implicit request =>
-
-        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
-          case Some(obligation) => 
-            val returnQuarter = obligation.toReturnQuarter
-            val nextPage = returnsNavigator.firstPageOfReturnSection
-
-            Ok(view(returnQuarter, true, nextPage))
-          case None => Redirect(controllers.routes.IndexController.onPageLoad)
+        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+          val returnQuarter = obligation.toReturnQuarter
+          val nextPage = returnsNavigator.firstPageOfReturnSection
+          Ok(view(returnQuarter, true, nextPage))
         }
     }
   

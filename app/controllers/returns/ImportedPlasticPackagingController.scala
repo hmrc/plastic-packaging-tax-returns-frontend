@@ -20,8 +20,7 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingFormProvider
-import models.returns.TaxReturnObligation
-import models.{Mode, UserAnswers}
+import models.{Mode, ReturnsUserAnswers, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.ImportedPlasticPackagingPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,11 +49,9 @@ class ImportedPlasticPackagingController @Inject()
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
-
-        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
-          case Some(obligation) => Ok(view(preparedForm, mode, obligation))
-          case None => Redirect(controllers.routes.IndexController.onPageLoad)
+        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+          val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
+          Ok(view(preparedForm, mode, obligation))
         }
     }
 
@@ -63,10 +60,7 @@ class ImportedPlasticPackagingController @Inject()
       implicit request =>
         val pptId: String = request.pptReference
         val userAnswers = request.userAnswers
-
-        val obligation = request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         formProvider().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),

@@ -16,6 +16,7 @@
 
 package connectors
 
+import akka.util.Timeout
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -26,6 +27,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.await
 
 import java.util.UUID
+import scala.concurrent.Await
 
 class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
@@ -42,18 +44,18 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
     super.afterAll()
   }
 
-  "Get" should {
+  "it" should {
+    
     "return a credit for a pptReference" in {
-      val expectedCredit = CreditBalance(10, 5, 200, true, Map("a-key" -> TaxablePlastic(1, 2, 3)))
+      val creditBalance = CreditBalance(10, 5, 200, true, Map("a-key" -> TaxablePlastic(1, 2, 3)))
+      
       stubCalculateCreditApi(
         Status.OK,
         pptReference,
-        Json.toJsObject(expectedCredit).toString
+        Json.toJsObject(creditBalance).toString
       )
 
-      val res = await(connector.get(pptReference))
-
-      res mustBe Right(expectedCredit)
+      await(connector.getEventually(pptReference)) mustBe creditBalance
     }
 
     "return an error" in {
@@ -62,9 +64,11 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
         pptReference
       )
 
-      val res = await(connector.get(pptReference))
-
-      assert(res.left.get.isInstanceOf[DownstreamServiceError])
+      val eventualResult = connector.getEventually(pptReference)
+      val timeout: Timeout = implicitly
+      Await.ready(eventualResult, timeout.duration)
+      
+      eventualResult.failed.futureValue mustBe a[DownstreamServiceError] 
     }
   }
 

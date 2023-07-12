@@ -145,8 +145,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Exported Plastic Packaging section" should {
-    val view = createView()
-    val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(3).text()
+    val view = createView(credits = NoCreditAvailable)
+    val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(2).text()
 
     "display header" in {
       view.select("h3").text() must include("Exported plastic packaging")
@@ -208,8 +208,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Deduction section" should {
-    val view = createView()
-    val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(5).text()
+    val view = createView(credits = NoCreditAvailable)
+    val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(4).text()
 
     "display header" in {
       view.select("h3").text() must include("Deductions")

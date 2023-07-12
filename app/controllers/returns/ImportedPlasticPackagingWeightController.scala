@@ -20,7 +20,7 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingWeightFormProvider
-import models.Mode
+import models.{Mode, ReturnsUserAnswers}
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import pages.returns.ImportedPlasticPackagingWeightPage
@@ -46,16 +46,11 @@ class ImportedPlasticPackagingWeightController @Inject() (
     extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(ImportedPlasticPackagingWeightPage) match {
-          case None        => form()
-          case Some(value) => form().fill(value)
-        }
-
-        request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable) match {
-          case Some(obligation) => Future.successful(Ok(view(preparedForm, mode, obligation)))
-          case None             => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+          val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingWeightPage, form())
+          Ok(view(preparedForm, mode, obligation))
         }
     }
 
@@ -63,10 +58,7 @@ class ImportedPlasticPackagingWeightController @Inject() (
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val pptId: String = request.pptReference
-
-        val obligation = request.userAnswers.get[TaxReturnObligation](ReturnObligationCacheable).getOrElse(
-          throw new IllegalStateException("Must have an obligation to Submit against")
-        )
+        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
         form().bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),

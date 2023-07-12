@@ -52,8 +52,8 @@ class NonExportedRecycledPlasticPackagingController @Inject()(
       nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
         .fold(
           Redirect(controllers.routes.IndexController.onPageLoad)) {
-          case (amount, directlyExported, exportedByAnotheBusiness) =>
-            Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotheBusiness).contains(true)))
+          case (amount, directlyExported, exportedByAnotherBusiness) =>
+            Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
         }
   }
 
