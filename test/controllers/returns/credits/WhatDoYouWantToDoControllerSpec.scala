@@ -24,14 +24,15 @@ import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.{Answers, MockitoSugar}
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.Form
 import play.api.data.Forms.boolean
+import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
@@ -52,7 +53,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
   private val controllerComponents = stubMessagesControllerComponents()
   private val view = mock[DoYouWantToClaimView]
   private val navigator = mock[ReturnsJourneyNavigator]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val dataRequest = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
   private val form = mock[Form[Boolean]]
   private val obligation = mock[TaxReturnObligation]
 
@@ -81,7 +82,9 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
     when(formProvider.apply()).thenReturn(form)
-    when(dataRequest.userAnswers.getOrFail(meq(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
+    
+    when(dataRequest.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(obligation)
+    when(dataRequest.userAnswers.getOrFail(eqTo(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
 
   }
 
@@ -104,9 +107,17 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
 
       val result = sut.onPageLoad(dataRequest)
       status(result) mustBe OK
-      verify(dataRequest.userAnswers).fill(meq(WhatDoYouWantToDoPage), meq(form))(any)
-      verify(view).apply(meq(validForm), meq(obligation))(any, any)
+      verify(dataRequest.userAnswers).fill(eqTo(WhatDoYouWantToDoPage), eqTo(form))(any)
+      verify(view).apply(eqTo(validForm), eqTo(obligation))(any, any)
     }
+    
+    "redirect to account page if obligation is missing" in {
+      when(dataRequest.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
+      val result = sut.onPageLoad(dataRequest)
+      status(result) mustBe Status.SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+    }
+    
   }
 
   "onSubmit" must {
@@ -122,9 +133,9 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(dataRequest.userAnswers.change(any, any, any)(any)).thenReturn(Future.successful(true))
 
       val result = await(sut.onSubmit(dataRequest))
-      verify(cacheConnector).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
-      verify(navigator).whatDoYouWantDo(meq(true))
-      verify(dataRequest.userAnswers, never).getOrFail(meq(ReturnObligationCacheable))(any, any)
+      verify(cacheConnector).saveUserAnswerFunc(eqTo(dataRequest.pptReference))(any)
+      verify(navigator).whatDoYouWantDo(eqTo(true))
+      verify(dataRequest.userAnswers, never).get(eqTo(ReturnObligationCacheable))(any)
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)) mustBe Some("/foo")
@@ -135,8 +146,8 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       when(form.bindFromRequest()(any,any)).thenReturn(formWithErrors)
 
       val result = await(sut.onSubmit(dataRequest))
-      verify(dataRequest.userAnswers).getOrFail(meq(ReturnObligationCacheable))(any, any)
-      verify(view).apply(meq(formWithErrors), meq(obligation))(any, any)
+      verify(dataRequest.userAnswers).getOrFail(eqTo(ReturnObligationCacheable))(any, any)
+      verify(view).apply(eqTo(formWithErrors), eqTo(obligation))(any, any)
 
       result.header.status mustBe BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"
