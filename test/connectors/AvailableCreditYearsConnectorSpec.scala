@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import models.returns.CreditRangeOption
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.mockito.stubbing.ReturnsDeepStubs
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, theSameInstanceAs, thrownBy}

@@ -22,7 +22,6 @@ import controllers.actions.AuthenticatedIdentifierAction.ContinueQueryParamKey
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import controllers.home.{routes => homeRoutes}
 import controllers.{routes => agentRoutes}
-import models.Mode.NormalMode
 import models.SignedInUser
 import models.requests.{IdentifiedRequest, IdentityData}
 import play.api.Logging

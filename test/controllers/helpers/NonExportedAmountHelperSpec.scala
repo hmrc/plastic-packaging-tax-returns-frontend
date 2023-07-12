@@ -252,12 +252,12 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
     "AnotherBusinessExportedPage is missing" in {
       val ans = userAnswer.remove(AnotherBusinessExportedPage).get
-      sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some(200, true, false)
+      sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some((200, true, false))
     }
 
     "AnotherBusinessExportedWeightPage is missing" in {
       val ans = userAnswer.remove(AnotherBusinessExportedWeightPage).get
-      sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some(200, true, true)
+      sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some((200, true, true))
     }
     
     "manufactured yes-no answer is missing" in {

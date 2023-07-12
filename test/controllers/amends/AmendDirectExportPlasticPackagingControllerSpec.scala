@@ -114,7 +114,7 @@ class AmendDirectExportPlasticPackagingControllerSpec
       val result = sut.onPageLoad(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.SubmittedReturnsController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
     }
   }
 
@@ -126,7 +126,7 @@ class AmendDirectExportPlasticPackagingControllerSpec
     }
 
     "set UserAnswer" in {
-      setUpMocks
+      setUpMocks()
 
       await(sut.onSubmit.skippingJourneyAction(dataRequest))
 
@@ -136,7 +136,7 @@ class AmendDirectExportPlasticPackagingControllerSpec
     "save a empty userAnswer to cache" in {
       val ans = createUserAnswers
 
-      setUpMocks
+      setUpMocks()
       when(dataRequest.userAnswers).thenReturn(ans)
       when(dataRequest.pptReference).thenReturn("123")
 
@@ -147,12 +147,12 @@ class AmendDirectExportPlasticPackagingControllerSpec
     }
 
     "redirect to amend exported by another business page" in {
-      setUpMocks
+      setUpMocks()
 
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.amends.routes.AmendExportedByAnotherBusinessController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.amends.routes.AmendExportedByAnotherBusinessController.onPageLoad.url)
     }
 
     "return a bad request with an error on view" in {
@@ -168,7 +168,7 @@ class AmendDirectExportPlasticPackagingControllerSpec
 
   }
 
-  private def setUpMocks: Unit = {
+  private def setUpMocks(): Unit = {
     when(formProvider.apply()).thenReturn(form)
     when(form.bindFromRequest()(any, any)).thenReturn(new AmendDirectExportPlasticPackagingFormProvider()().bind(Map("value" -> "10")))
     when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(UserAnswers("123"))

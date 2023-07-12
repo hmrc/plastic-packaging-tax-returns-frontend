@@ -23,7 +23,7 @@ import controllers.returns.routes
 import models.obligations.PPTObligations
 import models.subscription.LegalEntityDetails
 import org.jsoup.nodes.Element
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.mockito.MockitoSugar.mock
 import play.api.Application
 import play.api.inject.bind
@@ -123,7 +123,7 @@ class IndexPageViewSpec
 
       view.getElementById("direct-debit-link").text() mustBe "Set up or manage a Direct Debit"
       view.getElementById("direct-debit-link") must haveHref(
-        paymentRoute.DirectDebitController.redirectLink
+        paymentRoute.DirectDebitController.redirectLink()
       )
     }
 
@@ -236,6 +236,7 @@ class IndexPageViewSpec
                       val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
                       assertReturnsCardDetail(card, returnDetails, returnLinks)
 
+                    case t => fail(s"No test for $t")
                   }
                 }
 
@@ -332,6 +333,7 @@ class IndexPageViewSpec
 
                       checkDeregisterCard(deregister)
 
+                  case t => fail(s"No test for $t")
                   }
                 }
               }

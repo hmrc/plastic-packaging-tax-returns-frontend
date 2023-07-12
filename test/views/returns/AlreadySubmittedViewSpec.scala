@@ -66,7 +66,7 @@ class AlreadySubmittedViewSpec extends ViewSpecBase  with ViewAssertions with Vi
     bulletList.text() must include(messages("return-already-submitted.list.2"))
 
     val links = bulletList.select("a")
-    links.get(0) must haveHref(controllers.amends.routes.SubmittedReturnsController.onPageLoad)
+    links.get(0) must haveHref(controllers.amends.routes.SubmittedReturnsController.onPageLoad())
     links.get(1) must haveHref(controllers.routes.IndexController.onPageLoad)
   }
 }

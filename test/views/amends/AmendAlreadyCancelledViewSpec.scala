@@ -58,7 +58,7 @@ class AmendAlreadyCancelledViewSpec extends ViewSpecBase with ViewMatchers {
 
     "have a link to the view or amend all submitted return account page" in {
       view.getElementsByClass("govuk-list").select("a").get(1) must haveHref(
-        controllers.amends.routes.SubmittedReturnsController.onPageLoad
+        controllers.amends.routes.SubmittedReturnsController.onPageLoad()
       )
     }
 

@@ -21,7 +21,6 @@ import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.ImportedPlasticPackagingWeightFormProvider
 import models.{Mode, ReturnsUserAnswers}
-import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import pages.returns.ImportedPlasticPackagingWeightPage
 import play.api.i18n.{I18nSupport, MessagesApi}

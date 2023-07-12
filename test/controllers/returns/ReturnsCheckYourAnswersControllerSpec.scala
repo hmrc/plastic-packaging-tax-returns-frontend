@@ -28,6 +28,7 @@ import models.returns._
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
@@ -134,14 +135,15 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "view claimed credits on pageLoading" in {
       setUpMockConnector()
-      when(message.apply(any[String], any)).thenReturn("any-key")
+      when(message.apply(anyString(), any, any, any)).thenReturn("any-key")
+      when(message.apply(anyString())).thenReturn("total-key")
 
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
       verifyAndCaptorCreditDetails mustBe CreditsClaimedDetails(
         summaryList = Seq(
           CreditSummaryRow("any-key", "£2.00", Seq()),
-          CreditSummaryRow("any-key", "£20.00", Seq()),
+          CreditSummaryRow("total-key", "£20.00", Seq()),
         ),
         totalClaimAmount = 20
       )

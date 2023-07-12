@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DirectDebitConnector
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

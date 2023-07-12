@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.amends.AmendExportedPlasticPackagingView
 
 import javax.inject.Inject
-import scala.concurrent.Future
 
 class AmendExportedPlasticPackagingController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -37,10 +36,7 @@ class AmendExportedPlasticPackagingController @Inject()(
       Ok(view())
   }
 
-  def onSubmit : Action[AnyContent] = identify.async {
-    implicit request => Future.successful(
-      Redirect(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad)
-    )
-
+  def onSubmit : Action[AnyContent] = identify {
+    Redirect(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad)
   }
 }

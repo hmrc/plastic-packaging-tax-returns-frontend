@@ -33,9 +33,9 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
 
   val page: ExportedCreditsWeightView = inject[ExportedCreditsWeightView]
   val form = new ExportedCreditsWeightFormProvider()()
-  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  val creditRangeOption: CreditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
-  private def createView(form: Form[Long] = form): Html =
+  private def createView(form: Form[Long]): Html =
     page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
 
   "view" should {

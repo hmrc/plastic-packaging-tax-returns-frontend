@@ -22,7 +22,7 @@ import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendHumanMedicinePlasticPackagingPage
 import play.api.inject.bind

@@ -19,7 +19,7 @@ package services
 import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.mockito.MockitoSugar.mock
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.PlaySpec

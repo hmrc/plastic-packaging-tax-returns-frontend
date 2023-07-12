@@ -54,7 +54,7 @@ trait Formatters {
       override def bind(key: String, data: Map[String, String]) =
         baseFormatter
           .bind(key, data)
-          .right.flatMap {
+          .flatMap {
           case "true" => Right(true)
           case "false" => Right(false)
           case _ => Left(Seq(FormError(key, invalidKey, args)))
@@ -78,8 +78,8 @@ trait Formatters {
       override def bind(key: String, data: Map[String, String]) =
         baseFormatter
           .bind(key, data)
-          .right.map(_.replace(",", ""))
-          .right.flatMap {
+          .map(_.replace(",", ""))
+          .flatMap {
           case s if s.matches(decimalRegexp) =>
             Left(Seq(FormError(key, wholeNumberKey, args)))
           case s =>
@@ -109,8 +109,8 @@ trait Formatters {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Long] =
         baseFormatter
           .bind(key, data)
-          .right.map(_.replace(",", "").replace(" ", ""))
-          .right.flatMap {
+          .map(_.replace(",", "").replace(" ", ""))
+          .flatMap {
           case extractNumberRegex(numString) =>
             if (numString.matches(decimalRegexp)) {
               Left(Seq(FormError(key, wholeNumberKey, args)))
@@ -147,8 +147,8 @@ trait Formatters {
                        ): Either[Seq[FormError], BigDecimal] =
         baseFormatter
           .bind(key, data)
-          .right.map(_.replace(",", "").replace("£", "").replace(" ", ""))
-          .right.flatMap {
+          .map(_.replace(",", "").replace("£", "").replace(" ", ""))
+          .flatMap {
           case s if !s.matches(validNumeric) =>
             Left(Seq(FormError(key, nonNumericKey, args)))
           case s if !s.matches(isdp) =>
@@ -174,7 +174,7 @@ trait Formatters {
       private val baseFormatter = stringFormatter(requiredKey, args)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
-        baseFormatter.bind(key, data).right.flatMap {
+        baseFormatter.bind(key, data).flatMap {
           str =>
             ev.withName(str)
               .map(Right.apply)

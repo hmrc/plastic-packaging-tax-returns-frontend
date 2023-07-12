@@ -31,7 +31,9 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(messages)
+    when(messages.apply(any[String])).thenReturn("expected message")
     when(messages.apply(any[String], any)).thenReturn("expected message")
+    when(messages.apply(any[String], any, any)).thenReturn("expected message")
   }
 
   "paymentStatement" must {

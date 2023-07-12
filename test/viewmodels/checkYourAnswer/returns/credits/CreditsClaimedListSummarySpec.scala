@@ -98,7 +98,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   "create a chronological ordered list of row" in {
     when(message.apply(any[String])).thenAnswer((s: String) =>  s)
     when(message.apply(eqTo("creditSummary.for"), any)).thenReturn("creditSummary.for")
-    when(message.apply(eqTo("return.quarter"), any[Seq[String]]))
+    when(message.apply(eqTo("return.quarter"), any, any, any))
       .thenReturn(
         "1 April 2022 to 31 March 2023",
         "1 April 2023 to 31 March 2024",

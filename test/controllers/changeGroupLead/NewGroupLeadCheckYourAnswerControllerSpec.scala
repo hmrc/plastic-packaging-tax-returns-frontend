@@ -27,7 +27,6 @@ import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach

@@ -22,10 +22,6 @@ import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import util.EdgeOfSystem
-
-import java.time.format.DateTimeFormatter
-
 
 @Singleton
 class FrontendAppConfig @Inject() (
@@ -158,8 +154,8 @@ class FrontendAppConfig @Inject() (
     * @example {{{"2023-03-31T23:59:59"}}}
     * @example {{{"2023-04-01T00:00:00"}}}
     * @example {{{false}}}
-    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
-    * @see [[EdgeOfSystem.localDateTimeNow]]
+    * @see [[java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
+    * @see [[util.EdgeOfSystem.localDateTimeNow]]
     */
   def overrideSystemDateTime: Option[String] =
     configuration.getOptional[String]("features.override-system-date-time")

@@ -17,8 +17,7 @@
 package viewmodels
 
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
@@ -27,7 +26,7 @@ import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
   val mockMessages: Messages = mock[Messages]
-  when(mockMessages.apply(anyString(), any())).thenReturn("August")
+  when(mockMessages.apply("month.8")).thenReturn("August")
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
     "21C2", Some("charge-ref-no"), "2022-04-01", "2022-06-30", "2022-07-03", "New"

@@ -18,7 +18,6 @@ package controllers.amends
 
 import cacheables.AmendObligationCacheable
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.TaxReturnsConnector
 import controllers.actions.JourneyAction
 import models.amends.AmendSummaryRow

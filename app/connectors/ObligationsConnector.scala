@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +31,7 @@ class ObligationsConnector @Inject() (
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-    extends Logging {
+    extends Logging with HttpReadsInstances {
 
   def getOpen(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.open.get.timer").time()

@@ -38,7 +38,7 @@ object AmendManufacturedPlasticPackagingSummary {
       "amendManufacturedPlasticPackaging.checkYourAnswersLabel",
       existing,
       AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-      Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url),
+      Some(("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)),
     )
   }
 

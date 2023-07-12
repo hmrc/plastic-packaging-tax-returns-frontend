@@ -19,7 +19,7 @@ package models.returns
 import models.UserAnswers
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage

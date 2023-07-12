@@ -27,7 +27,7 @@ import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

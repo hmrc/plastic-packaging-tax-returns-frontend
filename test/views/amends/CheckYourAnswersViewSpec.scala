@@ -34,7 +34,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
   private def createView(calculation: AmendsCalculations, amendmentMade: Boolean): Html =
     page(obligation, Seq.empty, Seq.empty, calculation, amendmentMade)(request, messages)
 
-  private def createViewWithDeduction(deductions: Seq[AmendSummaryRow] = Seq.empty, amendmentMade: Boolean): Html =
+  private def createViewWithDeduction(deductions: Seq[AmendSummaryRow], amendmentMade: Boolean): Html =
     page(obligation, Seq.empty, deductions, createCalculations(true), amendmentMade)(request, messages)
 
   "View" should {
@@ -146,17 +146,17 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
   private def createExpectedDeductionRows: Seq[AmendSummaryRow] =
     Seq(
-      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithValue("70kg"), Some("export", "/url")),
-      AmendSummaryRow("humanMedicine", "3kg", AnswerWithValue("30kg"), Some("medicine", "/url")),
-      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithValue("20kg"), Some("recycled", "/rycycled")),
+      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithValue("70kg"), Some(("export", "/url"))),
+      AmendSummaryRow("humanMedicine", "3kg", AnswerWithValue("30kg"), Some(("medicine", "/url"))),
+      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithValue("20kg"), Some(("recycled", "/rycycled"))),
       AmendSummaryRow("total", "3kg", AnswerWithValue("3kg"), None)
     )
 
   private def createExpectedDeductionRowsForNotAmended: Seq[AmendSummaryRow] =
     Seq(
-      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithoutValue("hidden text"), Some("export", "/url")),
-      AmendSummaryRow("humanMedicine", "3kg", AnswerWithoutValue("hidden text"), Some("medicine", "/url")),
-      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithoutValue("hidden text"), Some("recycled", "/rycycled")),
+      AmendSummaryRow("exportedPlastic", "4kg", AnswerWithoutValue("hidden text"), Some(("export", "/url"))),
+      AmendSummaryRow("humanMedicine", "3kg", AnswerWithoutValue("hidden text"), Some(("medicine", "/url"))),
+      AmendSummaryRow("recycledPlastic", "5kg", AnswerWithoutValue("hidden text"), Some(("recycled", "/rycycled"))),
       AmendSummaryRow("total", "3kg", AnswerWithoutValue("hidden field"), None)
     )
 

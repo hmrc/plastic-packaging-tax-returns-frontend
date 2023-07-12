@@ -23,8 +23,7 @@ import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, Submit
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.JsString
-import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpReadsInstances, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +35,7 @@ class TaxReturnsConnector @Inject()(
   httpClient: HttpClient,
   frontendAppConfig: FrontendAppConfig,
   metrics: Metrics
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext) extends HttpReadsInstances {
 
   private val logger = Logger(this.getClass)
 

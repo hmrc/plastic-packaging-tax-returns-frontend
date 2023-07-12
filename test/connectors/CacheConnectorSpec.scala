@@ -22,7 +22,7 @@ import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito
-import org.mockito.Mockito.{atLeastOnce, verify, when}
+import org.mockito.MockitoSugar.{atLeastOnce, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.http.HttpClient
 
@@ -58,7 +58,7 @@ class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
       when(mockConfig.pptCacheSetUrl(any())).thenReturn("/cache/set/someref")
 
       connector.set("someref", answers)
-      verify(connector.httpClient, atLeastOnce()).POST(eqTo(putUrl), eqTo(answers), any())(any(), any(), any(), any())
+      verify(connector.httpClient, atLeastOnce).POST(eqTo(putUrl), eqTo(answers), any())(any(), any(), any(), any())
     }
   }
 }

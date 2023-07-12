@@ -17,7 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.mongodb.scala.model.Filters
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}

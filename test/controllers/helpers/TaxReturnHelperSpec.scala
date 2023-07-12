@@ -20,7 +20,8 @@ import connectors.{ObligationsConnector, TaxReturnsConnector}
 import models.obligations.PPTObligations
 import models.returns.{SubmittedReturn, TaxReturnObligation}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{verifyNoInteractions, verifyNoMoreInteractions}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.verifyNoMoreInteractions
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

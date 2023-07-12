@@ -18,7 +18,6 @@ package controllers.amends
 
 import base.utils.JourneyActionAnswer
 import cacheables.AmendObligationCacheable
-import config.FrontendAppConfig
 import connectors.{DownstreamServiceError, TaxReturnsConnector}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
@@ -138,7 +137,7 @@ class CheckYourAnswersControllerSpec
       val result = sut.onPageLoad()(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.SubmittedReturnsController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
     }
 
     "throw an error if cannot calculate amends" in {
@@ -193,7 +192,7 @@ class CheckYourAnswersControllerSpec
       val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.AmendConfirmationController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.AmendConfirmationController.onPageLoad().url)
     }
 
     "let it throw if cannot submit amend " in {
@@ -231,19 +230,19 @@ class CheckYourAnswersControllerSpec
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
         AmendNewAnswerType(Some("70kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+        Some(("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url))
       ),
       AmendSummaryRow(
         "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
         "3kg",
         AmendNewAnswerType(Some("30kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
+        Some(("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url))
       ),
       AmendSummaryRow(
         "amendRecycledPlasticPackaging.checkYourAnswersLabel",
         "5kg",
         AmendNewAnswerType(Some("20kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url)
+        Some(("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url))
       ),
       totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal"))
   }
@@ -254,13 +253,13 @@ class CheckYourAnswersControllerSpec
         "amendManufacturedPlasticPackaging.checkYourAnswersLabel",
         "0kg",
         AmendNewAnswerType(Some("300kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
+        Some(("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url))
       ),
       AmendSummaryRow(
         "amendImportedPlasticPackaging.checkYourAnswersLabel",
         "1kg",
         AmendNewAnswerType(Some("200kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
+        Some(("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url))
       ),
       totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal"))
   }

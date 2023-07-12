@@ -19,11 +19,10 @@ package controllers.returns
 import cacheables.ReturnObligationCacheable
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{CacheConnector, CalculateCreditsConnector, ServiceError, TaxReturnsConnector}
+import connectors.{CacheConnector, CalculateCreditsConnector, TaxReturnsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.helpers.TaxReturnHelper
-import models.ReturnsUserAnswers
-import models.UserAnswers
+import models.{ReturnsUserAnswers, UserAnswers}
 import models.requests.DataRequest
 import models.returns.Credits._
 import models.returns._

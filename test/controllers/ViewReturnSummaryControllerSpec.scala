@@ -31,7 +31,7 @@ import models.returns._
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.atLeastOnce
+import org.mockito.MockitoSugar.atLeastOnce
 import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -229,7 +229,7 @@ class ViewReturnSummaryControllerSpec
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
       verify(userAnswer).save(meq(saveFunction))(any)
-      verify(userAnswer, atLeastOnce()).setOrFail(AmendSelectedPeriodKey, "22C3")
+      verify(userAnswer, atLeastOnce).setOrFail(AmendSelectedPeriodKey, "22C3")
       verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
     }
 

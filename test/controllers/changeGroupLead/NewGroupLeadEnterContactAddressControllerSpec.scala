@@ -30,7 +30,8 @@ import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{reset, verifyNoInteractions, verifyNoMoreInteractions}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.{reset, verifyNoMoreInteractions}
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

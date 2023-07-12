@@ -22,15 +22,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class NewGroupLeadConfirmationController @Inject
 (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadConfirmationView,
-)
-(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action {
     implicit request => Ok(view())

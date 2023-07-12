@@ -24,25 +24,21 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   config: FrontendAppConfig,
   authenticate: AuthLoggedInAction
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+) extends FrontendBaseController with I18nSupport {
 
   def signOut(): Action[AnyContent] =
-    authenticate.async {
-      implicit request => 
-        Future.successful(Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.exitSurveyUrl))))
+    authenticate {
+      Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.exitSurveyUrl)))
     }
 
   def signOutNoSurvey(): Action[AnyContent] =
-    authenticate.async {
-      implicit request =>
-        Future.successful(Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.signedOutUrl))))
+    authenticate {
+      Redirect(config.signOutUrl, Map(QueryParamContinueKey -> Seq(config.signedOutUrl)))
     }
 
 }

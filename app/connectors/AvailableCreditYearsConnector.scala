@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.CreditRangeOption
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,7 +29,7 @@ class AvailableCreditYearsConnector @Inject() (
   httpClient: HttpClient, 
   appConfig: FrontendAppConfig,
   metrics: Metrics
-) (implicit ec: ExecutionContext) extends Logging {
+) (implicit ec: ExecutionContext) extends Logging with HttpReadsInstances{
 
   def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
     val timer = metrics.defaultRegistry.timer("ppt.availableCreditYears.get.timer").time()

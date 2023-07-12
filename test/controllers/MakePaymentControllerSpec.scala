@@ -21,7 +21,7 @@ import connectors.FinancialsConnector
 import models.financials.PPTFinancials
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{verify, when}
 import org.mockito.MockitoSugar.mock
 import play.api.Application
 import play.api.inject.bind

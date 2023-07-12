@@ -19,7 +19,7 @@ package models
 import models.UserAnswers.SaveUserAnswerFunc
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.MockitoSugar
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.play.PlaySpec
@@ -239,7 +239,7 @@ class UserAnswersSpec extends PlaySpec
       }
 
       "remove a nested field" in {
-        filledUserAnswers.removePath(JsPath \ "cheese" \ 'brie) mustBe UserAnswers("filled", obj(
+        filledUserAnswers.removePath(JsPath \ "cheese" \ "brie") mustBe UserAnswers("filled", obj(
           "cheese" -> Json.obj(),
         ), filledUserAnswers.lastUpdated)
       }

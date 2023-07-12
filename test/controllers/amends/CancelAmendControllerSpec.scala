@@ -190,7 +190,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
       val result = sut.onSubmit(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.amends.routes.CheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.amends.routes.CheckYourAnswersController.onPageLoad().url
     }
 
     "return bad request if error on form" in {
