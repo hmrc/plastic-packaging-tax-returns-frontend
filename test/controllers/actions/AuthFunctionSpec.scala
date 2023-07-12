@@ -113,8 +113,8 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
           Future.successful(None)
         )
 
-        val ex = intercept[RuntimeException](await(sut.authorised(predicate, request, testBlock)))
-        ex.getMessage mustBe "user must have internalID"
+        val ex = intercept[IllegalStateException](await(sut.authorised(predicate, request, testBlock)))
+        ex.getMessage mustBe "internalId is required"
       }
     }
   }

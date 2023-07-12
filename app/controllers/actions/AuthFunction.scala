@@ -50,7 +50,7 @@ class AuthFunction @Inject() (
 
     authorised(predicate)
       .retrieve(internalId) { maybeInternalId =>
-        val internalId = maybeInternalId.getOrElse(throw new RuntimeException("user must have internalID"))
+        val internalId = maybeInternalId.getOrElse(throw new IllegalStateException("internalId is required"))
         block(AuthedUser(internalId, request))
     } recover {
       case _: NoActiveSession =>

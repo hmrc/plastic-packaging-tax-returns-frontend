@@ -144,7 +144,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
           Future.successful(None and Some(AffinityGroup.Organisation) and Enrolments(Set.empty))
         )
 
-        val ex = intercept[IllegalArgumentException](await(sut.invokeBlock(request, testBlock)))
+        val ex = intercept[IllegalStateException](await(sut.invokeBlock(request, testBlock)))
 
         ex.getMessage mustBe "internalId is required"
         verifyNoInteractions(testBlock)
