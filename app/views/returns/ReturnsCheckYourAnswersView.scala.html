@@ -191,7 +191,7 @@
     ))
 
     @{credits match {
-        case c: CreditsClaimedDetails => // TODO can remove case?
+        case c: CreditsClaimedDetails =>
             c.ifClaiming(claimAmount => paragraphBody(
                 messages("submit-return.check-your-answers.tax-calc.footnote.2", strong(messages(
                     "submit-return.check-your-answers.tax-calc.credit.of", claimAmount.asPounds))

@@ -33,7 +33,6 @@ import scala.concurrent.ExecutionContext
 class NewGroupLeadCheckYourAnswerController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
-  featureGuard: FeatureGuard, // todo rename?
   countryService: CountryService,
   subscriptionConnector: SubscriptionConnector,
   val controllerComponents: MessagesControllerComponents,
@@ -44,7 +43,6 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
 
   def onPageLoad: Action[AnyContent] = journeyAction {
     implicit request =>
-      featureGuard.check()
       val summaryRows = Seq(
           ChooseNewGroupLeadSummary,
           NewGroupLeadEnterContactAddressSummary(countryService),
@@ -57,7 +55,6 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
 
   def onSubmit: Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       subscriptionConnector.changeGroupLead(request.pptReference).map{
         _ => Redirect(navigator.checkYourAnswers)
       }

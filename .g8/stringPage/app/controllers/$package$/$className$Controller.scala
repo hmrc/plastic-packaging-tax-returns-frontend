@@ -7,7 +7,7 @@ import models.Mode
 import pages.$package$.$className$Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import connectors.CacheConnector
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.$package$.$className$View
 
@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
+                                       cacheConnector: CacheConnector,
                                        navigator: Navigator,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
@@ -45,8 +45,8 @@ class $className$Controller @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set($className$Page, value))
-            _              <- sessionRepository.set(updatedAnswers) //todo we dont use this we use cache
-          } yield Redirect(navigator.nextPage($className$Page, mode, updatedAnswers)) //todo we dont use navigator anymore
+            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
+          } yield Redirect(navigator.nextPage($className$Page, mode, updatedAnswers))
       )
   }
 }

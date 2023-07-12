@@ -34,7 +34,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ConfirmPackagingCreditController @Inject()( //todo rename to something like OneYearCreditCheckYourAnswers vs AllYearsBlah
+class ConfirmPackagingCreditController @Inject()(
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
   journeyAction: JourneyAction,
@@ -57,9 +57,6 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
     }
 
   private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
-
-    //Todo: Pass to the view the fromDate and toDate the user is claiming
-    // credit for.
     val singleYear = creditBalance.creditForYear(key)
     val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
     val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
@@ -71,7 +68,7 @@ class ConfirmPackagingCreditController @Inject()( //todo rename to something lik
         summaryList,
         returnsJourneyNavigator.confirmCredit(mode),
         mode,
-      creditRangeOption
+        creditRangeOption
       )
     )
   }

@@ -69,11 +69,9 @@ class UserAnswersSpec extends PlaySpec
 
   "it" should {
     "have an id" in {
-      emptyUserAnswers must have('id ("empty"))
-      filledUserAnswers must have('id ("filled"))
+      emptyUserAnswers must have(Symbol("id") ("empty"))
+      filledUserAnswers must have(Symbol("id") ("filled"))
     }
-    
-    // TODO the timestamp... is it needed? (Actual timestamp for mongo in set by session repo in backend)
   }
 
   "setOrFail" should {
@@ -100,8 +98,6 @@ class UserAnswersSpec extends PlaySpec
       val updatedAnswers = emptyUserAnswers.set(question, "much")
       updatedAnswers.success.value.data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
     }
-    
-    // TODO don't know how to test set() return a failed Try
   }
 
   "getOrFail" should {
@@ -238,8 +234,6 @@ class UserAnswersSpec extends PlaySpec
         updatedAnswers.success.value.data.value mustBe Map("cheese" -> obj())
       }
 
-      // TODO don't know how to test remove with a failed try 
-      
       "remove a top level field" in {
         filledUserAnswers.removePath(JsPath \ "cheese") mustBe UserAnswers("filled", obj(), filledUserAnswers.lastUpdated)
       }

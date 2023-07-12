@@ -41,6 +41,6 @@ object GroupMembers {
             .organisationName
           Member(orgName, details.customerIdentification1)
       }
-    GroupMembers(members.sortBy(_.organisationName)) //todo what if this is 1 or empty
+    GroupMembers(members.sortBy(_.organisationName))
   }
 }

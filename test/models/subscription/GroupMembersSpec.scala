@@ -32,7 +32,7 @@ class GroupMembersSpec extends PlaySpec {
     
     "handle empty group details" in {
       val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq()))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq()) // TODO This may not be what we want, throw instead?
+      GroupMembers.create(subscription) mustBe GroupMembers(Seq())
     }
     
     "handle missing org-details within a member" in {

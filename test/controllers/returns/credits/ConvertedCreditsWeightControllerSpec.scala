@@ -86,7 +86,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     when(formProvider.apply()) thenReturn form
     
     when(view.apply(any, any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form // TODO could improve
+    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
@@ -113,15 +113,14 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       await {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any) // TODO could improve
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)
     }
 
-    // TODO ...
   }
   
   "onSubmit" should {
     
-    "save the user's answer" in { // TODO needs tidying
+    "save the user's answer" in {
       val boundForm = Form("value" -> longNumber).fill(1L)
       when(form.bindFromRequest()(any, any)) thenReturn boundForm
       
@@ -132,7 +131,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
       await(controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
-      verify(request.userAnswers).setOrFail(eqTo(ConvertedCreditsPage("year-key")), eqTo(CreditsAnswer.answerWeightWith(1L)), any) (any) // TODO could improve
+      verify(request.userAnswers).setOrFail(eqTo(ConvertedCreditsPage("year-key")), eqTo(CreditsAnswer.answerWeightWith(1L)), any) (any)
     }
 
     "redirect" in {

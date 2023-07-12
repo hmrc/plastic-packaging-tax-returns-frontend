@@ -23,7 +23,6 @@ import pages.returns._
 
 import scala.util.Try
 
-// Todo: This may be rename better.
 class ExportedPlasticAnswer(userAnswers: UserAnswers) {
 
   def resetExportedByYouIfAllExportedPlastic: Try[UserAnswers] = {
@@ -79,9 +78,7 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
     exported + exportedByOther >= (manufactured + imported)
   }
 
-  //todo: is there anyway to write this better?
   def totalAmendExportedPlastic: Option[Long] = {
-
     val amendExported = userAnswers.get(AmendDirectExportPlasticPackagingPage)
     val amendExportedByAnotherBusiness = userAnswers.get(AmendExportedByAnotherBusinessPage)
 
@@ -91,8 +88,6 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
       case(Some(exported), None) => Some(exported)
       case(None, None) => None
     }
-
-
   }
 }
 

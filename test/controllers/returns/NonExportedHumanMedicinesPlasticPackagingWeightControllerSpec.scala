@@ -91,7 +91,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       verifyView(formProvider().bind(Map("value" -> "0")))
     }
 
-    "redirect if required user answers are missing" in { 
+    "redirect if required user answers are missing" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
       val result = createSut(Some(userAnswers)).onPageLoad(NormalMode)(FakeRequest(GET, ""))
       status(result) mustEqual SEE_OTHER

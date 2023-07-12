@@ -35,7 +35,7 @@ import views.html.returns.credits.{CancelCreditsClaimErrorView, CancelCreditsCla
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancelCreditsClaimController @Inject()( //todo name better this will remove one year of credit
+class CancelCreditsClaimController @Inject()(
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -48,7 +48,6 @@ class CancelCreditsClaimController @Inject()( //todo name better this will remov
 
   def onPageLoad(key: String): Action[AnyContent] = journeyAction {
     implicit request =>
-      //todo view is hardcoded, it should pull back the date range in question
       Ok(createView(request.userAnswers, key, formProvider()))
   }
 

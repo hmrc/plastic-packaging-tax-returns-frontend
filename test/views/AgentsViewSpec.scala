@@ -30,7 +30,7 @@ class AgentsViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers
   val form: Form[String] = new AgentsFormProvider()()
 
   private def createView(form: Form[String] = form): Html =
-    page(form, NormalMode)(request, messages)
+    page(form)(request, messages)
 
   "AgentsView" should {
     val view = createView()

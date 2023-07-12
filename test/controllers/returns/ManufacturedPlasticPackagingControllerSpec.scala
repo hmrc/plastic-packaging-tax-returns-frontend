@@ -189,11 +189,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     }
     
     "submit must redirect to the mini-cya page if the answer has not changed" in {
-
-      // UserAnswers responds with "answer not changed"
       when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
 
-      // TODO all these running() unit tests should go...
       val application = applicationBuilder(Some(mockUserAnswers))
         .overrides(
           bind[CacheConnector].toInstance(mockCacheConnector),

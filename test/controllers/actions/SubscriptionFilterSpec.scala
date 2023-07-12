@@ -44,7 +44,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   
   private val subscriptionFilter = new SubscriptionFilter(subscriptionConnector, sessionRepository) {
     override def fromRequestAndSession(request: RequestHeader, session: Session): HeaderCarrier =
-      mock[HeaderCarrier] // todo can we do better?
+      mock[HeaderCarrier]
   }
   
   private val request = mock[IdentifiedRequest[AnyContent]]
@@ -88,18 +88,18 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
       "subscription cache expired / not present" in {
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
         callFilter mustBe None
-        verify(subscriptionConnector).get(eqTo("ppt-ref")) (any) // TODO check for header carrier
-        verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any) // todo check value
+        verify(subscriptionConnector).get(eqTo("ppt-ref")) (any)
+        verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any)
       }
 
-      "subscription is de-registered" in { // todo stop this one logging!
+      "subscription is de-registered" in {
         when(eisFailure.isDeregistered) thenReturn true
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
         inside (callFilter.value) {
           case Result(header, _, _, _, _) => 
-            header must have ('status (Status.SEE_OTHER))
+            header must have (Symbol("status") (Status.SEE_OTHER))
             header.headers must contain ("Location" -> "/deregistered")
         }
       }
@@ -120,7 +120,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         when(eisFailure.failures) thenReturn Some(Seq(EisError("code", "reason")))
         when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
-        // todo should we log the entire payload like above
+
         the [RuntimeException] thrownBy callFilter must have message "Failed to get subscription - Some(reason)"
       }
 

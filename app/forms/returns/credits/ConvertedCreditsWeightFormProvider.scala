@@ -19,9 +19,7 @@ package forms.returns.credits
 import forms.mappings.Mappings
 import play.api.data.Form
 
-import javax.inject.Inject
-
-class ConvertedCreditsWeightFormProvider @Inject() extends Mappings {
+class ConvertedCreditsWeightFormProvider extends Mappings {
 
   def apply(): Form[Long] =
     Form(
@@ -29,6 +27,6 @@ class ConvertedCreditsWeightFormProvider @Inject() extends Mappings {
         "converted-credits-weight.error.required",
         "converted-credits-weight.error.wholeNumber",
         "converted-credits-weight.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "converted-credits-weight.error.outOfRange")) // TODO is iRange ok? Also check 3rd party export form
+          .verifying(inRange(0L, 99999999999L, "converted-credits-weight.error.outOfRange"))
     )
 }

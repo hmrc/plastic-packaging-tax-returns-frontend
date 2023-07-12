@@ -20,6 +20,7 @@
 @import views.ViewUtils.getMonthName
 @import forms.returns.credits.ClaimForWhichYearFormProvider
 @import models.returns.CreditRangeOption
+@import views.ViewUtils
 
 @this(
     formHelper: FormWithCSRF,
@@ -33,16 +34,6 @@
 )
 
 @(form: Form[_], options: Seq[CreditRangeOption], mode: Mode)(implicit request: Request[_], messages: Messages)
-
-<!--//todo use the one in view utils once merged displayDateRangeTo -->
-@radioContent(from: LocalDate, to: LocalDate) = @{
-    messages(
-        "return.quarter",
-        s"${from.getDayOfMonth} ${getMonthName(from.getMonthValue)} ${from.getYear}",
-        s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
-        to.getYear.toString
-    )
-}
 
 @layout(pageTitle = title(form, messages("claim-for-which-year.credits.title-heading"), Some(messages("return.title.tail")))) {
 
@@ -63,7 +54,7 @@
                 field = form("value"),
                 legend = LegendViewModel(HtmlContent(hiddenContent("claim-for-which-year.credits.title-heading"))),
                 items = options.sortBy(_.from).zipWithIndex.map{ case (year, i) =>
-                    RadioItem(id = Some(s"option-$i"), value = Some(year.key), content =  Text(radioContent(year.from, year.to)))
+                    RadioItem(id = Some(s"option-$i"), value = Some(year.key), content =  Text(ViewUtils.displayDateRangeTo(year.from, year.to)))
                 }
             )
         )

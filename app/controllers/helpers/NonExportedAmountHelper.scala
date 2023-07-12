@@ -22,7 +22,7 @@ import pages.QuestionPage
 import pages.returns._
 
 @Singleton
-class NonExportedAmountHelper { //todo rename?
+class NonExportedAmountHelper {
 
   def returnsQuestionsAnswered(userAnswers: UserAnswers): Boolean =
     userAnswers.get(ManufacturedPlasticPackagingWeightPage).isDefined &&

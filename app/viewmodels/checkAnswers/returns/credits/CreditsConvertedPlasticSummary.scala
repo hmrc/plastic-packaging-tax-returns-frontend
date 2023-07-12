@@ -27,7 +27,7 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-// TODO de-dupe
+
 case class CreditsConvertedPlasticSummary(key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(ConvertedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {

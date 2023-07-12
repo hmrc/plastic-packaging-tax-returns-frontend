@@ -37,7 +37,6 @@ class NewGroupLeadEnterContactAddressController @Inject()(
   cacheConnector: CacheConnector,
   navigator: ChangeGroupLeadNavigator,
   journeyAction: JourneyAction,
-  featureGuard: FeatureGuard,
   formProvider: NewGroupLeadEnterContactAddressFormProvider,
   countryService: CountryService,
   val controllerComponents: MessagesControllerComponents,
@@ -46,7 +45,6 @@ class NewGroupLeadEnterContactAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
       val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
         Future.successful(Results.Ok(view(preparedForm, countryService.getAll, selectedMember.organisationName, mode)))
@@ -54,7 +52,6 @@ class NewGroupLeadEnterContactAddressController @Inject()(
 
   def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
     implicit request =>
-      featureGuard.check()
       val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
       formProvider().bindFromRequest().fold(

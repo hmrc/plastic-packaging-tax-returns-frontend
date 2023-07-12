@@ -58,7 +58,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
   private val mockCache = mock[CacheConnector]
   private val mockSubscriptionService = mock[SubscriptionService]
   private val journeyAction = mock[JourneyAction]
-  private val featureGuard = mock[FeatureGuard]
   private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form = mock[Form[Member]]
   private val navigator = mock[ChangeGroupLeadNavigator]
@@ -70,7 +69,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     mockView,
     mockFormProvider,
     mockCache,
-    featureGuard,
     mockSubscriptionService,
     navigator
   )(global)
@@ -88,7 +86,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       mockFormProvider,
       mockCache,
       mockSubscriptionService,
-      featureGuard,
       form,
       dataRequest,
       navigator
@@ -122,11 +119,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       sut.onPageLoad(NormalMode)(FakeRequest())
       verify(journeyAction).async(any)
-    }
-
-    "invoke feature guard" in {
-      await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(featureGuard).check()
     }
 
     "return a view" in {
@@ -180,11 +172,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(NormalMode)(FakeRequest())
       verify(journeyAction).async(any)
-    }
-
-    "invoke feature guard" in {
-      Try(await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
-      verify(featureGuard).check()
     }
 
     "redirect to the url given by the navigator" in {
