@@ -63,7 +63,7 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AffinityGroup.Agent.or(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong))))
       .retrieve(internalId and affinityGroup and allEnrolments) {
       case maybeInternalId ~ affinityGroup ~ allEnrolments =>
-        val internalId = maybeInternalId.getOrElse(throw new IllegalArgumentException("internalId is required"))
+        val internalId = maybeInternalId.getOrElse(throw new IllegalStateException("internalId is required"))
         val identityData = IdentityData(internalId, affinityGroup)
         val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
 
