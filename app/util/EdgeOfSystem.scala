@@ -27,8 +27,8 @@ class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
 
   /** The current system date-time, or the overridden date-time if set in config
     * @return
-    *  - current system date-time, if no override in-place
-    *  - overridden date-time, if set 
+    *  - current system date-time, if no override in-place, or the override value fails to parse as a ISO_LOCAL_DATE_TIME
+    *  - overridden date-time, if set
     * @see [[FrontendAppConfig.overrideSystemDateTime]]
     * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     */
