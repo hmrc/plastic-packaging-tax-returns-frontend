@@ -31,7 +31,7 @@ class FrontendAppConfigSpec extends PlaySpec
 
   private val validAppConfig: Config =
     ConfigFactory.parseString(s"""
-    |features.override-system-date-time = "whatEver"
+    |override-system-date-time = "whatEver"
     """.stripMargin)
 
   private val validServicesConfiguration = Configuration(validAppConfig)
@@ -54,7 +54,7 @@ class FrontendAppConfigSpec extends PlaySpec
       }
 
       "content is boolean" in {
-        val config: Config = ConfigFactory.parseString("""features.override-system-date-time = false""")
+        val config: Config = ConfigFactory.parseString("""override-system-date-time = false""")
         val frontendAppConfig = appConfig(Configuration(config))
         frontendAppConfig.overrideSystemDateTime mustBe Some("false")
       }
