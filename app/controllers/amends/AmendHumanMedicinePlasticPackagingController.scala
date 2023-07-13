@@ -71,7 +71,7 @@ class AmendHumanMedicinePlasticPackagingController @Inject() (
               )
               _ <- cacheConnector.set(pptId, updatedAnswers)
             } yield Redirect(
-              controllers.amends.routes.CheckYourAnswersController.onPageLoad
+              controllers.amends.routes.CheckYourAnswersController.onPageLoad()
             )
         )
     }

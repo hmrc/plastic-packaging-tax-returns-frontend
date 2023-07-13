@@ -26,8 +26,6 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.returns.NowStartYourReturnView
 
-import scala.concurrent.ExecutionContext
-
 class NowStartYourReturnController @Inject()
 (
   override val messagesApi: MessagesApi,
@@ -35,7 +33,7 @@ class NowStartYourReturnController @Inject()
   val controllerComponents: MessagesControllerComponents,
   view: NowStartYourReturnView,
   returnsNavigator: ReturnsJourneyNavigator
-) (implicit ec: ExecutionContext) extends I18nSupport with Logging {
+) extends I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] =
     journeyAction {
@@ -43,7 +41,7 @@ class NowStartYourReturnController @Inject()
         ReturnsUserAnswers.checkObligationSync(request) { obligation =>
           val returnQuarter = obligation.toReturnQuarter
           val nextPage = returnsNavigator.firstPageOfReturnSection
-          Ok(view(returnQuarter, true, nextPage))
+          Ok(view(returnQuarter, claimedCredits = true, nextPage))
         }
     }
   

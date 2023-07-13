@@ -18,7 +18,6 @@ package views
 
 import base.ViewSpecBase
 import forms.AgentsFormProvider
-import models.Mode.NormalMode
 import play.api.data.Form
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}

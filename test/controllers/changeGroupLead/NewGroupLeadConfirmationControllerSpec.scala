@@ -27,8 +27,6 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status, stub
 import play.twirl.api.Html
 import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
-import scala.concurrent.ExecutionContext.global
-
 class NewGroupLeadConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val controllerComponents = stubMessagesControllerComponents()
@@ -38,7 +36,7 @@ class NewGroupLeadConfirmationControllerSpec extends PlaySpec with BeforeAndAfte
   val sut = new NewGroupLeadConfirmationController(
     messagesApi = mockMessagesApi,
     controllerComponents = controllerComponents,
-    view = mockView)(global)
+    view = mockView)
 
   "onPageLoad" must {
     "present the view" in {

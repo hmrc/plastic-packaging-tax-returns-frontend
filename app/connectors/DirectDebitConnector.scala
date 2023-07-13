@@ -21,18 +21,17 @@ import config.FrontendAppConfig
 import connectors.DirectDebitConnector._
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectDebitConnector @Inject()
-(
+class DirectDebitConnector @Inject()(
   httpClient: HttpClient,
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-  extends Logging {
+  extends Logging with HttpReadsInstances {
 
   def getDirectDebitLink(pptReference: String, homeUrl: String)(implicit hc: HeaderCarrier): Future[String] = {
     val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()

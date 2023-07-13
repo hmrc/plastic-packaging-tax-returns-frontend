@@ -65,6 +65,7 @@ package object models {
                   }
                 }
             }
+        case _ => throw new RuntimeException(s"set not possible for path: $path")
       }
 
     private def setIndexNode(
@@ -151,6 +152,7 @@ package object models {
                   }
                 }
             }
+        case _ => throw new RuntimeException(s"remove not possible for path: $path")
       }
 
   }

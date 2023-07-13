@@ -22,7 +22,7 @@ import connectors.FinancialsConnector.{PaymentLinkRequest, PaymentLinkResponse}
 import models.financials.PPTFinancials
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +32,7 @@ class FinancialsConnector @Inject() (
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-    extends Logging {
+    extends Logging with HttpReadsInstances {
 
   def getPaymentLink(
                       pptReferenceNumber: String,

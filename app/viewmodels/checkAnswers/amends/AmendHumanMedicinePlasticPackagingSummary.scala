@@ -38,7 +38,7 @@ object AmendHumanMedicinePlasticPackagingSummary {
       "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
       existing,
       AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-      Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url),
+      Some(("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)),
     )
   }
 

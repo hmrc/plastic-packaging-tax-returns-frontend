@@ -21,7 +21,7 @@ import connectors.CacheConnector
 import models.requests.{IdentifiedRequest, OptionalDataRequest}
 import models.{SignedInUser, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.MockitoSugar._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import support.PptTestData

@@ -28,7 +28,7 @@ import models.returns.CreditsAnswer
 import models.returns.credits.SingleYearClaim
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.mockito.{Answers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

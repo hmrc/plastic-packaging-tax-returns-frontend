@@ -29,7 +29,7 @@ import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.mockito.MockitoSugar
@@ -76,7 +76,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
 
     reset(mockView, mockCacheConnector, mockNonExportedAmountHelper, userAns)
     when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some(300L, false, true))
+    when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, true)))
   }
 
   "onPageLoad" should {
@@ -84,7 +84,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return OK" when {
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
 
-        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some(300L, false, false))
+        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, false)))
         when(userAns.get(NonExportedRecycledPlasticPackagingWeightPage)).thenReturn(Some(validAnswer))
 
         val result = createSut(Some(userAns)).onPageLoad(NormalMode)(
@@ -113,7 +113,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
           message: Boolean) =>
 
           description in {
-            when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some(300L, directlyExport, ExportedByAnotherBusiness))
+            when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, directlyExport, ExportedByAnotherBusiness)))
             when(userAns.get(NonExportedRecycledPlasticPackagingWeightPage)).thenReturn(Some(validAnswer))
 
             await(createSut(Some(userAns)).onPageLoad(NormalMode)(
@@ -186,7 +186,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return a Bad Request and the correct view" when {
 
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
-        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some(300L, false, false))
+        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, false)))
 
         val userAnswer = nonExportedAnswer.set(DirectlyExportedPage, false).get
           .set(AnotherBusinessExportedPage, false).get

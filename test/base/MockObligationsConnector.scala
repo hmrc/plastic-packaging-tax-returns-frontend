@@ -20,8 +20,8 @@ import connectors.ObligationsConnector
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.MockitoSugar.{reset, when}
+import org.mockito.stubbing.{OngoingStubbing, ScalaOngoingStubbing}
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 
@@ -34,14 +34,14 @@ trait MockObligationsConnector extends MockitoSugar {
 
   protected def mockGetObligations(
     obligations: PPTObligations
-  ): OngoingStubbing[Future[PPTObligations]] = {
+  ): ScalaOngoingStubbing[Future[PPTObligations]] = {
     reset(mockObligationsConnector)
     when(mockObligationsConnector.getOpen(any())(any())).thenReturn(Future.successful(obligations))
   }
 
   protected def mockGetFulfilledObligations(
     obligations: Seq[TaxReturnObligation]
-  ): OngoingStubbing[Future[Seq[TaxReturnObligation]]] = {
+  ): ScalaOngoingStubbing[Future[Seq[TaxReturnObligation]]] = {
     reset(mockObligationsConnector)
     when(mockObligationsConnector.getFulfilled(any())(any())).thenReturn(Future.successful(obligations))
   }

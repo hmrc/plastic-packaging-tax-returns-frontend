@@ -20,7 +20,6 @@ import akka.stream.testkit.NoMaterializer
 import base.FakeAuthAction
 import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEnrolmentIdentifierName, pptEnrolmentKey}
 import forms.AgentsFormProvider
-import models.Mode.NormalMode
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.MockitoSugar.{reset, verify, when}

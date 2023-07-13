@@ -22,7 +22,7 @@ import forms.returns.ImportedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ImportedPlasticPackagingWeightPage
 import play.api.inject.bind

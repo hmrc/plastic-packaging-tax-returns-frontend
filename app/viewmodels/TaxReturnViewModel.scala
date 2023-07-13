@@ -53,7 +53,7 @@ case class  TaxReturnViewModel(
     RowInfo(key = messages(messageKey), value = messages(value))
   }
 
-  private def createYesNoRowWithDefault(page: QuestionPage[Boolean], messageKey: String)(implicit reads: Reads[Boolean]) = {
+  private def createYesNoRowWithDefault(page: QuestionPage[Boolean], messageKey: String) = {
     val answer = getWithDefault(page)
     val value = if (answer) "site.yes" else "site.no"
     RowInfo(key = messages(messageKey), value = messages(value))
@@ -65,7 +65,7 @@ case class  TaxReturnViewModel(
     RowInfo(key = messages(messageKey), value = value)
   }
 
-  private def createKgsRowWithDefault(page: QuestionPage[Long], messageKey: String)(implicit reads: Reads[Long]) = {
+  private def createKgsRowWithDefault(page: QuestionPage[Long], messageKey: String) = {
     val answer = getWithDefault(page)
     val value = answer.asKg
     RowInfo(key = messages(messageKey), value = value)

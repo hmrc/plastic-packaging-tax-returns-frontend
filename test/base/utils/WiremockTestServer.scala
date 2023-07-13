@@ -29,19 +29,19 @@ trait WiremockTestServer
 
   val wireHost = "localhost"
 
-  lazy val wirePort       = wireMockServer.port()
+  lazy val wirePort: Int = wireMockServer.port()
   private val wireMockServer = new WireMockServer(0)
 
   protected def stubFor(mappingBuilder: MappingBuilder): StubMapping =
     wireMockServer.stubFor(mappingBuilder)
 
-  protected def startWireMockServer = {
+  protected def startWireMockServer(): Unit = {
     if(!wireMockServer.isRunning) wireMockServer.start
 
     WireMock.configureFor(wireHost, wirePort)
   }
 
-  protected def stopWireMockServer = wireMockServer.stop()
+  protected def stopWireMockServer(): Unit = wireMockServer.stop()
 
-  protected def resetWireMockServer = wireMockServer.resetAll()
+  protected def resetWireMockServer(): Unit = wireMockServer.resetAll()
 }

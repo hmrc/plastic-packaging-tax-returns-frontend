@@ -38,7 +38,7 @@ object AmendDirectExportPlasticPackagingSummary {
       "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
       existing,
       AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-      Some("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)
+      Some(("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url))
     )
   }
 

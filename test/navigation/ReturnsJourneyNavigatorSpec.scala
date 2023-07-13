@@ -24,7 +24,7 @@ import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.verify
 import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

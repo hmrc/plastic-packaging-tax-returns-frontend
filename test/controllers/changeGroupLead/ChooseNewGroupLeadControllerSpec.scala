@@ -47,7 +47,6 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 import scala.AnyRef.{eq => _}
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
-import scala.util.Try
 
 class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 

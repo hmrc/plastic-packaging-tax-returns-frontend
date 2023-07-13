@@ -6,7 +6,7 @@ import models.UserAnswers
 import models.Mode.NormalMode
 import navigation.FakeNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.$className$Page
 import play.api.inject.bind

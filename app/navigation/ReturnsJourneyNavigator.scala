@@ -24,8 +24,6 @@ import controllers.returns.{routes => returnRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models.returns.CreditRangeOption
 import models.{Mode, UserAnswers}
-import pages._
-import pages.returns._
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.mvc.Call
 

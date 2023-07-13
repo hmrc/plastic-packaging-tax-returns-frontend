@@ -29,7 +29,7 @@ import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.atLeastOnce
+import org.mockito.MockitoSugar.atLeastOnce
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -200,7 +200,7 @@ class ClaimForWhichYearControllerSpec extends PlaySpec with JourneyActionAnswer 
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers, atLeastOnce()).setOrFail(JsPath \ "credit" \ "1000-01-01-1996-03-27" \ "toDate", LocalDate.of(1996, 3, 27))
+      verify(dataRequest.userAnswers, atLeastOnce).setOrFail(JsPath \ "credit" \ "1000-01-01-1996-03-27" \ "toDate", LocalDate.of(1996, 3, 27))
       verify(mockCache).saveUserAnswerFunc(meq(dataRequest.pptReference))(any)
     }
 

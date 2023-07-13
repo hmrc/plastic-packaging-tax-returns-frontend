@@ -72,7 +72,7 @@ class ExportedPlasticPackagingWeightControllerSpec
     mockNonExportedAmountHelper,
     journeyAction,
     formProvider,
-    stubMessagesControllerComponents,
+    stubMessagesControllerComponents(),
     view
   )
 

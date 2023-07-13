@@ -27,7 +27,7 @@ import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import models.subscription.LegalEntityDetails
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -56,13 +56,22 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockObligationsConnector,mockFinancialsConnector, mockSessionRepository, mockView, mockMessagesApi, mockAppConfig, mockLegalEntityDetails, mockPPTFinancials)
+    reset(
+      mockObligationsConnector,
+      mockFinancialsConnector,
+      mockSessionRepository,
+      mockView,
+      mockMessagesApi,
+      mockAppConfig,
+      mockLegalEntityDetails,
+      mockPPTFinancials
+    )
 
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply("test view"))
   }
 
   val sut = new IndexController(
-    stubMessagesControllerComponents.messagesApi,
+    stubMessagesControllerComponents().messagesApi,
     new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
     mockView,
     mockAppConfig,

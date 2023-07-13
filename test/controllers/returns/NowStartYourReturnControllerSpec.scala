@@ -22,7 +22,7 @@ import controllers.actions.JourneyAction
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.mockito.Answers
+import org.mockito.{Answers, ArgumentMatchers}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -36,7 +36,6 @@ import play.twirl.api.HtmlFormat
 import views.html.returns.NowStartYourReturnView
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach{
 
@@ -74,7 +73,8 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
 
   "onPageLoad" should {
     "use the journey action" in {
-      sut.onPageLoad
+      sut.onPageLoad()
+
       verify(journeyAction).apply(any)
     }
 
@@ -96,7 +96,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
       val nextPage = Call(GET, "foo")
 
       when(returnsNavigator.firstPageOfReturnSection).thenReturn(nextPage)
-      when(messages.apply(any[String], any)).thenReturn("date")
+      when(messages.apply(any[String], any, any, any)).thenReturn("date")
       when(request.userAnswers.getOrFail(eqTo(WhatDoYouWantToDoPage))(any, any)).thenReturn(true)
 
       await(sut.onPageLoad()(request))

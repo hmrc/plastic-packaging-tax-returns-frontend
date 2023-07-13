@@ -79,11 +79,11 @@ class SessionRepository @Inject()(
   def keepAlive(id: String): Future[Boolean] =
     collection
       .updateOne(filter = byId(id), update = Updates.set("lastUpdated", Instant.now(clock)))
-      .toFuture
+      .toFuture()
       .map(_ => true)
 
   private def get(id: String): Future[Option[Entry]] =
-    collection.find(byId(id)).headOption
+    collection.find(byId(id)).headOption()
 
   def get[A](id: String, path: JsPath)(implicit rds: Reads[A]): Future[Option[A]] =
     get(id).map{_.flatMap{ entry =>
@@ -96,7 +96,7 @@ class SessionRepository @Inject()(
                   replacement = entry,
                   options = ReplaceOptions().upsert(true)
       )
-      .toFuture
+      .toFuture()
       .map(_ => true)
 
   def set[A](id: String, path: JsPath, value: A)(implicit writes: Writes[A]): Future[Boolean] =

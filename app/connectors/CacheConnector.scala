@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.UserAnswers
 import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsInstances, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CacheConnector @Inject() (
   config: FrontendAppConfig,
   implicit val httpClient: HttpClient
-) (implicit ec: ExecutionContext) {
+) (implicit ec: ExecutionContext) extends HttpReadsInstances {
   
   def saveUserAnswerFunc(pptReference: String) (implicit hc: HeaderCarrier): UserAnswers.SaveUserAnswerFunc = {
     case (userAnswers, flag) => this.set(pptReference, userAnswers).map(_ => flag)

@@ -71,14 +71,14 @@ class NewGroupLeadConfirmationViewSpec extends ViewSpecBase with ViewAssertions 
     }
 
     def assertNewRepresentativeParagraph(): Unit = {
-      val paragraph = createView.getElementsByClass("govuk-body")
+      val paragraph = createView().getElementsByClass("govuk-body")
       paragraph.text() must include(messages("newGroupLeadConfirmation.paragraph.2.1"))
       paragraph.text() must include(messages("newGroupLeadConfirmation.paragraph.2.2"))
       paragraph.text() must include(messages("newGroupLeadConfirmation.paragraph.2.3"))
     }
 
     def assertBulletList(): Unit = {
-      val bulletList = createView.getElementsByClass("govuk-list--bullet")
+      val bulletList = createView().getElementsByClass("govuk-list--bullet")
       bulletList.text() must include("Plastic Packaging Tax registration number")
       bulletList.text() must include(messages("newGroupLeadConfirmation.bulletList.first"))
       bulletList.text() must include("date of registration")

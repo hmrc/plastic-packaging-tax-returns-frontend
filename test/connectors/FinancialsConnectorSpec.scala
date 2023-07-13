@@ -34,11 +34,11 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    startWireMockServer
+    startWireMockServer()
   }
 
   override protected def afterAll(): Unit = {
-    stopWireMockServer
+    stopWireMockServer()
     super.afterAll()
   }
 
@@ -119,7 +119,7 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
     }
   }
 
-  private def givenPostPaymentsUrl(status: Int, body: String = "") =
+  private def givenPostPaymentsUrl(status: Int, body: String) =
     stubFor(
       WireMock.post("/pay-api/plastic-packaging-tax/journey/start")
         .willReturn(

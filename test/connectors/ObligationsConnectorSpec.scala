@@ -36,11 +36,11 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    startWireMockServer
+    startWireMockServer()
   }
 
   override protected def afterAll(): Unit = {
-    stopWireMockServer
+    stopWireMockServer()
     super.afterAll()
   }
 
@@ -157,7 +157,7 @@ class ObligationsConnectorSpec extends ConnectorISpec with ScalaFutures with Eit
   private def givenGetSubscriptionEndpointReturns(
     status: Int,
     pptReference: String,
-    body: String = "",
+    body: String,
     obligationStatus: String
   ) =
     stubFor(

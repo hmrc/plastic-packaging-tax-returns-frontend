@@ -20,12 +20,15 @@ import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import models.CreditBalance
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CalculateCreditsConnector @Inject()(httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit ec: ExecutionContext) extends Logging {
+class CalculateCreditsConnector @Inject()(
+                                           httpClient: HttpClient,
+                                           appConfig: FrontendAppConfig,
+                                           metrics: Metrics)(implicit ec: ExecutionContext) extends Logging with HttpReadsInstances {
 
   def getEventually(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[CreditBalance] = {
 

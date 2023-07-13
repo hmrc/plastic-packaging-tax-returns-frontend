@@ -20,7 +20,7 @@ import base.{FakeIdentifierActionWithEnrolment, SpecBase}
 import connectors.CacheConnector
 import controllers.actions.IdentifierAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{atLeastOnce, never, verify, when}
+import org.mockito.MockitoSugar.{atLeastOnce, never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -54,7 +54,7 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockCacheConnector, atLeastOnce()).get(any())(any())
+          verify(mockCacheConnector, atLeastOnce).get(any())(any())
 
         }
       }
@@ -78,7 +78,7 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockCacheConnector, never()).get(any())(any())
+          verify(mockCacheConnector, never).get(any())(any())
         }
       }
     }

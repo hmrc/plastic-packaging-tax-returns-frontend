@@ -20,7 +20,8 @@ import base.MetricsMocks
 import config.FrontendAppConfig
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.{reset, verify}
 import org.mockito.MockitoSugar.{mock, spyLambda, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec

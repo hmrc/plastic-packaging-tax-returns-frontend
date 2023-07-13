@@ -119,7 +119,7 @@ class AmendExportedByAnotherBusinessControllerSpec
       val result = sut.onPageLoad(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.SubmittedReturnsController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.SubmittedReturnsController.onPageLoad().url)
     }
   }
 
@@ -157,7 +157,7 @@ class AmendExportedByAnotherBusinessControllerSpec
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.amends.routes.CheckYourAnswersController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.amends.routes.CheckYourAnswersController.onPageLoad().url)
     }
 
     "return a bad request with an error on view" in {

@@ -40,7 +40,7 @@ class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with De
     )
 
   override def fakeApplication(): Application = {
-    startWireMockServer
+    startWireMockServer()
     SharedMetricRegistries.clear()
     new GuiceApplicationBuilder()
       .overrides(inject.bind[SessionRepository].toInstance(mock[SessionRepository]))
