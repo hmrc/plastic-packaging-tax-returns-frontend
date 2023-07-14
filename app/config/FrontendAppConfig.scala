@@ -158,5 +158,5 @@ class FrontendAppConfig @Inject() (
     * @see [[util.EdgeOfSystem.localDateTimeNow]]
     */
   def overrideSystemDateTime: Option[String] =
-    configuration.getOptional[String]("features.override-system-date-time")
+    configuration.getOptional[String]("override-system-date-time")
 }
