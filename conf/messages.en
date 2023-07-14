@@ -660,6 +660,9 @@ plasticExportedByAnotherBusiness.caption = Exported plastic packaging
 plasticExportedByAnotherBusiness.paragraph.1 = You will not be charged tax on these but you must still tell us about them.
 plasticExportedByAnotherBusiness.paragraph.2 = You must have evidence that the export or conversion has taken place.
 plasticExportedByAnotherBusiness.error.required = Select yes if another business has exported or converted any of your finished plastic packaging components
+plasticExportedByAnotherBusiness.reveal = What do we mean by converted plastic packaging?
+plasticExportedByAnotherBusiness.reveal.content = Plastic packaging is converted if you make a new {0}.
+plasticExportedByAnotherBusiness.reveal.content.link = substantial modification
 
 anotherBusinessExportWeight.title = How much of your {0} of finished plastic packaging components did another business export or convert?
 anotherBusinessExportWeight.heading = How much of your {0} of finished plastic packaging components did another business export or convert?

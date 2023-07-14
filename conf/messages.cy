@@ -673,6 +673,9 @@ plasticExportedByAnotherBusiness.caption = Deunydd pacio plastig a allforiwyd
 plasticExportedByAnotherBusiness.paragraph.1 = Ni fydd treth yn cael ei chodi ar y rhain, ond mae’n rhaid i chi roi gwybod i ni amdanynt o hyd.
 plasticExportedByAnotherBusiness.paragraph.2 = Rhaid i chi fod â thystiolaeth bod gwaith allforio neu drosi wedi digwydd.
 plasticExportedByAnotherBusiness.error.required = Dewiswch ‘Iawn’ os oes busnes arall wedi allforio neu drosi unrhyw un o’ch cydrannau deunydd pacio plastig
+plasticExportedByAnotherBusiness.reveal = Beth ydyn ni’n ei olygu wrth ddeunydd pacio plastig a droswyd?
+plasticExportedByAnotherBusiness.reveal.content = Mae deunydd pacio plastig yn cael ei drosi os byddwch yn gwneud {0}.
+plasticExportedByAnotherBusiness.reveal.content.link = addasiad sylweddol newydd
 
 anotherBusinessExportWeight.title = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?
 anotherBusinessExportWeight.heading = Faint o’ch {0} o gydrannau deunydd pacio plastig gorffenedig y gwnaeth busnes arall eu hallforio neu eu trosi?

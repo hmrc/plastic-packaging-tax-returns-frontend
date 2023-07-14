@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
 @import viewmodels._
 @import components._
 @import templates.YesNoLayout
@@ -23,7 +24,10 @@
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     yesNoLayout: YesNoLayout,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    details: GovukDetails,
+    link: Link,
+    appConfig: FrontendAppConfig
 )
 
 @(form: Form[Boolean], mode: Mode, amount: Long)(implicit request: Request[_], messages: Messages)
@@ -32,6 +36,17 @@
 @paragraphContent ={
     @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.1"))
     @paragraphBody(messages("plasticExportedByAnotherBusiness.paragraph.2"))
+
+    @details(Details(
+            id = Some("exported-reveal"),
+            summary = Text(messages("plasticExportedByAnotherBusiness.reveal")),
+            content = HtmlContent(messages("plasticExportedByAnotherBusiness.reveal.content",
+                            link(
+                                id = "exported-reveal-link",
+                                text = messages("plasticExportedByAnotherBusiness.reveal.content.link"),
+                                href = appConfig.substantialModificationGuidanceUrl)
+        ))))
+
 }
 
 @layout(pageTitle = title(
