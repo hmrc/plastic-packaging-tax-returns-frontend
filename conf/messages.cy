@@ -564,6 +564,9 @@ converted-credits-yes-no.paragraph.1 = Os ydych wedi talu treth ar ddeunydd paci
 converted-credits-yes-no.paragraph.2 = Gallwch hefyd hawlio treth yn ôl fel credyd os gwnaeth busnes arall ei drosi.
 converted-credits-yes-no.question = A wnaethoch dalu treth ar ddeunydd pacio plastig rhwng {0} cyn iddo gael ei drosi?
 converted-credits-yes-no.error.required = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar ddeunydd pacio plastig cyn iddo gael ei drosi
+converted-credits-yes-no.reveal = Beth ydyn ni’n ei olygu wrth ddeunydd pacio plastig a droswyd?
+converted-credits-yes-no.reveal.content = Mae deunydd pacio plastig yn cael ei drosi os byddwch yn gwneud {0}.
+converted-credits-yes-no.reveal.content.link = addasiad sylweddol newydd
 
 do-you-want-to-claim.title = Hawlio treth yn ôl fel credyd
 do-you-want-to-claim.p1 = Os ydych wedi talu treth ar ddeunydd pacio plastig, gallwch hawlio’r dreth hon yn ôl fel credyd os yw’r naill neu’r llall o’r canlynol yn wir am y deunydd pacio:

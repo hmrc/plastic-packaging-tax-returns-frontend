@@ -557,6 +557,9 @@ converted-credits-yes-no.paragraph.1 = If you paid tax on plastic packaging and 
 converted-credits-yes-no.paragraph.2 = You can also claim tax back as credit if another business converted it.
 converted-credits-yes-no.question = Did you pay tax on plastic packaging between {0} before it was converted?
 converted-credits-yes-no.error.required = Select yes if you paid tax on plastic packaging before it was converted
+converted-credits-yes-no.reveal = What do we mean by converted plastic packaging?
+converted-credits-yes-no.reveal.content = Plastic packaging is converted if you make a new {0}.
+converted-credits-yes-no.reveal.content.link = substantial modification
 
 do-you-want-to-claim.title = Claiming tax back as credit
 do-you-want-to-claim.p1 = If you have paid tax on plastic packaging you can claim this tax back as credit if this packaging is then (either of the following):

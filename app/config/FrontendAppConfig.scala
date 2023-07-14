@@ -144,6 +144,9 @@ class FrontendAppConfig @Inject() (
   def addMemberToGroupUrl: String =
     configuration.get[String]("urls.addMemberToGroup")
 
+  def convertedCreditsGuidanceUrl =
+    configuration.get[String]("urls.pptConvertedCreditGuidanceLink")
+
 
   /** Override the current system data-time, for coding and testing. The system date-time is used if the config value 
     * is missing or its value fails to parse.

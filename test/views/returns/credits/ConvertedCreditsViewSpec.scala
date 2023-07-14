@@ -75,6 +75,9 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
     }
 
+    "has reveal component" in {
+      view.getElementsByClass("govuk-details__summary").text mustBe "What do we mean by converted plastic packaging?"
+    }
     "display error" when {
 
       "the form has an error" in {
