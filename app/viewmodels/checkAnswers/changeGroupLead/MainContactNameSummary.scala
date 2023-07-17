@@ -31,7 +31,6 @@ object MainContactNameSummary extends SummaryViewModel {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(MainContactNamePage).map {
       answer =>
-
         SummaryListRowViewModel(
           key     = "newGroupLeadCheckYourAnswers.contact.name.key",
           value   = ValueViewModel(answer),

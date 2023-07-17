@@ -21,7 +21,7 @@ import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{reset, when}
-import org.mockito.stubbing.{OngoingStubbing, ScalaOngoingStubbing}
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 
