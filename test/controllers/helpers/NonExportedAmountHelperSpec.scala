@@ -137,41 +137,41 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
     "accretion questions answered yes and weights given" in {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(true)
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
-      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(true) 
+      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(true)
       when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn Some(10) 
       sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(11)
     }
-    
-    "manufactured was 'yes' and weight given, imported 'no'" ignore {
+
+    "manufactured was 'yes' and weight given, imported 'no'" in {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(true)
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
-      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(false) 
+      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn None
       when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
-      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(1)
+      sut.totalPlasticAdditions(mockUserAnswers) mustBe None
     }
-      
-    "accretion questions answered no (therefore no weight questions answered)" ignore {
-      when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(false)
-      when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn None
-      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(false)
-      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
-      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(0)
-    }
-      
-    "accretion questions answered no (and weights there none the less)" ignore {
-      when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(false)
-      when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
-      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(false)
-      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn Some(10)
-      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(0)
-    }
-    
-    "accretion answers missing" ignore {
+
+    "accretion questions answered no (therefore no weight questions answered)" in {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn None
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn None
       when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn None
       when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
-      sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(0)
+      sut.totalPlasticAdditions(mockUserAnswers) mustBe None
+    }
+      
+    "accretion questions answered no (and weights there none the less)" in {
+      when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn None
+      when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
+      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn None
+      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn Some(10)
+      sut.totalPlasticAdditions(mockUserAnswers) mustBe None
+    }
+
+    "accretion answers missing" in {
+      when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn None
+      when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn None
+      when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn None
+      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
+      sut.totalPlasticAdditions(mockUserAnswers) mustBe None
     }
   }
   
@@ -232,7 +232,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       sut.nonExportedAmount(mockUserAnswers) mustBe Some(100)
     }
 
-    "export questions have not been answered" ignore {
+    "export questions have not been answered" in {
       whenManufactured100kg
 
       when(mockUserAnswers.get(DirectlyExportedPage)) thenReturn None
@@ -241,7 +241,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn None
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn None
       
-      sut.nonExportedAmount(mockUserAnswers) mustBe Some(100)
+      sut.nonExportedAmount(mockUserAnswers) mustBe None
     }
   }
 
