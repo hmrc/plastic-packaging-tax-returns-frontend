@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -35,7 +36,7 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
   with ViewAssertions
   with ViewMatchers
   with AccessibilityMatchers
-  with MockitoSugar {
+  with MockitoSugar with BeforeAndAfterEach {
 
   override val messages = spy(super.messages)
   private val form = new ConvertedCreditsWeightFormProvider()()
@@ -43,31 +44,36 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
   private def createView: Html = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
-  "It" should {
-    
-    // Note as this only runs once, no mocks are reset
-    val view = createView
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(messages)
+  }
 
+  "It" should {
     "have a title and heading" in {
+      val view = createView
       verify(messages, times(2)).apply("converted-credits-weight.heading-title")
       view.select("title").text must include ("Submit return - Plastic Packaging Tax - GOV.UK")
       view.select("h1").text must include ("")
     }
 
     "have a caption" in {
-      verify(messages, times(1)).apply(ArgumentMatchers.eq("credits.caption"), any())
+      val view = createView
+      verify(messages).apply(ArgumentMatchers.eq("credits.caption"), any())
       view.getElementById("section-header").text mustBe ("Credit for 1 April 2023 to 31 March 2024")
     }
 
     "have a hint" in {
-      verify(messages, times(1)).apply("converted-credits-weight.hint")
+      val view = createView
+      verify(messages).apply("converted-credits-weight.hint")
 
       val doc: Document = Jsoup.parse(view.toString())
       doc.getElementById("value-hint").text must include (messages("Enter the weight in kilograms. 1 tonne is 1,000kg."))
     }
 
     "contain save & continue button" in {
-      verify(messages, times(1)).apply("site.continue")
+      val view = createView
+      verify(messages).apply("site.continue")
       view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
   }
