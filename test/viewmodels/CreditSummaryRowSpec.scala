@@ -60,4 +60,16 @@ class CreditSummaryRowSpec extends PlaySpec
     }
   }
 
+  "createCYAContent" should {
+    "make 2 rows" in {
+      val creditSummaryRow = CreditSummaryRow("a-label", "a-value", Seq(ActionItem()))
+      val result = creditSummaryRow.createCYAContent
+
+      result mustBe Seq(
+        TableRow(content = Text(creditSummaryRow.label), format = Some("text")),
+        TableRow(content = Text(creditSummaryRow.value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+      )
+    }
+  }
+
 }
