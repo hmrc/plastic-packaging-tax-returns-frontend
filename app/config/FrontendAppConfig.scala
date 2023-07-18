@@ -35,12 +35,8 @@ class FrontendAppConfig @Inject() (
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
   lazy private val contactHost                  = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "plastic-packaging-tax-returns-frontend"
 
   lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
-
-  def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
