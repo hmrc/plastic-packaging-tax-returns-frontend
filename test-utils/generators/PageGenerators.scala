@@ -16,6 +16,7 @@
 
 package generators
 
+import cacheables._
 import org.scalacheck.Arbitrary
 import pages._
 import pages.amends._
@@ -24,6 +25,21 @@ import pages.returns._
 import pages.returns.credits._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryReturnObligationCacheable: Arbitrary[ReturnObligationCacheable.type] =
+    Arbitrary(ReturnObligationCacheable)
+
+  implicit lazy val arbitraryReturnDisplayApiCacheable: Arbitrary[ReturnDisplayApiCacheable.type] =
+    Arbitrary(ReturnDisplayApiCacheable)
+
+  implicit lazy val arbitraryIsFirstReturnCacheable: Arbitrary[IsFirstReturnCacheable.type] =
+    Arbitrary(IsFirstReturnCacheable)
+
+  implicit lazy val arbitraryAmendSelectedPeriodKey: Arbitrary[AmendSelectedPeriodKey.type] =
+    Arbitrary(AmendSelectedPeriodKey)
+
+  implicit lazy val arbitraryAmendObligationCacheable: Arbitrary[AmendObligationCacheable.type] =
+    Arbitrary(AmendObligationCacheable)
 
   implicit lazy val arbitraryAmendExportedByAnotherBusinessPage: Arbitrary[AmendExportedByAnotherBusinessPage.type] =
     Arbitrary(AmendExportedByAnotherBusinessPage)

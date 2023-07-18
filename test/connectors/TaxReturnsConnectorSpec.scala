@@ -20,7 +20,7 @@ import com.codahale.metrics.Timer
 import com.kenshoo.play.metrics.Metrics
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector.StatusCode
-import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
 import org.apache.http.HttpException
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
@@ -176,5 +176,72 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
     }
   }
+
+  "ddInProgress" should {
+    "call the backend" when {
+      "Ok" in {
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptDDInProgress")
+        val mockResult = mock[DDInProgressApi]
+        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+
+        val result = await(connector.ddInProgress("ppt-ref", "periodKey"))
+
+        result mustBe mockResult
+      }
+      "error" in {
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptDDInProgress")
+        object TestException extends Exception
+        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+
+        intercept[TestException.type](await(connector.ddInProgress("ppt-ref", "periodKey")))
+      }
+    }
+  }
+
+  "getCalculationAmends" should {
+    "call the backend" when {
+      "Ok" in {
+        when(frontendAppConfig.pptAmendsCalculationUrl(any)).thenReturn("/getCalculationAmends")
+        val mockResult = mock[AmendsCalculations]
+        when(httpClient2.GET[AmendsCalculations](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+
+        val result = await(connector.getCalculationAmends("ppt-ref"))
+
+        result mustBe Right(mockResult)
+      }
+      "error" in {
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/getCalculationAmends")
+        object TestException extends Exception("boom")
+        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+
+        val result = await(connector.getCalculationAmends("ppt-ref"))
+
+        result mustBe Left(DownstreamServiceError("Failed to get calculations, error: boom", TestException))
+      }
+    }
+  }
+  "getCalculationReturns" should {
+    "call the backend" when {
+      "Ok" in {
+        when(frontendAppConfig.pptReturnsCalculationUrl(any)).thenReturn("/pptReturnsCalculationUrl")
+        val mockResult = mock[Calculations]
+        when(httpClient2.GET[Calculations](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+
+        val result = await(connector.getCalculationReturns("ppt-ref"))
+
+        result mustBe Right(mockResult)
+      }
+      "error" in {
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptReturnsCalculationUrl")
+        object TestException extends Exception("boom")
+        when(httpClient2.GET[Calculations](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+
+        val result = await(connector.getCalculationReturns("ppt-ref"))
+
+        result mustBe Left(DownstreamServiceError("Failed to get calculations, error: boom", TestException))
+      }
+    }
+  }
+
 
 }

@@ -16,7 +16,9 @@
 
 package generators
 
+import cacheables.AmendObligationCacheable
 import models.changeGroupLead.NewGroupLeadAddressDetails
+import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayDetails, TaxReturnObligation}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -26,7 +28,37 @@ import pages.returns._
 import pages.returns.credits._
 import play.api.libs.json.{JsValue, Json}
 
+import java.time.LocalDate
+
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+
+  implicit lazy val arbitraryReturnDisplayApiUserAnswersEntry: Arbitrary[ReturnDisplayApi] =
+    Arbitrary {
+      for {
+        long  <- arbitrary[Long]
+        bigDecimal  <- arbitrary[BigDecimal]
+        string <- arbitrary[String]
+      } yield ReturnDisplayApi(string, IdDetails(string, string), None, ReturnDisplayDetails(
+        long, long, long, long, long, long, bigDecimal, bigDecimal, long, bigDecimal
+      ))
+    }
+
+  implicit lazy val arbitraryTaxReturnObligationUserAnswersEntry: Arbitrary[TaxReturnObligation] =
+    Arbitrary {
+      for {
+        localDate  <- arbitrary[LocalDate]
+        string <- arbitrary[String]
+      } yield TaxReturnObligation(localDate, localDate, localDate, string)
+    }
+
+  implicit lazy val arbitraryAmendObligationCacheableUserAnswersEntry: Arbitrary[(AmendObligationCacheable.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmendObligationCacheable.type]
+        value <- arbitrary[TaxReturnObligation].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryAmendExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] =
     Arbitrary {

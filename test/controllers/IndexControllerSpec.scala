@@ -134,6 +134,63 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
         any()
       )(any(), any())
     }
+
+    "financials data not returned" in {
+      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
+      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(),now(),now(),""))))
+
+      await(sut.onPageLoad()(FakeRequest()))
+
+      verify(mockView).apply(
+        any(),
+        any(),
+        any(),
+        refEq(None),
+        any()
+      )(any(), any())
+    }
+
+    "getFulfilled obligations fails" in {
+      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
+      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
+
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
+
+      await(sut.onPageLoad()(FakeRequest()))
+
+      verify(mockView).apply(
+        any(),
+        any(),
+        refEq(false),
+        any(),
+        any()
+      )(any(), any())
+    }
+
+
+    "getObligationDetail fails" in {
+      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
+      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(),now(),now(),""))))
+
+      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
+
+      await(sut.onPageLoad()(FakeRequest()))
+
+      verify(mockView).apply(
+        any(),
+        refEq(None),
+        any(),
+        any(),
+        any()
+      )(any(), any())
+    }
   }
 
 }
