@@ -17,6 +17,7 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
@@ -25,7 +26,8 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.returns.credits.SingleYearClaim
+import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar._
@@ -42,7 +44,7 @@ import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, RequestHeader}
-import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import views.html.returns.credits.ConvertedCreditsWeightView
 
@@ -87,17 +89,25 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     
     when(view.apply(any, any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
     when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
     when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
+
+    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
+    when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
+      SingleYearClaim(
+        fromDate = LocalDate.of(2023, 4, 1),
+        toDate = LocalDate.of(2024, 3, 31),
+        exportedCredits = None,
+        convertedCredits = None)
+    )
+
   }
 
   "onPageLoad" should {
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).apply(any)
+      verify(journeyAction).async(any)
     }
     
     "show web page with correct submit url" in {
@@ -114,6 +124,25 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
       verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)
+    }
+
+    "redirect if obligation is missing" in {
+      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
+      val result = controller.onPageLoad("year-key", NormalMode)(request)
+      await(result)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+    }
+
+    "redirect if claim for year is missing" in {
+      when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn None
+      val result = controller.onPageLoad("year-key", NormalMode)(request)
+      await(result)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
     }
 
   }
@@ -153,7 +182,24 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       status(result) mustBe BAD_REQUEST
       verify(view).apply(meq(boundFormWithError), any, any)(any, any)
     }
-    
+
+    "redirect if obligation is missing" in {
+      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
+      val result = controller.onSubmit("year-key", NormalMode)(request)
+      await(result)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+    }
+
+    "redirect if claim for year is missing" in {
+      when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn None
+      val result = controller.onSubmit("year-key", NormalMode)(request)
+      await(result)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
+    }
+
   }
 
 }

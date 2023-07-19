@@ -19,9 +19,10 @@ package controllers.returns.credits
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
-import models.Mode
+import models.{Mode, ReturnsUserAnswers}
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
@@ -49,35 +50,34 @@ class ConvertedCreditsWeightController @Inject()(
   (implicit ec: ExecutionContext) extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction {
+    journeyAction.async {
       implicit request =>
-        val form = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-        Ok(createView(form, key, mode))
+        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+          val form = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+          createView(form, key, mode, singleYearClaim) map (Results.Ok(_))
+        }
     }
 
-  private def createView(form: Form[Long], key: String, mode: Mode)(implicit request: DataRequest[_]) = {
-    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
-    val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
-    view(form, routes.ConvertedCreditsWeightController.onSubmit(key, mode), creditRangeOption)
+  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)
+    (implicit request: DataRequest[_]) = {
+    val submitCall = routes.ConvertedCreditsWeightController.onSubmit(key, mode)
+    Future.successful(view(form, submitCall, singleYearClaim.createCreditRangeOption()))
   }
 
   def onSubmit(key: String, mode: Mode) : Action[AnyContent] =
     journeyAction.async {
       implicit request =>
-        formProvider()
-          .bindFromRequest()
-          .fold(formHasErrors(mode, key, _),formIsGood(key, mode, _))
+        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+          formProvider()
+            .bindFromRequest()
+            .fold(
+              createView(_, key, mode, singleYearClaim) map (Results.BadRequest(_)),
+              answer => request.userAnswers
+                .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
+                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+                .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
+            )
+        }
     }
 
-  private def formIsGood(key: String, mode: Mode, answer: Long) (implicit request: DataRequest[AnyContent]) = {
-    request.userAnswers
-      .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
-      .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-      .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
-  }
-
-  private def formHasErrors(mode: Mode, key: String, formWithErrors: Form[Long]) (implicit request: DataRequest[AnyContent]) = {
-    Future.successful(Results.BadRequest(createView(formWithErrors, key, mode)))
-  }
 }
