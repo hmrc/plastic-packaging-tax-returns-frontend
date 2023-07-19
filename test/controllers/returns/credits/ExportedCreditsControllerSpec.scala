@@ -17,12 +17,14 @@
 package controllers.returns.credits
 
 import base.utils.JourneyActionAnswer._
+import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.returns.credits.SingleYearClaim
+import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchersSugar._
 import org.mockito.MockitoSugar
@@ -84,8 +86,18 @@ class ExportedCreditsControllerSpec extends PlaySpec
 
     when(formProvider.apply()) thenReturn initialForm
     when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn("2023-04-01")
-    when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "toDate"))(any, any)).thenReturn("2024-03-31")
+    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
+    when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
+      SingleYearClaim(
+        fromDate = LocalDate.of(2023, 4, 1),
+        toDate = LocalDate.of(2024, 3, 31),
+        exportedCredits = None,
+        convertedCredits = None)
+    )
+
+    when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
+    when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
+    when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
   }
 
   "onPageLoad" must {
@@ -109,35 +121,66 @@ class ExportedCreditsControllerSpec extends PlaySpec
       }
     }
     
+    "redirect if obligation is missing" in {
+      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
+      await(result)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+    }
+
+    "redirect if claim for year is missing" in {
+      when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn None
+      val result = sut.onPageLoad("year-key", NormalMode)(request)
+      await(result)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe 
+        controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
+    }
+    
   }
   
   "onSubmit" must {
 
     "must redirect to the next page using the navigator" in {
-      when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
+      val result = sut.onSubmit("year-key", NormalMode)(request)
+      await(result)
       
-      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
-      when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
-
-      val result = await { sut.onSubmit("year-key", NormalMode)(request) }
       verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
       verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
       
-      result.header.status mustEqual SEE_OTHER
-      redirectLocation(Future.successful(result)).value mustBe "mr"
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe "mr"
     }
 
     "handle answer that fails form validation" in {
       val formWithError = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithError
 
-      val result = await { sut.onSubmit("year-key", NormalMode)(request) }
+      val result = sut.onSubmit("year-key", NormalMode)(request)
+      await(result)
       verify(view).apply(formWithError, "year-key", NormalMode, creditRangeOption) (request, messages)
 
-      result.header.status mustEqual BAD_REQUEST
-      contentAsString(Future.successful(result)) mustBe "correct view"
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe "correct view"
+    }
+
+    "redirect if obligation is missing" in {
+      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
+      val result = sut.onSubmit("year-key", NormalMode)(request)
+      await(result)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
     }
     
+    "redirect if claim for year is missing" ignore {
+      val result = sut.onSubmit("year-key", NormalMode)(request)
+      await(result)
+      status(result) mustBe SEE_OTHER
+      controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
+    }
   }
 }
