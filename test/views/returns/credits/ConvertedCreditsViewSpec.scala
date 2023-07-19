@@ -75,6 +75,16 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
       view.getElementsByClass("govuk-button").text must include(messages("site.continue"))
     }
 
+    "has reveal component" in {
+      view.getElementsByClass("govuk-details__summary").text mustBe "What do we mean by converted plastic packaging?"
+      view.getElementsByClass("govuk-details__text").text mustBe "Plastic packaging is converted if you make a new substantial modification."
+
+      withClue("have a link for guidance"){
+        view.getElementById("converted-reveal-link") must haveHref(
+          "https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax#substantial"
+        )
+      }
+    }
     "display error" when {
 
       "the form has an error" in {

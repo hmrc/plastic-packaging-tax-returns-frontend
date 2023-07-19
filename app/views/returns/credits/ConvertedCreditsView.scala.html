@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
 @import components._
 @import templates._
 @import viewmodels._
@@ -30,7 +31,10 @@
     sectionHeader: SectionHeader,
     heading: heading,
     paragraphBody: paragraphBody,
-    creditsJourneyCaption: CreditsJourneyCaption, 
+    creditsJourneyCaption: CreditsJourneyCaption,
+    details: GovukDetails,
+    link: Link,
+    appConfig: FrontendAppConfig
 )
 
 @(form: Form[Boolean], key: String, mode: Mode, dateRange: CreditRangeOption)(implicit request: Request[_], messages: Messages)
@@ -52,6 +56,17 @@
 
         @paragraphBody(messages("converted-credits-yes-no.paragraph.1"))
         @paragraphBody(messages("converted-credits-yes-no.paragraph.2"))
+
+        @details(Details(
+            id = Some("converted-reveal"),
+            summary = Text(messages("converted-credits-yes-no.reveal")),
+            content = HtmlContent(messages("converted-credits-yes-no.reveal.content",
+                            link(
+                                id = "converted-reveal-link",
+                                text = messages("converted-credits-yes-no.reveal.content.link"),
+                                href = appConfig.substantialModificationGuidanceUrl)
+        ))))
+
 
         @govukRadios(
             RadiosViewModel.yesNo(
