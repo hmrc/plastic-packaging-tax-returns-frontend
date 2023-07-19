@@ -176,11 +176,13 @@ class ExportedCreditsControllerSpec extends PlaySpec
       redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
     }
     
-    "redirect if claim for year is missing" ignore {
+    "redirect if claim for year is missing" in {
+      when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn None
       val result = sut.onSubmit("year-key", NormalMode)(request)
       await(result)
       status(result) mustBe SEE_OTHER
-      controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
+      redirectLocation(result).value mustBe 
+        controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
     }
   }
 }
