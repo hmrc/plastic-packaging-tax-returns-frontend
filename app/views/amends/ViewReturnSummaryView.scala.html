@@ -50,7 +50,7 @@
     @sectionHeader(messages("viewReturnSummary.sectionHeader"))
     <h1 class="govuk-heading-xl">@returnPeriod</h1>
 
-    <p>@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
+    <p class="govuk-body">@link("view-returns", messages("viewReturnSummary.viewReturnsLink"), controllers.amends.routes.SubmittedReturnsController.onPageLoad().url)</p>
 
     @amendCall match {
         case Right(call) => {
