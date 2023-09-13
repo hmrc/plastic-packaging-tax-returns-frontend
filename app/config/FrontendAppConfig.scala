@@ -19,27 +19,22 @@ package config
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (
-  configuration: Configuration,
-  val servicesConfig: ServicesConfig
-) {
+class FrontendAppConfig @Inject() (configuration: Configuration, val servicesConfig: ServicesConfig) {
 
-  lazy val host: String           = configuration.get[String]("host")
-  lazy val appName: String        = configuration.get[String]("appName")
+  lazy val host: String      = configuration.get[String]("host")
+  lazy val appName: String   = configuration.get[String]("appName")
   lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  lazy private val contactHost                  = configuration.get[String]("contact-frontend.host")
+  lazy private val contactHost = configuration.get[String]("contact-frontend.host")
 
   lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
 
-  lazy val loginUrl: String         = configuration.get[String]("urls.login")
-  lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  lazy val loginUrl: String   = configuration.get[String]("urls.login")
+  lazy val signOutUrl: String = configuration.get[String]("urls.signOut")
 
   lazy val exitSurveyUrl: String = configuration.get[String]("urls.exitSurvey")
   lazy val signedOutUrl: String  = configuration.get[String]("urls.signedOut")
@@ -58,19 +53,16 @@ class FrontendAppConfig @Inject() (
 
   def returnUrl(relative: String) = s"$host$relative"
 
-  private lazy val pptReturnsSubmissionUrl: String   = s"$pptServiceHost/returns-submission"
-  private lazy val pptReturnsAmendUrl: String        = s"$pptServiceHost/returns-amend"
+  private lazy val pptReturnsSubmissionUrl: String           = s"$pptServiceHost/returns-submission"
+  private lazy val pptReturnsAmendUrl: String                = s"$pptServiceHost/returns-amend"
   def pptReturnsCalculationUrl(pptReference: String): String = s"$pptServiceHost/returns-calculate/$pptReference"
-  def pptAmendsCalculationUrl(pptReference: String): String = s"$pptServiceHost/amends-calculate/$pptReference"
+  def pptAmendsCalculationUrl(pptReference: String): String  = s"$pptServiceHost/amends-calculate/$pptReference"
 
   lazy val pptRegistrationFrontEnd =
-    configuration.getOptional[String]("platform.frontend.host").getOrElse(
-      servicesConfig.baseUrl("ppt-registration-frontend")
-    )
-
+    configuration.getOptional[String]("platform.frontend.host").getOrElse(servicesConfig.baseUrl("ppt-registration-frontend"))
 
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
-  lazy val pptRegistrationUrl: String = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
+  lazy val pptRegistrationUrl: String     = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
 
   def pptReturnSubmissionUrl(pptReference: String): String =
     s"$pptReturnsSubmissionUrl/$pptReference"
@@ -126,9 +118,9 @@ class FrontendAppConfig @Inject() (
   def pptCacheSetUrl(pptReference: String): String =
     s"$pptServiceHost/cache/set/$pptReference"
 
-   lazy val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
+  lazy val businessAccountUrl: String = configuration.get[String]("urls.businessAccount")
 
-  def pptStartDirectDebit : String =
+  def pptStartDirectDebit: String =
     s"${servicesConfig.baseUrl("direct-debit")}/direct-debit-backend/ppt-homepage/ppt/journey/start"
 
   def creditsGuidanceUrl: String =
@@ -143,8 +135,7 @@ class FrontendAppConfig @Inject() (
   def substantialModificationGuidanceUrl =
     configuration.get[String]("urls.pptSubstantialModificationGuidanceLink")
 
-
-  /** Override the current system data-time, for coding and testing. The system date-time is used if the config value 
+  /** Override the current system data-time, for coding and testing. The system date-time is used if the config value
     * is missing or its value fails to parse.
     * @return
     *   - [[None]] if no date-time override config value is present
@@ -158,4 +149,5 @@ class FrontendAppConfig @Inject() (
     */
   def overrideSystemDateTime: Option[String] =
     configuration.getOptional[String]("override-system-date-time")
+
 }

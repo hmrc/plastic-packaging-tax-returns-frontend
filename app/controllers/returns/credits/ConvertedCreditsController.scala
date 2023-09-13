@@ -19,26 +19,23 @@ package controllers.returns.credits
 import connectors.CacheConnector
 import controllers.actions._
 import forms.returns.credits.ConvertedCreditsFormProvider
-import models.{Mode, ReturnsUserAnswers}
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import models.returns.credits.SingleYearClaim
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.{Mode, ReturnsUserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
 import play.api.mvc._
 import views.html.returns.credits.ConvertedCreditsView
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConvertedCreditsController @Inject()
-(
+class ConvertedCreditsController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -46,11 +43,10 @@ class ConvertedCreditsController @Inject()
   formProvider: ConvertedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ConvertedCreditsView
-)(implicit ec: ExecutionContext) 
-  extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-
-  def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
+  def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
@@ -58,7 +54,6 @@ class ConvertedCreditsController @Inject()
           createView(preparedForm, key, mode, singleYearClaim) map (Results.Ok(_))
         }
     }
-  }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
@@ -77,9 +72,7 @@ class ConvertedCreditsController @Inject()
         }
     }
 
-  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)
-    (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit request: DataRequest[_]) =
     Future.successful(view(form, key, mode, singleYearClaim.createCreditRangeOption()))
-  }
 
 }
