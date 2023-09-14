@@ -19,26 +19,23 @@ package controllers.returns.credits
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
-import models.{Mode, ReturnsUserAnswers}
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
+import models.returns.CreditsAnswer
 import models.returns.credits.SingleYearClaim
-import models.returns.{CreditRangeOption, CreditsAnswer}
+import models.{Mode, ReturnsUserAnswers}
 import navigation.ReturnsJourneyNavigator
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsPath
-import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import views.html.returns.credits.ConvertedCreditsWeightView
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConvertedCreditsWeightController @Inject()(
+class ConvertedCreditsWeightController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
@@ -46,8 +43,8 @@ class ConvertedCreditsWeightController @Inject()(
   formProvider: ConvertedCreditsWeightFormProvider,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator
-)
-  (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
@@ -58,13 +55,12 @@ class ConvertedCreditsWeightController @Inject()(
         }
     }
 
-  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)
-    (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit request: DataRequest[_]) = {
     val submitCall = routes.ConvertedCreditsWeightController.onSubmit(key, mode)
     Future.successful(view(form, submitCall, singleYearClaim.createCreditRangeOption()))
   }
 
-  def onSubmit(key: String, mode: Mode) : Action[AnyContent] =
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] =
     journeyAction.async {
       implicit request =>
         ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
@@ -72,10 +68,11 @@ class ConvertedCreditsWeightController @Inject()(
             .bindFromRequest()
             .fold(
               createView(_, key, mode, singleYearClaim) map (Results.BadRequest(_)),
-              answer => request.userAnswers
-                .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
-                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
+              answer =>
+                request.userAnswers
+                  .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
+                  .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+                  .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
             )
         }
     }

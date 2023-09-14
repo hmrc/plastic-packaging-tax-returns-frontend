@@ -45,11 +45,11 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
   "getPaymentLink" should {
     "return success response" when {
       "retrieving existing financial details" in {
-        val pptReference       = UUID.randomUUID().toString
+        val pptReference = UUID.randomUUID().toString
 
         givenPostPaymentsUrl(Status.CREATED, Json.obj("journeyId" -> "id", "nextUrl" -> "/expected").toString())
 
-        val res = await(connector.getPaymentLink(pptReference, 0, "/"))
+        val res = await(connector.getPaymentLink(pptReference, 0, "/", Some("2023-09-12")))
 
         res mustBe "/expected"
       }
@@ -85,10 +85,7 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
 
         val pptReference       = UUID.randomUUID().toString
         val expectedFinancials = PPTFinancials(None, None, None)
-        givenGetSubscriptionEndpointReturns(Status.OK,
-                                            pptReference,
-                                            Json.toJsObject(expectedFinancials).toString
-        )
+        givenGetSubscriptionEndpointReturns(Status.OK, pptReference, Json.toJsObject(expectedFinancials).toString)
 
         val res = await(connector.getPaymentStatement(pptReference))
 
@@ -129,11 +126,7 @@ class FinancialsConnectorSpec extends ConnectorISpec with ScalaFutures with Eith
         )
     )
 
-  private def givenGetSubscriptionEndpointReturns(
-    status: Int,
-    pptReference: String,
-    body: String = ""
-  ) =
+  private def givenGetSubscriptionEndpointReturns(status: Int, pptReference: String, body: String = "") =
     stubFor(
       WireMock.get(s"/financials/open/$pptReference")
         .willReturn(
