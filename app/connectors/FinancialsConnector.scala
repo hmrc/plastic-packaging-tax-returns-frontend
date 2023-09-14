@@ -27,28 +27,18 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialsConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: FrontendAppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext)
+class FinancialsConnector @Inject() (httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
     extends Logging with HttpReadsInstances {
 
-  def getPaymentLink(
-                      pptReferenceNumber: String,
-                      amountInPence: Int,
-                      homeUrl: String
-                    )(implicit hc: HeaderCarrier): Future[String] = {
-    val request = PaymentLinkRequest(pptReferenceNumber, amountInPence, homeUrl, homeUrl)
-    httpClient.POST[PaymentLinkRequest, PaymentLinkResponse](appConfig.makePaymentUrl, request).map{ res =>
+  def getPaymentLink(pptReferenceNumber: String, amountInPence: Int, homeUrl: String, nextDueDate: Option[String])(implicit hc: HeaderCarrier): Future[String] = {
+    val request = PaymentLinkRequest(pptReferenceNumber, amountInPence, homeUrl, homeUrl, nextDueDate)
+    httpClient.POST[PaymentLinkRequest, PaymentLinkResponse](appConfig.makePaymentUrl, request).map { res =>
       logger.info(s"Payment redirect created for pptReferenceNumber: $pptReferenceNumber with journeyId:${res.journeyId}")
       res.nextUrl
     }
   }
 
-  def getPaymentStatement(
-    pptReferenceNumber: String
-  )(implicit hc: HeaderCarrier): Future[PPTFinancials] = {
+  def getPaymentStatement(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTFinancials] = {
     val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
     httpClient.GET[PPTFinancials](appConfig.pptFinancialsUrl(pptReferenceNumber))
       .map {
@@ -60,7 +50,8 @@ class FinancialsConnector @Inject() (
       .recover {
         case exception: Exception =>
           throw DownstreamServiceError(
-            s"Failed to retrieve open financials for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+            s"Failed to retrieve open financials for PPTReference: [$pptReferenceNumber]," +
+              s"error: [${exception.getMessage}]",
             exception
           )
       }
@@ -69,13 +60,16 @@ class FinancialsConnector @Inject() (
 }
 
 object FinancialsConnector {
-  private final case class PaymentLinkRequest(reference: String, amountInPence: Int, returnUrl: String, backUrl: String)
+  private final case class PaymentLinkRequest(reference: String, amountInPence: Int, returnUrl: String, backUrl: String, dueDate: Option[String])
+
   private object PaymentLinkRequest {
     implicit val writes: OWrites[PaymentLinkRequest] = Json.writes[PaymentLinkRequest]
   }
 
   private final case class PaymentLinkResponse(journeyId: String, nextUrl: String)
+
   private object PaymentLinkResponse {
     implicit val writes: Reads[PaymentLinkResponse] = Json.reads[PaymentLinkResponse]
   }
+
 }

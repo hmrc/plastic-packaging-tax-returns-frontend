@@ -16,7 +16,6 @@
 
 package controllers.auth
 
-import base.SpecBase
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatestplus.play.PlaySpec
@@ -28,15 +27,15 @@ import views.html.auth.SignedOutView
 class SignedOutControllerSpec extends PlaySpec {
 
   private val view = mock[SignedOutView]
-  private val sut = new SignedOutController(stubMessagesControllerComponents(), view )
+  private val sut  = new SignedOutController(stubMessagesControllerComponents(), view)
 
   "SignedOut Controller" should {
 
     "must return OK and the correct view for a GET" in {
-      when(view.apply()(any,any)).thenReturn(HtmlFormat.empty)
+      when(view.apply()(any, any)).thenReturn(HtmlFormat.empty)
       val result = sut.onPageLoad()(FakeRequest())
       status(result) mustEqual OK
-      verify(view).apply()(any,any)
+      verify(view).apply()(any, any)
     }
   }
 }

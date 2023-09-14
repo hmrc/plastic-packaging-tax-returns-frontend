@@ -17,34 +17,41 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.FinancialsConnector
+import connectors.{FinancialsConnector, ObligationsConnector}
 import controllers.actions.IdentifierAction
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class MakePaymentController  @Inject() (
-                                         override val messagesApi: MessagesApi,
-                                         identify: IdentifierAction,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         financialsConnector: FinancialsConnector,
-                                         appConfig: FrontendAppConfig
-                                       )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+class MakePaymentController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  financialsConnector: FinancialsConnector,
+  obligationsConnector: ObligationsConnector,
+  appConfig: FrontendAppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  def redirectLink: Action[AnyContent] = identify.async {implicit request =>
-    val pptRef = request.pptReference
+  def redirectLink: Action[AnyContent] =
+    identify.async { implicit request =>
+      val pptRef = request.pptReference
 
-    for {
-      financials <- financialsConnector.getPaymentStatement(pptRef)
-      amountInPence = financials.amountToPayInPence
-      link <- financialsConnector.getPaymentLink(pptRef, amountInPence, homeUrl = appConfig.returnUrl(routes.IndexController.onPageLoad.url))
-    } yield {
-      Redirect(Call("GET", link))
+      for {
+        financials <- financialsConnector.getPaymentStatement(pptRef)
+        amountInPence = financials.amountToPayInPence
+        obligations <- obligationsConnector.getOpen(pptRef)
+        link <- financialsConnector.getPaymentLink(
+          pptRef,
+          amountInPence,
+          homeUrl = appConfig.returnUrl(routes.IndexController.onPageLoad.url),
+          obligations.nextObligationToReturn.map(_.dueDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+        )
+      } yield Redirect(Call("GET", link))
     }
-  }
 
 }
