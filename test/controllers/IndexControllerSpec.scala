@@ -16,7 +16,7 @@
 
 package controllers
 
-import akka.stream.testkit.NoMaterializer
+import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import config.FrontendAppConfig
 import connectors.{FinancialsConnector, ObligationsConnector}

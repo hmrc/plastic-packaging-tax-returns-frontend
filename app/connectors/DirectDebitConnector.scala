@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import connectors.DirectDebitConnector._
 import play.api.Logging

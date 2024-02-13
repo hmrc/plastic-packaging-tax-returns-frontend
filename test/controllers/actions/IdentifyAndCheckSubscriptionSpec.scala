@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import akka.stream.testkit.NoMaterializer
+import org.apache.pekko.stream.testkit.NoMaterializer
 import models.requests.IdentifiedRequest
 import org.mockito.MockitoSugar.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock

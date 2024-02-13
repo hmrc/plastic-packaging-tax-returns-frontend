@@ -17,7 +17,7 @@
 package base.utils
 
 import com.codahale.metrics.SharedMetricRegistries
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.DefaultAwaitTimeout

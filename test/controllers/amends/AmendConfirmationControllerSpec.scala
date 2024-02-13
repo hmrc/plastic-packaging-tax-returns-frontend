@@ -16,7 +16,7 @@
 
 package controllers.amends
 
-import akka.stream.testkit.NoMaterializer
+import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
