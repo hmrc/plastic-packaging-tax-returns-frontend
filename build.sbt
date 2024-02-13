@@ -46,8 +46,6 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
-    update / evictionWarningOptions :=
-      EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(Resolver.jcenterRepo),
     // concatenate js
     Concat.groups := Seq(
@@ -74,14 +72,6 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val testSettings: Seq[Def.Setting[_]] =
   Seq(fork := true, javaOptions ++= Seq("-Dconfig.resource=test.application.conf"), unmanagedSourceDirectories += baseDirectory.value / "test-utils")
-
-lazy val itSettings = Defaults.itSettings ++ Seq(
-  unmanagedSourceDirectories := Seq(baseDirectory.value / "it", baseDirectory.value / "test-utils"),
-  unmanagedResourceDirectories := Seq(baseDirectory.value / "it" / "resources"),
-  parallelExecution := false,
-  fork := true,
-  javaOptions ++= Seq("-Dconfig.resource=it.application.conf")
-)
 
 lazy val it = project
   .enablePlugins(PlayScala)
