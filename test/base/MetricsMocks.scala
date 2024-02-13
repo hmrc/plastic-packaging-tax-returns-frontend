@@ -24,7 +24,6 @@ trait MetricsMocks {
   val metricsMock: Metrics = new Metrics {
     override def defaultRegistry: MetricRegistry = metricRegistryMock
 
-    def toJson: String = ""
   }
 
   val metricRegistryMock = new MetricRegistry()

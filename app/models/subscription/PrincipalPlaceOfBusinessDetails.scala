@@ -16,7 +16,7 @@
 
 package models.subscription
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class PrincipalPlaceOfBusinessDetails(
   addressDetails: AddressDetails,
@@ -24,6 +24,6 @@ case class PrincipalPlaceOfBusinessDetails(
 )
 
 object PrincipalPlaceOfBusinessDetails {
-  implicit val format = Json.format[PrincipalPlaceOfBusinessDetails]
+  implicit val format: OFormat[PrincipalPlaceOfBusinessDetails] = Json.format[PrincipalPlaceOfBusinessDetails]
 
 }

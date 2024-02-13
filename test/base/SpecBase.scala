@@ -47,7 +47,7 @@ trait SpecBase
   implicit val config: FrontendAppConfig          = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector     = mock[CacheConnector]
   implicit val mockSessionRepo: SessionRepository = mock[SessionRepository]
-  implicit val mockTaxReturnConnector             = mock[TaxReturnsConnector]
+  implicit val mockTaxReturnConnector: TaxReturnsConnector = mock[TaxReturnsConnector]
 
   def userAnswers = UserAnswers(userAnswersId)
     .set(ReturnDisplayApiCacheable, retDisApi).get
@@ -59,7 +59,7 @@ trait SpecBase
     LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
 
-  val mockResponse = mock[HttpResponse]
+  val mockResponse: HttpResponse = mock[HttpResponse]
 
   val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
     periodFrom = "2022-04-01",
