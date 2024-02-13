@@ -15,7 +15,6 @@ import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.$className$View
 
 import scala.concurrent.Future
