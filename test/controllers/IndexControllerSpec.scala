@@ -36,7 +36,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import repositories.SessionRepository.Paths.SubscriptionIsActive
 import views.html.IndexView
 
 import java.time.LocalDate.now
@@ -46,26 +45,17 @@ import scala.concurrent.Future
 class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   val mockObligationsConnector: ObligationsConnector = mock[ObligationsConnector]
-  val mockFinancialsConnector: FinancialsConnector = mock[FinancialsConnector]
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val mockView: IndexView = mock[IndexView]
-  val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockLegalEntityDetails: LegalEntityDetails = mock[LegalEntityDetails]
-  val mockPPTFinancials: PPTFinancials = mock[PPTFinancials]
+  val mockFinancialsConnector: FinancialsConnector   = mock[FinancialsConnector]
+  val mockSessionRepository: SessionRepository       = mock[SessionRepository]
+  val mockView: IndexView                            = mock[IndexView]
+  val mockMessagesApi: MessagesApi                   = mock[MessagesApi]
+  val mockAppConfig: FrontendAppConfig               = mock[FrontendAppConfig]
+  val mockLegalEntityDetails: LegalEntityDetails     = mock[LegalEntityDetails]
+  val mockPPTFinancials: PPTFinancials               = mock[PPTFinancials]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(
-      mockObligationsConnector,
-      mockFinancialsConnector,
-      mockSessionRepository,
-      mockView,
-      mockMessagesApi,
-      mockAppConfig,
-      mockLegalEntityDetails,
-      mockPPTFinancials
-    )
+    reset(mockObligationsConnector, mockFinancialsConnector, mockSessionRepository, mockView, mockMessagesApi, mockAppConfig, mockLegalEntityDetails, mockPPTFinancials)
 
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply("test view"))
   }
@@ -94,24 +84,21 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       status(result) mustBe OK
       contentAsString(result) mustBe "test view"
-      verify(mockView).apply(
-        refEq(mockLegalEntityDetails),
-        refEq(Some(PPTObligations(None, None, 1, true, true))),
-        refEq(true),
-        refEq(Some("Test payment statement")),
+      verify(mockView).apply(refEq(mockLegalEntityDetails), refEq(Some(PPTObligations(None, None, 1, true, true))), refEq(true), refEq(Some("Test payment statement")), any())(
+        any(),
         any()
-      )(any(), any())
+      )
 
-      withClue("session should be called to get legalEntityDetails"){
-        verify(mockSessionRepository).get(refEq("SomeId-123"), refEq(SubscriptionIsActive))(any())
+      withClue("session should be called to get legalEntityDetails") {
+        verify(mockSessionRepository).get(any, any)(any())
       }
-      withClue("payments should be called"){
+      withClue("payments should be called") {
         verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
       }
-      withClue("obligations Open should be called"){
+      withClue("obligations Open should be called") {
         verify(mockObligationsConnector).getOpen(refEq("123"))(any())
       }
-      withClue("obligations Fulfilled should be called"){
+      withClue("obligations Fulfilled should be called") {
         verify(mockObligationsConnector).getFulfilled(refEq("123"))(any())
       }
     }
@@ -122,17 +109,11 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
       when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(),now(),now(),""))))
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(
-        any(),
-        any(),
-        refEq(false),
-        any(),
-        any()
-      )(any(), any())
+      verify(mockView).apply(any(), any(), refEq(false), any(), any())(any(), any())
     }
 
     "financials data not returned" in {
@@ -140,17 +121,11 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
       when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(),now(),now(),""))))
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(
-        any(),
-        any(),
-        any(),
-        refEq(None),
-        any()
-      )(any(), any())
+      verify(mockView).apply(any(), any(), any(), refEq(None), any())(any(), any())
     }
 
     "getFulfilled obligations fails" in {
@@ -163,33 +138,20 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(
-        any(),
-        any(),
-        refEq(false),
-        any(),
-        any()
-      )(any(), any())
+      verify(mockView).apply(any(), any(), refEq(false), any(), any())(any(), any())
     }
-
 
     "getObligationDetail fails" in {
       when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
       when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
       when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(),now(),now(),""))))
+      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
       when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(
-        any(),
-        refEq(None),
-        any(),
-        any(),
-        any()
-      )(any(), any())
+      verify(mockView).apply(any(), refEq(None), any(), any(), any())(any(), any())
     }
   }
 

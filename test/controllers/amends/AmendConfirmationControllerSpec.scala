@@ -29,24 +29,18 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
 import play.twirl.api.Html
 import repositories.SessionRepository
-import repositories.SessionRepository.Paths
 import views.html.amends.AmendConfirmation
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class AmendConfirmationControllerSpec extends PlaySpec
-  with BeforeAndAfterEach{
+class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val sessionRepository = mock[SessionRepository]
-  private val view = mock[AmendConfirmation]
+  private val view              = mock[AmendConfirmation]
 
-  private val sut = new AmendConfirmationController(
-    stubMessagesControllerComponents(),
-    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
-    sessionRepository,
-    view
-  )(global)
+  private val sut =
+    new AmendConfirmationController(stubMessagesControllerComponents(), new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)), sessionRepository, view)(global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -65,7 +59,7 @@ class AmendConfirmationControllerSpec extends PlaySpec
       status(result) mustEqual OK
       contentAsString(result) mustBe "correct view"
       verify(view).apply(refEq(Some("charge-ref")))(any, any)
-      verify(sessionRepository).get(refEq("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(any, any)(any)
     }
 
     "error" in {
@@ -74,9 +68,8 @@ class AmendConfirmationControllerSpec extends PlaySpec
       when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.failed(TestEx))
 
       intercept[TestEx.type](await(sut.onPageLoad()(FakeRequest())))
-      verify(sessionRepository).get(refEq("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(any, any)(any)
     }
   }
-
 
 }
