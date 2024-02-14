@@ -58,7 +58,7 @@ class CheckYourAnswersControllerSpec
     with AmendExportedData
     with BeforeAndAfterEach {
 
-  val expectedHtml = Html("correct view")
+  val expectedHtml: Html = Html("correct view")
 
   private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi = mock[MessagesApi]
@@ -67,7 +67,7 @@ class CheckYourAnswersControllerSpec
   private val comparisonService = mock[AmendReturnAnswerComparisonService]
   private val sessionRepository = mock[SessionRepository]
   private val view = mock[CheckYourAnswersView]
-  private implicit val edgeOfSystem = mock[EdgeOfSystem]
+  private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
 
   private val sut = new CheckYourAnswersController(
     messagesApi,

@@ -16,8 +16,9 @@
 
 package controllers.amends
 
-import akka.stream.testkit.NoMaterializer
+import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
@@ -35,18 +36,13 @@ import views.html.amends.AmendConfirmation
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class AmendConfirmationControllerSpec extends PlaySpec
-  with BeforeAndAfterEach{
+class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val sessionRepository = mock[SessionRepository]
-  private val view = mock[AmendConfirmation]
+  private val view              = mock[AmendConfirmation]
 
-  private val sut = new AmendConfirmationController(
-    stubMessagesControllerComponents(),
-    new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
-    sessionRepository,
-    view
-  )(global)
+  private val sut =
+    new AmendConfirmationController(stubMessagesControllerComponents(), new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)), sessionRepository, view)(global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -65,7 +61,7 @@ class AmendConfirmationControllerSpec extends PlaySpec
       status(result) mustEqual OK
       contentAsString(result) mustBe "correct view"
       verify(view).apply(refEq(Some("charge-ref")))(any, any)
-      verify(sessionRepository).get(refEq("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
     }
 
     "error" in {
@@ -74,9 +70,8 @@ class AmendConfirmationControllerSpec extends PlaySpec
       when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.failed(TestEx))
 
       intercept[TestEx.type](await(sut.onPageLoad()(FakeRequest())))
-      verify(sessionRepository).get(refEq("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
     }
   }
-
 
 }

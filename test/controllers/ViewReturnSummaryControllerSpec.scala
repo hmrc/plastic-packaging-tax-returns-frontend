@@ -68,10 +68,10 @@ class ViewReturnSummaryControllerSpec
   private val taxReturnHelper = mock[TaxReturnHelper]
   private val returnsConnector = mock[TaxReturnsConnector]
   private val errorHandler = mock[ErrorHandler]
-  private implicit val edgeOfSystem = mock[EdgeOfSystem]
+  private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
 
-  val returnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-  val submittedReturn = SubmittedReturn(
+  val returnDisplayDetails: ReturnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  val submittedReturn: SubmittedReturn = SubmittedReturn(
     0.3,
     ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
   )
@@ -93,7 +93,7 @@ class ViewReturnSummaryControllerSpec
     errorHandler
   )
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(journeyAction, view, cacheConnector, dataRequest, errorHandler, edgeOfSystem)

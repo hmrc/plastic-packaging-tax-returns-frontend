@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.actions.AuthFunction.QueryParamKeys
 import play.api.mvc.{Request, Result, Results, WrappedRequest}
