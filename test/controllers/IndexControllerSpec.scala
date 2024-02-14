@@ -26,16 +26,19 @@ import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import models.subscription.LegalEntityDetails
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.refEq
+import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
-import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import views.html.IndexView
 
 import java.time.LocalDate.now
@@ -56,8 +59,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockObligationsConnector, mockFinancialsConnector, mockSessionRepository, mockView, mockMessagesApi, mockAppConfig, mockLegalEntityDetails, mockPPTFinancials)
-
-    when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(Html.apply("test view"))
+    when(mockView.apply(any, any, any, any, any)(any, any)).thenReturn(Html.apply("test view"))
   }
 
   val sut = new IndexController(
@@ -73,85 +75,86 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   "onPageLoad" must {
     "construct and return the account home page" in {
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(mockPPTFinancials))
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq.empty))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)).thenReturn(Future.successful(mockPPTFinancials))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq.empty))
 
-      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
+      when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
 
       val result = sut.onPageLoad()(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe "test view"
-      verify(mockView).apply(refEq(mockLegalEntityDetails), refEq(Some(PPTObligations(None, None, 1, true, true))), refEq(true), refEq(Some("Test payment statement")), any())(
-        any(),
-        any()
+
+      verify(mockView).apply(refEq(mockLegalEntityDetails), refEq(Some(PPTObligations(None, None, 1, true, true))), refEq(true), refEq(Some("Test payment statement")), any)(
+        any,
+        any
       )
 
       withClue("session should be called to get legalEntityDetails") {
-        verify(mockSessionRepository).get(any, any)(any())
+        verify(mockSessionRepository).get(ArgumentMatchers.contains("SomeId-123"), refEq(Paths.SubscriptionIsActive))(any)
       }
       withClue("payments should be called") {
-        verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
+        verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any)
       }
       withClue("obligations Open should be called") {
-        verify(mockObligationsConnector).getOpen(refEq("123"))(any())
+        verify(mockObligationsConnector).getOpen(refEq("123"))(any)
       }
       withClue("obligations Fulfilled should be called") {
-        verify(mockObligationsConnector).getFulfilled(refEq("123"))(any())
+        verify(mockObligationsConnector).getFulfilled(refEq("123"))(any)
       }
     }
 
     "calculate ifFirstReturn to be false, when fulfilled obligation is nonEmpty" in {
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
-      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockObligationsConnector.getFulfilled(any[String])(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any(), any(), refEq(false), any(), any())(any(), any())
+      verify(mockView).apply(any, any, refEq(false), any, any)(any, any)
     }
 
     "financials data not returned" in {
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)).thenReturn(Future.failed(new Exception("boom")))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any(), any(), any(), refEq(None), any())(any(), any())
+      verify(mockView).apply(any, any, any, any, any)(any, any)
     }
 
     "getFulfilled obligations fails" in {
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
-      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.failed(new Exception("boom")))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any(), any(), refEq(false), any(), any())(any(), any())
+      verify(mockView).apply(any, any, refEq(false), any, any)(any, any)
     }
 
     "getObligationDetail fails" in {
-      when(mockSessionRepository.get[Any](any(), any())(any())).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any[String])(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-      when(mockPPTFinancials.paymentStatement()(any())).thenReturn("Test payment statement")
-      when(mockObligationsConnector.getFulfilled(any[String])(any())).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
+      when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
 
-      when(mockObligationsConnector.getOpen(any[String])(any())).thenReturn(Future.failed(new Exception("boom")))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.failed(new Exception("boom")))
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any(), refEq(None), any(), any(), any())(any(), any())
+      verify(mockView).apply(any, refEq(None), any, any, any)(any, any)
     }
   }
 

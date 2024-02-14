@@ -18,6 +18,7 @@ package controllers.amends
 
 import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
@@ -29,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status, stubMessagesControllerComponents, stubPlayBodyParsers}
 import play.twirl.api.Html
 import repositories.SessionRepository
+import repositories.SessionRepository.Paths
 import views.html.amends.AmendConfirmation
 
 import scala.concurrent.ExecutionContext.global
@@ -59,7 +61,7 @@ class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
       status(result) mustEqual OK
       contentAsString(result) mustBe "correct view"
       verify(view).apply(refEq(Some("charge-ref")))(any, any)
-      verify(sessionRepository).get(any, any)(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
     }
 
     "error" in {
@@ -68,7 +70,7 @@ class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.failed(TestEx))
 
       intercept[TestEx.type](await(sut.onPageLoad()(FakeRequest())))
-      verify(sessionRepository).get(any, any)(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
     }
   }
 
