@@ -47,9 +47,9 @@ trait SpecBase
   implicit val config: FrontendAppConfig          = mock[FrontendAppConfig]
   implicit val cacheConnector: CacheConnector     = mock[CacheConnector]
   implicit val mockSessionRepo: SessionRepository = mock[SessionRepository]
-  implicit val mockTaxReturnConnector             = mock[TaxReturnsConnector]
+  implicit val mockTaxReturnConnector: TaxReturnsConnector = mock[TaxReturnsConnector]
 
-  def userAnswers = UserAnswers(userAnswersId)
+  def userAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(ReturnDisplayApiCacheable, retDisApi).get
     .set(ReturnObligationCacheable, taxReturnOb).get
 
@@ -59,7 +59,7 @@ trait SpecBase
     LocalDate.parse("2022-06-30").plusWeeks(8),
     "00XX")
 
-  val mockResponse = mock[HttpResponse]
+  val mockResponse: HttpResponse = mock[HttpResponse]
 
   val charge: ReturnDisplayChargeDetails = ReturnDisplayChargeDetails(
     periodFrom = "2022-04-01",
@@ -85,7 +85,7 @@ trait SpecBase
   def messages(app: Application): Messages =
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  def messages(app: Application, message: String) = {
+  def messages(app: Application, message: String): String = {
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest()).apply(message)
   }
 

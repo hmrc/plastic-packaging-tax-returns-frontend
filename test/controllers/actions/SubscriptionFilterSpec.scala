@@ -98,7 +98,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
         inside (callFilter.value) {
-          case Result(header, _, _, _, _) => 
+          case Result(header, _, _, _, _,_) =>
             header must have (Symbol("status") (Status.SEE_OTHER))
             header.headers must contain ("Location" -> "/deregistered")
         }

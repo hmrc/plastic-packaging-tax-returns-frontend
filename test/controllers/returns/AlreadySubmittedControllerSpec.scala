@@ -16,7 +16,7 @@
 
 package controllers.returns
 
-import akka.stream.testkit.NoMaterializer
+import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers

@@ -16,7 +16,7 @@
 
 package connectors
 
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import base.utils.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse

@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import config.FrontendAppConfig
 import org.mockito.MockitoSugar.when
 import org.mongodb.scala.model.Filters
-import org.scalatest.OptionValues
+import org.scalatest.{Assertion, OptionValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsPath, JsString}
+import repositories.{Entry, SessionRepository}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.temporal.ChronoUnit
@@ -107,7 +108,7 @@ class SessionRepositorySpec
     }
   }
 
-  def verifyUserAnswerResult(actual: Entry, expected: Entry) = {
+  def verifyUserAnswerResult(actual: Entry, expected: Entry): Assertion = {
     actual.id mustEqual expected.id
     actual.data mustEqual expected.data
   }
