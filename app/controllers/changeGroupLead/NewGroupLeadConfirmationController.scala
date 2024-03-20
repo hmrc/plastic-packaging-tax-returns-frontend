@@ -23,7 +23,7 @@ import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
 import javax.inject.Inject
 
-class NewGroupLeadConfirmationController @Inject (
+class NewGroupLeadConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadConfirmationView
