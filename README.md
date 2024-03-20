@@ -25,7 +25,6 @@ sm2 -s
   * `Identifier Name`: `EtmpRegistrationNumber`
   * `Identifier Value`: `XMPPT0000000001`
 * Then enter a redirect url:
-  * To start a return: http://localhost:8505/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return 
   * To see account page: http://localhost:8505/plastic-packaging-tax/account 
 * Press **Submit**.
 

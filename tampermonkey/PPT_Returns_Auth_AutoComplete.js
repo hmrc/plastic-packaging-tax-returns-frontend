@@ -12,7 +12,7 @@
 (function() {
     'use strict';
 
-    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return";
+    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/account";
 
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
