@@ -48,9 +48,8 @@ class SubmittedReturnsControllerSpec extends SpecBase with MockObligationsConnec
 
         val view = application.injector.instanceOf[SubmittedReturnsView]
 
-        val ob: Seq[TaxReturnObligation] = {
+        val ob: Seq[TaxReturnObligation] =
           Seq.empty
-        }
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(ob)(request, messages(application)).toString

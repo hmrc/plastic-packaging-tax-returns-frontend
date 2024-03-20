@@ -34,7 +34,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ConfirmPackagingCreditController @Inject()(
+class ConfirmPackagingCreditController @Inject() (
   override val messagesApi: MessagesApi,
   creditConnector: CalculateCreditsConnector,
   journeyAction: JourneyAction,
@@ -43,26 +43,31 @@ class ConfirmPackagingCreditController @Inject()(
   cacheConnector: CacheConnector,
   returnsJourneyNavigator: ReturnsJourneyNavigator,
   creditSummaryListFactory: CreditSummaryListFactory
-)(implicit ec: ExecutionContext)  extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        // Although we don't use the obligation here, the backend will fail without it
-        ReturnsUserAnswers.checkObligation(request) { _ =>
-          creditConnector.getEventually(request.pptReference)
-            .map(response => displayView(response, key, mode))
-            .recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)) // TODO do we want to do this?
-        }
+    journeyAction.async { implicit request =>
+      // Although we don't use the obligation here, the backend will fail without it
+      ReturnsUserAnswers.checkObligation(request) { _ =>
+        creditConnector.getEventually(request.pptReference)
+          .map(response => displayView(response, key, mode))
+          .recover(_ =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad)
+          ) // TODO do we want to do this?
+      }
     }
 
-  private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit request: DataRequest[_]): Result = {
-    val singleYear = creditBalance.creditForYear(key)
-    val summaryList = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
-    val fromDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
-    val toDate = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
+  private def displayView(creditBalance: CreditBalance, key: String, mode: Mode)(implicit
+    request: DataRequest[_]
+  ): Result = {
+    val singleYear        = creditBalance.creditForYear(key)
+    val summaryList       = creditSummaryListFactory.createSummaryList(singleYear, key: String, request.userAnswers)
+    val fromDate          = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "fromDate")
+    val toDate            = request.userAnswers.getOrFail[String](JsPath \ "credit" \ key \ "toDate")
     val creditRangeOption = CreditRangeOption(LocalDate.parse(fromDate), LocalDate.parse(toDate))
-    Ok(confirmCreditView(
+    Ok(
+      confirmCreditView(
         key,
         singleYear.moneyInPounds,
         summaryList,

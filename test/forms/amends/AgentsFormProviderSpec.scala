@@ -23,8 +23,8 @@ import play.api.data.FormError
 class AgentsFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "agents.error.required"
-  val lengthKey = "agents.error.length"
-  val maxLength = 15
+  val lengthKey   = "agents.error.length"
+  val maxLength   = 15
 
   val form = new AgentsFormProvider()()
 

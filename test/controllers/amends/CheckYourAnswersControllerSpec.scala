@@ -52,7 +52,7 @@ import scala.concurrent.Future
 import scala.util.Try
 
 class CheckYourAnswersControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with SummaryListFluency
     with JourneyActionAnswer
     with AmendExportedData
@@ -60,13 +60,13 @@ class CheckYourAnswersControllerSpec
 
   val expectedHtml: Html = Html("correct view")
 
-  private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messagesApi = mock[MessagesApi]
-  private val journeyAction = mock[JourneyAction]
-  private val returnsConnector = mock[TaxReturnsConnector]
-  private val comparisonService = mock[AmendReturnAnswerComparisonService]
-  private val sessionRepository = mock[SessionRepository]
-  private val view = mock[CheckYourAnswersView]
+  private val dataRequest                         = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi                         = mock[MessagesApi]
+  private val journeyAction                       = mock[JourneyAction]
+  private val returnsConnector                    = mock[TaxReturnsConnector]
+  private val comparisonService                   = mock[AmendReturnAnswerComparisonService]
+  private val sessionRepository                   = mock[SessionRepository]
+  private val view                                = mock[CheckYourAnswersView]
   private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
 
   private val sut = new CheckYourAnswersController(
@@ -82,21 +82,13 @@ class CheckYourAnswersControllerSpec
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset( messagesApi,
-      journeyAction,
-      returnsConnector,
-      comparisonService,
-      sessionRepository,
-      view,
-      dataRequest
-    )
+    reset(messagesApi, journeyAction, returnsConnector, comparisonService, sessionRepository, view, dataRequest)
 
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
-
 
   "onPageLoad" should {
     "use the journey action" in {
@@ -107,7 +99,9 @@ class CheckYourAnswersControllerSpec
 
     "return 200" in {
       val calc = Calculations(1, 2, 3, 4, true, 200.0)
-      when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
+      when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(
+        Future.successful(Right(AmendsCalculations(calc, calc)))
+      )
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
 
       val result = sut.onPageLoad()(dataRequest)
@@ -117,7 +111,9 @@ class CheckYourAnswersControllerSpec
 
     "return view" in {
       val calc = Calculations(1, 2, 3, 4, true, 200.0)
-      when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(Future.successful(Right(AmendsCalculations(calc, calc))))
+      when(returnsConnector.getCalculationAmends(any)(any)).thenReturn(
+        Future.successful(Right(AmendsCalculations(calc, calc)))
+      )
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
       when(comparisonService.hasMadeChangesOnAmend(any)).thenReturn(true)
 
@@ -128,7 +124,8 @@ class CheckYourAnswersControllerSpec
         meq(createExpectedTotalRows),
         meq(createExpectedDeductionRows),
         meq(createExpectedCalculationsRow),
-        meq(true))(any,any)
+        meq(true)
+      )(any, any)
     }
 
     "redirect to submitted-return page if already submitted" in {
@@ -143,8 +140,9 @@ class CheckYourAnswersControllerSpec
     "throw an error if cannot calculate amends" in {
       when(dataRequest.userAnswers).thenReturn(createUserAnswerWithData)
       when(returnsConnector.getCalculationAmends(any)(any))
-        .thenReturn(Future.successful(Left(DownstreamServiceError("Calculation Error",
-          new Exception("Calculation Exception")))))
+        .thenReturn(
+          Future.successful(Left(DownstreamServiceError("Calculation Error", new Exception("Calculation Exception"))))
+        )
 
       intercept[Exception] {
         await(sut.onPageLoad()(dataRequest))
@@ -162,7 +160,7 @@ class CheckYourAnswersControllerSpec
     "submit the amendment" in {
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("12345")))
-      when(sessionRepository.set(any,any,any)(any)).thenReturn(Future.successful(true))
+      when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
 
       await(sut.onSubmit().skippingJourneyAction(dataRequest))
 
@@ -173,21 +171,18 @@ class CheckYourAnswersControllerSpec
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
-      when(sessionRepository.set(any,any,any)(any)).thenReturn(Future.successful(true))
+      when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
 
       await(sut.onSubmit().skippingJourneyAction(dataRequest))
 
-      verify(sessionRepository).set(
-        meq("cacheKey"),
-        meq(Paths.AmendChargeRef),
-        meq(Some("chargeRef")))(any)
+      verify(sessionRepository).set(meq("cacheKey"), meq(Paths.AmendChargeRef), meq(Some("chargeRef")))(any)
     }
 
     "redirect to return-amended page" in {
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
-      when(sessionRepository.set(any,any,any)(any)).thenReturn(Future.successful(true))
+      when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
 
       val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
@@ -200,7 +195,7 @@ class CheckYourAnswersControllerSpec
       when(returnsConnector.amend(any)(any)).thenReturn(Future.failed(new Exception("error")))
 
       intercept[Exception] {
-       await(sut.onSubmit().skippingJourneyAction(dataRequest))
+        await(sut.onSubmit().skippingJourneyAction(dataRequest))
       }
     }
 
@@ -208,7 +203,7 @@ class CheckYourAnswersControllerSpec
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
-      when(sessionRepository.set(any,any,any)(any))
+      when(sessionRepository.set(any, any, any)(any))
         .thenReturn(Future.failed(JsResultException(Seq((JsPath, Seq(JsonValidationError("error", "error")))))))
 
       intercept[Exception] {
@@ -217,12 +212,11 @@ class CheckYourAnswersControllerSpec
     }
   }
 
-  private def createExpectedCalculationsRow = {
+  private def createExpectedCalculationsRow =
     AmendsCalculations(
       Calculations(1, 2, 3, 4, true, 200.0),
       Calculations(1, 2, 3, 4, true, 200.0)
     )
-  }
 
   private def createExpectedDeductionRows = {
     Seq(
@@ -244,7 +238,8 @@ class CheckYourAnswersControllerSpec
         AmendNewAnswerType(Some("20kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some(("recycled", controllers.amends.routes.AmendRecycledPlasticPackagingController.onPageLoad().url))
       ),
-      totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal"))
+      totalRow(3, 3, "AmendsCheckYourAnswers.deductionsTotal")
+    )
   }
 
   private def createExpectedTotalRows = {
@@ -261,7 +256,8 @@ class CheckYourAnswersControllerSpec
         AmendNewAnswerType(Some("200kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some(("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url))
       ),
-      totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal"))
+      totalRow(4, 4, "AmendsCheckYourAnswers.packagingTotal")
+    )
   }
 
   private def createUserAnswerWithData = {

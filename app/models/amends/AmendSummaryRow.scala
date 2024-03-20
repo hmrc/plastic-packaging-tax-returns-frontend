@@ -16,7 +16,6 @@
 
 package models.amends
 
-
 case class AmendSummaryRow(
   label: String,
   oldAnswer: String,

@@ -41,15 +41,15 @@ class ConvertedCreditsWeightFormProviderSpec extends LongFieldBehaviours {
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "converted-credits-weight.error.nonNumeric"),
+      nonNumericError = FormError(fieldName, "converted-credits-weight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "converted-credits-weight.error.wholeNumber")
     )
 
     behave like longFieldWithRange(
       form,
       fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
+      minimum = minimum,
+      maximum = maximum,
       expectedError = FormError(fieldName, "converted-credits-weight.error.outOfRange", Seq(minimum, maximum))
     )
 

@@ -18,14 +18,10 @@ package audit.returns
 
 import play.api.libs.json.{Json, OFormat}
 
-case class AmendStarted(internalId: String,
-                        msg: String,
-                        pptReference: String)
+case class AmendStarted(internalId: String, msg: String, pptReference: String)
 
 object AmendStarted {
   implicit val format: OFormat[AmendStarted] = Json.format[AmendStarted]
   val eventType: String                      = "AmendStarted"
   val message: String                        = "Amend started"
 }
-
-

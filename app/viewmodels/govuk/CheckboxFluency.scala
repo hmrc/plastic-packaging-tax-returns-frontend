@@ -40,13 +40,13 @@ trait CheckboxFluency {
     def apply(form: Form[_], name: String, items: Seq[CheckboxItem], fieldset: Fieldset)(implicit
       messages: Messages
     ): Checkboxes =
-      Checkboxes(fieldset = Some(fieldset),
-                 name = name,
-                 errorMessage = errorMessage(form(name)),
-                 items = items.map {
-                   item =>
-                     item copy (checked = form.data.exists(data => data._2 == item.value))
-                 }
+      Checkboxes(
+        fieldset = Some(fieldset),
+        name = name,
+        errorMessage = errorMessage(form(name)),
+        items = items.map { item =>
+          item copy (checked = form.data.exists(data => data._2 == item.value))
+        }
       )
 
   }
@@ -61,11 +61,7 @@ trait CheckboxFluency {
   object CheckboxItemViewModel {
 
     def apply(content: Content, fieldId: String, index: Int, value: String): CheckboxItem =
-      CheckboxItem(content = content,
-                   id = Some(s"${fieldId}_$index"),
-                   name = Some(s"$fieldId[$index]"),
-                   value = value
-      )
+      CheckboxItem(content = content, id = Some(s"${fieldId}_$index"), name = Some(s"$fieldId[$index]"), value = value)
 
   }
 

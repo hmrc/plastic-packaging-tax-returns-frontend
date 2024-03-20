@@ -32,27 +32,41 @@ import java.time.LocalDate
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-
   implicit lazy val arbitraryReturnDisplayApiUserAnswersEntry: Arbitrary[ReturnDisplayApi] =
     Arbitrary {
       for {
-        long  <- arbitrary[Long]
-        bigDecimal  <- arbitrary[BigDecimal]
-        string <- arbitrary[String]
-      } yield ReturnDisplayApi(string, IdDetails(string, string), None, ReturnDisplayDetails(
-        long, long, long, long, long, long, bigDecimal, bigDecimal, long, bigDecimal
-      ))
+        long       <- arbitrary[Long]
+        bigDecimal <- arbitrary[BigDecimal]
+        string     <- arbitrary[String]
+      } yield ReturnDisplayApi(
+        string,
+        IdDetails(string, string),
+        None,
+        ReturnDisplayDetails(
+          long,
+          long,
+          long,
+          long,
+          long,
+          long,
+          bigDecimal,
+          bigDecimal,
+          long,
+          bigDecimal
+        )
+      )
     }
 
   implicit lazy val arbitraryTaxReturnObligationUserAnswersEntry: Arbitrary[TaxReturnObligation] =
     Arbitrary {
       for {
-        localDate  <- arbitrary[LocalDate]
-        string <- arbitrary[String]
+        localDate <- arbitrary[LocalDate]
+        string    <- arbitrary[String]
       } yield TaxReturnObligation(localDate, localDate, localDate, string)
     }
 
-  implicit lazy val arbitraryAmendObligationCacheableUserAnswersEntry: Arbitrary[(AmendObligationCacheable.type, JsValue)] =
+  implicit lazy val arbitraryAmendObligationCacheableUserAnswersEntry
+    : Arbitrary[(AmendObligationCacheable.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendObligationCacheable.type]
@@ -60,7 +74,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAmendExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] =
+  implicit lazy val arbitraryAmendExportedByAnotherBusinessUserAnswersEntry
+    : Arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AmendExportedByAnotherBusinessPage.type]
@@ -68,7 +83,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry: Arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryAnotherBusinessExportWeightUserAnswersEntry
+    : Arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AnotherBusinessExportedWeightPage.type]
@@ -76,7 +92,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryPlasticExportedByAnotherBusinessUserAnswersEntry: Arbitrary[(AnotherBusinessExportedPage.type, JsValue)] =
+  implicit lazy val arbitraryPlasticExportedByAnotherBusinessUserAnswersEntry
+    : Arbitrary[(AnotherBusinessExportedPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[AnotherBusinessExportedPage.type]
@@ -84,7 +101,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-    implicit lazy val arbitraryNewGroupLeadEnterContactAddressUserAnswersEntry: Arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] =
+  implicit lazy val arbitraryNewGroupLeadEnterContactAddressUserAnswersEntry
+    : Arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[NewGroupLeadEnterContactAddressPage.type]
@@ -124,7 +142,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[NonExportedHumanMedicinesPlasticPackagingWeightPage.type]
@@ -132,7 +151,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryNonExportedHumanMedicinesPlasticPackagingUserAnswersEntry
+    : Arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[NonExportedHumanMedicinesPlasticPackagingPage.type]
@@ -140,7 +160,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry: Arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] =
+  implicit lazy val arbitraryRecycledPlasticPackagingUserAnswersEntry
+    : Arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[NonExportedRecycledPlasticPackagingPage.type]
@@ -148,7 +169,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry: Arbitrary[(DirectlyExportedPage.type, JsValue)] =
+  implicit lazy val arbitraryDirectlyExportedComponentsUserAnswersEntry
+    : Arbitrary[(DirectlyExportedPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[DirectlyExportedPage.type]
@@ -156,7 +178,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryManufacturedPlasticPackagingWeightUserAnswersEntry: Arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] =
+  implicit lazy val arbitraryManufacturedPlasticPackagingWeightUserAnswersEntry
+    : Arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[ManufacturedPlasticPackagingWeightPage.type]
@@ -224,7 +247,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
-
 
   implicit lazy val arbitraryAmendRecycledPlasticPackagingUserAnswersEntry
     : Arbitrary[(AmendRecycledPlasticPackagingPage.type, JsValue)] =

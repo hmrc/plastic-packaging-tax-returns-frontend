@@ -25,7 +25,8 @@ case class ConditionalMapping[T](
   wrapped: Mapping[T],
   opWrapped: Mapping[T],
   constraints: Seq[Constraint[T]] = Nil,
-  keys: Set[String] = Set()) extends Mapping[T] {
+  keys: Set[String] = Set()
+) extends Mapping[T] {
 
   override val format: Option[(String, Seq[Any])] = wrapped.format
 
@@ -40,10 +41,10 @@ case class ConditionalMapping[T](
 
   def unbind(value: T): Map[String, String] =
     wrapped.unbind(value) ++
-    opWrapped.unbind(value)
+      opWrapped.unbind(value)
 
   def unbindAndValidate(value: T): (Map[String, String], Seq[FormError]) = {
-    val w = wrapped.unbindAndValidate(value)
+    val w  = wrapped.unbindAndValidate(value)
     val op = opWrapped.unbindAndValidate(value)
     (w._1 ++ op._1, w._2 ++ op._2)
   }

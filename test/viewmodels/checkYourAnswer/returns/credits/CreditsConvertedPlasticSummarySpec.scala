@@ -29,7 +29,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Key, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow, Value}
 import viewmodels.checkAnswers.returns.credits.CreditsConvertedPlasticSummary
 
-class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEach{
+class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
   private val messages = mock[Messages]
 
@@ -39,8 +39,6 @@ class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEac
     when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.converted.answer"))).thenReturn("answer")
     when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
   }
-
-
 
   "Row" should {
     "return a summary row" when {
@@ -65,14 +63,22 @@ class CreditsConvertedPlasticSummarySpec extends PlaySpec with BeforeAndAfterEac
   }
 
   private def createExpectedResult(answerValue: String): Option[SummaryListRow] = {
-    Some(SummaryListRow(
-      key = Key(Text("answer"), "govuk-!-width-one-half"),
-      value = Value(Text(answerValue)),
-      actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", CheckMode).url,
-        Text("change"),
-        Some("answer")
-      ))))
-    ))
+    Some(
+      SummaryListRow(
+        key = Key(Text("answer"), "govuk-!-width-one-half"),
+        value = Value(Text(answerValue)),
+        actions = Some(
+          Actions(items =
+            Seq(
+              ActionItem(
+                controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", CheckMode).url,
+                Text("change"),
+                Some("answer")
+              )
+            )
+          )
+        )
+      )
+    )
   }
 }

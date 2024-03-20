@@ -44,18 +44,22 @@ import views.html.returns.credits.DoYouWantToClaimView
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach{
+class WhatDoYouWantToDoControllerSpec
+    extends PlaySpec
+    with JourneyActionAnswer
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
   private val messagesApi: MessagesApi = mock[MessagesApi]
-  private val cacheConnector = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val formProvider = mock[DoYouWantToClaimFormProvider]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val view = mock[DoYouWantToClaimView]
-  private val navigator = mock[ReturnsJourneyNavigator]
-  private val dataRequest = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
-  private val form = mock[Form[Boolean]]
-  private val obligation = mock[TaxReturnObligation]
+  private val cacheConnector           = mock[CacheConnector]
+  private val journeyAction            = mock[JourneyAction]
+  private val formProvider             = mock[DoYouWantToClaimFormProvider]
+  private val controllerComponents     = stubMessagesControllerComponents()
+  private val view                     = mock[DoYouWantToClaimView]
+  private val navigator                = mock[ReturnsJourneyNavigator]
+  private val dataRequest              = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val form                     = mock[Form[Boolean]]
+  private val obligation               = mock[TaxReturnObligation]
 
   val sut = new WhatDoYouWantToDoController(
     messagesApi,
@@ -76,13 +80,13 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       form,
       obligation,
       cacheConnector,
-      formProvider,
+      formProvider
     )
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
     when(formProvider.apply()).thenReturn(form)
-    
+
     when(dataRequest.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(obligation)
     when(dataRequest.userAnswers.getOrFail(eqTo(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
 
@@ -110,14 +114,14 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
       verify(dataRequest.userAnswers).fill(eqTo(WhatDoYouWantToDoPage), eqTo(form))(any)
       verify(view).apply(eqTo(validForm), eqTo(obligation))(any, any)
     }
-    
+
     "redirect to account page if obligation is missing" in {
       when(dataRequest.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
       val result = sut.onPageLoad(dataRequest)
       status(result) mustBe Status.SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
     }
-    
+
   }
 
   "onSubmit" must {
@@ -129,7 +133,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "redirect to the next page" in {
       when(navigator.whatDoYouWantDo(any)).thenReturn(Call(GET, "/foo"))
-      when(form.bindFromRequest()(any,any)).thenReturn(Form("value" -> boolean).fill(true))
+      when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> boolean).fill(true))
       when(dataRequest.userAnswers.change(any, any, any)(any)).thenReturn(Future.successful(true))
 
       val result = await(sut.onSubmit(dataRequest))
@@ -143,7 +147,7 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with JourneyActionAnswer 
 
     "return bad request when form validation fails" in {
       val formWithErrors = Form("v" -> boolean).withError("key", "message")
-      when(form.bindFromRequest()(any,any)).thenReturn(formWithErrors)
+      when(form.bindFromRequest()(any, any)).thenReturn(formWithErrors)
 
       val result = await(sut.onSubmit(dataRequest))
       verify(dataRequest.userAnswers).getOrFail(eqTo(ReturnObligationCacheable))(any, any)

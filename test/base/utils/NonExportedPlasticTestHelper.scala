@@ -21,21 +21,20 @@ import pages.returns._
 
 object NonExportedPlasticTestHelper {
 
-  def createUserAnswer
-  (
+  def createUserAnswer(
     exportedAmount: Long,
     exportedByAnotherBusinessAmount: Long,
     manufacturedAmount: Long,
     importedAmount: Long
   ): UserAnswers = {
     UserAnswers("123")
-      .set(ManufacturedPlasticPackagingPage,true, cleanup = false).get
-      .set(ManufacturedPlasticPackagingWeightPage,manufacturedAmount, cleanup = false).get
-      .set(ImportedPlasticPackagingPage,true, cleanup = false).get
-      .set(ImportedPlasticPackagingWeightPage,importedAmount, cleanup = false).get
-      .set(DirectlyExportedPage,true, cleanup = false).get
-      .set(DirectlyExportedWeightPage,exportedAmount, cleanup = false).get
-      .set(AnotherBusinessExportedPage,true, cleanup = false).get
-      .set(AnotherBusinessExportedWeightPage,exportedByAnotherBusinessAmount, cleanup = false).get
+      .set(ManufacturedPlasticPackagingPage, true, cleanup = false).get
+      .set(ManufacturedPlasticPackagingWeightPage, manufacturedAmount, cleanup = false).get
+      .set(ImportedPlasticPackagingPage, true, cleanup = false).get
+      .set(ImportedPlasticPackagingWeightPage, importedAmount, cleanup = false).get
+      .set(DirectlyExportedPage, true, cleanup = false).get
+      .set(DirectlyExportedWeightPage, exportedAmount, cleanup = false).get
+      .set(AnotherBusinessExportedPage, true, cleanup = false).get
+      .set(AnotherBusinessExportedWeightPage, exportedByAnotherBusinessAmount, cleanup = false).get
   }
 }

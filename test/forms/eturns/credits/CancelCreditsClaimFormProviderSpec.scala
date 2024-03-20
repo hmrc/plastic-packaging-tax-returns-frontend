@@ -23,7 +23,7 @@ import play.api.data.FormError
 class CancelCreditsClaimFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "cancelCreditsClaim.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new CancelCreditsClaimFormProvider()()
 

@@ -31,57 +31,58 @@ import views.html.returns.NonExportedRecycledPlasticPackagingWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportedRecycledPlasticPackagingWeightController @Inject()(
-                                                                     override val messagesApi: MessagesApi,
-                                                                     cacheConnector: CacheConnector,
-                                                                     navigator: ReturnsJourneyNavigator,
-                                                                     identify: IdentifierAction,
-                                                                     getData: DataRetrievalAction,
-                                                                     requireData: DataRequiredAction,
-                                                                     form: NonExportedRecycledPlasticPackagingWeightFormProvider,
-                                                                     val controllerComponents: MessagesControllerComponents,
-                                                                     view: NonExportedRecycledPlasticPackagingWeightView,
-                                                                     nonExportedAmountHelper: NonExportedAmountHelper
-                                                                 )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+class NonExportedRecycledPlasticPackagingWeightController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  form: NonExportedRecycledPlasticPackagingWeightFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: NonExportedRecycledPlasticPackagingWeightView,
+  nonExportedAmountHelper: NonExportedAmountHelper
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
+    (identify andThen getData andThen requireData) { implicit request =>
+      val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage) match {
+        case None        => form()
+        case Some(value) => form().fill(value)
+      }
 
-        val preparedForm = request.userAnswers.get(NonExportedRecycledPlasticPackagingWeightPage) match {
-          case None => form()
-          case Some(value) => form().fill(value)
-        }
-
-        nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
-          Redirect(controllers.routes.IndexController.onPageLoad)) {
-          case (amount, directlyExported, exportedByAnotherBusiness) =>
-            Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
-        }
+      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers).fold(
+        Redirect(controllers.routes.IndexController.onPageLoad)
+      ) { case (amount, directlyExported, exportedByAnotherBusiness) =>
+        Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptId: String = request.pptReference
-        form().bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val pptId: String = request.pptReference
+      form().bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(
+            nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
               .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
                 case (amount, directlyExported, exportedByAnotherBusiness) =>
-                  BadRequest(view(formWithErrors, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
+                  BadRequest(
+                    view(formWithErrors, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true))
+                  )
               }
-            ),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              navigator.nonExportedRecycledPlasticPackagingWeightPage()
+          ),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(NonExportedRecycledPlasticPackagingWeightPage, value)
             )
-        )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+          } yield Redirect(
+            navigator.nonExportedRecycledPlasticPackagingWeightPage()
+          )
+      )
     }
 }

@@ -42,35 +42,34 @@ class ImportedPlasticPackagingWeightController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: ImportedPlasticPackagingWeightView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
-          val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingWeightPage, form())
-          Ok(view(preparedForm, mode, obligation))
-        }
+    (identify andThen getData andThen requireData) { implicit request =>
+      ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+        val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingWeightPage, form())
+        Ok(view(preparedForm, mode, obligation))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptId: String = request.pptReference
-        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val pptId: String = request.pptReference
+      val obligation    = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
-        form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ImportedPlasticPackagingWeightPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              navigator.importedPlasticPackagingWeightPage()
+      form().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(ImportedPlasticPackagingWeightPage, value)
             )
-        )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+          } yield Redirect(
+            navigator.importedPlasticPackagingWeightPage()
+          )
+      )
     }
 
 }

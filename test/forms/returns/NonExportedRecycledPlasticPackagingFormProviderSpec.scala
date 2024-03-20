@@ -22,7 +22,7 @@ import play.api.data.FormError
 class NonExportedRecycledPlasticPackagingFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "NonExportRecycledPlasticPackaging.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new NonExportedRecycledPlasticPackagingFormProvider()()
 

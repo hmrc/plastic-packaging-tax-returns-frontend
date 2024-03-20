@@ -27,21 +27,19 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-
 case class CreditsConvertedPlasticSummary(key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ConvertedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {
-      creditsAnswer =>
-        SummaryListRowViewModel(
-          key = Key("confirmPackagingCredit.converted.answer", classes="govuk-!-width-one-half"),
-          value = ValueViewModel(creditsAnswer.yesNoMsgKey),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(key, CheckMode).url
-            ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.answer"))
-          )
+    answers.get(ConvertedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map { creditsAnswer =>
+      SummaryListRowViewModel(
+        key = Key("confirmPackagingCredit.converted.answer", classes = "govuk-!-width-one-half"),
+        value = ValueViewModel(creditsAnswer.yesNoMsgKey),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad(key, CheckMode).url
+          ).withVisuallyHiddenText(messages("confirmPackagingCredit.converted.answer"))
         )
+      )
     }
   }
 }

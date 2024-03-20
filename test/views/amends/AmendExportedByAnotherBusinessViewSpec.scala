@@ -26,7 +26,7 @@ import views.html.amends.AmendExportedByAnotherBusinessView
 class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatchers {
 
   private val form: Form[Long] = new AmendExportedByAnotherBusinessFormProvider()()
-  private val page = inject[AmendExportedByAnotherBusinessView]
+  private val page             = inject[AmendExportedByAnotherBusinessView]
 
   private def createView(form: Form[Long] = form): Html =
     page(form)(request, messages)
@@ -36,7 +36,9 @@ class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatch
     val view = createView()
 
     "have a title" in {
-      view.select("title").text mustBe "How much of your finished plastic packaging components did another business export or convert? - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text mustBe "How much of your finished plastic packaging components did another business export or convert? - Submit return - Plastic Packaging Tax - GOV.UK"
       view.select("title").text must include(messages("amendExportedByAnotherBusiness.title"))
     }
 
@@ -70,7 +72,7 @@ class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatch
       buttonElement.text() must include(messages("site.continue"))
     }
 
-    "display an error summary box"  in {
+    "display an error summary box" in {
       val view = createView(form.withError("error key", "error message"))
 
       view.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
@@ -100,13 +102,17 @@ class AmendExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewMatch
       "value is less than 0" in {
         val view = createView(form.bind(Map("value" -> "-1")))
 
-        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
+        view.getElementsByClass("govuk-error-summary__list").get(
+          0
+        ).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
       }
 
       "value is greater than 99,999,999,999" in {
         val view = createView(form.bind(Map("value" -> "999999999999")))
 
-        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
+        view.getElementsByClass("govuk-error-summary__list").get(
+          0
+        ).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
       }
 
       "value is a decimal number" in {

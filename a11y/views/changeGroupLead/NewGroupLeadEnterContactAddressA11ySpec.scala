@@ -28,9 +28,9 @@ class NewGroupLeadEnterContactAddressA11ySpec extends ViewSpecBase with Accessib
 
   private val page = inject[NewGroupLeadEnterContactAddressView]
 
-  val form: Form[_] = new NewGroupLeadEnterContactAddressFormProvider().apply()
+  val form: Form[_]            = new NewGroupLeadEnterContactAddressFormProvider().apply()
   val organisationName: String = "Test"
-  val mode: Mode = NormalMode
+  val mode: Mode               = NormalMode
 
   private def createView(form: Form[_]): String =
     page(form, Map(), organisationName, mode)(request, messages).toString()

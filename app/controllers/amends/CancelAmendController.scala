@@ -32,46 +32,42 @@ import views.html.amends.{AmendAlreadyCancelledView, CancelAmendView}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancelAmendController @Inject()
-(override val messagesApi: MessagesApi,
- cacheConnector: CacheConnector,
- journeyAction: JourneyAction,
- formProvider: CancelAmendFormProvider,
- val controllerComponents: MessagesControllerComponents,
- cancelAmendView: CancelAmendView,
- amendAlreadyCancelledView: AmendAlreadyCancelledView
-)(implicit ec: ExecutionContext) extends I18nSupport {
+class CancelAmendController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  journeyAction: JourneyAction,
+  formProvider: CancelAmendFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  cancelAmendView: CancelAmendView,
+  amendAlreadyCancelledView: AmendAlreadyCancelledView
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = journeyAction {
-    implicit request =>
-      request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
-        .fold(Results.Ok(amendAlreadyCancelledView()))(
-          o => Results.Ok(cancelAmendView(formProvider(), o))
-        )
+  def onPageLoad: Action[AnyContent] = journeyAction { implicit request =>
+    request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable)
+      .fold(Results.Ok(amendAlreadyCancelledView()))(o => Results.Ok(cancelAmendView(formProvider(), o)))
 
   }
 
-  def onSubmit: Action[AnyContent] = journeyAction.async {
-    implicit request =>
+  def onSubmit: Action[AnyContent] = journeyAction.async { implicit request =>
+    val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
+      throw new IllegalStateException("Must have an obligation to Submit against")
+    )
 
-      val obligation = request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).getOrElse(
-        throw new IllegalStateException("Must have an obligation to Submit against")
-      )
-
-      formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(cancelAmendView(formWithErrors, obligation))),
-        value => if (value) {
+    formProvider().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(cancelAmendView(formWithErrors, obligation))),
+      value =>
+        if (value) {
           cancel(request)
         } else {
           Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
         }
-      )
+    )
   }
 
-  def cancel(implicit request: DataRequest[_]): Future[Result] = {
+  def cancel(implicit request: DataRequest[_]): Future[Result] =
     request.userAnswers
       .removeAll()
       .save(cacheConnector.saveUserAnswerFunc(request.request.pptReference))
-      .map { _ => Results.Ok(amendAlreadyCancelledView()) }
-  }
+      .map(_ => Results.Ok(amendAlreadyCancelledView()))
 }

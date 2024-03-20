@@ -26,25 +26,24 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectDebitConnector @Inject()(
+class DirectDebitConnector @Inject() (
   httpClient: HttpClient,
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-  extends Logging with HttpReadsInstances {
+    extends Logging
+    with HttpReadsInstances {
 
   def getDirectDebitLink(pptReference: String, homeUrl: String)(implicit hc: HeaderCarrier): Future[String] = {
-    val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
+    val timer   = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
     val request = DDLinkRequest(pptReference, "zppt", homeUrl, homeUrl)
     httpClient.POST[DDLinkRequest, DDLinkResponse](appConfig.pptStartDirectDebit, request).map { res =>
       logger.info(s"DD redirect created for pptReferenceNumber: $pptReference with journeyId:${res.journeyId}")
       res.nextUrl
     }
       .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError("Error trying to get Direct Debit link",
-            exception)
+      .recover { case exception: Exception =>
+        throw DownstreamServiceError("Error trying to get Direct Debit link", exception)
       }
   }
 }

@@ -45,11 +45,8 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
     .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(1L)).get
     .set(WhatDoYouWantToDoPage, true).get
 
-  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(12),
-    LocalDate.now().plusWeeks(16),
-    "PK1")
+  private val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
   def createViewModel(answers: UserAnswers): TaxReturnViewModel = {
     val calculations = Calculations(1, 2L, 3L, 5L, true, 0.2)
@@ -59,7 +56,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
   val credits = CreditsClaimedDetails(
     summaryList = Seq(
       CreditSummaryRow("a-key", "£2.00", Seq()),
-      CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq()),
+      CreditSummaryRow("Credit total [Use Key]", "£20.00", Seq())
     ),
     totalClaimAmount = 20
   )
@@ -69,7 +66,7 @@ class ReturnsCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessibility
       "credits is claimed" ignore {
         def render: Html = page(
           createViewModel(userAnswer),
-          CreditsClaimedDetails(userAnswer, CreditBalance(0,0,0L,true, Map())),
+          CreditsClaimedDetails(userAnswer, CreditBalance(0, 0, 0L, true, Map())),
           "/change"
         )(request, messages)
 

@@ -32,7 +32,7 @@ import views.html.changeGroupLead.MainContactNameView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class MainContactNameController @Inject()(
+class MainContactNameController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   journeyAction: JourneyAction,
@@ -40,29 +40,26 @@ class MainContactNameController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   navigator: ChangeGroupLeadNavigator,
   view: MainContactNameView
-)(implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
-    implicit request =>
-      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
-      val preparedForm = request.userAnswers.fill(MainContactNamePage, form())
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction { implicit request =>
+    val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+    val preparedForm   = request.userAnswers.fill(MainContactNamePage, form())
 
-      Ok(view(preparedForm, selectedMember.organisationName, mode))
+    Ok(view(preparedForm, selectedMember.organisationName, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, selectedMember.organisationName, mode))),
-
-        mainContactName =>
-          request.userAnswers
-            .setOrFail(MainContactNamePage, mainContactName)
-            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Redirect(navigator.mainContactName(mode)))
-      )
+    form().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, selectedMember.organisationName, mode))),
+      mainContactName =>
+        request.userAnswers
+          .setOrFail(MainContactNamePage, mainContactName)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Redirect(navigator.mainContactName(mode)))
+    )
   }
 }

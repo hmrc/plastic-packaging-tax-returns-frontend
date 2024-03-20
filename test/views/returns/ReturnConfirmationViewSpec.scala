@@ -34,7 +34,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
   "Submitted returns page" should {
 
     "have a title" in {
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.select("title").text() mustBe "Return submitted - Plastic Packaging Tax - GOV.UK"
@@ -43,21 +43,21 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
     }
 
     "have a charge reference" in {
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementsByClass("govuk-panel__body").text must include("Your charge reference for this return is ABC123")
     }
 
     "have no charge reference" in {
-      val view = createView(None)
+      val view          = createView(None)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementsByClass("govuk-panel__body").text mustBe ""
     }
 
     "have find details paragraph" in {
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("find-details").text must include(
@@ -66,7 +66,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
     }
 
     "have confirmation paragraph" in {
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("confirmation").text must include(
@@ -75,7 +75,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
     }
 
     "have nothing to pay when there is no charge reference" in {
-      val view = createView(None)
+      val view          = createView(None)
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("nothing-to-pay").text must include(
@@ -87,7 +87,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
     }
 
     "contain 'Check what you owe' label" in {
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("check-what-you-owe").text() must include("Check what you owe")
@@ -96,7 +96,7 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
 
     "contain 'Go to your PPT account' link" when {
       "have no charge reference" in {
-        val view = createView(None)
+        val view          = createView(None)
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.getElementById("account-link-body").text must
@@ -109,14 +109,13 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
       }
 
       "charge reference is present" in {
-        val view = createView(Some("ABCVF"))
+        val view          = createView(Some("ABCVF"))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.getElementById("account-link-body").text must
-          include("Go to your PPT account to:" )
+          include("Go to your PPT account to:")
         doc.getElementById("account-link-body").text must include(
-          messages("return.confirmation.homePage.link1",
-            messages("return.confirmation.homePage.link2"))
+          messages("return.confirmation.homePage.link1", messages("return.confirmation.homePage.link2"))
         )
         doc.getElementById("account-link").select("a").get(0) must
           haveHref(routes.IndexController.onPageLoad)
@@ -127,10 +126,10 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
 
     "have survey link" in {
 
-      val view = createView(Some("ABC123"))
+      val view          = createView(Some("ABC123"))
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("survey-link").text must include (
+      doc.getElementById("survey-link").text must include(
         "What did you think of this service?"
       )
 
@@ -138,10 +137,12 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
 
     "have technical issue link" in {
 
-      val view = createView(None)
+      val view          = createView(None)
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include ("Is this page not working properly?")
+      doc.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include(
+        "Is this page not working properly?"
+      )
 
     }
   }

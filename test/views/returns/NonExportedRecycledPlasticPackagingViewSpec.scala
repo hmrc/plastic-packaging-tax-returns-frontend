@@ -27,9 +27,9 @@ import views.html.returns.NonExportedRecycledPlasticPackagingView
 
 class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val form = new NonExportedRecycledPlasticPackagingFormProvider()()
-  val page = inject[NonExportedRecycledPlasticPackagingView]
-  val plastic = 1234L
+  val form        = new NonExportedRecycledPlasticPackagingFormProvider()()
+  val page        = inject[NonExportedRecycledPlasticPackagingView]
+  val plastic     = 1234L
   val plasticAsKg = plastic.asKg
 
   private def createView(form: Form[Boolean] = form, directlyExportAnswer: Boolean = true): Html =
@@ -51,7 +51,9 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
 
         newView.select("title").text mustBe
           s"Did any of your $plasticAsKg of your total finished plastic packaging components contain 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
-        newView.select("title").text() must include(messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg))
+        newView.select("title").text() must include(
+          messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg)
+        )
       }
     }
     "have a heading" when {
@@ -67,7 +69,9 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
 
         newView.select("h1").text mustBe
           s"Did any of your $plasticAsKg of your total finished plastic packaging components contain 30% or more recycled plastic?"
-        newView.select("h1").text() must include(messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg))
+        newView.select("h1").text() must include(
+          messages("NonExportRecycledPlasticPackaging.directly.export.no.heading", plasticAsKg)
+        )
       }
     }
 
@@ -75,12 +79,13 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackaging.caption")
     }
 
-    "contain paragraph content" in{
-      val text = "You will not be charged tax on these but you must still tell us about them. Find out what we mean by recycled plastic packaging."
+    "contain paragraph content" in {
+      val text =
+        "You will not be charged tax on these but you must still tell us about them. Find out what we mean by recycled plastic packaging."
       view.getElementsByClass("govuk-body").text() must include(text)
     }
     "contain save & continue button" in {
-      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
     "contain an error" when {
@@ -102,7 +107,9 @@ class NonExportedRecycledPlasticPackagingViewSpec extends ViewSpecBase with View
   private def assertErrorMsg(view: Html): Unit = {
     val actualErrorMessage = view.getElementsByClass("govuk-error-message").text()
 
-    actualErrorMessage must include("Select yes if any of your finished plastic packaging components contained 30% or more recycled plastic")
+    actualErrorMessage must include(
+      "Select yes if any of your finished plastic packaging components contained 30% or more recycled plastic"
+    )
     actualErrorMessage must include(messages("NonExportRecycledPlasticPackaging.error.required"))
   }
 }

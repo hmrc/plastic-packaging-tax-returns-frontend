@@ -31,14 +31,14 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
 
   val page: NonExportedRecycledPlasticPackagingWeightView = inject[NonExportedRecycledPlasticPackagingWeightView]
   val form: Form[Long] = new NonExportedRecycledPlasticPackagingWeightFormProvider()()
-  val amount = 321L
-  val amountAsKg = amount.asKg
+  val amount           = 321L
+  val amountAsKg       = amount.asKg
 
   private def createView(form: Form[Long] = form, directlyExportedAnswer: Boolean = true): Html =
     page(form, NormalMode, amount, directlyExportedAnswer)(request, messages)
 
   "NonExportedRecycledPlasticPackagingWeightView" should {
-    val view: Html = createView()
+    val view: Html    = createView()
     val doc: Document = Jsoup.parse(view.toString())
 
     "have a title" when {
@@ -53,7 +53,9 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
 
         newView.select("title").text() mustBe
           s"How much of your $amountAsKg of finished plastic packaging components contained 30% or more recycled plastic? - Submit return - Plastic Packaging Tax - GOV.UK"
-        newView.select("title").text must include(messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg))
+        newView.select("title").text must include(
+          messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg)
+        )
 
       }
     }
@@ -70,7 +72,9 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
 
         newView.select("h1").text mustBe
           s"How much of your $amountAsKg of finished plastic packaging components contained 30% or more recycled plastic?"
-        newView.select("h1").text must include(messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg))
+        newView.select("h1").text must include(
+          messages("NonExportRecycledPlasticPackagingWeight.directly.export.no.heading", amountAsKg)
+        )
       }
     }
 
@@ -86,7 +90,9 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
 
     "contain paragraph content" in {
 
-      view.getElementsByClass("govuk-body").text() must include(messages("NonExportRecycledPlasticPackagingWeight.paragraph"))
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("NonExportRecycledPlasticPackagingWeight.paragraph")
+      )
     }
     "contain save & continue button" in {
 
@@ -94,14 +100,14 @@ class NonExportedRecycledPlasticPackagingWeightViewSpec extends ViewSpecBase wit
     }
     "display error" when {
       "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(-1))
+        val view: Html    = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("NonExportRecycledPlasticPackagingWeight.error.outOfRange.low"))
       }
 
       "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(999999999999L))
+        val view: Html    = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("NonExportRecycledPlasticPackagingWeight.error.outOfRange.high"))

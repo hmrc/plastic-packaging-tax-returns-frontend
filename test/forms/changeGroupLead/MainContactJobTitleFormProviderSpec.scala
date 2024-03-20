@@ -22,8 +22,8 @@ import play.api.data.FormError
 class MainContactJobTitleFormProviderSpec extends PlaySpec {
 
   val requiredKey = "mainContactJobTitle.error.required"
-  val lengthKey = "mainContactJobTitle.error.length"
-  val maxLength = 155
+  val lengthKey   = "mainContactJobTitle.error.length"
+  val maxLength   = 155
 
   val form = new MainContactJobTitleFormProvider()()
 

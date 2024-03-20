@@ -24,7 +24,7 @@ import java.time.{LocalDate, LocalDateTime}
 
 class TaxReturnObligationSpec extends PlaySpec {
 
-  val allNowOb = TaxReturnObligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "PPKY")
+  val allNowOb                       = TaxReturnObligation(LocalDate.now(), LocalDate.now(), LocalDate.now(), "PPKY")
   val mockEdgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
   when(mockEdgeOfSystem.localDateTimeNow).thenReturn(LocalDateTime.now())
 

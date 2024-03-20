@@ -24,19 +24,19 @@ import views.html.amends.AmendExportedPlasticPackagingView
 
 import javax.inject.Inject
 
-class AmendExportedPlasticPackagingController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AmendExportedPlasticPackagingView
-                                     ) extends FrontendBaseController with I18nSupport {
+class AmendExportedPlasticPackagingController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: AmendExportedPlasticPackagingView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify {
-    implicit request =>
-      Ok(view())
+  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+    Ok(view())
   }
 
-  def onSubmit : Action[AnyContent] = identify {
+  def onSubmit: Action[AnyContent] = identify {
     Redirect(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad)
   }
 }

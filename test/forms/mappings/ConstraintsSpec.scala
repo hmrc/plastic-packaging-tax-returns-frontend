@@ -25,9 +25,7 @@ import play.api.data.validation.{Invalid, Valid}
 
 import java.time.LocalDate
 
-class ConstraintsSpec
-    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators
-    with Constraints {
+class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
   "firstError" - {
 
@@ -137,10 +135,9 @@ class ConstraintsSpec
         date <- datesBetween(LocalDate.of(2000, 1, 1), max)
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-          val result = maxDate(max, "error.future")(date)
-          result mustEqual Valid
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future")(date)
+        result mustEqual Valid
       }
     }
 
@@ -151,10 +148,9 @@ class ConstraintsSpec
         date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-          val result = maxDate(max, "error.future", "foo")(date)
-          result mustEqual Invalid("error.future", "foo")
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future", "foo")(date)
+        result mustEqual Invalid("error.future", "foo")
       }
     }
   }
@@ -168,10 +164,9 @@ class ConstraintsSpec
         date <- datesBetween(min, LocalDate.of(3000, 1, 1))
       } yield (min, date)
 
-      forAll(gen) {
-        case (min, date) =>
-          val result = minDate(min, "error.past", "foo")(date)
-          result mustEqual Valid
+      forAll(gen) { case (min, date) =>
+        val result = minDate(min, "error.past", "foo")(date)
+        result mustEqual Valid
       }
     }
 
@@ -182,10 +177,9 @@ class ConstraintsSpec
         date <- datesBetween(LocalDate.of(2000, 1, 1), min.minusDays(1))
       } yield (min, date)
 
-      forAll(gen) {
-        case (min, date) =>
-          val result = minDate(min, "error.past", "foo")(date)
-          result mustEqual Invalid("error.past", "foo")
+      forAll(gen) { case (min, date) =>
+        val result = minDate(min, "error.past", "foo")(date)
+        result mustEqual Invalid("error.past", "foo")
       }
     }
   }

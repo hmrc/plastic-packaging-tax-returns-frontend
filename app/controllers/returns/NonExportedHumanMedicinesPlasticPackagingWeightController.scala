@@ -33,7 +33,7 @@ import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
+class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -44,28 +44,34 @@ class NonExportedHumanMedicinesPlasticPackagingWeightController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: NonExportedHumanMedicinesPlasticPackagingWeightView,
   nonExportedAmountHelper: NonExportedAmountHelper
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.fill(NonExportedHumanMedicinesPlasticPackagingWeightPage, formProvider())
-      createResponse(Ok, mode, preparedForm)
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.fill(NonExportedHumanMedicinesPlasticPackagingWeightPage, formProvider())
+    createResponse(Ok, mode, preparedForm)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       formProvider()
         .bindFromRequest()
-        .fold(formWithErrors => Future.successful(createResponse(BadRequest, mode, formWithErrors)),
+        .fold(
+          formWithErrors => Future.successful(createResponse(BadRequest, mode, formWithErrors)),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value))
-                _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value)
+              )
+              _ <- cacheConnector.set(request.pptReference, updatedAnswers)
             } yield Redirect(navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(mode))
         )
   }
 
-  private def createResponse(responseStatus: Status, mode: Mode, form: Form[Long])(implicit request: DataRequest[_]): Result =
+  private def createResponse(responseStatus: Status, mode: Mode, form: Form[Long])(implicit
+    request: DataRequest[_]
+  ): Result =
     nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers) match {
       case Some((amount, directlyExported, exportedByThirdParty)) =>
         responseStatus(view(amount, form, mode, directlyExported, exportedByThirdParty))

@@ -24,11 +24,10 @@ class AmendAlreadyCancelledViewA11ySpec extends ViewSpecBase with AccessibilityM
 
   private val page = inject[AmendAlreadyCancelledView]
 
-  private def render: String = {
+  private def render: String =
     page()(request, messages).toString()
-  }
 
   "pass accessibility checks" in {
-      render must passAccessibilityChecks
-    }
+    render must passAccessibilityChecks
+  }
 }

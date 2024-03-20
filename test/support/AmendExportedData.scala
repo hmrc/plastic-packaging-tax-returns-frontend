@@ -44,12 +44,10 @@ trait AmendExportedData {
     LocalDate.parse("2022-04-01"),
     LocalDate.parse("2022-06-30"),
     LocalDate.parse("2022-06-30").plusWeeks(8),
-    "00XX")
+    "00XX"
+  )
 
-
-
-  def createUserAnswers: UserAnswers = {
+  def createUserAnswers: UserAnswers =
     UserAnswers("123").set(ReturnDisplayApiCacheable, retDisApi).get
       .set(AmendObligationCacheable, taxReturnOb).get
-  }
 }

@@ -30,15 +30,12 @@ import java.time.LocalDate
 
 class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val form = new DoYouWantToClaimFormProvider()()
-  val page = inject[DoYouWantToClaimView]
+  val form      = new DoYouWantToClaimFormProvider()()
+  val page      = inject[DoYouWantToClaimView]
   val appConfig = inject[FrontendAppConfig]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022,7,5),
-    LocalDate.of(2022,10,5),
-    LocalDate.of(2023,1,5),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
   private def createView: Html =
     page(form, aTaxObligation)(request, messages)
@@ -67,10 +64,14 @@ class DoYouWantToClaimViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "have the links to guidance" in {
       view.getElementById("credit-info-link").text() mustBe messages("do-you-want-to-claim.p4.b1.a")
-      view.getElementById("credit-info-link").attr("href") mustBe "https://www.gov.uk/guidance/claim-a-credit-or-defer-paying-plastic-packaging-tax#components-youve-already-paid-tax-on-which-are-exported-or-converted"
+      view.getElementById("credit-info-link").attr(
+        "href"
+      ) mustBe "https://www.gov.uk/guidance/claim-a-credit-or-defer-paying-plastic-packaging-tax#components-youve-already-paid-tax-on-which-are-exported-or-converted"
 
       view.getElementById("records-info-link").text() mustBe messages("do-you-want-to-claim.p4.b2.a")
-      view.getElementById("records-info-link").attr("href") mustBe "https://www.gov.uk/guidance/record-keeping-and-accounts-for-plastic-packaging-tax#records-to-keep-to-claim-a-credit"
+      view.getElementById("records-info-link").attr(
+        "href"
+      ) mustBe "https://www.gov.uk/guidance/record-keeping-and-accounts-for-plastic-packaging-tax#records-to-keep-to-claim-a-credit"
     }
 
     "have a the radio options" in {

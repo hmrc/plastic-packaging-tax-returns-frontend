@@ -27,19 +27,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (
   subscriptionConnector: SubscriptionConnector
-) (implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext) {
 
-  def fetchGroupMemberNames(pptReferenceNumber: String) (implicit hc: HeaderCarrier): Future[GroupMembers] = {
+  def fetchGroupMemberNames(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[GroupMembers] =
     subscriptionConnector
       .get(pptReferenceNumber)
       .map(extractNames)
-  }
 
-  private def extractNames(connectorResponse: Either[EisFailure, SubscriptionDisplayResponse]): GroupMembers = {
+  private def extractNames(connectorResponse: Either[EisFailure, SubscriptionDisplayResponse]): GroupMembers =
     connectorResponse.fold(
       eisFailure => throw new RuntimeException("Subscription connector failed"),
       GroupMembers.create
     )
-  }
 
 }

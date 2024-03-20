@@ -23,14 +23,21 @@ import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
-class NonExportedHumanMedicinesPlasticPackagingViewA11ySpec extends ViewSpecBase with AccessibilityMatchers{
+class NonExportedHumanMedicinesPlasticPackagingViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
-  private val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
+  val form           = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
+  private val page   = inject[NonExportedHumanMedicinesPlasticPackagingView]
   private val amount = 321L
 
-  private def createView(form: Form[Boolean], isYesNoDirectlyExported: Boolean, isYesNoAnotherBusinessExported: Boolean): String =
-    page(amount, form, NormalMode, isYesNoDirectlyExported, isYesNoAnotherBusinessExported)(request, messages).toString()
+  private def createView(
+    form: Form[Boolean],
+    isYesNoDirectlyExported: Boolean,
+    isYesNoAnotherBusinessExported: Boolean
+  ): String =
+    page(amount, form, NormalMode, isYesNoDirectlyExported, isYesNoAnotherBusinessExported)(
+      request,
+      messages
+    ).toString()
 
   "NonExportedHumanMedicinesPlasticPackagingView" should {
 

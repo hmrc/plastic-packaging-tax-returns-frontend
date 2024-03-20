@@ -40,10 +40,9 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendHumanMedicinePlasticPackagingFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute  = Call("GET", "/foo")
 
   val validAnswer: Long = 0
-
 
   lazy val amendHumanMedicinePlasticPackagingRoute =
     routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
@@ -62,16 +61,13 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val view = application.injector.instanceOf[AmendHumanMedicinePlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(formProvider())(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.
-        set(AmendHumanMedicinePlasticPackagingPage, validAnswer).success.value
+      val ans = userAnswers.set(AmendHumanMedicinePlasticPackagingPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -98,8 +94,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
-          )
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector))
           .build()
 
       running(application) {
@@ -143,9 +138,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }
 

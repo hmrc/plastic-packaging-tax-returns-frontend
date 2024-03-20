@@ -26,23 +26,22 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.returns.NowStartYourReturnView
 
-class NowStartYourReturnController @Inject()
-(
+class NowStartYourReturnController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
   view: NowStartYourReturnView,
   returnsNavigator: ReturnsJourneyNavigator
-) extends I18nSupport with Logging {
+) extends I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
-          val returnQuarter = obligation.toReturnQuarter
-          val nextPage = returnsNavigator.firstPageOfReturnSection
-          Ok(view(returnQuarter, claimedCredits = true, nextPage))
-        }
+    journeyAction { implicit request =>
+      ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+        val returnQuarter = obligation.toReturnQuarter
+        val nextPage      = returnsNavigator.firstPageOfReturnSection
+        Ok(view(returnQuarter, claimedCredits = true, nextPage))
+      }
     }
-  
+
 }

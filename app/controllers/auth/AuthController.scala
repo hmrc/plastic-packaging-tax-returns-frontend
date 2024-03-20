@@ -29,7 +29,8 @@ class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   config: FrontendAppConfig,
   authenticate: AuthLoggedInAction
-) extends FrontendBaseController with I18nSupport {
+) extends FrontendBaseController
+    with I18nSupport {
 
   def signOut(): Action[AnyContent] =
     authenticate {

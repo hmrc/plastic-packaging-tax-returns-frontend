@@ -41,15 +41,15 @@ class AnotherBusinessExportWeightFormProviderSpec extends LongFieldBehaviours {
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "anotherBusinessExportWeight.error.nonNumeric"),
+      nonNumericError = FormError(fieldName, "anotherBusinessExportWeight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "anotherBusinessExportWeight.error.wholeNumber")
     )
 
     behave like longFieldWithRange(
       form,
       fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
+      minimum = minimum,
+      maximum = maximum,
       expectedError = FormError(fieldName, "anotherBusinessExportWeight.error.outOfRange", Seq(minimum, maximum))
     )
 

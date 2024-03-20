@@ -37,56 +37,52 @@ import views.html.returns.ExportedPlasticPackagingWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExportedPlasticPackagingWeightController @Inject()(
-                                                          override val messagesApi: MessagesApi,
-                                                          cacheConnector: CacheConnector,
-                                                          navigator: ReturnsJourneyNavigator,
-                                                          nonExportedAmountHelper: NonExportedAmountHelper,
-                                                          journeyAction: JourneyAction,
-                                                          form: ExportedPlasticPackagingWeightFormProvider,
-                                                          val controllerComponents: MessagesControllerComponents,
-                                                          view: ExportedPlasticPackagingWeightView
+class ExportedPlasticPackagingWeightController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  nonExportedAmountHelper: NonExportedAmountHelper,
+  journeyAction: JourneyAction,
+  form: ExportedPlasticPackagingWeightFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ExportedPlasticPackagingWeightView
 )(implicit ec: ExecutionContext)
-  extends I18nSupport {
+    extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-
-        val preparedForm = request.userAnswers.fill(DirectlyExportedWeightPage, form())
-        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
-            Redirect(controllers.routes.IndexController.onPageLoad)
-          )(totalPlastic => Ok(view(preparedForm, mode, totalPlastic))
-        )
+    journeyAction { implicit request =>
+      val preparedForm = request.userAnswers.fill(DirectlyExportedWeightPage, form())
+      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
+        Redirect(controllers.routes.IndexController.onPageLoad)
+      )(totalPlastic => Ok(view(preparedForm, mode, totalPlastic)))
 
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-
-        form().bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
-          value =>
-            request.userAnswers
-              .setOrFail(DirectlyExportedWeightPage, value, mode != CheckMode)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(updatedAnswers =>
-                Redirect(navigator.exportedPlasticPackagingWeightRoute(
+    journeyAction.async { implicit request =>
+      form().bindFromRequest().fold(
+        formWithErrors => Future.successful(handleTotalPlasticCalculationError(mode, formWithErrors)),
+        value =>
+          request.userAnswers
+            .setOrFail(DirectlyExportedWeightPage, value, mode != CheckMode)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(updatedAnswers =>
+              Redirect(
+                navigator.exportedPlasticPackagingWeightRoute(
                   ExportedPlasticAnswer(updatedAnswers).isAllPlasticExported,
-                  mode))
+                  mode
+                )
               )
-        )
+            )
+      )
     }
 
   private def handleTotalPlasticCalculationError(
     mode: Mode,
     formWithErrors: Form[Long]
-  )(implicit request: DataRequest[AnyContent]) = {
+  )(implicit request: DataRequest[AnyContent]) =
     nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
       Redirect(controllers.routes.IndexController.onPageLoad)
     )(totalPlastic => BadRequest(view(formWithErrors, mode, totalPlastic)))
-  }
 
 }

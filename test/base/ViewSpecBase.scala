@@ -30,7 +30,7 @@ import repositories.SessionRepository
 
 trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  val request: Request[AnyContent]         = FakeRequest().withCSRFToken
+  val request: Request[AnyContent]                = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   implicit def messages: Messages =
@@ -40,4 +40,3 @@ trait ViewSpecBase extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     .overrides(bind[SessionRepository].toInstance(mock[SessionRepository])).build()
 
 }
-

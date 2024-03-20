@@ -35,7 +35,7 @@ import views.html.returns.DirectlyExportedComponentsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectlyExportedComponentsController @Inject()(
+class DirectlyExportedComponentsController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -45,41 +45,35 @@ class DirectlyExportedComponentsController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: DirectlyExportedComponentsView
 )(implicit ec: ExecutionContext)
-  extends I18nSupport {
+    extends I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-
-        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
-          Redirect(controllers.routes.IndexController.onPageLoad)
-        )(totalPlastic => {
-          val preparedForm = request.userAnswers.fill(DirectlyExportedPage, form())
-          Ok(view(preparedForm, mode, totalPlastic))
-        })
+    journeyAction { implicit request =>
+      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
+        Redirect(controllers.routes.IndexController.onPageLoad)
+      ) { totalPlastic =>
+        val preparedForm = request.userAnswers.fill(DirectlyExportedPage, form())
+        Ok(view(preparedForm, mode, totalPlastic))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-
-        form().bindFromRequest().fold(
-          formWithErrors => handleErrorInForm(mode, formWithErrors),
-          newAnswer =>
-            request.userAnswers
-              .setOrFail(DirectlyExportedPage, newAnswer)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Redirect(navigator.directlyExportedComponentsRoute(newAnswer, mode)))
-        )
+    journeyAction.async { implicit request =>
+      form().bindFromRequest().fold(
+        formWithErrors => handleErrorInForm(mode, formWithErrors),
+        newAnswer =>
+          request.userAnswers
+            .setOrFail(DirectlyExportedPage, newAnswer)
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Redirect(navigator.directlyExportedComponentsRoute(newAnswer, mode)))
+      )
     }
 
   private def handleErrorInForm(
     mode: Mode,
     formWithErrors: Form[Boolean]
-  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  )(implicit request: DataRequest[AnyContent]): Future[Result] =
     nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
-      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad)))(
-      totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic)))
-    )
-  }
+      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+    )(totalPlastic => Future.successful(BadRequest(view(formWithErrors, mode, totalPlastic))))
 }

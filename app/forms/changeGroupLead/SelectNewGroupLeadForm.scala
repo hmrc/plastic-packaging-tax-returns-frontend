@@ -24,11 +24,12 @@ import play.api.data.Forms.{optional, text}
 class SelectNewGroupLeadForm {
 
   def apply(members: Seq[Member]): Form[Member] =
-    Form("value" -> optional(text)
-      .verifying(error, _.isDefined)
-      .transform[String](_.get, Some(_))
-      .verifying(error, crn => members.exists(_.crn == crn))
-      .transform[Member](crn => members.find(_.crn == crn).get, _.crn)
+    Form(
+      "value" -> optional(text)
+        .verifying(error, _.isDefined)
+        .transform[String](_.get, Some(_))
+        .verifying(error, crn => members.exists(_.crn == crn))
+        .transform[Member](crn => members.find(_.crn == crn).get, _.crn)
     )
 
 }

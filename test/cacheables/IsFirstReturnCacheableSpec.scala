@@ -18,7 +18,6 @@ package cacheables
 
 import pages.behaviours.PageBehaviours
 
-
 class IsFirstReturnCacheableSpec extends PageBehaviours {
 
   "IsFirstReturnCacheable" - {

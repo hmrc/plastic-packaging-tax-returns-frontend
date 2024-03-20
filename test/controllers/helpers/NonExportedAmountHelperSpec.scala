@@ -23,7 +23,7 @@ import org.scalatestplus.play.PlaySpec
 import pages.returns._
 
 class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
-  
+
   private val mockUserAnswers = mock[UserAnswers]
 
   private val userAnswer = UserAnswers("123")
@@ -35,7 +35,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
     .set(AnotherBusinessExportedPage, true).get
     .set(AnotherBusinessExportedWeightPage, 100L).get
 
-  override protected def beforeEach(): Unit = { 
+  override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockUserAnswers)
   }
@@ -69,11 +69,11 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
   "nonExportedAmount" should {
     "return total plastic" when {
       "plastic is not exported" in {
-      val ans = userAnswer
-        .set(DirectlyExportedPage, false).get
-        .set(AnotherBusinessExportedPage, false).get
-      sut.nonExportedAmount(ans) mustBe Some(300L)
-    }
+        val ans = userAnswer
+          .set(DirectlyExportedPage, false).get
+          .set(AnotherBusinessExportedPage, false).get
+        sut.nonExportedAmount(ans) mustBe Some(300L)
+      }
 
       "plastic is exported" in {
         val ans = userAnswer
@@ -133,12 +133,12 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "totalPlasticAdditions" when {
-    
+
     "accretion questions answered yes and weights given" in {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(true)
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
       when(mockUserAnswers.get(ImportedPlasticPackagingPage)) thenReturn Some(true)
-      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn Some(10) 
+      when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn Some(10)
       sut.totalPlasticAdditions(mockUserAnswers) mustBe Some(11)
     }
 
@@ -157,7 +157,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       when(mockUserAnswers.get(ImportedPlasticPackagingWeightPage)) thenReturn None
       sut.totalPlasticAdditions(mockUserAnswers) mustBe None
     }
-      
+
     "accretion questions answered no (and weights there none the less)" in {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn None
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(1)
@@ -174,9 +174,9 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       sut.totalPlasticAdditions(mockUserAnswers) mustBe None
     }
   }
-  
+
   "nonExportedAmount" when {
-    
+
     def whenManufactured100kg = {
       when(mockUserAnswers.get(ManufacturedPlasticPackagingPage)) thenReturn Some(true)
       when(mockUserAnswers.get(ManufacturedPlasticPackagingWeightPage)) thenReturn Some(100)
@@ -192,7 +192,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn Some(true)
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn Some(1)
-      
+
       sut.nonExportedAmount(mockUserAnswers) mustBe Some(89)
     }
 
@@ -204,7 +204,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn None
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn None
-      
+
       sut.nonExportedAmount(mockUserAnswers) mustBe Some(0)
     }
 
@@ -216,7 +216,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn Some(true)
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn Some(100)
-      
+
       sut.nonExportedAmount(mockUserAnswers) mustBe Some(0)
     }
 
@@ -228,7 +228,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn Some(false)
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn None
-      
+
       sut.nonExportedAmount(mockUserAnswers) mustBe Some(100)
     }
 
@@ -240,7 +240,7 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
       when(mockUserAnswers.get(AnotherBusinessExportedPage)) thenReturn None
       when(mockUserAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn None
-      
+
       sut.nonExportedAmount(mockUserAnswers) mustBe None
     }
   }
@@ -259,32 +259,32 @@ class NonExportedAmountHelperSpec extends PlaySpec with BeforeAndAfterEach {
       val ans = userAnswer.remove(AnotherBusinessExportedWeightPage).get
       sut.getAmountAndDirectlyExportedAnswer(ans) mustBe Some((200, true, true))
     }
-    
+
     "manufactured yes-no answer is missing" in {
       val changedAnswers = userAnswer.remove(ManufacturedPlasticPackagingPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
-    
+
     "manufactured weight answer is missing" in {
       val changedAnswers = userAnswer.remove(ManufacturedPlasticPackagingWeightPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
-    
+
     "imported yes-no answer is missing" in {
       val changedAnswers = userAnswer.remove(ImportedPlasticPackagingPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
-    
+
     "imported weight answer is missing" in {
       val changedAnswers = userAnswer.remove(ImportedPlasticPackagingWeightPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
-    
+
     "directly exported yes-no answer is missing" in {
       val changedAnswers = userAnswer.remove(DirectlyExportedPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None
     }
-    
+
     "directly exported weight answer is missing" in {
       val changedAnswers = userAnswer.remove(DirectlyExportedWeightPage).get
       sut.getAmountAndDirectlyExportedAnswer(changedAnswers) mustBe None

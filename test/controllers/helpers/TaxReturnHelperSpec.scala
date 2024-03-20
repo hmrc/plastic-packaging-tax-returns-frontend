@@ -41,7 +41,7 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
   val hc = HeaderCarrier()
 
-  val mockReturnsConnector = mock[TaxReturnsConnector]
+  val mockReturnsConnector     = mock[TaxReturnsConnector]
   val mockObligationsConnector = mock[ObligationsConnector]
 
   val sut = new TaxReturnHelper(mockReturnsConnector, mockObligationsConnector)(global)
@@ -116,7 +116,9 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
   "nextOpenObligationAndIfFirst" must {
     "return None" when {
       "there is no next obligation to return" in {
-        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 0, false, false)))
+        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+          Future.successful(PPTObligations(None, None, 0, false, false))
+        )
 
         val result = await(sut.nextOpenObligationAndIfFirst("some-ppt-id")(hc))
 
@@ -129,7 +131,9 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
 
     "return the next obligation" when {
       "there is no fulfilled so is the first return" in {
-        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false)))
+        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+          Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false))
+        )
         when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq.empty))
 
         val result = await(sut.nextOpenObligationAndIfFirst("some-ppt-id")(hc))
@@ -140,7 +144,9 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
       }
 
       "there is some fulfilled so is NOT the first return" in {
-        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false)))
+        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+          Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false))
+        )
         when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq(obligation("key2"))))
 
         val result = await(sut.nextOpenObligationAndIfFirst("some-ppt-id")(hc))
@@ -159,7 +165,9 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
         intercept[TestException.type](await(sut.nextOpenObligationAndIfFirst("some-ppt-id")(hc)))
       }
       "call to getFulfilled fails" in {
-        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false)))
+        when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+          Future.successful(PPTObligations(Some(obligation("key")), None, 0, true, false))
+        )
         when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.nextOpenObligationAndIfFirst("some-ppt-id")(hc)))

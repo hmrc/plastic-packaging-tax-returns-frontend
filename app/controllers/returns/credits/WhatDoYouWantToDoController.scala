@@ -35,41 +35,40 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoController @Inject() (
-                                              override val messagesApi: MessagesApi,
-                                              cacheConnector: CacheConnector,
-                                              journeyAction: JourneyAction,
-                                              formProvider: DoYouWantToClaimFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: DoYouWantToClaimView,
-                                              returnsNavigator: ReturnsJourneyNavigator
-) (implicit ec: ExecutionContext) extends I18nSupport {
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  journeyAction: JourneyAction,
+  formProvider: DoYouWantToClaimFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: DoYouWantToClaimView,
+  returnsNavigator: ReturnsJourneyNavigator
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
-          val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
-          Ok(view(preparedForm, obligation))
-        }
+    journeyAction { implicit request =>
+      ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+        val preparedForm = request.userAnswers.fill(WhatDoYouWantToDoPage, formProvider())
+        Ok(view(preparedForm, obligation))
+      }
     }
 
   def onSubmit: Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-
-        formProvider().bindFromRequest().fold(
-          formWithErrors => {
-            val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
-            Future.successful(BadRequest(view(formWithErrors, obligation)))
-          },
-          newAnswer => updateAnswersAndGotoNextPage(request.pptReference, request.userAnswers, newAnswer)
-        )
+    journeyAction.async { implicit request =>
+      formProvider().bindFromRequest().fold(
+        formWithErrors => {
+          val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
+          Future.successful(BadRequest(view(formWithErrors, obligation)))
+        },
+        newAnswer => updateAnswersAndGotoNextPage(request.pptReference, request.userAnswers, newAnswer)
+      )
     }
 
-  private def updateAnswersAndGotoNextPage(pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
-    (implicit hc: HeaderCarrier) = 
+  private def updateAnswersAndGotoNextPage(pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)(
+    implicit hc: HeaderCarrier
+  ) =
     previousAnswers
       .change(WhatDoYouWantToDoPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(_ => Redirect(returnsNavigator.whatDoYouWantDo(newAnswer)))
-  
+
 }

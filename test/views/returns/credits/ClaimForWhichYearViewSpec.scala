@@ -26,12 +26,16 @@ import views.html.returns.credits.ClaimForWhichYearView
 
 import java.time.LocalDate
 
-class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers{
+class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page = inject[ClaimForWhichYearView]
   val form = new DoYouWantToClaimFormProvider()()
 
-  private def createView: Html = page(form, Seq(CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31))), NormalMode)(request, messages)
+  private def createView: Html = page(
+    form,
+    Seq(CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31))),
+    NormalMode
+  )(request, messages)
 
   "ClaimForWhichYearView" should {
     val view = createView
@@ -48,8 +52,12 @@ class ClaimForWhichYearViewSpec extends ViewSpecBase with ViewAssertions with Vi
     "have paragraph content" in {
       val paragraph = view.getElementsByClass("govuk-body").text()
 
-      paragraph must include("Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate.")
-      paragraph must include("If you need to claim tax back as credit for more than one of these date ranges, you will be given the option to do this later.")
+      paragraph must include(
+        "Plastic Packaging Tax rates have changed. We need to make sure you claim tax back at the correct rate."
+      )
+      paragraph must include(
+        "If you need to claim tax back as credit for more than one of these date ranges, you will be given the option to do this later."
+      )
     }
 
     "have radio options" in {

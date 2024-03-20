@@ -36,12 +36,16 @@ class PlasticExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAss
   "view" should {
     val view = createView()
     "have a title" in {
-      view.select("title").text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components? - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components? - Submit return - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("plasticExportedByAnotherBusiness.title", "200kg"))
     }
 
     "have an header" in {
-      view.select("h1").text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components?"
+      view.select(
+        "h1"
+      ).text() mustBe "In this period, has another business exported or converted any of your 200kg of manufactured or imported finished plastic packaging components?"
       view.select("h1").text() mustBe messages("plasticExportedByAnotherBusiness.heading", "200kg")
     }
 
@@ -65,9 +69,11 @@ class PlasticExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAss
 
     "has reveal component" in {
       view.getElementsByClass("govuk-details__summary").text mustBe "What do we mean by converted plastic packaging?"
-      view.getElementsByClass("govuk-details__text").text mustBe "Plastic packaging is converted if you make a new substantial modification."
+      view.getElementsByClass(
+        "govuk-details__text"
+      ).text mustBe "Plastic packaging is converted if you make a new substantial modification."
 
-      withClue("have a link for guidance"){
+      withClue("have a link for guidance") {
         view.getElementById("exported-reveal-link") must haveHref(
           "https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax#substantial"
         )
@@ -77,10 +83,12 @@ class PlasticExportedByAnotherBusinessViewSpec extends ViewSpecBase with ViewAss
     "error when no answer provided" in {
       val view = createView(form.bind(Map("value" -> "")))
 
-      Jsoup.parse(view.toString()).text() must include("Select yes if another business has exported or converted any of your finished plastic packaging components")
+      Jsoup.parse(view.toString()).text() must include(
+        "Select yes if another business has exported or converted any of your finished plastic packaging components"
+      )
     }
 
-    "display an error summary box"  in {
+    "display an error summary box" in {
       val view = createView(form.withError("error", "error message"))
 
       view.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"

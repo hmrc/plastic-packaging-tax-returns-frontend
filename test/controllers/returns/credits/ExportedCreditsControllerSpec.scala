@@ -48,51 +48,56 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ExportedCreditsControllerSpec extends PlaySpec 
-  with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
+class ExportedCreditsControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with ResetMocksAfterEachTest {
 
   private val controllerComponents = stubMessagesControllerComponents()
-  
-  private val messagesApi = mock[MessagesApi]
-  private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val view = mock[ExportedCreditsView]
-  private val formProvider = mock[ExportedCreditsFormProvider]
-  private val mockJourneyAction = mock[JourneyAction]
 
-  private val preparedForm = mock[Form[Boolean]]("prepared form")
-  private val initialForm = mock[Form[Boolean]]("initial form")
-  private val messages = mock[Messages]
-  private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val messagesApi        = mock[MessagesApi]
+  private val mockCacheConnector = mock[CacheConnector]
+  private val mockNavigator      = mock[ReturnsJourneyNavigator]
+  private val view               = mock[ExportedCreditsView]
+  private val formProvider       = mock[ExportedCreditsFormProvider]
+  private val mockJourneyAction  = mock[JourneyAction]
+
+  private val preparedForm      = mock[Form[Boolean]]("prepared form")
+  private val initialForm       = mock[Form[Boolean]]("initial form")
+  private val messages          = mock[Messages]
+  private val request           = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   val sut: ExportedCreditsController = new ExportedCreditsController(
     messagesApi,
     mockCacheConnector,
     mockNavigator,
-    mockJourneyAction, 
+    mockJourneyAction,
     formProvider,
     controllerComponents,
-    view)
+    view
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    
+
     when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
-    
+
     when(view.apply(any, any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
-    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
+    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
     when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
       SingleYearClaim(
         fromDate = LocalDate.of(2023, 4, 1),
         toDate = LocalDate.of(2024, 3, 31),
         exportedCredits = None,
-        convertedCredits = None)
+        convertedCredits = None
+      )
     )
 
     when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
@@ -120,7 +125,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
         verify(creditsAnswer).yesNo
       }
     }
-    
+
     "redirect if obligation is missing" in {
       when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn None
       val result = sut.onPageLoad("year-key", NormalMode)(request)
@@ -136,22 +141,22 @@ class ExportedCreditsControllerSpec extends PlaySpec
       await(result)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe 
+      redirectLocation(result).value mustBe
         controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
     }
-    
+
   }
-  
+
   "onSubmit" must {
 
     "must redirect to the next page using the navigator" in {
       val result = sut.onSubmit("year-key", NormalMode)(request)
       await(result)
-      
+
       verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
-      verify(request.userAnswers).changeWithFunc(any, any, any) (any, any)
+      verify(request.userAnswers).changeWithFunc(any, any, any)(any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
-      
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe "mr"
     }
@@ -162,7 +167,7 @@ class ExportedCreditsControllerSpec extends PlaySpec
 
       val result = sut.onSubmit("year-key", NormalMode)(request)
       await(result)
-      verify(view).apply(formWithError, "year-key", NormalMode, creditRangeOption) (request, messages)
+      verify(view).apply(formWithError, "year-key", NormalMode, creditRangeOption)(request, messages)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
@@ -175,13 +180,13 @@ class ExportedCreditsControllerSpec extends PlaySpec
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
     }
-    
+
     "redirect if claim for year is missing" in {
       when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn None
       val result = sut.onSubmit("year-key", NormalMode)(request)
       await(result)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe 
+      redirectLocation(result).value mustBe
         controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
     }
   }

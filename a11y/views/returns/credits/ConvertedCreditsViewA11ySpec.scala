@@ -28,8 +28,8 @@ import java.time.LocalDate
 
 class ConvertedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new ConvertedCreditsFormProvider()()
-  val page = inject[ConvertedCreditsView]
+  val form                      = new ConvertedCreditsFormProvider()()
+  val page                      = inject[ConvertedCreditsView]
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   def render(form: Form[Boolean]): String =

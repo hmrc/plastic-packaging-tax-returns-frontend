@@ -16,24 +16,22 @@
 
 package models.amends
 
-sealed trait  AmendNewAnswerType
+sealed trait AmendNewAnswerType
 
 object AmendNewAnswerType {
 
-  final case class AnswerWithValue(value: String) extends AmendNewAnswerType
-  final case class AnswerWithoutValue(hiddenMessage: String ) extends AmendNewAnswerType
+  final case class AnswerWithValue(value: String)            extends AmendNewAnswerType
+  final case class AnswerWithoutValue(hiddenMessage: String) extends AmendNewAnswerType
 
-  def apply(value: String, hiddenMessage: String, amendmentMade: Boolean): AmendNewAnswerType = {
+  def apply(value: String, hiddenMessage: String, amendmentMade: Boolean): AmendNewAnswerType =
     amendmentMade match {
       case true => AnswerWithValue(value)
-      case _ => AnswerWithoutValue(hiddenMessage)
+      case _    => AnswerWithoutValue(hiddenMessage)
     }
-  }
 
-  def apply(value: Option[String], hiddenMessage: String): AmendNewAnswerType = {
+  def apply(value: Option[String], hiddenMessage: String): AmendNewAnswerType =
     value match {
       case Some(v) => AnswerWithValue(v)
-      case _ => AnswerWithoutValue(hiddenMessage)
+      case _       => AnswerWithoutValue(hiddenMessage)
     }
-  }
 }

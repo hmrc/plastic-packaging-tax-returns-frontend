@@ -26,8 +26,7 @@ import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierActionWithEnrolment @Inject() (bodyParsers: PlayBodyParsers)
-    extends IdentifierAction {
+class FakeIdentifierActionWithEnrolment @Inject() (bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
   override def invokeBlock[A](
     request: Request[A],

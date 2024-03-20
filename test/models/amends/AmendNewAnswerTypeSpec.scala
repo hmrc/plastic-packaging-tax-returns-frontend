@@ -19,7 +19,7 @@ package models.amends
 import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
 import org.scalatestplus.play.PlaySpec
 
-class AmendNewAnswerTypeSpec extends PlaySpec{
+class AmendNewAnswerTypeSpec extends PlaySpec {
 
   "AmendNewAnswerType apply" should {
     "create an instance of AnswerWithValue with no message" when {

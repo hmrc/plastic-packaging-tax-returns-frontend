@@ -32,7 +32,7 @@ object AmendDirectExportPlasticPackagingSummary {
     )
 
     val amended: Option[String] = ExportedPlasticAnswer(answers).totalAmendExportedPlastic.map(_.asKg)
-    val existing: String = returnDisplayApi.returnDetails.directExports.asKg
+    val existing: String        = returnDisplayApi.returnDetails.directExports.asKg
 
     AmendSummaryRow(
       "amendDirectExportPlasticPackaging.checkYourAnswersLabel",

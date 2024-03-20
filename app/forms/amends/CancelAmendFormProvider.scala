@@ -26,5 +26,5 @@ class CancelAmendFormProvider @Inject() extends Mappings {
   def apply(): Form[Boolean] =
     Form(
       "value" -> boolean("cancelAmend.error.required")
-  )
+    )
 }

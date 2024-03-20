@@ -27,20 +27,20 @@ import views.html.returns.ReturnConfirmationView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReturnConfirmationController @Inject()(
+class ReturnConfirmationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
   sessionRepository: SessionRepository,
   view: ReturnConfirmationView
-)(
-  implicit ec: ExecutionContext
-) extends FrontendBaseController with I18nSupport {
+)(implicit
+  ec: ExecutionContext
+) extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(isUserClaimingCredit: Boolean): Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get[String](request.cacheKey, Paths.ReturnChargeRef).map{
-        maybeChargeRef =>
-          Ok(view(maybeChargeRef, isUserClaimingCredit))
+      sessionRepository.get[String](request.cacheKey, Paths.ReturnChargeRef).map { maybeChargeRef =>
+        Ok(view(maybeChargeRef, isUserClaimingCredit))
       }
     }
 }

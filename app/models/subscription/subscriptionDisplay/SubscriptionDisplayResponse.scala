@@ -30,7 +30,7 @@ case class SubscriptionDisplayResponse(
   taxObligationStartDate: String,
   last12MonthTotalTonnageAmt: BigDecimal,
   groupPartnershipSubscription: Option[GroupPartnershipSubscription],
-  processingDate: String,
+  processingDate: String
 )
 
 object SubscriptionDisplayResponse {

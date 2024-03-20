@@ -22,8 +22,8 @@ import play.api.data.FormError
 class MainContactNameFormProviderSpec extends PlaySpec {
 
   val requiredKey = "mainContactName.error.required"
-  val lengthKey = "mainContactName.error.length"
-  val maxLength = 160
+  val lengthKey   = "mainContactName.error.length"
+  val maxLength   = 160
 
   val form = new MainContactNameFormProvider()()
 

@@ -25,16 +25,16 @@ import views.html.DeregisteredView
 import javax.inject.Inject
 
 class DeregisteredController @Inject() (
-                                         override val messagesApi: MessagesApi,
-                                         identify: AuthLoggedInAction,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: DeregisteredView
-) extends FrontendBaseController with I18nSupport {
+  override val messagesApi: MessagesApi,
+  identify: AuthLoggedInAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: DeregisteredView
+) extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    identify {
-      implicit request =>
-        Ok(view())
+    identify { implicit request =>
+      Ok(view())
     }
 
 }

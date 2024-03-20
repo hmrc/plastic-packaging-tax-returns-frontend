@@ -33,7 +33,9 @@ class NewGroupLeadConfirmationViewSpec extends ViewSpecBase with ViewAssertions 
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() must include("The representative member will be changed - Account - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text() must include(
+        "The representative member will be changed - Account - Plastic Packaging Tax - GOV.UK"
+      )
       view.select("title").text() must include(messages("newGroupLeadConfirmation.title"))
     }
 
@@ -67,7 +69,9 @@ class NewGroupLeadConfirmationViewSpec extends ViewSpecBase with ViewAssertions 
     }
 
     "have a technical issue link" in {
-      view.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include ("Is this page not working properly?")
+      view.getElementsByClass("govuk-link hmrc-report-technical-issue ").text must include(
+        "Is this page not working properly?"
+      )
     }
 
     def assertNewRepresentativeParagraph(): Unit = {

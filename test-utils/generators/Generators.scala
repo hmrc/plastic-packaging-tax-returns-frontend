@@ -22,9 +22,7 @@ import org.scalacheck.{Gen, Shrink}
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators
-    extends UserAnswersGenerator with PageGenerators with ModelGenerators
-    with UserAnswersEntryGenerators {
+trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -110,7 +108,7 @@ trait Generators
   def stringsWithMaxLength(maxLength: Int, minLength: Int = 1, gen: Option[Gen[Char]] = None): Gen[String] =
     for {
       length <- choose(minLength, maxLength)
-      chars <- listOfN(length, gen.fold(arbitrary[Char])(o => o))
+      chars  <- listOfN(length, gen.fold(arbitrary[Char])(o => o))
     } yield chars.mkString
 
   def stringsLongerThan(minLength: Int): Gen[String] =
@@ -136,9 +134,8 @@ trait Generators
     def toMillis(date: LocalDate): Long =
       date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
-    Gen.choose(toMillis(min), toMillis(max)).map {
-      millis =>
-        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+    Gen.choose(toMillis(min), toMillis(max)).map { millis =>
+      Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
 

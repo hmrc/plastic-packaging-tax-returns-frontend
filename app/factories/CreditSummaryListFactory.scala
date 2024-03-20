@@ -23,18 +23,19 @@ import viewmodels.checkAnswers.returns.credits._
 
 class CreditSummaryListFactory {
 
-  def createSummaryList(singleYear: TaxablePlastic, key: String, userAnswer: UserAnswers)
-    (implicit messages: Messages): Seq[SummaryListRow] = {
-    
+  def createSummaryList(singleYear: TaxablePlastic, key: String, userAnswer: UserAnswers)(implicit
+    messages: Messages
+  ): Seq[SummaryListRow] = {
+
     Seq(CreditsTaxRateSummary(singleYear.taxRate)) ++ Seq(
-        CreditsExportedPlasticSummary(key),
-        CreditsExportedWeightSummary(key),
-        CreditsConvertedPlasticSummary(key),
-        CreditsConvertedWeightSummary(key)
-      ).flatMap(_.row(userAnswer)) ++ Seq(
-        CreditsTotalPlasticSummary(singleYear.weight),
-        CreditAmountSummary(singleYear.moneyInPounds)
-      )
+      CreditsExportedPlasticSummary(key),
+      CreditsExportedWeightSummary(key),
+      CreditsConvertedPlasticSummary(key),
+      CreditsConvertedWeightSummary(key)
+    ).flatMap(_.row(userAnswer)) ++ Seq(
+      CreditsTotalPlasticSummary(singleYear.weight),
+      CreditAmountSummary(singleYear.moneyInPounds)
+    )
   }
 
 }

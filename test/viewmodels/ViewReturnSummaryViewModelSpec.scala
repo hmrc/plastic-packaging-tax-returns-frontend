@@ -29,12 +29,26 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
   when(mockMessages.apply("month.8")).thenReturn("August")
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
-    "21C2", Some("charge-ref-no"), "2022-04-01", "2022-06-30", "2022-07-03", "New"
+    "21C2",
+    Some("charge-ref-no"),
+    "2022-04-01",
+    "2022-06-30",
+    "2022-07-03",
+    "New"
   )
 
   private val manufacturedWeight = 100
   private val returnDetails = ReturnDisplayDetails(
-    manufacturedWeight, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    manufacturedWeight,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
   )
 
   private val submittedReturn = ReturnDisplayApi(
@@ -43,7 +57,6 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     Some(returnDisplayChargeDetails),
     returnDetails
   )
-
 
   "The Summary section" must {
     val summarySection = ViewReturnSummaryViewModel(submittedReturn)(mockMessages).summarySection
@@ -64,7 +77,8 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "say 'n/a' when the charge reference number is not available" in {
-      val anotherReturn = submittedReturn.copy(chargeDetails = Some(returnDisplayChargeDetails.copy(chargeReference = None)))
+      val anotherReturn =
+        submittedReturn.copy(chargeDetails = Some(returnDisplayChargeDetails.copy(chargeReference = None)))
       val section = ViewReturnSummaryViewModel(anotherReturn)(mockMessages).summarySection
       section.fields(1) mustBe Field("viewReturnSummary.summary.field.reference", "n/a")
     }
@@ -82,15 +96,15 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
       liableSection.fields must have(size(3))
     }
 
-    "have the manufactured field" in  {
+    "have the manufactured field" in {
       liableSection.fields(0) mustBe Field("viewReturnSummary.liable.field.manufactured", "100kg")
     }
 
-    "have the imported field" in  {
+    "have the imported field" in {
       liableSection.fields(1) mustBe Field("viewReturnSummary.liable.field.imported", "2kg")
     }
 
-    "have the total field" in  {
+    "have the total field" in {
       liableSection.fields(2) mustBe Field("viewReturnSummary.liable.field.total", "102kg", bold = true)
     }
   }
@@ -106,19 +120,19 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
       exemptSection.fields must have(size(4))
     }
 
-    "have the exported field" in  {
+    "have the exported field" in {
       exemptSection.fields(0) mustBe Field("viewReturnSummary.exempt.field.exported", "5kg")
     }
 
-    "have the medicine field" in  {
+    "have the medicine field" in {
       exemptSection.fields(1) mustBe Field("viewReturnSummary.exempt.field.medicine", "4kg")
     }
 
-    "have the recycled field" in  {
+    "have the recycled field" in {
       exemptSection.fields(2) mustBe Field("viewReturnSummary.exempt.field.recycled", "6kg")
     }
 
-    "have the recycled total" in  {
+    "have the recycled total" in {
       exemptSection.fields(3) mustBe Field("viewReturnSummary.exempt.field.total", "3kg", bold = true)
     }
   }
@@ -147,8 +161,12 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the tax total" in {
-      calculationSection.fields(3) mustBe Field("viewReturnSummary.calculation.field.tax", "£10.00",
-        bold = true, big = false)
+      calculationSection.fields(3) mustBe Field(
+        "viewReturnSummary.calculation.field.tax",
+        "£10.00",
+        bold = true,
+        big = false
+      )
     }
   }
 }

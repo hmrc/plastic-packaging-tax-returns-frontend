@@ -34,11 +34,10 @@ import views.html.returns._
 
 import java.time.LocalDate
 
-class CreateReturnA11ySpec
-  extends ViewSpecBase
-    with AccessibilityMatchers {
+class CreateReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
   val amount = 321L
 
   "ExportedPlasticPackagingWeightView" should {
@@ -86,11 +85,11 @@ class CreateReturnA11ySpec
 
     def render(form: Form[Long] = form, directlyExportedAnswer: Boolean = true): String =
       page(form, NormalMode, amount, directlyExportedAnswer)(request, messages).toString()
-        
+
     "pass accessibility checks without error" in {
       render(form) must passAccessibilityChecks
     }
-    
+
     "pass accessibility checks with error" in {
       render(form.withError("test", "message")) must passAccessibilityChecks
     }
@@ -100,7 +99,11 @@ class CreateReturnA11ySpec
     val form = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()()
     val page = inject[NonExportedHumanMedicinesPlasticPackagingWeightView]
 
-    def render(form: Form[Long], directlyExportedAnswer: Boolean = true, anotherBusinessExportedAnswer: Boolean = true): String =
+    def render(
+      form: Form[Long],
+      directlyExportedAnswer: Boolean = true,
+      anotherBusinessExportedAnswer: Boolean = true
+    ): String =
       page(amount, form, NormalMode, true, true)(request, messages).toString()
 
     "pass accessibility checks pass" when {
@@ -117,7 +120,6 @@ class CreateReturnA11ySpec
       render(form.withError("test", "message")) must passAccessibilityChecks
     }
   }
-
 
   "ManufacturedPlasticPackagingWeightView" should {
     val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()

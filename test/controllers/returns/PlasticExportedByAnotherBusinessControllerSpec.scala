@@ -44,21 +44,18 @@ import views.html.returns.PlasticExportedByAnotherBusinessView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PlasticExportedByAnotherBusinessControllerSpec
-  extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class PlasticExportedByAnotherBusinessControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute = Call("GET", "/foo")
 
-  private val formProvider = mock[PlasticExportedByAnotherBusinessFormProvider]
-  private val bindForm = new PlasticExportedByAnotherBusinessFormProvider()()
-  private val messagesApi = mock[MessagesApi]
-  private val cacheConnector = mock[CacheConnector]
-  private val returnsNavigator = mock[ReturnsJourneyNavigator]
-  private val journeyAction = mock[JourneyAction]
-  private val view = mock[PlasticExportedByAnotherBusinessView]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val formProvider                = mock[PlasticExportedByAnotherBusinessFormProvider]
+  private val bindForm                    = new PlasticExportedByAnotherBusinessFormProvider()()
+  private val messagesApi                 = mock[MessagesApi]
+  private val cacheConnector              = mock[CacheConnector]
+  private val returnsNavigator            = mock[ReturnsJourneyNavigator]
+  private val journeyAction               = mock[JourneyAction]
+  private val view                        = mock[PlasticExportedByAnotherBusinessView]
+  private val dataRequest                 = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new PlasticExportedByAnotherBusinessController(
@@ -77,10 +74,11 @@ class PlasticExportedByAnotherBusinessControllerSpec
       .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
       .getMock[Action[AnyContent]]
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -90,7 +88,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn mock[Messages]
-    when(view.apply(any, any, any)(any,any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
 
@@ -117,7 +115,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
     "prepopulate the form" in {
       await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
-      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportedPage),meq(bindForm))(any)
+      verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportedPage), meq(bindForm))(any)
     }
 
     "view should show total plastic packaging amount" in {
@@ -127,10 +125,9 @@ class PlasticExportedByAnotherBusinessControllerSpec
       verify(view).apply(any, any, ArgumentMatchers.eq(50L))(any, any)
     }
 
-
     "redirect to the account page if cannot calculate total plastic" in {
       when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
-     val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
@@ -142,12 +139,12 @@ class PlasticExportedByAnotherBusinessControllerSpec
     val form = mock[Form[Boolean]]
 
     "redirect to AnotherBusinessExportWeight page" in {
-      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.fill(true))
+      when(form.bindFromRequest()(any, any)).thenReturn(bindForm.fill(true))
       when(formProvider.apply()).thenReturn(form)
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
       when(returnsNavigator.exportedByAnotherBusinessRoute(any, any)) thenReturn Call("", "some-url")
       val answer = dataRequest.userAnswers
-      when(dataRequest.userAnswers.setOrFail(any, any,any)(any)).thenReturn(answer)
+      when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answer)
       when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answer))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
@@ -157,7 +154,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     }
 
     "should save answer to the cache" in {
-      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.bind(Map("value" -> "true")))
+      when(form.bindFromRequest()(any, any)).thenReturn(bindForm.bind(Map("value" -> "true")))
       when(formProvider.apply()).thenReturn(form)
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
       when(dataRequest.pptReference).thenReturn("123")
@@ -169,7 +166,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
 
     "should return an error with bad request" in {
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any,any)).thenReturn(bindForm.withError("error", "error"))
+      when(form.bindFromRequest()(any, any)).thenReturn(bindForm.withError("error", "error"))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
@@ -179,7 +176,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
     "should return a view with error and total plastic" in {
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
@@ -194,7 +191,7 @@ class PlasticExportedByAnotherBusinessControllerSpec
       when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val errorForm = bindForm.withError("error", "error")
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any,any)).thenReturn(errorForm)
+      when(form.bindFromRequest()(any, any)).thenReturn(errorForm)
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 

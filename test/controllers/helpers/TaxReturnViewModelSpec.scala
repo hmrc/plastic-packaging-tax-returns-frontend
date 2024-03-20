@@ -28,15 +28,15 @@ import viewmodels.{RowInfo, TaxReturnViewModel}
 class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val calculations = mock[Calculations]
-  private val messages = mock[Messages]
-  private val userAnswers = mock[UserAnswers]
+  private val messages     = mock[Messages]
+  private val userAnswers  = mock[UserAnswers]
 
   private val sut = TaxReturnViewModel(
     userAnswers,
-    "ppt-ref", 
+    "ppt-ref",
     mock[TaxReturnObligation],
     calculations
-    )(messages)
+  )(messages)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -47,7 +47,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
     when(messages.apply("site.no")).thenReturn("no-string")
 
     // expect this to not match a message-file entry
-    when(messages.apply("part-of-a-key")).thenReturn("part-of-a-key") 
+    when(messages.apply("part-of-a-key")).thenReturn("part-of-a-key")
   }
 
   "exportedWeight" should {
@@ -94,7 +94,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       verify(messages).apply("part-of-a-key")
     }
   }
-  
+
   "anotherBusinessExportedWeight" when {
     "question is answered" in {
       when(userAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn Some(200L)
@@ -131,7 +131,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
       when(calculations.packagingTotal) thenReturn 0L
       sut.canEditExported mustBe false
     }
-    
+
     "assume zero when AnotherBusinessExportWeightPage is unanswered" in {
       when(userAnswers.get(DirectlyExportedWeightPage)) thenReturn Some(0L)
       when(userAnswers.get(AnotherBusinessExportedWeightPage)) thenReturn None

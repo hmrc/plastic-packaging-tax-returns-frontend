@@ -28,8 +28,8 @@ import java.time.LocalDate
 
 class ExportedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new ExportedCreditsWeightFormProvider()()
-  val page = inject[ExportedCreditsWeightView]
+  val form              = new ExportedCreditsWeightFormProvider()()
+  val page              = inject[ExportedCreditsWeightView]
   val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   def render(form: Form[Long]): String =

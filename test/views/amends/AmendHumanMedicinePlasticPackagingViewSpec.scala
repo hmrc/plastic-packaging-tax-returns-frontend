@@ -26,7 +26,7 @@ import views.html.amends.AmendHumanMedicinePlasticPackagingView
 class AmendHumanMedicinePlasticPackagingViewSpec extends ViewSpecBase {
 
   val page: AmendHumanMedicinePlasticPackagingView = inject[AmendHumanMedicinePlasticPackagingView]
-  val form: Form[Long] = new AmendHumanMedicinePlasticPackagingFormProvider()()
+  val form: Form[Long]                             = new AmendHumanMedicinePlasticPackagingFormProvider()()
 
   private def getDocumentFromView(form: Form[Long] = form): Document = {
     val view = page(form)(request, messages)
@@ -57,7 +57,6 @@ class AmendHumanMedicinePlasticPackagingViewSpec extends ViewSpecBase {
       doc.text() must include(messages("amendHumanMedicinePlasticPackaging.para"))
     }
 
-
     "have a hint" in {
       val doc: Document = getDocumentFromView()
 
@@ -72,7 +71,7 @@ class AmendHumanMedicinePlasticPackagingViewSpec extends ViewSpecBase {
       }
 
       "number submitted is greater than maximum" in {
-        val doc: Document  = getDocumentFromView(form.fillAndValidate(999999999999L))
+        val doc: Document = getDocumentFromView(form.fillAndValidate(999999999999L))
 
         doc.text() must include(messages("amendHumanMedicinePlasticPackaging.error.outOfRange.high"))
       }

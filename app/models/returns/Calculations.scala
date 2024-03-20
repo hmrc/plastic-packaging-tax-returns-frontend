@@ -19,21 +19,22 @@ package models.returns
 import play.api.libs.json.{Json, OFormat}
 
 case class AmendsCalculations(
-                              original: Calculations,
-                              amend: Calculations
-                             )
+  original: Calculations,
+  amend: Calculations
+)
 
 object AmendsCalculations {
   implicit val format: OFormat[AmendsCalculations] = Json.format[AmendsCalculations]
 }
 
-case class Calculations(taxDue: BigDecimal,
-                        chargeableTotal: Long,
-                        deductionsTotal: Long,
-                        packagingTotal: Long,
-                        isSubmittable: Boolean,
-                        taxRate: BigDecimal
-                       )
+case class Calculations(
+  taxDue: BigDecimal,
+  chargeableTotal: Long,
+  deductionsTotal: Long,
+  packagingTotal: Long,
+  isSubmittable: Boolean,
+  taxRate: BigDecimal
+)
 
 object Calculations {
   implicit val format: OFormat[Calculations] = Json.format[Calculations]

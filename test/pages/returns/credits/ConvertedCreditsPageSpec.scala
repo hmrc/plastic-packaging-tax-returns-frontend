@@ -20,6 +20,5 @@ import pages.behaviours.PageBehaviours
 
 class ConvertedCreditsPageSpec extends PageBehaviours {
 
-  "ConvertedCreditsPage" - {
-  }
+  "ConvertedCreditsPage" - {}
 }

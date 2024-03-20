@@ -31,47 +31,45 @@ import views.html.returns.NonExportedRecycledPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NonExportedRecycledPlasticPackagingController @Inject()(
-                                                               override val messagesApi: MessagesApi,
-                                                               cacheConnector: CacheConnector,
-                                                               navigator: ReturnsJourneyNavigator,
-                                                               identify: IdentifierAction,
-                                                               getData: DataRetrievalAction,
-                                                               requireData: DataRequiredAction,
-                                                               form: NonExportedRecycledPlasticPackagingFormProvider,
-                                                               val controllerComponents: MessagesControllerComponents,
-                                                               view: NonExportedRecycledPlasticPackagingView,
-                                                               nonExportedAmountHelper: NonExportedAmountHelper
-                                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class NonExportedRecycledPlasticPackagingController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ReturnsJourneyNavigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  form: NonExportedRecycledPlasticPackagingFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: NonExportedRecycledPlasticPackagingView,
+  nonExportedAmountHelper: NonExportedAmountHelper
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.fill(NonExportedRecycledPlasticPackagingPage, form())
 
-      val preparedForm = request.userAnswers.fill(NonExportedRecycledPlasticPackagingPage, form())
-
-      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-        .fold(
-          Redirect(controllers.routes.IndexController.onPageLoad)) {
-          case (amount, directlyExported, exportedByAnotherBusiness) =>
-            Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
-        }
+    nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+      .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+        case (amount, directlyExported, exportedByAnotherBusiness) =>
+          Ok(view(preparedForm, mode, amount, Seq(directlyExported, exportedByAnotherBusiness).contains(true)))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       form().bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-            .fold(
-              Redirect(controllers.routes.IndexController.onPageLoad)) {
-              case (amount, directlyExported, _) => BadRequest(view(formWithErrors, mode, amount, directlyExported))
-            }
+          Future.successful(
+            nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad)) { case (amount, directlyExported, _) =>
+                BadRequest(view(formWithErrors, mode, amount, directlyExported))
+              }
           ),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedRecycledPlasticPackagingPage, value))
-            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+            _              <- cacheConnector.set(request.pptReference, updatedAnswers)
           } yield Redirect(navigator.nonExportedRecycledPlasticPackagingPage(mode, value))
       )
   }

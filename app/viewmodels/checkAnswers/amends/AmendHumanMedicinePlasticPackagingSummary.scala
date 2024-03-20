@@ -32,13 +32,13 @@ object AmendHumanMedicinePlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendHumanMedicinePlasticPackagingPage).map(_.asKg)
-    val existing: String    = returnDisplayApi.returnDetails.humanMedicines.asKg
+    val existing: String        = returnDisplayApi.returnDetails.humanMedicines.asKg
 
     AmendSummaryRow(
       "amendHumanMedicinePlasticPackaging.checkYourAnswersLabel",
       existing,
       AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-      Some(("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)),
+      Some(("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url))
     )
   }
 

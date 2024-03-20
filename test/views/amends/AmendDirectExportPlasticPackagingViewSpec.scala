@@ -27,7 +27,7 @@ import views.html.amends.AmendDirectExportPlasticPackagingView
 class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
 
   val page: AmendDirectExportPlasticPackagingView = inject[AmendDirectExportPlasticPackagingView]
-  val form: Form[Long] = new AmendDirectExportPlasticPackagingFormProvider()()
+  val form: Form[Long]                            = new AmendDirectExportPlasticPackagingFormProvider()()
 
   private def createView(form: Form[Long] = form): Html =
     page(form)(request, messages)
@@ -35,15 +35,14 @@ class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
   "Amend Direct Export packaging page" should {
 
     "have a paragraph" in {
-      val view: Html = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.text() must include(messages("amendDirectExportPlasticPackaging.para"))
     }
 
-
     "have a hint" in {
-      val view: Html = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("value-hint").text must include(messages("amendDirectExportPlasticPackaging.hint"))
@@ -51,14 +50,14 @@ class AmendDirectExportPlasticPackagingViewSpec extends ViewSpecBase {
 
     "display error" when {
       "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(-1))
+        val view: Html    = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))
       }
 
       "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(999999999999L))
+        val view: Html    = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("amendDirectExportPlasticPackaging.error.outOfRange"))

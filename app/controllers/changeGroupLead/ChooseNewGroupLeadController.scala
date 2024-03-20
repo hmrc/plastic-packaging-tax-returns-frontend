@@ -35,7 +35,6 @@ import views.html.changeGroupLead.ChooseNewGroupLeadView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class ChooseNewGroupLeadController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
@@ -45,15 +44,14 @@ class ChooseNewGroupLeadController @Inject() (
   cacheConnector: CacheConnector,
   subscriptionService: SubscriptionService,
   navigator: ChangeGroupLeadNavigator
-)
-  (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      subscriptionService.fetchGroupMemberNames(request.pptReference).map{ members =>
-        val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
-        Results.Ok(createView(preparedForm, members, mode))
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    subscriptionService.fetchGroupMemberNames(request.pptReference).map { members =>
+      val preparedForm = request.userAnswers.fill(ChooseNewGroupLeadPage, form(members.membersNames))
+      Results.Ok(createView(preparedForm, members, mode))
+    }
   }
 
   private def createView(form: Form[Member], members: GroupMembers, mode: Mode)(implicit request: DataRequest[_]) = {
@@ -61,20 +59,19 @@ class ChooseNewGroupLeadController @Inject() (
     view(form, members, onSubmit)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap{ members =>
-        form(members.membersNames)
-          .bindFromRequest()
-          .fold(
-            errorForm => Future.successful(Results.BadRequest(createView(errorForm, members, mode))),
-            selectedMember =>
-              request.userAnswers
-                .setOrFail(ChooseNewGroupLeadPage, selectedMember)
-                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                .map(_ => Results.Redirect(navigator.selectNewGroupRep(mode)))
-          )
-      }
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    subscriptionService.fetchGroupMemberNames(request.pptReference).flatMap { members =>
+      form(members.membersNames)
+        .bindFromRequest()
+        .fold(
+          errorForm => Future.successful(Results.BadRequest(createView(errorForm, members, mode))),
+          selectedMember =>
+            request.userAnswers
+              .setOrFail(ChooseNewGroupLeadPage, selectedMember)
+              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+              .map(_ => Results.Redirect(navigator.selectNewGroupRep(mode)))
+        )
+    }
   }
 
 }

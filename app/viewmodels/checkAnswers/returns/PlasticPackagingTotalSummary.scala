@@ -28,10 +28,14 @@ import viewmodels.implicits._
 
 class PlasticPackagingTotalSummary(nonExportedAmountHelper: NonExportedAmountHelper) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    Some(SummaryListRowViewModel(
-      key = "confirmPlasticPackagingTotal.total.label",
-      value = ValueViewModel(nonExportedAmountHelper.totalPlasticAdditions(answers).getOrElse(0L).asKg).withCssClass("total-weight"),
-      actions = Seq.empty
-    ))
+    Some(
+      SummaryListRowViewModel(
+        key = "confirmPlasticPackagingTotal.total.label",
+        value = ValueViewModel(nonExportedAmountHelper.totalPlasticAdditions(answers).getOrElse(0L).asKg).withCssClass(
+          "total-weight"
+        ),
+        actions = Seq.empty
+      )
+    )
 
 }

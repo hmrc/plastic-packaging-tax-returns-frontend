@@ -24,9 +24,8 @@ class AmendExportedPlasticPackagingViewA11ySpec extends ViewSpecBase with Access
 
   private val page = inject[AmendExportedPlasticPackagingView]
 
-  private def render: String = {
+  private def render: String =
     page()(request, messages).toString()
-  }
 
   "view shpould pass accessibility tests" in {
     render must passAccessibilityChecks

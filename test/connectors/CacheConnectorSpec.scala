@@ -32,9 +32,9 @@ import scala.concurrent.Future
 class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
 
   val mockConfig = mock[FrontendAppConfig]
-  val connector = new CacheConnector(config = mockConfig, httpClient = mock[HttpClient])
-  val dateVal       = LocalDateTime.now
-  val answers       = UserAnswers("id")
+  val connector  = new CacheConnector(config = mockConfig, httpClient = mock[HttpClient])
+  val dateVal    = LocalDateTime.now
+  val answers    = UserAnswers("id")
 
   "GET" must {
     "successfully fetch cache" in {

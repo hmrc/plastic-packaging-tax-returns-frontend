@@ -35,7 +35,7 @@ import views.html.returns.credits.{CancelCreditsClaimErrorView, CancelCreditsCla
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancelCreditsClaimController @Inject()(
+class CancelCreditsClaimController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -44,37 +44,35 @@ class CancelCreditsClaimController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: CancelCreditsClaimView,
   errorView: CancelCreditsClaimErrorView
-) (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad(key: String): Action[AnyContent] = journeyAction {
-    implicit request =>
-      Ok(createView(request.userAnswers, key, formProvider()))
+  def onPageLoad(key: String): Action[AnyContent] = journeyAction { implicit request =>
+    Ok(createView(request.userAnswers, key, formProvider()))
   }
 
-  def onSubmit(key: String): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-
-      formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(createView(request.userAnswers, key, formWithErrors))),
-        
-        isRemovingYear => {
-          {if (isRemovingYear) {
+  def onSubmit(key: String): Action[AnyContent] = journeyAction.async { implicit request =>
+    formProvider().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(createView(request.userAnswers, key, formWithErrors))),
+      isRemovingYear => {
+        {
+          if (isRemovingYear) {
             request.userAnswers
               .removePath(JsPath \ "credit" \ key)
               .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          } else {Future.unit}
-          }.map(_ => Redirect(navigator.cancelCredit()))
-        }
-      )
+          } else { Future.unit }
+        }.map(_ => Redirect(navigator.cancelCredit()))
+      }
+    )
   }
 
-  private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean]) (implicit request: Request[_]): Html = {
+  private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean])(implicit
+    request: Request[_]
+  ): Html = {
     SingleYearClaim.maybeReadFrom(userAnswers, key)
       .fold(
         ifEmpty = errorView(navigator.cancelCredit().url)
-      )(
-        singleYearClaim => view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim)
-      )
+      )(singleYearClaim => view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim))
   }
-  
+
 }

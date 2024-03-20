@@ -34,7 +34,6 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
 
   val userAnswersNoChanges = UserAnswers("userAnswersId").set(ReturnDisplayApiCacheable, retDisApi).get
 
-
   "hasMadeChangesOnAmend" must {
 
     "return false" when {
@@ -93,7 +92,7 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
     "throws exception" when {
       "when returnDisplayAPI is missing" in {
         val userAnswersNoRDA = UserAnswers("userAnswersId")
-        val exception = intercept[Exception](service.hasMadeChangesOnAmend(userAnswersNoRDA))
+        val exception        = intercept[Exception](service.hasMadeChangesOnAmend(userAnswersNoRDA))
 
         exception.getMessage mustBe "Original return missing from user answers"
 

@@ -24,10 +24,10 @@ import org.scalatestplus.play.PlaySpec
 class CreditBalanceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val creditBalance = CreditBalance(
-    availableCreditInPounds = 1, 
-    totalRequestedCreditInPounds = 2, 
-    totalRequestedCreditInKilograms = 3, 
-    canBeClaimed = true, 
+    availableCreditInPounds = 1,
+    totalRequestedCreditInPounds = 2,
+    totalRequestedCreditInKilograms = 3,
+    canBeClaimed = true,
     credit = Map(
       "a-key" -> TaxablePlastic(weight = 11, moneyInPounds = 22, taxRate = 33),
       "b-key" -> TaxablePlastic(weight = 44, moneyInPounds = 55, taxRate = 66)
@@ -42,5 +42,5 @@ class CreditBalanceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEa
       creditBalance.creditForYear("z-key") mustBe TaxablePlastic.zero
     }
   }
-  
+
 }

@@ -20,7 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Request
 import services.CountryService
 
-
 case class NewGroupLeadAddressDetails(
   addressLine1: String,
   addressLine2: String,
@@ -29,7 +28,7 @@ case class NewGroupLeadAddressDetails(
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
 ) {
-  def definedFields(countryService: CountryService) (implicit request: Request[_])=
+  def definedFields(countryService: CountryService)(implicit request: Request[_]) =
     Seq(
       Some(addressLine1),
       Some(addressLine2),
@@ -58,7 +57,7 @@ object NewGroupLeadAddressDetails {
   implicit val format: OFormat[NewGroupLeadAddressDetails] = Json.format[NewGroupLeadAddressDetails]
 }
 
-case class NewGroupLeadAddressDetailsFormBuffer (
+case class NewGroupLeadAddressDetailsFormBuffer(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: Option[String],
@@ -80,4 +79,3 @@ case class NewGroupLeadAddressDetailsFormBuffer (
     )
   }
 }
-

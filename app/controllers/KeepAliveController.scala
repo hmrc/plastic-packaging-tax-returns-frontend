@@ -25,10 +25,10 @@ import javax.inject.Inject
 class KeepAliveController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
+  getData: DataRetrievalAction
 ) extends FrontendBaseController {
 
   def keepAlive: Action[AnyContent] =
-    (identify andThen getData) { Ok }
+    (identify andThen getData)(Ok)
 
 }

@@ -31,17 +31,19 @@ import java.time.LocalDate
 
 class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val page: ExportedCreditsWeightView = inject[ExportedCreditsWeightView]
-  val form = new ExportedCreditsWeightFormProvider()()
+  val page: ExportedCreditsWeightView      = inject[ExportedCreditsWeightView]
+  val form                                 = new ExportedCreditsWeightFormProvider()()
   val creditRangeOption: CreditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private def createView(form: Form[Long]): Html =
-    page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
+    page(form, "year-key", NormalMode, creditRangeOption)(request, messages)
 
   "view" should {
     val view = createView(form)
     "have title" in {
-      view.select("title").text() mustBe "How much plastic packaging did you pay tax on before it was exported? - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text() mustBe "How much plastic packaging did you pay tax on before it was exported? - Submit return - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("exportedCreditsWeight.heading"))
     }
 
@@ -64,12 +66,12 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
 
     "contain save & continue button" in {
       view.getElementsByClass("govuk-button").text() must include("Save and continue")
-      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
     "show an error message" when {
 
-      "display an error summary box"  in {
+      "display an error summary box" in {
         val view = createView(form.withError("error key", "error message"))
 
         view.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
@@ -98,13 +100,17 @@ class ExportedCreditsWeightViewSpec extends ViewSpecBase with ViewAssertions wit
       "weight less than 0" in {
         val view = createView(form.bind(Map("value" -> "-1")))
 
-        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
+        view.getElementsByClass("govuk-error-summary__list").get(
+          0
+        ).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
       }
 
       "weight greater than 99999999999Kg" in {
         val view = createView(form.bind(Map("value" -> "999999999999")))
 
-        view.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
+        view.getElementsByClass("govuk-error-summary__list").get(
+          0
+        ).text() mustBe "Weight must be between 0kg and 99,999,999,999kg"
       }
 
       "weight is a decimal number" in {

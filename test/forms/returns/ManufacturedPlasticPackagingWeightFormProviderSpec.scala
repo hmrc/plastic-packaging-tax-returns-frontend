@@ -58,6 +58,5 @@ class ManufacturedPlasticPackagingWeightFormProviderSpec extends LongFieldBehavi
       outOfRangeError = FormError(fieldName, "manufacturedPlasticPackagingWeight.error.outOfRange.low")
     )
 
-
   }
 }

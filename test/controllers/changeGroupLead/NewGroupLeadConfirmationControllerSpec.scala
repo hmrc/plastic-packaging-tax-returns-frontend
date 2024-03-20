@@ -29,14 +29,15 @@ import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
 class NewGroupLeadConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val controllerComponents = stubMessagesControllerComponents()
+  private val controllerComponents         = stubMessagesControllerComponents()
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val mockView = mock[NewGroupLeadConfirmationView]
+  private val mockView                     = mock[NewGroupLeadConfirmationView]
 
   val sut = new NewGroupLeadConfirmationController(
     messagesApi = mockMessagesApi,
     controllerComponents = controllerComponents,
-    view = mockView)
+    view = mockView
+  )
 
   "onPageLoad" must {
     "present the view" in {

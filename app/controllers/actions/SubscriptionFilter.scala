@@ -29,28 +29,33 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionFilter @Inject()(
-                                    subscriptionConnector: SubscriptionConnector,
-                                    sessionRepository: SessionRepository
-                                  )(implicit val executionContext: ExecutionContext)
-  extends ActionFilter[IdentifiedRequest] with HeaderCarrierConverter {
+class SubscriptionFilter @Inject() (
+  subscriptionConnector: SubscriptionConnector,
+  sessionRepository: SessionRepository
+)(implicit val executionContext: ExecutionContext)
+    extends ActionFilter[IdentifiedRequest]
+    with HeaderCarrierConverter {
 
   override def filter[A](request: IdentifiedRequest[A]): Future[Option[Result]] = {
-    sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive).flatMap{
+    sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive).flatMap {
       case Some(_) => Future.successful(None)
       case _ =>
-        subscriptionConnector.get(request.pptReference)(fromRequestAndSession(request, request.session)).flatMap{
-          case Right(subscription) => sessionRepository
-            .set(request.cacheKey, SubscriptionIsActive, PPTSubscriptionDetails(subscription.legalEntityDetails))
-            .map(_ => None)
+        subscriptionConnector.get(request.pptReference)(fromRequestAndSession(request, request.session)).flatMap {
+          case Right(subscription) =>
+            sessionRepository
+              .set(request.cacheKey, SubscriptionIsActive, PPTSubscriptionDetails(subscription.legalEntityDetails))
+              .map(_ => None)
           case Left(eisFailure) if eisFailure.isDeregistered =>
             Future.successful(Some(Redirect(controllers.routes.DeregisteredController.onPageLoad())))
           case Left(eisFailure) if eisFailure.isDependentSystemsNotResponding =>
-            throw DownstreamServiceError(EisFailure.DependantSystemReason, new ServiceUnavailableException(eisFailure.failures.toString))
+            throw DownstreamServiceError(
+              EisFailure.DependantSystemReason,
+              new ServiceUnavailableException(eisFailure.failures.toString)
+            )
           case Left(eisFailure) =>
             throw new RuntimeException(
               s"Failed to get subscription - ${eisFailure.failures.map(_.headOption.map(_.reason))
-                .getOrElse("no underlying reason supplied")}"
+                  .getOrElse("no underlying reason supplied")}"
             )
         }
     }

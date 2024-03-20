@@ -49,14 +49,14 @@ import scala.util.Try
 class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[MainContactNameView]
-  private val mockFormProvider = mock[MainContactNameFormProvider]
-  private val mockCache = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val mockNavigator = mock[ChangeGroupLeadNavigator]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[String]]
+  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                     = mock[MainContactNameView]
+  private val mockFormProvider             = mock[MainContactNameFormProvider]
+  private val mockCache                    = mock[CacheConnector]
+  private val journeyAction                = mock[JourneyAction]
+  private val mockNavigator                = mock[ChangeGroupLeadNavigator]
+  private val dataRequest                  = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                         = mock[Form[String]]
 
   val sut = new MainContactNameController(
     mockMessagesApi,
@@ -96,11 +96,11 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
       .getMock[Action[AnyContent]]
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
-
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 
@@ -147,7 +147,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(errorForm), meq("company-name"), meq(NormalMode))(any, any)
       verify(mockFormProvider).apply()
-      verify(form).bindFromRequest()(meq(dataRequest),any)
+      verify(form).bindFromRequest()(meq(dataRequest), any)
     }
 
     "bind the form and bind a value" in {
@@ -156,7 +156,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
       when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
@@ -165,10 +165,12 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       redirectLocation(result) mustBe Some("/test-foo")
       verify(mockNavigator).mainContactName(NormalMode)
       verify(mockFormProvider).apply()
-      verify(form).bindFromRequest()(meq(dataRequest),any)
-      withClue("the selected member must be cached"){
+      verify(form).bindFromRequest()(meq(dataRequest), any)
+      withClue("the selected member must be cached") {
         verify(dataRequest.userAnswers).setOrFail(MainContactNamePage, "test-name")
-        verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
+        verify(dataRequest.userAnswers).save(
+          mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier)
+        )(global)
       }
     }
 
@@ -188,14 +190,12 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
         when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }
     }
   }
-
-
 
 }

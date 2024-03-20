@@ -24,34 +24,33 @@ case class CreditsAnswer(yesNo: Boolean, private val weight: Option[Long]) {
 
   def weightValue: Long = (yesNo, weight) match {
     case (true, Some(x)) => x
-    case _ => 0
+    case _               => 0
   }
 
   def changeYesNoTo(isYes: Boolean): CreditsAnswer = CreditsAnswer(isYes, weightForForm)
-  def asTuple: (Boolean, Long) = yesNo -> weightValue
+  def asTuple: (Boolean, Long)                     = yesNo -> weightValue
 
   def weightForForm: Option[Long] = (yesNo, weight) match {
-    case (_, None) => None
+    case (_, None)  => None
     case (false, _) => Some(0L)
-    case (true, x) => x 
+    case (true, x)  => x
   }
-  
+
 }
 
 object CreditsAnswer {
 
-  def changeYesNoTo(isYes: Boolean) (previousAnswer: Option[CreditsAnswer]): CreditsAnswer = { // Curry for the win
+  def changeYesNoTo(isYes: Boolean)(previousAnswer: Option[CreditsAnswer]): CreditsAnswer = // Curry for the win
     previousAnswer match {
-      case None => CreditsAnswer(isYes, None)
+      case None           => CreditsAnswer(isYes, None)
       case Some(previous) => previous.changeYesNoTo(isYes)
     }
-  }
 
   implicit val formats: OFormat[CreditsAnswer] = Json.format[CreditsAnswer]
 
-  def noClaim: CreditsAnswer = CreditsAnswer(false, None)
-  def answerWeightWith(weight: Long): CreditsAnswer = CreditsAnswer(true, Some(weight))
+  def noClaim: CreditsAnswer                                       = CreditsAnswer(false, None)
+  def answerWeightWith(weight: Long): CreditsAnswer                = CreditsAnswer(true, Some(weight))
   def fillFormYesNo(creditsAnswer: CreditsAnswer): Option[Boolean] = Some(creditsAnswer.yesNo)
-  def fillFormWeight(creditsAnswer: CreditsAnswer): Option[Long] = creditsAnswer.weightForForm
-    
+  def fillFormWeight(creditsAnswer: CreditsAnswer): Option[Long]   = creditsAnswer.weightForForm
+
 }

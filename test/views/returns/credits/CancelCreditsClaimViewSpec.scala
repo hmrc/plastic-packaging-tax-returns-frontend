@@ -28,7 +28,7 @@ import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.CancelCreditsClaimView
 
 class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers with MockitoSugar {
-  
+
   private val page = inject[CancelCreditsClaimView]
   private val form = new CancelCreditsClaimFormProvider()()
 
@@ -38,11 +38,11 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
     when(singleYearClaim.toDateRangeString(any)) thenReturn "date-range-string"
     page(form, Call("POST", "call-url"), singleYearClaim)(request, messages)
   }
-  
+
   "CancelCreditsClaimView" should {
-    
+
     val view = createView(form)
-    
+
     "have a title" in {
       view.select("title").text mustBe
         "Are you sure you want to remove this credit for date-range-string? - Submit return - Plastic Packaging Tax - GOV.UK"
@@ -59,12 +59,15 @@ class CancelCreditsClaimViewSpec extends ViewSpecBase with ViewAssertions with V
       view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
-
     "error" when {
       "no option is selected" in {
         val errorForm = form.bind(Map("value" -> ""))
-        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe "Select yes if you want to remove this credit"
-        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages("cancelCreditsClaim.error.required")
+        createView(errorForm).getElementsByClass(
+          "govuk-error-summary__list"
+        ).text() mustBe "Select yes if you want to remove this credit"
+        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages(
+          "cancelCreditsClaim.error.required"
+        )
       }
 
       "display error summary box" in {

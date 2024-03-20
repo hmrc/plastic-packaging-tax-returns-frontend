@@ -25,7 +25,8 @@ class NonExportedRecycledPlasticPackagingWeightFormProvider @Inject() extends Ma
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long("NonExportRecycledPlasticPackagingWeight.error.required",
+      "value" -> long(
+        "NonExportRecycledPlasticPackagingWeight.error.required",
         "NonExportRecycledPlasticPackagingWeight.error.wholeNumber",
         "NonExportRecycledPlasticPackagingWeight.error.nonNumeric"
       )

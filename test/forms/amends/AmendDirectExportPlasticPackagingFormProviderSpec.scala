@@ -34,7 +34,8 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like longFieldWithMinimum(form,
+    behave like longFieldWithMinimum(
+      form,
       fieldName,
       minimum = minimum,
       expectedError = FormError(
@@ -44,7 +45,8 @@ class AmendDirectExportPlasticPackagingFormProviderSpec extends LongFieldBehavio
       )
     )
 
-    behave like longFieldWithMaximum(form,
+    behave like longFieldWithMaximum(
+      form,
       fieldName,
       maximum = maximum,
       expectedError = FormError(

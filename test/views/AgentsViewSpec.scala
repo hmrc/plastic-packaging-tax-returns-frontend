@@ -23,9 +23,8 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.AgentsView
 
-
-class AgentsViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
-  val page: AgentsView = inject[AgentsView]
+class AgentsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
+  val page: AgentsView   = inject[AgentsView]
   val form: Form[String] = new AgentsFormProvider()()
 
   private def createView(form: Form[String] = form): Html =
@@ -36,7 +35,7 @@ class AgentsViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers
 
     "have a title" in {
       view.select("title").text mustBe
-      "What is your client’s Plastic Packaging Tax registration number? - Plastic Packaging Tax - GOV.UK"
+        "What is your client’s Plastic Packaging Tax registration number? - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a back link" in {
@@ -56,7 +55,7 @@ class AgentsViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers
       view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
 
-    "display an error summary box"  in {
+    "display an error summary box" in {
       val view = createView(form.withError("error", "error message"))
 
       view.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"

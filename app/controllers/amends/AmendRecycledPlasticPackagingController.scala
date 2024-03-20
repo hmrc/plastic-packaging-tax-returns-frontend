@@ -40,40 +40,39 @@ class AmendRecycledPlasticPackagingController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: AmendRecycledPlasticPackagingView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(AmendRecycledPlasticPackagingPage) match {
-          case None        => form()
-          case Some(value) => form().fill(value)
-        }
-        if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
-          Ok(view(preparedForm))
-        } else {
-          Redirect(routes.SubmittedReturnsController.onPageLoad())
-        }
+    (identify andThen getData andThen requireData) { implicit request =>
+      val preparedForm = request.userAnswers.get(AmendRecycledPlasticPackagingPage) match {
+        case None        => form()
+        case Some(value) => form().fill(value)
+      }
+      if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
+        Ok(view(preparedForm))
+      } else {
+        Redirect(routes.SubmittedReturnsController.onPageLoad())
+      }
 
     }
 
   def onSubmit: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptId: String = request.pptReference
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val pptId: String = request.pptReference
 
-        form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(AmendRecycledPlasticPackagingPage, value)
-              )
-              _ <- cacheConnector.set(pptId, updatedAnswers)
-            } yield Redirect(
-              controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+      form().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(AmendRecycledPlasticPackagingPage, value)
             )
-        )
+            _ <- cacheConnector.set(pptId, updatedAnswers)
+          } yield Redirect(
+            controllers.amends.routes.CheckYourAnswersController.onPageLoad()
+          )
+      )
     }
 
 }

@@ -24,10 +24,9 @@ import viewmodels.implicits._
 
 object CreditsTotalPlasticSummary {
 
-  def apply(totalRequestedCreditInKilograms: Long)(implicit messages: Messages): SummaryListRow = {
+  def apply(totalRequestedCreditInKilograms: Long)(implicit messages: Messages): SummaryListRow =
     SummaryListRowViewModel(
-      key = Key("confirmPackagingCredit.totalPlastic", classes="govuk-!-width-one-half"),
+      key = Key("confirmPackagingCredit.totalPlastic", classes = "govuk-!-width-one-half"),
       value = ValueViewModel(totalRequestedCreditInKilograms.asKg)
     )
-  }
 }

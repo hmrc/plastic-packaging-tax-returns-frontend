@@ -29,9 +29,16 @@ trait ModelGenerators {
         addressLine2 <- arbitrary[String]
         addressLine3 <- arbitrary[Option[String]]
         addressLine4 <- arbitrary[Option[String]]
-        postalCode <- arbitrary[Option[String]]
-        countryCode <- arbitrary[String]
+        postalCode   <- arbitrary[Option[String]]
+        countryCode  <- arbitrary[String]
 
-      } yield NewGroupLeadAddressDetails(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
+      } yield NewGroupLeadAddressDetails(
+        addressLine1,
+        addressLine2,
+        addressLine3,
+        addressLine4,
+        postalCode,
+        countryCode
+      )
     }
 }

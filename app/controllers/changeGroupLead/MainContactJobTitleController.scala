@@ -32,37 +32,34 @@ import views.html.changeGroupLead.MainContactJobTitleView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class MainContactJobTitleController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       cacheConnector: CacheConnector,
-                                       navigator: ChangeGroupLeadNavigator,
-                                       journeyAction: JourneyAction,
-                                       form: MainContactJobTitleFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: MainContactJobTitleView
-                                     )(implicit ec: ExecutionContext) extends I18nSupport {
+class MainContactJobTitleController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  navigator: ChangeGroupLeadNavigator,
+  journeyAction: JourneyAction,
+  form: MainContactJobTitleFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: MainContactJobTitleView
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
-    implicit request =>
-      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
-      val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form())
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction { implicit request =>
+    val contactName  = request.userAnswers.getOrFail(MainContactNamePage)
+    val preparedForm = request.userAnswers.fill(MainContactJobTitlePage, form())
 
-      Ok(view(preparedForm, contactName, mode))
+    Ok(view(preparedForm, contactName, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      val contactName = request.userAnswers.getOrFail(MainContactNamePage)
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    val contactName = request.userAnswers.getOrFail(MainContactNamePage)
 
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
-
-        jobTitle =>
-          request.userAnswers
-            .setOrFail(MainContactJobTitlePage, jobTitle)
-            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Redirect(navigator.mainContactJobTitle(mode)))
-      )
+    form().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, mode))),
+      jobTitle =>
+        request.userAnswers
+          .setOrFail(MainContactJobTitlePage, jobTitle)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Redirect(navigator.mainContactJobTitle(mode)))
+    )
   }
 }

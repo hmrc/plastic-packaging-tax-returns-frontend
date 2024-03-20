@@ -50,8 +50,11 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
           auditor.returnStarted("testId", pptReference)
 
-          verify(auditConnector, times(1)).
-            sendExplicitAudit(eqTo(ReturnStarted.eventType), captor.capture())(any(), any(), any())
+          verify(auditConnector, times(1)).sendExplicitAudit(eqTo(ReturnStarted.eventType), captor.capture())(
+            any(),
+            any(),
+            any()
+          )
 
           val capturedEvent = captor.getValue.asInstanceOf[ReturnStarted]
           capturedEvent.internalId mustBe "testId"
@@ -74,8 +77,11 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
           auditor.amendStarted("testId", pptReference)
 
-          verify(auditConnector, times(1)).
-            sendExplicitAudit(eqTo(AmendStarted.eventType), captor.capture())(any(), any(), any())
+          verify(auditConnector, times(1)).sendExplicitAudit(eqTo(AmendStarted.eventType), captor.capture())(
+            any(),
+            any(),
+            any()
+          )
 
           val capturedEvent = captor.getValue.asInstanceOf[AmendStarted]
           capturedEvent.internalId mustBe "testId"

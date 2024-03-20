@@ -27,10 +27,10 @@ final case class CreditRangeOption(from: LocalDate, to: LocalDate) {
 object CreditRangeOption {
   implicit val format: OFormat[CreditRangeOption] = Json.format[CreditRangeOption]
   def createFromString(key: String): CreditRangeOption = {
-    val first = key.substring(0,10)
-    val second = key.substring(11, 21)
+    val first    = key.substring(0, 10)
+    val second   = key.substring(11, 21)
     val fromDate = LocalDate.parse(first)
-    val toDate = LocalDate.parse(second)
+    val toDate   = LocalDate.parse(second)
     CreditRangeOption(fromDate, toDate)
   }
 }

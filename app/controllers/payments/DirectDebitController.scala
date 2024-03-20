@@ -27,19 +27,20 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DirectDebitController @Inject()
-(
+class DirectDebitController @Inject() (
   override val messagesApi: MessagesApi,
   connector: DirectDebitConnector,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   appConf: FrontendAppConfig
 )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def redirectLink: Action[AnyContent] = identify.async { implicit request =>
     val pptRef = request.pptReference
-    val futureLink = connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
-    futureLink.map { link => Redirect(Call("GET", link)) }
+    val futureLink =
+      connector.getDirectDebitLink(pptRef, homeUrl = appConf.returnUrl(payRoute.IndexController.onPageLoad.url))
+    futureLink.map(link => Redirect(Call("GET", link)))
   }
 }

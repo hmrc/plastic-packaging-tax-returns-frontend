@@ -34,15 +34,15 @@ class AmendImportedPlasticPackagingFormProviderSpec extends LongFieldBehaviours 
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like longField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName, "amendImportedPlasticPackaging.error.nonNumeric"),
-                         wholeNumberError =
-                           FormError(fieldName, "amendImportedPlasticPackaging.error.wholeNumber")
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError = FormError(fieldName, "amendImportedPlasticPackaging.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "amendImportedPlasticPackaging.error.wholeNumber")
     )
 
-    behave like longFieldWithMinimum(form,
+    behave like longFieldWithMinimum(
+      form,
       fieldName,
       minimum = minimum,
       expectedError = FormError(
@@ -52,7 +52,8 @@ class AmendImportedPlasticPackagingFormProviderSpec extends LongFieldBehaviours 
       )
     )
 
-    behave like longFieldWithMaximum(form,
+    behave like longFieldWithMaximum(
+      form,
       fieldName,
       maximum = maximum,
       expectedError = FormError(

@@ -27,22 +27,24 @@ object EisError {
 
 case class EisFailure(failures: Option[Seq[EisError]]) {
 
-  /**
-    * @return true when response can be inferred to mean ppt account has been de-registered
-    * @note only correct for responses from the view subscription api
+  /** @return
+    *   true when response can be inferred to mean ppt account has been de-registered
+    * @note
+    *   only correct for responses from the view subscription api
     */
   def isDeregistered: Boolean =
     failures.exists(_.exists(_.code == "NO_DATA_FOUND"))
 
-  /**
-    * @return true if a reason matches that expected from a bad-gateway or service-unavailable failure 
-    * @note intended for use on response from view subscription api, but may also work for others - check the specs
+  /** @return
+    *   true if a reason matches that expected from a bad-gateway or service-unavailable failure
+    * @note
+    *   intended for use on response from view subscription api, but may also work for others - check the specs
     */
   def isDependentSystemsNotResponding: Boolean =
-    failures.exists(_.exists(_.reason == DependantSystemReason ))
+    failures.exists(_.exists(_.reason == DependantSystemReason))
 }
 
 object EisFailure {
-  val DependantSystemReason = "Dependent systems are currently not responding."
+  val DependantSystemReason                = "Dependent systems are currently not responding."
   implicit val format: OFormat[EisFailure] = Json.format[EisFailure]
 }

@@ -26,9 +26,9 @@ object CreditsTaxRateSummary {
 
   def apply(taxRate: BigDecimal)(implicit messages: Messages): SummaryListRow = {
     SummaryListRowViewModel(
-      key = Key("confirmPackagingCredit.taxRate", classes="govuk-!-width-one-half"),
+      key = Key("confirmPackagingCredit.taxRate", classes = "govuk-!-width-one-half"),
       value = ValueViewModel(
-        messages("confirmPackagingCredit.taxRate.value", taxRate.asPoundPerTonne),
+        messages("confirmPackagingCredit.taxRate.value", taxRate.asPoundPerTonne)
       )
     )
 

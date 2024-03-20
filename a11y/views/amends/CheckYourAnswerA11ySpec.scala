@@ -25,26 +25,22 @@ import views.html.amends.CheckYourAnswersView
 
 import java.time.LocalDate
 
-class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
+class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
   val page = inject[CheckYourAnswersView]
-  val obligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(12),
-    LocalDate.now().plusWeeks(16),
-    "PK1")
+  val obligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
   val amendsCalculations = AmendsCalculations(
     Calculations(12, 200L, 100L, 300L, true, 0.2),
     Calculations(12, 200L, 150L, 350L, true, 0.2)
   )
-  val totalRows = createTotalPlasticTable
+  val totalRows      = createTotalPlasticTable
   val deductionsRows = createDeductionTable
-  val calculations = createCalculationTable
+  val calculations   = createCalculationTable
 
-  private def render(isSubmittable: Boolean, amendmentMade: Boolean): String = {
+  private def render(isSubmittable: Boolean, amendmentMade: Boolean): String =
     page(obligation, totalRows, deductionsRows, calculations, amendmentMade)(request, messages).toString()
-  }
 
   "pass accessibility checks" when {
     "no error" in {
@@ -65,16 +61,21 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
         messages("amendManufacturedPlasticPackaging.checkYourAnswersLabel"),
         "200",
         AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url),
+        Some("manufacture", controllers.amends.routes.AmendManufacturedPlasticPackagingController.onPageLoad().url)
       ),
-      AmendSummaryRow(messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
+      AmendSummaryRow(
+        messages("amendImportedPlasticPackaging.checkYourAnswersLabel"),
         "100",
         AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
         Some("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)
       ),
-      AmendSummaryRow(messages("AmendsCheckYourAnswers.packagingTotal"),
+      AmendSummaryRow(
+        messages("AmendsCheckYourAnswers.packagingTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
-        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"),
+        AmendNewAnswerType(
+          Some(amendsCalculations.amend.deductionsTotal.asKg),
+          "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
+        ),
         None
       )
     )
@@ -85,14 +86,17 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
       AmendSummaryRow(
         messages("amendDirectExportPlasticPackaging.checkYourAnswersLabel"),
         "20",
-        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
+        AmendNewAnswerType(
+          Some(amendsCalculations.amend.deductionsTotal.asKg),
+          "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"
+        ),
         Some("export", controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
       ),
       AmendSummaryRow(
         messages("amendHumanMedicinePlasticPackaging.checkYourAnswersLabel"),
         "30",
         AmendNewAnswerType(Some("0"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url),
+        Some("medicine", controllers.amends.routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url)
       ),
       AmendSummaryRow(
         messages("amendRecycledPlasticPackaging.checkYourAnswersLabel"),
@@ -103,16 +107,18 @@ class CheckYourAnswerA11ySpec extends ViewSpecBase with AccessibilityMatchers{
       AmendSummaryRow(
         messages("AmendsCheckYourAnswers.deductionsTotal"),
         amendsCalculations.original.deductionsTotal.asKg,
-        AmendNewAnswerType(Some(amendsCalculations.amend.deductionsTotal.asKg), "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"),
+        AmendNewAnswerType(
+          Some(amendsCalculations.amend.deductionsTotal.asKg),
+          "AmendsCheckYourAnswers.hiddenCell.newAnswer.2"
+        ),
         None
       )
     )
   }
 
-  private def createCalculationTable = {
+  private def createCalculationTable =
     AmendsCalculations(
       Calculations(12, 40, 100, 200, true, 0.2),
       Calculations(12, 40, 100, 200, true, 0.2)
     )
-  }
 }

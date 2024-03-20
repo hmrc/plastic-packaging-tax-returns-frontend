@@ -38,26 +38,24 @@ class NewGroupLeadCheckYourAnswerController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadCheckYourAnswerView,
   navigator: ChangeGroupLeadNavigator
-) 
-  (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = journeyAction {
-    implicit request =>
-      val summaryRows = Seq(
-          ChooseNewGroupLeadSummary,
-          NewGroupLeadEnterContactAddressSummary(countryService),
-          MainContactNameSummary,
-          MainContactJobTitleSummary,
-        ).flatMap(_.row(request.userAnswers))
+  def onPageLoad: Action[AnyContent] = journeyAction { implicit request =>
+    val summaryRows = Seq(
+      ChooseNewGroupLeadSummary,
+      NewGroupLeadEnterContactAddressSummary(countryService),
+      MainContactNameSummary,
+      MainContactJobTitleSummary
+    ).flatMap(_.row(request.userAnswers))
 
-      Ok(view(summaryRows))
+    Ok(view(summaryRows))
   }
 
-  def onSubmit: Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      subscriptionConnector.changeGroupLead(request.pptReference).map{
-        _ => Redirect(navigator.checkYourAnswers)
-      }
+  def onSubmit: Action[AnyContent] = journeyAction.async { implicit request =>
+    subscriptionConnector.changeGroupLead(request.pptReference).map { _ =>
+      Redirect(navigator.checkYourAnswers)
+    }
   }
 
 }

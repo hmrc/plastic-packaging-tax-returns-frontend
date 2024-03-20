@@ -25,9 +25,10 @@ class ExportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long("exportedPlasticPackagingWeight.error.required",
-                     "exportedPlasticPackagingWeight.error.wholeNumber",
-                     "exportedPlasticPackagingWeight.error.nonNumeric"
+      "value" -> long(
+        "exportedPlasticPackagingWeight.error.required",
+        "exportedPlasticPackagingWeight.error.wholeNumber",
+        "exportedPlasticPackagingWeight.error.nonNumeric"
       )
         .verifying(minimumValue(0L, "exportedPlasticPackagingWeight.error.outOfRange"))
         .verifying(maximumValue(99999999999L, "exportedPlasticPackagingWeight.error.outOfRange"))

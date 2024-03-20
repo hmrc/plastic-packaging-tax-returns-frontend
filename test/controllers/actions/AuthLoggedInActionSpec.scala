@@ -27,7 +27,6 @@ import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 import scala.concurrent.Future
 
-
 class AuthLoggedInActionSpec extends PlaySpec {
   val authFun: AuthFunction = mock[AuthFunction]
 
@@ -40,7 +39,7 @@ class AuthLoggedInActionSpec extends PlaySpec {
     "proxy to AuthFunction set to Agents" in {
       when(authFun.authorised(any, any, any)).thenReturn(Future.successful(ImATeapot("")))
 
-      val request = FakeRequest("GET", "/foo")
+      val request                                  = FakeRequest("GET", "/foo")
       val block: AuthedUser[Any] => Future[Result] = _ => Future.successful(Ok("test"))
 
       await(sut.invokeBlock(request, block))

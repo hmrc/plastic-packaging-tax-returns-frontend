@@ -29,11 +29,11 @@ case class GroupPartnershipDetails(
   addressDetails: AddressDetails,
   contactDetails: ContactDetails,
   regWithoutIDFlag: Boolean
-){
+) {
   def isRepresentative: Boolean = relationship == Representative
 }
 
 object GroupPartnershipDetails {
-  val Representative = "Representative"
+  val Representative                                    = "Representative"
   implicit val format: OFormat[GroupPartnershipDetails] = Json.format[GroupPartnershipDetails]
 }

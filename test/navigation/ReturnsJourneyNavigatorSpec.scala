@@ -32,8 +32,8 @@ import queries.Gettable
 
 class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val frontendConfig = mock[FrontendAppConfig]
-  private val userAnswers = mock[UserAnswers]
+  private val frontendConfig          = mock[FrontendAppConfig]
+  private val userAnswers             = mock[UserAnswers]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val navigator = new ReturnsJourneyNavigator(frontendConfig, nonExportedAmountHelper)
@@ -44,7 +44,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "startYourReturn" must {
-    "go to manufactured-components page when answer is yes"in {
+    "go to manufactured-components page when answer is yes" in {
       navigator.startYourReturn(true) mustBe
         returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
@@ -56,25 +56,41 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
   "nonExportedHumanMedicinesPlasticPackagingWeightPage" should {
     "navigate in NormalMode" in {
-      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(NormalMode) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(
+        NormalMode
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     }
     "navigate in CheckMode" in {
-      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(CheckMode) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
+      navigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(
+        CheckMode
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
     }
   }
 
   "nonExportedRecycledPlasticPackagingPage" should {
-    "navigate when yes NormalMode" in{
-      navigator.nonExportedRecycledPlasticPackagingPage(NormalMode, true) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
+    "navigate when yes NormalMode" in {
+      navigator.nonExportedRecycledPlasticPackagingPage(
+        NormalMode,
+        true
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode)
     }
-    "navigate when yes CheckMode" in{
-      navigator.nonExportedRecycledPlasticPackagingPage(CheckMode, true) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode)
+    "navigate when yes CheckMode" in {
+      navigator.nonExportedRecycledPlasticPackagingPage(
+        CheckMode,
+        true
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(CheckMode)
     }
-    "navigate when no NormalMode" in{
-      navigator.nonExportedRecycledPlasticPackagingPage(NormalMode, false) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    "navigate when no NormalMode" in {
+      navigator.nonExportedRecycledPlasticPackagingPage(
+        NormalMode,
+        false
+      ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
-    "navigate when no CheckMode" in{
-      navigator.nonExportedRecycledPlasticPackagingPage(CheckMode, false) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+    "navigate when no CheckMode" in {
+      navigator.nonExportedRecycledPlasticPackagingPage(
+        CheckMode,
+        false
+      ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
   }
 
@@ -91,44 +107,70 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "manufacturedPlasticPackagingWeightPage" should {
-    "navigate when normalmode" in{
-      navigator.manufacturedPlasticPackagingWeightPage(NormalMode) mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+    "navigate when normalmode" in {
+      navigator.manufacturedPlasticPackagingWeightPage(
+        NormalMode
+      ) mustBe returnsRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
     }
-    "navigate when checkmode" in{
-      navigator.manufacturedPlasticPackagingWeightPage(CheckMode) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+    "navigate when checkmode" in {
+      navigator.manufacturedPlasticPackagingWeightPage(
+        CheckMode
+      ) mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
   }
 
   "nonExportedHumanMedicinesPlasticPackagingPage" should {
-    "navigate when answer is yes NormalMode" in{
-      navigator.nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, true) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
+    "navigate when answer is yes NormalMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(
+        NormalMode,
+        true
+      ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(NormalMode)
     }
-    "navigate when answer is yes CheckMode" in{
-      navigator.nonExportedHumanMedicinesPlasticPackagingPage(CheckMode, true) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode)
+    "navigate when answer is yes CheckMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(
+        CheckMode,
+        true
+      ) mustBe returnsRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(CheckMode)
     }
-    "navigate when answer is no NormalMode" in{
-      navigator.nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, false) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
+    "navigate when answer is no NormalMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(
+        NormalMode,
+        false
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode)
     }
-    "navigate when answer is no CheckMode" in{
-      navigator.nonExportedHumanMedicinesPlasticPackagingPage(CheckMode, false) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
+    "navigate when answer is no CheckMode" in {
+      navigator.nonExportedHumanMedicinesPlasticPackagingPage(
+        CheckMode,
+        false
+      ) mustBe returnsRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(CheckMode)
     }
   }
 
   "what do you want to do page" should {
     "go to claim for which year" in {
-      navigator.whatDoYouWantDo(isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
+      navigator.whatDoYouWantDo(isClaimingCredit = true) mustBe creditRoutes.ClaimForWhichYearController.onPageLoad(
+        NormalMode
+      )
     }
     "skip credit, go to the first page of the return" in {
-      navigator.whatDoYouWantDo(isClaimingCredit = false) mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      navigator.whatDoYouWantDo(isClaimingCredit =
+        false
+      ) mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
     }
   }
-  
+
   "claim for which year page" should {
     "include the key" in {
       val year = mock[CreditRangeOption]
       when(year.key) thenReturn "a-key"
-      navigator.claimForWhichYear(year, NormalMode) mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", NormalMode)
-      navigator.claimForWhichYear(year, CheckMode) mustBe creditRoutes.ExportedCreditsController.onPageLoad("a-key", CheckMode)
+      navigator.claimForWhichYear(year, NormalMode) mustBe creditRoutes.ExportedCreditsController.onPageLoad(
+        "a-key",
+        NormalMode
+      )
+      navigator.claimForWhichYear(year, CheckMode) mustBe creditRoutes.ExportedCreditsController.onPageLoad(
+        "a-key",
+        CheckMode
+      )
     }
   }
 
@@ -137,7 +179,10 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       "user answer is yes, in normal mode" in {
         when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
         val call = navigator.exportedCreditsYesNo("year-key", NormalMode, true, userAnswers)
-        call mustBe controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad("year-key", NormalMode)
+        call mustBe controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(
+          "year-key",
+          NormalMode
+        )
       }
 
       "user answer is yes, in check mode" in {
@@ -151,21 +196,24 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         val call = navigator.exportedCreditsYesNo("year-key", NormalMode, false, userAnswers)
         call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", NormalMode)
       }
-      
+
       "user answer is no, it is in Check mode but converted questions have not been done" in {
         when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn None
         val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
         call mustBe controllers.returns.credits.routes.ConvertedCreditsController.onPageLoad("year-key", CheckMode)
       }
-      
+
       "user answer is no, it is in Check mode and converted questions have been done" in {
         when(userAnswers.get(any[Gettable[Any]])(any)) thenReturn Some(CreditsAnswer.noClaim)
         val call = navigator.exportedCreditsYesNo("year-key", CheckMode, false, userAnswers)
-        call mustBe controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
+        call mustBe controllers.returns.credits.routes.ConfirmPackagingCreditController.onPageLoad(
+          "year-key",
+          CheckMode
+        )
       }
     }
   }
-  
+
   "exportedCreditsWeight" must {
 
     "redirect to converted yes-no page" when {
@@ -190,7 +238,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "convertedCreditsYesNo" must {
-    
+
     "redirect to weight page when user answers 'yes'" when {
       "normal mode" in {
         val call = navigator.convertedCreditsYesNo(NormalMode, "year-key", true)
@@ -201,18 +249,18 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe creditRoutes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode)
       }
     }
-    
+
     "skip weight page when user answers 'no'" when {
       "normal mode" in {
-        val call = navigator.convertedCreditsYesNo(NormalMode,"year-key",  false)
+        val call = navigator.convertedCreditsYesNo(NormalMode, "year-key", false)
         call mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", NormalMode)
       }
       "check mode" in {
-        val call = navigator.convertedCreditsYesNo(CheckMode,"year-key", false)
+        val call = navigator.convertedCreditsYesNo(CheckMode, "year-key", false)
         call mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("year-key", CheckMode)
       }
     }
-    
+
   }
 
   "convertedCreditsWeight" must {
@@ -235,21 +283,21 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       navigator.confirmCredit(CheckMode) mustBe creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode)
     }
   }
-  
+
   "summary list of credit years claimed" when {
-    
+
     "in normal mode" in {
-      navigator.creditClaimedList(NormalMode, isAddingAnotherYear = false, userAnswers) mustBe 
+      navigator.creditClaimedList(NormalMode, isAddingAnotherYear = false, userAnswers) mustBe
         returnsRoutes.NowStartYourReturnController.onPageLoad
-      navigator.creditClaimedList(NormalMode, isAddingAnotherYear = true, userAnswers) mustBe 
+      navigator.creditClaimedList(NormalMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
     }
-    
+
     "in check mode without returns section completed" in {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(any)) thenReturn false
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = false, userAnswers) mustBe
         returnsRoutes.NowStartYourReturnController.onPageLoad
-      navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe 
+      navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
     }
 
@@ -259,21 +307,32 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
-    }    
+    }
 
     "redirect to CYA page in CheckMode Mode and have NOT done Returns questions" in {
-      navigator.creditClaimedList(CheckMode, false, userAnswers) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
+      navigator.creditClaimedList(
+        CheckMode,
+        false,
+        userAnswers
+      ) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
     }
 
     "redirect to CYA page in CheckMode Mode and have done Returns questions" in {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers)).thenReturn(true)
-      navigator.creditClaimedList(CheckMode, false, userAnswers) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+      navigator.creditClaimedList(
+        CheckMode,
+        false,
+        userAnswers
+      ) mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
   }
-  
+
   "credit summary" should {
     "change a claim for a year" in {
-      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad("a-key", CheckMode).url
+      navigator.creditSummaryChange("a-key") mustBe creditRoutes.ConfirmPackagingCreditController.onPageLoad(
+        "a-key",
+        CheckMode
+      ).url
     }
     "remove a claim for a year" in {
       navigator.creditSummaryRemove("a-key") mustBe creditRoutes.CancelCreditsClaimController.onPageLoad("a-key").url
@@ -286,12 +345,14 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
   "firstPageOfReturnSection" should {
     "go to the first page of the return" in {
-      navigator.firstPageOfReturnSection mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
+      navigator.firstPageOfReturnSection mustBe returnsRoutes.ManufacturedPlasticPackagingController.onPageLoad(
+        NormalMode
+      )
     }
   }
 
   "manufacturedPlasticPackagingRoute" must {
-    
+
     "redirect to manufacturedWeight page in normal mode" when {
       "answer is Yes" in {
         val call = navigator.manufacturedPlasticPackaging(NormalMode, hasAnswerChanged = true, yesNo = true)
@@ -360,7 +421,6 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
       }
 
-
       "answer is No and has not changed" in {
         val call = navigator.importedPlasticPackaging(NormalMode, hasAnswerChanged = false, yesNo = false)
         call mustBe returnsRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
@@ -369,7 +429,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "exportedPlasticPackagingWeightRoute" when {
-    
+
     "all plastic is exported  in NormalMode" in {
       val call = navigator.exportedPlasticPackagingWeightRoute(true, NormalMode)
       call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
@@ -392,7 +452,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "exportedByAnotherBusinessWeightRoute" when {
-    
+
     "all plastic exported in NormalMode" in {
       val call = navigator.exportedByAnotherBusinessWeightRoute(true, NormalMode)
       call mustBe returnsRoutes.ReturnsCheckYourAnswersController.onPageLoad()
@@ -461,7 +521,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "directlyExportedComponentsRoute" when {
-    
+
     "answer is yes in check mode" in {
       navigator.directlyExportedComponentsRoute(true, CheckMode) mustBe
         returnsRoutes.ExportedPlasticPackagingWeightController.onPageLoad(CheckMode)
@@ -481,16 +541,16 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
       navigator.directlyExportedComponentsRoute(false, NormalMode) mustBe
         returnsRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(NormalMode)
     }
-    
+
   }
-  
+
   "exportedByAnotherBusinessRoute" when {
-    
+
     "answer is yes in normal mode" in {
       navigator.exportedByAnotherBusinessRoute(true, NormalMode) mustBe
         returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(NormalMode)
     }
-    
+
     "answer is yes in check mode" in {
       navigator.exportedByAnotherBusinessRoute(true, CheckMode) mustBe
         returnsRoutes.AnotherBusinessExportWeightController.onPageLoad(CheckMode)
@@ -511,6 +571,5 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "link to change credit answers" in {
       navigator.cyaChangeCredits mustBe creditRoutes.CreditsClaimedListController.onPageLoad(CheckMode).url
     }
-  } 
+  }
 }
-

@@ -29,7 +29,6 @@ import pages.returns._
 
 class ExportedPlasticAnswerSpec extends PlaySpec {
 
-
   private val answer = createUserAnswer
 
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
@@ -148,15 +147,17 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
         ("bot value are not available", None, None, None)
       )
 
-      forAll(table) {
-        (description, amendExported, amendExportedByAnotherBusiness, expectedResult) =>
-          description in {
-            val newUserAnswer = createUserAnswer
-            val ans = amendExported.fold[UserAnswers](newUserAnswer)(newUserAnswer.set(AmendDirectExportPlasticPackagingPage, _).get)
-            val ans1 = amendExportedByAnotherBusiness.fold[UserAnswers](ans)(ans.set(AmendExportedByAnotherBusinessPage, _).get)
+      forAll(table) { (description, amendExported, amendExportedByAnotherBusiness, expectedResult) =>
+        description in {
+          val newUserAnswer = createUserAnswer
+          val ans = amendExported.fold[UserAnswers](newUserAnswer)(
+            newUserAnswer.set(AmendDirectExportPlasticPackagingPage, _).get
+          )
+          val ans1 =
+            amendExportedByAnotherBusiness.fold[UserAnswers](ans)(ans.set(AmendExportedByAnotherBusinessPage, _).get)
 
-            ExportedPlasticAnswer(ans1).totalAmendExportedPlastic mustBe expectedResult
-          }
+          ExportedPlasticAnswer(ans1).totalAmendExportedPlastic mustBe expectedResult
+        }
       }
     }
   }

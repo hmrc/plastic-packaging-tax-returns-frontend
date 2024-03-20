@@ -31,7 +31,8 @@ class ManufacturedPlasticPackagingViewSpec extends ViewSpecBase with ViewAsserti
   val form = new ManufacturedPlasticPackagingFormProvider()()
   val page = inject[ManufacturedPlasticPackagingView]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
   private def createView: Html =
     page(form, NormalMode, aTaxObligation)(request, messages)
@@ -45,7 +46,7 @@ class ManufacturedPlasticPackagingViewSpec extends ViewSpecBase with ViewAsserti
         "Have you manufactured finished plastic packaging components in this period? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
-    "have a heading" in{
+    "have a heading" in {
 
       view.select("h1").text mustBe
         "Have you manufactured finished plastic packaging components in this period?"
@@ -57,11 +58,12 @@ class ManufacturedPlasticPackagingViewSpec extends ViewSpecBase with ViewAsserti
 
     }
 
-    "contain paragraph content" in{
+    "contain paragraph content" in {
 
-      val text = "Tax is chargeable when a plastic packaging component is finished. Plastic packaging is finished when the last substantial modification " +
-        "in the manufacturing process has been made. If you’re still not sure, check when packaging is classed as finished and what we mean by components " +
-        "and substantial modifications."
+      val text =
+        "Tax is chargeable when a plastic packaging component is finished. Plastic packaging is finished when the last substantial modification " +
+          "in the manufacturing process has been made. If you’re still not sure, check when packaging is classed as finished and what we mean by components " +
+          "and substantial modifications."
 
       view.getElementsByClass("govuk-body").text() must include(text)
 

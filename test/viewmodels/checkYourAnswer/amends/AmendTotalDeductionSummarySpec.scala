@@ -33,8 +33,8 @@ class AmendTotalDeductionSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
   private val ans = mock[UserAnswers]
   private val calculations = AmendsCalculations(
-    Calculations(1,2, 200, 100, true, 0.2),
-    Calculations(1,2,100, 100, true, 0.2)
+    Calculations(1, 2, 200, 100, true, 0.2),
+    Calculations(1, 2, 100, 100, true, 0.2)
   )
 
   override def beforeEach(): Unit = {

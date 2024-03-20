@@ -25,8 +25,9 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val cacheConnector: CacheConnector) 
-  (implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
+class DataRetrievalActionImpl @Inject() (val cacheConnector: CacheConnector)(implicit
+  val executionContext: ExecutionContext
+) extends DataRetrievalAction {
 
   protected def transform[A](request: IdentifiedRequest[A]): Future[OptionalDataRequest[A]] = {
     val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

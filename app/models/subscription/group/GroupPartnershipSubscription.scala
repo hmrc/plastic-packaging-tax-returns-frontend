@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 case class GroupPartnershipSubscription(
   representativeControl: Option[Boolean],
   allMembersControl: Option[Boolean],
-  groupPartnershipDetails: Seq[GroupPartnershipDetails],
+  groupPartnershipDetails: Seq[GroupPartnershipDetails]
 )
 
 object GroupPartnershipSubscription {

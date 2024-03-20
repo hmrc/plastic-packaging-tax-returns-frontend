@@ -26,7 +26,7 @@ import views.html.amends.AmendRecycledPlasticPackagingView
 class AmendRecycledPlasticPackagingViewSpec extends ViewSpecBase {
 
   val page: AmendRecycledPlasticPackagingView = inject[AmendRecycledPlasticPackagingView]
-  val form: Form[Long] = new AmendRecycledPlasticPackagingFormProvider()()
+  val form: Form[Long]                        = new AmendRecycledPlasticPackagingFormProvider()()
 
   private def getDocumentFromView(form: Form[Long] = form): Document = {
     val view = page(form)(request, messages)
@@ -57,7 +57,6 @@ class AmendRecycledPlasticPackagingViewSpec extends ViewSpecBase {
       doc.text() must include(messages("amendRecycledPlasticPackaging.para"))
     }
 
-
     "have a hint" in {
       val doc: Document = getDocumentFromView()
 
@@ -81,4 +80,3 @@ class AmendRecycledPlasticPackagingViewSpec extends ViewSpecBase {
 
   }
 }
-

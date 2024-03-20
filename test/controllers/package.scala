@@ -20,8 +20,8 @@ import play.api.mvc.{Action, AnyContent, Result}
 import scala.concurrent.Future
 
 package object controllers {
-    implicit class BetterMockActionSyntax(action: Action[AnyContent]){
-      def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
-        action.apply(request)
-    }
+  implicit class BetterMockActionSyntax(action: Action[AnyContent]) {
+    def skippingJourneyAction(request: DataRequest[AnyContent]): Future[Result] =
+      action.apply(request)
+  }
 }

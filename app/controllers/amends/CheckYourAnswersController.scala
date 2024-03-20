@@ -36,33 +36,38 @@ import views.html.amends.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()
-(override val messagesApi: MessagesApi,
- journeyAction: JourneyAction,
- returnsConnector: TaxReturnsConnector,
- comparisonService: AmendReturnAnswerComparisonService,
- val controllerComponents: MessagesControllerComponents,
- sessionRepository: SessionRepository,
- view: CheckYourAnswersView,
-)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
+class CheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  journeyAction: JourneyAction,
+  returnsConnector: TaxReturnsConnector,
+  comparisonService: AmendReturnAnswerComparisonService,
+  val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  view: CheckYourAnswersView
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem)
+    extends I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
-          case Some(obligation) if obligation.tooOldToAmend =>
-            throw new IllegalStateException(s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}")
-          case Some(obligation) =>
-            returnsConnector.getCalculationAmends(request.pptReference).map {
-              case Right(calculations) => displayPage(request, obligation, calculations)
-              case Left(error) => throw error
-            }
-          case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
-        }
+    journeyAction.async { implicit request =>
+      request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable) match {
+        case Some(obligation) if obligation.tooOldToAmend =>
+          throw new IllegalStateException(
+            s"trying to amend obligation that is beyond the allowed range. ${obligation.periodKey}"
+          )
+        case Some(obligation) =>
+          returnsConnector.getCalculationAmends(request.pptReference).map {
+            case Right(calculations) => displayPage(request, obligation, calculations)
+            case Left(error)         => throw error
+          }
+        case None => Future.successful(Redirect(routes.SubmittedReturnsController.onPageLoad()))
+      }
     }
 
-  private def displayPage(request: DataRequest[AnyContent], obligation: TaxReturnObligation,
-                          calculations: AmendsCalculations)(implicit r: DataRequest[_]) = {
+  private def displayPage(
+    request: DataRequest[AnyContent],
+    obligation: TaxReturnObligation,
+    calculations: AmendsCalculations
+  )(implicit r: DataRequest[_]) = {
 
     val totalRows: Seq[AmendSummaryRow] = Seq(
       AmendManufacturedPlasticPackagingSummary.apply(request.userAnswers),
@@ -82,14 +87,12 @@ class CheckYourAnswersController @Inject()
   }
 
   def onSubmit(): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        returnsConnector.amend(request.pptReference).flatMap {
-          optChargeRef =>
-            sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map {
-              _ => Redirect(routes.AmendConfirmationController.onPageLoad())
-            }
+    journeyAction.async { implicit request =>
+      returnsConnector.amend(request.pptReference).flatMap { optChargeRef =>
+        sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map { _ =>
+          Redirect(routes.AmendConfirmationController.onPageLoad())
         }
+      }
     }
-  
+
 }

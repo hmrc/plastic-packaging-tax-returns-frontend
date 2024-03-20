@@ -30,13 +30,27 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
   val page = inject[ViewReturnSummaryView]
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
-    "21C2", Some("charge-ref-no"), "2022-04-01", "2022-06-30", "2022-07-03", "New"
+    "21C2",
+    Some("charge-ref-no"),
+    "2022-04-01",
+    "2022-06-30",
+    "2022-07-03",
+    "New"
   )
 
   private val debitForPeriod = 100
 
   private val returnDetails = ReturnDisplayDetails(
-    10, 2, 3, 4, 5, 6, debitForPeriod, 8, 9, 10
+    10,
+    2,
+    3,
+    4,
+    5,
+    6,
+    debitForPeriod,
+    8,
+    9,
+    10
   )
 
   private val displayReturn = ReturnDisplayApi(
@@ -48,9 +62,8 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
 
   val summaryRow = ViewReturnSummaryViewModel(displayReturn)(messages)
 
-  def createView: Html = {
+  def createView: Html =
     page("anyPeriod", summaryRow, Right(Call(GET, "/foo")), "£300")(request, messages)
-  }
 
   "view" should {
     val view = createView
@@ -63,7 +76,6 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
       view.getElementsByClass("govuk-summary-list__row").select("dt").text() must include("Credit total")
       view.getElementsByClass("govuk-summary-list__row").get(2).select("dd").text() mustBe "£100.00"
     }
-
 
     "contain a how much the plastic is charged for tonne" in {
       view.select("p").text() must include("For this period, tax is charged at a rate of £300 per tonne.")

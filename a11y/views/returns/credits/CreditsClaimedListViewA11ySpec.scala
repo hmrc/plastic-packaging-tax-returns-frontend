@@ -55,9 +55,15 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
 
   val creditRangeOption = CreditRangeOption(LocalDate.now(), LocalDate.now())
 
-  val creditBalance = CreditBalance(10, 20, 5L, true, Map(
-    creditRangeOption.key -> TaxablePlastic(0, 20, 0)
-  ))
+  val creditBalance = CreditBalance(
+    10,
+    20,
+    5L,
+    true,
+    Map(
+      creditRangeOption.key -> TaxablePlastic(0, 20, 0)
+    )
+  )
 
   def render(form: Form[Boolean], creditBalance: CreditBalance): String =
     page(form, creditBalance, LocalDate.now(), Seq(creditRangeOption), years, NormalMode)(request, messages).toString()
@@ -73,7 +79,10 @@ class CreditsClaimedListViewA11ySpec extends ViewSpecBase with AccessibilityMatc
       }
 
       "no more years to claim" in {
-        page(form, creditBalance, LocalDate.now(), Seq.empty, years, NormalMode)(request, messages).toString() must passAccessibilityChecks
+        page(form, creditBalance, LocalDate.now(), Seq.empty, years, NormalMode)(
+          request,
+          messages
+        ).toString() must passAccessibilityChecks
       }
     }
 

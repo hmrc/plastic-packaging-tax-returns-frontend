@@ -33,18 +33,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class UserAnswersSpec extends PlaySpec 
-  with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
+class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
-  private val emptyUserAnswers = UserAnswers("empty")
+  private val emptyUserAnswers  = UserAnswers("empty")
   private val filledUserAnswers = UserAnswers("filled", obj("cheese" -> obj("brie" -> "200g")))
-  
-  private val question = mock[QuestionPage[String]]
+
+  private val question     = mock[QuestionPage[String]]
   private val saveFunction = mock[SaveUserAnswerFunc]
   private val newValueFunc = mock[Option[String] => String]
   private val fillFormFunc = mock[String => Option[String]]
-  private val emptyForm = mock[Form[String]]("empty form")
-  private val filledForm = mock[Form[String]]("filled form")
+  private val emptyForm    = mock[Form[String]]("empty form")
+  private val filledForm   = mock[Form[String]]("filled form")
 
   class RandoException extends Exception {}
 
@@ -55,22 +54,22 @@ class UserAnswersSpec extends PlaySpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    
+
     when(question.path) thenReturn JsPath \ "cheese" \ "brie"
-    when(question.cleanup(any, any)) thenAnswer {
-      (_: Option[String], userAnswers: UserAnswers) => Try(userAnswers) // pass through
+    when(question.cleanup(any, any)) thenAnswer { (_: Option[String], userAnswers: UserAnswers) =>
+      Try(userAnswers) // pass through
     }
-    
+
     when(saveFunction.apply(any, any)) thenReturn Future.successful(true)
     when(newValueFunc.apply(any)) thenReturn "new-value"
-    
+
     when(emptyForm.fill(any)) thenReturn filledForm
   }
 
   "it" should {
     "have an id" in {
-      emptyUserAnswers must have(Symbol("id") ("empty"))
-      filledUserAnswers must have(Symbol("id") ("filled"))
+      emptyUserAnswers must have(Symbol("id")("empty"))
+      filledUserAnswers must have(Symbol("id")("filled"))
     }
   }
 
@@ -88,12 +87,12 @@ class UserAnswersSpec extends PlaySpec
     }
 
     "pass on exceptions if something else goes wrong" in {
-      a [RandoException] must be thrownBy emptyUserAnswers.setOrFail(JsPath \ "x", BadValue())
+      a[RandoException] must be thrownBy emptyUserAnswers.setOrFail(JsPath \ "x", BadValue())
     }
   }
-  
+
   "set" should {
-    
+
     "set a value" in {
       val updatedAnswers = emptyUserAnswers.set(question, "much")
       updatedAnswers.success.value.data.value mustBe Map("cheese" -> JsObject(Seq("brie" -> JsString("much"))))
@@ -114,21 +113,21 @@ class UserAnswersSpec extends PlaySpec
     "complain when an answer is missing" when {
       "using a question" in {
         when(question.path) thenReturn JsPath \ "doesnt" \ "exist"
-        the [Exception] thrownBy emptyUserAnswers.getOrFail(question) must have message
+        the[Exception] thrownBy emptyUserAnswers.getOrFail(question) must have message
           "/doesnt/exist is missing from user answers"
       }
       "using a path" in {
-        the [Exception] thrownBy emptyUserAnswers.getOrFail[JsValue](JsPath \ "not-there") must have message
+        the[Exception] thrownBy emptyUserAnswers.getOrFail[JsValue](JsPath \ "not-there") must have message
           "/not-there is missing from user answers"
       }
     }
-    
+
     "complain if an answer cannot be read as given type" in {
-      the [Exception] thrownBy filledUserAnswers.getOrFail[Long](JsPath \ "cheese" \ "brie") must have message
+      the[Exception] thrownBy filledUserAnswers.getOrFail[Long](JsPath \ "cheese" \ "brie") must have message
         "/cheese/brie in user answers cannot be read as type Long"
     }
   }
-  
+
   "get" when {
     "calling with a JsPath" in {
       filledUserAnswers.get[String](JsPath \ "cheese" \ "brie") mustBe Some("200g")
@@ -145,7 +144,7 @@ class UserAnswersSpec extends PlaySpec
   }
 
   "it" should {
-    
+
     "fill in a form's value" when {
       "the answer exists" in {
         filledUserAnswers.fill(question, emptyForm) mustBe theSameInstanceAs(filledForm)
@@ -160,7 +159,7 @@ class UserAnswersSpec extends PlaySpec
         verify(emptyForm, never).fill(any)
       }
     }
-    
+
     "fill a yes-no form using given function" when {
       "user answer does not exist" in {
         emptyUserAnswers.fillWithFunc(question, emptyForm, fillFormFunc) mustBe theSameInstanceAs(emptyForm)
@@ -192,35 +191,37 @@ class UserAnswersSpec extends PlaySpec
         verify(saveFunction, never).apply(any, any)
       }
     }
-    
+
     "change a value with a function" when {
-      
+
       "previous value exists" in {
         await {
           filledUserAnswers.changeWithFunc(question, newValueFunc, saveFunction)
         }
         verify(newValueFunc).apply(Some("200g"))
         verify(saveFunction).apply(
-          eqTo(UserAnswers("filled", obj { "cheese" -> obj("brie" -> "new-value") }, filledUserAnswers.lastUpdated)), 
-          any)
+          eqTo(UserAnswers("filled", obj("cheese" -> obj("brie" -> "new-value")), filledUserAnswers.lastUpdated)),
+          any
+        )
       }
-      
+
       "previous value does not exist" in {
         await {
           emptyUserAnswers.changeWithFunc(question, newValueFunc, saveFunction)
         }
         verify(newValueFunc).apply(None)
         verify(saveFunction).apply(
-          eqTo(UserAnswers("empty", obj { "cheese" -> obj("brie" -> "new-value") }, emptyUserAnswers.lastUpdated)),
-          any)
+          eqTo(UserAnswers("empty", obj("cheese" -> obj("brie" -> "new-value")), emptyUserAnswers.lastUpdated)),
+          any
+        )
       }
     }
-    
+
     "save changed answers" in {
-      await(filledUserAnswers.save(saveFunction)) must be theSameInstanceAs(filledUserAnswers)
+      await(filledUserAnswers.save(saveFunction)) must be theSameInstanceAs filledUserAnswers
       verify(saveFunction).apply(any, any)
     }
-    
+
     "remove answers" when {
 
       "remove all answers" in {
@@ -235,13 +236,21 @@ class UserAnswersSpec extends PlaySpec
       }
 
       "remove a top level field" in {
-        filledUserAnswers.removePath(JsPath \ "cheese") mustBe UserAnswers("filled", obj(), filledUserAnswers.lastUpdated)
+        filledUserAnswers.removePath(JsPath \ "cheese") mustBe UserAnswers(
+          "filled",
+          obj(),
+          filledUserAnswers.lastUpdated
+        )
       }
 
       "remove a nested field" in {
-        filledUserAnswers.removePath(JsPath \ "cheese" \ "brie") mustBe UserAnswers("filled", obj(
-          "cheese" -> Json.obj(),
-        ), filledUserAnswers.lastUpdated)
+        filledUserAnswers.removePath(JsPath \ "cheese" \ "brie") mustBe UserAnswers(
+          "filled",
+          obj(
+            "cheese" -> Json.obj()
+          ),
+          filledUserAnswers.lastUpdated
+        )
       }
 
     }
@@ -249,37 +258,52 @@ class UserAnswersSpec extends PlaySpec
     "quickly set lots of fields" when {
 
       "one key-value pair" in {
-        filledUserAnswers.setAll("x" -> "y") mustBe UserAnswers("filled", Json.obj(
-          "cheese" -> Json.obj("brie" -> "200g"),
-          "x" -> "y"
-        ), filledUserAnswers.lastUpdated)
+        filledUserAnswers.setAll("x" -> "y") mustBe UserAnswers(
+          "filled",
+          Json.obj(
+            "cheese" -> Json.obj("brie" -> "200g"),
+            "x"      -> "y"
+          ),
+          filledUserAnswers.lastUpdated
+        )
       }
 
       "multiple key-values" in {
-        filledUserAnswers.setAll("x" -> "y", "left" -> "right") mustBe UserAnswers("filled", Json.obj(
-          "cheese" -> Json.obj("brie" -> "200g"),
-          "left" -> "right",
-          "x" -> "y",
-        ), filledUserAnswers.lastUpdated)
+        filledUserAnswers.setAll("x" -> "y", "left" -> "right") mustBe UserAnswers(
+          "filled",
+          Json.obj(
+            "cheese" -> Json.obj("brie" -> "200g"),
+            "left"   -> "right",
+            "x"      -> "y"
+          ),
+          filledUserAnswers.lastUpdated
+        )
       }
 
       "values are of multiple js types" in {
-        filledUserAnswers.setAll("x" -> JsNumber(1), "y" -> JsString("z")) mustBe UserAnswers("filled", Json.obj(
-          "cheese" -> Json.obj("brie" -> "200g"),
-          "x" -> 1,
-          "y" -> "z",
-        ), filledUserAnswers.lastUpdated)
+        filledUserAnswers.setAll("x" -> JsNumber(1), "y" -> JsString("z")) mustBe UserAnswers(
+          "filled",
+          Json.obj(
+            "cheese" -> Json.obj("brie" -> "200g"),
+            "x"      -> 1,
+            "y"      -> "z"
+          ),
+          filledUserAnswers.lastUpdated
+        )
       }
 
       "nested field" in {
-        filledUserAnswers.setAll("x" -> obj { "y" -> "z" }) mustBe UserAnswers("filled", Json.obj(
-          "cheese" -> Json.obj("brie" -> "200g"),
-          "x" -> Json.obj {"y" -> "z"}
-        ), filledUserAnswers.lastUpdated)
+        filledUserAnswers.setAll("x" -> obj("y" -> "z")) mustBe UserAnswers(
+          "filled",
+          Json.obj(
+            "cheese" -> Json.obj("brie" -> "200g"),
+            "x"      -> Json.obj("y" -> "z")
+          ),
+          filledUserAnswers.lastUpdated
+        )
       }
 
     }
-
 
   }
 }

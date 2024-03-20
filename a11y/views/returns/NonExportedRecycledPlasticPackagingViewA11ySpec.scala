@@ -31,7 +31,8 @@ class NonExportedRecycledPlasticPackagingViewA11ySpec extends ViewSpecBase with 
 
     val amount = 123L
 
-    def render(directlyExportedYesNoAnswer: Boolean): String = page(form, NormalMode, amount, directlyExportedYesNoAnswer)(request, messages).toString()
+    def render(directlyExportedYesNoAnswer: Boolean): String =
+      page(form, NormalMode, amount, directlyExportedYesNoAnswer)(request, messages).toString()
 
     "pass accessibility checks" when {
       "directly exported answer is Yes" in {

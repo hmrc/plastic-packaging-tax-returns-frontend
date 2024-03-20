@@ -27,7 +27,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 
 import scala.concurrent.Future
 
-
 class AuthAgentActionSpec extends PlaySpec {
 
   val authFun: AuthFunction = mock[AuthFunction]
@@ -41,7 +40,7 @@ class AuthAgentActionSpec extends PlaySpec {
     "proxy to AuthFunction set to Agents" in {
       when(authFun.authorised(any, any, any)).thenReturn(Future.successful(ImATeapot("")))
 
-      val request = FakeRequest("GET", "/foo")
+      val request                                  = FakeRequest("GET", "/foo")
       val block: AuthedUser[Any] => Future[Result] = _ => Future.successful(Ok("test"))
 
       await(sut.invokeBlock(request, block))

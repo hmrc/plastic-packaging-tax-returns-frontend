@@ -30,7 +30,11 @@ object Charge {
   implicit val writes: OFormat[Charge] = Json.format[Charge]
 }
 
-final case class PPTFinancials(creditAmount: Option[BigDecimal], debitAmount: Option[Charge], overdueAmount: Option[BigDecimal]) {
+final case class PPTFinancials(
+  creditAmount: Option[BigDecimal],
+  debitAmount: Option[Charge],
+  overdueAmount: Option[BigDecimal]
+) {
 
   def amountToPayInPence: Int = debitAmount.map(_.amount).orElse(overdueAmount).map(a => (100 * a).toInt).getOrElse(0)
 
@@ -43,11 +47,19 @@ final case class PPTFinancials(creditAmount: Option[BigDecimal], debitAmount: Op
       case (Some(amount), None, None) =>
         messages("account.homePage.card.payments.inCredit", formatCurrencyAmount(amount))
       case (None, Some(Charge(amount, date)), None) =>
-        messages("account.homePage.card.payments.debitDue", formatCurrencyAmount(amount), s"${date.getDayOfMonth} ${getMonth(date)} ${date.getYear}")
+        messages(
+          "account.homePage.card.payments.debitDue",
+          formatCurrencyAmount(amount),
+          s"${date.getDayOfMonth} ${getMonth(date)} ${date.getYear}"
+        )
       case (None, None, Some(amount)) =>
         messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount))
       case (None, Some(Charge(debit, _)), Some(overdue)) =>
-        messages("account.homePage.card.payments.debitAndOverDue", formatCurrencyAmount(debit), formatCurrencyAmount(overdue))
+        messages(
+          "account.homePage.card.payments.debitAndOverDue",
+          formatCurrencyAmount(debit),
+          formatCurrencyAmount(overdue)
+        )
       case _ => messages("account.homePage.card.payments.error")
     }
 

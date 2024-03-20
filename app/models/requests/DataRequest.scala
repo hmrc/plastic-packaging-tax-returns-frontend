@@ -20,7 +20,7 @@ import models.UserAnswers
 import play.api.mvc.WrappedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
-case class OptionalDataRequest[A] (
+case class OptionalDataRequest[A](
   request: IdentifiedRequest[A],
   answers: Option[UserAnswers]
 ) extends WrappedRequest[A](request) {
@@ -36,8 +36,8 @@ case class DataRequest[A](
   userAnswers: UserAnswers
 ) extends WrappedRequest[A](request) {
 
-  def pptReference: String = request.pptReference
-  def cacheKey: String = request.cacheKey
+  def pptReference: String         = request.pptReference
+  def cacheKey: String             = request.cacheKey
   def headerCarrier: HeaderCarrier = request.headerCarrier
 }
 

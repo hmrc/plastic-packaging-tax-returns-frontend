@@ -47,27 +47,32 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class NonExportedRecycledPlasticPackagingWeightControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with MockitoSugar
     with BeforeAndAfterEach {
 
   private val formProvider = new NonExportedRecycledPlasticPackagingWeightFormProvider()
-  private def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute  = Call("GET", "/foo")
 
-  private val validAnswer: Long = 10L
-  private val manufacturedAmount = 200L
-  private val importedAmount = 100L
-  private val exportedAmount = 50L
+  private val validAnswer: Long               = 10L
+  private val manufacturedAmount              = 200L
+  private val importedAmount                  = 100L
+  private val exportedAmount                  = 50L
   private val exportedByAnotherBusinessAmount = 50L
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
+    exportedAmount,
+    exportedByAnotherBusinessAmount,
+    manufacturedAmount,
+    importedAmount
+  )
 
   private val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
-  private val mockMessagesApi= mock[MessagesApi]
-  private val mockCacheConnector= mock[CacheConnector]
-  private val mockNavigator =  mock[ReturnsJourneyNavigator]
-  private val mockView = mock[NonExportedRecycledPlasticPackagingWeightView]
+  private val mockMessagesApi             = mock[MessagesApi]
+  private val mockCacheConnector          = mock[CacheConnector]
+  private val mockNavigator               = mock[ReturnsJourneyNavigator]
+  private val mockView                    = mock[NonExportedRecycledPlasticPackagingWeightView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val userAns = mock[UserAnswers]
@@ -84,7 +89,9 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return OK" when {
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
 
-        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, false)))
+        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(
+          Some((300L, false, false))
+        )
         when(userAns.get(NonExportedRecycledPlasticPackagingWeightPage)).thenReturn(Some(validAnswer))
 
         val result = createSut(Some(userAns)).onPageLoad(NormalMode)(
@@ -98,7 +105,12 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "Return the right key" when {
 
       val table = Table(
-        ("description", "DirectlyExportedComponentsPage value", "PlasticExportedByAnotherBusinessPage value", "expected"),
+        (
+          "description",
+          "DirectlyExportedComponentsPage value",
+          "PlasticExportedByAnotherBusinessPage value",
+          "expected"
+        ),
         ("both question were answered Yes", true, true, true),
         ("directlyExport is Yes and ExportedByAnotherBusiness is No", true, false, true),
         ("directlyExport is No and ExportedByAnotherBusiness is Yes", false, true, true),
@@ -106,19 +118,18 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
       )
 
       forAll(table) {
-        (
-          description: String,
-          directlyExport: Boolean,
-          ExportedByAnotherBusiness: Boolean,
-          message: Boolean) =>
-
+        (description: String, directlyExport: Boolean, ExportedByAnotherBusiness: Boolean, message: Boolean) =>
           description in {
-            when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, directlyExport, ExportedByAnotherBusiness)))
+            when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(
+              Some((300L, directlyExport, ExportedByAnotherBusiness))
+            )
             when(userAns.get(NonExportedRecycledPlasticPackagingWeightPage)).thenReturn(Some(validAnswer))
 
-            await(createSut(Some(userAns)).onPageLoad(NormalMode)(
-              FakeRequest(GET, recycledPlasticPackagingWeightRoute)
-            ))
+            await(
+              createSut(Some(userAns)).onPageLoad(NormalMode)(
+                FakeRequest(GET, recycledPlasticPackagingWeightRoute)
+              )
+            )
 
             verify(mockView).apply(
               ArgumentMatchers.eq(formProvider().fill(validAnswer)),
@@ -131,7 +142,6 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
       }
 
     }
-
 
     "redirect GET to home page when exported amount not found" in {
       when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
@@ -177,7 +187,7 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
 
       await(
         createSut(Some(nonExportedAnswer))
-        .onSubmit(NormalMode)(fakePostRequestWithBody(("value", validAnswer.toString)))
+          .onSubmit(NormalMode)(fakePostRequestWithBody(("value", validAnswer.toString)))
       )
 
       val expectedUserAnswer = nonExportedAnswer.set(NonExportedRecycledPlasticPackagingWeightPage, validAnswer).get
@@ -186,7 +196,9 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     "return a Bad Request and the correct view" when {
 
       "DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage answer is No" in {
-        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, false)))
+        when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(
+          Some((300L, false, false))
+        )
 
         val userAnswer = nonExportedAnswer.set(DirectlyExportedPage, false).get
           .set(AnotherBusinessExportedPage, false).get
@@ -214,10 +226,9 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
     }
   }
 
-  private def fakePostRequestWithBody(body: (String, String)) = {
+  private def fakePostRequestWithBody(body: (String, String)) =
     FakeRequest(POST, recycledPlasticPackagingWeightRoute)
       .withFormUrlEncodedBody(body)
-  }
 
   private def createSut(userAnswer: Option[UserAnswers]) =
     new NonExportedRecycledPlasticPackagingWeightController(
@@ -231,5 +242,5 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
       stubMessagesControllerComponents(),
       mockView,
       mockNonExportedAmountHelper
-  )
+    )
 }

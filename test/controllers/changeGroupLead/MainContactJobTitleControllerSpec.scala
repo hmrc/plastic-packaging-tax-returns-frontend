@@ -46,18 +46,17 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
 
-
 class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[MainContactJobTitleView]
-  private val mockFormProvider = mock[MainContactJobTitleFormProvider]
-  private val mockCache = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[String]]
-  private val mockNavigator =  mock[ChangeGroupLeadNavigator]
+  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                     = mock[MainContactJobTitleView]
+  private val mockFormProvider             = mock[MainContactJobTitleFormProvider]
+  private val mockCache                    = mock[CacheConnector]
+  private val journeyAction                = mock[JourneyAction]
+  private val dataRequest                  = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                         = mock[Form[String]]
+  private val mockNavigator                = mock[ChangeGroupLeadNavigator]
 
   val sut = new MainContactJobTitleController(
     mockMessagesApi,
@@ -73,15 +72,7 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockMessagesApi,
-      journeyAction,
-      mockView,
-      mockFormProvider,
-      mockCache,
-      form,
-      mockNavigator,
-      dataRequest
-    )
+    reset(mockMessagesApi, journeyAction, mockView, mockFormProvider, mockCache, form, mockNavigator, dataRequest)
 
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
@@ -93,14 +84,14 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
     when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) =>
-        Future.successful(function(request)))
+      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
       .getMock[Action[AnyContent]]
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
     "invoke the journey action" in {
@@ -144,9 +135,9 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(errorForm), meq("job-title"),  meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(errorForm), meq("job-title"), meq(NormalMode))(any, any)
       verify(mockFormProvider).apply()
-      verify(form).bindFromRequest()(meq(dataRequest),any)
+      verify(form).bindFromRequest()(meq(dataRequest), any)
     }
 
     "bind the form and bind the value" in {
@@ -155,7 +146,7 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
       when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
@@ -164,10 +155,12 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
       redirectLocation(result) mustBe Some("/test-foo")
 
       verify(mockFormProvider).apply()
-      verify(form).bindFromRequest()(meq(dataRequest),any)
-      withClue("the selected member must be cached"){
+      verify(form).bindFromRequest()(meq(dataRequest), any)
+      withClue("the selected member must be cached") {
         verify(dataRequest.userAnswers).setOrFail(MainContactJobTitlePage, "test-name")
-        verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
+        verify(dataRequest.userAnswers).save(
+          mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier)
+        )(global)
       }
     }
 
@@ -187,7 +180,7 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
         when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))

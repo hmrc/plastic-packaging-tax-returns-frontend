@@ -46,28 +46,32 @@ class ViewReturnSummaryController @Inject() (
   taxReturnHelper: TaxReturnHelper,
   returnsConnector: TaxReturnsConnector,
   errorHandler: ErrorHandler
-)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem) extends I18nSupport {
+)(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem)
+    extends I18nSupport {
 
   def onPageLoad(periodKey: String): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-
-        fetchData(periodKey).map {
-          case Right((_, submittedReturn, obligation, ddInProgress)) =>
-            val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
-            val amendCall =
-              Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey))
-                .filterOrElse(_ => !obligation.tooOldToAmend, Unamendable.TooOld)
-                .filterOrElse(_ => !ddInProgress, Unamendable.DDInProgress)
-            Ok(view(returnPeriod, ViewReturnSummaryViewModel(submittedReturn.displayReturnJson), amendCall, submittedReturn.taxRate.asPoundPerTonne))
-          case Left(result) => result
-        }
+    journeyAction.async { implicit request =>
+      fetchData(periodKey).map {
+        case Right((_, submittedReturn, obligation, ddInProgress)) =>
+          val returnPeriod = views.ViewUtils.displayReturnQuarter(obligation)
+          val amendCall =
+            Right(controllers.amends.routes.ViewReturnSummaryController.amendReturn(periodKey))
+              .filterOrElse(_ => !obligation.tooOldToAmend, Unamendable.TooOld)
+              .filterOrElse(_ => !ddInProgress, Unamendable.DDInProgress)
+          Ok(
+            view(
+              returnPeriod,
+              ViewReturnSummaryViewModel(submittedReturn.displayReturnJson),
+              amendCall,
+              submittedReturn.taxRate.asPoundPerTonne
+            )
+          )
+        case Left(result) => result
+      }
     }
-    
+
   def amendReturn(periodKey: String): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        
+    journeyAction.async { implicit request =>
       fetchData(periodKey).flatMap {
         case Right((pptReference, submittedReturn, obligation, ddInProgress)) =>
           handleAPIsSuccessResponse(periodKey, pptReference, submittedReturn, obligation, ddInProgress)
@@ -89,39 +93,38 @@ class ViewReturnSummaryController @Inject() (
         .map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
   }
 
-  private def handleNewPeriodKey
-  (
+  private def handleNewPeriodKey(
     periodKey: String,
     pptReference: String,
     submittedReturn: SubmittedReturn,
     obligation: TaxReturnObligation
-  )(implicit request: DataRequest[_]): Future[Any] = {
-
-    if(!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey))
+  )(implicit request: DataRequest[_]): Future[Any] =
+    if (!request.userAnswers.get(AmendSelectedPeriodKey).contains(periodKey))
       reinitialiseCache(periodKey, pptReference, submittedReturn.displayReturnJson, obligation)
     else Future.unit
-  }
 
-  private def fetchData(periodKey: String)(implicit request: DataRequest[_])
-  : Future[Either[Result, (String, SubmittedReturn, TaxReturnObligation, Boolean)]] = {
+  private def fetchData(periodKey: String)(implicit
+    request: DataRequest[_]
+  ): Future[Either[Result, (String, SubmittedReturn, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("""\d{2}C[1-4]""")) Future.successful(Left(NotFound(errorHandler.notFoundTemplate(request.request))))
+    if (!periodKey.matches("""\d{2}C[1-4]"""))
+      Future.successful(Left(NotFound(errorHandler.notFoundTemplate(request.request))))
     else {
 
       val futureReturn: Future[SubmittedReturn] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
-      val futureMaybeObligation: Future[Option[TaxReturnObligation]] = taxReturnHelper.getObligation(pptReference, periodKey)
+      val futureMaybeObligation: Future[Option[TaxReturnObligation]] =
+        taxReturnHelper.getObligation(pptReference, periodKey)
       val futureDDInProgress: Future[DDInProgressApi] = returnsConnector.ddInProgress(pptReference, periodKey)
       for {
         submittedReturn <- futureReturn
         maybeObligation <- futureMaybeObligation
-        ddInProgress <- futureDDInProgress
-      } yield {
-        maybeObligation match {
-          case Some(obligation) => Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
-          case None => Left(NotFound(errorHandler.notFoundTemplate))
-        }
-
+        ddInProgress    <- futureDDInProgress
+      } yield maybeObligation match {
+        case Some(obligation) =>
+          Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
+        case None => Left(NotFound(errorHandler.notFoundTemplate))
       }
+
     }
   }
 
@@ -140,11 +143,11 @@ class ViewReturnSummaryController @Inject() (
   }
 
 }
- object ViewReturnSummaryController {
+object ViewReturnSummaryController {
 
-   sealed trait Unamendable
-   object Unamendable {
-     case object TooOld extends Unamendable
-     case object DDInProgress extends Unamendable
-   }
- }
+  sealed trait Unamendable
+  object Unamendable {
+    case object TooOld       extends Unamendable
+    case object DDInProgress extends Unamendable
+  }
+}

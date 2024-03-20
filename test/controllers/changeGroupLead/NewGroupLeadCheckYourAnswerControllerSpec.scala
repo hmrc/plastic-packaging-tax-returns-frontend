@@ -48,16 +48,16 @@ import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndAfterEach{
+class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val view: NewGroupLeadCheckYourAnswerView = mock[NewGroupLeadCheckYourAnswerView]
-  private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messagesApi = mock[MessagesApi]
-  private val messages = mock[Messages]
-  private val navigator = mock[ChangeGroupLeadNavigator]
-  private val subscriptionConnector = mock[SubscriptionConnector]
-  private val countryService = mock[CountryService]
+  private val journeyAction                         = mock[JourneyAction]
+  private val dataRequest                           = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi                           = mock[MessagesApi]
+  private val messages                              = mock[Messages]
+  private val navigator                             = mock[ChangeGroupLeadNavigator]
+  private val subscriptionConnector                 = mock[SubscriptionConnector]
+  private val countryService                        = mock[CountryService]
 
   private val sut = new NewGroupLeadCheckYourAnswerController(
     messagesApi,
@@ -68,7 +68,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     view,
     navigator
   )
-
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -84,17 +83,15 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
 
   def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
     when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) =>
-        Future.successful(function(request)))
+      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
       .getMock[Action[AnyContent]]
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) =>
-        function(request))
-      .getMock[Action[AnyContent]]
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
-  
   "onPageLoad" should {
     "return OK" in {
       when(dataRequest.userAnswers.get(ArgumentMatchers.eq(ChooseNewGroupLeadPage))(any))
@@ -115,7 +112,8 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     "construct the summary list and pass it to the view" in {
       when(dataRequest.userAnswers.get(any[Gettable[Any]])(any)).thenReturn(Some(Member("Blah", "1")), None)
 
-      val definedRow = ChooseNewGroupLeadSummary.row(UserAnswers("").setOrFail(ChooseNewGroupLeadPage, Member("Blah", "1"))
+      val definedRow = ChooseNewGroupLeadSummary.row(
+        UserAnswers("").setOrFail(ChooseNewGroupLeadPage, Member("Blah", "1"))
       )(messages).get
 
       await(sut.onPageLoad.skippingJourneyAction(dataRequest))
@@ -151,13 +149,13 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   }
 
   "onSubmit" should {
-    
+
     "use the journey action" in {
       when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(FakeRequest())
       verify(journeyAction).async(any)
     }
-    
+
     "redirect via the navigator" in {
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
       await(result)
@@ -171,8 +169,7 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
       verify(subscriptionConnector).changeGroupLead(refEq(dataRequest.pptReference))(any)
     }
   }
-  
-  
+
   private def verifyAndCaptureValue: Seq[SummaryListRow] = {
     val captor = ArgumentCaptor.forClass(classOf[Seq[SummaryListRow]])
 

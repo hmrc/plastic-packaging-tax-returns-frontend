@@ -34,15 +34,15 @@ class NonExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFiel
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like longField(form,
+    behave like longField(
+      form,
       fieldName,
-      nonNumericError =
-        FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.nonNumeric"),
-      wholeNumberError =
-        FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.wholeNumber")
+      nonNumericError = FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "NonExportRecycledPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like longFieldWithMinimum(form,
+    behave like longFieldWithMinimum(
+      form,
       fieldName,
       minimum = minimum,
       expectedError = FormError(
@@ -52,7 +52,8 @@ class NonExportedRecycledPlasticPackagingWeightFormProviderSpec extends LongFiel
       )
     )
 
-    behave like longFieldWithMaximum(form,
+    behave like longFieldWithMaximum(
+      form,
       fieldName,
       maximum = maximum,
       expectedError = FormError(

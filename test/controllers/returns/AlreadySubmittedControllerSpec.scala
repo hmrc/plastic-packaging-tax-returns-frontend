@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class AlreadySubmittedControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
-  private val mockView = mock[AlreadySubmittedView]
+  private val mockView              = mock[AlreadySubmittedView]
 
   private val sut = new AlreadySubmittedController(
     stubMessagesControllerComponents(),
@@ -50,7 +50,7 @@ class AlreadySubmittedControllerSpec extends PlaySpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(mockView.apply(any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   "onPageLoad" should {

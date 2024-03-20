@@ -32,8 +32,7 @@ case object ManufacturedPlasticPackagingWeightPage extends QuestionPage[Long] {
     value.map(amount =>
       if (amount > 0) {
         userAnswers.set(ManufacturedPlasticPackagingPage, true, cleanup = false)
-      }
-      else {
+      } else {
         super.cleanup(value, userAnswers)
       }
     ).getOrElse(super.cleanup(value, userAnswers))

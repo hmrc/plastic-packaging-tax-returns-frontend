@@ -26,23 +26,22 @@ import views.html.returns.SubmittedReturnsView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class SubmittedReturnsController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: SubmittedReturnsView,
-                                            obligationsConnector: ObligationsConnector
-                                          )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+class SubmittedReturnsController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: SubmittedReturnsView,
+  obligationsConnector: ObligationsConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    identify.async {
+    identify.async { implicit request =>
+      val pptReference = request.pptReference
 
-      implicit request =>
-        val pptReference = request.pptReference
-
-        obligationsConnector.getFulfilled(pptReference).map { taxReturnObligations =>
-          Ok(view(taxReturnObligations))
-        }
+      obligationsConnector.getFulfilled(pptReference).map { taxReturnObligations =>
+        Ok(view(taxReturnObligations))
+      }
     }
 }

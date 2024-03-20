@@ -26,10 +26,10 @@ import views.html.returns.credits.ConvertedCreditsWeightView
 
 import java.time.LocalDate
 
-class ConvertedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityMatchers{
+class ConvertedCreditsWeightViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new ConvertedCreditsWeightFormProvider()()
-  val page = inject[ConvertedCreditsWeightView]
+  val form              = new ConvertedCreditsWeightFormProvider()()
+  val page              = inject[ConvertedCreditsWeightView]
   val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   def render(form: Form[Long]): String =

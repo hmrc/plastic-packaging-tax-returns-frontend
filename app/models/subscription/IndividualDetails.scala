@@ -24,12 +24,11 @@ case class IndividualDetails(
   middleName: Option[String],
   lastName: String
 ) {
-  def toDisplayString:String = {
+  def toDisplayString: String = {
     val titleOrNot = title.map(_ + " ").getOrElse("")
     s"$titleOrNot$firstName $lastName"
   }
 }
-
 
 object IndividualDetails {
   implicit val format: OFormat[IndividualDetails] = Json.format[IndividualDetails]

@@ -50,10 +50,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
 
         val pptReference       = UUID.randomUUID().toString
         val expectedRegDetails = createSubscriptionDisplayResponse(ukLimitedCompanySubscription)
-        givenGetSubscriptionEndpointReturns(Status.OK,
-                                            pptReference,
-                                            Json.toJsObject(expectedRegDetails).toString
-        )
+        givenGetSubscriptionEndpointReturns(Status.OK, pptReference, Json.toJsObject(expectedRegDetails).toString)
 
         val res = await(connector.get(pptReference))
 
@@ -92,10 +89,7 @@ class SubscriptionConnectorSpec extends ConnectorISpec with ScalaFutures with Ei
 
         val pptReference = UUID.randomUUID().toString
 
-        givenUpdateSubscriptionEndpointReturns(Status.OK,
-                                               pptReference,
-                                               "some body"
-        )
+        givenUpdateSubscriptionEndpointReturns(Status.OK, pptReference, "some body")
 
         val res = await(connector.changeGroupLead(pptReference))
 

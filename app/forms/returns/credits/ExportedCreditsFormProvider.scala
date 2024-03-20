@@ -21,9 +21,8 @@ import play.api.data.Form
 
 class ExportedCreditsFormProvider extends Mappings {
 
-  def apply(): Form[Boolean] = {
+  def apply(): Form[Boolean] =
     Form(
       "value" -> boolean("exportedCredits.error.required")
     )
-  }
 }

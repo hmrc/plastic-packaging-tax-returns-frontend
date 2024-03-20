@@ -27,7 +27,7 @@ import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.AnotherBusinessExportWeightView
 
 class AnotherBusinessExportWeightViewSpec
-  extends ViewSpecBase
+    extends ViewSpecBase
     with ViewAssertions
     with ViewMatchers
     with AccessibilityMatchers {
@@ -50,7 +50,7 @@ class AnotherBusinessExportWeightViewSpec
         "How much of your 1,234kg of finished plastic packaging components did another business export or convert? - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
-    "have a heading" in{
+    "have a heading" in {
 
       view.select("h1").text mustBe
         "How much of your 1,234kg of finished plastic packaging components did another business export or convert?"
@@ -65,16 +65,18 @@ class AnotherBusinessExportWeightViewSpec
       val view: Html    = createView
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("value-hint").text must include (messages("1 tonne is 1,000kg."))
+      doc.getElementById("value-hint").text must include(messages("1 tonne is 1,000kg."))
     }
 
-    "contain paragraph content" in{
+    "contain paragraph content" in {
 
-      view.getElementsByClass("govuk-body").text() must include (messages("This will show as a deduction on your tax calculation."))
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("This will show as a deduction on your tax calculation.")
+      )
     }
     "contain save & continue button" in {
 
-      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
   }
 

@@ -49,20 +49,19 @@ import scala.concurrent.Future
 import scala.util.Try
 
 class ExportedPlasticPackagingWeightControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with MockitoSugar
     with JourneyActionAnswer
     with BeforeAndAfterEach {
 
-
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Long]]
-  private val messagesApi = mock[MessagesApi]
-  private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[ReturnsJourneyNavigator]
-  private val journeyAction = mock[JourneyAction]
-  private val formProvider = mock[ExportedPlasticPackagingWeightFormProvider]
-  private val view = mock[ExportedPlasticPackagingWeightView]
+  private val dataRequest                 = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                        = mock[Form[Long]]
+  private val messagesApi                 = mock[MessagesApi]
+  private val cacheConnector              = mock[CacheConnector]
+  private val navigator                   = mock[ReturnsJourneyNavigator]
+  private val journeyAction               = mock[JourneyAction]
+  private val formProvider                = mock[ExportedPlasticPackagingWeightFormProvider]
+  private val view                        = mock[ExportedPlasticPackagingWeightView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new ExportedPlasticPackagingWeightController(
@@ -76,8 +75,8 @@ class ExportedPlasticPackagingWeightControllerSpec
     view
   )
 
-  val saveUserAnswersFunc: UserAnswers.SaveUserAnswerFunc = {
-    case _ => Future.successful(true)
+  val saveUserAnswersFunc: UserAnswers.SaveUserAnswerFunc = { case _ =>
+    Future.successful(true)
   }
 
   override protected def beforeEach(): Unit = {
@@ -125,7 +124,7 @@ class ExportedPlasticPackagingWeightControllerSpec
       when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(form)
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
-      verify(view).apply(ArgumentMatchers.eq(form), meq(NormalMode), meq(100L))(any,any)
+      verify(view).apply(ArgumentMatchers.eq(form), meq(NormalMode), meq(100L))(any, any)
       verify(dataRequest.userAnswers).fill(meq(DirectlyExportedWeightPage), meq(form))(any)
     }
 
@@ -164,10 +163,7 @@ class ExportedPlasticPackagingWeightControllerSpec
 
       await(sut.onSubmit(CheckMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers).setOrFail(
-        meq(DirectlyExportedWeightPage),
-        meq(5L),
-        meq(false))(any)
+      verify(dataRequest.userAnswers).setOrFail(meq(DirectlyExportedWeightPage), meq(5L), meq(false))(any)
     }
 
     "save userAnswer with clean up equal to true in NormalMode" in {
@@ -176,10 +172,7 @@ class ExportedPlasticPackagingWeightControllerSpec
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(dataRequest.userAnswers).setOrFail(
-        meq(DirectlyExportedWeightPage),
-        meq(5L),
-        meq(true))(any)
+      verify(dataRequest.userAnswers).setOrFail(meq(DirectlyExportedWeightPage), meq(5L), meq(true))(any)
     }
 
     "return an error" when {
@@ -191,7 +184,7 @@ class ExportedPlasticPackagingWeightControllerSpec
         val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
         status(result) mustEqual BAD_REQUEST
-        verify(view).apply(meq(errorForm), meq(NormalMode), meq(100L))(any,any)
+        verify(view).apply(meq(errorForm), meq(NormalMode), meq(100L))(any, any)
       }
 
       "redirect to index controller if cannot calculate total plastic" in {

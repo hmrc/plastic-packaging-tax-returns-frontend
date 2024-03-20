@@ -26,21 +26,22 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
 
-class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  private val page = inject[NewGroupLeadEnterContactAddressView]
-  private val formProvider = new NewGroupLeadEnterContactAddressFormProvider()
+  private val page             = inject[NewGroupLeadEnterContactAddressView]
+  private val formProvider     = new NewGroupLeadEnterContactAddressFormProvider()
   private val organisationName = "Organisation Name"
 
-  private def createView(form: Form[_] = formProvider.apply(), countryMap: Map[String,String] = Map()): Html = {
+  private def createView(form: Form[_] = formProvider.apply(), countryMap: Map[String, String] = Map()): Html =
     page(form, countryMap, organisationName, NormalMode)(request, messages)
-  }
 
   "view" should {
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() mustBe s"What is the organisation’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text() mustBe s"What is the organisation’s contact address? - Account - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("newGroupLeadEnterContactAddress.title"))
     }
 
@@ -58,34 +59,64 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     "have input box" when {
       val table = Table(
         ("description", "id", "message", "key", "autocompleteValue"),
-        ("Address Line 1", "addressLine1", "Address line 1", "newGroupLeadEnterContactAddress.addressLine1.label", "address-line1"),
-        ("Address Line 2", "addressLine2", "Address line 2 (optional)", "newGroupLeadEnterContactAddress.addressLine2.label", "address-line2"),
-        ("Address Line 3", "addressLine3", "Address line 3 (optional)", "newGroupLeadEnterContactAddress.addressLine3.label", "off"),
-        ("Address Line 4", "addressLine4", "Town or city", "newGroupLeadEnterContactAddress.addressLine4.label", "address-level2"),
-        ("Postal Code", "postalCode", "Postcode (required for UK addresses)", "newGroupLeadEnterContactAddress.postalCode.label", "postal-code"),
+        (
+          "Address Line 1",
+          "addressLine1",
+          "Address line 1",
+          "newGroupLeadEnterContactAddress.addressLine1.label",
+          "address-line1"
+        ),
+        (
+          "Address Line 2",
+          "addressLine2",
+          "Address line 2 (optional)",
+          "newGroupLeadEnterContactAddress.addressLine2.label",
+          "address-line2"
+        ),
+        (
+          "Address Line 3",
+          "addressLine3",
+          "Address line 3 (optional)",
+          "newGroupLeadEnterContactAddress.addressLine3.label",
+          "off"
+        ),
+        (
+          "Address Line 4",
+          "addressLine4",
+          "Town or city",
+          "newGroupLeadEnterContactAddress.addressLine4.label",
+          "address-level2"
+        ),
+        (
+          "Postal Code",
+          "postalCode",
+          "Postcode (required for UK addresses)",
+          "newGroupLeadEnterContactAddress.postalCode.label",
+          "postal-code"
+        )
       )
 
-      forAll(table) {
-        (description, id, message, key, autocompleteValue) =>
-          s"for $description" in {
-            view.getElementsByAttributeValue("for", id).text() mustBe message
-            view.getElementsByAttributeValue("for", id).text() mustBe messages(key)
-            view.getElementsByAttributeValue("id", id).attr("autocomplete") mustBe autocompleteValue
-          }
+      forAll(table) { (description, id, message, key, autocompleteValue) =>
+        s"for $description" in {
+          view.getElementsByAttributeValue("for", id).text() mustBe message
+          view.getElementsByAttributeValue("for", id).text() mustBe messages(key)
+          view.getElementsByAttributeValue("id", id).attr("autocomplete") mustBe autocompleteValue
+        }
       }
     }
 
     "have country code input" in {
       view.getElementsByAttributeValue("for", countryCode).text() mustBe "Country"
-      view.getElementsByAttributeValue("for", countryCode).text() mustBe messages("newGroupLeadEnterContactAddress.countryCode.label")
+      view.getElementsByAttributeValue("for", countryCode).text() mustBe messages(
+        "newGroupLeadEnterContactAddress.countryCode.label"
+      )
     }
-
 
     "bind form to inputViewModel" in {
       val mapData = createMap()
-      val form = formProvider.apply().bind(mapData)
+      val form    = formProvider.apply().bind(mapData)
 
-      val view = createView(form, Map("GB"-> "United Kingdom"))
+      val view = createView(form, Map("GB" -> "United Kingdom"))
 
       view.getElementById(addressLine1).`val`() mustBe mapData.get(addressLine1).get
       view.getElementById(addressLine2).`val`() mustBe mapData.get(addressLine2).get
@@ -101,7 +132,7 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
       view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
     }
 
-    "display an error summary box"  in {
+    "display an error summary box" in {
       val form = formProvider.apply().withError("error key", "error message")
 
       val view = createView(form)
@@ -113,22 +144,21 @@ class NewGroupLeadEnterContactAddressViewSpec extends ViewSpecBase  with ViewAss
     }
   }
 
-  private def createMap
-  (
+  private def createMap(
     addressLine1: String = "line1",
     addressLine2: String = "line2",
     addressLine3: String = "line3",
     addressLine4: String = "line4",
     postalCode: String = "NE5 4SF",
     countryCode: String = "GB"
-  ): Map[String,String] = {
+  ): Map[String, String] = {
     Map(
       "addressLine1" -> addressLine1,
       "addressLine2" -> addressLine2,
       "addressLine3" -> addressLine3,
       "addressLine4" -> addressLine4,
-      "postalCode" -> postalCode,
-      "countryCode" -> countryCode
+      "postalCode"   -> postalCode,
+      "countryCode"  -> countryCode
     )
   }
 }

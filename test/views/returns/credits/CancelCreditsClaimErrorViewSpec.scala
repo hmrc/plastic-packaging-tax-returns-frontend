@@ -23,17 +23,16 @@ import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.CancelCreditsClaimErrorView
 
 class CancelCreditsClaimErrorViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers with MockitoSugar {
-  
+
   private val page = inject[CancelCreditsClaimErrorView]
 
-  private def createView(): Html = {
+  private def createView(): Html =
     page("/continue-url")(request, messages)
-  }
-  
+
   "CancelCreditsClaimView" should {
-    
+
     val view = createView()
-    
+
     "have a title" in {
       view.select("title").text mustBe
         "This credit has been removed - Submit return - Plastic Packaging Tax - GOV.UK"

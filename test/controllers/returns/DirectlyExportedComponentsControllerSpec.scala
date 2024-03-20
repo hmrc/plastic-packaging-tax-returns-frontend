@@ -43,17 +43,21 @@ import views.html.returns.DirectlyExportedComponentsView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSugar with JourneyActionAnswer with BeforeAndAfterEach {
+class DirectlyExportedComponentsControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with JourneyActionAnswer
+    with BeforeAndAfterEach {
 
-  private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messagesApi    = mock[MessagesApi]
-  private val cacheConnector = mock[CacheConnector]
-  private val navigator      = mock[ReturnsJourneyNavigator]
-  private val journeyAction  = mock[JourneyAction]
-  private val formProvider   = mock[DirectlyExportedComponentsFormProvider]
-  private val view           = mock[DirectlyExportedComponentsView]
+  private val dataRequest             = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi             = mock[MessagesApi]
+  private val cacheConnector          = mock[CacheConnector]
+  private val navigator               = mock[ReturnsJourneyNavigator]
+  private val journeyAction           = mock[JourneyAction]
+  private val formProvider            = mock[DirectlyExportedComponentsFormProvider]
+  private val view                    = mock[DirectlyExportedComponentsView]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
-  private val sut            = new DirectlyExportedComponentsController(
+  private val sut = new DirectlyExportedComponentsController(
     messagesApi,
     cacheConnector,
     navigator,
@@ -61,7 +65,8 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     nonExportedAmountHelper,
     formProvider,
     stubMessagesControllerComponents(),
-    view)
+    view
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -133,7 +138,9 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     "redirect" in {
       val form = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(form.bindFromRequest()(any, any)).thenReturn(
+        new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true"))
+      )
       when(dataRequest.userAnswers).thenReturn(createUserAnswer)
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
       when(navigator.directlyExportedComponentsRoute(any, any)).thenReturn(Call(GET, "/foo"))
@@ -150,7 +157,9 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
       val ans                                        = createUserAnswer
       val form                                       = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(form.bindFromRequest()(any, any)).thenReturn(
+        new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true"))
+      )
       when(dataRequest.userAnswers).thenReturn(ans)
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn { (a: UserAnswers, b: Boolean) =>
         saveUserAnswerToCache = Some(a)
@@ -166,7 +175,9 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     "save user answer to the cache" in {
       val form = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)
-      when(form.bindFromRequest()(any, any)).thenReturn(new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true")))
+      when(form.bindFromRequest()(any, any)).thenReturn(
+        new DirectlyExportedComponentsFormProvider()().bind(Map("value" -> "true"))
+      )
       when(dataRequest.userAnswers).thenReturn(createUserAnswer)
       when(dataRequest.pptReference).thenReturn("123")
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
@@ -178,7 +189,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     }
 
     "return an error when error on form" in {
-      val form = mock[Form[Boolean]]
+      val form      = mock[Form[Boolean]]
       val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any, any)).thenReturn(formError)
@@ -193,7 +204,7 @@ class DirectlyExportedComponentsControllerSpec extends PlaySpec with MockitoSuga
     "redirect when total plastic cannot be calculated" in {
       when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
       val formError = new DirectlyExportedComponentsFormProvider()().withError("error", "error message")
-      val form = mock[Form[Boolean]]
+      val form      = mock[Form[Boolean]]
       when(formProvider.apply()).thenReturn(form)
       when(form.bindFromRequest()(any, any)).thenReturn(formError)
       when(dataRequest.userAnswers).thenReturn(UserAnswers("123"))

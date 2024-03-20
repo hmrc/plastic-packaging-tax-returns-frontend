@@ -37,20 +37,17 @@ import views.html.returns.NowStartYourReturnView
 
 import java.time.LocalDate
 
-class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach{
+class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach {
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022,7,5),
-    LocalDate.of(2022,10,5),
-    LocalDate.of(2023,1,5),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
-  private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messages = mock[Messages]
-  private val journeyAction = mock[JourneyAction]
-  private val messagesApi = mock[MessagesApi]
-  private val view = mock[NowStartYourReturnView]
-  private val returnsNavigator =  mock[ReturnsJourneyNavigator]
+  private val request          = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messages         = mock[Messages]
+  private val journeyAction    = mock[JourneyAction]
+  private val messagesApi      = mock[MessagesApi]
+  private val view             = mock[NowStartYourReturnView]
+  private val returnsNavigator = mock[ReturnsJourneyNavigator]
 
   private val sut = new NowStartYourReturnController(
     messagesApi,
@@ -58,7 +55,6 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     stubMessagesControllerComponents(),
     view,
     returnsNavigator
-
   )
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -66,7 +62,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenAnswer(Some(aTaxObligation))
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
-    when(view.apply(any, any,any)(any,any)).thenReturn(HtmlFormat.empty)
+    when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
     when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }

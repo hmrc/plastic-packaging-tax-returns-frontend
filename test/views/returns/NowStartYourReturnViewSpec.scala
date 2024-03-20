@@ -25,8 +25,8 @@ import views.html.returns.NowStartYourReturnView
 class NowStartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: NowStartYourReturnView = inject[NowStartYourReturnView]
-  val obligationPeriod = "Month to Month Year"
-  val buttonLink: Call = Call("#", "/foo")
+  val obligationPeriod             = "Month to Month Year"
+  val buttonLink: Call             = Call("#", "/foo")
 
   private def createView(creditsClaimed: Boolean = true): Html =
     page(obligationPeriod, creditsClaimed, buttonLink)(request, messages)

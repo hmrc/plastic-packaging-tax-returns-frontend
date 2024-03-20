@@ -38,8 +38,8 @@ import scala.concurrent.Future
 
 class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
 
-  val authConnector: AuthConnector = mock[AuthConnector]
-  val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val authConnector: AuthConnector         = mock[AuthConnector]
+  val appConfig: FrontendAppConfig         = mock[FrontendAppConfig]
   val sessionRepository: SessionRepository = mock[SessionRepository]
 
   val sut = new AuthenticatedIdentifierAction(
@@ -66,12 +66,14 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
   "invokeBlock" must {
     "allow the user and invoke block" when {
       "user enrolled for ppt" in {
-        val pptEnrolment = Enrolment("HMRC-PPT-ORG", Seq(EnrolmentIdentifier("EtmpRegistrationNumber", "ppt-ref")), "activated")
+        val pptEnrolment =
+          Enrolment("HMRC-PPT-ORG", Seq(EnrolmentIdentifier("EtmpRegistrationNumber", "ppt-ref")), "activated")
 
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.successful(Some("internalId") and Some(AffinityGroup.Organisation) and Enrolments(Set(pptEnrolment)))
         )
-
 
         await(sut.invokeBlock(request, testBlock))
 
@@ -81,7 +83,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
         verifyNoInteractions(sessionRepository)
       }
       "user is agent with selected PPT ref defined" in {
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.successful(Some("internalId") and Some(AffinityGroup.Agent) and Enrolments(Set.empty))
         )
         when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.successful(Some("selected-ppt-ref")))
@@ -96,7 +100,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
     }
     "redirect agent to select client" when {
       "there is no selection in the cache" in {
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.successful(Some("internalId") and Some(AffinityGroup.Agent) and Enrolments(Set.empty))
         )
         when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.successful(None))
@@ -110,7 +116,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
     }
     "redirect to login" when {
       "No active session" in {
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.failed(BearerTokenExpired())
         )
         when(appConfig.loginUrl).thenReturn("/login-url")
@@ -127,7 +135,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
     }
     "redirect to 'cant use this service'" when {
       "user is not enrolled" in {
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.failed(InsufficientEnrolments())
         )
 
@@ -140,7 +150,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
     }
     "error" when {
       "internal id is not returned" in {
-        when(authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any,any)(any, any)).thenReturn(
+        when(
+          authConnector.authorise[Option[String] ~ Option[AffinityGroup] ~ Enrolments](any, any)(any, any)
+        ).thenReturn(
           Future.successful(None and Some(AffinityGroup.Organisation) and Enrolments(Set.empty))
         )
 
@@ -153,4 +165,3 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
     }
   }
 }
-

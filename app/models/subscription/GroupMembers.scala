@@ -34,13 +34,17 @@ object GroupMembers {
           throw new NoSuchElementException("SubscriptionDisplayResponse has no groupPartnershipSubscription field")
         )
         .groupPartnershipDetails.collect {
-        case details if details.addressDetails.isGB && !details.isRepresentative =>
-          val orgName = details.organisationDetails
-            .getOrElse(throw new NoSuchElementException("SubscriptionDisplayResponse has a groupPartnershipDetails " +
-              "entry missing its organisationDetails field"))
-            .organisationName
-          Member(orgName, details.customerIdentification1)
-      }
+          case details if details.addressDetails.isGB && !details.isRepresentative =>
+            val orgName = details.organisationDetails
+              .getOrElse(
+                throw new NoSuchElementException(
+                  "SubscriptionDisplayResponse has a groupPartnershipDetails " +
+                    "entry missing its organisationDetails field"
+                )
+              )
+              .organisationName
+            Member(orgName, details.customerIdentification1)
+        }
     GroupMembers(members.sortBy(_.organisationName))
   }
 }

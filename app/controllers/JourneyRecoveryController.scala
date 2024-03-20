@@ -29,11 +29,13 @@ class JourneyRecoveryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
   startAgainView: JourneyRecoveryView
-) extends FrontendBaseController with I18nSupport with Logging {
+) extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    identify {
-      implicit request => Ok(startAgainView())
+    identify { implicit request =>
+      Ok(startAgainView())
     }
 
 }

@@ -22,10 +22,7 @@ import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-class AuthLoggedInActionImpl @Inject()(
-                                        authorisedFun: AuthFunction,
-                                        mcc: MessagesControllerComponents)
+class AuthLoggedInActionImpl @Inject() (authorisedFun: AuthFunction, mcc: MessagesControllerComponents)
     extends AuthLoggedInAction {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
@@ -39,6 +36,4 @@ class AuthLoggedInActionImpl @Inject()(
 
 }
 
-trait AuthLoggedInAction
-    extends ActionBuilder[AuthedUser, AnyContent]
-    with ActionFunction[Request, AuthedUser]
+trait AuthLoggedInAction extends ActionBuilder[AuthedUser, AnyContent] with ActionFunction[Request, AuthedUser]

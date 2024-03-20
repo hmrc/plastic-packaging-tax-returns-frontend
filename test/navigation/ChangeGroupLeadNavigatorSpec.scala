@@ -24,11 +24,13 @@ import play.api.mvc.Call
 
 class ChangeGroupLeadNavigatorSpec extends PlaySpec {
 
-  private val navigator = new ChangeGroupLeadNavigator()
+  private val navigator                  = new ChangeGroupLeadNavigator()
   private val checkYourAnswersPage: Call = routes.NewGroupLeadCheckYourAnswerController.onPageLoad
 
   "selectNewGroupRep then goes to" in {
-    navigator.selectNewGroupRep(NormalMode) mustBe routes.NewGroupLeadEnterContactAddressController.onPageLoad(NormalMode)
+    navigator.selectNewGroupRep(NormalMode) mustBe routes.NewGroupLeadEnterContactAddressController.onPageLoad(
+      NormalMode
+    )
     navigator.selectNewGroupRep(CheckMode) mustBe checkYourAnswersPage
   }
 
@@ -36,7 +38,7 @@ class ChangeGroupLeadNavigatorSpec extends PlaySpec {
     navigator.enterContactAddress(NormalMode) mustBe routes.MainContactNameController.onPageLoad(NormalMode)
     navigator.enterContactAddress(CheckMode) mustBe checkYourAnswersPage
   }
-  
+
   "mainContactName" must {
     behave like aChangeGroupLeadQuestionPage(mode => navigator.mainContactName(mode))(
       routes.MainContactJobTitleController.onPageLoad(NormalMode)
@@ -47,7 +49,7 @@ class ChangeGroupLeadNavigatorSpec extends PlaySpec {
     navigator.mainContactJobTitle(NormalMode) mustBe checkYourAnswersPage
     navigator.mainContactJobTitle(CheckMode) mustBe checkYourAnswersPage
   }
-  
+
   "check your answers then goes to" in {
     navigator.checkYourAnswers mustBe routes.NewGroupLeadConfirmationController.onPageLoad
   }

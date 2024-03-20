@@ -26,5 +26,5 @@ class NonExportedRecycledPlasticPackagingFormProvider @Inject() extends Mappings
   def apply(): Form[Boolean] =
     Form(
       "value" -> boolean("NonExportRecycledPlasticPackaging.error.required")
-  )
+    )
 }

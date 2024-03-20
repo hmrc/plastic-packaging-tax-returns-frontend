@@ -23,11 +23,11 @@ import play.twirl.api.Html
 import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
 case class CreditsClaimedDetails(
-  override val summaryList: Seq[CreditSummaryRow], 
+  override val summaryList: Seq[CreditSummaryRow],
   totalClaimAmount: BigDecimal
 ) extends Credits {
-  
-  def ifClaiming(claimAmountToHtml: BigDecimal => Html): Html = 
+
+  def ifClaiming(claimAmountToHtml: BigDecimal => Html): Html =
     if (totalClaimAmount > 0)
       claimAmountToHtml(totalClaimAmount)
     else
@@ -37,10 +37,9 @@ case class CreditsClaimedDetails(
 
 object CreditsClaimedDetails {
 
-  def apply(userAnswer: UserAnswers,  creditBalance: CreditBalance) (implicit messages: Messages): CreditsClaimedDetails = {
+  def apply(userAnswer: UserAnswers, creditBalance: CreditBalance)(implicit messages: Messages): CreditsClaimedDetails =
     CreditsClaimedDetails(
       CreditsClaimedListSummary.createCreditSummary(userAnswer, creditBalance, None),
       totalClaimAmount = creditBalance.totalRequestedCreditInPounds
     )
-  }
 }

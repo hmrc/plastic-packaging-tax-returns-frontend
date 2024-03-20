@@ -27,27 +27,27 @@ import views.ViewUtils
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false){
+final case class Field(key: String, value: String, bold: Boolean = false, big: Boolean = false) {
   def classes: String =
-    Seq("govuk-!-width-one-half",
+    Seq(
+      "govuk-!-width-one-half",
       if (big) "govuk-body-l" else "govuk-body-m",
-      if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular",
+      if (bold) "govuk-!-font-weight-bold" else "govuk-!-font-weight-regular"
     ).mkString(" ")
 }
 
-final case class Section(titleKey: String, fields : Seq[Field]) {
-  def summaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(fields.map{ row =>
-    SummaryListRow(
-      Key(Text(messages(row.key)), row.classes),
-      Value(Text(row.value), row.classes))
+final case class Section(titleKey: String, fields: Seq[Field]) {
+  def summaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(fields.map { row =>
+    SummaryListRow(Key(Text(messages(row.key)), row.classes), Value(Text(row.value), row.classes))
   })
 }
 
 object Section {
   def apply(name: String, lastBold: Boolean = true, lastBig: Boolean = false)(fields: (String, String)*): Section =
-    Section(s"viewReturnSummary.$name.heading",
-      fields.zipWithIndex.map{ case ((row, value), i) =>
-        val isLast = i+1==fields.length
+    Section(
+      s"viewReturnSummary.$name.heading",
+      fields.zipWithIndex.map { case ((row, value), i) =>
+        val isLast = i + 1 == fields.length
         Field(s"viewReturnSummary.$name.field.$row", value, isLast && lastBold, isLast && lastBig)
       }
     )
@@ -55,17 +55,17 @@ object Section {
 
 final case class DetailsSection(credit: Section, liable: Section, exempt: Section, calculation: Section)
 
-final case class ViewReturnSummaryViewModel(summarySection : Section, detailsSection: DetailsSection)
+final case class ViewReturnSummaryViewModel(summarySection: Section, detailsSection: DetailsSection)
 
 object ViewReturnSummaryViewModel {
 
-  private def   toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+  private def toLocalDate(date: String) = LocalDate.parse(date, DateTimeFormatter.ISO_DATE_TIME)
 
   def apply(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
         "processed" -> ViewUtils.displayLocalDate(toLocalDate(returnDisplay.processingDate)),
-        "reference" -> returnDisplay.chargeReferenceAsString,
+        "reference" -> returnDisplay.chargeReferenceAsString
       ),
       DetailsSection(
         Section("credit", lastBold = false)(
@@ -73,20 +73,20 @@ object ViewReturnSummaryViewModel {
         ),
         Section("liable")(
           "manufactured" -> returnDisplay.returnDetails.manufacturedWeight.asKg,
-          "imported" -> returnDisplay.returnDetails.importedWeight.asKg,
-          "total" -> returnDisplay.returnDetails.liableWeight.asKg
+          "imported"     -> returnDisplay.returnDetails.importedWeight.asKg,
+          "total"        -> returnDisplay.returnDetails.liableWeight.asKg
         ),
         Section("exempt")(
           "exported" -> returnDisplay.returnDetails.directExports.asKg,
           "medicine" -> returnDisplay.returnDetails.humanMedicines.asKg,
           "recycled" -> returnDisplay.returnDetails.recycledPlastic.asKg,
-          "total" -> returnDisplay.returnDetails.totalNotLiable.asKg,
+          "total"    -> returnDisplay.returnDetails.totalNotLiable.asKg
         ),
         Section("calculation", lastBig = false)(
           "liable" -> returnDisplay.returnDetails.liableWeight.asKg,
           "exempt" -> returnDisplay.returnDetails.totalNotLiable.asKg,
-          "total" -> returnDisplay.returnDetails.totalWeight.asKg,
-          "tax" -> returnDisplay.returnDetails.taxDue.asPounds,
+          "total"  -> returnDisplay.returnDetails.totalWeight.asKg,
+          "tax"    -> returnDisplay.returnDetails.taxDue.asPounds
         )
       )
     )

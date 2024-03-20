@@ -26,14 +26,19 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
+class ChooseNewGroupLeadViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
-  
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
-  val members: GroupMembers = GroupMembers(Seq(Member("Test Company Ltd Asia", "1"), Member("Test Company Ltd Europe", "2"), Member("Test Company Ltd UK", "3")))
+  val members: GroupMembers = GroupMembers(
+    Seq(
+      Member("Test Company Ltd Asia", "1"),
+      Member("Test Company Ltd Europe", "2"),
+      Member("Test Company Ltd UK", "3")
+    )
+  )
   val form: Form[Member] = new SelectNewGroupLeadForm().apply(members.membersNames)
-  private val appConfig = inject[FrontendAppConfig]
-  private val call = Call("a", "b")
+  private val appConfig  = inject[FrontendAppConfig]
+  private val call       = Call("a", "b")
 
   private def createView: Html =
     page(form, members, call)(request, messages)
@@ -43,7 +48,7 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with 
 
     "have a title" in {
       view.select("title").text mustBe
-      "Select the new representative member - Account - Plastic Packaging Tax - GOV.UK"
+        "Select the new representative member - Account - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a back link" in {
@@ -52,7 +57,7 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with 
 
     "have a heading" in {
       view.select("h1").text mustBe
-      "Select the new representative member"
+        "Select the new representative member"
     }
 
     "have radio options" in {
@@ -67,8 +72,8 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase  with ViewAssertions with 
     }
 
     "have add a new member link" in {
-      view.getElementById("add-new-member-to-group").text  mustBe messages("Add a new member to the group")
-      view.getElementById("add-new-member-to-group")  must haveHref(appConfig.addMemberToGroupUrl)
+      view.getElementById("add-new-member-to-group").text mustBe messages("Add a new member to the group")
+      view.getElementById("add-new-member-to-group") must haveHref(appConfig.addMemberToGroupUrl)
     }
 
     "have a save & continue button" in {

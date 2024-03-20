@@ -36,23 +36,25 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorR
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   private val frontendAppConfig = mock[FrontendAppConfig]
-  private val metrics2 = mock[Metrics](ReturnsDeepStubs)
-  private val timerContext = mock[Timer.Context]
-  private val httpClient2 = mock[HttpClient]
+  private val metrics2          = mock[Metrics](ReturnsDeepStubs)
+  private val timerContext      = mock[Timer.Context]
+  private val httpClient2       = mock[HttpClient]
 
   protected implicit val ec2: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  protected implicit val hc2: HeaderCarrier = mock[HeaderCarrier]
+  protected implicit val hc2: HeaderCarrier    = mock[HeaderCarrier]
 
   private val connector = new TaxReturnsConnector(httpClient2, frontendAppConfig, metrics2)
 
   private val aReturnDisplayApi: ReturnDisplayApi = {
     val bd: BigDecimal = 0.1
-    val l: Long = 1
+    val l: Long        = 1
     ReturnDisplayApi(
-      "", IdDetails("a-ppt-ref", "subId"), None, ReturnDisplayDetails(l, l, l, l, l, l, bd, bd, l, bd)
+      "",
+      IdDetails("a-ppt-ref", "subId"),
+      None,
+      ReturnDisplayDetails(l, l, l, l, l, l, bd, bd, l, bd)
     )
   }
 
@@ -62,11 +64,13 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     when(frontendAppConfig.pptReturnSubmissionUrl(any)) thenReturn "return-submission-url"
     when(metrics2.defaultRegistry.timer(any).time()) thenReturn timerContext
     when(httpClient2.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(JsObject.empty)
-    when(httpClient2.POSTEmpty[Any](any, any)(any, any, any)) thenReturn Future.successful(HttpResponse(OK, JsObject.empty.toString()))
+    when(httpClient2.POSTEmpty[Any](any, any)(any, any, any)) thenReturn Future.successful(
+      HttpResponse(OK, JsObject.empty.toString())
+    )
   }
 
   "Tax Returns Connector" should {
-    
+
     "use the correct timer" when {
       "getting a return" in {
         await(connector.get("id", "period"))
@@ -79,7 +83,9 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         verify(timerContext).stop()
       }
       "amending a return" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(mock[HttpResponse])
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+          mock[HttpResponse]
+        )
         await(connector.amend("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
@@ -87,7 +93,9 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     }
 
     "get correctly" in {
-      when(httpClient2.GET[ReturnDisplayApi](any, any, any)(any, any, any)) thenReturn Future.successful(aReturnDisplayApi)
+      when(httpClient2.GET[ReturnDisplayApi](any, any, any)(any, any, any)) thenReturn Future.successful(
+        aReturnDisplayApi
+      )
       await(connector.get("ppt-reference", "period-key")) mustBe aReturnDisplayApi
       verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
       verify(httpClient2).GET(meq("return-submission-url/period-key"), any, any)(any, any, any)
@@ -99,7 +107,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
         verify(httpClient2).POSTEmpty(meq("return-submission-url"), any)(any, any, any)
       }
-      
+
       "there is a charge reference" in {
         when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
           HttpResponse(OK, """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
@@ -113,7 +121,7 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         )
         await(connector.submit("ppt-reference")) mustBe Right(None)
       }
-      
+
       "the return obligation is already fulfilled" in {
         when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
           HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
@@ -122,17 +130,22 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
 
       "Something goes wrong" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(new HttpException(
-          "exception-message", new Exception("Something went wrong.")
-        ))
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(
+          new HttpException(
+            "exception-message",
+            new Exception("Something went wrong.")
+          )
+        )
         intercept[DownstreamServiceError](await(connector.submit("ppt-reference")))
       }
     }
 
     "Amend" when {
-      
+
       "in all cases" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(mock[HttpResponse])
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+          mock[HttpResponse]
+        )
         when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn "return-amend-url"
         await(connector.amend("ppt-reference"))
         verify(frontendAppConfig).pptReturnAmendUrl("ppt-reference")
@@ -155,23 +168,35 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
     "throw" when {
       "get request fails" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
-          message = "exception-message", statusCode = 500, reportAs = 500
-        ))
+        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(
+          UpstreamErrorResponse(
+            message = "exception-message",
+            statusCode = 500,
+            reportAs = 500
+          )
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference", "period-key")))
       }
 
       "submit response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
-          message = "exception-message", statusCode = 500, reportAs = 500
-        ))
+        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(
+          UpstreamErrorResponse(
+            message = "exception-message",
+            statusCode = 500,
+            reportAs = 500
+          )
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.submit("ppt-reference")))
       }
 
       "amend response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse(
-          message = "exception-message", statusCode = 500, reportAs = 500
-        ))
+        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(
+          UpstreamErrorResponse(
+            message = "exception-message",
+            statusCode = 500,
+            reportAs = 500
+          )
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
       }
     }
@@ -242,6 +267,5 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
     }
   }
-
 
 }

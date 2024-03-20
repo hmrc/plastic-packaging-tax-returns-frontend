@@ -27,7 +27,7 @@ import viewmodels.checkAnswers.returns.ManufacturedPlasticPackagingSummary.Confi
 import viewmodels.govuk.summarylist._
 import views.html.returns.ConfirmPlasticPackagingTotalView
 
-class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: ConfirmPlasticPackagingTotalView = inject[ConfirmPlasticPackagingTotalView]
 
@@ -43,7 +43,7 @@ class ConfirmPlasticPackagingTotalViewSpec extends ViewSpecBase  with ViewAssert
       view.select("title").text() must include(messages("confirmPlasticPackagingTotal.title"))
 
       view.select("title").text() mustBe
-        ("Confirm your plastic packaging total - Submit return - Plastic Packaging Tax - GOV.UK")
+        "Confirm your plastic packaging total - Submit return - Plastic Packaging Tax - GOV.UK"
     }
 
     "contain section header" in {

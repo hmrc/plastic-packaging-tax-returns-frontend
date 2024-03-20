@@ -16,10 +16,9 @@
 
 package models.requests
 
-import java.time.{LocalDate,LocalDateTime}
+import java.time.{LocalDate, LocalDateTime}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.AffinityGroup
-
 
 case class IdentityData(
   internalId: String,
@@ -28,8 +27,8 @@ case class IdentityData(
 
 object IdentityData {
   implicit val localDateFormat: Format[LocalDate] = Format(Reads.DefaultLocalDateReads, Writes.DefaultLocalDateWrites)
-  implicit val dateTimeReads: Format[LocalDateTime]    = Format(Reads.DefaultLocalDateTimeReads, Writes.DefaultLocalDateTimeWrites)
+  implicit val dateTimeReads: Format[LocalDateTime] =
+    Format(Reads.DefaultLocalDateTimeReads, Writes.DefaultLocalDateTimeWrites)
 
   implicit val format: OFormat[IdentityData] = Json.format[IdentityData]
 }
-

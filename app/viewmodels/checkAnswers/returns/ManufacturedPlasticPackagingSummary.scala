@@ -26,23 +26,26 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ManufacturedPlasticPackagingSummary (key: String) extends SummaryViewModel {
+class ManufacturedPlasticPackagingSummary(key: String) extends SummaryViewModel {
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ManufacturedPlasticPackagingPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(ManufacturedPlasticPackagingPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRow(key = Key(key, classes="govuk-!-width-one-half"),
-          value = Value(value),
-          actions = Some(Actions(items = Seq(
-            ActionItem(
-              routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url,
-              messages("site.change"),
-
-            ).withAttribute("id"-> "confirm-pp-total-manufactured-plastic")
-              .withVisuallyHiddenText(messages("manufacturedPlasticPackaging.change.hidden"))
-          )))
+      SummaryListRow(
+        key = Key(key, classes = "govuk-!-width-one-half"),
+        value = Value(value),
+        actions = Some(
+          Actions(items =
+            Seq(
+              ActionItem(
+                routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url,
+                messages("site.change")
+              ).withAttribute("id" -> "confirm-pp-total-manufactured-plastic")
+                .withVisuallyHiddenText(messages("manufacturedPlasticPackaging.change.hidden"))
+            )
+          )
         )
+      )
     }
 }
 object ManufacturedPlasticPackagingSummary {

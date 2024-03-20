@@ -40,28 +40,31 @@ import scala.concurrent.Future
 class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val subscriptionConnector = mock[SubscriptionConnector]
-  private val sessionRepository = mock[SessionRepository]
-  
+  private val sessionRepository     = mock[SessionRepository]
+
   private val subscriptionFilter = new SubscriptionFilter(subscriptionConnector, sessionRepository) {
     override def fromRequestAndSession(request: RequestHeader, session: Session): HeaderCarrier =
       mock[HeaderCarrier]
   }
-  
-  private val request = mock[IdentifiedRequest[AnyContent]]
+
+  private val request    = mock[IdentifiedRequest[AnyContent]]
   private val eisFailure = mock[EisFailure]
-  private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] = Messaging.messagingNatureOfThrowable
-  
+  private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] =
+    Messaging.messagingNatureOfThrowable
+
   object RandoError extends RuntimeException
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(subscriptionConnector, sessionRepository, request, eisFailure)
-    when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(Some(mock[PPTSubscriptionDetails]))
-    when(sessionRepository.set(any, any, any) (any)) thenReturn Future.successful(true)
+    when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(
+      Some(mock[PPTSubscriptionDetails])
+    )
+    when(sessionRepository.set(any, any, any)(any)) thenReturn Future.successful(true)
     when(request.cacheKey) thenReturn "cache-key"
     when(request.pptReference) thenReturn "ppt-ref"
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(mock[SubscriptionDisplayResponse]))
-    
+
     // RoutesPrefix is a singleton, other tests may change it
     RoutesPrefix.setPrefix("/")
   }
@@ -71,78 +74,79 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "it" should {
-    
+
     "check the session repo for current subscription" in {
       callFilter
-      verify(sessionRepository).get[PPTSubscriptionDetails](eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive")) (any)
+      verify(sessionRepository).get[PPTSubscriptionDetails](eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"))(
+        any
+      )
     }
-    
+
     "handle" when {
-      
+
       "subscription is still in sessions repo" in {
         callFilter mustBe None
-        verify(subscriptionConnector, never).get(any) (any)
-        verify(sessionRepository, never).set(any, any, any) (any)
+        verify(subscriptionConnector, never).get(any)(any)
+        verify(sessionRepository, never).set(any, any, any)(any)
       }
-      
+
       "subscription cache expired / not present" in {
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
         callFilter mustBe None
-        verify(subscriptionConnector).get(eqTo("ppt-ref")) (any)
-        verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any) (any)
+        verify(subscriptionConnector).get(eqTo("ppt-ref"))(any)
+        verify(sessionRepository).set(eqTo("cache-key"), eqTo(JsPath \ "SubscriptionIsActive"), any)(any)
       }
 
       "subscription is de-registered" in {
         when(eisFailure.isDeregistered) thenReturn true
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
-        inside (callFilter.value) {
-          case Result(header, _, _, _, _,_) =>
-            header must have (Symbol("status") (Status.SEE_OTHER))
-            header.headers must contain ("Location" -> "/deregistered")
+        inside(callFilter.value) { case Result(header, _, _, _, _, _) =>
+          header must have(Symbol("status")(Status.SEE_OTHER))
+          header.headers must contain("Location" -> "/deregistered")
         }
       }
 
       "downstream unreliability" in {
         when(eisFailure.isDependentSystemsNotResponding) thenReturn true
         when(eisFailure.failures) thenReturn Some(Seq(EisError("code", "reason")))
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
-        val thrown = the [DownstreamServiceError] thrownBy { callFilter }
-        thrown must have message "Dependent systems are currently not responding." 
+        val thrown = the[DownstreamServiceError] thrownBy callFilter
+        thrown must have message "Dependent systems are currently not responding."
         thrown.getCause mustBe a[ServiceUnavailableException]
         thrown.getCause must have message "Some(List(EisError(code,reason)))"
       }
 
       "some other downstream error" in {
         when(eisFailure.failures) thenReturn Some(Seq(EisError("code", "reason")))
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
 
-        the [RuntimeException] thrownBy callFilter must have message "Failed to get subscription - Some(reason)"
+        the[RuntimeException] thrownBy callFilter must have message "Failed to get subscription - Some(reason)"
       }
 
       "session repo get fails" in {
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.failed(RandoError)
-        an [RandoError.type] must be thrownBy callFilter
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.failed(RandoError)
+        an[RandoError.type] must be thrownBy callFilter
       }
 
       "session repo set fails" in {
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
-        when(sessionRepository.set(any, any, any) (any)) thenReturn Future.failed(RandoError)
-        an [RandoError.type] must be thrownBy callFilter
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
+        when(sessionRepository.set(any, any, any)(any)) thenReturn Future.failed(RandoError)
+        an[RandoError.type] must be thrownBy callFilter
       }
-      
+
       "subscription connector get fails" in {
-        when(sessionRepository.get[PPTSubscriptionDetails](any, any) (any)) thenReturn Future.successful(None)
+        when(sessionRepository.get[PPTSubscriptionDetails](any, any)(any)) thenReturn Future.successful(None)
         when(subscriptionConnector.get(any)(any)) thenReturn Future.failed(RandoError)
-        an [RandoError.type] must be thrownBy callFilter
+        an[RandoError.type] must be thrownBy callFilter
       }
-      
+
     }
-    
+
   }
 
 }

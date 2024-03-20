@@ -47,32 +47,37 @@ class ConvertedCreditsController @Inject() (
     extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          val preparedForm = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
-          createView(preparedForm, key, mode, singleYearClaim) map (Results.Ok(_))
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        val preparedForm =
+          request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        createView(preparedForm, key, mode, singleYearClaim) map (Results.Ok(_))
+      }
     }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          formProvider()
-            .bindFromRequest()
-            .fold(
-              formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (Results.BadRequest(_)),
-              formValue => {
-                val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-                request.userAnswers.changeWithFunc(ConvertedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
-                  .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, key, formValue)))
-              }
-            )
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (Results.BadRequest(_)),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers.changeWithFunc(
+                ConvertedCreditsPage(key),
+                CreditsAnswer.changeYesNoTo(formValue),
+                saveFunc
+              )
+                .map(_ => Results.Redirect(navigator.convertedCreditsYesNo(mode, key, formValue)))
+            }
+          )
+      }
     }
 
-  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit request: DataRequest[_]) =
+  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit
+    request: DataRequest[_]
+  ) =
     Future.successful(view(form, key, mode, singleYearClaim.createCreditRangeOption()))
 
 }

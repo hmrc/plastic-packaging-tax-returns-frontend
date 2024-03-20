@@ -28,14 +28,12 @@ import viewmodels.checkAnswers.amends.AmendDirectExportPlasticPackagingSummary
 class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendExportedData with BeforeAndAfterEach {
 
   private val answer = UserAnswers("123")
-    .set(ReturnDisplayApiCacheable,retDisApi ).get
+    .set(ReturnDisplayApiCacheable, retDisApi).get
     .set(AmendDirectExportPlasticPackagingPage, 10L).get
     .set(AmendExportedByAnotherBusinessPage, 5L).get
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     super.beforeEach()
-
-  }
 
   "Summary" should {
     "return a summary row with amended value" in {
@@ -44,7 +42,7 @@ class AmendDirectExportPlasticPackagingSummarySpec extends PlaySpec with AmendEx
         "amendDirectExportPlasticPackaging.checkYourAnswersLabel",
         "4kg",
         AmendNewAnswerType(Some("15kg"), "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-        Some(("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url)),
+        Some(("export", controllers.amends.routes.AmendExportedPlasticPackagingController.onPageLoad.url))
       )
 
       AmendDirectExportPlasticPackagingSummary(answer) mustEqual expected

@@ -27,21 +27,22 @@ class EdgeOfSystem @Inject() (frontendAppConfig: FrontendAppConfig) {
 
   /** The current system date-time, or the overridden date-time if set in config
     * @return
-    *  - current system date-time, if no override in-place, or the override value fails to parse as a ISO_LOCAL_DATE_TIME
-    *  - overridden date-time, if set
-    * @see [[FrontendAppConfig.overrideSystemDateTime]]
-    * @see [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
+    *   - current system date-time, if no override in-place, or the override value fails to parse as a
+    *     ISO_LOCAL_DATE_TIME
+    *   - overridden date-time, if set
+    * @see
+    *   [[FrontendAppConfig.overrideSystemDateTime]]
+    * @see
+    *   [[DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
     */
-  def localDateTimeNow: LocalDateTime = {
+  def localDateTimeNow: LocalDateTime =
     frontendAppConfig
       .overrideSystemDateTime
       .flatMap(parseDate)
       .getOrElse(LocalDateTime.now())
-  }
 
-  private def parseDate(date: String): Option[LocalDateTime] = {
+  private def parseDate(date: String): Option[LocalDateTime] =
     Try(LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
       .toOption
-  }
-  
+
 }

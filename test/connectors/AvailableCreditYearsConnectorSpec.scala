@@ -35,17 +35,20 @@ import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AvailableCreditYearsConnectorSpec extends AnyWordSpec 
-  with MockitoSugar with ResetMocksAfterEachTest with BeforeAndAfterEach {
+class AvailableCreditYearsConnectorSpec
+    extends AnyWordSpec
+    with MockitoSugar
+    with ResetMocksAfterEachTest
+    with BeforeAndAfterEach {
 
   private val frontendAppConfig = mock[FrontendAppConfig]
-  private val httpClient = mock[HttpClient]
-  private val metrics = mock[Metrics](ReturnsDeepStubs)
-  private val timer = mock[Timer.Context]
-  private val availableYears = mock[Seq[CreditRangeOption]]
+  private val httpClient        = mock[HttpClient]
+  private val metrics           = mock[Metrics](ReturnsDeepStubs)
+  private val timer             = mock[Timer.Context]
+  private val availableYears    = mock[Seq[CreditRangeOption]]
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-  
+
   private val connector = new AvailableCreditYearsConnector(httpClient, frontendAppConfig, metrics) {
     override protected val logger: Logger = mock[Logger]
   }
@@ -55,15 +58,15 @@ class AvailableCreditYearsConnectorSpec extends AnyWordSpec
     when(metrics.defaultRegistry.timer(any).time()) thenReturn timer
     when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(availableYears)
   }
-  
+
   "get" should {
-    
+
     "start the timer" in {
       await(connector.get("ppt-reference"))
       verify(metrics.defaultRegistry).timer("ppt.availableCreditYears.get.timer")
       verify(metrics.defaultRegistry.timer(any)).time()
     }
-    
+
     "return list of dates" in {
       await(connector.get("ppt-reference")) mustBe theSameInstanceAs(availableYears)
       withClue("stop the timer") {
@@ -72,8 +75,10 @@ class AvailableCreditYearsConnectorSpec extends AnyWordSpec
     }
 
     "return an error" in {
-      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(UpstreamErrorResponse("message", 500, 500))
-      a [DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
+      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(
+        UpstreamErrorResponse("message", 500, 500)
+      )
+      a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
       withClue("stop the timer") {
         verify(timer).stop
       }

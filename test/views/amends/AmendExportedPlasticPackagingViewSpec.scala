@@ -23,7 +23,7 @@ import views.html.amends.AmendExportedPlasticPackagingView
 
 class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatchers {
 
-  private val page = inject[AmendExportedPlasticPackagingView]
+  private val page             = inject[AmendExportedPlasticPackagingView]
   private def createView: Html = page()(request, messages)
 
   "view" should {
@@ -31,7 +31,9 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
     val view = createView
 
     "have a title" in {
-      view.select("title").text() mustBe "Amending exported plastic packaging - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text() mustBe "Amending exported plastic packaging - Submit return - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("amendExportedPlasticPackaging.title"))
     }
 
@@ -43,7 +45,9 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
     "have a paragrapth" in {
 
       val paragraph = view.getElementsByClass("govuk-body").text()
-      paragraph must include("Exported plastic packaging total is the sum of 2 weights you entered when you submitted your return.")
+      paragraph must include(
+        "Exported plastic packaging total is the sum of 2 weights you entered when you submitted your return."
+      )
       paragraph must include(messages("amendExportedPlasticPackaging.paragraph.1"))
 
       paragraph must include("This is the weight of plastic packaging:")
@@ -51,11 +55,13 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
 
       val list = view.getElementsByClass("govuk-list--bullet").text()
       list must include("you exported or intended to export within 12 months")
-      list must include (messages("amendExportedPlasticPackaging.bulletPoint.1"))
+      list must include(messages("amendExportedPlasticPackaging.bulletPoint.1"))
       list must include("another business exported or converted")
-      list must include (messages("amendExportedPlasticPackaging.bulletPoint.2"))
+      list must include(messages("amendExportedPlasticPackaging.bulletPoint.2"))
 
-      paragraph must include("To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total.")
+      paragraph must include(
+        "To amend either of these weights, you’ll need to enter both. We’ll combine them and this will show as your amended exported plastic packaging total."
+      )
       paragraph must include(messages("amendExportedPlasticPackaging.paragraph.3"))
     }
 
@@ -64,7 +70,9 @@ class AmendExportedPlasticPackagingViewSpec extends ViewSpecBase with ViewMatche
 
       buttonElement.text() mustBe "Continue"
       buttonElement.text() mustBe messages("site.button.continue")
-      buttonElement.select("a").first must haveHref(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad)
+      buttonElement.select("a").first must haveHref(
+        controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad
+      )
     }
   }
 

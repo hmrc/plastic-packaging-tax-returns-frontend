@@ -31,14 +31,20 @@ import views.html.returns.credits.CreditsClaimedListView
 
 import java.time.LocalDate
 
-class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
+class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions {
 
   private val page = inject[CreditsClaimedListView]
   private val form = new CreditsClaimedListFormProvider().apply(Seq())(messages)
 
-  val creditBalance = CreditBalance(10, 20, 5L, true, Map(
-    "key1" -> TaxablePlastic(0, 20, 0)
-  ))
+  val creditBalance = CreditBalance(
+    10,
+    20,
+    5L,
+    true,
+    Map(
+      "key1" -> TaxablePlastic(0, 20, 0)
+    )
+  )
 
   private val rows = Seq(
     CreditSummaryRow(
@@ -54,7 +60,14 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       value = "answer"
     )
   )
-  private def createView(form: Form[_]): Html = page(form, creditBalance, LocalDate.now(), Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())), rows, NormalMode)(request, messages)
+  private def createView(form: Form[_]): Html = page(
+    form,
+    creditBalance,
+    LocalDate.now(),
+    Seq(CreditRangeOption(LocalDate.now(), LocalDate.now())),
+    rows,
+    NormalMode
+  )(request, messages)
 
   "View" should {
 
@@ -62,7 +75,7 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
       createView(form).select("h1").text mustBe messages("creditsSummary.title-heading")
     }
     "show a claimed credit" in {
-      createView(form).getElementsByClass("govuk-table__row").size() must be  > 0
+      createView(form).getElementsByClass("govuk-table__row").size() must be > 0
     }
 
     "not show change/remove link in total row" in {
@@ -73,7 +86,10 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "Show claiming to much credit" when {
       "canBeClaimed is false" in {
-        val view = page(form, creditBalance.copy(canBeClaimed = false), LocalDate.now(), Seq.empty, rows, NormalMode)(request, messages)
+        val view = page(form, creditBalance.copy(canBeClaimed = false), LocalDate.now(), Seq.empty, rows, NormalMode)(
+          request,
+          messages
+        )
 
         view.getElementsByTag("h2").text() must include(messages("creditsSummary.tooMuch.heading"))
       }
@@ -81,9 +97,12 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
     "hide the yes/no " when {
       "rangeOptionsRemaining is empty" in {
-        val view = page(form, creditBalance, LocalDate.now(),  rangeOptionsRemaining = Seq.empty, rows, NormalMode)(request, messages)
+        val view = page(form, creditBalance, LocalDate.now(), rangeOptionsRemaining = Seq.empty, rows, NormalMode)(
+          request,
+          messages
+        )
 
-        view.text() must not include(messages("creditsSummary.add-to-list"))
+        view.text() must not include (messages("creditsSummary.add-to-list"))
 
         val defaultNoInput = view.getElementById("defaultNoInput")
         defaultNoInput.attr("name") mustBe "value"
@@ -96,7 +115,9 @@ class CreditsClaimedListViewSpec extends ViewSpecBase with ViewAssertions{
 
       "no option is selected" in {
         val errorForm = form.bind(Map("value" -> ""))
-        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages("creditsSummary.error.required")
+        createView(errorForm).getElementsByClass("govuk-error-summary__list").text() mustBe messages(
+          "creditsSummary.error.required"
+        )
       }
 
       "display error summary box" in {

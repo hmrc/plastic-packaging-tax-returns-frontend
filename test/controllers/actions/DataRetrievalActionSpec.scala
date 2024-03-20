@@ -32,10 +32,9 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  val testUser: SignedInUser    = PptTestData.newUser("123", Some(pptEnrolment("333")))
+  val testUser: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
 
-  class Harness(cacheConnector: CacheConnector)
-      extends DataRetrievalActionImpl(cacheConnector) {
+  class Harness(cacheConnector: CacheConnector) extends DataRetrievalActionImpl(cacheConnector) {
 
     def callTransform[A](request: IdentifiedRequest[A]): Future[OptionalDataRequest[A]] =
       transform(request)
