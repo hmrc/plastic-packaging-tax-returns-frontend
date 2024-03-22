@@ -18,9 +18,7 @@ package audit.returns
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ReturnStarted(internalId: String,
-                         msg: String,
-                         pptReference: String)
+case class ReturnStarted(internalId: String, msg: String, pptReference: String)
 
 object ReturnStarted {
   implicit val format: OFormat[ReturnStarted] = Json.format[ReturnStarted]

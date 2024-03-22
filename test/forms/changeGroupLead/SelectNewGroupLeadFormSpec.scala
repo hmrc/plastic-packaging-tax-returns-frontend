@@ -23,7 +23,7 @@ import play.api.data.FormError
 class SelectNewGroupLeadFormSpec extends PlaySpec {
 
   val sut: SelectNewGroupLeadForm = new SelectNewGroupLeadForm
-  val requiredKey = "select-new-representative.error.required"
+  val requiredKey                 = "select-new-representative.error.required"
 
   "the form" should {
     "bind" when {

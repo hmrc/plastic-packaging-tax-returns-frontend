@@ -32,7 +32,7 @@ import scala.concurrent.Await
 class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
 
   lazy val connector: CalculateCreditsConnector = app.injector.instanceOf[CalculateCreditsConnector]
-  private val pptReference = UUID.randomUUID().toString
+  private val pptReference                      = UUID.randomUUID().toString
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -45,10 +45,10 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
   }
 
   "it" should {
-    
+
     "return a credit for a pptReference" in {
       val creditBalance = CreditBalance(10, 5, 200, true, Map("a-key" -> TaxablePlastic(1, 2, 3)))
-      
+
       stubCalculateCreditApi(
         Status.OK,
         pptReference,
@@ -64,11 +64,11 @@ class CalculateCreditsConnectorSpec extends ConnectorISpec with ScalaFutures {
         pptReference
       )
 
-      val eventualResult = connector.getEventually(pptReference)
+      val eventualResult   = connector.getEventually(pptReference)
       val timeout: Timeout = implicitly
       Await.ready(eventualResult, timeout.duration)
-      
-      eventualResult.failed.futureValue mustBe a[DownstreamServiceError] 
+
+      eventualResult.failed.futureValue mustBe a[DownstreamServiceError]
     }
   }
 

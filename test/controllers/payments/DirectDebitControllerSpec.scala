@@ -34,13 +34,12 @@ import play.api.test.Helpers.{GET, _}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 class DirectDebitControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
+  private val mockMessagesApi: MessagesApi                   = mock[MessagesApi]
   private val mockDirectDebitConnector: DirectDebitConnector = mock[DirectDebitConnector]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockAppConfig = mock[FrontendAppConfig]
+  private val controllerComponents                           = stubMessagesControllerComponents()
+  private val mockAppConfig                                  = mock[FrontendAppConfig]
 
   private val sut = new DirectDebitController(
     mockMessagesApi,
@@ -63,16 +62,16 @@ class DirectDebitControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("something")
-        }
       }
+    }
 
-      "call the direct debit connector" in {
-        when(mockAppConfig.returnUrl(any())).thenReturn("any-url")
-        await(sut.redirectLink(FakeRequest(GET, "/foo")))
+    "call the direct debit connector" in {
+      when(mockAppConfig.returnUrl(any())).thenReturn("any-url")
+      await(sut.redirectLink(FakeRequest(GET, "/foo")))
 
-        verify(mockDirectDebitConnector).getDirectDebitLink(
-          ArgumentMatchers.eq("123"),
-          ArgumentMatchers.eq("any-url"))(any())
-      }
+      verify(mockDirectDebitConnector).getDirectDebitLink(ArgumentMatchers.eq("123"), ArgumentMatchers.eq("any-url"))(
+        any()
+      )
+    }
   }
 }

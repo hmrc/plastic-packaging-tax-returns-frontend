@@ -29,10 +29,9 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
 
     "not bind non-numeric numbers" in {
 
-      forAll(nonNumerics -> "nonNumeric") {
-        nonNumeric =>
-          val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
-          result.errors mustEqual Seq(nonNumericError)
+      forAll(nonNumerics -> "nonNumeric") { nonNumeric =>
+        val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
+        result.errors mustEqual Seq(nonNumericError)
       }
     }
 
@@ -51,10 +50,9 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
 
     "not bind non-numeric numbers" in {
 
-      forAll(nonNumerics -> "nonNumeric") {
-        nonNumeric =>
-          val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
-          result.errors mustEqual Seq(nonNumericError)
+      forAll(nonNumerics -> "nonNumeric") { nonNumeric =>
+        val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
+        result.errors mustEqual Seq(nonNumericError)
       }
     }
 

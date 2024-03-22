@@ -47,34 +47,35 @@ class ConvertedCreditsWeightController @Inject() (
     extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          val form = request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-          createView(form, key, mode, singleYearClaim) map (Results.Ok(_))
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        val form =
+          request.userAnswers.fillWithFunc(ConvertedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+        createView(form, key, mode, singleYearClaim) map (Results.Ok(_))
+      }
     }
 
-  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit
+    request: DataRequest[_]
+  ) = {
     val submitCall = routes.ConvertedCreditsWeightController.onSubmit(key, mode)
     Future.successful(view(form, submitCall, singleYearClaim.createCreditRangeOption()))
   }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          formProvider()
-            .bindFromRequest()
-            .fold(
-              createView(_, key, mode, singleYearClaim) map (Results.BadRequest(_)),
-              answer =>
-                request.userAnswers
-                  .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
-                  .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-                  .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
-            )
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            createView(_, key, mode, singleYearClaim) map (Results.BadRequest(_)),
+            answer =>
+              request.userAnswers
+                .setOrFail(ConvertedCreditsPage(key), CreditsAnswer.answerWeightWith(answer))
+                .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+                .map(_ => Results.Redirect(navigator.convertedCreditsWeight(key, mode)))
+          )
+      }
     }
 
 }

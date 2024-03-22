@@ -24,19 +24,18 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-trait WiremockTestServer
-    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+trait WiremockTestServer extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   val wireHost = "localhost"
 
-  lazy val wirePort: Int = wireMockServer.port()
+  lazy val wirePort: Int     = wireMockServer.port()
   private val wireMockServer = new WireMockServer(0)
 
   protected def stubFor(mappingBuilder: MappingBuilder): StubMapping =
     wireMockServer.stubFor(mappingBuilder)
 
   protected def startWireMockServer(): Unit = {
-    if(!wireMockServer.isRunning) wireMockServer.start
+    if (!wireMockServer.isRunning) wireMockServer.start
 
     WireMock.configureFor(wireHost, wirePort)
   }

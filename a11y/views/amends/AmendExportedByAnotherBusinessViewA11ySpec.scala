@@ -24,12 +24,11 @@ import views.html.amends.AmendExportedByAnotherBusinessView
 
 class AmendExportedByAnotherBusinessViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val page = inject[AmendExportedByAnotherBusinessView]
+  val page         = inject[AmendExportedByAnotherBusinessView]
   private val form = new AmendExportedByAnotherBusinessFormProvider()()
 
-  private def render(form: Form[Long] = form): String = {
+  private def render(form: Form[Long] = form): String =
     page(form)(request, messages).toString()
-  }
 
   "view" should {
     "pass accessibility tests" in {

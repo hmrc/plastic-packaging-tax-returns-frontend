@@ -22,7 +22,7 @@ import play.api.data.FormError
 class DirectlyExportedComponentsFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "directlyExportedComponents.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new DirectlyExportedComponentsFormProvider()()
 

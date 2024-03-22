@@ -31,18 +31,17 @@ import viewmodels.implicits._
 case class CreditsExportedWeightSummary(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {
-      creditsAnswer =>
-        SummaryListRowViewModel(
-          key = Key("confirmPackagingCredit.exported.weight", classes="govuk-!-width-one-half"),
-          value = ValueViewModel(creditsAnswer.weightValue.asKg),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(key, CheckMode).url
-            ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.weight"))
-          )
+    answers.get(ExportedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map { creditsAnswer =>
+      SummaryListRowViewModel(
+        key = Key("confirmPackagingCredit.exported.weight", classes = "govuk-!-width-one-half"),
+        value = ValueViewModel(creditsAnswer.weightValue.asKg),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.returns.credits.routes.ExportedCreditsWeightController.onPageLoad(key, CheckMode).url
+          ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.weight"))
         )
+      )
     }
   }
 }

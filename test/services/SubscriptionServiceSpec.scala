@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val subscriptionConnector = mock[SubscriptionConnector]
-  private val headerCarrier = mock[HeaderCarrier]
+  private val headerCarrier         = mock[HeaderCarrier]
 
   private val service = new SubscriptionService(subscriptionConnector)
 
@@ -45,30 +45,28 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(subscriptionDisplayResponse))
   }
 
-
   "SubscriptionService" should {
-    
+
     "call its connector" in {
-      service.fetchGroupMemberNames("ppt-ref")(headerCarrier)    
+      service.fetchGroupMemberNames("ppt-ref")(headerCarrier)
       verify(subscriptionConnector).get("ppt-ref")(headerCarrier)
     }
-    
+
     "extract the group member names" in {
       await(service.fetchGroupMemberNames("ppt-ref")(headerCarrier)) mustBe GroupMembers(Seq(Member("Po", "crn")))
     }
-    
+
     "handle connector failure" in {
       val eisFailure = EisFailure(Some(Seq(EisError("error-code", "error-reason"))))
       when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Left(eisFailure))
-      the [RuntimeException] thrownBy 
+      the[RuntimeException] thrownBy
         await(service.fetchGroupMemberNames("ppt-ref")(headerCarrier)) must have message "Subscription connector failed"
     }
-    
+
   }
 
-  
-  private val customerDetails: CustomerDetails = CustomerDetails(customerType = CustomerType.Organisation,
-    individualDetails = None, organisationDetails = None)
+  private val customerDetails: CustomerDetails =
+    CustomerDetails(customerType = CustomerType.Organisation, individualDetails = None, organisationDetails = None)
 
   private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "GB")
 
@@ -79,15 +77,30 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
       changeOfCircumstanceDetails = None,
       LegalEntityDetails("", "", None, customerDetails, true, false, false),
       PrincipalPlaceOfBusinessDetails(addressDetails, contactDetails),
-      PrimaryContactDetails("", contactDetails, ""), 
+      PrimaryContactDetails("", contactDetails, ""),
       businessCorrespondenceDetails = addressDetails,
-      Declaration(true), 
-      taxObligationStartDate = "", 
+      Declaration(true),
+      taxObligationStartDate = "",
       last12MonthTotalTonnageAmt = 1.0,
-      processingDate = "", 
-      groupPartnershipSubscription = Some(GroupPartnershipSubscription(None, None, Seq(
-        GroupPartnershipDetails("", "crn", None, Some(OrganisationDetails(None, "Po")), None, addressDetails, contactDetails, false)
-      ))) 
+      processingDate = "",
+      groupPartnershipSubscription = Some(
+        GroupPartnershipSubscription(
+          None,
+          None,
+          Seq(
+            GroupPartnershipDetails(
+              "",
+              "crn",
+              None,
+              Some(OrganisationDetails(None, "Po")),
+              None,
+              addressDetails,
+              contactDetails,
+              false
+            )
+          )
+        )
+      )
     )
   }
 }

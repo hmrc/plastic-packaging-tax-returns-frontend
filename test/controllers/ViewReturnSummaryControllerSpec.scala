@@ -53,21 +53,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ViewReturnSummaryControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with MockitoSugar
     with JourneyActionAnswer
     with AmendExportedData
     with BeforeAndAfterEach {
 
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messages = mock[Messages]
-  private val messagesApi = mock[MessagesApi]
-  private val journeyAction =  mock[JourneyAction]
-  private val cacheConnector = mock[CacheConnector]
-  private val view = mock[ViewReturnSummaryView]
-  private val taxReturnHelper = mock[TaxReturnHelper]
-  private val returnsConnector = mock[TaxReturnsConnector]
-  private val errorHandler = mock[ErrorHandler]
+  private val dataRequest                         = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messages                            = mock[Messages]
+  private val messagesApi                         = mock[MessagesApi]
+  private val journeyAction                       = mock[JourneyAction]
+  private val cacheConnector                      = mock[CacheConnector]
+  private val view                                = mock[ViewReturnSummaryView]
+  private val taxReturnHelper                     = mock[TaxReturnHelper]
+  private val returnsConnector                    = mock[TaxReturnsConnector]
+  private val errorHandler                        = mock[ErrorHandler]
   private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
 
   val returnDisplayDetails: ReturnDisplayDetails = ReturnDisplayDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
@@ -76,11 +76,8 @@ class ViewReturnSummaryControllerSpec
     ReturnDisplayApi("2019-08-28T09:30:47Z", IdDetails("", ""), Some(charge), returnDisplayDetails)
   )
 
-  override val taxReturnOb: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(4),
-    LocalDate.now().plusWeeks(8),
-    "00XX")
+  override val taxReturnOb: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(4), LocalDate.now().plusWeeks(8), "00XX")
 
   private val sut = new ViewReturnSummaryController(
     messagesApi,
@@ -161,7 +158,6 @@ class ViewReturnSummaryControllerSpec
       when(mockObligation.fromDate).thenReturn(LocalDate.now())
       when(mockObligation.toDate).thenReturn(LocalDate.now())
 
-
       await(sut.onPageLoad("22C2")(dataRequest))
 
       val expected = ViewReturnSummaryViewModel(submittedReturn.displayReturnJson)(messages)
@@ -219,7 +215,7 @@ class ViewReturnSummaryControllerSpec
     }
     "re-initialise cache if is a new period key" in {
       setUpAPiCalls()
-      val userAnswer = mock[UserAnswers]
+      val userAnswer   = mock[UserAnswers]
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
       when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)

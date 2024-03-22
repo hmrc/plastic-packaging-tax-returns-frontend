@@ -20,8 +20,7 @@ import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
 case object IsFirstReturnCacheable extends Gettable[Boolean] with Settable[Boolean] {
-    override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ toString
 
-    override def toString: String = "isFirstReturn"
-  }
-
+  override def toString: String = "isFirstReturn"
+}

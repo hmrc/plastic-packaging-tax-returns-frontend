@@ -29,15 +29,14 @@ import viewmodels.implicits._
 object MainContactNameSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(MainContactNamePage).map {
-      answer =>
-        SummaryListRowViewModel(
-          key     = "newGroupLeadCheckYourAnswers.contact.name.key",
-          value   = ValueViewModel(answer),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.MainContactNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.name.key"))
-          )
+    answers.get(MainContactNamePage).map { answer =>
+      SummaryListRowViewModel(
+        key = "newGroupLeadCheckYourAnswers.contact.name.key",
+        value = ValueViewModel(answer),
+        actions = Seq(
+          ActionItemViewModel("site.change", routes.MainContactNameController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.name.key"))
         )
+      )
     }
 }

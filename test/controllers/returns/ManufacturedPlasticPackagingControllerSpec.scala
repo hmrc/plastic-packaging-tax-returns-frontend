@@ -42,26 +42,27 @@ import scala.concurrent.Future
 
 class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  private def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute  = Call("GET", "/foo")
   private val formProvider = new ManufacturedPlasticPackagingFormProvider()
-  private lazy val manufacturedPlasticPackagingRoute = routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
-  private val mockUserAnswers = mock[UserAnswers]
-  private val mockCacheConnector = mock[CacheConnector]
+  private lazy val manufacturedPlasticPackagingRoute =
+    routes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode).url
+  private val mockUserAnswers         = mock[UserAnswers]
+  private val mockCacheConnector      = mock[CacheConnector]
   private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val saveAnswersFunc = mock[UserAnswers.SaveUserAnswerFunc]
+  private val saveAnswersFunc         = mock[UserAnswers.SaveUserAnswerFunc]
 
   private def any[T]: T = ArgumentMatchers.any[T]()
-  
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockUserAnswers, mockCacheConnector, returnsJourneyNavigator)
 
-    val date = LocalDate.ofEpochDay(0)
+    val date       = LocalDate.ofEpochDay(0)
     val obligation = TaxReturnObligation(date, date, date, "")
     when(mockUserAnswers.get(eqq(ReturnObligationCacheable))(any)).thenReturn(Some(obligation))
 
-    when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
-    when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
+    when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
+    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveAnswersFunc
     when(returnsJourneyNavigator.manufacturedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
   }
 
@@ -81,7 +82,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -104,7 +106,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -115,7 +118,7 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
       val application =
         applicationBuilder(userAnswers = Some(mockUserAnswers))
           .overrides(
-            bind[CacheConnector].toInstance(mockCacheConnector), 
+            bind[CacheConnector].toInstance(mockCacheConnector),
             bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
           )
           .build()
@@ -129,10 +132,10 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-        
+
         verify(mockCacheConnector).saveUserAnswerFunc(eqq("123"))(any)
-        verify(mockUserAnswers).change (eqq(ManufacturedPlasticPackagingPage), eqq(true), any) (any)
-        verify(returnsJourneyNavigator).manufacturedPlasticPackaging (NormalMode, false, true)
+        verify(mockUserAnswers).change(eqq(ManufacturedPlasticPackagingPage), eqq(true), any)(any)
+        verify(returnsJourneyNavigator).manufacturedPlasticPackaging(NormalMode, false, true)
       }
     }
 
@@ -152,7 +155,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -187,9 +191,9 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
       }
     }
-    
+
     "submit must redirect to the mini-cya page if the answer has not changed" in {
-      when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
+      when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
 
       val application = applicationBuilder(Some(mockUserAnswers))
         .overrides(
@@ -202,15 +206,15 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
         val request = FakeRequest(POST, routes.ManufacturedPlasticPackagingController.onPageLoad(CheckMode).url)
           .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
-        
+
         status(result) mustBe 303
         redirectLocation(result) mustBe Some("/foo")
       }
 
-      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
-      verify(mockUserAnswers).change(eqq(ManufacturedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
+      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123"))(any)
+      verify(mockUserAnswers).change(eqq(ManufacturedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc))(any)
       verify(returnsJourneyNavigator).manufacturedPlasticPackaging(CheckMode, false, true)
     }
-    
+
   }
 }

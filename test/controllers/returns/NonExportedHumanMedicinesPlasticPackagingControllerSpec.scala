@@ -47,34 +47,42 @@ import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach{
+class NonExportedHumanMedicinesPlasticPackagingControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
   def onwardRoute = Call("GET", "/foo")
 
-  private val nonExportedHumanMedicinesPlasticPackagingRoute = routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
+  private val nonExportedHumanMedicinesPlasticPackagingRoute =
+    routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
 
-  val manufacturedAmount = 200L
-  val importedAmount = 100L
-  val exportedAmount = 50L
+  val manufacturedAmount              = 200L
+  val importedAmount                  = 100L
+  val exportedAmount                  = 50L
   val exportedByAnotherBusinessAmount = 50L
   val nonExportedAmount = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingView]
-  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private val mockCacheConnector           = mock[CacheConnector]
+  private val mockNavigator                = mock[ReturnsJourneyNavigator]
+  private val mockView                     = mock[NonExportedHumanMedicinesPlasticPackagingView]
+  private val nonExportedAmountHelper      = mock[NonExportedAmountHelper]
 
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
+    exportedAmount,
+    exportedByAnotherBusinessAmount,
+    manufacturedAmount,
+    importedAmount
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper)
-    when(mockView.apply(any(),any(),any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
-    when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L,true, true)))
+    when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
-
 
   "NonExportedHumanMedicinesPlasticPackaging Controller" should {
 
@@ -92,7 +100,9 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         .success
         .value
 
-      val result = createSut(userAnswer = Some(userAnswers)).onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
+      val result = createSut(userAnswer = Some(userAnswers)).onPageLoad(NormalMode)(
+        FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute)
+      )
 
       status(result) mustEqual OK
 
@@ -103,16 +113,19 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
         ArgumentMatchers.eq(NormalMode),
         ArgumentMatchers.eq(true),
         ArgumentMatchers.eq(true)
-      )(any(),any())
+      )(any(), any())
 
       captor.getValue.value mustBe Some(true)
     }
 
     "redirect GET to home page when DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage amount not found" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
-        .remove(AnotherBusinessExportedPage).success.value
-      ))
+      val result = createSut(userAnswer =
+        Some(
+          nonExportedAnswer.remove(DirectlyExportedPage).success.value
+            .remove(AnotherBusinessExportedPage).success.value
+        )
+      )
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
       status(result) mustEqual SEE_OTHER
@@ -125,10 +138,12 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
       when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingPage(any(), any())).thenReturn(Call(GET, "/faa"))
 
       val result = createSut(userAnswer = Some(nonExportedAnswer))
-        .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
-        .withFormUrlEncodedBody(("value", "true")))
+        .onSubmit(NormalMode)(
+          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+        )
 
-        status(result) mustEqual SEE_OTHER
+      status(result) mustEqual SEE_OTHER
 
       val expectedAnswer = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingPage, true).get
       verify(mockNavigator).nonExportedHumanMedicinesPlasticPackagingPage(NormalMode, true)
@@ -138,19 +153,26 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
     "return a Bad Request and errors when invalid data is submitted" in {
 
       val result = createSut(userAnswer = Some(nonExportedAnswer))
-        .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
-          .withFormUrlEncodedBody(("value", "")))
+        .onSubmit(NormalMode)(
+          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", ""))
+        )
 
-        status(result) mustEqual BAD_REQUEST
+      status(result) mustEqual BAD_REQUEST
     }
 
     "redirect Post to the home page is DirectlyExportedComponentsPage and PlasticExportedByAnotherBusinessPage question is not answered" in {
       when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(None)
-      val result = createSut(userAnswer = Some(nonExportedAnswer.remove(DirectlyExportedPage).success.value
-        .remove(AnotherBusinessExportedPage).success.value
-      ))
-        .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
-          .withFormUrlEncodedBody(("value", "")))
+      val result = createSut(userAnswer =
+        Some(
+          nonExportedAnswer.remove(DirectlyExportedPage).success.value
+            .remove(AnotherBusinessExportedPage).success.value
+        )
+      )
+        .onSubmit(NormalMode)(
+          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", ""))
+        )
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
@@ -160,15 +182,17 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
       val result = createSut()
         .onPageLoad(NormalMode)(FakeRequest(GET, nonExportedHumanMedicinesPlasticPackagingRoute))
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
     }
 
     "redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val result = createSut()
-        .onSubmit(NormalMode)(FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
-          .withFormUrlEncodedBody(("value", "true")))
+        .onSubmit(NormalMode)(
+          FakeRequest(POST, nonExportedHumanMedicinesPlasticPackagingRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+        )
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad.url
@@ -176,7 +200,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec extends PlaySpec w
   }
 
   private def createSut(
-    formProvider: NonExportedHumanMedicinesPlasticPackagingFormProvider = new NonExportedHumanMedicinesPlasticPackagingFormProvider(),
+    formProvider: NonExportedHumanMedicinesPlasticPackagingFormProvider =
+      new NonExportedHumanMedicinesPlasticPackagingFormProvider(),
     userAnswer: Option[UserAnswers] = None
   ): NonExportedHumanMedicinesPlasticPackagingController = {
     new NonExportedHumanMedicinesPlasticPackagingController(

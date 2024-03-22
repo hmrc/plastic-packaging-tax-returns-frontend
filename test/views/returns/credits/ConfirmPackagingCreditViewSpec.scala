@@ -28,19 +28,20 @@ import views.html.returns.credits.ConfirmPackagingCreditView
 
 import java.time.LocalDate
 
-class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
+class ConfirmPackagingCreditViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private val page: ConfirmPackagingCreditView = inject[ConfirmPackagingCreditView]
-  private val requestedCredit = BigDecimal(500)
-  private val continueCall = Call("TEST", "/end-point")
-  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private val requestedCredit                  = BigDecimal(500)
+  private val continueCall                     = Call("TEST", "/end-point")
+  private val creditRangeOption                = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val summaryList = Seq(
     SummaryListRow(key = Key(Text("tax rate")), value = Value(Text("value in pounds"))),
     SummaryListRow(
       key = Key(Text("exported")),
       value = Value(Text("answer")),
-      actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change"))))))
+      actions = Some(Actions(items = Seq(ActionItem("/foo", Text("change")))))
+    )
   )
   private def createView(): Html =
     page("year-key", requestedCredit, summaryList, continueCall, NormalMode, creditRangeOption)(request, messages)
@@ -50,8 +51,12 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
     val view = createView()
 
     "have a title" in {
-      view.select("title").text() must include("Confirm credit for 1 April 2023 to 31 March 2024 - Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("title").text() must include(messages("confirmPackagingCredit.title", "1 April 2023 to 31 March 2024"))
+      view.select("title").text() must include(
+        "Confirm credit for 1 April 2023 to 31 March 2024 - Submit return - Plastic Packaging Tax - GOV.UK"
+      )
+      view.select("title").text() must include(
+        messages("confirmPackagingCredit.title", "1 April 2023 to 31 March 2024")
+      )
     }
 
     "have a header" in {
@@ -63,13 +68,17 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
       view.getElementsByClass("govuk-summary-list__row").size() mustEqual 2
     }
 
-    "display conditional paragraph" when{
+    "display conditional paragraph" when {
       "only one year available to claim" in {
-        view.getElementsByClass("govuk-body").text() must include("Your £500.00 credit will be applied against your total balance in your Plastic Packaging Tax account.")
-        view.getElementsByClass("govuk-body").text() must include(messages("confirmPackagingCredit.requestedCredits", "£500.00"))
+        view.getElementsByClass("govuk-body").text() must include(
+          "Your £500.00 credit will be applied against your total balance in your Plastic Packaging Tax account."
+        )
+        view.getElementsByClass("govuk-body").text() must include(
+          messages("confirmPackagingCredit.requestedCredits", "£500.00")
+        )
 
         withClue("should not show too much credit paragraph") {
-          view.select("h2").text() must not include("You are claiming too much credit")
+          view.select("h2").text() must not include "You are claiming too much credit"
         }
       }
     }
@@ -82,7 +91,7 @@ class ConfirmPackagingCreditViewSpec extends ViewSpecBase  with ViewAssertions w
 
     "have a confirm and continue button" in {
       view.getElementById("link-button") must haveHref(continueCall.url)
-      view.getElementById("link-button").text() mustBe  "Confirm and continue"
+      view.getElementById("link-button").text() mustBe "Confirm and continue"
       view.getElementById("link-button").text() mustBe messages("site.continue.confirm")
     }
 

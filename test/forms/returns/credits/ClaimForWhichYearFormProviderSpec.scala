@@ -31,7 +31,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "one of the years is selected" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq(option))
+        val form  = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> option.key))
 
         bound.errors mustBe Nil
@@ -43,7 +43,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "The option is not in the form" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq.empty)
+        val form  = sut.apply(Seq.empty)
         val bound = form.bind(Map("value" -> option.key))
 
         bound.value mustBe None
@@ -52,7 +52,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "The value is not correct" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq(option))
+        val form  = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> "blah-not-correct"))
 
         bound.value mustBe None
@@ -61,7 +61,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "The value is not provided" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq(option))
+        val form  = sut.apply(Seq(option))
         val bound = form.bind(Map("value" -> ""))
 
         bound.value mustBe None
@@ -70,7 +70,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "The binding is malformed" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq(option))
+        val form  = sut.apply(Seq(option))
         val bound = form.bind(Map("blah" -> "bloop"))
 
         bound.value mustBe None
@@ -79,7 +79,7 @@ class ClaimForWhichYearFormProviderSpec extends PlaySpec {
       "The binding is not provided" in {
         val option = CreditRangeOption(LocalDate.MIN, LocalDate.MAX)
 
-        val form = sut.apply(Seq(option))
+        val form  = sut.apply(Seq(option))
         val bound = form.bind(Map.empty[String, String])
 
         bound.value mustBe None

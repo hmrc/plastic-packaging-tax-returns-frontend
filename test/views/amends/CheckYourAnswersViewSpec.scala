@@ -28,8 +28,9 @@ import java.time.LocalDate
 
 class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val page                            = inject[CheckYourAnswersView]
-  val obligation: TaxReturnObligation = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val page = inject[CheckYourAnswersView]
+  val obligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
   private def createView(calculation: AmendsCalculations, amendmentMade: Boolean): Html =
     page(obligation, Seq.empty, Seq.empty, calculation, amendmentMade)(request, messages)
@@ -41,9 +42,11 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "not allow to submit return when deduction greater than accretion" in {
       val view = createView(calculation = createCalculations(false), amendmentMade = true)
 
-      view.getElementsByClass("govuk-button").text() must not include("Submit amended return")
+      view.getElementsByClass("govuk-button").text() must not include "Submit amended return"
       view.getElementById("submit-amend-return-header-error").text() mustBe "Submitting your amended return"
-      view.getElementById("submit-amend-return-header-error").text() mustBe messages("AmendsCheckYourAnswers.error.heading")
+      view.getElementById("submit-amend-return-header-error").text() mustBe messages(
+        "AmendsCheckYourAnswers.error.heading"
+      )
       view.getElementById(
         "submit-amend-return-error-line"
       ).text() mustBe "You cannot submit this amended return unless you change your answers. The weight of your total plastic packaging must be greater than, or equal to, the weight of your total deductions."
@@ -101,7 +104,9 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
       "display tax rate" in {
         val view = createView(calculation = createCalculations(false), amendmentMade = true)
 
-        view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300.00 per tonne.")
+        view.getElementsByClass("govuk-body").text() must include(
+          "For this period, tax is charged at a rate of £300.00 per tonne."
+        )
       }
       "amended" in {
         val view = createView(calculation = createCalculations(true), amendmentMade = true)
@@ -137,12 +142,11 @@ class CheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
   }
 
-  private def createCalculations(isSubmittable: Boolean) = {
+  private def createCalculations(isSubmittable: Boolean) =
     AmendsCalculations(
       Calculations(12, 40, 100, 200, isSubmittable, 200.0),
       Calculations(12, 40, 100, 200, isSubmittable, 0.3)
     )
-  }
 
   private def createExpectedDeductionRows: Seq[AmendSummaryRow] =
     Seq(

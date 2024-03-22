@@ -27,11 +27,11 @@ case class LegalEntityDetails(
   groupSubscriptionFlag: Boolean,
   regWithoutIDFlag: Boolean,
   partnershipSubscriptionFlag: Boolean
-){
+) {
   def entityName: String = customerDetails.customerType match {
-    case Individual => customerDetails.individualDetails.get.toDisplayString
+    case Individual   => customerDetails.individualDetails.get.toDisplayString
     case Organisation => customerDetails.organisationDetails.get.organisationName
-    case _ => throw new IllegalStateException(s"Invalid customer type: ${customerDetails.customerType}")
+    case _            => throw new IllegalStateException(s"Invalid customer type: ${customerDetails.customerType}")
   }
 
   val isGroup: Boolean       = groupSubscriptionFlag

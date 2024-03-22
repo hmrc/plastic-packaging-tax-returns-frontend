@@ -24,21 +24,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class Auditor @Inject()(auditConnector: AuditConnector) {
+class Auditor @Inject() (auditConnector: AuditConnector) {
 
-  def returnStarted(internalId: String,
-                    pptReference: String)
-                   (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
+  def returnStarted(internalId: String, pptReference: String)(implicit
+    hc: HeaderCarrier,
+    ex: ExecutionContext
+  ): Unit = {
     val payload = ReturnStarted(internalId, ReturnStarted.message, pptReference)
     auditConnector.sendExplicitAudit(ReturnStarted.eventType, payload)
   }
 
-  def amendStarted(internalId: String,
-                   pptReference: String)
-                  (implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
+  def amendStarted(internalId: String, pptReference: String)(implicit hc: HeaderCarrier, ex: ExecutionContext): Unit = {
     val payload = AmendStarted(internalId, AmendStarted.message, pptReference)
     auditConnector.sendExplicitAudit(AmendStarted.eventType, payload)
   }
 
 }
-

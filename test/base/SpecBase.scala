@@ -39,14 +39,18 @@ import uk.gov.hmrc.http.HttpResponse
 import java.time.LocalDate
 
 trait SpecBase
-    extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures
+    extends AnyFreeSpec
+    with Matchers
+    with TryValues
+    with OptionValues
+    with ScalaFutures
     with IntegrationPatience {
 
   val userAnswersId: String = "123"
 
-  implicit val config: FrontendAppConfig          = mock[FrontendAppConfig]
-  implicit val cacheConnector: CacheConnector     = mock[CacheConnector]
-  implicit val mockSessionRepo: SessionRepository = mock[SessionRepository]
+  implicit val config: FrontendAppConfig                   = mock[FrontendAppConfig]
+  implicit val cacheConnector: CacheConnector              = mock[CacheConnector]
+  implicit val mockSessionRepo: SessionRepository          = mock[SessionRepository]
   implicit val mockTaxReturnConnector: TaxReturnsConnector = mock[TaxReturnsConnector]
 
   def userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -57,7 +61,8 @@ trait SpecBase
     LocalDate.parse("2022-04-01"),
     LocalDate.parse("2022-06-30"),
     LocalDate.parse("2022-06-30").plusWeeks(8),
-    "00XX")
+    "00XX"
+  )
 
   val mockResponse: HttpResponse = mock[HttpResponse]
 
@@ -85,9 +90,8 @@ trait SpecBase
   def messages(app: Application): Messages =
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  def messages(app: Application, message: String): String = {
+  def messages(app: Application, message: String): String =
     app.injector.instanceOf[MessagesApi].preferred(FakeRequest()).apply(message)
-  }
 
   protected def applicationBuilder(
     userAnswers: Option[UserAnswers] = None

@@ -49,22 +49,24 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+class ConvertedCreditsControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with ResetMocksAfterEachTest {
 
-class ConvertedCreditsControllerSpec extends PlaySpec 
-  with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
-
-  private val mockCacheConnector: CacheConnector = mock[CacheConnector]
+  private val mockCacheConnector: CacheConnector     = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val view = mock[ConvertedCreditsView]
-  private val formProvider = mock[ConvertedCreditsFormProvider]
-  private val initialForm = mock[Form[Boolean]]("initial form")
-  private val preparedForm = mock[Form[Boolean]]("prepared form")
-  private val journeyAction = mock[JourneyAction]
-  private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
-  private val messagesApi = mock[MessagesApi]
-  private val messages = mock[Messages]
-  private val saveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
-  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3,31))
+  private val view                                   = mock[ConvertedCreditsView]
+  private val formProvider                           = mock[ConvertedCreditsFormProvider]
+  private val initialForm                            = mock[Form[Boolean]]("initial form")
+  private val preparedForm                           = mock[Form[Boolean]]("prepared form")
+  private val journeyAction                          = mock[JourneyAction]
+  private val request                                = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val messagesApi                            = mock[MessagesApi]
+  private val messages                               = mock[Messages]
+  private val saveUserAnswerFunc                     = mock[UserAnswers.SaveUserAnswerFunc]
+  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -87,7 +89,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec
 
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
     when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
-    
+
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
@@ -98,38 +100,39 @@ class ConvertedCreditsControllerSpec extends PlaySpec
         fromDate = LocalDate.of(2023, 4, 1),
         toDate = LocalDate.of(2024, 3, 31),
         exportedCredits = None,
-        convertedCredits = None)
+        convertedCredits = None
+      )
     )
   }
-  
+
   "onPageLoad" must {
-    
+
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
       verify(journeyAction).async(any)
     }
-    
+
     "fill the form with user's previous answer" in {
-      controller.onPageLoad("year-key", NormalMode) (request)
+      controller.onPageLoad("year-key", NormalMode)(request)
       val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function) (any)
-      
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function)(any)
+
       withClue("using correct function") {
         val creditsAnswer = mock[CreditsAnswer]
         function.value(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
     }
-    
+
     "render the page" in {
-      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any) (any)) thenReturn preparedForm
-      controller.onPageLoad("year-key", NormalMode) (request)
+      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
+      controller.onPageLoad("year-key", NormalMode)(request)
       verify(messagesApi).preferred(request)
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
     }
-    
+
     "200 ok the client" in {
-      val futureResult = controller.onPageLoad("year-key", NormalMode) (request)
+      val futureResult = controller.onPageLoad("year-key", NormalMode)(request)
       status(futureResult) mustBe Status.OK
       contentAsString(futureResult) mustBe "correct view"
     }
@@ -158,28 +161,34 @@ class ConvertedCreditsControllerSpec extends PlaySpec
 
     "remember the user's answers" in {
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-      await(controller.onSubmit("year-key", NormalMode) (request))
+      await(controller.onSubmit("year-key", NormalMode)(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc)) (any, any)
+      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc))(
+        any,
+        any
+      )
     }
 
     "redirect to the next page" in {
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-      when(request.userAnswers.changeWithFunc(any, any, any) (any, any)) thenReturn Future.unit
-      
-      val result = await { controller.onSubmit("year-key", NormalMode) (request) }
+      when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
+
+      val result = await(controller.onSubmit("year-key", NormalMode)(request))
       verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo("year-key"), eqTo(true))
-      
+
       result.header.status mustBe Status.SEE_OTHER
       redirectLocation(Future.successful(result)) mustBe Some("/next/page")
     }
-    
+
     "display any errors" in {
       val formWithErrors = Form("v" -> boolean).withError("key", "message")
       when(initialForm.bindFromRequest()(any, any)) thenReturn formWithErrors
 
-      val result = await { controller.onSubmit("year-key", NormalMode)(request) }
-      verify(view).apply(eqTo(formWithErrors),eqTo("year-key") ,eqTo(NormalMode), eqTo(creditRangeOption)) (eqTo(request), eqTo(messages))
+      val result = await(controller.onSubmit("year-key", NormalMode)(request))
+      verify(view).apply(eqTo(formWithErrors), eqTo("year-key"), eqTo(NormalMode), eqTo(creditRangeOption))(
+        eqTo(request),
+        eqTo(messages)
+      )
 
       result.header.status mustBe Status.BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"
@@ -204,4 +213,3 @@ class ConvertedCreditsControllerSpec extends PlaySpec
 
   }
 }
-

@@ -32,7 +32,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   val amount = 321L
 
   "AmendDirectExportPlasticPackagingView" should {
-    val form: Form[Long] = new AmendDirectExportPlasticPackagingFormProvider()()
+    val form: Form[Long]                            = new AmendDirectExportPlasticPackagingFormProvider()()
     val page: AmendDirectExportPlasticPackagingView = inject[AmendDirectExportPlasticPackagingView]
 
     def render(form: Form[Long]): String =
@@ -48,7 +48,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   }
 
   "AmendRecycledPlasticPackagingView" should {
-    val form: Form[Long] = new AmendRecycledPlasticPackagingFormProvider()()
+    val form: Form[Long]                        = new AmendRecycledPlasticPackagingFormProvider()()
     val page: AmendRecycledPlasticPackagingView = inject[AmendRecycledPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =
@@ -64,7 +64,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   }
 
   "AmendHumanMedicinePlasticPackagingView" should {
-    val form: Form[Long] = new AmendHumanMedicinePlasticPackagingFormProvider()()
+    val form: Form[Long]                             = new AmendHumanMedicinePlasticPackagingFormProvider()()
     val page: AmendHumanMedicinePlasticPackagingView = inject[AmendHumanMedicinePlasticPackagingView]
 
     def render(form: Form[Long]): String =
@@ -80,7 +80,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   }
 
   "AmendManufacturedPlasticPackagingView" should {
-    val form: Form[Long] = new AmendManufacturedPlasticPackagingFormProvider()()
+    val form: Form[Long]                            = new AmendManufacturedPlasticPackagingFormProvider()()
     val page: AmendManufacturedPlasticPackagingView = inject[AmendManufacturedPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =
@@ -96,7 +96,7 @@ class AmendReturnA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   }
 
   "AmendImportedPlasticPackagingView" should {
-    val form: Form[Long] = new AmendImportedPlasticPackagingFormProvider()()
+    val form: Form[Long]                        = new AmendImportedPlasticPackagingFormProvider()()
     val page: AmendImportedPlasticPackagingView = inject[AmendImportedPlasticPackagingView]
 
     def render(form: Form[Long] = form): String =

@@ -32,7 +32,7 @@ import views.html.changeGroupLead.NewGroupLeadEnterContactAddressView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NewGroupLeadEnterContactAddressController @Inject()(
+class NewGroupLeadEnterContactAddressController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ChangeGroupLeadNavigator,
@@ -41,26 +41,28 @@ class NewGroupLeadEnterContactAddressController @Inject()(
   countryService: CountryService,
   val controllerComponents: MessagesControllerComponents,
   view: NewGroupLeadEnterContactAddressView
-)(implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
-      val preparedForm = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
-        Future.successful(Results.Ok(view(preparedForm, countryService.getAll, selectedMember.organisationName, mode)))
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+    val preparedForm   = request.userAnswers.fill(NewGroupLeadEnterContactAddressPage, formProvider.apply())
+    Future.successful(Results.Ok(view(preparedForm, countryService.getAll, selectedMember.organisationName, mode)))
   }
 
-  def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
+  def onSubmit(implicit mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    val selectedMember = request.userAnswers.getOrFail(ChooseNewGroupLeadPage)
 
-      formProvider().bindFromRequest().fold(
-        formWithErrors => Future.successful(Results.BadRequest(view(formWithErrors, countryService.getAll, selectedMember.organisationName, mode))),
-        contactAddress =>
-          request.userAnswers
-            .setOrFail(NewGroupLeadEnterContactAddressPage, contactAddress)
-            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(_ => Results.Redirect(navigator.enterContactAddress))
-      )
+    formProvider().bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(
+          Results.BadRequest(view(formWithErrors, countryService.getAll, selectedMember.organisationName, mode))
+        ),
+      contactAddress =>
+        request.userAnswers
+          .setOrFail(NewGroupLeadEnterContactAddressPage, contactAddress)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Results.Redirect(navigator.enterContactAddress))
+    )
   }
 }

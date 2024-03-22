@@ -30,12 +30,12 @@ class CreditsClaimedListFormProviderSpec extends BooleanFieldBehaviours {
   val invalidKey = "error.boolean"
 
   val mockMessages = mock[Messages]
-  val cro = CreditRangeOption(LocalDate.now(), LocalDate.now())
+  val cro          = CreditRangeOption(LocalDate.now(), LocalDate.now())
 
   "form when" - {
     "one CreditRangeOption available" - {
       val onlyOneRemainingError = "creditsSummary.error.required.one-remaining"
-      val form = new CreditsClaimedListFormProvider().apply(Seq.fill(1)(cro))(mockMessages)
+      val form                  = new CreditsClaimedListFormProvider().apply(Seq.fill(1)(cro))(mockMessages)
       ".value" - {
 
         val fieldName = "value"
@@ -58,7 +58,7 @@ class CreditsClaimedListFormProviderSpec extends BooleanFieldBehaviours {
 
     "multiple CreditRangeOption available" - {
       val standardError = "creditsSummary.error.required"
-      val form = new CreditsClaimedListFormProvider().apply(Seq.fill(2)(cro))(mockMessages)
+      val form          = new CreditsClaimedListFormProvider().apply(Seq.fill(2)(cro))(mockMessages)
       ".value" - {
 
         val fieldName = "value"
@@ -77,6 +77,5 @@ class CreditsClaimedListFormProviderSpec extends BooleanFieldBehaviours {
       }
     }
   }
-
 
 }

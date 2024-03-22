@@ -28,10 +28,10 @@ case object ManufacturedPlasticPackagingPage extends QuestionPage[Boolean] {
 
   override def toString: String = "manufacturedPlasticPackaging"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map {
       case true => super.cleanup(value, userAnswers)
-      case _ => userAnswers.set(ManufacturedPlasticPackagingWeightPage, 0L)
+      case _    => userAnswers.set(ManufacturedPlasticPackagingWeightPage, 0L)
     }
-  }.getOrElse(super.cleanup(value, userAnswers))
+      .getOrElse(super.cleanup(value, userAnswers))
 }

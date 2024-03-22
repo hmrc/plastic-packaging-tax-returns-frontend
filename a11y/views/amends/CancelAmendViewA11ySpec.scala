@@ -31,13 +31,10 @@ class CancelAmendViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   val form = new CancelAmendFormProvider()()
   val page = inject[CancelAmendView]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.now(),
-    LocalDate.now().plusWeeks(12),
-    LocalDate.now().plusWeeks(16),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
 
-  private def render(form: Form[Boolean] = form):  Html =
+  private def render(form: Form[Boolean] = form): Html =
     page(form, aTaxObligation)(request, messages)
 
   "CancelAmendView" should {

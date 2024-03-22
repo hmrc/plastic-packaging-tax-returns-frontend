@@ -34,49 +34,49 @@ import views.html.returns.AnotherBusinessExportWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AnotherBusinessExportWeightController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        cacheConnector: CacheConnector,
-                                        returnsNavigator: ReturnsJourneyNavigator,
-                                        journeyAction: JourneyAction,
-                                        form: AnotherBusinessExportWeightFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: AnotherBusinessExportWeightView,
-                                        nonExportedAmountHelper: NonExportedAmountHelper
-                                      )(implicit ec: ExecutionContext) extends Results with I18nSupport {
+class AnotherBusinessExportWeightController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  returnsNavigator: ReturnsJourneyNavigator,
+  journeyAction: JourneyAction,
+  form: AnotherBusinessExportWeightFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AnotherBusinessExportWeightView,
+  nonExportedAmountHelper: NonExportedAmountHelper
+)(implicit ec: ExecutionContext)
+    extends Results
+    with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = journeyAction { implicit request =>
+    val preparedForm = request.userAnswers.fill(AnotherBusinessExportedWeightPage, form())
 
-      val preparedForm = request.userAnswers.fill(AnotherBusinessExportedWeightPage, form())
-
-      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
-        .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-          totalPlastic => Ok(view(totalPlastic, preparedForm, mode))
-        )
+    nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
+      .fold(Redirect(controllers.routes.IndexController.onPageLoad))(totalPlastic =>
+        Ok(view(totalPlastic, preparedForm, mode))
+      )
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(
-            nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
-              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                totalPlastic => BadRequest(view(totalPlastic, formWithErrors, mode))
-              )
-          ),
-
-        value =>
-          request.userAnswers
-            .setOrFail(AnotherBusinessExportedWeightPage, value, mode != CheckMode)
-            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-            .map(updatedUserAnswers =>
-              Redirect(returnsNavigator.exportedByAnotherBusinessWeightRoute(
-                ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
-                mode))
+  def onSubmit(mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    form().bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(
+          nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers)
+            .fold(Redirect(controllers.routes.IndexController.onPageLoad))(totalPlastic =>
+              BadRequest(view(totalPlastic, formWithErrors, mode))
             )
-        )
+        ),
+      value =>
+        request.userAnswers
+          .setOrFail(AnotherBusinessExportedWeightPage, value, mode != CheckMode)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(updatedUserAnswers =>
+            Redirect(
+              returnsNavigator.exportedByAnotherBusinessWeightRoute(
+                ExportedPlasticAnswer(updatedUserAnswers).isAllPlasticExported,
+                mode
+              )
+            )
+          )
+    )
   }
 }

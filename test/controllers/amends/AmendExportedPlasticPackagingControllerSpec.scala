@@ -28,10 +28,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import views.html.amends.AmendExportedPlasticPackagingView
 
-class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAndAfterEach{
+class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val messagesApi = mock[MessagesApi]
-  private val view = mock[AmendExportedPlasticPackagingView]
+  private val view        = mock[AmendExportedPlasticPackagingView]
   private val sut = new AmendExportedPlasticPackagingController(
     messagesApi,
     new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
@@ -43,7 +43,7 @@ class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAn
     super.beforeEach()
 
     reset(messagesApi, view)
-    when(view.apply()(any,any)).thenReturn(HtmlFormat.empty)
+    when(view.apply()(any, any)).thenReturn(HtmlFormat.empty)
   }
 
   "onPageLoad" should {
@@ -61,7 +61,9 @@ class AmendExportedPlasticPackagingControllerSpec extends PlaySpec with BeforeAn
       val result = sut.onSubmit(FakeRequest(POST, ""))
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url)
+      redirectLocation(result) mustEqual Some(
+        controllers.amends.routes.AmendDirectExportPlasticPackagingController.onPageLoad.url
+      )
     }
   }
 }

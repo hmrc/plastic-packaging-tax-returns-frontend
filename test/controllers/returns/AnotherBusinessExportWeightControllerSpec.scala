@@ -47,18 +47,18 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach{
+class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[AnotherBusinessExportWeightView]
-  private val mockFormProvider = mock[AnotherBusinessExportWeightFormProvider]
-  private val mockCache = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Long]]
-  private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                     = mock[AnotherBusinessExportWeightView]
+  private val mockFormProvider             = mock[AnotherBusinessExportWeightFormProvider]
+  private val mockCache                    = mock[CacheConnector]
+  private val journeyAction                = mock[JourneyAction]
+  private val dataRequest                  = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                         = mock[Form[Long]]
+  private val mockNavigator                = mock[ReturnsJourneyNavigator]
+  private val mockNonExportedAmountHelper  = mock[NonExportedAmountHelper]
 
   val sut = new AnotherBusinessExportWeightController(
     mockMessagesApi,
@@ -73,7 +73,8 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockMessagesApi,
+    reset(
+      mockMessagesApi,
       journeyAction,
       mockCache,
       mockNavigator,
@@ -101,7 +102,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
     "return OK and correct view" in {
       val result = sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest)
-     status(result) mustBe OK
+      status(result) mustBe OK
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(200L), meq(form), meq(NormalMode))(any, any)
     }
@@ -116,15 +117,15 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
       verify(dataRequest.userAnswers).fill(meq(AnotherBusinessExportedWeightPage), meq(form))(any)
     }
 
-   "redirect to index controller when total plastic cannot be calculated" in {
-     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
+    "redirect to index controller when total plastic cannot be calculated" in {
+      when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(None)
 
-     val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
 
-     status(result) mustEqual SEE_OTHER
-     redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
-     verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
-   }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+      verify(mockNonExportedAmountHelper).totalPlasticAdditions(dataRequest.userAnswers)
+    }
   }
 
   "onSubmit" should {
@@ -174,7 +175,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
     }
 
     "save userAnswer to cache" in {
-      val saveFunc:SaveUserAnswerFunc = (_, bool) => Future.successful(bool)
+      val saveFunc: SaveUserAnswerFunc = (_, bool) => Future.successful(bool)
       when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber()).fill(20L))
       val answers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answers)

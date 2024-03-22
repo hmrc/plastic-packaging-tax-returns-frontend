@@ -32,8 +32,9 @@ import java.time.LocalDate
 class ManufacturedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewMatchers {
 
   val page: ManufacturedPlasticPackagingWeightView = inject[ManufacturedPlasticPackagingWeightView]
-  val aTaxObligation: TaxReturnObligation          = TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
-  val form: Form[Long]                             = new ManufacturedPlasticPackagingWeightFormProvider()()
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.now(), LocalDate.now().plusWeeks(12), LocalDate.now().plusWeeks(16), "PK1")
+  val form: Form[Long] = new ManufacturedPlasticPackagingWeightFormProvider()()
 
   private def createView(form: Form[Long] = form): Html =
     page(form, NormalMode, aTaxObligation)(request, messages)
@@ -66,7 +67,7 @@ class ManufacturedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewM
       val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
-      doc.getElementById("value-hint").text  must include(messages("manufacturedPlasticPackagingWeight.hint"))
+      doc.getElementById("value-hint").text must include(messages("manufacturedPlasticPackagingWeight.hint"))
     }
 
     "display error" when {

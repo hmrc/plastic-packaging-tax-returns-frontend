@@ -41,17 +41,24 @@ class MainContactNameSummarySpec extends PlaySpec {
 
       val userAnswers = UserAnswers("test").setOrFail(MainContactNamePage, "Pan", false)
 
-      MainContactNameSummary.row(userAnswers)(message) mustBe Some(SummaryListRow(
-        key = Key(Text("[KEY]")),
-        value = Value(Text("Pan")),
-        actions = Some(Actions("", Seq(
-          ActionItemViewModel(Text("[CHANGE]"), routes.MainContactNameController.onPageLoad(CheckMode).url)
-          .withVisuallyHiddenText("[KEY]")
-      )))
-      ))
+      MainContactNameSummary.row(userAnswers)(message) mustBe Some(
+        SummaryListRow(
+          key = Key(Text("[KEY]")),
+          value = Value(Text("Pan")),
+          actions = Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(Text("[CHANGE]"), routes.MainContactNameController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText("[KEY]")
+              )
+            )
+          )
+        )
+      )
 
     }
-    "not return a row" in  {
+    "not return a row" in {
       val userAnswers = UserAnswers("test")
 
       MainContactNameSummary.row(userAnswers)(message) mustBe None

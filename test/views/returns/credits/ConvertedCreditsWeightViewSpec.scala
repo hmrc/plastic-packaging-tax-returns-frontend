@@ -32,17 +32,19 @@ import views.html.returns.credits.ConvertedCreditsWeightView
 
 import java.time.LocalDate
 
-class ConvertedCreditsWeightViewSpec extends ViewSpecBase
-  with ViewAssertions
-  with ViewMatchers
-  with AccessibilityMatchers
-  with MockitoSugar with BeforeAndAfterEach {
+class ConvertedCreditsWeightViewSpec
+    extends ViewSpecBase
+    with ViewAssertions
+    with ViewMatchers
+    with AccessibilityMatchers
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
-  override val messages = spy(super.messages)
-  private val form = new ConvertedCreditsWeightFormProvider()()
-  private val page = inject[ConvertedCreditsWeightView]
+  override val messages         = spy(super.messages)
+  private val form              = new ConvertedCreditsWeightFormProvider()()
+  private val page              = inject[ConvertedCreditsWeightView]
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
-  private def createView: Html = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
+  private def createView: Html  = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -53,14 +55,14 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
     "have a title and heading" in {
       val view = createView
       verify(messages, times(2)).apply("converted-credits-weight.heading-title")
-      view.select("title").text must include ("Submit return - Plastic Packaging Tax - GOV.UK")
-      view.select("h1").text must include ("")
+      view.select("title").text must include("Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("h1").text must include("")
     }
 
     "have a caption" in {
       val view = createView
       verify(messages).apply(ArgumentMatchers.eq("credits.caption"), any())
-      view.getElementById("section-header").text mustBe ("Credit for 1 April 2023 to 31 March 2024")
+      view.getElementById("section-header").text mustBe "Credit for 1 April 2023 to 31 March 2024"
     }
 
     "have a hint" in {
@@ -68,7 +70,7 @@ class ConvertedCreditsWeightViewSpec extends ViewSpecBase
       verify(messages).apply("converted-credits-weight.hint")
 
       val doc: Document = Jsoup.parse(view.toString())
-      doc.getElementById("value-hint").text must include (messages("Enter the weight in kilograms. 1 tonne is 1,000kg."))
+      doc.getElementById("value-hint").text must include(messages("Enter the weight in kilograms. 1 tonne is 1,000kg."))
     }
 
     "contain save & continue button" in {

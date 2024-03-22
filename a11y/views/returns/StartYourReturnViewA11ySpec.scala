@@ -31,11 +31,8 @@ class StartYourReturnViewA11ySpec extends ViewSpecBase with AccessibilityMatcher
   val page = inject[StartYourReturnView]
   val form = new StartYourReturnFormProvider()()
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022,7,5),
-    LocalDate.of(2022,10,5),
-    LocalDate.of(2023,1,5),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
   def render(form: Form[Boolean], isFirstReturn: Boolean): Html =
     page(form, aTaxObligation, isFirstReturn)(request, messages)

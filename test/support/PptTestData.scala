@@ -33,49 +33,47 @@ object PptTestData {
   val nrsCredentials = Credentials(providerId = "providerId", providerType = "providerType")
 
   val ukLimitedCompanySubscription: Subscription = Subscription(
-    legalEntityDetails =
-      LegalEntityDetails(dateOfApplication =
-                           now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                         customerIdentification1 = "123456789",
-                         customerIdentification2 = Some("1234567890"),
-                         customerDetails = CustomerDetails(customerType = CustomerType.Organisation,
-                                                           organisationDetails =
-                                                             Some(
-                                                               subscription.OrganisationDetails(
-                                                                 organisationName = "Plastics Ltd", 
-                                                                 organisationType =
-                                                                   Some("UK Limited Company")
-                                                               )
-                                                             ), 
-                           individualDetails = None),
-        groupSubscriptionFlag = false, 
-        regWithoutIDFlag = false,
-        partnershipSubscriptionFlag = false
-      ),
-    principalPlaceOfBusinessDetails =
-      PrincipalPlaceOfBusinessDetails(
-        addressDetails = AddressDetails(addressLine1 = "2-3 Scala Street",
-                                        addressLine2 = "Soho",
-                                        addressLine3 = Some("London"),
-                                        addressLine4 = None,
-                                        postalCode = Some("W1T 2HN"),
-                                        countryCode = "GB", 
-          
+    legalEntityDetails = LegalEntityDetails(
+      dateOfApplication = now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+      customerIdentification1 = "123456789",
+      customerIdentification2 = Some("1234567890"),
+      customerDetails = CustomerDetails(
+        customerType = CustomerType.Organisation,
+        organisationDetails = Some(
+          subscription.OrganisationDetails(
+            organisationName = "Plastics Ltd",
+            organisationType = Some("UK Limited Company")
+          )
         ),
-        contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
+        individualDetails = None
       ),
-    primaryContactDetails =
-      PrimaryContactDetails(name = "Kevin Durant",
-                            contactDetails =
-                              ContactDetails(email = "test@test.com", telephone = "02034567890"),
-                            positionInCompany = "Director"
+      groupSubscriptionFlag = false,
+      regWithoutIDFlag = false,
+      partnershipSubscriptionFlag = false
+    ),
+    principalPlaceOfBusinessDetails = PrincipalPlaceOfBusinessDetails(
+      addressDetails = AddressDetails(
+        addressLine1 = "2-3 Scala Street",
+        addressLine2 = "Soho",
+        addressLine3 = Some("London"),
+        addressLine4 = None,
+        postalCode = Some("W1T 2HN"),
+        countryCode = "GB"
       ),
-    businessCorrespondenceDetails = AddressDetails(addressLine1 = "addressLine1",
-                                                   addressLine2 = " line2 Town",
-                                                   addressLine3 = None,
-                                                   addressLine4 = None,
-                                                   postalCode = Some("PostCode"),
-                                                   countryCode = "GB"
+      contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
+    ),
+    primaryContactDetails = PrimaryContactDetails(
+      name = "Kevin Durant",
+      contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890"),
+      positionInCompany = "Director"
+    ),
+    businessCorrespondenceDetails = AddressDetails(
+      addressLine1 = "addressLine1",
+      addressLine2 = " line2 Town",
+      addressLine3 = None,
+      addressLine4 = None,
+      postalCode = Some("PostCode"),
+      countryCode = "GB"
     ),
     taxObligationStartDate = now(UTC).toString,
     last12MonthTotalTonnageAmt = 15000,
@@ -85,23 +83,18 @@ object PptTestData {
 
   val soleTraderSubscription: Subscription = {
     val subscription = ukLimitedCompanySubscription.copy(legalEntityDetails =
-      LegalEntityDetails(dateOfApplication =
-                           now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                         customerIdentification1 = "123456789",
-                         customerIdentification2 = Some("1234567890"),
-                         customerDetails =
-                           CustomerDetails(customerType = CustomerType.Individual,
-                                           individualDetails =
-                                             Some(
-                                               IndividualDetails(title = Some("MR"),
-                                                                 firstName = "James",
-                                                                 lastName = "Bond",
-                                                 middleName = None
-                                               )
-                                             ),
-                             organisationDetails = None
-                           ), 
-        regWithoutIDFlag = false, 
+      LegalEntityDetails(
+        dateOfApplication = now(UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        customerIdentification1 = "123456789",
+        customerIdentification2 = Some("1234567890"),
+        customerDetails = CustomerDetails(
+          customerType = CustomerType.Individual,
+          individualDetails = Some(
+            IndividualDetails(title = Some("MR"), firstName = "James", lastName = "Bond", middleName = None)
+          ),
+          organisationDetails = None
+        ),
+        regWithoutIDFlag = false,
         partnershipSubscriptionFlag = false,
         groupSubscriptionFlag = false
       )
@@ -114,10 +107,9 @@ object PptTestData {
     enrolments: Option[Enrolments] = Some(pptEnrolment("123")),
     affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
-    SignedInUser(enrolments.getOrElse(Enrolments(Set())),
-                 IdentityData("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-                              affinityGroup
-                 )
+    SignedInUser(
+      enrolments.getOrElse(Enrolments(Set())),
+      IdentityData("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b", affinityGroup)
     )
 
   def newAgent(externalId: String = "123") =
@@ -125,10 +117,7 @@ object PptTestData {
 
   def pptEnrolment(pptEnrolmentId: String) =
     newEnrolments(
-      newEnrolment(IdentifierAction.pptEnrolmentKey,
-                   IdentifierAction.pptEnrolmentIdentifierName,
-                   pptEnrolmentId
-      )
+      newEnrolment(IdentifierAction.pptEnrolmentKey, IdentifierAction.pptEnrolmentIdentifierName, pptEnrolmentId)
     )
 
   def newEnrolments(enrolment: Enrolment*): Enrolments =
@@ -138,29 +127,19 @@ object PptTestData {
     Enrolment(key).withIdentifier(identifierName, identifierValue)
 
   def createSubscriptionDisplayResponse(subscription: Subscription) =
-    SubscriptionDisplayResponse(processingDate = "2020-05-05",
-                                changeOfCircumstanceDetails =
-                                  Some(
-                                    ChangeOfCircumstanceDetails(changeOfCircumstance =
-                                      "update"
-                                    )
-                                  ),
-                                legalEntityDetails =
-                                  subscription.legalEntityDetails,
-                                principalPlaceOfBusinessDetails =
-                                  subscription.principalPlaceOfBusinessDetails,
-                                primaryContactDetails =
-                                  subscription.primaryContactDetails,
-                                businessCorrespondenceDetails =
-                                  subscription.businessCorrespondenceDetails,
-                                taxObligationStartDate =
-                                  subscription.taxObligationStartDate,
-                                last12MonthTotalTonnageAmt =
-                                  subscription.last12MonthTotalTonnageAmt.longValue(),
-                                declaration =
-                                  subscription.declaration,
-                                groupPartnershipSubscription =
-                                  subscription.groupSubscription
+    SubscriptionDisplayResponse(
+      processingDate = "2020-05-05",
+      changeOfCircumstanceDetails = Some(
+        ChangeOfCircumstanceDetails(changeOfCircumstance = "update")
+      ),
+      legalEntityDetails = subscription.legalEntityDetails,
+      principalPlaceOfBusinessDetails = subscription.principalPlaceOfBusinessDetails,
+      primaryContactDetails = subscription.primaryContactDetails,
+      businessCorrespondenceDetails = subscription.businessCorrespondenceDetails,
+      taxObligationStartDate = subscription.taxObligationStartDate,
+      last12MonthTotalTonnageAmt = subscription.last12MonthTotalTonnageAmt.longValue(),
+      declaration = subscription.declaration,
+      groupPartnershipSubscription = subscription.groupSubscription
     )
 
 }

@@ -44,10 +44,10 @@ import scala.concurrent.Future
 class AgentSelectPPTRefControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   val formProvider = mock[AgentsFormProvider]
-  val mockForm = mock[Form[String]]
-  val view = mock[AgentsView]
+  val mockForm     = mock[Form[String]]
+  val view         = mock[AgentsView]
 
-  val mockAuthConnector = mock[AuthConnector]
+  val mockAuthConnector     = mock[AuthConnector]
   val mockSessionRepository = mock[SessionRepository]
 
   val fakeForm: Form[String] = Form[String]("value" -> Forms.of[String](Formats.stringFormat))
@@ -124,19 +124,24 @@ class AgentSelectPPTRefControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
         verifyNoInteractions(mockSessionRepository)
         verify(mockAuthConnector).authorise(
-          refEq(Enrolment(pptEnrolmentKey)
-            .withIdentifier(pptEnrolmentIdentifierName, "selected")
-            .withDelegatedAuthRule("ppt-auth")),
-          refEq(EmptyRetrieval))(any(), any())
+          refEq(
+            Enrolment(pptEnrolmentKey)
+              .withIdentifier(pptEnrolmentIdentifierName, "selected")
+              .withDelegatedAuthRule("ppt-auth")
+          ),
+          refEq(EmptyRetrieval)
+        )(any(), any())
       }
     }
 
-    "redirect to home page" when{
+    "redirect to home page" when {
       "The form is filled, auth validates and the ref is cached" in {
         val filledForm = fakeForm.fill("selected")
         when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any())).thenReturn(Future.unit)
-        when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set[Any](any(), refEq(AgentSelectedPPTRef), refEq("selected"))(any())).thenReturn(
+          Future.successful(true)
+        )
 
         val result: Future[Result] = sut.onSubmit()(FakeRequest())
 

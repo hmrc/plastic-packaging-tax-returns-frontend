@@ -26,12 +26,12 @@ case class AddressDetails(
   addressLine4: Option[String],
   postalCode: Option[String],
   countryCode: String // If 'GB' then must have postalCode field, otherwise postalCode is optional
-){
+) {
   def isGB: Boolean = countryCode == GB
 }
 
 object AddressDetails {
-  val GB = "GB"
+  val GB                                       = "GB"
   implicit val format: OFormat[AddressDetails] = Json.format[AddressDetails]
 
 }

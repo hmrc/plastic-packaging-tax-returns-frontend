@@ -32,13 +32,13 @@ object AmendTotalPlasticPackagingSummary {
       AmendNewAnswerType(
         calculations.amend.packagingTotal.asKg,
         "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
-        isAmending(userAnswer)),
+        isAmending(userAnswer)
+      ),
       None
     )
   }
 
-  private def isAmending(userAnswer: UserAnswers) = {
+  private def isAmending(userAnswer: UserAnswers) =
     userAnswer.get(AmendManufacturedPlasticPackagingPage).isDefined ||
       userAnswer.get(AmendImportedPlasticPackagingPage).isDefined
-  }
 }

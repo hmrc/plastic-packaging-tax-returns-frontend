@@ -29,7 +29,6 @@ class FakeAuthAction @Inject() (bodyParsers: PlayBodyParsers) extends AuthAgentA
     block: AuthedUser[A] => Future[Result]
   ): Future[Result] = block(AuthedUser("SomeId", request))
 
-
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default
 

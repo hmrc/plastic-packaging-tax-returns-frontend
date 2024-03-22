@@ -30,7 +30,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryL
 import viewmodels.PrintLong
 import viewmodels.checkAnswers.returns.credits.CreditsConvertedWeightSummary
 
-class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach{
+class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
   private val messages = mock[Messages]
 
@@ -48,15 +48,26 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
   }
 
   private def createExpectedResult(answerValue: Long): Option[SummaryListRow] = {
-    Some(SummaryListRow(
-      key = Key(Text("answer"), "govuk-!-width-one-half"),
-      value = Value(Text(answerValue.asKg)),
-      actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad("year-key", CheckMode).url,
-        Text("change"),
-        Some("answer")
-      ))))
-    ))
+    Some(
+      SummaryListRow(
+        key = Key(Text("answer"), "govuk-!-width-one-half"),
+        value = Value(Text(answerValue.asKg)),
+        actions = Some(
+          Actions(items =
+            Seq(
+              ActionItem(
+                controllers.returns.credits.routes.ConvertedCreditsWeightController.onPageLoad(
+                  "year-key",
+                  CheckMode
+                ).url,
+                Text("change"),
+                Some("answer")
+              )
+            )
+          )
+        )
+      )
+    )
   }
 
 }

@@ -43,7 +43,7 @@ class DirectlyExportedComponentsViewSpec extends ViewSpecBase with ViewAssertion
         "Did you export any of your 1,234kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
-    "have a heading" in{
+    "have a heading" in {
 
       view.select("h1").text mustBe
         "Did you export any of your 1,234kg of finished plastic packaging components in this period yourself, or do you intend to within 12 months?"
@@ -54,13 +54,17 @@ class DirectlyExportedComponentsViewSpec extends ViewSpecBase with ViewAssertion
       view.getElementById("section-header").text() mustBe messages("caption.exported.plastic")
     }
 
-    "contain paragraph content" in{
+    "contain paragraph content" in {
       val paragraph = view.getElementsByClass("govuk-body").text()
 
       paragraph must include(messages("You will not be charged tax on these but you must still tell us about them."))
       paragraph must include(messages("directlyExportedComponents.paragraph.1"))
 
-      paragraph must include(messages("If you do not export these plastics within 12 months of manufacture or import, you’ll need to pay tax on them."))
+      paragraph must include(
+        messages(
+          "If you do not export these plastics within 12 months of manufacture or import, you’ll need to pay tax on them."
+        )
+      )
       paragraph must include(messages("directlyExportedComponents.paragraph.2"))
     }
 

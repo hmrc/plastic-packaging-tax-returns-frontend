@@ -22,14 +22,14 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction
-  extends ActionBuilder[IdentifiedRequest, AnyContent]
+trait IdentifierAction extends ActionBuilder[IdentifiedRequest, AnyContent]
 
-class IdentifyAndCheckSubscription @Inject()(
-                                              val parser: BodyParsers.Default,
-                                              identifierAction: AuthAction,
-                                              subscriptionFilter: SubscriptionFilter
-                             )(implicit val executionContext: ExecutionContext) extends IdentifierAction {
+class IdentifyAndCheckSubscription @Inject() (
+  val parser: BodyParsers.Default,
+  identifierAction: AuthAction,
+  subscriptionFilter: SubscriptionFilter
+)(implicit val executionContext: ExecutionContext)
+    extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifiedRequest[A] => Future[Result]): Future[Result] =
     identifierAction.andThen(subscriptionFilter).invokeBlock(request, block)

@@ -57,7 +57,11 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
 
     "return debitDue text" when {
       "Only debit is populated" in {
-        val text = PPTFinancials(None, debitAmount = Some(Charge(BigDecimal(345.21), LocalDate.of(2020, 3, 27))), None).paymentStatement()(messages)
+        val text = PPTFinancials(
+          None,
+          debitAmount = Some(Charge(BigDecimal(345.21), LocalDate.of(2020, 3, 27))),
+          None
+        ).paymentStatement()(messages)
 
         text mustBe "expected message"
         verify(messages).apply("account.homePage.card.payments.debitDue", "£345.21", "27 expected message 2020")
@@ -76,7 +80,11 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
 
     "return debitAndOverDue text" when {
       "debit and overdue is populated" in {
-        val text = PPTFinancials(None, debitAmount = Some(Charge(BigDecimal(345.21), LocalDate.of(2020, 3, 27))), overdueAmount = Some(0.01)).paymentStatement()(messages)
+        val text = PPTFinancials(
+          None,
+          debitAmount = Some(Charge(BigDecimal(345.21), LocalDate.of(2020, 3, 27))),
+          overdueAmount = Some(0.01)
+        ).paymentStatement()(messages)
 
         text mustBe "expected message"
         verify(messages).apply("account.homePage.card.payments.debitAndOverDue", "£345.21", "£0.01")
@@ -98,7 +106,8 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "amountToPayInPence" must {
-    def financials(debit: Option[BigDecimal] = None, overdue: Option[BigDecimal] = None) = PPTFinancials(None, debit.map(Charge(_, LocalDate.now())), overdue)
+    def financials(debit: Option[BigDecimal] = None, overdue: Option[BigDecimal] = None) =
+      PPTFinancials(None, debit.map(Charge(_, LocalDate.now())), overdue)
     "return 0" when {
       "there is no amounts" in {
         financials(debit = None).amountToPayInPence mustBe 0

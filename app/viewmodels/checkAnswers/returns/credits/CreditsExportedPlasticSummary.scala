@@ -30,18 +30,17 @@ import viewmodels.implicits._
 case class CreditsExportedPlasticSummary(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExportedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map {
-      creditsAnswer =>
-        SummaryListRowViewModel(
-          key = Key("confirmPackagingCredit.exported.answer", classes="govuk-!-width-one-half"),
-          value = ValueViewModel(creditsAnswer.yesNoMsgKey),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(key, CheckMode).url
-            ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.answer"))
-          )
+    answers.get(ExportedCreditsPage(key)).orElse(Some(CreditsAnswer.noClaim)).map { creditsAnswer =>
+      SummaryListRowViewModel(
+        key = Key("confirmPackagingCredit.exported.answer", classes = "govuk-!-width-one-half"),
+        value = ValueViewModel(creditsAnswer.yesNoMsgKey),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.returns.credits.routes.ExportedCreditsController.onPageLoad(key, CheckMode).url
+          ).withVisuallyHiddenText(messages("confirmPackagingCredit.exported.answer"))
         )
+      )
     }
   }
 

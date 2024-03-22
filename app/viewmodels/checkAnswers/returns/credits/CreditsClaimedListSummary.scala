@@ -28,41 +28,48 @@ import views.ViewUtils
 
 import java.time.LocalDate
 
-
 case object CreditsClaimedListSummary {
 
-  def createCreditSummary(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
-                         (implicit messages: Messages): Seq[CreditSummaryRow] = {
-
+  def createCreditSummary(
+    userAnswer: UserAnswers,
+    creditBalance: CreditBalance,
+    maybeNavigator: Option[ReturnsJourneyNavigator]
+  )(implicit messages: Messages): Seq[CreditSummaryRow] =
     CreditsClaimedListSummary.createRows(userAnswer, creditBalance, maybeNavigator) :+
-      CreditSummaryRow(messages("creditsSummary.table.total"), creditBalance.totalRequestedCreditInPounds.asPounds, Seq.empty)
-  }
+      CreditSummaryRow(
+        messages("creditsSummary.table.total"),
+        creditBalance.totalRequestedCreditInPounds.asPounds,
+        Seq.empty
+      )
 
-  
-  def createRows(userAnswer: UserAnswers, creditBalance: CreditBalance, maybeNavigator: Option[ReturnsJourneyNavigator])
-    (implicit messages: Messages): Seq[CreditSummaryRow] = {
+  def createRows(
+    userAnswer: UserAnswers,
+    creditBalance: CreditBalance,
+    maybeNavigator: Option[ReturnsJourneyNavigator]
+  )(implicit messages: Messages): Seq[CreditSummaryRow] = {
     creditBalance.credit.toSeq
-      .sortBy{case (key, _) => userAnswer.getOrFail[LocalDate](JsPath \ "credit" \ key \ "fromDate")}
+      .sortBy { case (key, _) => userAnswer.getOrFail[LocalDate](JsPath \ "credit" \ key \ "fromDate") }
       .map { case (key, taxablePlastic) =>
         creditSummary(maybeNavigator, key, userAnswer, taxablePlastic.moneyInPounds.asPounds)
       }
   }
-  def createRows
-  (
+  def createRows(
     userAnswers: UserAnswers,
     creditBalance: CreditBalance,
     navigator: ReturnsJourneyNavigator
-  )(implicit messages: Messages): Seq[CreditSummaryRow] = {
+  )(implicit messages: Messages): Seq[CreditSummaryRow] =
     createRows(userAnswers, creditBalance, Some(navigator))
 
-  }
+  private def creditSummary(
+    maybeNavigator: Option[ReturnsJourneyNavigator],
+    key: String,
+    userAnswer: UserAnswers,
+    value: String
+  )(implicit messages: Messages): CreditSummaryRow = {
 
-  private def creditSummary(maybeNavigator: Option[ReturnsJourneyNavigator], key: String, userAnswer: UserAnswers, value: String)
-    (implicit messages: Messages): CreditSummaryRow = {
-
-    val fromDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
+    val fromDate          = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "fromDate"))
     val toDate: LocalDate = LocalDate.parse(userAnswer.getOrFail[String](JsPath \ "credit" \ key \ "toDate"))
-    val label = ViewUtils.displayDateRangeTo(fromDate, toDate)
+    val label             = ViewUtils.displayDateRangeTo(fromDate, toDate)
 
     CreditSummaryRow(
       label,

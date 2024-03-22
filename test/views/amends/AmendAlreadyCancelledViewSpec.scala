@@ -20,7 +20,6 @@ import base.ViewSpecBase
 import support.ViewMatchers
 import views.html.amends.AmendAlreadyCancelledView
 
-
 class AmendAlreadyCancelledViewSpec extends ViewSpecBase with ViewMatchers {
 
   private val page = inject[AmendAlreadyCancelledView]
@@ -29,7 +28,9 @@ class AmendAlreadyCancelledViewSpec extends ViewSpecBase with ViewMatchers {
     val view = page()(request, messages)
 
     "have a title" in {
-      view.select("title").text() mustBe "You have cancelled amending this return - Submit return - Plastic Packaging Tax - GOV.UK"
+      view.select(
+        "title"
+      ).text() mustBe "You have cancelled amending this return - Submit return - Plastic Packaging Tax - GOV.UK"
       view.select("title").text() must include(messages("amendAlreadyCancelledView.heading"))
     }
 

@@ -48,23 +48,31 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class CancelCreditsClaimControllerSpec extends PlaySpec
-  with JourneyActionAnswer with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
+class CancelCreditsClaimControllerSpec
+    extends PlaySpec
+    with JourneyActionAnswer
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with ResetMocksAfterEachTest {
 
-  private val journeyAction = mock[JourneyAction]
-  private val messagesApi = mock[MessagesApi]
-  private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[ReturnsJourneyNavigator]
-  private val formProvider = mock[CancelCreditsClaimFormProvider]
+  private val journeyAction        = mock[JourneyAction]
+  private val messagesApi          = mock[MessagesApi]
+  private val cacheConnector       = mock[CacheConnector]
+  private val navigator            = mock[ReturnsJourneyNavigator]
+  private val formProvider         = mock[CancelCreditsClaimFormProvider]
   private val controllerComponents = stubMessagesControllerComponents()
-  private val view = mock[CancelCreditsClaimView]
-  private val errorView = mock[CancelCreditsClaimErrorView]
-  private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Boolean]]
-  private val saveFunction = mock[SaveUserAnswerFunc]
+  private val view                 = mock[CancelCreditsClaimView]
+  private val errorView            = mock[CancelCreditsClaimErrorView]
+  private val request              = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                 = mock[Form[Boolean]]
+  private val saveFunction         = mock[SaveUserAnswerFunc]
 
   private val exampleSingleYearClaim = SingleYearClaim(
-    fromDate = LocalDate.of(1, 2, 3), toDate = LocalDate.of(4, 5, 6), exportedCredits = None, convertedCredits = None)
+    fromDate = LocalDate.of(1, 2, 3),
+    toDate = LocalDate.of(4, 5, 6),
+    exportedCredits = None,
+    convertedCredits = None
+  )
 
   private val sut = new CancelCreditsClaimController(
     messagesApi,
@@ -104,7 +112,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       sut.onPageLoad("year-key")(request)
       verify(journeyAction).apply(any)
     }
-    
+
     "return a 200" in {
       val result = sut.onPageLoad("year-key")(request)
       status(result) mustBe OK
@@ -117,14 +125,14 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       val expectedCall = routes.CancelCreditsClaimController.onSubmit("year-key")
       verify(view).apply(eqTo(form), eqTo(expectedCall), eqTo(exampleSingleYearClaim))(any, any)
     }
-    
+
     "display an error if there is no claim for the given key" in {
       when(request.userAnswers.get[Any](any[JsPath])(any)) thenReturn None // key not found
-      
+
       val result = sut.onPageLoad("year-key")(request)
       verify(navigator).cancelCredit()
       verify(errorView).apply(eqTo("/next-page"))(any, any)
-      
+
       contentAsString(result) mustBe "the error view"
     }
 
@@ -168,7 +176,7 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
       when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
 
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
-      verify(view).apply(eqTo(formWithErrors), any, eqTo(exampleSingleYearClaim)) (eqTo(request), any)
+      verify(view).apply(eqTo(formWithErrors), any, eqTo(exampleSingleYearClaim))(eqTo(request), any)
       verifyZeroInteractions(saveFunction)
 
       result.header.status mustBe BAD_REQUEST
@@ -177,9 +185,8 @@ class CancelCreditsClaimControllerSpec extends PlaySpec
 
   }
 
-  def createUserAnswer = {
+  def createUserAnswer =
     UserAnswers("123")
       .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
       .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
-  }
 }

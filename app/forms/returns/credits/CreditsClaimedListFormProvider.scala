@@ -24,13 +24,17 @@ import views.ViewUtils
 
 class CreditsClaimedListFormProvider extends Mappings {
 
-  val standardError = "creditsSummary.error.required"
+  val standardError         = "creditsSummary.error.required"
   val onlyOneRemainingError = "creditsSummary.error.required.one-remaining"
 
   def apply(options: Seq[CreditRangeOption])(implicit messages: Messages): Form[Boolean] = {
     Form(
       options match {
-        case Seq(onlyOption) => "value" -> boolean(onlyOneRemainingError, args = Seq(ViewUtils.displayDateRangeTo(onlyOption.from, onlyOption.to)))
+        case Seq(onlyOption) =>
+          "value" -> boolean(
+            onlyOneRemainingError,
+            args = Seq(ViewUtils.displayDateRangeTo(onlyOption.from, onlyOption.to))
+          )
         case _ => "value" -> boolean(standardError)
       }
     )

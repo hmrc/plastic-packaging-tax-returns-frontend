@@ -23,7 +23,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.DeregisteredView
 
-
 class DeregisteredControllerSpec extends SpecBase {
 
   "Deregistered Controller" - {

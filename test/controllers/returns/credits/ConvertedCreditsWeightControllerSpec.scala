@@ -52,17 +52,20 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConvertedCreditsWeightControllerSpec extends PlaySpec 
-  with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
+class ConvertedCreditsWeightControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with ResetMocksAfterEachTest {
 
-  private val messagesApi = mock[MessagesApi]
-  private val journeyAction = mock[JourneyAction]
+  private val messagesApi          = mock[MessagesApi]
+  private val journeyAction        = mock[JourneyAction]
   private val controllerComponents = mock[MessagesControllerComponents]
-  private val view = mock[ConvertedCreditsWeightView]
-  private val formProvider = mock[ConvertedCreditsWeightFormProvider]
-  private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[ReturnsJourneyNavigator]
-  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private val view                 = mock[ConvertedCreditsWeightView]
+  private val formProvider         = mock[ConvertedCreditsWeightFormProvider]
+  private val cacheConnector       = mock[CacheConnector]
+  private val navigator            = mock[ReturnsJourneyNavigator]
+  private val creditRangeOption    = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private val controller = new ConvertedCreditsWeightController(
     messagesApi,
@@ -73,22 +76,22 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     cacheConnector,
     navigator
   )
-  
-  private val request = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
-  private val form = mock[Form[Long]]
-  private val messages = mock[Messages]
+
+  private val request            = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val form               = mock[Form[Long]]
+  private val messages           = mock[Messages]
   private val updatedUserAnswers = mock[UserAnswers]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    
+
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
-    
+
     when(formProvider.apply()) thenReturn form
-    
-    when(view.apply(any, any, any) (any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any) (any)) thenReturn form
+
+    when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("a-view")
+    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)) thenReturn form
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
     when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
 
@@ -98,7 +101,8 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
         fromDate = LocalDate.of(2023, 4, 1),
         toDate = LocalDate.of(2024, 3, 31),
         exportedCredits = None,
-        convertedCredits = None)
+        convertedCredits = None
+      )
     )
 
   }
@@ -109,16 +113,16 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       controller.onPageLoad("year-key", NormalMode)
       verify(journeyAction).async(any)
     }
-    
+
     "show web page with correct submit url" in {
       when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
       status {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       } mustBe Status.OK
       val call = routes.ConvertedCreditsWeightController.onSubmit("year-key", NormalMode)
-      verify(view).apply(eqTo(form), eqTo(call), eqTo(creditRangeOption)) (eqTo(request), eqTo(messages))
+      verify(view).apply(eqTo(form), eqTo(call), eqTo(creditRangeOption))(eqTo(request), eqTo(messages))
     }
-    
+
     "use an existing user-answer if present" in {
       await {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
@@ -146,13 +150,13 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
     }
 
   }
-  
+
   "onSubmit" should {
-    
+
     "save the user's answer" in {
       val boundForm = Form("value" -> longNumber).fill(1L)
       when(form.bindFromRequest()(any, any)) thenReturn boundForm
-      
+
       val saveFunction = mock[SaveUserAnswerFunc]
       when(cacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveFunction
 
@@ -160,14 +164,18 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
 
       await(controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
-      verify(request.userAnswers).setOrFail(eqTo(ConvertedCreditsPage("year-key")), eqTo(CreditsAnswer.answerWeightWith(1L)), any) (any)
+      verify(request.userAnswers).setOrFail(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(CreditsAnswer.answerWeightWith(1L)),
+        any
+      )(any)
     }
 
     "redirect" in {
       when(form.bindFromRequest()(any, any)) thenReturn Form("value" -> longNumber).fill(1L)
       when(navigator.convertedCreditsWeight(any, any)).thenReturn(Call(GET, "/foo"))
 
-      val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
+      val result = controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe SEE_OTHER
       verify(navigator).convertedCreditsWeight("year-key", NormalMode)
@@ -177,7 +185,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec
       val boundFormWithError = Form("value" -> longNumber).withError("message", "error message")
       when(form.bindFromRequest()(any, any)) thenReturn boundFormWithError
 
-      val result =  controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
+      val result = controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe BAD_REQUEST
       verify(view).apply(meq(boundFormWithError), any, any)(any, any)

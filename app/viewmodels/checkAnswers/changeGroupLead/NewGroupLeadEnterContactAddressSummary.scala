@@ -30,21 +30,20 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-case class NewGroupLeadEnterContactAddressSummary(countryService: CountryService) (implicit request: Request[_]) 
-  extends SummaryViewModel {
+case class NewGroupLeadEnterContactAddressSummary(countryService: CountryService)(implicit request: Request[_])
+    extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NewGroupLeadEnterContactAddressPage).map {
-      answer =>
-        val content = HtmlContent(answer.definedFields(countryService).map(HtmlFormat.escape).mkString("<br>"))
+    answers.get(NewGroupLeadEnterContactAddressPage).map { answer =>
+      val content = HtmlContent(answer.definedFields(countryService).map(HtmlFormat.escape).mkString("<br>"))
 
-        SummaryListRowViewModel(
-          key     = "newGroupLeadCheckYourAnswers.contact.address.key",
-          value   = ValueViewModel(content),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.NewGroupLeadEnterContactAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.address.key"))
-          )
+      SummaryListRowViewModel(
+        key = "newGroupLeadCheckYourAnswers.contact.address.key",
+        value = ValueViewModel(content),
+        actions = Seq(
+          ActionItemViewModel("site.change", routes.NewGroupLeadEnterContactAddressController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.contact.address.key"))
         )
+      )
     }
 }

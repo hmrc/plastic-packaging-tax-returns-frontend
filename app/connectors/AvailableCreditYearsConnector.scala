@@ -26,19 +26,23 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AvailableCreditYearsConnector @Inject() (
-  httpClient: HttpClient, 
+  httpClient: HttpClient,
   appConfig: FrontendAppConfig,
   metrics: Metrics
-) (implicit ec: ExecutionContext) extends Logging with HttpReadsInstances{
+)(implicit ec: ExecutionContext)
+    extends Logging
+    with HttpReadsInstances {
 
   def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
     val timer = metrics.defaultRegistry.timer("ppt.availableCreditYears.get.timer").time()
     httpClient.GET[Seq[CreditRangeOption]](appConfig.pptAvailableCreditYearsUrl(pptReferenceNumber))
       .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(s"Failed to get available credit years for ppt reference number" +
-            s" [$pptReferenceNumber]", exception)
+      .recover { case exception: Exception =>
+        throw DownstreamServiceError(
+          s"Failed to get available credit years for ppt reference number" +
+            s" [$pptReferenceNumber]",
+          exception
+        )
       }
   }
 

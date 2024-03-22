@@ -32,12 +32,14 @@ class AmendConfirmationController @Inject() (
   identify: IdentifierAction,
   sessionRepository: SessionRepository,
   view: AmendConfirmation
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     identify.async { implicit request =>
-      sessionRepository.get[String](request.cacheKey, Paths.AmendChargeRef).map{
-        chargeRef => Ok(view(chargeRef))
+      sessionRepository.get[String](request.cacheKey, Paths.AmendChargeRef).map { chargeRef =>
+        Ok(view(chargeRef))
       }
     }
 }

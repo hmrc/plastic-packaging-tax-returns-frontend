@@ -25,9 +25,10 @@ class AmendHumanMedicinePlasticPackagingFormProvider @Inject() extends Mappings 
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long("amendHumanMedicinePlasticPackaging.error.required",
-                     "amendHumanMedicinePlasticPackaging.error.wholeNumber",
-                     "amendHumanMedicinePlasticPackaging.error.nonNumeric"
+      "value" -> long(
+        "amendHumanMedicinePlasticPackaging.error.required",
+        "amendHumanMedicinePlasticPackaging.error.wholeNumber",
+        "amendHumanMedicinePlasticPackaging.error.nonNumeric"
       )
         .verifying(minimumValue(0L, "amendHumanMedicinePlasticPackaging.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "amendHumanMedicinePlasticPackaging.error.outOfRange.high"))

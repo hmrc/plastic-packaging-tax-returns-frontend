@@ -32,7 +32,9 @@ import scala.language.implicitConversions
 
 @Singleton
 class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)
-    extends FrontendErrorHandler with I18nSupport with Logging {
+    extends FrontendErrorHandler
+    with I18nSupport
+    with Logging {
 
   private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
 

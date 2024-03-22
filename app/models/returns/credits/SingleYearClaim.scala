@@ -24,7 +24,6 @@ import views.ViewUtils
 
 import java.time.LocalDate
 
-
 case class SingleYearClaim(
   fromDate: LocalDate,
   toDate: LocalDate,
@@ -32,22 +31,22 @@ case class SingleYearClaim(
   convertedCredits: Option[CreditsAnswer]
 ) {
   def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, toDate)
-  def createCreditRangeOption(): CreditRangeOption = CreditRangeOption(fromDate, toDate)
+  def createCreditRangeOption(): CreditRangeOption   = CreditRangeOption(fromDate, toDate)
 }
 
 object SingleYearClaim {
 
-  def readFrom(userAnswers: UserAnswers, key: String): SingleYearClaim = {
+  def readFrom(userAnswers: UserAnswers, key: String): SingleYearClaim =
     userAnswers.getOrFail[SingleYearClaim](JsPath \ "credit" \ key)
-  }
 
   /** Read a single year credit claim from user answers
-    * @param key credit-claim year-key
-    * @return [[SingleYearClaim]] if answers exist for given key, or [[None]]
+    * @param key
+    *   credit-claim year-key
+    * @return
+    *   [[SingleYearClaim]] if answers exist for given key, or [[None]]
     */
-  def maybeReadFrom(userAnswers: UserAnswers, key: String): Option[SingleYearClaim] = {
+  def maybeReadFrom(userAnswers: UserAnswers, key: String): Option[SingleYearClaim] =
     userAnswers.get[SingleYearClaim](JsPath \ "credit" \ key)
-  }
-  
+
   implicit val formats: OFormat[SingleYearClaim] = Json.format[SingleYearClaim]
 }

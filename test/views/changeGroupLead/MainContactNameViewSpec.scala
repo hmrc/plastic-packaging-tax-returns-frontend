@@ -25,23 +25,21 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.changeGroupLead.MainContactNameView
 
-
-class MainContactNameViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+class MainContactNameViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
   val page: MainContactNameView = inject[MainContactNameView]
 
   val form: Form[String] = new MainContactNameFormProvider()()
-  val appConfig = inject[FrontendAppConfig]
-
+  val appConfig          = inject[FrontendAppConfig]
 
   private def createView: Html =
-    page(form, "company-name",NormalMode)(request, messages)
+    page(form, "company-name", NormalMode)(request, messages)
 
   "MainContactNameView" should {
     val view = createView
 
     "have a title" in {
       view.select("title").text mustBe
-      "Who is the main contact for the organisation? - Account - Plastic Packaging Tax - GOV.UK"
+        "Who is the main contact for the organisation? - Account - Plastic Packaging Tax - GOV.UK"
     }
 
     "have a back link" in {
@@ -50,7 +48,7 @@ class MainContactNameViewSpec extends ViewSpecBase  with ViewAssertions with Vie
 
     "have a heading" in {
       view.select("h1").text mustBe
-      "Who is the main contact for company-name?"
+        "Who is the main contact for company-name?"
     }
 
     "have string input" in {

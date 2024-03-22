@@ -24,10 +24,9 @@ import viewmodels.implicits._
 
 object CreditAmountSummary {
 
-  def apply(creditAmount: BigDecimal)(implicit messages: Messages): SummaryListRow = {
+  def apply(creditAmount: BigDecimal)(implicit messages: Messages): SummaryListRow =
     SummaryListRowViewModel(
-      key = Key("confirmPackagingCredit.creditAmount", classes="govuk-!-width-one-half"),
+      key = Key("confirmPackagingCredit.creditAmount", classes = "govuk-!-width-one-half"),
       value = ValueViewModel(creditAmount.asPounds)
     )
-  }
 }

@@ -26,7 +26,7 @@ import scala.util.Try
 class ExportedPlasticAnswer(userAnswers: UserAnswers) {
 
   def resetExportedByYouIfAllExportedPlastic: Try[UserAnswers] = {
-    if(isAllPlasticExported) {
+    if (isAllPlasticExported) {
       userAnswers.set(DirectlyExportedPage, true, cleanup = false).get
         .set(AnotherBusinessExportedPage, false).get
         .set(AnotherBusinessExportedWeightPage, 0L, cleanup = false).get
@@ -34,28 +34,26 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
-    }
-    else {
+    } else {
       userAnswers.set(DirectlyExportedPage, true, cleanup = false)
     }
   }
 
   def resetAnotherBusinessIfAllExportedPlastic: Try[UserAnswers] = {
-    if(isAllPlasticExported) {
+    if (isAllPlasticExported) {
       userAnswers
         .set(DirectlyExportedPage, true, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
         .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false)
-    }
-    else {
+    } else {
       userAnswers.set(AnotherBusinessExportedPage, true, cleanup = false)
     }
   }
 
   def resetAllIfNoTotalPlastic(helper: NonExportedAmountHelper): UserAnswers = {
-    if(helper.totalPlasticAdditions(userAnswers).exists(_ > 0L)) {
+    if (helper.totalPlasticAdditions(userAnswers).exists(_ > 0L)) {
       userAnswers
     } else {
       userAnswers.set(DirectlyExportedPage, false).get
@@ -70,30 +68,29 @@ class ExportedPlasticAnswer(userAnswers: UserAnswers) {
   }
 
   def isAllPlasticExported: Boolean = {
-    val manufactured = userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
-    val imported = userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
-    val exported = userAnswers.get(DirectlyExportedWeightPage).getOrElse(0L)
+    val manufactured    = userAnswers.get(ManufacturedPlasticPackagingWeightPage).getOrElse(0L)
+    val imported        = userAnswers.get(ImportedPlasticPackagingWeightPage).getOrElse(0L)
+    val exported        = userAnswers.get(DirectlyExportedWeightPage).getOrElse(0L)
     val exportedByOther = userAnswers.get(AnotherBusinessExportedWeightPage).getOrElse(0L)
 
     exported + exportedByOther >= (manufactured + imported)
   }
 
   def totalAmendExportedPlastic: Option[Long] = {
-    val amendExported = userAnswers.get(AmendDirectExportPlasticPackagingPage)
+    val amendExported                  = userAnswers.get(AmendDirectExportPlasticPackagingPage)
     val amendExportedByAnotherBusiness = userAnswers.get(AmendExportedByAnotherBusinessPage)
 
     (amendExported, amendExportedByAnotherBusiness) match {
-      case(Some(exported), Some(byAnotherBusiness)) => Some(exported + byAnotherBusiness)
-      case(None, Some(byAnotherBusiness)) => Some(byAnotherBusiness)
-      case(Some(exported), None) => Some(exported)
-      case(None, None) => None
+      case (Some(exported), Some(byAnotherBusiness)) => Some(exported + byAnotherBusiness)
+      case (None, Some(byAnotherBusiness))           => Some(byAnotherBusiness)
+      case (Some(exported), None)                    => Some(exported)
+      case (None, None)                              => None
     }
   }
 }
 
 object ExportedPlasticAnswer {
 
-  def apply(userAnswer: UserAnswers): ExportedPlasticAnswer = {
+  def apply(userAnswer: UserAnswers): ExportedPlasticAnswer =
     new ExportedPlasticAnswer(userAnswer)
-  }
 }

@@ -24,12 +24,11 @@ import views.html.amends.AmendDirectExportPlasticPackagingView
 
 class AmendDirectExportPlasticPackagingViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val page = inject[AmendDirectExportPlasticPackagingView]
+  val page         = inject[AmendDirectExportPlasticPackagingView]
   private val form = new AmendDirectExportPlasticPackagingFormProvider()()
 
-  private def render(form: Form[Long] = form): String = {
+  private def render(form: Form[Long] = form): String =
     page(form)(request, messages).toString()
-  }
 
   "view" should {
     "pass accessibility tests" in {

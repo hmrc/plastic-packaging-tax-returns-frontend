@@ -40,7 +40,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendManufacturedPlasticPackagingFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute  = Call("GET", "/foo")
 
   val validAnswer: Long = 0
 
@@ -61,9 +61,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val view = application.injector.instanceOf[AmendManufacturedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(formProvider())(request, messages(application)).toString
       }
     }
 
@@ -96,8 +94,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
-          )
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector))
           .build()
 
       running(application) {
@@ -141,9 +138,7 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }
 

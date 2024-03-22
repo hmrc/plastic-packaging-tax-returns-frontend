@@ -23,89 +23,118 @@ import org.scalatestplus.play.PlaySpec
 class GroupMembersSpec extends PlaySpec {
 
   "create" should {
-    
+
     "handle missing group subscription" in {
       val subscription = createSubscriptionDisplayResponse(groupPartnershipSubscription = None)
-      the[NoSuchElementException] thrownBy GroupMembers.create(subscription) must have message "SubscriptionDisplayResponse " +
+      the[NoSuchElementException] thrownBy GroupMembers.create(
+        subscription
+      ) must have message "SubscriptionDisplayResponse " +
         "has no groupPartnershipSubscription field"
     }
-    
+
     "handle empty group details" in {
       val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq()))
       GroupMembers.create(subscription) mustBe GroupMembers(Seq())
     }
-    
+
     "handle missing org-details within a member" in {
       val groupDetails = createGroupDetails(maybeOrganisationDetails = None)
       val subscription = createSubscriptionDisplayResponse(createGroupSubscription(Seq(groupDetails)))
-      the[NoSuchElementException] thrownBy GroupMembers.create(subscription) must have message "SubscriptionDisplayResponse " +
+      the[NoSuchElementException] thrownBy GroupMembers.create(
+        subscription
+      ) must have message "SubscriptionDisplayResponse " +
         "has a groupPartnershipDetails entry missing its organisationDetails field"
     }
-    
+
     "extract names from group members in sorted order" in {
-      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
-        Seq(
-          createGroupDetails(Some(OrganisationDetails(None, "Po"))), 
-          createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))), 
-          createGroupDetails(Some(OrganisationDetails(None, "Noo-noo"))), 
-      )))
-      GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("Laa-laa", "crn"), Member("Noo-noo", "crn"), Member("Po", "crn")))
+      val subscription = createSubscriptionDisplayResponse(
+        createGroupSubscription(
+          Seq(
+            createGroupDetails(Some(OrganisationDetails(None, "Po"))),
+            createGroupDetails(Some(OrganisationDetails(None, "Laa-laa"))),
+            createGroupDetails(Some(OrganisationDetails(None, "Noo-noo")))
+          )
+        )
+      )
+      GroupMembers.create(subscription) mustBe GroupMembers(
+        Seq(Member("Laa-laa", "crn"), Member("Noo-noo", "crn"), Member("Po", "crn"))
+      )
     }
 
     "filter non GB organisations" in {
-      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
-        Seq(
-          createGroupDetails(Some(OrganisationDetails(None, "non-gb"))).copy(addressDetails = addressDetails.copy(countryCode = "NONGB")),
-          createGroupDetails(Some(OrganisationDetails(None, "gb-1"))),
-          createGroupDetails(Some(OrganisationDetails(None, "gb-2"))),
-        )))
+      val subscription = createSubscriptionDisplayResponse(
+        createGroupSubscription(
+          Seq(
+            createGroupDetails(Some(OrganisationDetails(None, "non-gb"))).copy(addressDetails =
+              addressDetails.copy(countryCode = "NONGB")
+            ),
+            createGroupDetails(Some(OrganisationDetails(None, "gb-1"))),
+            createGroupDetails(Some(OrganisationDetails(None, "gb-2")))
+          )
+        )
+      )
       GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("gb-1", "crn"), Member("gb-2", "crn")))
     }
 
     "filter the Representative from the members" in {
-      val subscription = createSubscriptionDisplayResponse(createGroupSubscription(
-        Seq(
-          createGroupDetails(Some(OrganisationDetails(None, "rep"))).copy(relationship = "Representative"),
-          createGroupDetails(Some(OrganisationDetails(None, "mem-1"))),
-          createGroupDetails(Some(OrganisationDetails(None, "mem-2"))),
-        )))
+      val subscription = createSubscriptionDisplayResponse(
+        createGroupSubscription(
+          Seq(
+            createGroupDetails(Some(OrganisationDetails(None, "rep"))).copy(relationship = "Representative"),
+            createGroupDetails(Some(OrganisationDetails(None, "mem-1"))),
+            createGroupDetails(Some(OrganisationDetails(None, "mem-2")))
+          )
+        )
+      )
       GroupMembers.create(subscription) mustBe GroupMembers(Seq(Member("mem-1", "crn"), Member("mem-2", "crn")))
     }
-    
+
   }
 
-  private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) = {
+  private def createGroupDetails(maybeOrganisationDetails: Option[OrganisationDetails]) =
     GroupPartnershipDetails("", "crn", None, maybeOrganisationDetails, None, addressDetails, contactDetails, false)
-  }
 
-  private def createGroupSubscription(groupPartnershipDetails: Seq[GroupPartnershipDetails]) = {
+  private def createGroupSubscription(groupPartnershipDetails: Seq[GroupPartnershipDetails]) =
     Some(
       GroupPartnershipSubscription(representativeControl = None, allMembersControl = None, groupPartnershipDetails)
     )
-  }
 
-  private val customerDetails: CustomerDetails = CustomerDetails(customerType = CustomerType.Organisation, 
-    individualDetails = None, organisationDetails = None)
+  private val customerDetails: CustomerDetails =
+    CustomerDetails(customerType = CustomerType.Organisation, individualDetails = None, organisationDetails = None)
 
-  private val legalEntityDetails: LegalEntityDetails = LegalEntityDetails("", "", None, customerDetails, 
-    groupSubscriptionFlag = true, regWithoutIDFlag = false, partnershipSubscriptionFlag = false)
+  private val legalEntityDetails: LegalEntityDetails = LegalEntityDetails(
+    "",
+    "",
+    None,
+    customerDetails,
+    groupSubscriptionFlag = true,
+    regWithoutIDFlag = false,
+    partnershipSubscriptionFlag = false
+  )
 
   private val addressDetails: AddressDetails = AddressDetails("", "", None, None, None, "GB")
 
   private val contactDetails: ContactDetails = ContactDetails("", "", None)
 
-  private val principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails = PrincipalPlaceOfBusinessDetails(
-    addressDetails, contactDetails)
+  private val principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails =
+    PrincipalPlaceOfBusinessDetails(addressDetails, contactDetails)
 
   val primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails("", contactDetails, "")
 
   val declaration: Declaration = Declaration(true)
 
   private def createSubscriptionDisplayResponse(groupPartnershipSubscription: Option[GroupPartnershipSubscription]) = {
-    SubscriptionDisplayResponse(changeOfCircumstanceDetails = None, legalEntityDetails,
-      principalPlaceOfBusinessDetails, primaryContactDetails, businessCorrespondenceDetails = addressDetails, 
-      declaration, taxObligationStartDate = "", last12MonthTotalTonnageAmt = 1.0, 
-      groupPartnershipSubscription, processingDate = ""
+    SubscriptionDisplayResponse(
+      changeOfCircumstanceDetails = None,
+      legalEntityDetails,
+      principalPlaceOfBusinessDetails,
+      primaryContactDetails,
+      businessCorrespondenceDetails = addressDetails,
+      declaration,
+      taxObligationStartDate = "",
+      last12MonthTotalTonnageAmt = 1.0,
+      groupPartnershipSubscription,
+      processingDate = ""
     )
   }
 }

@@ -48,23 +48,21 @@ object SubscriptionTypes extends Enumeration {
   val SingleEntity, Group, Partnership = Value
 }
 
-class IndexPageViewSpec
-    extends ViewSpecBase with ViewAssertions with ViewMatchers {
-
+class IndexPageViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].toInstance(appConfig),
       bind[SessionRepository].toInstance(mock[SessionRepository])
-   ).build()
+    ).build()
 
-  lazy val homePage = inject[IndexView]
-  private val appConfig = mock[FrontendAppConfig]
+  lazy val homePage                    = inject[IndexView]
+  private val appConfig                = mock[FrontendAppConfig]
   private val singleEntitySubscription = mock[LegalEntityDetails]
-  private val groupSubscription = mock[LegalEntityDetails]
-  private val partnershipSubscription = mock[LegalEntityDetails]
-  val completeReturnUrl = "/complete-return-url"
-  val pptFinancials = Some("You owe £100")
+  private val groupSubscription        = mock[LegalEntityDetails]
+  private val partnershipSubscription  = mock[LegalEntityDetails]
+  val completeReturnUrl                = "/complete-return-url"
+  val pptFinancials                    = Some("You owe £100")
 
   when(singleEntitySubscription.entityName).thenReturn("Single entity subscription")
   when(groupSubscription.entityName).thenReturn("Group subscription")
@@ -127,218 +125,212 @@ class IndexPageViewSpec
       )
     }
 
-
     Seq(
       (NoneDueUpToDate, noneDueUpToDate),
       (OneDueUpToDate, oneDueUpToDate),
       (OneDueOneOverdue, oneDueOneOverdue),
       (OneDueTwoOverdue, oneDueTwoOverdue)
-    ).foreach {
+    ).foreach { case (obligationType, obligations) =>
+      Seq(
+        (SingleEntity, singleEntitySubscription),
+        (Group, groupSubscription),
+        (Partnership, partnershipSubscription)
+      ).foreach { case (subscriptionType, subscription) =>
+        val view: Html = createView(subscription, Some(obligations))
 
-      case (obligationType, obligations) =>
-        Seq(
-          (SingleEntity, singleEntitySubscription),
-          (Group, groupSubscription),
-          (Partnership, partnershipSubscription)
-        ).foreach {
+        s"displaying $subscriptionType subscription" when {
 
-          case (subscriptionType, subscription) =>
-            val view: Html = createView(subscription, Some(obligations))
+          s"$obligationType obligations" should {
 
-            s"displaying $subscriptionType subscription" when {
+            "display 'returns' card" in {
 
-              s"$obligationType obligations" should {
+              val card = view.select(".card .card-body").get(0)
 
+              card.select(".govuk-heading-m").first() must containMessage(
+                "account.homePage.card.makeReturn.header"
+              )
 
-                "display 'returns' card" in {
+              val createLink = (
+                messages("account.homePage.card.makeReturn.line3.createLink"),
+                routes.StartYourReturnController.onPageLoad().url
+              )
 
-                  val card = view.select(".card .card-body").get(0)
+              val returnsCreationGuidanceLink =
+                (messages("account.homePage.card.makeReturn.guidance.link"), completeReturnUrl)
 
-                  card.select(".govuk-heading-m").first() must containMessage(
-                    "account.homePage.card.makeReturn.header"
-                  )
+              obligationType match {
+                case NoneDueUpToDate =>
+                  val returnDetails =
+                    Seq(messages("account.homePage.card.makeReturn.line1.none"))
 
-                  val createLink = (
-                    messages("account.homePage.card.makeReturn.line3.createLink"),
-                    routes.StartYourReturnController.onPageLoad().url
-                  )
+                  val returnLinks = Seq(returnsCreationGuidanceLink)
+                  assertReturnsCardDetail(card, returnDetails, returnLinks)
 
-                  val returnsCreationGuidanceLink =
-                    (messages("account.homePage.card.makeReturn.guidance.link"), completeReturnUrl)
-
-                  obligationType match {
-                    case NoneDueUpToDate =>
-                      val returnDetails =
-                        Seq(messages("account.homePage.card.makeReturn.line1.none"))
-
-                      val returnLinks = Seq(returnsCreationGuidanceLink)
-                      assertReturnsCardDetail(card, returnDetails, returnLinks)
-
-                    case OneDueUpToDate =>
-                      val returnDetails =
-                        Seq(
-                          messages(
-                            "account.homePage.card.makeReturn.line2.due",
-                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                            ViewUtils.displayLocalDate(
-                              obligations.nextObligation.get.dueDate.minusDays(
-                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                              )
-                            ),
-                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                case OneDueUpToDate =>
+                  val returnDetails =
+                    Seq(
+                      messages(
+                        "account.homePage.card.makeReturn.line2.due",
+                        ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                        ViewUtils.displayLocalDate(
+                          obligations.nextObligation.get.dueDate.minusDays(
+                            obligations.nextObligation.get.dueDate.getDayOfMonth - 1
                           )
-                        )
+                        ),
+                        ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                      )
+                    )
 
-                      val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
-                      assertReturnsCardDetail(card, returnDetails, returnLinks)
+                  val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
+                  assertReturnsCardDetail(card, returnDetails, returnLinks)
 
-                    case OneDueOneOverdue =>
-                      val returnDetails =
-                        Seq(
-                          messages(
-                            "account.homePage.card.makeReturn.line1.singleOverdue",
-                            ViewUtils.displayReturnQuarter(obligations.oldestOverdueObligation.get)
-                          ),
-                          messages(
-                            "account.homePage.card.makeReturn.line2.due",
-                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                            ViewUtils.displayLocalDate(
-                              obligations.nextObligation.get.dueDate.minusDays(
-                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                              )
-                            ),
-                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                case OneDueOneOverdue =>
+                  val returnDetails =
+                    Seq(
+                      messages(
+                        "account.homePage.card.makeReturn.line1.singleOverdue",
+                        ViewUtils.displayReturnQuarter(obligations.oldestOverdueObligation.get)
+                      ),
+                      messages(
+                        "account.homePage.card.makeReturn.line2.due",
+                        ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                        ViewUtils.displayLocalDate(
+                          obligations.nextObligation.get.dueDate.minusDays(
+                            obligations.nextObligation.get.dueDate.getDayOfMonth - 1
                           )
-                        )
+                        ),
+                        ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                      )
+                    )
 
-                      val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
-                      assertReturnsCardDetail(card, returnDetails, returnLinks)
+                  val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
+                  assertReturnsCardDetail(card, returnDetails, returnLinks)
 
-                    case OneDueTwoOverdue =>
-                      val returnDetails =
-                        Seq(
-                          messages(
-                            "account.homePage.card.makeReturn.line1.multipleOverdue",
-                            obligations.overdueObligationCount
-                          ),
-                          messages(
-                            "account.homePage.card.makeReturn.line2.due",
-                            ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
-                            ViewUtils.displayLocalDate(
-                              obligations.nextObligation.get.dueDate.minusDays(
-                                obligations.nextObligation.get.dueDate.getDayOfMonth - 1
-                              )
-                            ),
-                            ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
+                case OneDueTwoOverdue =>
+                  val returnDetails =
+                    Seq(
+                      messages(
+                        "account.homePage.card.makeReturn.line1.multipleOverdue",
+                        obligations.overdueObligationCount
+                      ),
+                      messages(
+                        "account.homePage.card.makeReturn.line2.due",
+                        ViewUtils.displayReturnQuarter(obligations.nextObligation.get),
+                        ViewUtils.displayLocalDate(
+                          obligations.nextObligation.get.dueDate.minusDays(
+                            obligations.nextObligation.get.dueDate.getDayOfMonth - 1
                           )
-                        )
-
-                      val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
-                      assertReturnsCardDetail(card, returnDetails, returnLinks)
-
-                    case t => fail(s"No test for $t")
-                  }
-                }
-
-                "display 'balance' card" in {
-
-                  val card = view.select(".card .card-body").get(1)
-
-                  card.select(".govuk-heading-m").first() must containMessage(
-                    "account.homePage.card.payments.header"
-                  )
-                  card.select(".govuk-body").first().text() mustBe "You owe £100"
-                }
-
-                "display account management heading" in {
-                  view.select("h2").text() must include(
-                    messages("account.homePage.manage.ppt.account.header")
-                  )
-
-                }
-
-                "display account management sections" in {
-
-                  val coreManagement       = view.getElementById("core-management")
-                  val additionalManagement = view.getElementById("additional-management")
-                  val deregister           = view.getElementById("deregister")
-
-                  subscriptionType match {
-                    case SingleEntity =>
-                      coreManagement.select("h3").text() must include(
-                        messages("account.homePage.card.registration.details.1.link.single")
+                        ),
+                        ViewUtils.displayLocalDate(obligations.nextObligation.get.dueDate)
                       )
+                    )
 
-                      coreManagement.select("p").text() mustBe messages(
-                        "account.homePage.card.registration.details.1.body"
-                      )
+                  val returnLinks = Seq(createLink, returnsCreationGuidanceLink)
+                  assertReturnsCardDetail(card, returnDetails, returnLinks)
 
-                      coreManagement.select("a").first() must haveHref(
-                        "pptRegistrationAmendUrl"
-                      )
-
-                      checkDeregisterCard(deregister)
-
-                    case Group =>
-                      coreManagement.select("h3").text() must include(
-                        messages("account.homePage.card.registration.details.1.link.group")
-                      )
-
-                      coreManagement.select("p").text() mustBe messages(
-                        "account.homePage.card.registration.details.1.body"
-                      )
-
-                      coreManagement.select("a").first() must haveHref(
-                        "pptRegistrationAmendUrl"
-                      )
-
-                      additionalManagement.select("h3").text() must include(
-                        messages("account.homePage.card.registration.details.2.link.group")
-                      )
-
-                      additionalManagement.select("p").text() mustBe messages(
-                        "account.homePage.card.registration.details.2.body.group"
-                      )
-
-                      additionalManagement.select("a").first() must haveHref(
-                        "pptRegistrationManageGroupUrl"
-                      )
-
-                      checkDeregisterCard(deregister)
-
-                    case Partnership =>
-                      coreManagement.select("h3").text() must include(
-                        messages("account.homePage.card.registration.details.1.link.partnership")
-                      )
-
-                      coreManagement.select("p").text() mustBe messages(
-                        "account.homePage.card.registration.details.1.body"
-                      )
-
-                      coreManagement.select("a").first() must haveHref(
-                        "pptRegistrationAmendUrl"
-                      )
-
-                      additionalManagement.select("h3").text() must include(
-                        messages("account.homePage.card.registration.details.2.link.partnership")
-                      )
-
-                      additionalManagement.select("p").text() mustBe messages(
-                        "account.homePage.card.registration.details.2.body.partnership"
-                      )
-
-                      additionalManagement.select("a").first() must haveHref(
-                        "pptRegistrationManagePartnersUrl"
-                      )
-
-                      checkDeregisterCard(deregister)
-
-                  case t => fail(s"No test for $t")
-                  }
-                }
+                case t => fail(s"No test for $t")
               }
             }
+
+            "display 'balance' card" in {
+
+              val card = view.select(".card .card-body").get(1)
+
+              card.select(".govuk-heading-m").first() must containMessage(
+                "account.homePage.card.payments.header"
+              )
+              card.select(".govuk-body").first().text() mustBe "You owe £100"
+            }
+
+            "display account management heading" in {
+              view.select("h2").text() must include(
+                messages("account.homePage.manage.ppt.account.header")
+              )
+
+            }
+
+            "display account management sections" in {
+
+              val coreManagement       = view.getElementById("core-management")
+              val additionalManagement = view.getElementById("additional-management")
+              val deregister           = view.getElementById("deregister")
+
+              subscriptionType match {
+                case SingleEntity =>
+                  coreManagement.select("h3").text() must include(
+                    messages("account.homePage.card.registration.details.1.link.single")
+                  )
+
+                  coreManagement.select("p").text() mustBe messages(
+                    "account.homePage.card.registration.details.1.body"
+                  )
+
+                  coreManagement.select("a").first() must haveHref(
+                    "pptRegistrationAmendUrl"
+                  )
+
+                  checkDeregisterCard(deregister)
+
+                case Group =>
+                  coreManagement.select("h3").text() must include(
+                    messages("account.homePage.card.registration.details.1.link.group")
+                  )
+
+                  coreManagement.select("p").text() mustBe messages(
+                    "account.homePage.card.registration.details.1.body"
+                  )
+
+                  coreManagement.select("a").first() must haveHref(
+                    "pptRegistrationAmendUrl"
+                  )
+
+                  additionalManagement.select("h3").text() must include(
+                    messages("account.homePage.card.registration.details.2.link.group")
+                  )
+
+                  additionalManagement.select("p").text() mustBe messages(
+                    "account.homePage.card.registration.details.2.body.group"
+                  )
+
+                  additionalManagement.select("a").first() must haveHref(
+                    "pptRegistrationManageGroupUrl"
+                  )
+
+                  checkDeregisterCard(deregister)
+
+                case Partnership =>
+                  coreManagement.select("h3").text() must include(
+                    messages("account.homePage.card.registration.details.1.link.partnership")
+                  )
+
+                  coreManagement.select("p").text() mustBe messages(
+                    "account.homePage.card.registration.details.1.body"
+                  )
+
+                  coreManagement.select("a").first() must haveHref(
+                    "pptRegistrationAmendUrl"
+                  )
+
+                  additionalManagement.select("h3").text() must include(
+                    messages("account.homePage.card.registration.details.2.link.partnership")
+                  )
+
+                  additionalManagement.select("p").text() mustBe messages(
+                    "account.homePage.card.registration.details.2.body.partnership"
+                  )
+
+                  additionalManagement.select("a").first() must haveHref(
+                    "pptRegistrationManagePartnersUrl"
+                  )
+
+                  checkDeregisterCard(deregister)
+
+                case t => fail(s"No test for $t")
+              }
+            }
+          }
         }
+      }
     }
 
     "render the de-registration link" in {
@@ -377,16 +369,15 @@ class IndexPageViewSpec
 
     val returnCardDetails = card.select(".govuk-body")
 
-    returnDetails.zipWithIndex.foreach {
-      case (returnDetail, idx) => returnCardDetails.get(idx).text() must include(returnDetail)
+    returnDetails.zipWithIndex.foreach { case (returnDetail, idx) =>
+      returnCardDetails.get(idx).text() must include(returnDetail)
     }
 
     val returnCardLinks = card.select(".govuk-link")
 
-    returnLinks.zipWithIndex.foreach {
-      case (linkDetail, idx) =>
-        returnCardLinks.get(idx).text() must include(linkDetail._1)
-        returnCardLinks.get(idx) must haveHref(linkDetail._2)
+    returnLinks.zipWithIndex.foreach { case (linkDetail, idx) =>
+      returnCardLinks.get(idx).text() must include(linkDetail._1)
+      returnCardLinks.get(idx) must haveHref(linkDetail._2)
     }
 
   }

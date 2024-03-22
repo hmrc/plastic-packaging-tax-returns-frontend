@@ -28,7 +28,8 @@ class AnotherBusinessExportWeightFormProvider @Inject() extends Mappings {
       "value" -> long(
         "anotherBusinessExportWeight.error.required",
         "anotherBusinessExportWeight.error.wholeNumber",
-        "anotherBusinessExportWeight.error.nonNumeric")
-          .verifying(inRange(0L, 99999999999L, "anotherBusinessExportWeight.error.outOfRange"))
+        "anotherBusinessExportWeight.error.nonNumeric"
+      )
+        .verifying(inRange(0L, 99999999999L, "anotherBusinessExportWeight.error.outOfRange"))
     )
 }

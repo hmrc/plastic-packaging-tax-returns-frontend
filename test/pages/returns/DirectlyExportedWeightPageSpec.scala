@@ -37,7 +37,6 @@ class DirectlyExportedWeightPageSpec extends PageBehaviours {
           val userAnswer = createUserAnswer
             .set(DirectlyExportedWeightPage, 70L).get
 
-
           DirectlyExportedWeightPage.cleanup(Some(70L), userAnswer) mustBe
             Success(expectedResetUserAnswer(userAnswer))
         }
@@ -73,7 +72,7 @@ class DirectlyExportedWeightPageSpec extends PageBehaviours {
 
   }
 
-  private def expectedResetUserAnswer(userAnswer: UserAnswers) = 
+  private def expectedResetUserAnswer(userAnswer: UserAnswers) =
     userAnswer
       .set(DirectlyExportedPage, true, cleanup = false).get
       .set(AnotherBusinessExportedPage, false, cleanup = false).get
@@ -82,8 +81,8 @@ class DirectlyExportedWeightPageSpec extends PageBehaviours {
       .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingWeightPage, 0L, cleanup = false).get
-  
-  private def createUserAnswer = 
+
+  private def createUserAnswer =
     UserAnswers("reg-number")
       .set(ManufacturedPlasticPackagingPage, false).get
       .set(ManufacturedPlasticPackagingWeightPage, 20L).get
@@ -91,5 +90,5 @@ class DirectlyExportedWeightPageSpec extends PageBehaviours {
       .set(ImportedPlasticPackagingWeightPage, 50L).get
       .set(DirectlyExportedPage, true).get
       .set(DirectlyExportedWeightPage, 0L).get
-  
+
 }

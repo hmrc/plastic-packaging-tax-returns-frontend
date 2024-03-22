@@ -23,9 +23,8 @@ import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.MainContactJobTitleView
 
-
 class MainContactJobTitleA11ySpec extends ViewSpecBase with AccessibilityMatchers {
- private val page = inject[MainContactJobTitleView]
+  private val page = inject[MainContactJobTitleView]
 
   val form: Form[String] = new MainContactJobTitleFormProvider()()
 

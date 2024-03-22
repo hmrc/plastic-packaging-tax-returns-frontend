@@ -35,29 +35,29 @@ case class CreditSummaryRow(
       Value(Text(value), classes = "govuk-!-width-one-quarter govuk-table__cell--numeric")
     )
 
-  def createCYAContent = {
+  def createCYAContent =
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;"))
     )
-  }
 
-  def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] = {
+  def createContent(createActionsContent: Seq[ActionItem] => Html): Seq[TableRow] =
     Seq(
       TableRow(content = Text(label), format = Some("text")),
-      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;")),
+      TableRow(content = Text(value), format = Some("text"), attributes = Map("style" -> "text-align:right;"))
     ) ++ createActionsCell(createActionsContent)
-  }
 
   private def createActionsCell(createActionsContent: Seq[Aliases.ActionItem] => Html) = {
     if (actions.isEmpty) {
-      Seq(TableRow(attributes=Map("aria-hidden" -> "true")))
+      Seq(TableRow(attributes = Map("aria-hidden" -> "true")))
     } else {
-      Seq(TableRow(
-        content = HtmlContent(createActionsContent(actions)),
-        format = Some("text"),
-        attributes = Map("style" -> "text-align:right;")
-      ))
+      Seq(
+        TableRow(
+          content = HtmlContent(createActionsContent(actions)),
+          format = Some("text"),
+          attributes = Map("style" -> "text-align:right;")
+        )
+      )
     }
   }
 }

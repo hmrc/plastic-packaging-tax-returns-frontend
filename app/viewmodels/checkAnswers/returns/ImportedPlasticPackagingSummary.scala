@@ -26,25 +26,24 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ImportedPlasticPackagingSummary private(key: String) extends SummaryViewModel {
+class ImportedPlasticPackagingSummary private (key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ImportedPlasticPackagingPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(ImportedPlasticPackagingPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(key = key,
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url
-            )
-              .withAttribute("id" -> "confirm-pp-total-imported-plastic")
-              .withVisuallyHiddenText(messages("importedPlasticPackaging.change.hidden")
-              )
+      SummaryListRowViewModel(
+        key = key,
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url
           )
+            .withAttribute("id" -> "confirm-pp-total-imported-plastic")
+            .withVisuallyHiddenText(messages("importedPlasticPackaging.change.hidden"))
         )
+      )
     }
 
 }

@@ -58,7 +58,16 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockObligationsConnector, mockFinancialsConnector, mockSessionRepository, mockView, mockMessagesApi, mockAppConfig, mockLegalEntityDetails, mockPPTFinancials)
+    reset(
+      mockObligationsConnector,
+      mockFinancialsConnector,
+      mockSessionRepository,
+      mockView,
+      mockMessagesApi,
+      mockAppConfig,
+      mockLegalEntityDetails,
+      mockPPTFinancials
+    )
     when(mockView.apply(any, any, any, any, any)(any, any)).thenReturn(Html.apply("test view"))
   }
 
@@ -75,9 +84,13 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   "onPageLoad" must {
     "construct and return the account home page" in {
-      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(
+        Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails)))
+      )
       when(mockFinancialsConnector.getPaymentStatement(any)(any)).thenReturn(Future.successful(mockPPTFinancials))
-      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+        Future.successful(PPTObligations(None, None, 1, true, true))
+      )
       when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq.empty))
 
       when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
@@ -87,13 +100,21 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
       status(result) mustBe OK
       contentAsString(result) mustBe "test view"
 
-      verify(mockView).apply(refEq(mockLegalEntityDetails), refEq(Some(PPTObligations(None, None, 1, true, true))), refEq(true), refEq(Some("Test payment statement")), any)(
+      verify(mockView).apply(
+        refEq(mockLegalEntityDetails),
+        refEq(Some(PPTObligations(None, None, 1, true, true))),
+        refEq(true),
+        refEq(Some("Test payment statement")),
+        any
+      )(
         any,
         any
       )
 
       withClue("session should be called to get legalEntityDetails") {
-        verify(mockSessionRepository).get(ArgumentMatchers.contains("SomeId-123"), refEq(Paths.SubscriptionIsActive))(any)
+        verify(mockSessionRepository).get(ArgumentMatchers.contains("SomeId-123"), refEq(Paths.SubscriptionIsActive))(
+          any
+        )
       }
       withClue("payments should be called") {
         verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any)
@@ -107,12 +128,20 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "calculate ifFirstReturn to be false, when fulfilled obligation is nonEmpty" in {
-      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
-      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(
+        Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails)))
+      )
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(
+        PPTFinancials(None, None, None)
+      ))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+        Future.successful(PPTObligations(None, None, 1, true, true))
+      )
       when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
 
-      when(mockObligationsConnector.getFulfilled(any[String])(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockObligationsConnector.getFulfilled(any[String])(any)).thenReturn(
+        Future.successful(Seq(TaxReturnObligation(now(), now(), now(), "")))
+      )
 
       await(sut.onPageLoad()(FakeRequest()))
 
@@ -120,11 +149,17 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "financials data not returned" in {
-      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(
+        Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails)))
+      )
       when(mockFinancialsConnector.getPaymentStatement(any)(any)).thenReturn(Future.failed(new Exception("boom")))
-      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+        Future.successful(PPTObligations(None, None, 1, true, true))
+      )
 
-      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(
+        Future.successful(Seq(TaxReturnObligation(now(), now(), now(), "")))
+      )
 
       await(sut.onPageLoad()(FakeRequest()))
 
@@ -132,9 +167,15 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "getFulfilled obligations fails" in {
-      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
-      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.successful(PPTObligations(None, None, 1, true, true)))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(
+        Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails)))
+      )
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(
+        PPTFinancials(None, None, None)
+      ))
+      when(mockObligationsConnector.getOpen(any)(any)).thenReturn(
+        Future.successful(PPTObligations(None, None, 1, true, true))
+      )
       when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
 
       when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.failed(new Exception("boom")))
@@ -145,10 +186,16 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "getObligationDetail fails" in {
-      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails))))
-      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(PPTFinancials(None, None, None)))
+      when(mockSessionRepository.get[Any](any, any)(any)).thenReturn(
+        Future.successful(Some(PPTSubscriptionDetails(mockLegalEntityDetails)))
+      )
+      when(mockFinancialsConnector.getPaymentStatement(any)(any)) thenReturn (Future.successful(
+        PPTFinancials(None, None, None)
+      ))
       when(mockPPTFinancials.paymentStatement()(any)).thenReturn("Test payment statement")
-      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(Future.successful(Seq(TaxReturnObligation(now(), now(), now(), ""))))
+      when(mockObligationsConnector.getFulfilled(any)(any)).thenReturn(
+        Future.successful(Seq(TaxReturnObligation(now(), now(), now(), "")))
+      )
 
       when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.failed(new Exception("boom")))
 

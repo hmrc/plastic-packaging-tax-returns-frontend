@@ -53,10 +53,16 @@ class MakePaymentControllerSpec extends SpecBase {
           .build()
 
         running(app) {
-          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(Future.successful("/blah"))
+          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(
+            Future.successful(PPTFinancials(None, None, None))
+          )
+          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(
+            Future.successful("/blah")
+          )
           when(mockObligationsConnector.getOpen(any())(any())).thenReturn(
-            Future.successful(PPTObligations(Some(TaxReturnObligation(now, now, now, "periodKey")), None, 0, true, false))
+            Future.successful(
+              PPTObligations(Some(TaxReturnObligation(now, now, now, "periodKey")), None, 0, true, false)
+            )
           )
 
           val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)
@@ -65,7 +71,12 @@ class MakePaymentControllerSpec extends SpecBase {
 
           redirectLocation(result) mustBe Some("/blah")
           verify(mockFinancialsConnector).getPaymentStatement(refEq("123"))(any())
-          verify(mockFinancialsConnector).getPaymentLink(refEq("123"), refEq(0), eqTo(pptRegAccount), eqTo(Some(nowInIsoLocalDate)))(any())
+          verify(mockFinancialsConnector).getPaymentLink(
+            refEq("123"),
+            refEq(0),
+            eqTo(pptRegAccount),
+            eqTo(Some(nowInIsoLocalDate))
+          )(any())
         }
       }
     }
@@ -94,8 +105,12 @@ class MakePaymentControllerSpec extends SpecBase {
         running(app) {
           class MagicExc() extends Exception("boom")
 
-          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(Future.successful("/blah"))
+          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(
+            Future.successful(PPTFinancials(None, None, None))
+          )
+          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(
+            Future.successful("/blah")
+          )
           when(mockObligationsConnector.getOpen(any())(any())).thenReturn(Future.failed(new MagicExc()))
 
           val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)
@@ -113,10 +128,16 @@ class MakePaymentControllerSpec extends SpecBase {
 
           class MagicExc() extends Exception("boom")
 
-          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(Future.successful(PPTFinancials(None, None, None)))
-          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(Future.failed(new MagicExc()))
+          when(mockFinancialsConnector.getPaymentStatement(any())(any())).thenReturn(
+            Future.successful(PPTFinancials(None, None, None))
+          )
+          when(mockFinancialsConnector.getPaymentLink(any(), any(), any(), any())(any())).thenReturn(
+            Future.failed(new MagicExc())
+          )
           when(mockObligationsConnector.getOpen(any())(any())).thenReturn(
-            Future.successful(PPTObligations(Some(TaxReturnObligation(now, now, now, "periodKey")), None, 0, true, false))
+            Future.successful(
+              PPTObligations(Some(TaxReturnObligation(now, now, now, "periodKey")), None, 0, true, false)
+            )
           )
 
           val request = FakeRequest(GET, routes.MakePaymentController.redirectLink().url)

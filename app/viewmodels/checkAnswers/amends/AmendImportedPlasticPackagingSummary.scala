@@ -32,13 +32,13 @@ object AmendImportedPlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendImportedPlasticPackagingPage).map(_.asKg)
-    val existing = returnDisplayApi.returnDetails.importedWeight.asKg
+    val existing                = returnDisplayApi.returnDetails.importedWeight.asKg
 
     AmendSummaryRow(
       "amendImportedPlasticPackaging.checkYourAnswersLabel",
       existing,
       AmendNewAnswerType(amended, "AmendsCheckYourAnswers.hiddenCell.newAnswer.1"),
-      Some(("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url)),
+      Some(("import", controllers.amends.routes.AmendImportedPlasticPackagingController.onPageLoad().url))
     )
   }
 

@@ -49,30 +49,29 @@ class StartYourReturnController @Inject() (
   auditor: Auditor,
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
-    extends I18nSupport with Logging {
+    extends I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference).flatMap {
-          case Some((taxReturnObligation, false)) => viewCredit(taxReturnObligation)
-          case Some((taxReturnObligation, true)) => viewFirstReturn(taxReturnObligation)
-          case None =>
-            logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
-            Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-        }
+    journeyAction.async { implicit request =>
+      taxReturnHelper.nextOpenObligationAndIfFirst(request.pptReference).flatMap {
+        case Some((taxReturnObligation, false)) => viewCredit(taxReturnObligation)
+        case Some((taxReturnObligation, true))  => viewFirstReturn(taxReturnObligation)
+        case None =>
+          logger.info("Trying to start return with no obligation. Redirecting to account homepage.")
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+      }
     }
 
   private def viewCredit(
     taxReturnObligation: TaxReturnObligation
-  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  )(implicit request: DataRequest[AnyContent]): Future[Result] =
     saveUserAnswer(isFirstReturn = false, taxReturnObligation)
       .map(_ => Redirect(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad))
-  }
 
   private def viewFirstReturn(
-                                 taxReturnObligation: TaxReturnObligation
-                               )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    taxReturnObligation: TaxReturnObligation
+  )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.fill(StartYourReturnPage, form())
 
     saveUserAnswer(isFirstReturn = true, taxReturnObligation)
@@ -82,32 +81,30 @@ class StartYourReturnController @Inject() (
   private def saveUserAnswer(
     isFirstReturn: Boolean,
     taxReturnObligation: TaxReturnObligation
-  )(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
+  )(implicit request: DataRequest[AnyContent]): Future[UserAnswers] =
     request.userAnswers
       .setOrFail(ReturnObligationCacheable, taxReturnObligation)
       .setOrFail(IsFirstReturnCacheable, isFirstReturn)
       .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-  }
 
   def onSubmit(): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        val userAnswers   = request.userAnswers
-        val pptReference  = request.pptReference
-        val obligation    = userAnswers.getOrFail(ReturnObligationCacheable)
-        val isFirstReturn = userAnswers.getOrFail[Boolean](IsFirstReturnCacheable)
+    journeyAction.async { implicit request =>
+      val userAnswers   = request.userAnswers
+      val pptReference  = request.pptReference
+      val obligation    = userAnswers.getOrFail(ReturnObligationCacheable)
+      val isFirstReturn = userAnswers.getOrFail[Boolean](IsFirstReturnCacheable)
 
-        form().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation, isFirstReturn))),
-          formValue =>
-            userAnswers
-              .setOrFail(StartYourReturnPage, formValue)
-              .save(cacheConnector.saveUserAnswerFunc(pptReference))
-              .map(_ => act(formValue))
-        )
+      form().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, obligation, isFirstReturn))),
+        formValue =>
+          userAnswers
+            .setOrFail(StartYourReturnPage, formValue)
+            .save(cacheConnector.saveUserAnswerFunc(pptReference))
+            .map(_ => act(formValue))
+      )
     }
 
-  private def act(formValue: Boolean) (implicit request: DataRequest[_]) = {
+  private def act(formValue: Boolean)(implicit request: DataRequest[_]) = {
     if (formValue) {
       auditor.returnStarted(request.request.user.identityData.internalId, request.pptReference)
     }

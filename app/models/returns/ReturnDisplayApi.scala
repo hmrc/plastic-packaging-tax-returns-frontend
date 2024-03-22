@@ -48,7 +48,7 @@ case class ReturnDisplayDetails(
   debitForPeriod: BigDecimal,
   totalWeight: Long,
   taxDue: BigDecimal
-){
+) {
   def liableWeight: Long = manufacturedWeight + importedWeight
 }
 
@@ -61,7 +61,7 @@ case class ReturnDisplayApi(
   idDetails: IdDetails,
   chargeDetails: Option[ReturnDisplayChargeDetails],
   returnDetails: ReturnDisplayDetails
-){
+) {
 
   def chargeReferenceAsString: String =
     chargeDetails.flatMap(_.chargeReference).getOrElse("n/a")
@@ -72,8 +72,7 @@ object ReturnDisplayApi {
   implicit val format: OFormat[ReturnDisplayApi] = Json.format[ReturnDisplayApi]
 }
 
-case class SubmittedReturn
-(
+case class SubmittedReturn(
   taxRate: BigDecimal,
   displayReturnJson: ReturnDisplayApi
 )
@@ -81,4 +80,3 @@ case class SubmittedReturn
 object SubmittedReturn {
   implicit val format: OFormat[SubmittedReturn] = Json.format[SubmittedReturn]
 }
-

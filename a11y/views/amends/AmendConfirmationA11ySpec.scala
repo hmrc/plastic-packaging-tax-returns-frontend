@@ -24,9 +24,8 @@ class AmendConfirmationA11ySpec extends ViewSpecBase with AccessibilityMatchers 
 
   val page = inject[AmendConfirmation]
 
-  private def render(chargeRef: Option[String]): String = {
+  private def render(chargeRef: Option[String]): String =
     page(chargeRef)(request, messages).toString()
-  }
 
   "pass accessibility checks" when {
     "charge reference is present" in {

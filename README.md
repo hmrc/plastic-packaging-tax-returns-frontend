@@ -13,10 +13,10 @@ These are the steps to the Plastic Packaging Tax Returns and Account service, of
 
 ```
 # Start the plastic packaging services and dependencies
-sm --start PLASTIC_PACKAGING_TAX_ALL -f
+sm2 --start PLASTIC_PACKAGING_TAX_ALL
 
 # confirm all services are running
-sm -s
+sm2 -s
 ```
 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
@@ -25,7 +25,6 @@ sm -s
   * `Identifier Name`: `EtmpRegistrationNumber`
   * `Identifier Value`: `XMPPT0000000001`
 * Then enter a redirect url:
-  * To start a return: http://localhost:8505/plastic-packaging-tax/submit-return-for-plastic-packaging-tax/submit-return 
   * To see account page: http://localhost:8505/plastic-packaging-tax/account 
 * Press **Submit**.
 

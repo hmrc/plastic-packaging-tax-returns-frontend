@@ -26,10 +26,11 @@ object AmendTotalDeductionSummary {
 
   def apply(calculations: AmendsCalculations, userAnswer: UserAnswers): AmendSummaryRow = {
 
-    val answer  = AmendNewAnswerType(
+    val answer = AmendNewAnswerType(
       calculations.amend.deductionsTotal.asKg,
       "AmendsCheckYourAnswers.hiddenCell.newAnswer.2",
-      isAmending(userAnswer))
+      isAmending(userAnswer)
+    )
 
     AmendSummaryRow(
       "AmendsCheckYourAnswers.deductionsTotal",
@@ -39,10 +40,9 @@ object AmendTotalDeductionSummary {
     )
   }
 
-  private def isAmending(userAnswer: UserAnswers) = {
+  private def isAmending(userAnswer: UserAnswers) =
     userAnswer.get(AmendDirectExportPlasticPackagingPage).isDefined ||
       userAnswer.get(AmendExportedByAnotherBusinessPage).isDefined ||
       userAnswer.get(AmendHumanMedicinePlasticPackagingPage).isDefined ||
       userAnswer.get(AmendRecycledPlasticPackagingPage).isDefined
-  }
 }

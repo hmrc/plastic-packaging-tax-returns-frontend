@@ -32,10 +32,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 final case class Entry(
-                        id: String,
-                        data: JsObject = JsObject.empty,
-                        lastUpdated: Instant = Instant.now()
-                      )
+  id: String,
+  data: JsObject = JsObject.empty,
+  lastUpdated: Instant = Instant.now()
+)
 
 object Entry {
   implicit val format: Format[Entry] = Format(
@@ -43,30 +43,31 @@ object Entry {
       (JsPath \ "_id").read[String] and
         (JsPath \ "data").read[JsObject] and
         (JsPath \ "lastUpdated").read[Instant](MongoJavatimeFormats.instantFormat)
-      )(Entry.apply _),
+    )(Entry.apply _),
     (
       (JsPath \ "_id").write[String] and
         (JsPath \ "data").write[JsObject] and
         (JsPath \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantFormat)
-      )(unlift(Entry.unapply))
+    )(unlift(Entry.unapply))
   )
 }
 
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock
 )(implicit ec: ExecutionContext)
     extends PlayMongoRepository[Entry](
       collectionName = "session-cache",
       mongoComponent = mongoComponent,
       domainFormat = Entry.format,
       indexes = Seq(
-        IndexModel(Indexes.ascending("lastUpdated"),
-                   IndexOptions()
-                     .name("lastUpdatedIdx")
-                     .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
         )
       ),
       replaceIndexes = true
@@ -86,37 +87,36 @@ class SessionRepository @Inject()(
     collection.find(byId(id)).headOption()
 
   def get[A](id: String, path: JsPath)(implicit rds: Reads[A]): Future[Option[A]] =
-    get(id).map{_.flatMap{ entry =>
+    get(id).map {
+      _.flatMap { entry =>
         Reads.optionNoError(Reads.at(path)(rds)).reads(entry.data).getOrElse(None)
-    }}
+      }
+    }
 
   private def set(entry: Entry): Future[Boolean] =
     collection
-      .replaceOne(filter = byId(entry.id),
-                  replacement = entry,
-                  options = ReplaceOptions().upsert(true)
-      )
+      .replaceOne(filter = byId(entry.id), replacement = entry, options = ReplaceOptions().upsert(true))
       .toFuture()
       .map(_ => true)
 
   def set[A](id: String, path: JsPath, value: A)(implicit writes: Writes[A]): Future[Boolean] =
-      get(id).map{_.fold(JsObject.empty)(_.data)}.flatMap {
-        _.setObject(path, Json.toJson(value)) match {
-            case JsSuccess(jsValue, _) => set(Entry(id, jsValue))
-            case JsError(errors) => Future.failed(JsResultException(errors))
-          }
+    get(id).map(_.fold(JsObject.empty)(_.data)).flatMap {
+      _.setObject(path, Json.toJson(value)) match {
+        case JsSuccess(jsValue, _) => set(Entry(id, jsValue))
+        case JsError(errors)       => Future.failed(JsResultException(errors))
       }
+    }
 
 }
 
 object SessionRepository {
 
   object Paths {
-    val AmendChargeRef: JsPath = JsPath \ "AmendChargeRef"
-    val ReturnChargeRef: JsPath = JsPath \ "ReturnChargeRef"
-    val TaxReturnObligation: JsPath = JsPath \ "TaxReturnObligation"
+    val AmendChargeRef: JsPath       = JsPath \ "AmendChargeRef"
+    val ReturnChargeRef: JsPath      = JsPath \ "ReturnChargeRef"
+    val TaxReturnObligation: JsPath  = JsPath \ "TaxReturnObligation"
     val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
-    val AgentSelectedPPTRef: JsPath = JsPath \ "AgentSelectedPPTRef"
+    val AgentSelectedPPTRef: JsPath  = JsPath \ "AgentSelectedPPTRef"
   }
 
 }

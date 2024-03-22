@@ -30,7 +30,7 @@ import play.api.mvc.Call
 import javax.inject.Singleton
 
 @Singleton
-class ReturnsJourneyNavigator @Inject()(
+class ReturnsJourneyNavigator @Inject() (
   appConfig: FrontendAppConfig,
   nonExportedAmountHelper: NonExportedAmountHelper
 ) {
@@ -46,8 +46,8 @@ class ReturnsJourneyNavigator @Inject()(
     else returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
 
   def nonExportedHumanMedicinesPlasticPackagingPage(mode: Mode, yesNo: Boolean) =
-      if (yesNo) returnRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
-      else returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
+    if (yesNo) returnRoutes.NonExportedHumanMedicinesPlasticPackagingWeightController.onPageLoad(mode)
+    else returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
 
   def nonExportedHumanMedicinesPlasticPackagingWeightPage(mode: Mode) =
     returnRoutes.NonExportedRecycledPlasticPackagingController.onPageLoad(mode)
@@ -59,52 +59,49 @@ class ReturnsJourneyNavigator @Inject()(
   def firstPageOfReturnSection =
     returnRoutes.ManufacturedPlasticPackagingController.onPageLoad(NormalMode)
 
-  def whatDoYouWantDo(isClaimingCredit: Boolean): Call = {
-    if(isClaimingCredit) creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
+  def whatDoYouWantDo(isClaimingCredit: Boolean): Call =
+    if (isClaimingCredit) creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
     else firstPageOfReturnSection
-  }
 
   def claimForWhichYear(year: CreditRangeOption, mode: Mode): Call =
     creditRoutes.ExportedCreditsController.onPageLoad(year.key, mode)
 
-  private def isConvertCreditQuestionAnswered(key: String, userAnswers: UserAnswers) = {
-    // It's possible to be changing credit answers whilst changing a year, whilst in CheckMode from the final CYA 
-    // page. To emulate this kind of double / nested check mode, we check to see if the converted question has 
-    // been answered as a proxy. If it hasn't, we assume you're adding another year to the claim, so continue as 
-    // normal mode would. If it has been answered, then we assume that you are in the nested-check mode and go 
+  private def isConvertCreditQuestionAnswered(key: String, userAnswers: UserAnswers) =
+    // It's possible to be changing credit answers whilst changing a year, whilst in CheckMode from the final CYA
+    // page. To emulate this kind of double / nested check mode, we check to see if the converted question has
+    // been answered as a proxy. If it hasn't, we assume you're adding another year to the claim, so continue as
+    // normal mode would. If it has been answered, then we assume that you are in the nested-check mode and go
     // back to the single year, mini-cya
     userAnswers.get(ConvertedCreditsPage(key)).isDefined
-  }
 
   def exportedCreditsYesNo(key: String, mode: Mode, isYes: Boolean, userAnswers: UserAnswers): Call = {
     val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
     (isCheckMode, isYes) match {
-      case (_, true) => creditRoutes.ExportedCreditsWeightController.onPageLoad(key, mode)
+      case (_, true)      => creditRoutes.ExportedCreditsWeightController.onPageLoad(key, mode)
       case (false, false) => creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
-      case (true, false) =>  creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
+      case (true, false)  => creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     }
   }
 
   def exportedCreditsWeight(key: String, mode: Mode, userAnswers: UserAnswers): Call = {
     val isCheckMode = mode == CheckMode && isConvertCreditQuestionAnswered(key, userAnswers)
-    if(isCheckMode)
+    if (isCheckMode)
       creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
     else
       creditRoutes.ConvertedCreditsController.onPageLoad(key, mode)
   }
-  
-  def convertedCreditsYesNo(mode: Mode, key: String, isAnswerYes: Boolean): Call = {
+
+  def convertedCreditsYesNo(mode: Mode, key: String, isAnswerYes: Boolean): Call =
     if (isAnswerYes)
       creditRoutes.ConvertedCreditsWeightController.onPageLoad(key, mode)
     else
       creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
-  }
 
   def convertedCreditsWeight(key: String, mode: Mode) =
     creditRoutes.ConfirmPackagingCreditController.onPageLoad(key, mode)
 
   def confirmCredit(mode: Mode): Call =
-      creditRoutes.CreditsClaimedListController.onPageLoad(mode)
+    creditRoutes.CreditsClaimedListController.onPageLoad(mode)
 
   def creditClaimedList(mode: Mode, isAddingAnotherYear: Boolean, userAnswers: UserAnswers) =
     if (isAddingAnotherYear)
@@ -120,39 +117,38 @@ class ReturnsJourneyNavigator @Inject()(
   def creditSummaryRemove(yearKey: String): String =
     creditRoutes.CancelCreditsClaimController.onPageLoad(yearKey).url
 
-  def cancelCredit(): Call = {
+  def cancelCredit(): Call =
     creditRoutes.CreditsClaimedListController.onPageLoad(NormalMode)
-  }
 
   def startYourReturn(doesUserWantToStartReturn: Boolean): Call =
     if (doesUserWantToStartReturn)
-        firstPageOfReturnSection
+      firstPageOfReturnSection
     else
       returnRoutes.NotStartOtherReturnsController.onPageLoad()
 
   def manufacturedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, yesNo: Boolean): Call = {
     (mode, hasAnswerChanged, yesNo) match {
       case (NormalMode, _, true) => returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode)
-      case (NormalMode, _, _) => returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
-      case (_, true, true) => returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
-      case _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (NormalMode, _, _)    => returnRoutes.ImportedPlasticPackagingController.onPageLoad(NormalMode)
+      case (_, true, true)       => returnRoutes.ManufacturedPlasticPackagingWeightController.onPageLoad(CheckMode)
+      case _                     => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
   }
 
   def importedPlasticPackaging(mode: Mode, hasAnswerChanged: Boolean, yesNo: Boolean): Call = {
     (mode, hasAnswerChanged, yesNo) match {
       case (NormalMode, _, true) => returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-      case (NormalMode, _, _) => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
-      case (_,true, true) => returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
-      case _ => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (NormalMode, _, _)    => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
+      case (_, true, true)       => returnRoutes.ImportedPlasticPackagingWeightController.onPageLoad(mode)
+      case _                     => returnRoutes.ConfirmPlasticPackagingTotalController.onPageLoad
     }
   }
 
   def confirmTotalPlasticPackagingRoute(answers: UserAnswers): Call = {
     nonExportedAmountHelper.totalPlasticAdditions(answers) match {
-      case Some(amount) if amount > 0 => returnRoutes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
+      case Some(amount) if amount > 0  => returnRoutes.DirectlyExportedComponentsController.onPageLoad(NormalMode)
       case Some(amount) if amount <= 0 => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-      case _ => controllers.routes.IndexController.onPageLoad
+      case _                           => controllers.routes.IndexController.onPageLoad
     }
   }
 
@@ -164,26 +160,26 @@ class ReturnsJourneyNavigator @Inject()(
     }
 
   def exportedPlasticPackagingWeightRoute(isAllPlasticExported: Boolean, mode: Mode): Call =
-    if (mode.equals(CheckMode)) 
+    if (mode.equals(CheckMode))
       returnRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
-    else if (isAllPlasticExported) 
+    else if (isAllPlasticExported)
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-    else 
+    else
       returnRoutes.PlasticExportedByAnotherBusinessController.onPageLoad(mode)
 
   def exportedByAnotherBusinessRoute(answer: Boolean, mode: Mode): Call =
     (answer, mode) match {
-      case (true, _) => returnRoutes.AnotherBusinessExportWeightController.onPageLoad(mode)
+      case (true, _)           => returnRoutes.AnotherBusinessExportWeightController.onPageLoad(mode)
       case (false, NormalMode) => returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
-      case (false, CheckMode) => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
+      case (false, CheckMode)  => returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     }
 
   def exportedByAnotherBusinessWeightRoute(isAllPlasticExported: Boolean, mode: Mode): Call = {
-    if (mode.equals(CheckMode)) 
+    if (mode.equals(CheckMode))
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else if (isAllPlasticExported)
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
-    else 
+    else
       returnRoutes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode)
   }
 

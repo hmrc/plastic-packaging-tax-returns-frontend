@@ -32,37 +32,32 @@ import views.html.amends.AmendExportedByAnotherBusinessView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendExportedByAnotherBusinessController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        cacheConnector: CacheConnector,
-                                        journeyAction: JourneyAction,
-                                        form: AmendExportedByAnotherBusinessFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: AmendExportedByAnotherBusinessView
-                                      )(implicit ec: ExecutionContext) extends I18nSupport {
+class AmendExportedByAnotherBusinessController @Inject() (
+  override val messagesApi: MessagesApi,
+  cacheConnector: CacheConnector,
+  journeyAction: JourneyAction,
+  form: AmendExportedByAnotherBusinessFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AmendExportedByAnotherBusinessView
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = journeyAction {
-    implicit request =>
-
-      if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
-        Ok(view(request.userAnswers.fill(AmendExportedByAnotherBusinessPage, form())))
-      } else {
-        Redirect(routes.SubmittedReturnsController.onPageLoad())
-      }
+  def onPageLoad: Action[AnyContent] = journeyAction { implicit request =>
+    if (request.userAnswers.get[TaxReturnObligation](AmendObligationCacheable).isDefined) {
+      Ok(view(request.userAnswers.fill(AmendExportedByAnotherBusinessPage, form())))
+    } else {
+      Redirect(routes.SubmittedReturnsController.onPageLoad())
+    }
   }
 
-  def onSubmit: Action[AnyContent] = journeyAction.async {
-    implicit request =>
-
-      form().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors))),
-
-        value =>
-            request.userAnswers
-              .setOrFail(AmendExportedByAnotherBusinessPage, value)
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
-      )
+  def onSubmit: Action[AnyContent] = journeyAction.async { implicit request =>
+    form().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+      value =>
+        request.userAnswers
+          .setOrFail(AmendExportedByAnotherBusinessPage, value)
+          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+          .map(_ => Redirect(controllers.amends.routes.CheckYourAnswersController.onPageLoad()))
+    )
   }
 }

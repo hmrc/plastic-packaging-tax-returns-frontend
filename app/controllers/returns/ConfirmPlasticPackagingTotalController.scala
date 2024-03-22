@@ -38,8 +38,7 @@ import views.html.returns.ConfirmPlasticPackagingTotalView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ConfirmPlasticPackagingTotalController @Inject()
-(
+class ConfirmPlasticPackagingTotalController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   val controllerComponents: MessagesControllerComponents,
@@ -47,24 +46,22 @@ class ConfirmPlasticPackagingTotalController @Inject()
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
   nonExportedAmountHelper: NonExportedAmountHelper
-) (implicit ec: ExecutionContext)
-  extends I18nSupport with Logging {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    journeyAction {
-      implicit request =>
-
-        nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
-          Redirect(controllers.routes.IndexController.onPageLoad)
-        )(_ => Ok(view(createSummaryList(request))))
+    journeyAction { implicit request =>
+      nonExportedAmountHelper.totalPlasticAdditions(request.userAnswers).fold(
+        Redirect(controllers.routes.IndexController.onPageLoad)
+      )(_ => Ok(view(createSummaryList(request))))
     }
 
   def submit: Action[AnyContent] = {
-    journeyAction.async {
-      implicit request =>
-        ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic(nonExportedAmountHelper)
-          .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-          .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
+    journeyAction.async { implicit request =>
+      ExportedPlasticAnswer(request.userAnswers).resetAllIfNoTotalPlastic(nonExportedAmountHelper)
+        .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+        .map(updateUserAnswer => Redirect(navigator.confirmTotalPlasticPackagingRoute(updateUserAnswer)))
     }
   }
 

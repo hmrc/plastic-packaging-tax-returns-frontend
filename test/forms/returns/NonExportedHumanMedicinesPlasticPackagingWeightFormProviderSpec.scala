@@ -41,11 +41,12 @@ class NonExportedHumanMedicinesPlasticPackagingWeightFormProviderSpec extends Lo
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric"),
+      nonNumericError = FormError(fieldName, "nonExportedHumanMedicinesPlasticPackagingWeight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "nonExportedHumanMedicinesPlasticPackagingWeight.error.wholeNumber")
     )
 
-    behave like longFieldWithMinimum(form,
+    behave like longFieldWithMinimum(
+      form,
       fieldName,
       minimum = minimum,
       expectedError = FormError(
@@ -55,7 +56,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightFormProviderSpec extends Lo
       )
     )
 
-    behave like longFieldWithMaximum(form,
+    behave like longFieldWithMaximum(
+      form,
       fieldName,
       maximum = maximum,
       expectedError = FormError(

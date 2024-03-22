@@ -43,36 +43,39 @@ class ManufacturedPlasticPackagingController @Inject() (
   view: ManufacturedPlasticPackagingView,
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
-          val preparedForm = request.userAnswers.fill(ManufacturedPlasticPackagingPage, formProvider())
-          Ok(view(preparedForm, mode, obligation))
-        }
+    (identify andThen getData andThen requireData) { implicit request =>
+      ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+        val preparedForm = request.userAnswers.fill(ManufacturedPlasticPackagingPage, formProvider())
+        Ok(view(preparedForm, mode, obligation))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptId: String = request.pptReference
-        val userAnswers = request.userAnswers
-        val obligation = userAnswers.getOrFail(ReturnObligationCacheable)
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val pptId: String = request.pptReference
+      val userAnswers   = request.userAnswers
+      val obligation    = userAnswers.getOrFail(ReturnObligationCacheable)
 
-        formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          newAnswer => updateAnswersAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
-        )
+      formProvider().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+        newAnswer => updateAnswersAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
+      )
     }
 
-  private def updateAnswersAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean) 
-    (implicit hc: HeaderCarrier) = {
-
+  private def updateAnswersAndGotoNextPage(
+    mode: Mode,
+    pptReference: String,
+    previousAnswers: UserAnswers,
+    newAnswer: Boolean
+  )(implicit hc: HeaderCarrier) =
     previousAnswers
       .change(ManufacturedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
-      .map(hasAnswerChanged => Redirect(returnsNavigator.manufacturedPlasticPackaging(mode, hasAnswerChanged, newAnswer)))
-  }
-  
+      .map(hasAnswerChanged =>
+        Redirect(returnsNavigator.manufacturedPlasticPackaging(mode, hasAnswerChanged, newAnswer))
+      )
+
 }

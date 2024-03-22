@@ -24,10 +24,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class FrontendAppConfigSpec extends PlaySpec
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ResetMocksAfterEachTest {
+class FrontendAppConfigSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
 
   private val validAppConfig: Config =
     ConfigFactory.parseString(s"""
@@ -37,12 +34,12 @@ class FrontendAppConfigSpec extends PlaySpec
   private val validServicesConfiguration = Configuration(validAppConfig)
 
   private def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
-  private def appConfig(conf: Configuration) = new FrontendAppConfig(conf, servicesConfig(conf))
+  private def appConfig(conf: Configuration)      = new FrontendAppConfig(conf, servicesConfig(conf))
 
   "configuration" should {
 
     "return override-system-date-time" when {
-      
+
       "value is present" in {
         val configService: FrontendAppConfig = appConfig(validServicesConfiguration)
         configService.overrideSystemDateTime mustBe Some("whatEver")
@@ -54,7 +51,7 @@ class FrontendAppConfigSpec extends PlaySpec
       }
 
       "content is boolean" in {
-        val config: Config = ConfigFactory.parseString("""override-system-date-time = false""")
+        val config: Config    = ConfigFactory.parseString("""override-system-date-time = false""")
         val frontendAppConfig = appConfig(Configuration(config))
         frontendAppConfig.overrideSystemDateTime mustBe Some("false")
       }

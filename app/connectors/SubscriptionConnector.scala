@@ -35,18 +35,18 @@ class SubscriptionConnector @Inject() (
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
-  def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Either[EisFailure, SubscriptionDisplayResponse]] = {
+  def get(
+    pptReferenceNumber: String
+  )(implicit hc: HeaderCarrier): Future[Either[EisFailure, SubscriptionDisplayResponse]] = {
 
     val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
     httpClient.GET[HttpResponse](appConfig.pptSubscriptionUrl(pptReferenceNumber))
-      .map {
-        response =>
-          if (Status.isSuccessful(response.status)) {
-            Right(response.json.as[SubscriptionDisplayResponse])
-          }
-          else {
-            Left(response.json.as[EisFailure])
-          }
+      .map { response =>
+        if (Status.isSuccessful(response.status)) {
+          Right(response.json.as[SubscriptionDisplayResponse])
+        } else {
+          Left(response.json.as[EisFailure])
+        }
       }
       .andThen { case _ => timer.stop() }
   }
@@ -56,13 +56,14 @@ class SubscriptionConnector @Inject() (
   ): Future[HttpResponse] = {
     httpClient.POSTEmpty[HttpResponse](
       appConfig.pptChangeGroupLeadUrl(pptReferenceNumber)
-    ).map{ response =>
+    ).map { response =>
       response.status match {
         case OK => response
-        case _ => throw DownstreamServiceError(
-          s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
-          new Exception()
-        )
+        case _ =>
+          throw DownstreamServiceError(
+            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
+            new Exception()
+          )
       }
     }
   }

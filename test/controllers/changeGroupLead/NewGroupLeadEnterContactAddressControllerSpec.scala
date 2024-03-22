@@ -53,15 +53,15 @@ import scala.util.Try
 class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[NewGroupLeadEnterContactAddressView]
-  private val mockFormProvider = mock[NewGroupLeadEnterContactAddressFormProvider]
-  private val mockCache = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[NewGroupLeadAddressDetails]]
-  private val mockNavigator =  mock[ChangeGroupLeadNavigator]
-  private val mockCountryService = mock[CountryService]
+  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                     = mock[NewGroupLeadEnterContactAddressView]
+  private val mockFormProvider             = mock[NewGroupLeadEnterContactAddressFormProvider]
+  private val mockCache                    = mock[CacheConnector]
+  private val journeyAction                = mock[JourneyAction]
+  private val dataRequest                  = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                         = mock[Form[NewGroupLeadAddressDetails]]
+  private val mockNavigator                = mock[ChangeGroupLeadNavigator]
+  private val mockCountryService           = mock[CountryService]
 
   val sut = new NewGroupLeadEnterContactAddressController(
     mockMessagesApi,
@@ -80,14 +80,16 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockMessagesApi,
+    reset(
+      mockMessagesApi,
       mockCache,
       mockNavigator,
       journeyAction,
       mockFormProvider,
       form,
       mockView,
-      dataRequest.userAnswers)
+      dataRequest.userAnswers
+    )
 
     when(mockView.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
@@ -99,23 +101,25 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     when(mockFormProvider.apply()) thenReturn form
     val userAnswers = dataRequest.userAnswers
     when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-    when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({ case _ => Future.successful(true) })
+    when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
     when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
     val createBindForm = new NewGroupLeadEnterContactAddressFormProvider().apply().bind(
       Map(
         addressLine1 -> "1 road",
         addressLine2 -> "1 road",
         addressLine4 -> "London",
-        countryCode -> "EN"
-      ))
+        countryCode  -> "EN"
+      )
+    )
     when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
 
   }
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 
@@ -157,9 +161,9 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe "correct view"
-      verify(mockView).apply(meq(newForm), meq(countryMap), meq("organisation-name"),  meq(NormalMode))(any, any)
+      verify(mockView).apply(meq(newForm), meq(countryMap), meq("organisation-name"), meq(NormalMode))(any, any)
       verify(mockFormProvider).apply()
-      verify(form).bindFromRequest()(meq(dataRequest),any)
+      verify(form).bindFromRequest()(meq(dataRequest), any)
     }
 
     "redirect to a new page" in {

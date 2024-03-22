@@ -42,44 +42,46 @@ class IndexController @Inject() (
   obligationsConnector: ObligationsConnector,
   getData: DataRetrievalAction
 )(implicit ec: ExecutionContext)
-    extends Results with I18nSupport with FrontendHeaderCarrierProvider {
+    extends Results
+    with I18nSupport
+    with FrontendHeaderCarrierProvider {
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
       val pptReference = request.pptReference
-        for {
-          legalEntity      <- sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive)
-          paymentStatement <- getPaymentsStatement(pptReference)
-          obligations      <- getObligationsDetail(pptReference)
-          isFirstReturn    <- isFirstReturn(pptReference)
-        } yield Ok(
-          view(
-            legalEntity.get.legalEntityDetails,
-            obligations,
-            isFirstReturn,
-            paymentStatement,
-            pptReference
-          )
+      for {
+        legalEntity      <- sessionRepository.get[PPTSubscriptionDetails](request.cacheKey, SubscriptionIsActive)
+        paymentStatement <- getPaymentsStatement(pptReference)
+        obligations      <- getObligationsDetail(pptReference)
+        isFirstReturn    <- isFirstReturn(pptReference)
+      } yield Ok(
+        view(
+          legalEntity.get.legalEntityDetails,
+          obligations,
+          isFirstReturn,
+          paymentStatement,
+          pptReference
         )
+      )
     }
 
   private def getPaymentsStatement(
     pptReference: String
   )(implicit hc: HeaderCarrier, messages: Messages): Future[Option[String]] =
-    financialsConnector.getPaymentStatement(pptReference).map(
-      response => Some(response.paymentStatement()(messages))
-    ).recover { case _ => None}
+    financialsConnector.getPaymentStatement(pptReference).map(response =>
+      Some(response.paymentStatement()(messages))
+    ).recover { case _ => None }
 
   private def isFirstReturn(pptReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-    obligationsConnector.getFulfilled(pptReference).map(_.isEmpty).recoverWith {
-      case _ => Future.successful(false) //assume not first return
+    obligationsConnector.getFulfilled(pptReference).map(_.isEmpty).recoverWith { case _ =>
+      Future.successful(false) // assume not first return
     }
 
   private def getObligationsDetail(
     pptReference: String
   )(implicit hc: HeaderCarrier): Future[Option[PPTObligations]] =
-    obligationsConnector.getOpen(pptReference).map(response => Some(response)).recoverWith {
-      case _ => Future(None)
+    obligationsConnector.getOpen(pptReference).map(response => Some(response)).recoverWith { case _ =>
+      Future(None)
     }
 
 }

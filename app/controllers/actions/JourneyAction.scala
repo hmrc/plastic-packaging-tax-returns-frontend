@@ -23,26 +23,23 @@ import play.api.mvc._
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class JourneyAction @Inject()(
+class JourneyAction @Inject() (
   identifierAction: IdentifierAction,
   dataRetrievalAction: DataRetrievalAction,
-  dataAction: DataNotRequiredAction,
+  dataAction: DataNotRequiredAction
 ) {
-  
-  def async(function: RequestAsyncFunction): Action[AnyContent] = {
+
+  def async(function: RequestAsyncFunction): Action[AnyContent] =
     build.async(function)
-  }
 
-  def apply(function: RequestFunction): Action[AnyContent] = {
+  def apply(function: RequestFunction): Action[AnyContent] =
     build.apply(function)
-  }
 
-  private def build: ActionBuilder[DataRequest, AnyContent] = {
+  private def build: ActionBuilder[DataRequest, AnyContent] =
     identifierAction.andThen(dataRetrievalAction.andThen(dataAction))
-  }
 }
 
 object JourneyAction {
-  type RequestFunction = DataRequest[AnyContent] => Result
+  type RequestFunction      = DataRequest[AnyContent] => Result
   type RequestAsyncFunction = DataRequest[AnyContent] => Future[Result]
 }

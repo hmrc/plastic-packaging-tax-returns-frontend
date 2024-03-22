@@ -41,7 +41,7 @@ class ImportedPlasticPackagingPageSpec extends PageBehaviours {
 
     "must return a value of zero" - {
       "when answer is no" in {
-        val answer = UserAnswers("123").set(ImportedPlasticPackagingPage, false).get
+        val answer         = UserAnswers("123").set(ImportedPlasticPackagingPage, false).get
         val expectedAnswer = answer.copy().set(ImportedPlasticPackagingWeightPage, 0L).get
 
         ImportedPlasticPackagingPage.cleanup(Some(false), answer).get mustBe expectedAnswer

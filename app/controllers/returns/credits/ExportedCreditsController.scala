@@ -35,8 +35,7 @@ import views.html.returns.credits.ExportedCreditsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExportedCreditsController @Inject()
-(
+class ExportedCreditsController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   navigator: ReturnsJourneyNavigator,
@@ -44,39 +43,39 @@ class ExportedCreditsController @Inject()
   formProvider: ExportedCreditsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ExportedCreditsView
-)(implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] = {
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          val preparedForm = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
-          createView(preparedForm, key, mode, singleYearClaim) map (Results.Ok(_))
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        val preparedForm =
+          request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormYesNo)
+        createView(preparedForm, key, mode, singleYearClaim) map (Results.Ok(_))
+      }
     }
   }
 
   def onSubmit(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          formProvider()
-            .bindFromRequest()
-            .fold(
-              formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (Results.BadRequest(_)),
-              formValue => {
-                val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
-                request.userAnswers
-                  .changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
-                  .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
-              }
-            )
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (Results.BadRequest(_)),
+            formValue => {
+              val saveFunc = cacheConnector.saveUserAnswerFunc(request.pptReference)
+              request.userAnswers
+                .changeWithFunc(ExportedCreditsPage(key), CreditsAnswer.changeYesNoTo(formValue), saveFunc)
+                .map(_ => Results.Redirect(navigator.exportedCreditsYesNo(key, mode, formValue, request.userAnswers)))
+            }
+          )
+      }
     }
 
-  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)
-    (implicit request: DataRequest[_]) = {
+  private def createView(form: Form[Boolean], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit
+    request: DataRequest[_]
+  ) =
     Future.successful(view(form, key, mode, singleYearClaim.createCreditRangeOption()))
-  }
 
 }

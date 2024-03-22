@@ -43,40 +43,40 @@ class NonExportedHumanMedicinesPlasticPackagingController @Inject() (
   view: NonExportedHumanMedicinesPlasticPackagingView,
   nonExportedAmountHelper: NonExportedAmountHelper
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
+    (identify andThen getData andThen requireData) { implicit request =>
+      val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
+        case None        => form()
+        case Some(value) => form().fill(value)
+      }
 
-        val preparedForm = request.userAnswers.get(NonExportedHumanMedicinesPlasticPackagingPage) match {
-          case None        => form()
-          case Some(value) => form().fill(value)
+      nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+        .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
+          case (amount, directlyExported, exportedThirdParty) =>
+            Ok(view(amount, preparedForm, mode, directlyExported, exportedThirdParty))
         }
-
-        nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-          .fold(Redirect(controllers.routes.IndexController.onPageLoad)) {
-            case (amount, directlyExported, exportedThirdParty) =>
-              Ok(view(amount, preparedForm, mode, directlyExported, exportedThirdParty))
-          }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        form().bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(
-              nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
-                .fold(Redirect(controllers.routes.IndexController.onPageLoad))(
-                  o => BadRequest(view(o._1, formWithErrors, mode, o._2, o._3))
-                )
-            ),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value))
-              _              <- cacheConnector.set(request.pptReference, updatedAnswers)
-            } yield Redirect(navigator.nonExportedHumanMedicinesPlasticPackagingPage(mode, value))
-        )
+    (identify andThen getData andThen requireData).async { implicit request =>
+      form().bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(
+            nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(request.userAnswers)
+              .fold(Redirect(controllers.routes.IndexController.onPageLoad))(o =>
+                BadRequest(view(o._1, formWithErrors, mode, o._2, o._3))
+              )
+          ),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(NonExportedHumanMedicinesPlasticPackagingPage, value)
+            )
+            _ <- cacheConnector.set(request.pptReference, updatedAnswers)
+          } yield Redirect(navigator.nonExportedHumanMedicinesPlasticPackagingPage(mode, value))
+      )
     }
 }

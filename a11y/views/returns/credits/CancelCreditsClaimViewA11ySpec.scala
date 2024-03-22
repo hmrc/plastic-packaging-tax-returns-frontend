@@ -33,13 +33,14 @@ class CancelCreditsClaimViewA11ySpec extends ViewSpecBase with AccessibilityMatc
   private val page = inject[CancelCreditsClaimView]
   private def render: Html = page(
     Form("value" -> boolean).fill(true),
-    Call("POST", "call-url"), 
+    Call("POST", "call-url"),
     SingleYearClaim(
-      fromDate = LocalDate.of(1, 2, 3), 
+      fromDate = LocalDate.of(1, 2, 3),
       toDate = LocalDate.of(4, 5, 6),
-      exportedCredits = Some(CreditsAnswer(true, Some(7L))), 
-      convertedCredits = Some(CreditsAnswer(true, Some(8L))))
-  ) (request, messages)
+      exportedCredits = Some(CreditsAnswer(true, Some(7L))),
+      convertedCredits = Some(CreditsAnswer(true, Some(8L)))
+    )
+  )(request, messages)
 
   "view" should {
     "pass accessibility checks" in {

@@ -49,20 +49,20 @@ import scala.concurrent.Future
 import scala.util.Try
 
 class AmendExportedByAnotherBusinessControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with JourneyActionAnswer
     with MockitoSugar
     with AmendExportedData
     with BeforeAndAfterEach {
 
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Long]]
-  private val saveFunction = mock[SaveUserAnswerFunc]
-  private val formProvider = mock[AmendExportedByAnotherBusinessFormProvider]
-  private val messagesApi = mock[MessagesApi]
+  private val dataRequest    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form           = mock[Form[Long]]
+  private val saveFunction   = mock[SaveUserAnswerFunc]
+  private val formProvider   = mock[AmendExportedByAnotherBusinessFormProvider]
+  private val messagesApi    = mock[MessagesApi]
   private val cacheConnector = mock[CacheConnector]
-  private val journeyAction = mock[JourneyAction]
-  private val view = mock[AmendExportedByAnotherBusinessView]
+  private val journeyAction  = mock[JourneyAction]
+  private val view           = mock[AmendExportedByAnotherBusinessView]
 
   private val sut = new AmendExportedByAnotherBusinessController(
     messagesApi,
@@ -167,12 +167,14 @@ class AmendExportedByAnotherBusinessControllerSpec
       val result = sut.onSubmit.skippingJourneyAction(dataRequest)
 
       status(result) mustEqual BAD_REQUEST
-      verify(view).apply(meq(formError))(any,any)
+      verify(view).apply(meq(formError))(any, any)
     }
   }
 
   private def setUpMocks(): Unit = {
-    when(form.bindFromRequest()(any, any)).thenReturn(new AmendExportedByAnotherBusinessFormProvider()().bind(Map("value" -> "10")))
+    when(form.bindFromRequest()(any, any)).thenReturn(
+      new AmendExportedByAnotherBusinessFormProvider()().bind(Map("value" -> "10"))
+    )
     when(dataRequest.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(UserAnswers("123"))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(saveFunction.apply(any, any)).thenReturn(Future.successful(true))

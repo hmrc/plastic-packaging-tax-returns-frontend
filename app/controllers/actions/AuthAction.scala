@@ -37,57 +37,55 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-trait AuthAction
-  extends ActionBuilder[IdentifiedRequest, AnyContent]
-    with ActionFunction[Request, IdentifiedRequest]
+trait AuthAction extends ActionBuilder[IdentifiedRequest, AnyContent] with ActionFunction[Request, IdentifiedRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
-                                                override val authConnector: AuthConnector,
-                                                appConfig: FrontendAppConfig,
-                                                sessionRepository: SessionRepository,
-                                                controllerComponents: ControllerComponents
-                                              )(implicit val executionContext: ExecutionContext)
-  extends AuthAction with AuthorisedFunctions with Logging {
+  override val authConnector: AuthConnector,
+  appConfig: FrontendAppConfig,
+  sessionRepository: SessionRepository,
+  controllerComponents: ControllerComponents
+)(implicit val executionContext: ExecutionContext)
+    extends AuthAction
+    with AuthorisedFunctions
+    with Logging {
 
   override val parser: BodyParser[AnyContent] = controllerComponents.parsers.default
 
   override def invokeBlock[A](
-                               request: Request[A],
-                               block: IdentifiedRequest[A] => Future[Result]
-                             ): Future[Result] = {
+    request: Request[A],
+    block: IdentifiedRequest[A] => Future[Result]
+  ): Future[Result] = {
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AffinityGroup.Agent.or(Enrolment(pptEnrolmentKey).and(CredentialStrength(CredentialStrength.strong))))
       .retrieve(internalId and affinityGroup and allEnrolments) {
-      case maybeInternalId ~ affinityGroup ~ allEnrolments =>
-        val internalId = maybeInternalId.getOrElse(throw new IllegalStateException("internalId is required"))
-        val identityData = IdentityData(internalId, affinityGroup)
-        val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
+        case maybeInternalId ~ affinityGroup ~ allEnrolments =>
+          val internalId      = maybeInternalId.getOrElse(throw new IllegalStateException("internalId is required"))
+          val identityData    = IdentityData(internalId, affinityGroup)
+          val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
 
-        affinityGroup match {
-          case Some(AffinityGroup.Agent) =>
-            sessionRepository.get[String](internalId, AgentSelectedPPTRef).flatMap(
-              _.fold(
-                Future.successful(Redirect(agentRoutes.AgentSelectPPTRefController.onPageLoad()))
-              ) {
-                pptEnrolmentIdentifier =>
+          affinityGroup match {
+            case Some(AffinityGroup.Agent) =>
+              sessionRepository.get[String](internalId, AgentSelectedPPTRef).flatMap(
+                _.fold(
+                  Future.successful(Redirect(agentRoutes.AgentSelectPPTRefController.onPageLoad()))
+                ) { pptEnrolmentIdentifier =>
                   block(IdentifiedRequest(request, pptLoggedInUser, pptEnrolmentIdentifier))
+                }
+              )
+            case _ =>
+              // A non agent has authed; their ppt enrolment will have been returned
+              // from auth as it is a principal enrolment
+              getPptReferenceNumber(allEnrolments) match {
+                case Some(pptReferenceNumber) =>
+                  block(IdentifiedRequest(request, pptLoggedInUser, pptReferenceNumber))
+                case None =>
+                  throw new RuntimeException("Auth verified PPT user does not have PPT Reference Number")
               }
-            )
-          case _ =>
-            // A non agent has authed; their ppt enrolment will have been returned
-            // from auth as it is a principal enrolment
-            getPptReferenceNumber(allEnrolments) match {
-              case Some(pptReferenceNumber) =>
-                block(IdentifiedRequest(request, pptLoggedInUser, pptReferenceNumber))
-              case None =>
-                throw new RuntimeException("Auth verified PPT user does not have PPT Reference Number")
-            }
-        }
-    } recover {
+          }
+      } recover {
       case _: NoActiveSession =>
         Redirect(appConfig.loginUrl, Map(ContinueQueryParamKey -> Seq(request.target.path)))
 
@@ -109,7 +107,7 @@ class AuthenticatedIdentifierAction @Inject() (
 object AuthenticatedIdentifierAction {
   val ContinueQueryParamKey = "continue"
   object IdentifierAction {
-    val pptEnrolmentKey = "HMRC-PPT-ORG"
+    val pptEnrolmentKey            = "HMRC-PPT-ORG"
     val pptEnrolmentIdentifierName = "EtmpRegistrationNumber"
   }
 }

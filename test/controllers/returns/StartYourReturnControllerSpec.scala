@@ -48,18 +48,17 @@ import scala.concurrent.Future
 class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer with BeforeAndAfterEach {
 
   private val mockTaxReturnHelper: TaxReturnHelper = mock[TaxReturnHelper]
-  private val mockFormProvider = mock[StartYourReturnFormProvider]
-  private val mockCacheConnector = mock[CacheConnector]
-  private val navigator = mock[ReturnsJourneyNavigator]
-  private val view = mock[StartYourReturnView]
-  private val auditor = mock[Auditor]
-  private val messagesApi = mock[MessagesApi]
-  private val journeyAction = mock[JourneyAction]
-  private val request = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Boolean]]
-  private val saveFunc = mock[SaveUserAnswerFunc]
-  private val realFrom = new StartYourReturnFormProvider().apply()
-
+  private val mockFormProvider                     = mock[StartYourReturnFormProvider]
+  private val mockCacheConnector                   = mock[CacheConnector]
+  private val navigator                            = mock[ReturnsJourneyNavigator]
+  private val view                                 = mock[StartYourReturnView]
+  private val auditor                              = mock[Auditor]
+  private val messagesApi                          = mock[MessagesApi]
+  private val journeyAction                        = mock[JourneyAction]
+  private val request                              = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                                 = mock[Form[Boolean]]
+  private val saveFunc                             = mock[SaveUserAnswerFunc]
+  private val realFrom                             = new StartYourReturnFormProvider().apply()
 
   private val obligation: TaxReturnObligation = TaxReturnObligation(
     fromDate = LocalDate.parse("2022-04-01"),
@@ -107,8 +106,9 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
 
     "show the view if user has obligation" in {
       setUpMocks()
-      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(Future.successful(Some((obligation, true))))
-
+      when(mockTaxReturnHelper.nextOpenObligationAndIfFirst(any)(any)).thenReturn(
+        Future.successful(Some((obligation, true)))
+      )
 
       val result = sut.onPageLoad()(request)
 
@@ -118,7 +118,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
       verify(request.userAnswers).save(eqTo(saveFunc))(any)
       verify(mockCacheConnector).saveUserAnswerFunc(eqTo("test-ppt-ref"))(any)
       verify(view).apply(eqTo(form), eqTo(obligation), eqTo(true))(any, any)
-      }
+    }
 
     "redirect to account home when no obligation to start a return" in {
       setUpMocks()
@@ -143,7 +143,9 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
       val result = sut.onPageLoad()(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(
+        controllers.returns.credits.routes.WhatDoYouWantToDoController.onPageLoad.url
+      )
 
       withClue("set and save the obligation") {
         verify(request.userAnswers).setOrFail(eqTo(ReturnObligationCacheable), eqTo(obligation), any)(any)
@@ -186,7 +188,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/next-page")
 
-        withClue("should audit doing first return"){
+        withClue("should audit doing first return") {
           verify(auditor).returnStarted(any, any)(any, any)
         }
       }

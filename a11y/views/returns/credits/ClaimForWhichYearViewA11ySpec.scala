@@ -28,9 +28,8 @@ class ClaimForWhichYearViewA11ySpec extends ViewSpecBase with AccessibilityMatch
   private val form = Form("value" -> text())
   private val page = inject[ClaimForWhichYearView]
 
-  private def render(form: Form[_]) = {
+  private def render(form: Form[_]) =
     page(form, Seq.empty, NormalMode)(request, messages).toString()
-  }
 
   "view" should {
     "pass accessibility tests" when {

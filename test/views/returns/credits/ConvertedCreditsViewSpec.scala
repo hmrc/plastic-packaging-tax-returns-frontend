@@ -32,11 +32,11 @@ import java.time.LocalDate
 class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val page: ConvertedCreditsView = inject[ConvertedCreditsView]
-  val form = new ConvertedCreditsFormProvider()()
-  val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  val form                       = new ConvertedCreditsFormProvider()()
+  val creditRangeOption          = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   private def createView(form: Form[Boolean] = form): Html =
-    page(form,"year-key", NormalMode, creditRangeOption)(request, messages)
+    page(form, "year-key", NormalMode, creditRangeOption)(request, messages)
 
   "Converted Credits View" should {
 
@@ -63,7 +63,10 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     }
 
     "have a question" in {
-      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages("converted-credits-yes-no.question", "1 April 2023 and 31 March 2024")
+      view.getElementsByClass("govuk-fieldset__legend").text mustBe messages(
+        "converted-credits-yes-no.question",
+        "1 April 2023 and 31 March 2024"
+      )
     }
 
     "have radios" in {
@@ -77,9 +80,11 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
 
     "has reveal component" in {
       view.getElementsByClass("govuk-details__summary").text mustBe "What do we mean by converted plastic packaging?"
-      view.getElementsByClass("govuk-details__text").text mustBe "Plastic packaging is converted if you make a new substantial modification."
+      view.getElementsByClass(
+        "govuk-details__text"
+      ).text mustBe "Plastic packaging is converted if you make a new substantial modification."
 
-      withClue("have a link for guidance"){
+      withClue("have a link for guidance") {
         view.getElementById("converted-reveal-link") must haveHref(
           "https://www.gov.uk/guidance/decide-if-you-need-to-register-for-plastic-packaging-tax#substantial"
         )
@@ -88,11 +93,13 @@ class ConvertedCreditsViewSpec extends ViewSpecBase with ViewAssertions with Vie
     "display error" when {
 
       "the form has an error" in {
-        val boundForm = form.withError("requiredKey", "converted-credits-yes-no.error.required")
-        val view = createView(boundForm)
+        val boundForm     = form.withError("requiredKey", "converted-credits-yes-no.error.required")
+        val view          = createView(boundForm)
         val doc: Document = Jsoup.parse(view.toString())
 
-        doc.getElementsByClass("govuk-error-summary").text() must include("Select yes if you paid tax on plastic packaging before it was converted")
+        doc.getElementsByClass("govuk-error-summary").text() must include(
+          "Select yes if you paid tax on plastic packaging before it was converted"
+        )
       }
     }
   }

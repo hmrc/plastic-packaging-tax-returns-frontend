@@ -36,7 +36,6 @@ import uk.gov.hmrc.auth.core.{AuthConnector, BearerTokenExpired, IncorrectCreden
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-
 class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEach {
 
   val authConnector: AuthConnector = mock[AuthConnector]
@@ -50,7 +49,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/target-url")
   val testBlock: AuthedUser[Any] => Future[Result] = spyLambda(_ => Future.successful(Ok("test")))
-  val predicate = EmptyPredicate
+  val predicate                                    = EmptyPredicate
 
   override def beforeEach(): Unit = {
     reset(appConfig, authConnector, testBlock)
@@ -60,7 +59,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
   "authorised" must {
     "invoke block" when {
       "user is logged in" in {
-        when(authConnector.authorise[Option[String]](any,any)(any, any)).thenReturn(
+        when(authConnector.authorise[Option[String]](any, any)(any, any)).thenReturn(
           Future.successful(Some("internalId"))
         )
 
@@ -73,7 +72,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
 
     "redirect" when {
       "NoActiveSession" in {
-        when(authConnector.authorise[Option[String]](any,any)(any, any)).thenReturn(
+        when(authConnector.authorise[Option[String]](any, any)(any, any)).thenReturn(
           Future.failed(BearerTokenExpired())
         )
         when(appConfig.loginUrl).thenReturn("/login-url")
@@ -87,7 +86,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
         verifyNoInteractions(testBlock)
       }
       "IncorrectCredentialStrength" in {
-        when(authConnector.authorise[Option[String]](any,any)(any, any)).thenReturn(
+        when(authConnector.authorise[Option[String]](any, any)(any, any)).thenReturn(
           Future.failed(IncorrectCredentialStrength())
         )
         when(appConfig.mfaUpliftUrl).thenReturn("/mfa-uplift-url")
@@ -109,7 +108,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
 
     "error" when {
       "internalId is not returned" in {
-        when(authConnector.authorise[Option[String]](any,any)(any, any)).thenReturn(
+        when(authConnector.authorise[Option[String]](any, any)(any, any)).thenReturn(
           Future.successful(None)
         )
 

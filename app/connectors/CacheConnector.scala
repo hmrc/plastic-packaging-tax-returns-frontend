@@ -24,24 +24,24 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsInstance
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class CacheConnector @Inject() (
   config: FrontendAppConfig,
   implicit val httpClient: HttpClient
-) (implicit ec: ExecutionContext) extends HttpReadsInstances {
-  
-  def saveUserAnswerFunc(pptReference: String) (implicit hc: HeaderCarrier): UserAnswers.SaveUserAnswerFunc = {
+)(implicit ec: ExecutionContext)
+    extends HttpReadsInstances {
+
+  def saveUserAnswerFunc(pptReference: String)(implicit hc: HeaderCarrier): UserAnswers.SaveUserAnswerFunc = {
     case (userAnswers, flag) => this.set(pptReference, userAnswers).map(_ => flag)
   }
 
-  def get(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = 
+  def get(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
     httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(pptReference))
 
-  def set(pptReference: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = 
+  def set(pptReference: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST(config.pptCacheSetUrl(pptReference), userAnswers)(
-    implicitly[Writes[UserAnswers]],
-    implicitly[HttpReads[HttpResponse]],
-    hc.withExtraHeaders("Csrf-Token" -> "nocheck"),
-    implicitly
-  )
+      implicitly[Writes[UserAnswers]],
+      implicitly[HttpReads[HttpResponse]],
+      hc.withExtraHeaders("Csrf-Token" -> "nocheck"),
+      implicitly
+    )
 }

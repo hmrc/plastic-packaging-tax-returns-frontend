@@ -27,19 +27,19 @@ import viewmodels.checkAnswers.SummaryViewModel
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewModel {
+class ImportedPlasticPackagingWeightSummary(key: String) extends SummaryViewModel {
 
   override def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answer(answers).map {
-          answer => createSummaryListRow(answer.asKg)
+    answer(answers).map { answer =>
+      createSummaryListRow(answer.asKg)
     }
 
-  def answer(answers: UserAnswers): Option[Long] = {
+  def answer(answers: UserAnswers): Option[Long] =
     answers.get(ImportedPlasticPackagingWeightPage)
-  }
 
   private def createSummaryListRow(value: String)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(key = key,
+    SummaryListRowViewModel(
+      key = key,
       value = ValueViewModel(value),
       actions = Seq(
         ActionItemViewModel(
@@ -57,7 +57,10 @@ class ImportedPlasticPackagingWeightSummary (key: String) extends SummaryViewMod
 
 object ImportedPlasticPackagingWeightSummary {
 
-  private val confirmImportedPlasticPackagingWeightLabel = "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label"
+  private val confirmImportedPlasticPackagingWeightLabel =
+    "confirmPlasticPackagingTotal.weightImportedPlasticPackaging.label"
 
-  val ConfirmImportedPlasticPackagingWeightLabel = new ImportedPlasticPackagingWeightSummary(confirmImportedPlasticPackagingWeightLabel)
+  val ConfirmImportedPlasticPackagingWeightLabel = new ImportedPlasticPackagingWeightSummary(
+    confirmImportedPlasticPackagingWeightLabel
+  )
 }

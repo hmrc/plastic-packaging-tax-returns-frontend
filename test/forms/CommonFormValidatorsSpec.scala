@@ -19,8 +19,7 @@ package forms
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class CommonFormValidatorsSpec
-    extends AnyWordSpec with Matchers with CommonFormValidators {
+class CommonFormValidatorsSpec extends AnyWordSpec with Matchers with CommonFormValidators {
 
   "isNonEmpty" should {
 

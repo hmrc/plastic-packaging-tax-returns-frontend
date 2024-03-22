@@ -32,7 +32,7 @@ import scala.util.Try
 
 class IdentifyAndCheckSubscriptionSpec extends PlaySpec {
 
-  val mockAuthAction = mock[AuthAction]
+  val mockAuthAction         = mock[AuthAction]
   val mockSubscriptionFilter = mock[SubscriptionFilter]
 
   val sut = new IdentifyAndCheckSubscription(
@@ -46,7 +46,7 @@ class IdentifyAndCheckSubscriptionSpec extends PlaySpec {
       val resultingAction = mock[ActionBuilder[IdentifiedRequest, AnyContent]]
       when(mockAuthAction.andThen(mockSubscriptionFilter)).thenReturn(resultingAction)
       val request = FakeRequest()
-      val block = {_: IdentifiedRequest[_] => Future.successful(Ok("test"))}
+      val block   = { _: IdentifiedRequest[_] => Future.successful(Ok("test")) }
 
       Try(sut.invokeBlock(request, block))
 

@@ -23,7 +23,6 @@ class ConvertedCreditsFormProviderSpec extends PlaySpec {
 
   val sut: Form[Boolean] = new ConvertedCreditsFormProvider().apply()
 
-
   "bind correctly" when {
     "yes is provided" in {
 

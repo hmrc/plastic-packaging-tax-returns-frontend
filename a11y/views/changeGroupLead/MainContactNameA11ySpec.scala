@@ -24,16 +24,14 @@ import play.api.data.Form
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.MainContactNameView
 
-
 class MainContactNameA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   val page: MainContactNameView = inject[MainContactNameView]
 
   val form: Form[String] = new MainContactNameFormProvider()()
-  val appConfig = inject[FrontendAppConfig]
-
+  val appConfig          = inject[FrontendAppConfig]
 
   private def createView(form: Form[String]): String =
-    page(form, "company-name",NormalMode)(request, messages).toString()
+    page(form, "company-name", NormalMode)(request, messages).toString()
 
   "MainContactNameView" should {
 

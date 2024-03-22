@@ -24,12 +24,17 @@ import play.api.mvc.Call
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
-
-class ChooseNewGroupLeadA11ySpec extends ViewSpecBase  with AccessibilityMatchers {
+class ChooseNewGroupLeadA11ySpec extends ViewSpecBase with AccessibilityMatchers {
   val page: ChooseNewGroupLeadView = inject[ChooseNewGroupLeadView]
-  val members: GroupMembers = GroupMembers(Seq(Member("Test Company Ltd Asia", "1"), Member("Test Company Ltd Europe", "2"), Member("Test Company Ltd UK", "3")))
+  val members: GroupMembers = GroupMembers(
+    Seq(
+      Member("Test Company Ltd Asia", "1"),
+      Member("Test Company Ltd Europe", "2"),
+      Member("Test Company Ltd UK", "3")
+    )
+  )
   val form: Form[Member] = new SelectNewGroupLeadForm().apply(members.membersNames)
-  private val call = Call("get", "b")
+  private val call       = Call("get", "b")
 
   private def createView(form: Form[Member]): String =
     page(form, members, call)(request, messages).toString()

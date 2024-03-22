@@ -26,12 +26,15 @@ import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
 class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
-  val form = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
-  val page = inject[NonExportedHumanMedicinesPlasticPackagingView]
-  val plastic = 1234L
+  val form        = new NonExportedHumanMedicinesPlasticPackagingFormProvider()()
+  val page        = inject[NonExportedHumanMedicinesPlasticPackagingView]
+  val plastic     = 1234L
   val plasticInKg = plastic.asKg
 
-  private def createView(yesNoDirectExportedAnswer: Boolean = true, yesNoAnotherBusinessExportedAnswer: Boolean = true): Html =
+  private def createView(
+    yesNoDirectExportedAnswer: Boolean = true,
+    yesNoAnotherBusinessExportedAnswer: Boolean = true
+  ): Html =
     page(plastic, form, NormalMode, yesNoDirectExportedAnswer, yesNoAnotherBusinessExportedAnswer)(request, messages)
 
   "NonExportedHumanMedicinesPlasticPackagingView" should {
@@ -42,25 +45,31 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
         view.select("title").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
-        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
+        view.select("title").text must include(
+          messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+        )
       }
 
       "directly exported component answer is yes and another business exported answer is no" in {
-        val view = createView(true,false)
+        val view = createView(true, false)
 
         view.select("title").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
-        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
+        view.select("title").text must include(
+          messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+        )
       }
 
       "directly exported component answer is no and another business exported answer is yes" in {
-        val view = createView(false,true)
+        val view = createView(false, true)
 
         view.select("title").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
 
-        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg))
+        view.select("title").text must include(
+          messages("nonExportedHumanMedicinesPlasticPackaging.heading", plasticInKg)
+        )
       }
 
       "directly exported component answer is No and another business exported answer is no" in {
@@ -68,7 +77,9 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
 
         view.select("title").text mustBe
           s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines? - Submit return - Plastic Packaging Tax - GOV.UK"
-        view.select("title").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg))
+        view.select("title").text must include(
+          messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg)
+        )
       }
     }
     "have a heading" when {
@@ -80,7 +91,7 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
       }
 
       "directly exported component answer is yes and another business exported answer is no" in {
-        val view = createView(true,false)
+        val view = createView(true, false)
 
         view.select("h1").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
@@ -89,7 +100,7 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
       }
 
       "directly exported component answer is no and another business exported answer is yes" in {
-        val view = createView(false,true)
+        val view = createView(false, true)
 
         view.select("h1").text mustBe
           s"A total of $plasticInKg was not exported. Was any of this used for the immediate packaging of licenced human medicines?"
@@ -102,7 +113,9 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
 
         view.select("h1").text mustBe
           s"Were any of your $plasticInKg of finished plastic packaging components used for the immediate packaging of licenced human medicines?"
-        view.select("h1").text must include(messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg))
+        view.select("h1").text must include(
+          messages("nonExportedHumanMedicinesPlasticPackaging.direct.exported.no.answer.heading", plasticInKg)
+        )
       }
     }
 
@@ -110,15 +123,17 @@ class NonExportedHumanMedicinesPlasticPackagingViewSpec extends ViewSpecBase wit
       view.getElementById("section-header").text() mustBe messages("nonExportedHumanMedicinesPlasticPackaging.caption")
     }
 
-    "contain paragraph content" in{
+    "contain paragraph content" in {
 
-      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal"))
-      view.getElementById("reveal").text() must include (messages("nonExportedHumanMedicinesPlasticPackaging.reveal.content"))
+      view.getElementById("reveal").text() must include(messages("nonExportedHumanMedicinesPlasticPackaging.reveal"))
+      view.getElementById("reveal").text() must include(
+        messages("nonExportedHumanMedicinesPlasticPackaging.reveal.content")
+      )
 
     }
     "contain save & continue button" in {
 
-      view.getElementsByClass("govuk-button").text() must include( messages("site.continue"))
+      view.getElementsByClass("govuk-button").text() must include(messages("site.continue"))
 
     }
 

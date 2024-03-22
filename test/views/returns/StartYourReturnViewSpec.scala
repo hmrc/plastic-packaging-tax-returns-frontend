@@ -31,11 +31,8 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
   val form = new StartYourReturnFormProvider()()
   val page = inject[StartYourReturnView]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022,7,5),
-    LocalDate.of(2022,10,5),
-    LocalDate.of(2023,1,5),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
   private def createView(form: Form[Boolean] = form, isFirstReturn: Boolean): Html =
     page(form, aTaxObligation, isFirstReturn)(request, messages)
@@ -58,7 +55,7 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
       }
     }
 
-    "when is first return"  when {
+    "when is first return" when {
       val view = createView(isFirstReturn = true)
 
       "have a title" in {
@@ -71,7 +68,8 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
             "5 July 2022",
             "5 July 2022",
             "5 October 2022"
-          ))
+          )
+        )
       }
 
       "have a heading" in {
@@ -84,11 +82,11 @@ class StartYourReturnViewSpec extends ViewSpecBase with ViewAssertions with View
             "5 July 2022",
             "5 July 2022",
             "5 October 2022"
-          ))
+          )
+        )
 
       }
     }
-
 
     "contain save & continue button" in {
       createView(isFirstReturn = true).getElementsByClass("govuk-button").text() must

@@ -51,15 +51,15 @@ import scala.concurrent.Future
 class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val controllerComponents = stubMessagesControllerComponents()
-  private val mockView = mock[ChooseNewGroupLeadView]
-  private val mockFormProvider = mock[SelectNewGroupLeadForm]
-  private val mockCache = mock[CacheConnector]
-  private val mockSubscriptionService = mock[SubscriptionService]
-  private val journeyAction = mock[JourneyAction]
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val form = mock[Form[Member]]
-  private val navigator = mock[ChangeGroupLeadNavigator]
+  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                     = mock[ChooseNewGroupLeadView]
+  private val mockFormProvider             = mock[SelectNewGroupLeadForm]
+  private val mockCache                    = mock[CacheConnector]
+  private val mockSubscriptionService      = mock[SubscriptionService]
+  private val journeyAction                = mock[JourneyAction]
+  private val dataRequest                  = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val form                         = mock[Form[Member]]
+  private val navigator                    = mock[ChangeGroupLeadNavigator]
 
   val sut = new ChooseNewGroupLeadController(
     mockMessagesApi,
@@ -105,12 +105,12 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     when(navigator.selectNewGroupRep(any)) thenReturn Call("", "some-url")
   }
-  
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
 
+  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 
@@ -126,13 +126,13 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(form), meq(GroupMembers(Seq())), any)(any, any)
     }
-    
+
     "pass Normal mode to the submit url" in {
       await(sut.onPageLoad(NormalMode).skippingJourneyAction(dataRequest))
       val call = routes.ChooseNewGroupLeadController.onSubmit(NormalMode)
       verify(mockView).apply(any, any, meq(call))(any, any)
     }
-    
+
     "pass Check mode to the submit url" in {
       await(sut.onPageLoad(CheckMode).skippingJourneyAction(dataRequest))
       val call = routes.ChooseNewGroupLeadController.onSubmit(CheckMode)
@@ -201,22 +201,24 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       contentAsString(result) mustBe "correct view"
       verify(mockView).apply(meq(errorForm), meq(GroupMembers(Seq())), any)(any, any)
       verify(mockFormProvider).apply(groupMembers.membersNames)
-      verify(form).bindFromRequest()(meq(dataRequest),any)
+      verify(form).bindFromRequest()(meq(dataRequest), any)
     }
 
     "bind the form and bind a value" in {
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
       when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
       verify(mockFormProvider).apply(groupMembers.membersNames)
-      verify(form).bindFromRequest()(meq(dataRequest),any)
-      withClue("the selected member must be cached"){
+      verify(form).bindFromRequest()(meq(dataRequest), any)
+      withClue("the selected member must be cached") {
         verify(dataRequest.userAnswers).setOrFail(ChooseNewGroupLeadPage, Member("test-member", "1"))
-        verify(dataRequest.userAnswers).save(mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier))(global)
+        verify(dataRequest.userAnswers).save(
+          mockCache.saveUserAnswerFunc(dataRequest.pptReference)(dataRequest.headerCarrier)
+        )(global)
       }
     }
 
@@ -237,13 +239,12 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       "the cache save fails" in {
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn({case _ => Future.successful(true)})
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
         when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }
     }
   }
-
 
 }

@@ -20,12 +20,16 @@ import org.scalatestplus.play.PlaySpec
 
 class NewGroupLeadAddressDetailsSpec extends PlaySpec {
 
-
   "NewGroupLeadAddressDetailsFormBuffer.toNewGroupLeadAddressDetails" must {
     "shuffle up townOrCity" when {
       "addressLine3 is not defined" in {
         val result = NewGroupLeadAddressDetailsFormBuffer(
-          "addressLine1", Some("addressLine2"), None, "townOrCity", Some("postcode"), "countryCode"
+          "addressLine1",
+          Some("addressLine2"),
+          None,
+          "townOrCity",
+          Some("postcode"),
+          "countryCode"
         ).toNewGroupLeadAddressDetails
 
         result.addressLine1 mustBe "addressLine1"
@@ -35,7 +39,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
       }
       "addressLine2 and addressLine3 are not defined" in {
         val result = NewGroupLeadAddressDetailsFormBuffer(
-          "addressLine1", None, None, "townOrCity", Some("postcode"), "countryCode"
+          "addressLine1",
+          None,
+          None,
+          "townOrCity",
+          Some("postcode"),
+          "countryCode"
         ).toNewGroupLeadAddressDetails
 
         result.addressLine1 mustBe "addressLine1"
@@ -46,7 +55,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
     }
     "be cyclic" in {
       val sut = NewGroupLeadAddressDetailsFormBuffer(
-        "addressLine1", Some("addressLine2"), None, "townOrCity", Some("postcode"), "countryCode"
+        "addressLine1",
+        Some("addressLine2"),
+        None,
+        "townOrCity",
+        Some("postcode"),
+        "countryCode"
       )
       sut.toNewGroupLeadAddressDetails.toBuffer mustBe sut
     }
@@ -57,7 +71,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
     "maintain the order" when {
       "there are 2 address lines" in {
         val result = NewGroupLeadAddressDetails(
-          "addressLine1", "addressLine2", None, None, Some("postcode"), "countryCode"
+          "addressLine1",
+          "addressLine2",
+          None,
+          None,
+          Some("postcode"),
+          "countryCode"
         ).toBuffer
 
         result.addressLine1 mustBe "addressLine1"
@@ -67,7 +86,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
       }
       "there are 3 address lines" in {
         val result = NewGroupLeadAddressDetails(
-          "addressLine1", "addressLine2", Some("addressLine3"), None, Some("postcode"), "countryCode"
+          "addressLine1",
+          "addressLine2",
+          Some("addressLine3"),
+          None,
+          Some("postcode"),
+          "countryCode"
         ).toBuffer
 
         result.addressLine1 mustBe "addressLine1"
@@ -77,7 +101,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
       }
       "there are 4 address lines" in {
         val result = NewGroupLeadAddressDetails(
-          "addressLine1", "addressLine2", Some("addressLine3"), Some("addressLine4"), Some("postcode"), "countryCode"
+          "addressLine1",
+          "addressLine2",
+          Some("addressLine3"),
+          Some("addressLine4"),
+          Some("postcode"),
+          "countryCode"
         ).toBuffer
 
         result.addressLine1 mustBe "addressLine1"
@@ -89,7 +118,12 @@ class NewGroupLeadAddressDetailsSpec extends PlaySpec {
 
     "be cyclic" in {
       val sut = NewGroupLeadAddressDetails(
-        "addressLine1", "addressLine2", Some("addressLine3"), None, Some("postcode"), "countryCode"
+        "addressLine1",
+        "addressLine2",
+        Some("addressLine3"),
+        None,
+        Some("postcode"),
+        "countryCode"
       )
       sut.toBuffer.toNewGroupLeadAddressDetails mustBe sut
     }

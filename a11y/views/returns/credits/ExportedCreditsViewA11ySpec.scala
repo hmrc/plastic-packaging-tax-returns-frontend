@@ -28,12 +28,12 @@ import java.time.LocalDate
 
 class ExportedCreditsViewA11ySpec extends ViewSpecBase with AccessibilityMatchers {
 
-  val form = new ExportedCreditsFormProvider()()
-  val page = inject[ExportedCreditsView]
+  val form              = new ExportedCreditsFormProvider()()
+  val page              = inject[ExportedCreditsView]
   val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   def render(form: Form[Boolean]): String =
-    page(form,"year-key", NormalMode, creditRangeOption)(request, messages).toString()
+    page(form, "year-key", NormalMode, creditRangeOption)(request, messages).toString()
 
   "view" should {
     "pass accessibility tests" when {

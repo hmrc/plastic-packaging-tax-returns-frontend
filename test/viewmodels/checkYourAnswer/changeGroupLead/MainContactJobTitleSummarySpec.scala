@@ -41,18 +41,25 @@ class MainContactJobTitleSummarySpec extends PlaySpec {
 
       val userAnswers = UserAnswers("test").setOrFail(MainContactJobTitlePage, "Pan", false)
 
-      MainContactJobTitleSummary.row(userAnswers)(message) mustBe Some(SummaryListRow(
-        key = Key(Text("[KEY]")),
-        value = Value(Text("Pan")),
-        actions = Some(Actions("", Seq(
-          ActionItemViewModel(Text("[CHANGE]"), routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
-          .withVisuallyHiddenText("[KEY]")
-      )))
-      ))
+      MainContactJobTitleSummary.row(userAnswers)(message) mustBe Some(
+        SummaryListRow(
+          key = Key(Text("[KEY]")),
+          value = Value(Text("Pan")),
+          actions = Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(Text("[CHANGE]"), routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText("[KEY]")
+              )
+            )
+          )
+        )
+      )
 
     }
 
-    "not return a row" in  {
+    "not return a row" in {
       val userAnswers = UserAnswers("test")
 
       MainContactJobTitleSummary.row(userAnswers)(message) mustBe None

@@ -31,19 +31,19 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(AmendExportedByAnotherBusinessPage.type, JsValue)] ::
-    arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] ::
-    arbitrary[(AnotherBusinessExportedPage.type, JsValue)] ::
-    arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] ::
-    arbitrary[(MainContactNamePage.type, JsValue)] ::
-    arbitrary[(MainContactJobTitlePage.type, JsValue)] ::
-    arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
-    arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
-    arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
-    arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
-    arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
-    arbitrary[(DirectlyExportedPage.type, JsValue)] ::
-    arbitrary[(AgentsPage.type, JsValue)] ::
-    arbitrary[(StartYourReturnPage.type, JsValue)] ::
+      arbitrary[(AnotherBusinessExportedWeightPage.type, JsValue)] ::
+      arbitrary[(AnotherBusinessExportedPage.type, JsValue)] ::
+      arbitrary[(NewGroupLeadEnterContactAddressPage.type, JsValue)] ::
+      arbitrary[(MainContactNamePage.type, JsValue)] ::
+      arbitrary[(MainContactJobTitlePage.type, JsValue)] ::
+      arbitrary[(NonExportedHumanMedicinesPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(NonExportedHumanMedicinesPlasticPackagingPage.type, JsValue)] ::
+      arbitrary[(NonExportedRecycledPlasticPackagingPage.type, JsValue)] ::
+      arbitrary[(DirectlyExportedWeightPage.type, JsValue)] ::
+      arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
+      arbitrary[(DirectlyExportedPage.type, JsValue)] ::
+      arbitrary[(AgentsPage.type, JsValue)] ::
+      arbitrary[(StartYourReturnPage.type, JsValue)] ::
       arbitrary[(NonExportedRecycledPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingWeightPage.type, JsValue)] ::
       arbitrary[(ManufacturedPlasticPackagingPage.type, JsValue)] ::
@@ -68,11 +68,11 @@ trait UserAnswersGenerator extends TryValues {
           case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
           case _   => Gen.mapOf(oneOf(generators))
         }
-      } yield UserAnswers(id = id,
-                          data = data.foldLeft(Json.obj()) {
-                            case (obj, (path, value)) =>
-                              obj.setObject(path.path, value).get
-                          }
+      } yield UserAnswers(
+        id = id,
+        data = data.foldLeft(Json.obj()) { case (obj, (path, value)) =>
+          obj.setObject(path.path, value).get
+        }
       )
     }
   }

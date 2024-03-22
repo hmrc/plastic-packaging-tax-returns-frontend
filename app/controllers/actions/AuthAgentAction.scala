@@ -22,7 +22,6 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class AuthAgentActionImpl @Inject() (
   authorisedFun: AuthFunction,
   mcc: MessagesControllerComponents
@@ -35,13 +34,8 @@ class AuthAgentActionImpl @Inject() (
     request: Request[A],
     block: AuthedUser[A] => Future[Result]
   ): Future[Result] =
-    authorisedFun.authorised(AffinityGroup.Agent,
-                             request,
-                             block
-    )
+    authorisedFun.authorised(AffinityGroup.Agent, request, block)
 
 }
 
-trait AuthAgentAction
-    extends ActionBuilder[AuthedUser, AnyContent]
-    with ActionFunction[Request, AuthedUser]
+trait AuthAgentAction extends ActionBuilder[AuthedUser, AnyContent] with ActionFunction[Request, AuthedUser]

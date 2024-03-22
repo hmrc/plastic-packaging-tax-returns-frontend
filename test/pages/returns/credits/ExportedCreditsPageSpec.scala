@@ -20,7 +20,5 @@ import pages.behaviours.PageBehaviours
 
 class ExportedCreditsPageSpec extends PageBehaviours {
 
-  "ExportedCreditsPage" - {
-  }
+  "ExportedCreditsPage" - {}
 }
-

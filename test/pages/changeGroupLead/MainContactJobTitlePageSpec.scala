@@ -18,7 +18,6 @@ package pages.changeGroupLead
 
 import pages.behaviours.PageBehaviours
 
-
 class MainContactJobTitlePageSpec extends PageBehaviours {
 
   "MainContactJobTitlePage" - {

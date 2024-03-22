@@ -36,7 +36,7 @@ import views.html.returns.credits.ExportedCreditsWeightView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExportedCreditsWeightController @Inject()(
+class ExportedCreditsWeightController @Inject() (
   override val messagesApi: MessagesApi,
   journeyAction: JourneyAction,
   cacheConnector: CacheConnector,
@@ -44,35 +44,34 @@ class ExportedCreditsWeightController @Inject()(
   view: ExportedCreditsWeightView,
   formProvider: ExportedCreditsWeightFormProvider,
   navigator: ReturnsJourneyNavigator
-)
-  (implicit ec: ExecutionContext) extends I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   def onPageLoad(key: String, mode: Mode): Action[AnyContent] =
-    journeyAction.async {
-      implicit request =>
-        ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-          val form = request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
-          createView(form, key, mode, singleYearClaim) map (Ok(_))
-        }
+    journeyAction.async { implicit request =>
+      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+        val form =
+          request.userAnswers.fillWithFunc(ExportedCreditsPage(key), formProvider(), CreditsAnswer.fillFormWeight)
+        createView(form, key, mode, singleYearClaim) map (Ok(_))
+      }
     }
 
-  def onSubmit(key: String, mode: Mode): Action[AnyContent] = journeyAction.async {
-    implicit request =>
-      ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
-        formProvider().bindFromRequest().fold(
-          formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (BadRequest(_)),
-          formValue => {
-            request.userAnswers
-              .setOrFail(ExportedCreditsPage(key), CreditsAnswer.answerWeightWith(formValue))
-              .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
-              .map(_ => Results.Redirect(navigator.exportedCreditsWeight(key, mode, request.userAnswers)))
-          }
-        )
-      }
+  def onSubmit(key: String, mode: Mode): Action[AnyContent] = journeyAction.async { implicit request =>
+    ReturnsUserAnswers.checkCreditYear(request, key, mode) { singleYearClaim =>
+      formProvider().bindFromRequest().fold(
+        formWithErrors => createView(formWithErrors, key, mode, singleYearClaim) map (BadRequest(_)),
+        formValue =>
+          request.userAnswers
+            .setOrFail(ExportedCreditsPage(key), CreditsAnswer.answerWeightWith(formValue))
+            .save(cacheConnector.saveUserAnswerFunc(request.pptReference))
+            .map(_ => Results.Redirect(navigator.exportedCreditsWeight(key, mode, request.userAnswers)))
+      )
+    }
   }
 
-  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim) 
-    (implicit request: DataRequest[_]) = 
+  private def createView(form: Form[Long], key: String, mode: Mode, singleYearClaim: SingleYearClaim)(implicit
+    request: DataRequest[_]
+  ) =
     Future.successful(view(form, key, mode, singleYearClaim.createCreditRangeOption()))
 
 }

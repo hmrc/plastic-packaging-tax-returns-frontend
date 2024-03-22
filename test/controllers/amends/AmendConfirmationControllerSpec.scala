@@ -42,7 +42,12 @@ class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
   private val view              = mock[AmendConfirmation]
 
   private val sut =
-    new AmendConfirmationController(stubMessagesControllerComponents(), new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)), sessionRepository, view)(global)
+    new AmendConfirmationController(
+      stubMessagesControllerComponents(),
+      new FakeIdentifierActionWithEnrolment(stubPlayBodyParsers(NoMaterializer)),
+      sessionRepository,
+      view
+    )(global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -61,7 +66,7 @@ class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
       status(result) mustEqual OK
       contentAsString(result) mustBe "correct view"
       verify(view).apply(refEq(Some("charge-ref")))(any, any)
-      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
     }
 
     "error" in {
@@ -70,7 +75,7 @@ class AmendConfirmationControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.failed(TestEx))
 
       intercept[TestEx.type](await(sut.onPageLoad()(FakeRequest())))
-      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"),refEq(Paths.AmendChargeRef))(any)
+      verify(sessionRepository).get(ArgumentMatchers.contains("SomeId-123"), refEq(Paths.AmendChargeRef))(any)
     }
   }
 

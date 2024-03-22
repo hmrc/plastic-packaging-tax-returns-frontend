@@ -22,7 +22,7 @@ import play.api.data.FormError
 class StartYourReturnFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "startYourReturn.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new StartYourReturnFormProvider()()
 

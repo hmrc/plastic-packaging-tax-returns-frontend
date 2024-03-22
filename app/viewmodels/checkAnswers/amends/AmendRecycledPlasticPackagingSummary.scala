@@ -32,7 +32,7 @@ object AmendRecycledPlasticPackagingSummary {
     )
 
     val amended: Option[String] = answers.get(AmendRecycledPlasticPackagingPage).map(_.asKg)
-    val existing = returnDisplayApi.returnDetails.recycledPlastic.asKg
+    val existing                = returnDisplayApi.returnDetails.recycledPlastic.asKg
 
     AmendSummaryRow(
       "amendRecycledPlasticPackaging.checkYourAnswersLabel",

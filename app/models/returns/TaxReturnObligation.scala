@@ -29,9 +29,8 @@ final case class TaxReturnObligation(
   dueDate: LocalDate,
   periodKey: String
 ) {
-  def toReturnQuarter(implicit messages: Messages): String = {
+  def toReturnQuarter(implicit messages: Messages): String =
     ViewUtils.displayReturnQuarter(fromDate, toDate)
-  }
 
   def tooOldToAmend(implicit edgeOfSystem: EdgeOfSystem): Boolean = {
     val today = edgeOfSystem.localDateTimeNow.toLocalDate

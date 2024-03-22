@@ -32,8 +32,7 @@ import views.html.returns.ImportedPlasticPackagingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ImportedPlasticPackagingController @Inject()
-(
+class ImportedPlasticPackagingController @Inject() (
   override val messagesApi: MessagesApi,
   cacheConnector: CacheConnector,
   identify: IdentifierAction,
@@ -44,36 +43,37 @@ class ImportedPlasticPackagingController @Inject()
   view: ImportedPlasticPackagingView,
   returnsNavigator: ReturnsJourneyNavigator
 )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) {
-      implicit request =>
-        ReturnsUserAnswers.checkObligationSync(request) { obligation =>
-          val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
-          Ok(view(preparedForm, mode, obligation))
-        }
+    (identify andThen getData andThen requireData) { implicit request =>
+      ReturnsUserAnswers.checkObligationSync(request) { obligation =>
+        val preparedForm = request.userAnswers.fill(ImportedPlasticPackagingPage, formProvider())
+        Ok(view(preparedForm, mode, obligation))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
-      implicit request =>
-        val pptId: String = request.pptReference
-        val userAnswers = request.userAnswers
-        val obligation = request.userAnswers.getOrFail(ReturnObligationCacheable)
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val pptId: String = request.pptReference
+      val userAnswers   = request.userAnswers
+      val obligation    = request.userAnswers.getOrFail(ReturnObligationCacheable)
 
-        formProvider().bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
-          newAnswer => updateAnswerAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
-        )
+      formProvider().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, obligation))),
+        newAnswer => updateAnswerAndGotoNextPage(mode, pptId, userAnswers, newAnswer)
+      )
     }
 
-  private def updateAnswerAndGotoNextPage(mode: Mode, pptReference: String, previousAnswers: UserAnswers, newAnswer: Boolean)
-                                         (implicit hc: HeaderCarrier): Future[Result] = {
-
+  private def updateAnswerAndGotoNextPage(
+    mode: Mode,
+    pptReference: String,
+    previousAnswers: UserAnswers,
+    newAnswer: Boolean
+  )(implicit hc: HeaderCarrier): Future[Result] =
     previousAnswers
       .change(ImportedPlasticPackagingPage, newAnswer, cacheConnector.saveUserAnswerFunc(pptReference))
       .map(hasAnswerChanged => Redirect(returnsNavigator.importedPlasticPackaging(mode, hasAnswerChanged, newAnswer)))
-  }
 
 }

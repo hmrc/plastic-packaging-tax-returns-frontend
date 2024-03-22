@@ -36,7 +36,8 @@ class CreditTaxRateSummarySpec extends PlaySpec {
 
       CreditsTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
         key = Key(Text("value"), "govuk-!-width-one-half"),
-        value = Value(Text("value")))
+        value = Value(Text("value"))
+      )
     }
   }
 }

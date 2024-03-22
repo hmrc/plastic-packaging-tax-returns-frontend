@@ -23,37 +23,39 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxReturnHelper @Inject()(
-                                 returnsConnector: TaxReturnsConnector,
-                                 obligationsConnector: ObligationsConnector
-                               )(implicit ec: ExecutionContext){
+class TaxReturnHelper @Inject() (
+  returnsConnector: TaxReturnsConnector,
+  obligationsConnector: ObligationsConnector
+)(implicit ec: ExecutionContext) {
 
-  def nextOpenObligationAndIfFirst(pptId: String)(implicit hc: HeaderCarrier): Future[Option[(TaxReturnObligation, Boolean)]] = {
-    obligationsConnector.getOpen(pptId) flatMap  { obligations =>
-
+  def nextOpenObligationAndIfFirst(
+    pptId: String
+  )(implicit hc: HeaderCarrier): Future[Option[(TaxReturnObligation, Boolean)]] = {
+    obligationsConnector.getOpen(pptId) flatMap { obligations =>
       obligations.nextObligationToReturn.fold[Future[Option[(TaxReturnObligation, Boolean)]]](
         Future.successful(None)
-      )( nextObligation =>
-        obligationsConnector.getFulfilled(pptId).map{
-          fulfilledObs =>
-            Some((nextObligation, fulfilledObs.isEmpty))
+      )(nextObligation =>
+        obligationsConnector.getFulfilled(pptId).map { fulfilledObs =>
+          Some((nextObligation, fulfilledObs.isEmpty))
         }
       )
     }
   }
 
-  def getObligation(pptId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[Option[TaxReturnObligation]] = {
+  def getObligation(pptId: String, periodKey: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Option[TaxReturnObligation]] = {
     obligationsConnector.getFulfilled(pptId)
-      .map { obligations => obligations.filter(o => o.periodKey == periodKey) }
+      .map(obligations => obligations.filter(o => o.periodKey == periodKey))
       .map {
         case Seq(obligation) => Some(obligation)
-        case Nil => None
-        case sequence => throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
+        case Nil             => None
+        case sequence =>
+          throw new IllegalStateException(s"Expected one obligation for '$periodKey', got ${sequence.length}")
       }
   }
 
-  def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
+  def fetchTaxReturn(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] =
     returnsConnector.get(userId, periodKey)
-  }
 
 }

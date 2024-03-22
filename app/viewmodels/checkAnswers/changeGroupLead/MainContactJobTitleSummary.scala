@@ -30,16 +30,14 @@ import viewmodels.implicits._
 object MainContactJobTitleSummary extends SummaryViewModel {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(MainContactJobTitlePage).map {
-      answer =>
-
-        SummaryListRowViewModel(
-          key     = "newGroupLeadCheckYourAnswers.job.title.key",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.job.title.key"))
-          )
+    answers.get(MainContactJobTitlePage).map { answer =>
+      SummaryListRowViewModel(
+        key = "newGroupLeadCheckYourAnswers.job.title.key",
+        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        actions = Seq(
+          ActionItemViewModel("site.change", routes.MainContactJobTitleController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("newGroupLeadCheckYourAnswers.job.title.key"))
         )
+      )
     }
 }

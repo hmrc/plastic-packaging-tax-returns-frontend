@@ -27,8 +27,8 @@ trait CommonFormValidators {
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
   val isDigitsOnly: String => Boolean = value =>
-    isNonEmpty(value) && isNotExceedingMaxLength(value, maxLength) && value.trim.chars().allMatch(
-      c => Character.isDigit(c)
+    isNonEmpty(value) && isNotExceedingMaxLength(value, maxLength) && value.trim.chars().allMatch(c =>
+      Character.isDigit(c)
     )
 
   val isEqualToOrBelow: (String, Long) => Boolean = (value, limit) =>
@@ -36,9 +36,10 @@ trait CommonFormValidators {
 
   val isValidDecimal: String => Boolean =
     (input: String) =>
-      try isNonEmpty(input) &&
-        BigDecimal(input.trim) >= 0 &&
-        BigDecimal(input.trim).scale <= 2
+      try
+        isNonEmpty(input) &&
+          BigDecimal(input.trim) >= 0 &&
+          BigDecimal(input.trim).scale <= 2
       catch {
         case _: java.lang.NumberFormatException => false
       }
@@ -48,11 +49,9 @@ trait CommonFormValidators {
 
   val isLength: (String, Int) => Boolean = (value, length) => value.trim.length == length
 
-  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
-    value.trim.length <= maxLength
+  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) => value.trim.length <= maxLength
 
-  protected val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
-    pattern.matcher(value).matches()
+  protected val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) => pattern.matcher(value).matches()
 
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 

@@ -27,7 +27,6 @@ class AmendReturnAnswerComparisonService {
       case None => throw new Exception("Original return missing from user answers")
 
       case Some(original) =>
-
         val manufacturedHasChanged: Boolean = userAnswers.get(AmendManufacturedPlasticPackagingPage)
           .exists(_ != original.returnDetails.manufacturedWeight)
         val importedHasChanged: Boolean = userAnswers.get(AmendImportedPlasticPackagingPage)
@@ -47,18 +46,18 @@ class AmendReturnAnswerComparisonService {
             userAnswers.get(AmendHumanMedicinePlasticPackagingPage).isDefined
 
         val aUsefulAmendHasBeenMade: Boolean =
-          Seq(manufacturedHasChanged,
+          Seq(
+            manufacturedHasChanged,
             importedHasChanged,
             directExportHasChanged,
             recycledHasChanged,
-            humanMedicinesHasChanged)
+            humanMedicinesHasChanged
+          )
             .contains(true)
 
         anAmendmentHasBeenMade && aUsefulAmendHasBeenMade
 
     }
-
-
 
   }
 

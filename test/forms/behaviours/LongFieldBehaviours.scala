@@ -28,30 +28,28 @@ trait LongFieldBehaviours extends FieldBehaviours {
   ): Unit = {
 
     "not bind non-numeric numbers" in {
-      forAll(nonNumerics -> "nonNumeric") {
-        nonNumeric =>
-          val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
-          result.errors must contain only nonNumericError
+      forAll(nonNumerics -> "nonNumeric") { nonNumeric =>
+        val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
+        result.errors must contain only nonNumericError
       }
     }
 
     "not bind decimals" in {
-      forAll(decimals -> "decimal") {
-        decimal =>
-          val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
-          result.errors must contain only wholeNumberError
+      forAll(decimals -> "decimal") { decimal =>
+        val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
+        result.errors must contain only wholeNumberError
       }
     }
 
     "not bind longs larger than Long.MaxValue" in {
       val tooBig: BigInt = BigInt(Long.MaxValue) + 1
-      val result = form.bind(Map(fieldName -> tooBig.toString)).apply(fieldName)
+      val result         = form.bind(Map(fieldName -> tooBig.toString)).apply(fieldName)
       result.errors must contain only nonNumericError
     }
 
     "not bind longs smaller than Long.MinValue" in {
       val tooSmall: BigInt = BigInt(Long.MinValue) - 1
-      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      val result           = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
       result.errors must contain only nonNumericError
     }
   }
@@ -65,13 +63,13 @@ trait LongFieldBehaviours extends FieldBehaviours {
 
     s"not bind long integers below $minimum" in {
       val tooSmall = minimum - 1
-      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      val result   = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
       result.errors must contain only expectedError
     }
 
     s"do bind long integers equal to $minimum" in {
       val tooSmall = minimum
-      val result = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
+      val result   = form.bind(Map(fieldName -> tooSmall.toString)).apply(fieldName)
       result.errors mustBe empty
     }
 
@@ -98,13 +96,13 @@ trait LongFieldBehaviours extends FieldBehaviours {
 
     s"do bind long integers equal to $maximum" in {
       val justRight = BigInt(maximum)
-      val result = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
+      val result    = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
       result.errors mustBe empty
     }
 
     s"do bind long integers less then $maximum" in {
       val justRight = BigInt(maximum) - 1
-      val result = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
+      val result    = form.bind(Map(fieldName -> justRight.toString)).apply(fieldName)
       result.errors mustBe empty
     }
   }
@@ -121,11 +119,11 @@ trait LongFieldBehaviours extends FieldBehaviours {
   }
 
   def numericStringExtractor(
-                              form: Form[_],
-                              fieldName: String,
-                              outOfRangeError: FormError,
-                              wholeNumberError: FormError
-                            ): Unit = {
+    form: Form[_],
+    fieldName: String,
+    outOfRangeError: FormError,
+    wholeNumberError: FormError
+  ): Unit = {
 
     val validInputs = Seq("10", "10suffix", "prefix10", "pre10suffix", "£+10symbolic")
 

@@ -36,15 +36,14 @@ class CountryService @Inject() (languageUtils: LanguageUtils) {
   private val countriesEn = parseCountriesResource("EN")
   private val countriesCy = parseCountriesResource("CY")
 
-  def tryLookupCountryName(code: String) (implicit request: Request[_]): String =
+  def tryLookupCountryName(code: String)(implicit request: Request[_]): String =
     getAll.getOrElse(code, code)
 
-  def getAll(implicit request: Request[_]): Map[String, String] = {
+  def getAll(implicit request: Request[_]): Map[String, String] =
     languageUtils.getCurrentLang(request).code.take(2) match {
       case "cy" => countriesCy
       case _    => countriesEn
     }
-  }
 
   private def parseCountriesResource(languageCode: String): Map[String, String] = {
 
@@ -57,4 +56,3 @@ class CountryService @Inject() (languageUtils: LanguageUtils) {
     ListMap(countryMap.toSeq.sortBy(_._2): _*)
   }
 }
-

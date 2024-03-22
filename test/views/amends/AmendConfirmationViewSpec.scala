@@ -21,7 +21,7 @@ import play.twirl.api.Html
 import support.ViewMatchers
 import views.html.amends.AmendConfirmation
 
-class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers{
+class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
 
   val page: AmendConfirmation = inject[AmendConfirmation]
 
@@ -33,7 +33,9 @@ class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers{
     "have a title" in {
       val view = createView()
 
-      view.select("title").text() must include("Your return will be amended - Submit return - Plastic Packaging Tax - GOV.UK")
+      view.select("title").text() must include(
+        "Your return will be amended - Submit return - Plastic Packaging Tax - GOV.UK"
+      )
       view.select("title").text() must include(messages("amend.confirmation.submitted"))
     }
 
@@ -47,12 +49,14 @@ class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers{
     "contain reference charge in the header" in {
       val view = createView(Some("ABC123"))
 
-      view.getElementsByClass("govuk-panel__body").text must include("Your charge reference for this amendment is ABC123")
+      view.getElementsByClass("govuk-panel__body").text must include(
+        "Your charge reference for this amendment is ABC123"
+      )
       view.getElementsByClass("govuk-panel__body").text must include(messages("amend.confirmation.panel"))
     }
 
     "not contain reference charge in the header" in {
-      val view =createView(None)
+      val view = createView(None)
 
       view.getElementsByClass("govuk-panel__body").text mustBe ""
     }
@@ -70,8 +74,10 @@ class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers{
       view.getElementById("main-content").text must include(messages("amend.confirmation.subheading"))
       view.getElementById("main-content").text must include(messages("amend.confirmation.paragraph.1"))
       view.getElementById("main-content").text must include(messages("amend.confirmation.paragraph.2"))
-      view.getElementById("main-content").text must include(messages("amend.confirmation.check.account") + " " +
-        messages("amend.confirmation.paragraph.3"))
+      view.getElementById("main-content").text must include(
+        messages("amend.confirmation.check.account") + " " +
+          messages("amend.confirmation.paragraph.3")
+      )
     }
   }
 }

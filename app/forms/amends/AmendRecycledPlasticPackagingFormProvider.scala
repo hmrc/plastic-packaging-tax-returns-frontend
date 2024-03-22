@@ -25,9 +25,10 @@ class AmendRecycledPlasticPackagingFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long("amendRecycledPlasticPackaging.error.required",
-                     "amendRecycledPlasticPackaging.error.wholeNumber",
-                     "amendRecycledPlasticPackaging.error.nonNumeric"
+      "value" -> long(
+        "amendRecycledPlasticPackaging.error.required",
+        "amendRecycledPlasticPackaging.error.wholeNumber",
+        "amendRecycledPlasticPackaging.error.nonNumeric"
       )
         .verifying(minimumValue(0L, "amendRecycledPlasticPackaging.error.outOfRange.low"))
         .verifying(maximumValue(99999999999L, "amendRecycledPlasticPackaging.error.outOfRange.high"))

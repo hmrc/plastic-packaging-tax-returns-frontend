@@ -27,7 +27,7 @@ import views.html.amends.AmendImportedPlasticPackagingView
 class AmendImportedPackagingWeightViewSpec extends ViewSpecBase {
 
   val page: AmendImportedPlasticPackagingView = inject[AmendImportedPlasticPackagingView]
-  val form: Form[Long] = new AmendImportedPlasticPackagingFormProvider()()
+  val form: Form[Long]                        = new AmendImportedPlasticPackagingFormProvider()()
 
   private def createView(form: Form[Long] = form): Html =
     page(form)(request, messages)
@@ -35,7 +35,7 @@ class AmendImportedPackagingWeightViewSpec extends ViewSpecBase {
   "Amend Imported packaging page" should {
 
     "have a what to include paragraph" in {
-      val view: Html = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.text() must include(messages("amendImportedPlasticPackaging.para.include"))
@@ -45,7 +45,7 @@ class AmendImportedPackagingWeightViewSpec extends ViewSpecBase {
     }
 
     "have a what not to include paragraph" in {
-      val view: Html = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.text() must include(messages("amendImportedPlasticPackaging.para.exclude"))
@@ -58,7 +58,7 @@ class AmendImportedPackagingWeightViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      val view: Html = createView()
+      val view: Html    = createView()
       val doc: Document = Jsoup.parse(view.toString())
 
       doc.getElementById("value-hint").text must include(messages("amendImportedPlasticPackaging.hint"))
@@ -66,14 +66,14 @@ class AmendImportedPackagingWeightViewSpec extends ViewSpecBase {
 
     "display error" when {
       "negative number submitted" in {
-        val view: Html = createView(form.fillAndValidate(-1))
+        val view: Html    = createView(form.fillAndValidate(-1))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("amendImportedPlasticPackaging.error.outOfRange.low"))
       }
 
       "number submitted is greater than maximum" in {
-        val view: Html = createView(form.fillAndValidate(999999999999L))
+        val view: Html    = createView(form.fillAndValidate(999999999999L))
         val doc: Document = Jsoup.parse(view.toString())
 
         doc.text() must include(messages("amendImportedPlasticPackaging.error.outOfRange.high"))

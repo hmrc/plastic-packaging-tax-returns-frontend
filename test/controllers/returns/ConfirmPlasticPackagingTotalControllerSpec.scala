@@ -16,7 +16,6 @@
 
 package controllers.returns
 
-
 import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
@@ -44,18 +43,18 @@ import scala.concurrent.Future
 import scala.util.Try
 
 class ConfirmPlasticPackagingTotalControllerSpec
-  extends PlaySpec
+    extends PlaySpec
     with MockitoSugar
     with JourneyActionAnswer
     with BeforeAndAfterEach {
 
-  private val dataRequest = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messages = mock[Messages]
-  private val messagesApi = mock[MessagesApi]
-  private val journeyAction = mock[JourneyAction]
-  private val view = mock[ConfirmPlasticPackagingTotalView]
-  private val cacheConnector = mock[CacheConnector]
-  private val navigator = mock[ReturnsJourneyNavigator]
+  private val dataRequest             = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messages                = mock[Messages]
+  private val messagesApi             = mock[MessagesApi]
+  private val journeyAction           = mock[JourneyAction]
+  private val view                    = mock[ConfirmPlasticPackagingTotalView]
+  private val cacheConnector          = mock[CacheConnector]
+  private val navigator               = mock[ReturnsJourneyNavigator]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   private val sut = new ConfirmPlasticPackagingTotalController(
@@ -71,7 +70,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
   override def beforeEach() = {
     super.beforeEach()
 
-    reset(journeyAction, view,cacheConnector, dataRequest, messages, navigator)
+    reset(journeyAction, view, cacheConnector, dataRequest, messages, navigator)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
@@ -142,13 +141,13 @@ class ConfirmPlasticPackagingTotalControllerSpec
 
     "set the user answer" in {
       var saveUserAnswerToCache: Option[UserAnswers] = None
-      val ans = createUserAnswer
+      val ans                                        = createUserAnswer
 
       setUpMocks(ans)
-      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn((a: UserAnswers, b: Boolean) => {
+      when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn { (a: UserAnswers, b: Boolean) =>
         saveUserAnswerToCache = Some(a)
         Future.successful(true)
-      })
+      }
 
       await(sut.submit.skippingJourneyAction(dataRequest))
 

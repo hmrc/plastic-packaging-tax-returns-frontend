@@ -23,15 +23,14 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 import views.html.changeGroupLead.NewGroupLeadCheckYourAnswerView
 
-class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers{
+class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private val page: NewGroupLeadCheckYourAnswerView = inject[NewGroupLeadCheckYourAnswerView]
 
   val rows = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
 
-  private def createView: Html = {
+  private def createView: Html =
     page(rows)(request, messages)
-  }
 
   "view" should {
 
@@ -51,7 +50,7 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     }
 
     "show summary rows" in {
-      getKeyAtRowIndex(view,0).text() mustBe "key"
+      getKeyAtRowIndex(view, 0).text() mustBe "key"
       getValueAtRowIndex(view, 0).text() mustBe "value"
     }
 
@@ -61,7 +60,9 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     }
 
     "have a paraghraph description" in {
-      view.getElementsByClass("govuk-body").text() must include("By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct.")
+      view.getElementsByClass("govuk-body").text() must include(
+        "By sending this change to the representative member of the group you are confirming that, to the best of your knowledge, the details you are providing are correct."
+      )
       view.getElementsByClass("govuk-body").text() must include(messages("newGroupLeadCheckYourAnswers.body"))
     }
 
@@ -71,14 +72,12 @@ class NewGroupLeadCheckYourAnswerViewSpec extends ViewSpecBase  with ViewAsserti
     }
   }
 
-  private def getKeyAtRowIndex(view: Html, index: Int) = {
+  private def getKeyAtRowIndex(view: Html, index: Int) =
     view.getElementsByClass("govuk-summary-list__row").get(index)
       .getElementsByClass("govuk-summary-list__key").get(0)
-  }
 
-  private def getValueAtRowIndex(view: Html, index: Int) = {
+  private def getValueAtRowIndex(view: Html, index: Int) =
     view.getElementsByClass("govuk-summary-list__row").get(index)
       .getElementsByClass("govuk-summary-list__value").get(0)
-  }
 
 }

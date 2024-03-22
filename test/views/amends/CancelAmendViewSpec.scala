@@ -25,16 +25,13 @@ import views.html.amends.CancelAmendView
 
 import java.time.LocalDate
 
-class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers{
+class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val form = new CancelAmendFormProvider()()
   val page = inject[CancelAmendView]
 
-  val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022,7,5),
-    LocalDate.of(2022,10,5),
-    LocalDate.of(2023,1,5),
-    "PK1")
+  val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
   private def createView(taxObligation: TaxReturnObligation): Html =
     page(form, taxObligation)(request, messages)
@@ -48,13 +45,12 @@ class CancelAmendViewSpec extends ViewSpecBase with ViewAssertions with ViewMatc
         "Are you sure you want to cancel amending your return for July to October 2022? - Submit return - Plastic Packaging Tax - GOV.UK"
 
     }
-    "have a heading" in{
+    "have a heading" in {
 
       view.select("h1").text mustBe
         "Are you sure you want to cancel amending your return for July to October 2022?"
 
     }
-
 
     "contain continue button" in {
 

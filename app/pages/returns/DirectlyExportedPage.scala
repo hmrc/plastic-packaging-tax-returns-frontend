@@ -28,10 +28,10 @@ case object DirectlyExportedPage extends QuestionPage[Boolean] {
 
   override def toString: String = "directlyExportedComponents"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value.map {
       case true => super.cleanup(value, userAnswers)
       case _    => userAnswers.set(DirectlyExportedWeightPage, 0L)
     }
-  }.getOrElse(super.cleanup(value, userAnswers))
+      .getOrElse(super.cleanup(value, userAnswers))
 }

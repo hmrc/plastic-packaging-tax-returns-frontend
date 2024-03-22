@@ -41,15 +41,15 @@ class ExportedCreditsWeightFormProviderSpec extends LongFieldBehaviours {
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, "exportedCreditsWeight.error.nonNumeric"),
+      nonNumericError = FormError(fieldName, "exportedCreditsWeight.error.nonNumeric"),
       wholeNumberError = FormError(fieldName, "exportedCreditsWeight.error.wholeNumber")
     )
 
     behave like longFieldWithRange(
       form,
       fieldName,
-      minimum       = minimum,
-      maximum       = maximum,
+      minimum = minimum,
+      maximum = maximum,
       expectedError = FormError(fieldName, "exportedCreditsWeight.error.outOfRange", Seq(minimum, maximum))
     )
 

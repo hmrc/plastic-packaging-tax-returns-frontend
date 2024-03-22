@@ -44,8 +44,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase with ViewAssertions with View
     "contain go to your home account link" in {
       view.getElementById("account-link-body").text() must include("Go to your Plastic Packaging Tax account.")
       view.getElementById("account-link-body").text() must include(
-        messages("journeyRecovery.startAgain.link.1",
-          messages("journeyRecovery.startAgain.link.2"))
+        messages("journeyRecovery.startAgain.link.1", messages("journeyRecovery.startAgain.link.2"))
       )
 
       view.getElementById("account-link")

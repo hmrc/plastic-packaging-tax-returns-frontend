@@ -33,7 +33,6 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
 
   private val messages = mock[Messages]
 
-
   override def beforeEach(): Unit = {
     super.beforeEach()
 
@@ -43,7 +42,7 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   "summary" should {
-    "return a Summary row"  when {
+    "return a Summary row" when {
       "answer is yes" in {
         val userAnswer = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(1L)).get
         when(messages.apply(ArgumentMatchers.eq("site.yes"))).thenReturn("yes")
@@ -59,14 +58,22 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   private def createExpectedResult(answerValue: String): Option[SummaryListRow] = {
-    Some(SummaryListRow(
-      key = Key(Text("answer"), "govuk-!-width-one-half"),
-      value = Value(Text(answerValue)),
-      actions = Some(Actions(items = Seq(ActionItem(
-        controllers.returns.credits.routes.ExportedCreditsController.onPageLoad("year-key", CheckMode).url,
-        Text("change"),
-        Some("answer")
-      ))))
-    ))
+    Some(
+      SummaryListRow(
+        key = Key(Text("answer"), "govuk-!-width-one-half"),
+        value = Value(Text(answerValue)),
+        actions = Some(
+          Actions(items =
+            Seq(
+              ActionItem(
+                controllers.returns.credits.routes.ExportedCreditsController.onPageLoad("year-key", CheckMode).url,
+                Text("change"),
+                Some("answer")
+              )
+            )
+          )
+        )
+      )
+    )
   }
 }

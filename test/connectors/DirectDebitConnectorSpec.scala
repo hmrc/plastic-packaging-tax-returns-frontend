@@ -39,7 +39,7 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
 
   "getDirectDebitLink" must {
     "return the link" in {
-      stubDDFor(OK,  Json.obj("journeyId" -> "id", "nextUrl" -> "/expected-url").toString())
+      stubDDFor(OK, Json.obj("journeyId" -> "id", "nextUrl" -> "/expected-url").toString())
 
       val result = await(connector.getDirectDebitLink("ppt-ref", "/home-url"))
 
@@ -47,7 +47,7 @@ class DirectDebitConnectorSpec extends ConnectorISpec {
     }
 
     "error when fails" in {
-      stubDDFor(INTERNAL_SERVER_ERROR,  Json.obj("go" -> "boom").toString())
+      stubDDFor(INTERNAL_SERVER_ERROR, Json.obj("go" -> "boom").toString())
 
       val ex = intercept[DownstreamServiceError](await(connector.getDirectDebitLink("ppt-ref", "/home-url")))
 

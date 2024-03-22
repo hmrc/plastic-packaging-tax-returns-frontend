@@ -52,15 +52,14 @@ class AuthFunction @Inject() (
       .retrieve(internalId) { maybeInternalId =>
         val internalId = maybeInternalId.getOrElse(throw new IllegalStateException("internalId is required"))
         block(AuthedUser(internalId, request))
-    } recover {
+      } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map(QueryParamKeys.continue -> Seq(target)))
 
       case _: IncorrectCredentialStrength =>
-        Results.Redirect(appConfig.mfaUpliftUrl,
-          Map(QueryParamKeys.origin -> Seq(appConfig.serviceIdentifier),
-            QueryParamKeys.continueUrl -> Seq(target)
-          )
+        Results.Redirect(
+          appConfig.mfaUpliftUrl,
+          Map(QueryParamKeys.origin -> Seq(appConfig.serviceIdentifier), QueryParamKeys.continueUrl -> Seq(target))
         )
     }
   }
@@ -69,8 +68,8 @@ class AuthFunction @Inject() (
 
 object AuthFunction {
   object QueryParamKeys {
-    val continue = "continue"
-    val origin = "origin"
+    val continue    = "continue"
+    val origin      = "origin"
     val continueUrl = "continueUrl"
   }
 }

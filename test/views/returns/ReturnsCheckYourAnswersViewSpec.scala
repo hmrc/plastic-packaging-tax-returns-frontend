@@ -43,15 +43,11 @@ import java.time.LocalDate
 class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
-  private val appConfig                      = mock[FrontendAppConfig]
-  private val dateKey = s"${LocalDate.now()}-${LocalDate.now()}"
+  private val appConfig                              = mock[FrontendAppConfig]
+  private val dateKey                                = s"${LocalDate.now()}-${LocalDate.now()}"
 
-  private val aTaxObligation: TaxReturnObligation = TaxReturnObligation(
-    LocalDate.of(2022, 4, 1),
-    LocalDate.of(2022, 6, 30),
-    LocalDate.of(2022, 8,1), "PK1")
-
-
+  private val aTaxObligation: TaxReturnObligation =
+    TaxReturnObligation(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 6, 30), LocalDate.of(2022, 8, 1), "PK1")
 
   private val calculations    = Calculations(1, 2L, 3L, 5L, true, 0.3)
   private val returnViewModel = createViewModel(createUserAnswer)
@@ -63,11 +59,10 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         bind[SessionRepository].toInstance(mock[SessionRepository])
       ).build()
 
-  def createViewModel(answers: UserAnswers, calculations: Calculations = calculations): TaxReturnViewModel = {
+  def createViewModel(answers: UserAnswers, calculations: Calculations = calculations): TaxReturnViewModel =
     TaxReturnViewModel(answers, "reg-number", aTaxObligation, calculations)
-  }
 
-  private def createView (
+  private def createView(
     credits: Credits = CreditsClaimedDetails(createUserAnswer, createCreditBalance),
     taxReturn: TaxReturnViewModel = returnViewModel
   ): Html =
@@ -136,7 +131,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
     "show change link for credits" in {
       val view = createView()
-      val doc = Jsoup.parse(view.toString())
+      val doc  = Jsoup.parse(view.toString())
 
       val link = doc.getElementById("change-credit-link")
       link.text() mustBe messages("submit-return.check-your-answers.credits.change.text.link")
@@ -145,7 +140,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   }
 
   "Exported Plastic Packaging section" should {
-    val view = createView(credits = NoCreditAvailable)
+    val view             = createView(credits = NoCreditAvailable)
     val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(2).text()
 
     "display header" in {
@@ -165,12 +160,16 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
     "display 'Plastic packaging exported or converted by another business' question and answer" in {
       summaryListTexts must include("Plastic packaging exported or converted by another business Yes")
-      summaryListTexts must include(messages("submit-return.check-your-answers.exported-packaging-by-another-business-label"))
+      summaryListTexts must include(
+        messages("submit-return.check-your-answers.exported-packaging-by-another-business-label")
+      )
     }
 
     "display 'Weight of plastic packaging exported or converted by another business' question and answer" in {
       summaryListTexts must include("Weight of plastic packaging exported or converted by another business 150kg")
-      summaryListTexts must include(messages("submit-return.check-your-answers.exported-packaging-by-another-business-weight"))
+      summaryListTexts must include(
+        messages("submit-return.check-your-answers.exported-packaging-by-another-business-weight")
+      )
     }
 
     "should no able to change answer" in {
@@ -181,10 +180,12 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
         .set(DirectlyExportedWeightPage, 0L).get
         .set(AnotherBusinessExportedWeightPage, 0L).get
 
-      val view = createView(taxReturn = createViewModel(ans, Calculations(1,1,1,0, true, 200.0)))
+      val view = createView(taxReturn = createViewModel(ans, Calculations(1, 1, 1, 0, true, 200.0)))
       val text = view.select("p").text()
 
-      text must include("To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging.")
+      text must include(
+        "To change an answer from exported plastic packaging you must have manufactured or imported plastic packaging."
+      )
       text must include(messages("submit-return.check-your-answers.exported-packaging.no-change-reason"))
     }
 
@@ -202,13 +203,15 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
       text must include("Change any answer from exported plastic packaging")
       text must include(messages("submit-return.check-your-answers.exported-packaging.change-link-text"))
 
-      view.getElementById("exported-packaging") must haveHref(routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url)
+      view.getElementById("exported-packaging") must haveHref(
+        routes.DirectlyExportedComponentsController.onPageLoad(CheckMode).url
+      )
     }
 
   }
 
   "Deduction section" should {
-    val view = createView(credits = NoCreditAvailable)
+    val view             = createView(credits = NoCreditAvailable)
     val summaryListTexts = view.getElementsByClass("govuk-summary-list").get(4).text()
 
     "display header" in {
@@ -251,12 +254,14 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     }
 
     "display tax rate" in {
-      view.getElementsByClass("govuk-body").text() must include("For this period, tax is charged at a rate of £300.00 per tonne.")
       view.getElementsByClass("govuk-body").text() must include(
-        messages("submit-return.check-your-answers.tax-calc.footnote", "£300.00"))
+        "For this period, tax is charged at a rate of £300.00 per tonne."
+      )
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("submit-return.check-your-answers.tax-calc.footnote", "£300.00")
+      )
     }
   }
-
 
   private def assertNoCreditsAvailable(view: Html) = {
     val paragraphText = view.getElementsByClass("govuk-body").text()
@@ -266,19 +271,23 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     paragraphText must include(messages("submit-return.check-your-answers.credits.line1"))
 
     paragraphText must include(
-     "You may be able to claim tax back as credit in the future if you have paid tax on plastic packaging and this packaging is then:"
+      "You may be able to claim tax back as credit in the future if you have paid tax on plastic packaging and this packaging is then:"
     )
     paragraphText must include(messages("submit-return.check-your-answers.credits.line2"))
     paragraphText must include("Find out more about claiming tax back as credit (opens in new tab).")
     paragraphText must include(
-      messages("submit-return.check-your-answers.credits.line5",
-        messages("submit-return.check-your-answers.credits.line5.link-text"))
+      messages(
+        "submit-return.check-your-answers.credits.line5",
+        messages("submit-return.check-your-answers.credits.line5.link-text")
+      )
     )
 
     val bulletListText = view.getElementsByClass("govuk-list--bullet").text()
     bulletListText must include("exported")
     bulletListText must include(messages("submit-return.check-your-answers.credits.line3"))
-    bulletListText must include("converted into different chargeable plastic packaging components by you or another business")
+    bulletListText must include(
+      "converted into different chargeable plastic packaging components by you or another business"
+    )
     bulletListText must include(messages("submit-return.check-your-answers.credits.line4"))
 
     view.getElementById("credits-line-5").select("a").first() must
@@ -287,29 +296,27 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   private def createCreditBalance = CreditBalance(10, 40, 300L, true, Map(dateKey -> TaxablePlastic(1, 2, 0.30)))
 
-
   private def getText(view: Html, id: String): String =
     view.getElementById(id).text()
 
   private def createUserAnswer = {
     val v = UserAnswers("reg-number")
-    .set(ManufacturedPlasticPackagingPage, false).get
-    .set(ImportedPlasticPackagingPage, false).get
-    .set(DirectlyExportedPage, true).get
-    .set(DirectlyExportedWeightPage, 50L).get
-    .set(AnotherBusinessExportedPage, true).get
-    .set(AnotherBusinessExportedWeightPage, 150L).get
-    .set(NonExportedHumanMedicinesPlasticPackagingPage, true).get
-    .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
-    .set(NonExportedRecycledPlasticPackagingPage, true).get
-    .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
-    .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
-    .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
-    .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
+      .set(ManufacturedPlasticPackagingPage, false).get
+      .set(ImportedPlasticPackagingPage, false).get
+      .set(DirectlyExportedPage, true).get
+      .set(DirectlyExportedWeightPage, 50L).get
+      .set(AnotherBusinessExportedPage, true).get
+      .set(AnotherBusinessExportedWeightPage, 150L).get
+      .set(NonExportedHumanMedicinesPlasticPackagingPage, true).get
+      .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 20L).get
+      .set(NonExportedRecycledPlasticPackagingPage, true).get
+      .set(NonExportedRecycledPlasticPackagingWeightPage, 25L).get
+      .set(ExportedCreditsPage(dateKey), CreditsAnswer(false, Some(100L))).get
+      .set(ConvertedCreditsPage(dateKey), CreditsAnswer(true, Some(0L))).get
+      .setOrFail[String](JsPath \ "credit" \ dateKey \ "fromDate", "2022-04-01")
       .setOrFail[String](JsPath \ "credit" \ dateKey \ "toDate", "2023-03-31")
-    .set(WhatDoYouWantToDoPage, true).get
+      .set(WhatDoYouWantToDoPage, true).get
 
     v
   }
 }
-

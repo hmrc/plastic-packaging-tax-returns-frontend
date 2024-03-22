@@ -35,7 +35,8 @@ class MakePaymentController @Inject() (
   obligationsConnector: ObligationsConnector,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController with I18nSupport {
+    extends FrontendBaseController
+    with I18nSupport {
 
   def redirectLink: Action[AnyContent] =
     identify.async { implicit request =>

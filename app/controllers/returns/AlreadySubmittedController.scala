@@ -28,12 +28,14 @@ import views.html.returns.AlreadySubmittedView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AlreadySubmittedController @Inject()(
+class AlreadySubmittedController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
   sessionRepository: SessionRepository,
   view: AlreadySubmittedView
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     identify.async { implicit request =>

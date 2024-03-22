@@ -30,22 +30,21 @@ import viewmodels.checkAnswers.returns.credits.CreditsClaimedListSummary
 
 class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
 
-  private val message    = mock[Messages]
-  private val navigator  = mock[ReturnsJourneyNavigator]
+  private val message       = mock[Messages]
+  private val navigator     = mock[ReturnsJourneyNavigator]
   private val creditBalance = mock[CreditBalance]
-  private val key1 = "2022-04-01-2023-03-31"
-  private val key2 = "2023-04-01-2024-03-31"
-  private val key3 =  "2024-04-01-2025-03-31"
+  private val key1          = "2022-04-01-2023-03-31"
+  private val key2          = "2023-04-01-2024-03-31"
+  private val key3          = "2024-04-01-2025-03-31"
   val credit = Map(
     key3 -> TaxablePlastic(300L, 350, 0.4),
     key2 -> TaxablePlastic(100L, 150, 0.3),
-    key1 -> TaxablePlastic(200L, 200, 0.2),
+    key1 -> TaxablePlastic(200L, 200, 0.2)
   )
 
   val userAnswer = UserAnswers(
     "123",
-    Json.parse(
-    s"""{
+    Json.parse(s"""{
       |  "credit" : {
       |    "$key3" : {
       |      "fromDate": "2024-04-01",
@@ -84,8 +83,8 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       |     }
       |   }
       | }
-      |}""".stripMargin).as[JsObject])
-
+      |}""".stripMargin).as[JsObject]
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -96,14 +95,10 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   }
 
   "create a chronological ordered list of row" in {
-    when(message.apply(any[String])).thenAnswer((s: String) =>  s)
+    when(message.apply(any[String])).thenAnswer((s: String) => s)
     when(message.apply(eqTo("creditSummary.for"), any)).thenReturn("creditSummary.for")
     when(message.apply(eqTo("return.quarter"), any, any, any))
-      .thenReturn(
-        "1 April 2022 to 31 March 2023",
-        "1 April 2023 to 31 March 2024",
-        "1 April 2024 to 31 March 2025")
-
+      .thenReturn("1 April 2022 to 31 March 2023", "1 April 2023 to 31 March 2024", "1 April 2024 to 31 March 2025")
 
     when(creditBalance.credit).thenReturn(credit)
 
@@ -113,11 +108,11 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   }
 
   "return an empty list" in {
-      when(creditBalance.credit).thenReturn(Map.empty)
+    when(creditBalance.credit).thenReturn(Map.empty)
 
-      val rows = CreditsClaimedListSummary.createRows(userAnswer, creditBalance, navigator)(message)
+    val rows = CreditsClaimedListSummary.createRows(userAnswer, creditBalance, navigator)(message)
 
-      rows mustBe Seq.empty
+    rows mustBe Seq.empty
   }
 
   "throw" when {
@@ -168,26 +163,30 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     )
 
   def userAnswerWithInvalidFromDate = {
-    UserAnswers("123", Json.parse(
-      """{
+    UserAnswers(
+      "123",
+      Json.parse("""{
         | "credit": {
         |   "key1": {
         |     "fromDate": "2022-3-2",
         |     "toDate": "2023-04-31"
         |    }
         | }
-        |}""".stripMargin).as[JsObject])
+        |}""".stripMargin).as[JsObject]
+    )
   }
 
   def userAnswerWithInvalidendDate = {
-    UserAnswers("123", Json.parse(
-      """{
+    UserAnswers(
+      "123",
+      Json.parse("""{
         | "credit": {
         |   "key1": {
         |     "toDate": "2022-3-2",
         |     "fromDate": "2023-04-31"
         |    }
         | }
-        |}""".stripMargin).as[JsObject])
+        |}""".stripMargin).as[JsObject]
+    )
   }
 }

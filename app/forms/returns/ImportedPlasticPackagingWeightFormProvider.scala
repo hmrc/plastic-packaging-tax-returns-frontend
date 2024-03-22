@@ -25,7 +25,8 @@ class ImportedPlasticPackagingWeightFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Long] =
     Form(
-      "value" -> long("importedPlasticPackagingWeight.error.required",
+      "value" -> long(
+        "importedPlasticPackagingWeight.error.required",
         "importedPlasticPackagingWeight.error.wholeNumber",
         "importedPlasticPackagingWeight.error.nonNumeric"
       )

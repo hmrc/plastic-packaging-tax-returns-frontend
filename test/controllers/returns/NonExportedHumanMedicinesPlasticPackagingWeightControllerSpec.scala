@@ -45,28 +45,37 @@ import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach{
+class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec
+    extends PlaySpec
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
   private val userAnswers = UserAnswers("123")
   private val validAnswer = 0L
 
-  private val manufacturedAmount = 200L
-  private val importedAmount = 100L
-  private val exportedAmount = 50L
+  private val manufacturedAmount              = 200L
+  private val importedAmount                  = 100L
+  private val exportedAmount                  = 50L
   private val exportedByAnotherBusinessAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
-  private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val formProvider = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
-  private val mockView = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
+  private val nonExportedAmount =
+    manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
+    exportedAmount,
+    exportedByAnotherBusinessAmount,
+    manufacturedAmount,
+    importedAmount
+  )
+  private val mockCacheConnector      = mock[CacheConnector]
+  private val mockNavigator           = mock[ReturnsJourneyNavigator]
+  private val formProvider            = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
+  private val mockView                = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper)
 
-    when(mockView.apply(any(), any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
 
@@ -109,7 +118,8 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
 
     "redirect to the next page" in {
       def onwardRoute = Call("GET", "/foo")
-      val userAnswersWithExportAmount = userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = 8L).get
+      val userAnswersWithExportAmount =
+        userAnswers.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, value = 8L).get
       when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(any())) thenReturn onwardRoute
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
 
@@ -136,7 +146,7 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
     "redirect to Journey Recovery if no existing data is found" in {
 
       val result = createSut(None).onSubmit(NormalMode)(
-        FakeRequest(POST, "").withFormUrlEncodedBody(("value",  validAnswer.toString))
+        FakeRequest(POST, "").withFormUrlEncodedBody(("value", validAnswer.toString))
       )
 
       status(result) mustEqual SEE_OTHER
@@ -148,9 +158,11 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec extends Play
       when(mockNavigator.nonExportedHumanMedicinesPlasticPackagingWeightPage(any())).thenReturn(Call(GET, "foo"))
       when(mockCacheConnector.set(any(), any())(any())).thenReturn(Future.successful(mock[HttpResponse]))
 
-      await(createSut(Some(nonExportedAnswer)).onSubmit(NormalMode)(
-        FakeRequest(POST, "").withFormUrlEncodedBody(("value", "10"))
-      ))
+      await(
+        createSut(Some(nonExportedAnswer)).onSubmit(NormalMode)(
+          FakeRequest(POST, "").withFormUrlEncodedBody(("value", "10"))
+        )
+      )
 
       val expectedUserAnswer = nonExportedAnswer.set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 10L).get
       verify(mockCacheConnector).set(any(), ArgumentMatchers.eq(expectedUserAnswer))(any())

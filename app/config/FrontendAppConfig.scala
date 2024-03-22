@@ -59,7 +59,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
   def pptAmendsCalculationUrl(pptReference: String): String  = s"$pptServiceHost/amends-calculate/$pptReference"
 
   lazy val pptRegistrationFrontEnd =
-    configuration.getOptional[String]("platform.frontend.host").getOrElse(servicesConfig.baseUrl("ppt-registration-frontend"))
+    configuration.getOptional[String]("platform.frontend.host").getOrElse(
+      servicesConfig.baseUrl("ppt-registration-frontend")
+    )
 
   lazy val pptRegistrationInfoUrl: String = configuration.get[String]("urls.pptRegistrationsInfoLink")
   lazy val pptRegistrationUrl: String     = s"$pptRegistrationFrontEnd/register-for-plastic-packaging-tax/start"
@@ -135,17 +137,22 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
   def substantialModificationGuidanceUrl =
     configuration.get[String]("urls.pptSubstantialModificationGuidanceLink")
 
-  /** Override the current system data-time, for coding and testing. The system date-time is used if the config value
-    * is missing or its value fails to parse.
+  /** Override the current system data-time, for coding and testing. The system date-time is used if the config value is
+    * missing or its value fails to parse.
     * @return
     *   - [[None]] if no date-time override config value is present
     *   - Some[ [[String]] ] if an override config value is present, needs to be a ISO_LOCAL_DATE_TIME serialised
     *     date-time for override to work
-    * @example {{{"2023-03-31T23:59:59"}}}
-    * @example {{{"2023-04-01T00:00:00"}}} sets the override
-    * @example {{{"DO_NOT_OVERRIDE"}}}
-    * @see [[java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
-    * @see [[util.EdgeOfSystem.localDateTimeNow]]
+    * @example
+    *   {{{"2023-03-31T23:59:59"}}}
+    * @example
+    *   {{{"2023-04-01T00:00:00"}}} sets the override
+    * @example
+    *   {{{"DO_NOT_OVERRIDE"}}}
+    * @see
+    *   [[java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME]]
+    * @see
+    *   [[util.EdgeOfSystem.localDateTimeNow]]
     */
   def overrideSystemDateTime: Option[String] =
     configuration.getOptional[String]("override-system-date-time")

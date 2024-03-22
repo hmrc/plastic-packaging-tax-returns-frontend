@@ -31,41 +31,38 @@ class ObligationsConnector @Inject() (
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-    extends Logging with HttpReadsInstances {
+    extends Logging
+    with HttpReadsInstances {
 
   def getOpen(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.open.get.timer").time()
     httpClient.GET[PPTObligations](appConfig.pptOpenObligationUrl(pptReferenceNumber))
-      .map {
-        response =>
-          logger.info(s"Retrieved open obligations for ppt reference number [$pptReferenceNumber]")
-          response
+      .map { response =>
+        logger.info(s"Retrieved open obligations for ppt reference number [$pptReferenceNumber]")
+        response
       }
       .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to retrieve open obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
+      .recover { case exception: Exception =>
+        throw DownstreamServiceError(
+          s"Failed to retrieve open obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+          exception
+        )
       }
   }
 
   def getFulfilled(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.fulfilled.get.timer").time()
     httpClient.GET[Seq[TaxReturnObligation]](appConfig.pptFulfilledObligationUrl(pptReferenceNumber))
-      .map {
-        response =>
-          logger.info(s"Retrieved fulfilled obligations for ppt reference number [$pptReferenceNumber]")
-          response
+      .map { response =>
+        logger.info(s"Retrieved fulfilled obligations for ppt reference number [$pptReferenceNumber]")
+        response
       }
       .andThen { case _ => timer.stop() }
-      .recover {
-        case exception: Exception =>
-          throw DownstreamServiceError(
-            s"Failed to retrieve fulfilled obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
-            exception
-          )
+      .recover { case exception: Exception =>
+        throw DownstreamServiceError(
+          s"Failed to retrieve fulfilled obligations for PPTReference: [$pptReferenceNumber], error: [${exception.getMessage}]",
+          exception
+        )
       }
   }
 

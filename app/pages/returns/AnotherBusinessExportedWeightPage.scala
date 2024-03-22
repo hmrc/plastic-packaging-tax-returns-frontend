@@ -35,8 +35,7 @@ case object AnotherBusinessExportedWeightPage extends QuestionPage[Long] {
         ExportedPlasticAnswer(userAnswers)
           .resetAnotherBusinessIfAllExportedPlastic.get
           .set(AnotherBusinessExportedPage, true, cleanup = false)
-      }
-      else {
+      } else {
         super.cleanup(value, userAnswers)
       }
     ).getOrElse(super.cleanup(value, userAnswers))

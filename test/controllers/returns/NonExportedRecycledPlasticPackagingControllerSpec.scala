@@ -47,28 +47,35 @@ import scala.concurrent.Future
 
 class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
-  private val mockMessageApi = mock[MessagesApi]
-  private val mockCacheConnector = mock[CacheConnector]
-  private val mockNavigator = mock[ReturnsJourneyNavigator]
-  private val mockView = mock[NonExportedRecycledPlasticPackagingView]
+  def onwardRoute                         = Call("GET", "/foo")
+  private val mockMessageApi              = mock[MessagesApi]
+  private val mockCacheConnector          = mock[CacheConnector]
+  private val mockNavigator               = mock[ReturnsJourneyNavigator]
+  private val mockView                    = mock[NonExportedRecycledPlasticPackagingView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
 
-  private val validAnswer = 0L
-  private val manufacturedAmount = 200L
-  private val importedAmount = 100L
-  private val exportedAmount = 50L
+  private val validAnswer                     = 0L
+  private val manufacturedAmount              = 200L
+  private val importedAmount                  = 100L
+  private val exportedAmount                  = 50L
   private val exportedByAnotherBusinessAmount = 50L
-  private val nonExportedAmount = manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
-  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(exportedAmount, exportedByAnotherBusinessAmount, manufacturedAmount, importedAmount)
+  private val nonExportedAmount =
+    manufacturedAmount + importedAmount - (exportedAmount + exportedByAnotherBusinessAmount)
+  private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
+    exportedAmount,
+    exportedByAnotherBusinessAmount,
+    manufacturedAmount,
+    importedAmount
+  )
 
-  private val recycledPlasticPackagingRoute = controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
+  private val recycledPlasticPackagingRoute =
+    controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
   override def beforeEach() = {
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper)
 
-    when(mockView.apply(any(), any(), any(), any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
   }
 
@@ -115,7 +122,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
     "redirect to the next page when valid data is submitted" in {
 
       when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mock[HttpResponse])
-      when(mockNavigator.nonExportedRecycledPlasticPackagingPage(any(),any())).thenReturn(onwardRoute)
+      when(mockNavigator.nonExportedRecycledPlasticPackagingPage(any(), any())).thenReturn(onwardRoute)
 
       val result = createSut(userAnswer = Some(UserAnswers("123"))).onSubmit(NormalMode)(
         FakeRequest(POST, recycledPlasticPackagingRoute)
@@ -173,7 +180,11 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
     }
   }
 
-  private def verifyView(expectedIsYesNo: Option[Boolean], amount: Long, expectedDirectlyExportedYesNoAnswer: Boolean = true): Unit = {
+  private def verifyView(
+    expectedIsYesNo: Option[Boolean],
+    amount: Long,
+    expectedDirectlyExportedYesNoAnswer: Boolean = true
+  ): Unit = {
     val captor: ArgumentCaptor[Form[Boolean]] = ArgumentCaptor.forClass(classOf[Form[Boolean]])
 
     verify(mockView).apply(
@@ -181,14 +192,15 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
       ArgumentMatchers.eq(NormalMode),
       ArgumentMatchers.eq(amount),
       ArgumentMatchers.eq(expectedDirectlyExportedYesNoAnswer)
-    )(any(),any())
+    )(any(), any())
 
     captor.getValue.value mustBe expectedIsYesNo
   }
   private def createSut(
-                         formProvider: NonExportedRecycledPlasticPackagingFormProvider = new NonExportedRecycledPlasticPackagingFormProvider(),
-                         userAnswer: Option[UserAnswers]
-                       ): NonExportedRecycledPlasticPackagingController = {
+    formProvider: NonExportedRecycledPlasticPackagingFormProvider =
+      new NonExportedRecycledPlasticPackagingFormProvider(),
+    userAnswer: Option[UserAnswers]
+  ): NonExportedRecycledPlasticPackagingController = {
     new NonExportedRecycledPlasticPackagingController(
       mockMessageApi,
       mockCacheConnector,

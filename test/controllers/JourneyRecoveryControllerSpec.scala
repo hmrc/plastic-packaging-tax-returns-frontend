@@ -28,22 +28,20 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
     "must return OK and the start again view" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
-        running(application) {
+      running(application) {
 
-          val request = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad.url)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          val startAgainView = application.injector.instanceOf[JourneyRecoveryView]
+        val startAgainView = application.injector.instanceOf[JourneyRecoveryView]
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual startAgainView()(request,
-                                                             messages(application)
-          ).toString
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual startAgainView()(request, messages(application)).toString
       }
+    }
 
     "must return an error if not authorized" in {
       val application = applicationBuilderFailedAuth().build()

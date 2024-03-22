@@ -35,14 +35,15 @@ import scala.concurrent.Future
 
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new ManufacturedPlasticPackagingWeightFormProvider()
+  val formProvider       = new ManufacturedPlasticPackagingWeightFormProvider()
   val mockCacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 1
 
-  lazy val ManufacturedPlasticPackagingWeightRoute = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
+  lazy val ManufacturedPlasticPackagingWeightRoute =
+    controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val navigator = mock[ReturnsJourneyNavigator]
   when(navigator.manufacturedPlasticPackagingWeightPage(any)).thenReturn(onwardRoute)
@@ -56,13 +57,15 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
       running(application) {
         val request = FakeRequest(GET, ManufacturedPlasticPackagingWeightRoute)
 
-
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ManufacturedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -80,7 +83,10 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -91,7 +97,8 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[ReturnsJourneyNavigator].toInstance(navigator),
-          bind[CacheConnector].toInstance(mockCacheConnector))
+          bind[CacheConnector].toInstance(mockCacheConnector)
+        )
         .build()
 
       running(application) {
@@ -122,7 +129,10 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 

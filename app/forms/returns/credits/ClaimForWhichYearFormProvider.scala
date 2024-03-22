@@ -20,14 +20,13 @@ import forms.mappings.Mappings
 import models.returns.CreditRangeOption
 import play.api.data.Form
 
-
 class ClaimForWhichYearFormProvider extends Mappings {
 
   def apply(options: Seq[CreditRangeOption]): Form[CreditRangeOption] =
-    Form("value" ->
-      text("claim-for-which-year.error.required")
-        .verifying("claim-for-which-year.error.required", key => options.exists(_.key == key))
-        .transform[CreditRangeOption](key => options.find(_.key == key).get, _.key)
+    Form(
+      "value" ->
+        text("claim-for-which-year.error.required")
+          .verifying("claim-for-which-year.error.required", key => options.exists(_.key == key))
+          .transform[CreditRangeOption](key => options.find(_.key == key).get, _.key)
     )
 }
-

@@ -45,33 +45,28 @@ object ViewUtils {
     messages(s"month.$monthNumber")
 
   def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
-    messages("return.quarter",
-      getMonthName(from.getMonthValue),
-      getMonthName(to.getMonthValue),
-      to.getYear.toString
-    )
+    messages("return.quarter", getMonthName(from.getMonthValue), getMonthName(to.getMonthValue), to.getYear.toString)
   }
 
   def displayDateRangeTo(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
-    messages("return.quarter",
+    messages(
+      "return.quarter",
       displayLocalDate(from),
       s"${to.getDayOfMonth} ${getMonthName(to.getMonthValue)}",
       to.getYear.toString
     )
   }
 
-  def displayDateRangeAnd(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
-    messages("return.quarter.and",
-      displayLocalDate(from),
-      displayLocalDate(to),
-    )
-  }
+  def displayDateRangeAnd(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
+    messages("return.quarter.and", displayLocalDate(from), displayLocalDate(to))
 
   def displayReturnQuarter(obligation: TaxReturnObligation)(implicit messages: Messages): String =
     displayReturnQuarter(obligation.fromDate, obligation.toDate)
 
   def displayReturnQuarter(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): String = {
-    val charge = returnDisplay.chargeDetails.getOrElse(throw new IllegalStateException("A return must have a charge details sub-container"))
+    val charge = returnDisplay.chargeDetails.getOrElse(
+      throw new IllegalStateException("A return must have a charge details sub-container")
+    )
     displayReturnQuarter(LocalDate.parse(charge.periodFrom), LocalDate.parse(charge.periodTo))
   }
 

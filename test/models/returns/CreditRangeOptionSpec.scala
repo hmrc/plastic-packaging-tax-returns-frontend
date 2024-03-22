@@ -24,7 +24,7 @@ class CreditRangeOptionSpec extends PlaySpec {
   "apply" should {
     "create a creditRangeOption object from a string" in {
       CreditRangeOption.createFromString("2022-04-01-2023-03-31") mustBe
-        CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023,3,31))
+        CreditRangeOption(LocalDate.of(2022, 4, 1), LocalDate.of(2023, 3, 31))
     }
   }
 

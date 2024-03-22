@@ -73,8 +73,7 @@ class AnotherBusinessExportedWeightPageSpec extends PageBehaviours {
   }
 
   private def expectedResetUserAnswer(userAnswer: UserAnswers) = {
-    userAnswer.
-      set(DirectlyExportedPage, true, cleanup = false).get
+    userAnswer.set(DirectlyExportedPage, true, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingPage, false, cleanup = false).get
       .set(NonExportedHumanMedicinesPlasticPackagingWeightPage, 0L, cleanup = false).get
       .set(NonExportedRecycledPlasticPackagingPage, false, cleanup = false).get

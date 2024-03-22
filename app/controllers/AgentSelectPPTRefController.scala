@@ -31,54 +31,54 @@ import views.html.AgentsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class AgentSelectPPTRefController @Inject() (
+  override val messagesApi: MessagesApi,
+  authConnector: AuthConnector,
+  sessionRepository: SessionRepository,
+  identify: AuthAgentAction,
+  form: AgentsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AgentsView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
-class AgentSelectPPTRefController @Inject()(
-                                  override val messagesApi: MessagesApi,
-                                  authConnector: AuthConnector,
-                                  sessionRepository: SessionRepository,
-                                  identify: AuthAgentAction,
-                                  form: AgentsFormProvider,
-                                  val controllerComponents: MessagesControllerComponents,
-                                  view: AgentsView
-                                )(implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
-
-  def onPageLoad(): Action[AnyContent] = identify.async {
-    implicit request =>
-      sessionRepository
-        .get[String](request.internalId, AgentSelectedPPTRef)
-        .map{ maybeSelectedClientIdentifier =>
-          val preparedForm = form().fill(
-            maybeSelectedClientIdentifier.getOrElse("")
-          )
-          Ok(view(preparedForm))
-        }
+  def onPageLoad(): Action[AnyContent] = identify.async { implicit request =>
+    sessionRepository
+      .get[String](request.internalId, AgentSelectedPPTRef)
+      .map { maybeSelectedClientIdentifier =>
+        val preparedForm = form().fill(
+          maybeSelectedClientIdentifier.getOrElse("")
+        )
+        Ok(view(preparedForm))
+      }
   }
 
-  def onSubmit(): Action[AnyContent] = identify.async {
-    implicit request =>
-      form()
-        .bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors))),
-        selectedClientIdentifier => {
-          for {
-            _ <- authConnector.authorise(
-              Enrolment(pptEnrolmentKey)
-                .withIdentifier(pptEnrolmentIdentifierName, selectedClientIdentifier)
-                .withDelegatedAuthRule("ppt-auth"),
-              EmptyRetrieval
-            )
-            _ <- sessionRepository.set(request.internalId, AgentSelectedPPTRef, selectedClientIdentifier) // this will only happen if authConnector.authorise does NOT fail
-          } yield
-            Redirect(routes.IndexController.onPageLoad)
+  def onSubmit(): Action[AnyContent] = identify.async { implicit request =>
+    form()
+      .bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+        selectedClientIdentifier =>
+          {
+            for {
+              _ <- authConnector.authorise(
+                Enrolment(pptEnrolmentKey)
+                  .withIdentifier(pptEnrolmentIdentifierName, selectedClientIdentifier)
+                  .withDelegatedAuthRule("ppt-auth"),
+                EmptyRetrieval
+              )
+              _ <- sessionRepository.set(
+                request.internalId,
+                AgentSelectedPPTRef,
+                selectedClientIdentifier
+              ) // this will only happen if authConnector.authorise does NOT fail
+            } yield Redirect(routes.IndexController.onPageLoad)
               .addingToSession("clientPPT" -> selectedClientIdentifier)
-          }.recover{
-            case _: InsufficientEnrolments =>
-              val errorForm = form()
-                .fill(selectedClientIdentifier)
-                .withError("value", "agents.client.identifier.auth.error")
-              BadRequest(view(errorForm))
+          }.recover { case _: InsufficientEnrolments =>
+            val errorForm = form()
+              .fill(selectedClientIdentifier)
+              .withError("value", "agents.client.identifier.auth.error")
+            BadRequest(view(errorForm))
           }
       )
   }

@@ -40,7 +40,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendImportedPlasticPackagingFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute  = Call("GET", "/foo")
 
   val validAnswer: Long = 0
 
@@ -61,9 +61,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[AmendImportedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(formProvider())(request, messages(application)).toString
       }
     }
 
@@ -92,12 +90,11 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
       val mockCacheConnector = mock[CacheConnector]
 
-      when(mockCacheConnector.set(any() ,any())(any())) thenReturn Future.successful(mockResponse)
+      when(mockCacheConnector.set(any(), any())(any())) thenReturn Future.successful(mockResponse)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[CacheConnector].toInstance(mockCacheConnector)
-          )
+          .overrides(bind[CacheConnector].toInstance(mockCacheConnector))
           .build()
 
       running(application) {
@@ -128,9 +125,7 @@ class AmendImportedPlasticPackagingControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request,
-                                                                      messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }
 

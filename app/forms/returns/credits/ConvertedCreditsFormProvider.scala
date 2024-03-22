@@ -21,9 +21,8 @@ import play.api.data.Form
 
 class ConvertedCreditsFormProvider extends Mappings {
 
-  def apply(): Form[Boolean] = {
-      Form(
-        "value" -> boolean("converted-credits-yes-no.error.required")
-      )
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("converted-credits-yes-no.error.required")
+    )
 }

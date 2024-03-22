@@ -21,14 +21,13 @@ import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.AlreadySubmittedView
 
-class AlreadySubmittedViewSpec extends ViewSpecBase  with ViewAssertions with ViewMatchers {
+class AlreadySubmittedViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private val page: AlreadySubmittedView = inject[AlreadySubmittedView]
 
   private val period = "April to June 2022"
-  private def createView: Html = {
+  private def createView: Html =
     page(period)(request, messages)
-  }
 
   "view" should {
     "have title" in {

@@ -34,19 +34,15 @@ class AmendHumanMedicinePlasticPackagingFormProviderSpec extends LongFieldBehavi
 
     behave like fieldThatBindsValidData(form, fieldName, validDataGenerator)
 
-    behave like longField(form,
-                         fieldName,
-                         nonNumericError =
-                           FormError(fieldName,
-                                     "amendHumanMedicinePlasticPackaging.error.nonNumeric"
-                           ),
-                         wholeNumberError =
-                           FormError(fieldName,
-                                     "amendHumanMedicinePlasticPackaging.error.wholeNumber"
-                           )
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError = FormError(fieldName, "amendHumanMedicinePlasticPackaging.error.nonNumeric"),
+      wholeNumberError = FormError(fieldName, "amendHumanMedicinePlasticPackaging.error.wholeNumber")
     )
 
-    behave like longFieldWithMinimum(form,
+    behave like longFieldWithMinimum(
+      form,
       fieldName,
       minimum = minimum,
       expectedError = FormError(
@@ -56,7 +52,8 @@ class AmendHumanMedicinePlasticPackagingFormProviderSpec extends LongFieldBehavi
       )
     )
 
-    behave like longFieldWithMaximum(form,
+    behave like longFieldWithMaximum(
+      form,
       fieldName,
       maximum = maximum,
       expectedError = FormError(

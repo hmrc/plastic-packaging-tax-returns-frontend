@@ -42,13 +42,13 @@ import scala.concurrent.Future
 
 class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  private def onwardRoute = Call("GET", "/foo")
-  private val formProvider = new ImportedPlasticPackagingFormProvider()
+  private def onwardRoute                        = Call("GET", "/foo")
+  private val formProvider                       = new ImportedPlasticPackagingFormProvider()
   private lazy val importedPlasticPackagingRoute = routes.ImportedPlasticPackagingController.onPageLoad(NormalMode).url
-  private val mockUserAnswers = mock[UserAnswers]
-  private val mockCacheConnector = mock[CacheConnector]
-  private val returnsJourneyNavigator = mock[ReturnsJourneyNavigator]
-  private val saveAnswersFunc = mock[UserAnswers.SaveUserAnswerFunc]
+  private val mockUserAnswers                    = mock[UserAnswers]
+  private val mockCacheConnector                 = mock[CacheConnector]
+  private val returnsJourneyNavigator            = mock[ReturnsJourneyNavigator]
+  private val saveAnswersFunc                    = mock[UserAnswers.SaveUserAnswerFunc]
 
   private def any[T]: T = ArgumentMatchers.any[T]()
 
@@ -56,12 +56,12 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     super.beforeEach()
     reset(mockUserAnswers, mockCacheConnector, returnsJourneyNavigator)
 
-    val date = LocalDate.ofEpochDay(0)
+    val date       = LocalDate.ofEpochDay(0)
     val obligation = TaxReturnObligation(date, date, date, "")
     when(mockUserAnswers.get(eqq(ReturnObligationCacheable))(any)).thenReturn(Some(obligation))
-    
-    when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
-    when(mockCacheConnector.saveUserAnswerFunc(any) (any)) thenReturn saveAnswersFunc
+
+    when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
+    when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveAnswersFunc
     when(returnsJourneyNavigator.importedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
   }
 
@@ -81,7 +81,8 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[ImportedPlasticPackagingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -104,7 +105,8 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -115,7 +117,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
       val application =
         applicationBuilder(userAnswers = Some(mockUserAnswers))
           .overrides(
-            bind[CacheConnector].toInstance(mockCacheConnector), 
+            bind[CacheConnector].toInstance(mockCacheConnector),
             bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
           )
           .build()
@@ -148,7 +150,8 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -170,13 +173,12 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
 
     "must redirect to Journey Recovery for a GET if obligation is missing" in {
 
-      val application = applicationBuilder(
-        Some(userAnswers.remove(ReturnObligationCacheable).get))
+      val application = applicationBuilder(Some(userAnswers.remove(ReturnObligationCacheable).get))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, importedPlasticPackagingRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
       }
@@ -199,7 +201,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     }
 
     "submit must redirect to the mini-cya page if the answer has not changed" in {
-      when(mockUserAnswers.change (any, any, any) (any)) thenReturn Future.successful(false)
+      when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
 
       val application = applicationBuilder(Some(mockUserAnswers))
         .overrides(
@@ -207,7 +209,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
           bind[ReturnsJourneyNavigator].toInstance(returnsJourneyNavigator)
         )
         .build()
-      
+
       running(application) {
         val request = FakeRequest(POST, routes.ImportedPlasticPackagingController.onPageLoad(CheckMode).url)
           .withFormUrlEncodedBody(("value", "true"))
@@ -216,9 +218,9 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
         status(result) mustBe 303
         redirectLocation(result) mustBe Some("/foo")
       }
-      
-      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123")) (any)
-      verify(mockUserAnswers).change(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc)) (any)
+
+      verify(mockCacheConnector).saveUserAnswerFunc(eqq("123"))(any)
+      verify(mockUserAnswers).change(eqq(ImportedPlasticPackagingPage), eqq(true), eqq(saveAnswersFunc))(any)
       verify(returnsJourneyNavigator).importedPlasticPackaging(CheckMode, false, true)
     }
 

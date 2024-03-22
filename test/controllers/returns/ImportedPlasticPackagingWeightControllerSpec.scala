@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ImportedPlasticPackagingWeightFormProvider()
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute  = Call("GET", "/foo")
 
   val validAnswer = 0L
 
@@ -61,7 +61,8 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val view = application.injector.instanceOf[ImportedPlasticPackagingWeightView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
@@ -69,9 +70,7 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val ans = userAnswers.set(ImportedPlasticPackagingWeightPage,
-        validAnswer
-      ).success.value
+      val ans = userAnswers.set(ImportedPlasticPackagingWeightPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(ans)).build()
 
@@ -132,7 +131,8 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(request,
+        contentAsString(result) mustEqual view(boundForm, NormalMode, taxReturnOb)(
+          request,
           messages(application)
         ).toString
       }
