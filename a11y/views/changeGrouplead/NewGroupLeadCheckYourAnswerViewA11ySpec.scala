@@ -28,13 +28,12 @@ class NewGroupLeadCheckYourAnswerViewA11ySpec extends ViewSpecBase with Accessib
 
   val rows = Seq(SummaryListRow(Key(Text("key")), Value(Text("value"))))
 
-  private def createView: String = {
+  private def createView: String =
     page(rows)(request, messages).toString()
-  }
 
   "view" should {
     "pass accessibility tests" in {
-        createView must passAccessibilityChecks
+      createView must passAccessibilityChecks
     }
   }
 }
