@@ -105,13 +105,11 @@ class ReturnsCheckYourAnswersController @Inject() (
     obligation: TaxReturnObligation,
     isUserClaimingCredit: Boolean,
     isFirstReturn: Boolean
-  )(implicit messages: Messages, hc: HeaderCarrier): Future[Result] = {
-
+  )(implicit messages: Messages, hc: HeaderCarrier): Future[Result] =
     callCalculationAndCreditApi(request, isUserClaimingCredit, isFirstReturn).map { case (calculations, credits) =>
       val returnViewModel = TaxReturnViewModel(request.userAnswers, request.pptReference, obligation, calculations)
       Ok(view(returnViewModel, credits, navigator.cyaChangeCredits)(request, messages))
     }
-  }
 
   private def callCalculationAndCreditApi(
     request: DataRequest[_],

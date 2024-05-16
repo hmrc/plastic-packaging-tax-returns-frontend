@@ -44,9 +44,8 @@ object ViewUtils {
   def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
     messages(s"month.$monthNumber")
 
-  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
+  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
     messages("return.quarter", getMonthName(from.getMonthValue), getMonthName(to.getMonthValue), to.getYear.toString)
-  }
 
   def displayDateRangeTo(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
     messages(
