@@ -17,6 +17,8 @@
 @import viewmodels.InputWidth._
 @import views.html.components.{heading, paragraphBody, CountryCodeAutoComplete}
 @import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -56,7 +58,7 @@
             Select(
                 id = "countryCode",
                 name = "countryCode",
-                formGroupClasses = "autocomplete-wrapper",
+                formGroup = FormGroup(classes = Some("autocomplete-wrapper")),
                 attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
                 items =
                     Seq(SelectItem(value = None, text = "Empty value")) ++

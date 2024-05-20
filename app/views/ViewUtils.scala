@@ -36,7 +36,7 @@ object ViewUtils {
   def titleNoForm(title: String, section: Option[String] = None)(implicit
     messages: Messages
   ): String =
-    s"${messages(title)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} - ${messages("site.govuk")}"
+    s"${messages(title)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} -"
 
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
@@ -44,9 +44,8 @@ object ViewUtils {
   def getMonthName(monthNumber: Int)(implicit messages: Messages): String =
     messages(s"month.$monthNumber")
 
-  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
+  def displayReturnQuarter(from: LocalDate, to: LocalDate)(implicit messages: Messages): String =
     messages("return.quarter", getMonthName(from.getMonthValue), getMonthName(to.getMonthValue), to.getYear.toString)
-  }
 
   def displayDateRangeTo(from: LocalDate, to: LocalDate)(implicit messages: Messages): String = {
     messages(

@@ -68,11 +68,10 @@ class CancelCreditsClaimController @Inject() (
 
   private def createView(userAnswers: UserAnswers, key: String, form: Form[Boolean])(implicit
     request: Request[_]
-  ): Html = {
+  ): Html =
     SingleYearClaim.maybeReadFrom(userAnswers, key)
       .fold(
         ifEmpty = errorView(navigator.cancelCredit().url)
       )(singleYearClaim => view(form, routes.CancelCreditsClaimController.onSubmit(key), singleYearClaim))
-  }
 
 }
