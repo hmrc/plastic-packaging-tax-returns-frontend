@@ -18,7 +18,6 @@ object AppDependencies {
     "org.scalatest"     %% "scalatest"               % "3.2.18",
     "org.scalatestplus" %% "scalacheck-1-15"         % "3.2.11.0",
     "org.mockito"       %% "mockito-scala-scalatest" % "1.17.31",
-    "org.playframework" %% "play-test"               % PlayVersion.current,
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-30" % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "bootstrap-test-play-30"  % bootstrapVersion
   ).map(_ % Test)
