@@ -117,7 +117,7 @@ class GroupMembersSpec extends PlaySpec {
   private val contactDetails: ContactDetails = ContactDetails("", "", None)
 
   private val principalPlaceOfBusinessDetails: PrincipalPlaceOfBusinessDetails =
-    PrincipalPlaceOfBusinessDetails(addressDetails, contactDetails)
+    PrincipalPlaceOfBusinessDetails(addressDetails, Some(contactDetails))
 
   val primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails("", contactDetails, "")
 
