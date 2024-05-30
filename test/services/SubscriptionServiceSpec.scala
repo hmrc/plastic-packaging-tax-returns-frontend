@@ -76,7 +76,7 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
     SubscriptionDisplayResponse(
       changeOfCircumstanceDetails = None,
       LegalEntityDetails("", "", None, customerDetails, true, false, false),
-      PrincipalPlaceOfBusinessDetails(addressDetails, contactDetails),
+      PrincipalPlaceOfBusinessDetails(addressDetails, Some(contactDetails)),
       PrimaryContactDetails("", contactDetails, ""),
       businessCorrespondenceDetails = addressDetails,
       Declaration(true),

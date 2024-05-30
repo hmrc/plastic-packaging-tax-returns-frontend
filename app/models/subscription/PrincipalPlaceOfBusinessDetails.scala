@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class PrincipalPlaceOfBusinessDetails(
   addressDetails: AddressDetails,
-  contactDetails: ContactDetails
+  contactDetails: Option[ContactDetails]
 )
 
 object PrincipalPlaceOfBusinessDetails {

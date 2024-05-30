@@ -60,7 +60,7 @@ object PptTestData {
         postalCode = Some("W1T 2HN"),
         countryCode = "GB"
       ),
-      contactDetails = ContactDetails(email = "test@test.com", telephone = "02034567890")
+      contactDetails = Some(ContactDetails(email = "test@test.com", telephone = "02034567890"))
     ),
     primaryContactDetails = PrimaryContactDetails(
       name = "Kevin Durant",
