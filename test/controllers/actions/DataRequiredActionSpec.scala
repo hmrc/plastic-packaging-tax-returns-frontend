@@ -27,19 +27,16 @@ import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import play.api.test.Helpers.LOCATION
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import support.PptTestData.pptEnrolment
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class DataRequiredActionSpec extends SpecBase with EitherValues {
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   val userAnswer: UserAnswers = UserAnswers("id")
-
-  implicit lazy val ec: ExecutionContext = injector().instanceOf[ExecutionContext]
-
   class Harness extends DataRequiredActionImpl {
 
     def actionRefine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = refine(request)
@@ -57,7 +54,7 @@ class DataRequiredActionSpec extends SpecBase with EitherValues {
       val harness = new Harness
       val result  = harness.actionRefine(OptionalDataRequest(identifierRequest, None)).futureValue.left.value.header
       result.status mustBe SEE_OTHER
-      result.headers.get(LOCATION) mustBe Some("/problem-with-service")
+      result.headers.get(LOCATION) mustBe Some("/plastic-packaging-tax/problem-with-service")
     }
 
     "must redirect to the ApplicationCompleteController when userAnswers is None but a journey has already been completed" in {
@@ -65,7 +62,7 @@ class DataRequiredActionSpec extends SpecBase with EitherValues {
       val harness = new Harness
       val result  = harness.actionRefine(OptionalDataRequest(identifierRequest, None)).futureValue.left.value.header
       result.status mustBe SEE_OTHER
-      result.headers.get(LOCATION) mustBe Some("/application-complete")
+      result.headers.get(LOCATION) mustBe Some("/plastic-packaging-tax/application-complete")
     }
 
     "must return userAnswers when UserAnswers data exist" in {
