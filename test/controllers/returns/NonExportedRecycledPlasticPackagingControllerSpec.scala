@@ -48,14 +48,13 @@ import scala.concurrent.Future
 
 class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = Call("GET", "/foo")
-  private val mockMessageApi              = mock[MessagesApi]
-  private val mockCacheConnector          = mock[CacheConnector]
-  private val mockNavigator               = mock[ReturnsJourneyNavigator]
-  private val mockView                    = mock[NonExportedRecycledPlasticPackagingView]
-  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
+  def onwardRoute: Call                                         = Call("GET", "/foo")
+  private val mockMessageApi                                    = mock[MessagesApi]
+  private val mockCacheConnector                                = mock[CacheConnector]
+  private val mockNavigator                                     = mock[ReturnsJourneyNavigator]
+  private val mockView                                          = mock[NonExportedRecycledPlasticPackagingView]
+  private val mockNonExportedAmountHelper                       = mock[NonExportedAmountHelper]
   private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
 
   private val validAnswer                     = 0L
   private val manufacturedAmount              = 200L
@@ -76,11 +75,11 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
 
   override def beforeEach() = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper,mockSessionRepository)
+    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper, mockSessionRepository)
 
     when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
-    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "onPageLoad" should {

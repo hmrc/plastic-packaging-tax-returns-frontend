@@ -44,7 +44,7 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
     controllers.returns.routes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
   val navigator = mock[ReturnsJourneyNavigator]
-  when(mockSessionRepo.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+  when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   when(navigator.importedPlasticPackagingWeightPage()).thenReturn(onwardRoute)
 
   "ImportedPlasticPackagingWeight Controller" - {

@@ -27,13 +27,11 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status, stubMessagesControlle
 import play.twirl.api.HtmlFormat
 import views.html.returns.ApplicationCompleteView
 
-class ApplicationCompleteSpec extends PlaySpec{
+class ApplicationCompleteSpec extends PlaySpec {
 
-
-  private val view = mock[ApplicationCompleteView]
+  private val view       = mock[ApplicationCompleteView]
   private val identifier = new FakeIdentifierAction(stubPlayBodyParsers(NoMaterializer))
-  private val sut  =   new ApplicationCompleteController(stubMessagesControllerComponents(),identifier,view)
-
+  private val sut        = new ApplicationCompleteController(stubMessagesControllerComponents(), identifier, view)
 
   "ApplicationComplete Controller" should {
 

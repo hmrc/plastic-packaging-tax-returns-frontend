@@ -112,11 +112,11 @@ class SessionRepository @Inject() (
 object SessionRepository {
 
   object Paths {
-    val AmendChargeRef: JsPath       = JsPath \ "AmendChargeRef"
-    val ReturnChargeRef: JsPath      = JsPath \ "ReturnChargeRef"
-    val TaxReturnObligation: JsPath  = JsPath \ "TaxReturnObligation"
-    val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
-    val AgentSelectedPPTRef: JsPath  = JsPath \ "AgentSelectedPPTRef"
+    val AmendChargeRef: JsPath         = JsPath \ "AmendChargeRef"
+    val ReturnChargeRef: JsPath        = JsPath \ "ReturnChargeRef"
+    val TaxReturnObligation: JsPath    = JsPath \ "TaxReturnObligation"
+    val SubscriptionIsActive: JsPath   = JsPath \ "SubscriptionIsActive"
+    val AgentSelectedPPTRef: JsPath    = JsPath \ "AgentSelectedPPTRef"
     val SubmittedToUserAnswers: JsPath = JsPath \ "SubmittedToUserAnswers"
   }
 

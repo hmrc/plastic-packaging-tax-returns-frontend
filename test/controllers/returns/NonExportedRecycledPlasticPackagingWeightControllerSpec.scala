@@ -70,22 +70,21 @@ class NonExportedRecycledPlasticPackagingWeightControllerSpec
   private val recycledPlasticPackagingWeightRoute =
     controllers.returns.routes.NonExportedRecycledPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
-  private val mockMessagesApi             = mock[MessagesApi]
-  private val mockCacheConnector          = mock[CacheConnector]
-  private val mockNavigator               = mock[ReturnsJourneyNavigator]
-  private val mockView                    = mock[NonExportedRecycledPlasticPackagingWeightView]
-  private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private val mockMessagesApi                                   = mock[MessagesApi]
+  private val mockCacheConnector                                = mock[CacheConnector]
+  private val mockNavigator                                     = mock[ReturnsJourneyNavigator]
+  private val mockView                                          = mock[NonExportedRecycledPlasticPackagingWeightView]
+  private val mockNonExportedAmountHelper                       = mock[NonExportedAmountHelper]
   private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
 
   private val userAns = mock[UserAnswers]
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockView, mockCacheConnector, mockNonExportedAmountHelper, userAns,mockSessionRepository)
+    reset(mockView, mockCacheConnector, mockNonExportedAmountHelper, userAns, mockSessionRepository)
     when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((300L, false, true)))
-    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "onPageLoad" should {

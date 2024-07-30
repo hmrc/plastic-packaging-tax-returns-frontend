@@ -73,14 +73,13 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
   private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper,mockSessionRepository)
+    reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper, mockSessionRepository)
 
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
-    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "onPageLoad" should {

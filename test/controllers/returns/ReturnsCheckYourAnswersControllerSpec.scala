@@ -74,18 +74,18 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     taxRate = 200.0
   )
 
-  private val mockView                     = mock[ReturnsCheckYourAnswersView]
-  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val message                      = mock[Messages]
-  private val controllerComponents         = stubMessagesControllerComponents()
+  private val mockView                                          = mock[ReturnsCheckYourAnswersView]
+  private val mockMessagesApi: MessagesApi                      = mock[MessagesApi]
+  private val message                                           = mock[Messages]
+  private val controllerComponents                              = stubMessagesControllerComponents()
   private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  private val mockTaxReturnConnector       = mock[TaxReturnsConnector]
-  private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
-  private val cacheConnector               = mock[CacheConnector]
-  private val mockTaxReturnHelper          = mock[TaxReturnHelper]
-  private val appConfig                    = mock[FrontendAppConfig]
-  private val navigator                    = mock[ReturnsJourneyNavigator]
-  private val keyString                    = s"${LocalDate.now()}-${LocalDate.now()}"
+  private val mockTaxReturnConnector                            = mock[TaxReturnsConnector]
+  private val mockCalculateCreditConnector                      = mock[CalculateCreditsConnector]
+  private val cacheConnector                                    = mock[CacheConnector]
+  private val mockTaxReturnHelper                               = mock[TaxReturnHelper]
+  private val appConfig                                         = mock[FrontendAppConfig]
+  private val navigator                                         = mock[ReturnsJourneyNavigator]
+  private val keyString                                         = s"${LocalDate.now()}-${LocalDate.now()}"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -101,8 +101,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(message.apply(any[String], any)).thenReturn("messages")
     when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
-    when(mockSessionRepository.set(any,any,any)(any)).thenReturn(Future.successful(true))
-    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockSessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
 
     when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(
       CreditBalance(10, 20, 500L, true, Map(keyString -> TaxablePlastic(1, 2, 0.30)))

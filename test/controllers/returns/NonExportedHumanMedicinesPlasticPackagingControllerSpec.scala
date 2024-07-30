@@ -64,13 +64,12 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   val exportedByAnotherBusinessAmount = 50L
   val nonExportedAmount = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
-  private val mockMessagesApi: MessagesApi = mock[MessagesApi]
-  private val mockCacheConnector           = mock[CacheConnector]
-  private val mockNavigator                = mock[ReturnsJourneyNavigator]
-  private val mockView                     = mock[NonExportedHumanMedicinesPlasticPackagingView]
-  private val nonExportedAmountHelper      = mock[NonExportedAmountHelper]
+  private val mockMessagesApi: MessagesApi                      = mock[MessagesApi]
+  private val mockCacheConnector                                = mock[CacheConnector]
+  private val mockNavigator                                     = mock[ReturnsJourneyNavigator]
+  private val mockView                                          = mock[NonExportedHumanMedicinesPlasticPackagingView]
+  private val nonExportedAmountHelper                           = mock[NonExportedAmountHelper]
   private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
 
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
     exportedAmount,
@@ -82,10 +81,10 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper,mockSessionRepository)
+    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper, mockSessionRepository)
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
-    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "NonExportedHumanMedicinesPlasticPackaging Controller" should {
