@@ -72,9 +72,11 @@ class ReturnsCheckYourAnswersController @Inject() (
       val isUserClaimingCredit     = userAnswers.get(WhatDoYouWantToDoPage).getOrElse(false)
       returnsConnector.submit(request.pptReference).flatMap {
         case Right(optChargeRef) =>
-          sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef).map { _ =>
-            Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
-          }
+          for {
+            _ <- sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef)
+            _ <- sessionRepository.set(request.cacheKey, Paths.SubmittedToUserAnswers, Some(true))
+          } yield Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
+
         case Left(_) =>
           val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable)
           sessionRepository.set(request.cacheKey, Paths.TaxReturnObligation, returnQuarter).map { _ =>

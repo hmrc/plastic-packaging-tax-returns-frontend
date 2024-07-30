@@ -117,6 +117,7 @@ object SessionRepository {
     val TaxReturnObligation: JsPath  = JsPath \ "TaxReturnObligation"
     val SubscriptionIsActive: JsPath = JsPath \ "SubscriptionIsActive"
     val AgentSelectedPPTRef: JsPath  = JsPath \ "AgentSelectedPPTRef"
+    val SubmittedToUserAnswers: JsPath = JsPath \ "SubmittedToUserAnswers"
   }
 
 }

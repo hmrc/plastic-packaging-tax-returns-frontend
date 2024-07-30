@@ -78,7 +78,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
   private val mockMessagesApi: MessagesApi = mock[MessagesApi]
   private val message                      = mock[Messages]
   private val controllerComponents         = stubMessagesControllerComponents()
-  private val mockSessionRepository        = mock[SessionRepository]
+  private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
   private val mockTaxReturnConnector       = mock[TaxReturnsConnector]
   private val mockCalculateCreditConnector = mock[CalculateCreditsConnector]
   private val cacheConnector               = mock[CacheConnector]
@@ -101,6 +101,8 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(message.apply(any[String], any)).thenReturn("messages")
     when(mockView.apply(any, any, any)(any, any)).thenReturn(new Html(""))
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
+    when(mockSessionRepository.set(any,any,any)(any)).thenReturn(Future.successful(true))
+    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
 
     when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(
       CreditBalance(10, 20, 500L, true, Map(keyString -> TaxablePlastic(1, 2, 0.30)))

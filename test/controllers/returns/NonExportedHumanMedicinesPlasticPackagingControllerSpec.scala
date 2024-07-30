@@ -41,6 +41,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingView
 
@@ -52,7 +53,7 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
     with MockitoSugar
     with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   private val nonExportedHumanMedicinesPlasticPackagingRoute =
     routes.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(NormalMode).url
@@ -68,6 +69,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   private val mockNavigator                = mock[ReturnsJourneyNavigator]
   private val mockView                     = mock[NonExportedHumanMedicinesPlasticPackagingView]
   private val nonExportedAmountHelper      = mock[NonExportedAmountHelper]
+  private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
 
   private val nonExportedAnswer = NonExportedPlasticTestHelper.createUserAnswer(
     exportedAmount,
@@ -79,9 +82,10 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper)
+    reset(mockView, mockNavigator, mockCacheConnector, nonExportedAmountHelper,mockSessionRepository)
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
+    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "NonExportedHumanMedicinesPlasticPackaging Controller" should {

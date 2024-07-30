@@ -39,6 +39,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.NonExportedRecycledPlasticPackagingView
 
@@ -47,12 +48,14 @@ import scala.concurrent.Future
 
 class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute                         = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
   private val mockMessageApi              = mock[MessagesApi]
   private val mockCacheConnector          = mock[CacheConnector]
   private val mockNavigator               = mock[ReturnsJourneyNavigator]
   private val mockView                    = mock[NonExportedRecycledPlasticPackagingView]
   private val mockNonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
 
   private val validAnswer                     = 0L
   private val manufacturedAmount              = 200L
@@ -73,10 +76,11 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
 
   override def beforeEach() = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper)
+    reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper,mockSessionRepository)
 
     when(mockView.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
+    when(mockSessionRepository.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "onPageLoad" should {

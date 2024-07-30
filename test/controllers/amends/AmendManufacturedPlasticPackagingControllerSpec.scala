@@ -40,6 +40,8 @@ class AmendManufacturedPlasticPackagingControllerSpec extends SpecBase with Mock
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendManufacturedPlasticPackagingFormProvider()
+  when(mockSessionRepo.get[Boolean](any,any)(any)).thenReturn(Future.successful(Some(false)))
+
   def onwardRoute  = Call("GET", "/foo")
 
   val validAnswer: Long = 0
