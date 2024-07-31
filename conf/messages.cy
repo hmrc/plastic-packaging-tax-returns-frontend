@@ -736,3 +736,7 @@ creditsSummary.tooMuch.p2 = I fynd yn eich blaen, mae angen i chi newid un neu f
 creditsSummary.tooMuch.p2.link = Ffurflen Dreth a gyflwynwyd yn flaenorol
 creditsSummary.tooMuch.p3 = Os oes angen, gallwch wirio’ch cofnodion a dod yn ôl yn nes ymlaen. Rydym wedi cadw’ch atebion.
 creditsSummary.tooMuch.p4 = Mae’n rhaid bod gennych dystiolaeth ddigonol i hawlio treth yn ôl fel credyd.
+
+applicationComplete.title = Cais wedi’i gwblhau
+applicationComplete.heading = Cais wedi’i gwblhau
+applicationComplete.guidance = Mae eich sesiwn wedi’i chlirio oherwydd eich bod wedi cwblhau’ch cais.
