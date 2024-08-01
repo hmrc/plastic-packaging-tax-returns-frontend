@@ -725,3 +725,7 @@ creditsSummary.tooMuch.p2 = To continue, you need to change one or more of your 
 creditsSummary.tooMuch.p2.link = previously submitted return
 creditsSummary.tooMuch.p3 = If you need to, you can check your records and come back later. We have saved your answers.
 creditsSummary.tooMuch.p4 = You must have sufficient evidence to claim tax back as credit.
+
+applicationComplete.title = Application Complete
+applicationComplete.heading = Application Complete
+applicationComplete.guidance = Your session has been cleared because you completed your application.

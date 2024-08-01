@@ -64,6 +64,8 @@ class ManufacturedPlasticPackagingControllerSpec extends SpecBase with MockitoSu
     when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveAnswersFunc
     when(returnsJourneyNavigator.manufacturedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
+    when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
+
   }
 
   "ManufacturedPlasticPackaging Controller" - {

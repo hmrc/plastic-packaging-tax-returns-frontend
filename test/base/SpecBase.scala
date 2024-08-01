@@ -74,7 +74,6 @@ trait SpecBase
     receiptDate = "2022-06-31",
     returnType = "TYPE"
   )
-
   val retDisApi: ReturnDisplayApi = ReturnDisplayApi(
     "",
     IdDetails("", ""),

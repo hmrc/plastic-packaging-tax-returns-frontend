@@ -47,6 +47,7 @@ class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with Moc
 
   val navigator = mock[ReturnsJourneyNavigator]
   when(navigator.manufacturedPlasticPackagingWeightPage(any)).thenReturn(onwardRoute)
+  when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
 
   "ManufacturedPlasticPackagingWeight Controller" - {
 

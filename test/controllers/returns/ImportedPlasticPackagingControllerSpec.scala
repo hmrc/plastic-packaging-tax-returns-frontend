@@ -63,6 +63,7 @@ class ImportedPlasticPackagingControllerSpec extends SpecBase with MockitoSugar 
     when(mockUserAnswers.change(any, any, any)(any)) thenReturn Future.successful(false)
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveAnswersFunc
     when(returnsJourneyNavigator.importedPlasticPackaging(any, any, any)).thenReturn(onwardRoute)
+    when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "ImportedPlasticPackaging Controller" - {

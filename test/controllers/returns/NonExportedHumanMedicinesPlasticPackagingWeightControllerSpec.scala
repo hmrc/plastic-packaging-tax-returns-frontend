@@ -39,6 +39,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HttpResponse
 import views.html.returns.NonExportedHumanMedicinesPlasticPackagingWeightView
 
@@ -70,13 +71,15 @@ class NonExportedHumanMedicinesPlasticPackagingWeightControllerSpec
   private val formProvider            = new NonExportedHumanMedicinesPlasticPackagingWeightFormProvider()
   private val mockView                = mock[NonExportedHumanMedicinesPlasticPackagingWeightView]
   private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper)
+    reset(mockView, mockCacheConnector, mockNavigator, nonExportedAmountHelper, mockSessionRepository)
 
     when(mockView.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(nonExportedAmountHelper.getAmountAndDirectlyExportedAnswer(any())).thenReturn(Some((200L, true, true)))
+    when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   }
 
   "onPageLoad" should {

@@ -40,7 +40,9 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendHumanMedicinePlasticPackagingFormProvider()
-  def onwardRoute  = Call("GET", "/foo")
+  when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
+
+  def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 0
 

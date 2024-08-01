@@ -40,7 +40,9 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
     .set(AmendObligationCacheable, taxReturnOb).get
 
   val formProvider = new AmendRecycledPlasticPackagingFormProvider()
-  def onwardRoute  = Call("GET", "/foo")
+  when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
+
+  def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 0L
 

@@ -25,6 +25,7 @@ GET         /language/:lang                                         controllers.
 GET         /refresh-session                                        controllers.KeepAliveController.keepAlive
 
 GET         /problem-with-service                                   controllers.JourneyRecoveryController.onPageLoad
+GET         /application-complete                                   controllers.returns.ApplicationCompleteController.onPageLoad
 
 GET         /amend-return                                           controllers.amends.CheckYourAnswersController.onPageLoad()
 POST        /amend-return                                           controllers.amends.CheckYourAnswersController.onSubmit()
