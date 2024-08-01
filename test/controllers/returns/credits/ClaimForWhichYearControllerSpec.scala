@@ -24,8 +24,8 @@ import controllers.actions.{DataNotRequiredAction, DataRequiredAction, DataRetri
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
+import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
@@ -76,8 +76,8 @@ class ClaimForWhichYearControllerSpec
   private val dataRequest                            = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form                                   = mock[Form[CreditRangeOption]]
   private val availableYearsConnector                = mock[AvailableCreditYearsConnector]
-  val testForm: Form[CreditRangeOption] = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
-  val saveUserAnswerFunc                = mock[UserAnswers.SaveUserAnswerFunc]
+  val testForm: Form[CreditRangeOption]      = Form("x" -> ignored(CreditRangeOption(LocalDate.now(), LocalDate.now())))
+  val saveUserAnswerFunc: SaveUserAnswerFunc = mock[UserAnswers.SaveUserAnswerFunc]
 
   val sut: ClaimForWhichYearController = new ClaimForWhichYearController(
     mockMessagesApi,
@@ -149,26 +149,37 @@ class ClaimForWhichYearControllerSpec
     }
 
     "take in a value from form & return view with prepopulated value" in {
-
-      val singleYearClaim = SingleYearClaim(
-        fromDate = LocalDate.of(1, 2, 3),
-        toDate = LocalDate.of(4, 5, 6),
-        exportedCredits = None,
-        convertedCredits = None
-      )
+      val alreadyUsed = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
+      val option      = CreditRangeOption(LocalDate.now, LocalDate.now)
       val availableYears =
         Seq(
-          CreditRangeOption(LocalDate.of(1, 2, 3), LocalDate.of(4, 5, 6)),
-          CreditRangeOption(LocalDate.now, LocalDate.now)
+          alreadyUsed,
+          option
         )
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
-      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
 
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val userAnswers = UserAnswers("123")
+        .setOrFail(JsPath \ "credit" \ alreadyUsed.key \ "toDate", alreadyUsed.to)
+        .setOrFail(JsPath \ "credit" \ alreadyUsed.key \ "fromDate", alreadyUsed.from)
 
-      status(result) mustBe OK
-      verify(mockView).apply(meq(form), meq(availableYears), meq(NormalMode))(any, any)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val view        = application.injector.instanceOf[ClaimForWhichYearView]
+
+      val formProvider: Form[CreditRangeOption] =
+        new ClaimForWhichYearFormProvider().apply(availableYears).bind(Map("value" -> alreadyUsed.key))
+
+      running(application) {
+        val request = FakeRequest(GET, claimForWhichYearController)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view(formProvider, availableYears, NormalMode)(
+          request,
+          messages(application)
+        ).toString
+
+      }
     }
 
     "get the available years from backend" in {
@@ -350,19 +361,31 @@ class ClaimForWhichYearControllerSpec
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(
         Some(Map(alreadyUsed.key -> JsObject.empty))
       )
+
+      val userAnswer: UserAnswers = UserAnswers("123")
+        .set(ExportedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+        .set(ConvertedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+
       val availableYears = Seq(CreditRangeOption(LocalDate.now, LocalDate.now), alreadyUsed)
       val options        = Seq(CreditRangeOption(LocalDate.now, LocalDate.now))
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
 
-      val formWithErrors = testForm.withError("key", "message")
-      when(form.bindFromRequest()(any, any)) thenReturn formWithErrors
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val view        = application.injector.instanceOf[ClaimForWhichYearView]
+      val formProvider: Form[CreditRangeOption] =
+        new ClaimForWhichYearFormProvider().apply(options).bind(Map("value" -> "invalid value"))
 
-      val result = await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
+      running(application) {
+        val request = FakeRequest(POST, claimForWhichYearController)
+        val result  = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
 
-      verify(mockView).apply(eqTo(formWithErrors), meq(options), meq(NormalMode))(eqTo(dataRequest), any)
+        contentAsString(result) mustEqual view(formProvider, options, NormalMode)(
+          request,
+          messages(application)
+        ).toString
 
-      result.header.status mustBe Status.BAD_REQUEST
-      contentAsString(Future.successful(result)) mustBe "correct view"
+      }
     }
 
   }

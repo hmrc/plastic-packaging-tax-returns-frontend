@@ -64,7 +64,6 @@ class ClaimForWhichYearController @Inject() (
             case None        => formProvider(options)
             case Some(value) => formProvider(options).fill(value)
           }
-          println("=======preparedForm===============" + options)
           Future.successful(Ok(view(preparedForm, options, mode)))
       }
 
@@ -102,14 +101,11 @@ class ClaimForWhichYearController @Inject() (
         request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
 
       val completedJ = alreadyUsedYears.foldLeft(Seq.empty[String]) { (x, key) =>
-        println("============ExportedCreditsPage======" + request.userAnswers.get(ExportedCreditsPage(key)))
-
         val flag = request.userAnswers.get(ExportedCreditsPage(key)).isDefined && request.userAnswers.get(
           ConvertedCreditsPage(key)
         ).isDefined
         if (flag) x :+ key else x
       }
-      println("============availableYears======" + completedJ)
 
       availableYears.filterNot(y => completedJ.contains(y.key))
 
