@@ -35,7 +35,7 @@ class DataRequiredActionImpl @Inject() (implicit
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     request.answers match {
       case None =>
-        sessionRepository.get[Boolean](request.cacheKey, Paths.SubmittedToUserAnswers) flatMap {
+        sessionRepository.get[Boolean](request.cacheKey, Paths.AlreadySubmitted) flatMap {
           case Some(true) =>
             Future.successful(
               Left(Redirect(returns.routes.ApplicationCompleteController.onPageLoad))

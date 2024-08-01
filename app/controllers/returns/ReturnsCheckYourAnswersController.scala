@@ -74,7 +74,7 @@ class ReturnsCheckYourAnswersController @Inject() (
         case Right(optChargeRef) =>
           for {
             _ <- sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef)
-            _ <- sessionRepository.set(request.cacheKey, Paths.SubmittedToUserAnswers, Some(true))
+            _ <- sessionRepository.set(request.cacheKey, Paths.AlreadySubmitted, Some(true))
           } yield Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
 
         case Left(_) =>
