@@ -254,7 +254,6 @@ class ClaimForWhichYearControllerSpec
 
       val availableYears = Seq(alreadyUsed)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
-      val result      = sut.onPageLoad(NormalMode)(dataRequest)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
 
