@@ -16,28 +16,34 @@
 
 package controllers.returns.credits
 
+import base.FakeIdentifierActionWithEnrolment
 import base.utils.JourneyActionAnswer
 import connectors.{AvailableCreditYearsConnector, CacheConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
-import controllers.actions.JourneyAction
+import controllers.actions.{DataNotRequiredAction, DataRequiredAction, DataRetrievalAction, FakeDataRetrievalAction, IdentifierAction, JourneyAction}
 import forms.returns.credits.ClaimForWhichYearFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
-import models.returns.CreditRangeOption
+import models.returns.credits.SingleYearClaim
+import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.BeforeAndAfterEach
+import org.mockito.MockitoSugar.{atLeastOnce, reset, verify, when}
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
+import play.api.Application
 import play.api.data.Form
 import play.api.data.Forms.ignored
 import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
@@ -54,7 +60,10 @@ class ClaimForWhichYearControllerSpec
     extends PlaySpec
     with JourneyActionAnswer
     with MockitoSugar
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach
+    with TryValues
+    with OptionValues
+    with ScalaFutures {
 
   private val mockMessagesApi: MessagesApi           = mock[MessagesApi]
   private val messages                               = mock[Messages]
@@ -101,6 +110,23 @@ class ClaimForWhichYearControllerSpec
     when(mockFormProvider.apply(any)) thenReturn form
   }
 
+  lazy val claimForWhichYearController: String =
+    routes.ClaimForWhichYearController.onPageLoad(NormalMode).url
+
+  def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[DataRequiredAction].to[DataNotRequiredAction],
+        bind[IdentifierAction].to[FakeIdentifierActionWithEnrolment],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[AvailableCreditYearsConnector].toInstance(availableYearsConnector)
+      )
+
+  def messages(app: Application): Messages =
+    app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
   "onPageLoad" must {
 
     "use the journey action" in {
@@ -112,6 +138,29 @@ class ClaimForWhichYearControllerSpec
     "take in a value from form & return view" in {
       val availableYears =
         Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
+      when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
+      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
+
+      val result = sut.onPageLoad(NormalMode)(dataRequest)
+
+      status(result) mustBe OK
+      verify(mockView).apply(meq(form), meq(availableYears), meq(NormalMode))(any, any)
+    }
+
+    "take in a value from form & return view with prepopulated value" in {
+
+      val singleYearClaim = SingleYearClaim(
+        fromDate = LocalDate.of(1, 2, 3),
+        toDate = LocalDate.of(4, 5, 6),
+        exportedCredits = None,
+        convertedCredits = None
+      )
+      val availableYears =
+        Seq(
+          CreditRangeOption(LocalDate.of(1, 2, 3), LocalDate.of(4, 5, 6)),
+          CreditRangeOption(LocalDate.now, LocalDate.now)
+        )
       when(dataRequest.userAnswers.get(any[JsPath])(any)).thenReturn(None)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
@@ -144,21 +193,42 @@ class ClaimForWhichYearControllerSpec
 
     "filter out already used options" in {
       val alreadyUsed = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
+      val option1     = CreditRangeOption(LocalDate.now, LocalDate.now.plusYears(1))
+      val option2     = CreditRangeOption(LocalDate.now.plusYears(1), LocalDate.now.plusYears(2))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(
         Some(Map(alreadyUsed.key -> JsObject.empty))
       )
+
+      val userAnswer: UserAnswers = UserAnswers("123")
+        .set(ExportedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+        .set(ConvertedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+
       val availableYears = Seq(
-        CreditRangeOption(LocalDate.now, LocalDate.now),
-        CreditRangeOption(LocalDate.now, LocalDate.now),
+        option1,
+        option2,
         alreadyUsed
       )
-      val options =
-        Seq(CreditRangeOption(LocalDate.now, LocalDate.now), CreditRangeOption(LocalDate.now, LocalDate.now))
-      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val options = Seq(option1, option2)
 
-      status(result) mustBe OK
-      verify(mockView).apply(meq(form), meq(options), meq(NormalMode))(any, any)
+      when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
+
+      val application                           = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      val formProvider: Form[CreditRangeOption] = new ClaimForWhichYearFormProvider().apply(options)
+
+      running(application) {
+        val request = FakeRequest(GET, claimForWhichYearController)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ClaimForWhichYearView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view(formProvider, options, NormalMode)(
+          request,
+          messages(application)
+        ).toString
+      }
     }
 
     "redirect if there are no options" in {
@@ -166,18 +236,30 @@ class ClaimForWhichYearControllerSpec
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(
         Some(Map(alreadyUsed.key -> JsObject.empty))
       )
+
+      val userAnswer: UserAnswers = UserAnswers("123")
+        .set(ExportedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+        .set(ConvertedCreditsPage(alreadyUsed.key), CreditsAnswer(yesNo = false, None)).success.value
+
       val availableYears = Seq(alreadyUsed)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(availableYears))
-      val result = sut.onPageLoad(NormalMode)(dataRequest)
+      val result      = sut.onPageLoad(NormalMode)(dataRequest)
+      val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+      running(application) {
 
-      redirectLocation(result) mustBe Some(
-        controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
-      )
+        val request = FakeRequest(GET, claimForWhichYearController)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result) mustBe Some(
+          controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url
+        )
+      }
     }
 
     "redirect if there is only ONE option" in {
       val onlyOption = CreditRangeOption(LocalDate.of(2000, 1, 1), LocalDate.of(2000, 1, 2))
-      when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(Some(Map.empty))
       when(dataRequest.userAnswers.get[Map[String, JsObject]](any[JsPath])(any)).thenReturn(None)
       when(availableYearsConnector.get(any)(any)).thenReturn(Future.successful(Seq(onlyOption)))
       when(mockNavigator.claimForWhichYear(any, any)).thenReturn(Call(GET, "/next/page"))
