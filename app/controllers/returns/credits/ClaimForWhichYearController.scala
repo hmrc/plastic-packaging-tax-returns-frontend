@@ -24,6 +24,7 @@ import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
 import models.returns.CreditRangeOption
 import navigation.ReturnsJourneyNavigator
+import pages.returns.credits.{ClaimForWhichYearPage, ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
@@ -47,17 +48,27 @@ class ClaimForWhichYearController @Inject() (
 )(implicit ec: ExecutionContext)
     extends I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] = {
     journeyAction.async { implicit request =>
       availableRemainingOptions.flatMap {
         case Nil =>
           Future.successful(Redirect(controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(mode)))
         case Seq(onlyOption) => selectDateRange(onlyOption, mode)
         case options =>
-          val form = formProvider(options)
-          Future.successful(Ok(view(form, options, mode)))
+          val preparedValue: Option[CreditRangeOption] = options.find { option =>
+            val maybeClaimYear = request.userAnswers.get(ClaimForWhichYearPage(option.key))
+            maybeClaimYear.exists(_.createCreditRangeOption().key == option.key)
+          }
+
+          val preparedForm = preparedValue match {
+            case None        => formProvider(options)
+            case Some(value) => formProvider(options).fill(value)
+          }
+          Future.successful(Ok(view(preparedForm, options, mode)))
       }
+
     }
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     journeyAction.async { implicit request =>
@@ -88,7 +99,16 @@ class ClaimForWhichYearController @Inject() (
     availableCreditYearsConnector.get(request.pptReference).map { availableYears =>
       val alreadyUsedYears =
         request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").getOrElse(Map.empty).keySet
-      availableYears.filterNot(y => alreadyUsedYears.contains(y.key))
+
+      val completedJ = alreadyUsedYears.foldLeft(Seq.empty[String]) { (x, key) =>
+        val flag = request.userAnswers.get(ExportedCreditsPage(key)).isDefined && request.userAnswers.get(
+          ConvertedCreditsPage(key)
+        ).isDefined
+        if (flag) x :+ key else x
+      }
+
+      availableYears.filterNot(y => completedJ.contains(y.key))
+
     }
 
 }
