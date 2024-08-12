@@ -145,6 +145,19 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
       )
 
     }
+
+    "have feedback content" in {
+
+      val view          = createView(None)
+      val doc: Document = Jsoup.parse(view.toString())
+
+      doc.getElementById("feedback-heading") must containMessage("common.feedback.title")
+      doc.getElementById("feedback-text1") must containMessage("common.feedback.info")
+      doc.getElementById("feedback-text2") must containMessage(
+        "common.feedback.link.description",
+        messages("common.feedback.link")
+      )
+    }
   }
 
   private def assertBulletList(doc: Document) = {

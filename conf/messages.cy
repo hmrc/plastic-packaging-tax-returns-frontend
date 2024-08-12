@@ -61,6 +61,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = Mae problem wedi codi
 
+common.feedback.title = Cyn i chi fynd
+common.feedback.info = Mae’ch adborth yn ein helpu i wella ein gwasanaeth.
+common.feedback.link = Llenwch ein harolwg
+common.feedback.link.description = {0} i rannu’ch adborth ar y gwasanaeth.
+
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.heading = Gwiriwch eich atebion
 

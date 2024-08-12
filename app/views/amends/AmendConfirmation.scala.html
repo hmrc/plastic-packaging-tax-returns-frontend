@@ -14,9 +14,12 @@
  * limitations under the License.
  *@
 
+@import components.feedbackContent
+
 @this(
 layout: templates.Layout,
-govukPanel: GovukPanel
+govukPanel: GovukPanel,
+feedbackContent: feedbackContent
 )
 
 @(chargeReference: Option[String])(implicit request: Request[_], messages: Messages)
@@ -50,6 +53,7 @@ showBackLink = false
     <a href="@controllers.routes.IndexController.onPageLoad.url" class="govuk-link">@messages("amend.confirmation.check.account")</a>
     @messages("amend.confirmation.paragraph.3")
 </p>
+    @feedbackContent()
 
 }
 

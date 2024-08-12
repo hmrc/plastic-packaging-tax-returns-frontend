@@ -61,6 +61,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
+common.feedback.title = Before you go
+common.feedback.info = Your feedback helps us make our service better.
+common.feedback.link = Take a short survey
+common.feedback.link.description = {0} to share your feedback on this service.
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
