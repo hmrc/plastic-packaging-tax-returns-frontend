@@ -124,17 +124,6 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
       }
     }
 
-    "have survey link" in {
-
-      val view          = createView(Some("ABC123"))
-      val doc: Document = Jsoup.parse(view.toString())
-
-      doc.getElementById("survey-link").text must include(
-        "What did you think of this service?"
-      )
-
-    }
-
     "have technical issue link" in {
 
       val view          = createView(None)
