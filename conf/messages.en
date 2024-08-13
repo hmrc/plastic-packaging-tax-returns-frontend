@@ -61,6 +61,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
+common.feedback.title = Before you go
+common.feedback.info = Your feedback helps us make our service better.
+common.feedback.link = Take a short survey
+common.feedback.link.description = {0} to share your feedback on this service.
+
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
@@ -352,7 +357,6 @@ return.confirmation.body.2 = You can also find this reference number on the main
 return.confirmation.body.3 = We will not email you a confirmation.
 return.confirmation.homePage.link1 = {0} to:
 return.confirmation.homePage.link2 = Go to your PPT account
-return.confirmation.exitSurvey.text.link = What did you think of this service?
 return.confirmation.checkWhatYouOwe = Check what you owe
 return.confirmation.bulletList.first = see the total tax you owe
 return.confirmation.bulletList.second = make a payment

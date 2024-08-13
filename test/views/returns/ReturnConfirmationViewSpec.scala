@@ -124,17 +124,6 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
       }
     }
 
-    "have survey link" in {
-
-      val view          = createView(Some("ABC123"))
-      val doc: Document = Jsoup.parse(view.toString())
-
-      doc.getElementById("survey-link").text must include(
-        "What did you think of this service?"
-      )
-
-    }
-
     "have technical issue link" in {
 
       val view          = createView(None)
@@ -144,6 +133,19 @@ class ReturnConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
         "Is this page not working properly?"
       )
 
+    }
+
+    "have feedback content" in {
+
+      val view          = createView(None)
+      val doc: Document = Jsoup.parse(view.toString())
+
+      doc.getElementById("feedback-heading") must containMessage("common.feedback.title")
+      doc.getElementById("feedback-text1") must containMessage("common.feedback.info")
+      doc.getElementById("feedback-text2") must containMessage(
+        "common.feedback.link.description",
+        messages("common.feedback.link")
+      )
     }
   }
 

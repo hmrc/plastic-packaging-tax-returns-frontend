@@ -61,6 +61,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = Mae problem wedi codi
 
+common.feedback.title = Cyn i chi fynd
+common.feedback.info = Mae’ch adborth yn ein helpu i wella ein gwasanaeth.
+common.feedback.link = Llenwch ein harolwg
+common.feedback.link.description = {0} i rannu’ch adborth ar y gwasanaeth.
+
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.heading = Gwiriwch eich atebion
 
@@ -361,7 +366,6 @@ return.confirmation.body.2 = Gallwch hefyd ddod o hyd i’r cyfeirnod hwn ar bri
 return.confirmation.body.3 = Ni fyddwn yn anfon cadarnhad atoch drwy e-bost.
 return.confirmation.return.link = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig
 return.confirmation.exitSurvey.text = {0}
-return.confirmation.exitSurvey.text.link = Beth oedd eich barn am y gwasanaeth hwn?
 return.confirmation.checkWhatYouOwe = Gwirio’r hyn sydd arnoch
 return.confirmation.homePage.link1 ={0} i wneud y canlynol:
 return.confirmation.homePage.link2 = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig

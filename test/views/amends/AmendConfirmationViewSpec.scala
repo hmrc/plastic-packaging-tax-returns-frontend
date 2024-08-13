@@ -17,6 +17,8 @@
 package views.amends
 
 import base.ViewSpecBase
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.ViewMatchers
 import views.html.amends.AmendConfirmation
@@ -77,6 +79,19 @@ class AmendConfirmationViewSpec extends ViewSpecBase with ViewMatchers {
       view.getElementById("main-content").text must include(
         messages("amend.confirmation.check.account") + " " +
           messages("amend.confirmation.paragraph.3")
+      )
+    }
+
+    "have feedback content" in {
+
+      val view          = createView(None)
+      val doc: Document = Jsoup.parse(view.toString())
+
+      doc.getElementById("feedback-heading") must containMessage("common.feedback.title")
+      doc.getElementById("feedback-text1") must containMessage("common.feedback.info")
+      doc.getElementById("feedback-text2") must containMessage(
+        "common.feedback.link.description",
+        messages("common.feedback.link")
       )
     }
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import components.{paragraphBody,Link, paragraph, bulletList}
+@import components.{paragraphBody,Link, paragraph, bulletList, feedbackContent}
 @import config.FrontendAppConfig
 
 @this(
@@ -25,7 +25,8 @@
         paragraph: paragraph,
         link: Link,
         bulletList: bulletList,
-        appConfig: FrontendAppConfig
+        appConfig: FrontendAppConfig,
+        feedbackContent: feedbackContent
 )
 
 
@@ -95,7 +96,6 @@
 
     @homeAccountLink
 
-    <p class="govuk-body" style="margin-top:2.5em">
-        @link(id = "survey-link", text = messages("return.confirmation.exitSurvey.text.link"), href = appConfig.exitSurveyUrl)
-    </p>
+    @feedbackContent()
 }
+
