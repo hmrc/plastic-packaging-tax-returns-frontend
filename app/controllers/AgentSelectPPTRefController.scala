@@ -73,7 +73,6 @@ class AgentSelectPPTRefController @Inject() (
                 selectedClientIdentifier
               ) // this will only happen if authConnector.authorise does NOT fail
             } yield Redirect(routes.IndexController.onPageLoad)
-              .addingToSession("clientPPT" -> selectedClientIdentifier)
           }.recover { case _: InsufficientEnrolments =>
             val errorForm = form()
               .fill(selectedClientIdentifier)
