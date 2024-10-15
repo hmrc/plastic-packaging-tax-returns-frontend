@@ -116,6 +116,7 @@ GET         /return-received                                        controllers.
 
 GET         /agents                                                 controllers.AgentSelectPPTRefController.onPageLoad()
 POST        /agents                                                 controllers.AgentSelectPPTRefController.onSubmit()
+GET         /ppt-reference                                          controllers.AgentSelectPPTRefSearchController.get()
 
 GET         /make-a-payment                                         controllers.MakePaymentController.redirectLink()
 GET         /direct-debit                                           controllers.payments.DirectDebitController.redirectLink()
