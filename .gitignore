@@ -36,3 +36,4 @@ tmp
 .idea_modules
 bin
 *.orig
+/project/metals.sbt
