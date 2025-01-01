@@ -5,6 +5,7 @@ $hmrc-assets-path: "/plastic-packaging-tax/assets/lib/hmrc-frontend/hmrc/";
 
 @import '_returns';
 @import '_location-autocomplete';
+@import 'loading-spinner';
 
 // Fix for font mismatch in country auto-complete widget - copied from Address Lookup Frontend
 .autocomplete__menu {

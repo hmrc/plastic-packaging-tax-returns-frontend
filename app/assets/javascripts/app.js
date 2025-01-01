@@ -14,3 +14,27 @@ if(backLinkElem != null) {
     });
 }
 
+// return submit status
+var processingStatusUrl = document.querySelector('#processing-status-url')
+if( processingStatusUrl !== null ){
+    var url = processingStatusUrl.value;
+    function pollData(){
+        fetch(url).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).then(function (data) {
+            if (data.status === "processing")
+                setTimeout(function() {
+                    pollData();
+                }, 2000);
+            else
+                location.reload();
+        }).catch(function (err) {
+            console.warn('Something went wrong.', err);
+        });
+    }
+    pollData();
+}

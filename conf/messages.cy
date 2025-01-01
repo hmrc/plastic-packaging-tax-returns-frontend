@@ -744,3 +744,7 @@ creditsSummary.tooMuch.p4 = Mae’n rhaid bod gennych dystiolaeth ddigonol i haw
 applicationComplete.title = Cais wedi’i gwblhau
 applicationComplete.heading = Cais wedi’i gwblhau
 applicationComplete.guidance = Mae eich sesiwn wedi’i chlirio oherwydd eich bod wedi cwblhau’ch cais.
+
+returnsProcessing.title = Rydym yn gwirio’r wybodaeth a gyflwynwyd gennych
+returnsProcessing.heading = Rydym yn gwirio’r wybodaeth a gyflwynwyd gennych
+returnsProcessing.paragraph = Gallai hyn gymryd ychydig o eiliadau.

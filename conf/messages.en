@@ -733,3 +733,7 @@ creditsSummary.tooMuch.p4 = You must have sufficient evidence to claim tax back 
 applicationComplete.title = Application Complete
 applicationComplete.heading = Application Complete
 applicationComplete.guidance = Your session has been cleared because you completed your application.
+
+returnsProcessing.title = We are checking the information you submitted
+returnsProcessing.heading = We are checking the information you submitted
+returnsProcessing.paragraph = This may take a few seconds.

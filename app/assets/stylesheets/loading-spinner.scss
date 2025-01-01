@@ -1,0 +1,30 @@
+
+.hods-loading-spinner {
+  padding-top: 15px;
+}
+
+.hods-loading-spinner__spinner {
+  margin-left: auto;
+  margin-right: auto;
+  border: 15px solid #dee0e2;
+  border-radius: 50%;
+  border-top-color: #1d70b8;
+  width: 100px;
+  height: 100px;
+  -webkit-animation: hods-loading-spinner-animation 2s linear infinite;
+  animation: hods-loading-spinner-animation 2s linear infinite;
+}
+
+.hods-loading-spinner__content {
+    padding-top: 15px;
+    text-align: center;
+}
+
+@keyframes hods-loading-spinner-animation {
+    0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
