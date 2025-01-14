@@ -31,7 +31,9 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
+import models.returns.ProcessingStatus.{AlreadySubmitted, Complete, Failed}
+import models.returns.ProcessingEntry
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -49,6 +51,7 @@ class ReturnsCheckYourAnswersController @Inject() (
   creditsCalculatorConnector: CalculateCreditsConnector,
   taxReturnHelper: TaxReturnHelper,
   sessionRepository: SessionRepository,
+  processingStatusRepository: ReturnsProcessingRepository,
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
   view: ReturnsCheckYourAnswersView,
@@ -70,19 +73,29 @@ class ReturnsCheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData).async { implicit request =>
       val userAnswers: UserAnswers = request.userAnswers
       val isUserClaimingCredit     = userAnswers.get(WhatDoYouWantToDoPage).getOrElse(false)
-      returnsConnector.submit(request.pptReference).flatMap {
-        case Right(optChargeRef) =>
-          for {
-            _ <- sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef)
-            _ <- sessionRepository.set(request.cacheKey, Paths.AlreadySubmitted, Some(true))
-          } yield Redirect(routes.ReturnConfirmationController.onPageLoad(isUserClaimingCredit))
+      val processId                = request.cacheKey
 
-        case Left(_) =>
-          val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable)
-          sessionRepository.set(request.cacheKey, Paths.TaxReturnObligation, returnQuarter).map { _ =>
-            Redirect(routes.AlreadySubmittedController.onPageLoad())
+      (for {
+          _ <- processingStatusRepository.set(ProcessingEntry(processId))
+          _ <- returnsConnector.submit(request.pptReference).flatMap {
+            case Right(optChargeRef) =>
+              for {
+                _ <- sessionRepository.set(request.cacheKey, Paths.ReturnChargeRef, optChargeRef)
+                _ <- sessionRepository.set(request.cacheKey, Paths.AlreadySubmitted, Some(true))
+                _ <- processingStatusRepository.set(ProcessingEntry(processId, Complete))
+              } yield ()
+            case Left(_) =>
+              val returnQuarter = userAnswers.getOrFail(ReturnObligationCacheable)
+              for {
+                _ <- sessionRepository.set(request.cacheKey, Paths.TaxReturnObligation, returnQuarter)
+                _ <- processingStatusRepository.set(ProcessingEntry(processId, AlreadySubmitted))
+              } yield ()
           }
+        } yield () // keeps running in background
+      ).recover { case ex: Exception =>
+        processingStatusRepository.set(ProcessingEntry(processId, Failed, Some(ex.getMessage)))
       }
+      Future.successful(Redirect(routes.ReturnsProcessingController.onPageLoad(isUserClaimingCredit)))
     }
 
   private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit

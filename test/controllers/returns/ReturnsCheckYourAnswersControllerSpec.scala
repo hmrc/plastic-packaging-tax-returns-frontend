@@ -44,7 +44,7 @@ import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView
@@ -74,23 +74,25 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     taxRate = 200.0
   )
 
-  private val mockView                                          = mock[ReturnsCheckYourAnswersView]
-  private val mockMessagesApi: MessagesApi                      = mock[MessagesApi]
-  private val message                                           = mock[Messages]
-  private val controllerComponents                              = stubMessagesControllerComponents()
-  private implicit val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  private val mockTaxReturnConnector                            = mock[TaxReturnsConnector]
-  private val mockCalculateCreditConnector                      = mock[CalculateCreditsConnector]
-  private val cacheConnector                                    = mock[CacheConnector]
-  private val mockTaxReturnHelper                               = mock[TaxReturnHelper]
-  private val appConfig                                         = mock[FrontendAppConfig]
-  private val navigator                                         = mock[ReturnsJourneyNavigator]
-  private val keyString                                         = s"${LocalDate.now()}-${LocalDate.now()}"
+  private val mockView                                                              = mock[ReturnsCheckYourAnswersView]
+  private val mockMessagesApi: MessagesApi                                          = mock[MessagesApi]
+  private val message                                                               = mock[Messages]
+  private val controllerComponents                                                  = stubMessagesControllerComponents()
+  private implicit val mockSessionRepository: SessionRepository                     = mock[SessionRepository]
+  private implicit val mockReturnsProcessingRepository: ReturnsProcessingRepository = mock[ReturnsProcessingRepository]
+  private val mockTaxReturnConnector                                                = mock[TaxReturnsConnector]
+  private val mockCalculateCreditConnector                                          = mock[CalculateCreditsConnector]
+  private val cacheConnector                                                        = mock[CacheConnector]
+  private val mockTaxReturnHelper                                                   = mock[TaxReturnHelper]
+  private val appConfig                                                             = mock[FrontendAppConfig]
+  private val navigator                                                             = mock[ReturnsJourneyNavigator]
+  private val keyString = s"${LocalDate.now()}-${LocalDate.now()}"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(
       mockSessionRepository,
+      mockReturnsProcessingRepository,
       mockTaxReturnConnector,
       mockCalculateCreditConnector,
       mockTaxReturnHelper,
@@ -103,6 +105,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(mockMessagesApi.preferred(any[RequestHeader])).thenReturn(message)
     when(mockSessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
     when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
+    when(mockReturnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
 
     when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(
       CreditBalance(10, 20, 500L, true, Map(keyString -> TaxablePlastic(1, 2, 0.30)))
@@ -189,7 +192,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       val result = createSut(Some(setUserAnswer())).onSubmit()(FakeRequest(POST, "/foo"))
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.returns.routes.ReturnConfirmationController.onPageLoad(
+      redirectLocation(result).value mustEqual controllers.returns.routes.ReturnsProcessingController.onPageLoad(
         true
       ).url
       verify(mockSessionRepository).set(
@@ -287,6 +290,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
       mockCalculateCreditConnector,
       mockTaxReturnHelper,
       mockSessionRepository,
+      mockReturnsProcessingRepository,
       controllerComponents,
       appConfig,
       mockView,

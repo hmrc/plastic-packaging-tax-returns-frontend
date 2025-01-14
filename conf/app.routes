@@ -209,3 +209,5 @@ GET        /credits-summary                        controllers.returns.credits.C
 POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
 GET        /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)
+GET        /returns-processing/:isUserClaimingCredit                       controllers.returns.ReturnsProcessingController.onPageLoad(isUserClaimingCredit: Boolean)
+GET        /returns-processing-status                 controllers.returns.ReturnsProcessingController.onPageLoadStatus()
