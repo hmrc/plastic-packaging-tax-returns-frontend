@@ -44,8 +44,7 @@ import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.ProcessingStatus.Complete
-import repositories.{ProcessingEntry, ReturnsProcessingRepository, SessionRepository}
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView

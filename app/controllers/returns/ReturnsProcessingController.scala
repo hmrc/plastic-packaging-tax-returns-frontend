@@ -23,7 +23,7 @@ import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
-import repositories.ProcessingStatus._
+import models.returns.ProcessingStatus._
 import repositories.ReturnsProcessingRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.returns.ReturnsProcessingView

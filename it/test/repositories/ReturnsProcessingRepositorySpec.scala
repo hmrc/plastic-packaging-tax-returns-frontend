@@ -17,6 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
+import models.returns.{ProcessingEntry, ProcessingStatus}
 import org.mongodb.scala.model.Filters
 import org.mockito.MockitoSugar.when
 import org.scalatest.{Assertion, OptionValues}
@@ -29,7 +30,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
-import repositories.ProcessingStatus.format
+import models.returns.ProcessingStatus.format
 
 import java.time.temporal.ChronoUnit
 

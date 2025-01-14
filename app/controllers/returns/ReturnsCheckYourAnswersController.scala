@@ -31,8 +31,9 @@ import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.ProcessingStatus.{AlreadySubmitted, Complete, Failed}
-import repositories.{ProcessingEntry, ReturnsProcessingRepository, SessionRepository}
+import models.returns.ProcessingStatus.{AlreadySubmitted, Complete, Failed}
+import models.returns.ProcessingEntry
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
