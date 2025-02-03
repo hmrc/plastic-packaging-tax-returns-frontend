@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.{eq => meq}
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures._
 import org.scalatestplus.play.PlaySpec
 import pages.amends._
 import play.api.i18n.MessagesApi
@@ -38,7 +39,7 @@ import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
 import support.AmendExportedData
@@ -66,23 +67,34 @@ class CheckYourAnswersControllerSpec
   private val returnsConnector                    = mock[TaxReturnsConnector]
   private val comparisonService                   = mock[AmendReturnAnswerComparisonService]
   private val sessionRepository                   = mock[SessionRepository]
+  private val returnsProcessingRepository         = mock[ReturnsProcessingRepository]
   private val view                                = mock[CheckYourAnswersView]
   private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
 
-  private val sut = new CheckYourAnswersController(
+  private def sut = new CheckYourAnswersController(
     messagesApi,
     journeyAction,
     returnsConnector,
     comparisonService,
     stubMessagesControllerComponents(),
     sessionRepository,
+    returnsProcessingRepository,
     view
   )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(messagesApi, journeyAction, returnsConnector, comparisonService, sessionRepository, view, dataRequest)
+    reset(
+      messagesApi,
+      journeyAction,
+      returnsConnector,
+      comparisonService,
+      sessionRepository,
+      returnsProcessingRepository,
+      view,
+      dataRequest
+    )
 
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
@@ -161,7 +173,7 @@ class CheckYourAnswersControllerSpec
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("12345")))
       when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
-
+      when(returnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
       await(sut.onSubmit().skippingJourneyAction(dataRequest))
 
       verify(returnsConnector).amend(meq("pptReference"))(any)
@@ -172,43 +184,47 @@ class CheckYourAnswersControllerSpec
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
       when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
-
+      when(returnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
       await(sut.onSubmit().skippingJourneyAction(dataRequest))
 
-      verify(sessionRepository).set(meq("cacheKey"), meq(Paths.AmendChargeRef), meq(Some("chargeRef")))(any)
+      whenReady(sessionRepository.set(any, any, any)(any)) { _ =>
+        verify(sessionRepository).set(meq("cacheKey"), meq(Paths.AmendChargeRef), meq(Some("chargeRef")))(any)
+      }
     }
 
-    "redirect to return-amended page" in {
+    "redirect to amend-processing page" in {
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
       when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
-
+      when(returnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
       val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AmendConfirmationController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.AmendProcessingController.onPageLoad().url)
     }
 
-    "let it throw if cannot submit amend " in {
+    "redirect to amend-processing page if cannot submit amend" in {
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.failed(new Exception("error")))
+      when(returnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
+      val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
-      intercept[Exception] {
-        await(sut.onSubmit().skippingJourneyAction(dataRequest))
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.AmendProcessingController.onPageLoad().url)
     }
 
-    "let it throw if cannot save to repository " in {
+    "redirect to amend-processing page if cannot save to repository " in {
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(dataRequest.cacheKey).thenReturn("cacheKey")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("chargeRef")))
       when(sessionRepository.set(any, any, any)(any))
         .thenReturn(Future.failed(JsResultException(Seq((JsPath, Seq(JsonValidationError("error", "error")))))))
+      when(returnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
+      val result = sut.onSubmit().skippingJourneyAction(dataRequest)
 
-      intercept[Exception] {
-        await(sut.onSubmit().skippingJourneyAction(dataRequest))
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.AmendProcessingController.onPageLoad().url)
     }
   }
 
