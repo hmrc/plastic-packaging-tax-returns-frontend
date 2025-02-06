@@ -1,6 +1,6 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                         hmrcfrontend.Routes
+->          /hmrc-frontend                                          hmrcfrontend.Routes
 
 # BTA entry points
 GET         /submit-return                                          controllers.Default.redirect(to = "/plastic-packaging-tax/return-accounting-period")
@@ -16,7 +16,7 @@ GET         /account/signed-out                                     controllers.
 
 GET         /account/sign-out-no-survey                             controllers.auth.AuthController.signOutNoSurvey
 
-GET         /account/not-enrolled                                  controllers.home.UnauthorisedController.notEnrolled()
+GET         /account/not-enrolled                                   controllers.home.UnauthorisedController.notEnrolled()
 
 GET         /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -122,7 +122,7 @@ GET         /make-a-payment                                         controllers.
 GET         /direct-debit                                           controllers.payments.DirectDebitController.redirectLink()
 
 GET         /confirm-plastic-packaging-total                        controllers.returns.ConfirmPlasticPackagingTotalController.onPageLoad
-GET         /confirm-plastic-packaging-total-routing               controllers.returns.ConfirmPlasticPackagingTotalController.submit()
+GET         /confirm-plastic-packaging-total-routing                controllers.returns.ConfirmPlasticPackagingTotalController.submit()
 
 GET         /non-exported-medicines-packaging                       controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onPageLoad(mode: Mode = NormalMode)
 POST        /non-exported-medicines-packaging                       controllers.returns.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode: Mode = NormalMode)
@@ -137,28 +137,28 @@ POST        /change-non-exported-medicines-packaging-weight         controllers.
 GET         /cancel-amend                                           controllers.amends.CancelAmendController.onPageLoad()
 POST        /cancel-amend                                           controllers.amends.CancelAmendController.onSubmit()
 
-GET         /credit-for-exported/:key               controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
-POST        /credit-for-exported/:key               controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = NormalMode)
-GET         /change-credit-for-exported/:key        controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
-POST        /change-credit-for-exported/:key        controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = CheckMode)
+GET         /credit-for-exported/:key                               controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-exported/:key                               controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-exported/:key                        controllers.returns.credits.ExportedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-exported/:key                        controllers.returns.credits.ExportedCreditsController.onSubmit(key, mode: Mode = CheckMode)
 
-GET         /credit-for-exported-weight/:key               controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
-POST        /credit-for-exported-weight/:key               controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
-GET         /change-credit-for-exported-weight/:key        controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
-POST        /change-credit-for-exported-weight/:key        controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
+GET         /credit-for-exported-weight/:key                        controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-exported-weight/:key                        controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-exported-weight/:key                 controllers.returns.credits.ExportedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-exported-weight/:key                 controllers.returns.credits.ExportedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
 
-GET         /credit-for-converted/:key               controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
-POST        /credit-for-converted/:key               controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = NormalMode)
-GET         /change-credit-for-converted/:key        controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
-POST        /change-credit-for-converted/:key        controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = CheckMode)
+GET         /credit-for-converted/:key                              controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-converted/:key                              controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-converted/:key                       controllers.returns.credits.ConvertedCreditsController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-converted/:key                       controllers.returns.credits.ConvertedCreditsController.onSubmit(key, mode: Mode = CheckMode)
 
-GET         /credit-for-converted-weight/:key               controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
-POST        /credit-for-converted-weight/:key               controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
-GET         /change-credit-for-converted-weight/:key        controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
-POST        /change-credit-for-converted-weight/:key        controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
+GET         /credit-for-converted-weight/:key                       controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = NormalMode)
+POST        /credit-for-converted-weight/:key                       controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = NormalMode)
+GET         /change-credit-for-converted-weight/:key                controllers.returns.credits.ConvertedCreditsWeightController.onPageLoad(key, mode: Mode = CheckMode)
+POST        /change-credit-for-converted-weight/:key                controllers.returns.credits.ConvertedCreditsWeightController.onSubmit(key, mode: Mode = CheckMode)
 
-GET         /confirm-or-correct-credit/:key                              controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = NormalMode)
-GET         /change-confirm-or-correct-credit/:key                       controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = CheckMode)
+GET         /confirm-or-correct-credit/:key                         controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = NormalMode)
+GET         /change-confirm-or-correct-credit/:key                  controllers.returns.credits.ConfirmPackagingCreditController.onPageLoad(key, mode: Mode = CheckMode)
 
 # Change group lead
 GET         /select-new-representative-member                       controllers.changeGroupLead.ChooseNewGroupLeadController.onPageLoad(mode: Mode = NormalMode)
@@ -174,7 +174,7 @@ POST       /main-contact                                            controllers.
 GET        /change-main-contact                                     controllers.changeGroupLead.MainContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-main-contact                                     controllers.changeGroupLead.MainContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /representative-member-changed                         controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
+GET         /representative-member-changed                          controllers.changeGroupLead.NewGroupLeadConfirmationController.onPageLoad
 
 GET        /enter-contact-address                                   controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /enter-contact-address                                   controllers.changeGroupLead.NewGroupLeadEnterContactAddressController.onSubmit(mode: Mode = NormalMode)
@@ -202,12 +202,14 @@ POST       /amending-exported-plastic-packaging                     controllers.
 GET        /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onPageLoad
 POST       /amend-exported-by-another-business                      controllers.amends.AmendExportedByAnotherBusinessController.onSubmit
 
-GET        /credit-removed/:key                        controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
-POST       /credit-removed/:key                        controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
+GET        /credit-removed/:key                                     controllers.returns.credits.CancelCreditsClaimController.onPageLoad(key)
+POST       /credit-removed/:key                                     controllers.returns.credits.CancelCreditsClaimController.onSubmit(key)
 
-GET        /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
-POST       /credits-summary                        controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
-GET        /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-credits-summary                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)
-GET        /returns-processing/:isUserClaimingCredit                       controllers.returns.ReturnsProcessingController.onPageLoad(isUserClaimingCredit: Boolean)
-GET        /returns-processing-status                 controllers.returns.ReturnsProcessingController.onPageLoadStatus()
+GET        /credits-summary                                         controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = NormalMode)
+POST       /credits-summary                                         controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = NormalMode)
+GET        /change-credits-summary                                  controllers.returns.credits.CreditsClaimedListController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-credits-summary                                  controllers.returns.credits.CreditsClaimedListController.onSubmit(mode: Mode = CheckMode)
+GET        /returns-processing/:isUserClaimingCredit                controllers.returns.ReturnsProcessingController.onPageLoad(isUserClaimingCredit: Boolean)
+GET        /returns-processing-status                               controllers.returns.ReturnsProcessingController.onPageLoadStatus()
+GET        /amend-processing                                        controllers.amends.AmendProcessingController.onPageLoad()
+GET        /amend-processing-status                                 controllers.amends.AmendProcessingController.onPageLoadStatus()

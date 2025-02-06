@@ -23,11 +23,12 @@ import controllers.actions.JourneyAction
 import models.amends.AmendSummaryRow
 import models.requests.DataRequest
 import models.requests.DataRequest.headerCarrier
-import models.returns.{AmendsCalculations, TaxReturnObligation}
+import models.returns.ProcessingStatus.{Complete, Failed}
+import models.returns.{AmendsCalculations, ProcessingEntry, TaxReturnObligation}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
 import services.AmendReturnAnswerComparisonService
 import util.EdgeOfSystem
@@ -43,6 +44,7 @@ class CheckYourAnswersController @Inject() (
   comparisonService: AmendReturnAnswerComparisonService,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
+  processingStatusRepository: ReturnsProcessingRepository,
   view: CheckYourAnswersView
 )(implicit ec: ExecutionContext, edgeOfSystem: EdgeOfSystem)
     extends I18nSupport {
@@ -88,11 +90,20 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      returnsConnector.amend(request.pptReference).flatMap { optChargeRef =>
-        sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef).map { _ =>
-          Redirect(routes.AmendConfirmationController.onPageLoad())
-        }
+      val processId = request.cacheKey
+
+      (for {
+          _            <- processingStatusRepository.set(ProcessingEntry(processId))
+          optChargeRef <- returnsConnector.amend(request.pptReference)
+          _            <- sessionRepository.set(request.cacheKey, Paths.AmendChargeRef, optChargeRef)
+          _            <- processingStatusRepository.set(ProcessingEntry(processId, Complete))
+        } yield () // keeps running in background
+      ).recover { case ex: Exception =>
+        processingStatusRepository.set(ProcessingEntry(processId, Failed, Some(ex.getMessage)))
       }
+
+      Future.successful(Redirect(routes.AmendProcessingController.onPageLoad()))
+
     }
 
 }
