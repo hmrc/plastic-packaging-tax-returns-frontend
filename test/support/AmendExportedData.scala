@@ -29,7 +29,7 @@ trait AmendExportedData {
     periodTo = "2022-06-30",
     periodKey = "22AC",
     chargeReference = Some("pan"),
-    receiptDate = "2022-06-31",
+    receiptDate = "2022-06-30T00:00:00Z",
     returnType = "TYPE"
   )
 
