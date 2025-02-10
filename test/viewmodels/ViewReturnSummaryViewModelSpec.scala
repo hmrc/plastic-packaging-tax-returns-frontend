@@ -26,14 +26,14 @@ import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
   val mockMessages: Messages = mock[Messages]
-  when(mockMessages.apply("month.8")).thenReturn("August")
+  when(mockMessages.apply("month.7")).thenReturn("July")
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(
     "21C2",
     Some("charge-ref-no"),
     "2022-04-01",
     "2022-06-30",
-    "2022-07-03",
+    "2022-07-03T00:00:00Z",
     "New"
   )
 
@@ -69,7 +69,7 @@ class ViewReturnSummaryViewModelSpec extends PlaySpec {
     }
 
     "have the processed field" in {
-      summarySection.fields(0) mustBe Field("viewReturnSummary.summary.field.processed", "28 August 2019")
+      summarySection.fields(0) mustBe Field("viewReturnSummary.summary.field.processed", "3 July 2022")
     }
 
     "have the reference field" in {

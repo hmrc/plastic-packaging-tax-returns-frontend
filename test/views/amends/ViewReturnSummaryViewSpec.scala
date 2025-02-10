@@ -34,7 +34,7 @@ class ViewReturnSummaryViewSpec extends ViewSpecBase with ViewAssertions with Vi
     Some("charge-ref-no"),
     "2022-04-01",
     "2022-06-30",
-    "2022-07-03",
+    "2022-07-03T00:00:00Z",
     "New"
   )
 

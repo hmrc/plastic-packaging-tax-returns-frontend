@@ -64,7 +64,9 @@ object ViewReturnSummaryViewModel {
   def apply(returnDisplay: ReturnDisplayApi)(implicit messages: Messages): ViewReturnSummaryViewModel =
     ViewReturnSummaryViewModel(
       Section("summary", lastBold = false)(
-        "processed" -> ViewUtils.displayLocalDate(toLocalDate(returnDisplay.processingDate)),
+        "processed" -> returnDisplay.chargeDetails.fold("n/a")(cd =>
+          ViewUtils.displayLocalDate(toLocalDate(cd.receiptDate))
+        ),
         "reference" -> returnDisplay.chargeReferenceAsString
       ),
       DetailsSection(
