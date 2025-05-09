@@ -107,9 +107,9 @@ class ViewReturnSummaryController @Inject() (
     request: DataRequest[_]
   ): Future[Either[Result, (String, SubmittedReturn, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("""\d{2}C[1-4]"""))
+    if (!periodKey.matches("""\d{2}C[1-4]""")) {
       Future.successful(Left(NotFound(errorHandler.notFoundTemplate(request.request))))
-    else {
+    } else {
 
       val futureReturn: Future[SubmittedReturn] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
       val futureMaybeObligation: Future[Option[TaxReturnObligation]] =
