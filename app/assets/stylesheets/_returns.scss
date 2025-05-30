@@ -41,6 +41,38 @@
     background: #f8f8f8;
     margin-bottom: 20px;
   }
+
+  .govuk-main-wrapper {
+    margin-left: 20px;
+    width: 91%;
+  }
+
+  .account-grid-column {
+    width: 100%;
+  }
+
+  p.govuk-body {
+    margin-bottom: 20px;
+  }
+
+  .grid-row {
+    margin-top: 10px;
+    text-size-adjust: 100%;
+    box-sizing: border-box;
+    background: #f8f8f8;
+    margin-bottom: 20px;
+    padding: 20px 10px 0;
+
+    .govuk-heading-m {
+        color: #1d70b8;
+        padding-bottom: 10px;
+    }
+
+    .govuk-link {
+        font-weight: normal;
+    }
+  }
+
 }
 
 

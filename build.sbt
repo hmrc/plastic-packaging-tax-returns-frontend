@@ -13,8 +13,6 @@ ThisBuild / scalaVersion := "2.13.16"
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(DefaultBuildSettings.scalaSettings: _*)
-  .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(inConfig(Test)(testSettings): _*)
   .configs(A11yTest)
   .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
