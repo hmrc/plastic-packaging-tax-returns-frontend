@@ -28,28 +28,28 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.{ApplicationException, FrontendE
 import views.html.ErrorTemplate
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 @Singleton
-class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)
+class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)(implicit val ec: ExecutionContext)
     extends FrontendErrorHandler
     with I18nSupport
     with Logging {
 
-  private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
-
-  override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
-    case ApplicationException(result, _) => result
+  override def resolveError(rh: RequestHeader, ex: Throwable): Future[Result] = ex match {
+    case ApplicationException(result, _) => Future.successful(result)
     case DownstreamServiceError(_, _: HttpException) | DownstreamServiceError(_, _: UpstreamErrorResponse) =>
-      InternalServerError(internalServerErrorTemplate(rh)).withHeaders(CACHE_CONTROL -> "no-cache")
+      internalServerErrorTemplate(rh)
+        .map(template => InternalServerError(template).withHeaders(CACHE_CONTROL -> "no-cache"))
     case _ =>
       logger.error("PPT_ERROR_RAISE_ALERT uncaught exception not from downstream", ex)
-      InternalServerError(internalServerErrorTemplate(rh)).withHeaders(CACHE_CONTROL -> "no-cache")
+      internalServerErrorTemplate(rh)
+        .map(template => InternalServerError(template).withHeaders(CACHE_CONTROL -> "no-cache"))
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    rh: Request[_]
-  ): Html =
-    view(pageTitle, heading, message)
-
+    rh: RequestHeader
+  ): Future[Html] =
+    Future.successful(view(pageTitle, heading, message))
 }
