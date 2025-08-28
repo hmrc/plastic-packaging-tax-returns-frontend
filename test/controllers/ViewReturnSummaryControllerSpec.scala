@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,8 +172,7 @@ class ViewReturnSummaryControllerSpec
 
     "return 404 not found" when {
       "the period key is mistyped" in {
-        when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
-
+        setUpAPiCalls()
         val result = sut.onPageLoad("222Ca")(dataRequest)
 
         status(result) mustBe NOT_FOUND
@@ -184,7 +183,6 @@ class ViewReturnSummaryControllerSpec
     "the user doesn't have a fulfilled obligation for the requested period" in {
       setUpAPiCalls(false, None)
       when(messages.apply(anyString, any)).thenReturn("any-period")
-      when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
 
       val result = sut.onPageLoad("22C2")(dataRequest)
 
@@ -242,7 +240,6 @@ class ViewReturnSummaryControllerSpec
 
     "return 404 when cannot fetch data" in {
       setUpAPiCalls(obligation = None)
-      when(errorHandler.notFoundTemplate(any)).thenReturn(Html("error-handler"))
 
       val result = sut.amendReturn("22C2").skippingJourneyAction(dataRequest)
 
@@ -266,5 +263,6 @@ class ViewReturnSummaryControllerSpec
     when(taxReturnHelper.getObligation(any, any)(any)).thenReturn(Future.successful(obligation))
     when(returnsConnector.ddInProgress(any, any)(any)).thenReturn(Future.successful(DDInProgressApi(isDDInProgress)))
     when(cacheConnector.set(any, any)(any)).thenReturn(Future.successful(mock[HttpResponse]))
+    when(errorHandler.notFoundTemplate(any)).thenReturn(Future.successful(Html("error-handler")))
   }
 }

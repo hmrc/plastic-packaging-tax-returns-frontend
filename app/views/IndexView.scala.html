@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,6 +185,7 @@
     showBackLink = false,
     large = true
 ) {
+
     <h1 class="govuk-heading-l">@messages("account.homePage.title")</h1>
 
     @paragraph(
@@ -194,8 +195,7 @@
 
     @paragraph(content = Html(s"$organisationName"))
 
-    <div class="govuk-grid-row govuk-!-grid-column-full govuk-!-margin-top-6 ">
-
+    <div class="govuk-grid-row">
         @card(header = messages("account.homePage.card.makeReturn.header"),
             lines = Seq[Option[String]](
                 returnsLine1,
@@ -207,7 +207,6 @@
                 Some(link(id = "guidance-link", text = messages("account.homePage.card.makeReturn.guidance.link"), href = appConfig.pptCompleteReturnGuidanceUrl, newTab = true))
             ).filter(_.isDefined).flatten
         )
-
         @card(header = messages("account.homePage.card.payments.header"),
             lines = Seq(
                 paymentStatement.getOrElse(messages("account.homePage.card.payments.error"))
@@ -223,12 +222,15 @@
             lines = Seq.empty,
             links = Seq(viewOrAmendReturnsLink)
         )
-
     </div>
 
-    <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
+    <div class="grid-row">
+        <div class="govuk-grid-column">
+            <h2 class="govuk-heading-m">@messages("account.homePage.manage.ppt.account.header")</h2>
 
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-        @managementCards
+            <div class="govuk-grid-row govuk-!-margin-top-4">
+                    @managementCards
+            </div>
+        </div>
     </div>
 }

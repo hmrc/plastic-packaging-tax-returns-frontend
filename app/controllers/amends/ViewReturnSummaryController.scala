@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,22 +107,24 @@ class ViewReturnSummaryController @Inject() (
     request: DataRequest[_]
   ): Future[Either[Result, (String, SubmittedReturn, TaxReturnObligation, Boolean)]] = {
     val pptReference: String = request.pptReference
-    if (!periodKey.matches("""\d{2}C[1-4]"""))
-      Future.successful(Left(NotFound(errorHandler.notFoundTemplate(request.request))))
-    else {
+    if (!periodKey.matches("""\d{2}C[1-4]""")) {
+      errorHandler.notFoundTemplate(request.request)
+        .map(template => Left(NotFound(template)))
+    } else {
 
       val futureReturn: Future[SubmittedReturn] = taxReturnHelper.fetchTaxReturn(pptReference, periodKey)
       val futureMaybeObligation: Future[Option[TaxReturnObligation]] =
         taxReturnHelper.getObligation(pptReference, periodKey)
       val futureDDInProgress: Future[DDInProgressApi] = returnsConnector.ddInProgress(pptReference, periodKey)
       for {
-        submittedReturn <- futureReturn
-        maybeObligation <- futureMaybeObligation
-        ddInProgress    <- futureDDInProgress
+        submittedReturn  <- futureReturn
+        maybeObligation  <- futureMaybeObligation
+        ddInProgress     <- futureDDInProgress
+        notFoundTemplate <- errorHandler.notFoundTemplate
       } yield maybeObligation match {
         case Some(obligation) =>
           Right((pptReference, submittedReturn, obligation, ddInProgress.isDdCollectionInProgress))
-        case None => Left(NotFound(errorHandler.notFoundTemplate))
+        case None => Left(NotFound(notFoundTemplate))
       }
 
     }
