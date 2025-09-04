@@ -89,6 +89,26 @@
   .card .govuk-link {
     font-size: 19px;
   }
+
+  .grid-row .govuk-grid-column .account-grid-column {
+    width: 80%;
+  }
+
+  .govuk-heading-s {
+    font-size: 19px;
+    font-weight: normal;
+  }
+
+  .grid-row {
+    background: #f8f8f8;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+  }
+
+  .govuk-heading-m {
+    color: #1d70b8;
+  }
+
 }
 
 .row-header--no-border .govuk-table__header {
