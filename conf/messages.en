@@ -108,7 +108,7 @@ journeyRecovery.startAgain.link.2 = Plastic Packaging Tax account
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
-signedOut.guidance = We have saved your answers.
+signedOut.guidance = We saved your answers for 1 hour.
 
 unauthorised.title = You must be registered to use this service
 unauthorised.heading = You must be registered to use this service

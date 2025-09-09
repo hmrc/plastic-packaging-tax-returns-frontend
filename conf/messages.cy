@@ -111,7 +111,7 @@ journeyRecovery.startAgain.link.2 = Treth Deunydd Pacio Plastig
 
 signedOut.title = Er eich diogelwch, gwnaethom eich allgofnodi
 signedOut.heading = Er eich diogelwch, gwnaethom eich allgofnodi
-signedOut.guidance = Rydym wedi cadw’ch atebion.
+signedOut.guidance = Rydym wedi cadw’ch atebion am 1 awr.
 
 unauthorised.title = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
 unauthorised.heading = Mae’n rhaid i chi fod wedi’ch cofrestru i ddefnyddio’r gwasanaeth hwn
