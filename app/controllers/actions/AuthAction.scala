@@ -87,7 +87,10 @@ class AuthenticatedIdentifierAction @Inject() (
           }
       } recover {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map(ContinueQueryParamKey -> Seq(request.target.path)))
+        Redirect(
+          appConfig.loginUrl,
+          Map(ContinueQueryParamKey -> Seq(request.target.path), "accountType" -> Seq("Organisation"))
+        )
 
       case _: InsufficientEnrolments =>
         Results.Redirect(homeRoutes.UnauthorisedController.notEnrolled())

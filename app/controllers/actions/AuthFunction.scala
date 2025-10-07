@@ -54,7 +54,10 @@ class AuthFunction @Inject() (
         block(AuthedUser(internalId, request))
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map(QueryParamKeys.continue -> Seq(target)))
+        Results.Redirect(
+          appConfig.loginUrl,
+          Map(QueryParamKeys.continue -> Seq(target), "accountType" -> Seq("Organisation"))
+        )
 
       case _: IncorrectCredentialStrength =>
         Results.Redirect(
