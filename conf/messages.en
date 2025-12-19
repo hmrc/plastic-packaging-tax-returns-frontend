@@ -382,14 +382,15 @@ account.homePage.card.makeReturn.returnDates.link = Return dates
 account.homePage.card.makeReturn.failure = We cannot display tax return details.
 
 account.homePage.card.payments.header = Payments
-account.homePage.card.payments.nothingOutstanding = You have no payments due.
-account.homePage.card.payments.inCredit = You are {0} in credit.
-account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}.
-account.homePage.card.payments.overDue = You owe {0}. This payment is overdue.
-account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue.
+account.homePage.card.payments.nothingOutstanding = You have no payments due. {0}
+account.homePage.card.payments.inCredit = You are {0} in credit. {1}
+account.homePage.card.payments.debitDue = You owe {0}. You must pay by {1}. {2}
+account.homePage.card.payments.overDue = You owe {0}. This payment is overdue. {1} 
+account.homePage.card.payments.debitAndOverDue = You owe {0}. This includes {1} which is overdue. {2}
 account.homePage.card.payments.error = We cannot display payment details.
 account.homePage.card.payments.payment.link = Make a PPT payment
 account.homePage.card.payments.direct.debit.link = Set up or manage a Direct Debit
+account.homePage.card.payments.POANote = This does not include any payments on account you have made.
 
 account.homePage.card.history.header = History
 account.homePage.card.history.viewamendreturnslink = View or amend submitted returns
