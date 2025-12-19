@@ -43,9 +43,17 @@ final case class PPTFinancials(
 
   def paymentStatement()(implicit messages: Messages): String =
     (creditAmount, debitAmount, overdueAmount) match {
-      case (None, None, None) => messages("account.homePage.card.payments.nothingOutstanding" , messages("account.homePage.card.payments.POANote"))
+      case (None, None, None) =>
+        messages(
+          "account.homePage.card.payments.nothingOutstanding",
+          messages("account.homePage.card.payments.POANote")
+        )
       case (Some(amount), None, None) =>
-        messages("account.homePage.card.payments.inCredit", formatCurrencyAmount(amount), messages("account.homePage.card.payments.POANote"))
+        messages(
+          "account.homePage.card.payments.inCredit",
+          formatCurrencyAmount(amount),
+          messages("account.homePage.card.payments.POANote")
+        )
       case (None, Some(Charge(amount, date)), None) =>
         messages(
           "account.homePage.card.payments.debitDue",
@@ -54,7 +62,11 @@ final case class PPTFinancials(
           messages("account.homePage.card.payments.POANote")
         )
       case (None, None, Some(amount)) =>
-        messages("account.homePage.card.payments.overDue", formatCurrencyAmount(amount), messages("account.homePage.card.payments.POANote"))
+        messages(
+          "account.homePage.card.payments.overDue",
+          formatCurrencyAmount(amount),
+          messages("account.homePage.card.payments.POANote")
+        )
       case (None, Some(Charge(debit, _)), Some(overdue)) =>
         messages(
           "account.homePage.card.payments.debitAndOverDue",
@@ -64,7 +76,6 @@ final case class PPTFinancials(
         )
       case _ => messages("account.homePage.card.payments.error")
     }
-  
 
 }
 
