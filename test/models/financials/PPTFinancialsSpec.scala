@@ -34,6 +34,7 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
     when(messages.apply(any[String])).thenReturn("expected message")
     when(messages.apply(any[String], any)).thenReturn("expected message")
     when(messages.apply(any[String], any, any)).thenReturn("expected message")
+    when(messages.apply(any[String], any, any, any)).thenReturn("expected message")
   }
 
   "paymentStatement" must {
@@ -42,7 +43,10 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
         val text = PPTFinancials(None, None, None).paymentStatement()(messages)
 
         text mustBe "expected message"
-        verify(messages).apply("account.homePage.card.payments.nothingOutstanding")
+        verify(messages).apply(
+          "account.homePage.card.payments.nothingOutstanding",
+          messages("account.homePage.card.payments.POANote")
+        )
       }
     }
 
@@ -51,7 +55,11 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
         val text = PPTFinancials(creditAmount = Some(BigDecimal(123)), None, None).paymentStatement()(messages)
 
         text mustBe "expected message"
-        verify(messages).apply("account.homePage.card.payments.inCredit", "£123.00")
+        verify(messages).apply(
+          "account.homePage.card.payments.inCredit",
+          "£123.00",
+          messages("account.homePage.card.payments.POANote")
+        )
       }
     }
 
@@ -64,7 +72,12 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
         ).paymentStatement()(messages)
 
         text mustBe "expected message"
-        verify(messages).apply("account.homePage.card.payments.debitDue", "£345.21", "27 expected message 2020")
+        verify(messages).apply(
+          "account.homePage.card.payments.debitDue",
+          "£345.21",
+          "27 expected message 2020",
+          messages("account.homePage.card.payments.POANote")
+        )
         verify(messages).apply("month.3")
       }
     }
@@ -74,7 +87,11 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
         val text = PPTFinancials(None, None, overdueAmount = Some(0.01)).paymentStatement()(messages)
 
         text mustBe "expected message"
-        verify(messages).apply("account.homePage.card.payments.overDue", "£0.01")
+        verify(messages).apply(
+          "account.homePage.card.payments.overDue",
+          "£0.01",
+          messages("account.homePage.card.payments.POANote")
+        )
       }
     }
 
@@ -87,7 +104,12 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
         ).paymentStatement()(messages)
 
         text mustBe "expected message"
-        verify(messages).apply("account.homePage.card.payments.debitAndOverDue", "£345.21", "£0.01")
+        verify(messages).apply(
+          "account.homePage.card.payments.debitAndOverDue",
+          "£345.21",
+          "£0.01",
+          messages("account.homePage.card.payments.POANote")
+        )
       }
     }
 
