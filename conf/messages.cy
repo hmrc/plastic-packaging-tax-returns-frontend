@@ -393,14 +393,15 @@ account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure = Ni allwn ddangos manylion y Ffurflen Dreth.
 
 account.homePage.card.payments.header = Taliadau
-account.homePage.card.payments.nothingOutstanding = Nid oes gennych dreth i’w thalu.
-account.homePage.card.payments.inCredit = Rydych mewn credyd o {0}.
-account.homePage.card.payments.debitDue = Mae arnoch {0}. Mae’n rhaid i chi dalu erbyn {1}.
-account.homePage.card.payments.overDue = Mae arnoch {0}. Mae’r taliad hwn yn hwyr.
-account.homePage.card.payments.debitAndOverDue = Mae arnoch {0}. Mae hyn yn cynnwys {1} sy’n hwyr.
+account.homePage.card.payments.nothingOutstanding = Nid oes gennych dreth i’w thalu. {0}
+account.homePage.card.payments.inCredit = Rydych mewn credyd o {0}. {1}
+account.homePage.card.payments.debitDue = Mae arnoch {0}. Mae’n rhaid i chi dalu erbyn {1}. {2}
+account.homePage.card.payments.overDue = Mae arnoch {0}. Mae’r taliad hwn yn hwyr. {1}
+account.homePage.card.payments.debitAndOverDue = Mae arnoch {0}. Mae hyn yn cynnwys {1} sy’n hwyr. {2}
 account.homePage.card.payments.error = Ni allwn ddangos manylion y taliad.
 account.homePage.card.payments.payment.link = Gwneud taliad Treth Deunydd Pacio Plastig
 account.homePage.card.payments.direct.debit.link = Sefydlu neu reoli Debyd Uniongyrchol
+account.homePage.card.payments.POANote = Nid yw hyn yn cynnwys unrhyw daliadau ar gyfrif rydych wedi’u gwneud.
 
 account.homePage.card.history.header = Hanes
 account.homePage.card.history.viewamendreturnslink = Bwrw golwg dros neu ddiwygio Ffurflenni Treth a gyflwynwyd
