@@ -48,10 +48,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConvertedCreditsControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val mockCacheConnector: CacheConnector     = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
@@ -115,10 +112,14 @@ class ConvertedCreditsControllerSpec
     "fill the form with user's previous answer" in {
       controller.onPageLoad("year-key", NormalMode)(request)
       val function = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function.capture())(any)
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(initialForm),
+        function.capture()
+      )(any)
 
       withClue("using correct function") {
-        val creditsAnswer = mock[CreditsAnswer]
+        val creditsAnswer    = mock[CreditsAnswer]
         val capturedFunction = function.getValue
         capturedFunction(creditsAnswer)
         verify(creditsAnswer).yesNo

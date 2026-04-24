@@ -26,8 +26,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage,
-  AmendHumanMedicinePlasticPackagingPage, AmendRecycledPlasticPackagingPage}
+import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage, AmendHumanMedicinePlasticPackagingPage, AmendRecycledPlasticPackagingPage}
 import queries.Gettable
 import viewmodels.checkAnswers.amends.AmendTotalDeductionSummary
 

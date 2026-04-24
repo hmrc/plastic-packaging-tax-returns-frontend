@@ -62,7 +62,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   val importedAmount                  = 100L
   val exportedAmount                  = 50L
   val exportedByAnotherBusinessAmount = 50L
-  val nonExportedAmount: Long = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
+  val nonExportedAmount: Long =
+    (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
   private val mockMessagesApi: MessagesApi                      = mock[MessagesApi]
   private val mockCacheConnector                                = mock[CacheConnector]

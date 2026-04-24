@@ -36,7 +36,7 @@ class AgentSelectPPTRefSearchControllerSpec extends PlaySpec with BeforeAndAfter
 
   val formProvider: AgentsFormProvider = mock[AgentsFormProvider]
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: AuthConnector         = mock[AuthConnector]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
   val sut = new AgentSelectPPTRefSearchController(

@@ -28,11 +28,11 @@ import play.api.libs.json.JsPath
 
 class CreditsAnswerSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
 
-  val userAnswers: UserAnswers = mock[UserAnswers]
-  val yesNoForm: Form[Boolean] = mock[Form[Boolean]]("unfilled-yes-no-form")
-  val weightForm: Form[Long] = mock[Form[Long]]("unfilled-weight-form")
+  val userAnswers: UserAnswers       = mock[UserAnswers]
+  val yesNoForm: Form[Boolean]       = mock[Form[Boolean]]("unfilled-yes-no-form")
+  val weightForm: Form[Long]         = mock[Form[Long]]("unfilled-weight-form")
   val filledYesNoForm: Form[Boolean] = mock[Form[Boolean]]("filled-yes-no-form")
-  val filledWeightForm: Form[Long] = mock[Form[Long]]("filled-weight-form")
+  val filledWeightForm: Form[Long]   = mock[Form[Long]]("filled-weight-form")
 
   case class TestPage() extends QuestionPage[CreditsAnswer] {
     override def path: JsPath = JsPath \ "test-path"

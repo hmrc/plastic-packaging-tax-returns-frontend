@@ -51,10 +51,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConvertedCreditsWeightControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class ConvertedCreditsWeightControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val messagesApi          = mock[MessagesApi]
   private val journeyAction        = mock[JourneyAction]

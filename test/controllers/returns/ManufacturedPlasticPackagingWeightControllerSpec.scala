@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider       = new ManufacturedPlasticPackagingWeightFormProvider()
+  val formProvider                       = new ManufacturedPlasticPackagingWeightFormProvider()
   val mockCacheConnector: CacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")

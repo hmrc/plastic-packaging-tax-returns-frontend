@@ -28,8 +28,8 @@ import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialsConnector @Inject()(httpClient: HttpClientV2, appConfig: FrontendAppConfig, metrics: Metrics)(implicit
-                                                                                                              ec: ExecutionContext
+class FinancialsConnector @Inject() (httpClient: HttpClientV2, appConfig: FrontendAppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
 ) extends Logging
     with HttpReadsInstances {
 
@@ -42,11 +42,11 @@ class FinancialsConnector @Inject()(httpClient: HttpClientV2, appConfig: Fronten
       .withBody(Json.toJson(request))
       .execute[PaymentLinkResponse]
       .map { res =>
-      logger.info(
-        s"Payment redirect created for pptReferenceNumber: $pptReferenceNumber with journeyId:${res.journeyId}"
-      )
-      res.nextUrl
-    }
+        logger.info(
+          s"Payment redirect created for pptReferenceNumber: $pptReferenceNumber with journeyId:${res.journeyId}"
+        )
+        res.nextUrl
+      }
   }
 
   def getPaymentStatement(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTFinancials] = {

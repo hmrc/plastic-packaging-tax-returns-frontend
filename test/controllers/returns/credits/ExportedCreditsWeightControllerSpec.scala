@@ -126,7 +126,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
       withClue("gets weight or None for displaying") {
         val creditsAnswer = mock[CreditsAnswer]
-        val capturedFunc = func.getValue
+        val capturedFunc  = func.getValue
         capturedFunc(creditsAnswer)
         verify(creditsAnswer).weightForForm
       }

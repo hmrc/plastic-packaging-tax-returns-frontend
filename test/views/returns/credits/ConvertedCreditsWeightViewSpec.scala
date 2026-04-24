@@ -44,10 +44,10 @@ class ConvertedCreditsWeightViewSpec
     with BeforeAndAfterEach {
 
   override val messages: Messages = spy(super.messages)
-  private val form              = new ConvertedCreditsWeightFormProvider()()
-  private val page              = inject[ConvertedCreditsWeightView]
-  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
-  private def createView: Html  = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
+  private val form                = new ConvertedCreditsWeightFormProvider()()
+  private val page                = inject[ConvertedCreditsWeightView]
+  private val creditRangeOption   = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private def createView: Html    = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

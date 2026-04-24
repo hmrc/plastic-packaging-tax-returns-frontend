@@ -147,7 +147,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
         key match {
           case "return.quarter" => "any-key"
-          case _ => "total-key"
+          case _                => "total-key"
         }
       }
 
@@ -205,11 +205,11 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         true
       ).url
 
-        verify(mockSessionRepository).set(
-          any,
-          ArgumentMatchers.eq(Paths.ReturnChargeRef),
-          ArgumentMatchers.eq(Some("12345"))
-        )(any)
+      verify(mockSessionRepository).set(
+        any,
+        ArgumentMatchers.eq(Paths.ReturnChargeRef),
+        ArgumentMatchers.eq(Some("12345"))
+      )(any)
     }
   }
 

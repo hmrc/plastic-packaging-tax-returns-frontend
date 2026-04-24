@@ -35,11 +35,11 @@ trait JourneyActionAnswer {
         invocation.getArguments()(0).asInstanceOf[RequestFunction]
 
       when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((invocation: InvocationOnMock) => {
+        .thenAnswer { (invocation: InvocationOnMock) =>
           val request =
             invocation.getArguments()(0).asInstanceOf[DataRequest[AnyContent]]
           Future.successful(function(request))
-        })
+        }
         .getMock[Action[AnyContent]]
     }
 
@@ -49,11 +49,11 @@ trait JourneyActionAnswer {
         invocation.getArguments()(0).asInstanceOf[RequestAsyncFunction]
 
       when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((invocation: InvocationOnMock) => {
+        .thenAnswer { (invocation: InvocationOnMock) =>
           val request =
             invocation.getArguments()(0).asInstanceOf[DataRequest[AnyContent]]
           function(request)
-        })
+        }
         .getMock[Action[AnyContent]]
     }
 }

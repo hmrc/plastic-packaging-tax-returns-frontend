@@ -38,7 +38,7 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
     "return a summary row" in {
       when(messages.apply("confirmPackagingCredit.converted.weight")).thenReturn("answer")
       when(messages.apply("site.change")).thenReturn("change")
-      when(messages.apply((50L.asKg))).thenReturn(50L.asKg)
+      when(messages.apply(50L.asKg)).thenReturn(50L.asKg)
       val userAnswer = UserAnswers("123").set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(50L)).get
 
       val result = CreditsConvertedWeightSummary("year-key").row(userAnswer)(messages)

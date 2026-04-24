@@ -56,7 +56,7 @@ class IndexPageViewSpec extends ViewSpecBase with ViewAssertions with ViewMatche
       bind[SessionRepository].toInstance(MockitoSugar.mock[SessionRepository])
     ).build()
 
-  lazy val homePage: IndexView = inject[IndexView]
+  lazy val homePage: IndexView         = inject[IndexView]
   private val appConfig                = MockitoSugar.mock[FrontendAppConfig]
   private val singleEntitySubscription = MockitoSugar.mock[LegalEntityDetails]
   private val groupSubscription        = MockitoSugar.mock[LegalEntityDetails]

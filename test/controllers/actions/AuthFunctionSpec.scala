@@ -50,8 +50,8 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
   }
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/target-url")
-  val testBlock: TestBlock = mock[TestBlock]
-  val predicate: EmptyPredicate.type = EmptyPredicate
+  val testBlock: TestBlock                         = mock[TestBlock]
+  val predicate: EmptyPredicate.type               = EmptyPredicate
 
   override def beforeEach(): Unit = {
     reset(appConfig, authConnector, testBlock)

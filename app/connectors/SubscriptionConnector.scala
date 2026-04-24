@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (
-                                        httpClient: HttpClientV2,
-                                        appConfig: FrontendAppConfig,
-                                        metrics: Metrics
+  httpClient: HttpClientV2,
+  appConfig: FrontendAppConfig,
+  metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
   def get(
@@ -61,15 +61,15 @@ class SubscriptionConnector @Inject() (
       .post(url"${appConfig.pptChangeGroupLeadUrl(pptReferenceNumber)}")
       .execute[HttpResponse]
       .map { response =>
-      response.status match {
-        case OK => response
-        case _ =>
-          throw DownstreamServiceError(
-            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
-            new Exception()
-          )
+        response.status match {
+          case OK => response
+          case _ =>
+            throw DownstreamServiceError(
+              s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
+              new Exception()
+            )
+        }
       }
-    }
   }
 
 }

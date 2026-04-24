@@ -28,9 +28,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitConnector @Inject() (
-                                       httpClient: HttpClientV2,
-                                       appConfig: FrontendAppConfig,
-                                       metrics: Metrics
+  httpClient: HttpClientV2,
+  appConfig: FrontendAppConfig,
+  metrics: Metrics
 )(implicit ec: ExecutionContext)
     extends Logging
     with HttpReadsInstances {
@@ -43,9 +43,9 @@ class DirectDebitConnector @Inject() (
       .withBody(Json.toJson(request))
       .execute[DDLinkResponse]
       .map { res =>
-      logger.info(s"DD redirect created for pptReferenceNumber: $pptReference with journeyId:${res.journeyId}")
-      res.nextUrl
-    }
+        logger.info(s"DD redirect created for pptReferenceNumber: $pptReference with journeyId:${res.journeyId}")
+        res.nextUrl
+      }
       .andThen { case _ => timer.stop() }
       .recover { case exception: Exception =>
         throw DownstreamServiceError("Error trying to get Direct Debit link", exception)

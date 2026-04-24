@@ -66,9 +66,9 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     )
   )
 
-  val returnSubmissionURL: String = url"http://localhost/return-submission-url".toString
+  val returnSubmissionURL: String   = url"http://localhost/return-submission-url".toString
   val returnsCalculationUrl: String = url"http://localhost/return-calculate".toString
-  val returnAmendUrl: String = url"http://localhost/return-amend-url".toString
+  val returnAmendUrl: String        = url"http://localhost/return-amend-url".toString
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -81,10 +81,12 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     when(httpClient2.post(any[URL])(any)).thenReturn(requestBuilder)
     when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
 
-    when(requestBuilder.execute[SubmittedReturn](
-      any[HttpReads[SubmittedReturn]],
-      any[ExecutionContext]
-    )).thenReturn(Future.successful(mock[SubmittedReturn]))
+    when(
+      requestBuilder.execute[SubmittedReturn](
+        any[HttpReads[SubmittedReturn]],
+        any[ExecutionContext]
+      )
+    ).thenReturn(Future.successful(mock[SubmittedReturn]))
   }
 
   "Tax Returns Connector" should {
@@ -96,13 +98,17 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         verify(timerContext).stop()
       }
       "submitting a return" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty))
+        )
         await(connector.submit("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
       }
       "amending a return" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty))
+        )
         await(connector.amend("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
@@ -118,37 +124,48 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
 
     "submit" when {
       "in all cases" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty))
+        )
         await(connector.submit("ppt-reference"))
         verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
         verify(httpClient2).post(meq(url"$returnSubmissionURL"))(any)
       }
 
       "there is a charge reference" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
-          HttpResponse(OK, """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
-        ))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(
+            HttpResponse(OK, """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
+          )
+        )
         await(connector.submit("ppt-reference")) mustBe Right(Some("PANTESTPAN"))
       }
 
       "there is no charge reference" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, """{"chargeDetails": {}}""")))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(HttpResponse(OK, """{"chargeDetails": {}}"""))
+        )
         await(connector.submit("ppt-reference")) mustBe Right(None)
       }
 
       "the return obligation is already fulfilled" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
-          HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
-        ))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(
+            HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
+          )
+        )
         await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }
 
       "Something goes wrong" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.failed(
-          new HttpException(
-            "exception-message",
-            new Exception("Something went wrong.")
-          )))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.failed(
+            new HttpException(
+              "exception-message",
+              new Exception("Something went wrong.")
+            )
+          )
+        )
         intercept[DownstreamServiceError](await(connector.submit("ppt-reference")))
       }
     }
@@ -156,13 +173,17 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     "Amend" when {
 
       "in all cases" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
-          HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
-        ))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(
+            HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
+          )
+        )
 
-        when(requestBuilder.execute[HttpResponse]).thenReturn(Future.successful(
-          mock[HttpResponse]
-        ))
+        when(requestBuilder.execute[HttpResponse]).thenReturn(
+          Future.successful(
+            mock[HttpResponse]
+          )
+        )
         when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn returnAmendUrl
         await(connector.amend("ppt-reference"))
         verify(frontendAppConfig).pptReturnAmendUrl("ppt-reference")
@@ -170,50 +191,59 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
       }
 
       "there is a charge reference" in {
-        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
-          HttpResponse(200, """{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
-        ))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(
+            HttpResponse(200, """{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
+          )
+        )
         await(connector.amend("ppt-reference")) mustBe Some("SOMEREF")
       }
 
       "there is no charge reference" in {
         when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
-          Future.successful(HttpResponse(200, """{"chargeDetails": null}""")))
+          Future.successful(HttpResponse(200, """{"chargeDetails": null}"""))
+        )
         await(connector.amend("ppt-reference")) mustBe None
       }
     }
 
     "throw" when {
       "get request fails" in {
-        when(requestBuilder.execute[JsValue](any, any)).thenReturn(Future.failed(
-          UpstreamErrorResponse(
-            message = "exception-message",
-            statusCode = 500,
-            reportAs = 500
+        when(requestBuilder.execute[JsValue](any, any)).thenReturn(
+          Future.failed(
+            UpstreamErrorResponse(
+              message = "exception-message",
+              statusCode = 500,
+              reportAs = 500
+            )
           )
-        ))
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference", "period-key")))
       }
 
       "submit response cannot be parsed" in {
-        when(requestBuilder.execute[JsValue](any, any)).thenReturn(Future.failed(
-          UpstreamErrorResponse(
-            message = "exception-message",
-            statusCode = 500,
-            reportAs = 500
+        when(requestBuilder.execute[JsValue](any, any)).thenReturn(
+          Future.failed(
+            UpstreamErrorResponse(
+              message = "exception-message",
+              statusCode = 500,
+              reportAs = 500
+            )
           )
-        ))
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.submit("ppt-reference")))
       }
 
       "amend response cannot be parsed" in {
-        when(requestBuilder.execute[HttpResponse]).thenReturn(Future.failed(
-          UpstreamErrorResponse(
-            message = "exception-message",
-            statusCode = 500,
-            reportAs = 500
+        when(requestBuilder.execute[HttpResponse]).thenReturn(
+          Future.failed(
+            UpstreamErrorResponse(
+              message = "exception-message",
+              statusCode = 500,
+              reportAs = 500
+            )
           )
-        ))
+        )
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
       }
     }

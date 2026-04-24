@@ -30,7 +30,7 @@ class CreditsClaimedListFormProviderSpec extends BooleanFieldBehaviours {
   val invalidKey = "error.boolean"
 
   val mockMessages: Messages = MockitoSugar.mock[Messages]
-  val cro          = CreditRangeOption(LocalDate.now(), LocalDate.now())
+  val cro                    = CreditRangeOption(LocalDate.now(), LocalDate.now())
 
   "form when" - {
     "one CreditRangeOption available" - {

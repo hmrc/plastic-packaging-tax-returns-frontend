@@ -32,7 +32,7 @@ import scala.util.Try
 
 class IdentifyAndCheckSubscriptionSpec extends PlaySpec {
 
-  val mockAuthAction: AuthAction = mock[AuthAction]
+  val mockAuthAction: AuthAction                 = mock[AuthAction]
   val mockSubscriptionFilter: SubscriptionFilter = mock[SubscriptionFilter]
 
   val sut = new IdentifyAndCheckSubscription(

@@ -37,16 +37,13 @@ import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AvailableCreditYearsConnectorSpec
-    extends AnyWordSpec
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class AvailableCreditYearsConnectorSpec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val frontendAppConfig = mock[FrontendAppConfig]
-  private val httpClient        = mock[HttpClientV2]
-  private val metrics           = mock[Metrics](Answers.RETURNS_DEEP_STUBS)
-  private val timer             = mock[Timer.Context]
-  private val availableYears    = mock[Seq[CreditRangeOption]]
+  private val frontendAppConfig              = mock[FrontendAppConfig]
+  private val httpClient                     = mock[HttpClientV2]
+  private val metrics                        = mock[Metrics](Answers.RETURNS_DEEP_STUBS)
+  private val timer                          = mock[Timer.Context]
+  private val availableYears                 = mock[Seq[CreditRangeOption]]
   private val requestBuilder: RequestBuilder = mock[RequestBuilder]
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
@@ -81,8 +78,9 @@ class AvailableCreditYearsConnectorSpec
 
     "return an error" in {
       when(httpClient.get(any[URL])(any)).thenReturn(requestBuilder)
-      when(requestBuilder.execute[Seq[CreditRangeOption]](any, any)).thenReturn(Future.failed(
-        UpstreamErrorResponse("message", 500, 500)))
+      when(requestBuilder.execute[Seq[CreditRangeOption]](any, any)).thenReturn(
+        Future.failed(UpstreamErrorResponse("message", 500, 500))
+      )
       a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
       withClue("stop the timer") {
         verify(timer).stop

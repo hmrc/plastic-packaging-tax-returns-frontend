@@ -18,7 +18,7 @@ package models
 
 import models.UserAnswers.SaveUserAnswerFunc
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, never, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar

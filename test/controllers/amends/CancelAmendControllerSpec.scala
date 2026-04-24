@@ -54,7 +54,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     "PK1"
   )
 
-  val form: Form[Boolean] = mock[Form[Boolean]]
+  val form: Form[Boolean]               = mock[Form[Boolean]]
   private val dataRequest               = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi               = mock[MessagesApi]
   private val cacheConnector            = mock[CacheConnector]

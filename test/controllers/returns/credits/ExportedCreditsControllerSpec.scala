@@ -47,10 +47,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ExportedCreditsControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -112,14 +109,16 @@ class ExportedCreditsControllerSpec
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
 
       val func = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
-      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func.capture)(any)
+      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func.capture)(
+        any
+      )
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"
 
       withClue("fills the form value with correct function") {
         val creditsAnswer = mock[CreditsAnswer]
-        val capturedFunc = func.getValue
+        val capturedFunc  = func.getValue
         capturedFunc(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
