@@ -28,10 +28,11 @@ import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -195,7 +196,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
     }
 
     "error" when {
-      object TestException extends Exception("Boom!")
+      object TestException extends RuntimeException("Boom!")
       "obligation is not present" in {
         setUpMocks()
         when(request.userAnswers.getOrFail(eqTo(ReturnObligationCacheable))(any, any)).thenThrow(TestException)

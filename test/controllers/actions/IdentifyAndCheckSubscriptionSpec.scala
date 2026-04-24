@@ -16,14 +16,14 @@
 
 package controllers.actions
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import models.requests.IdentifiedRequest
-import org.mockito.MockitoSugar.{verify, when}
+import org.apache.pekko.stream.testkit.NoMaterializer
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import play.api.mvc.{ActionBuilder, AnyContent}
 import play.api.mvc.BodyParsers.Default
 import play.api.mvc.Results.Ok
+import play.api.mvc.{ActionBuilder, AnyContent}
 import play.api.test.FakeRequest
 
 import scala.concurrent.ExecutionContext.global
@@ -32,8 +32,8 @@ import scala.util.Try
 
 class IdentifyAndCheckSubscriptionSpec extends PlaySpec {
 
-  val mockAuthAction         = mock[AuthAction]
-  val mockSubscriptionFilter = mock[SubscriptionFilter]
+  val mockAuthAction: AuthAction = mock[AuthAction]
+  val mockSubscriptionFilter: SubscriptionFilter = mock[SubscriptionFilter]
 
   val sut = new IdentifyAndCheckSubscription(
     new Default()(NoMaterializer),

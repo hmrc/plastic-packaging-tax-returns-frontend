@@ -28,10 +28,11 @@ import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.reset
-import org.mockito.MockitoSugar.{mock, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.reset
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.AnotherBusinessExportedWeightPage
 import play.api.data.Form

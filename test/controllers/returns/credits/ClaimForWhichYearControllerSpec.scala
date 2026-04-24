@@ -29,9 +29,8 @@ import models.requests.DataRequest
 import models.returns.{CreditRangeOption, CreditsAnswer}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{atLeastOnce, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
@@ -189,7 +188,7 @@ class ClaimForWhichYearControllerSpec
 
       await(sut.onPageLoad(NormalMode)(dataRequest))
 
-      verify(availableYearsConnector).get(eqTo(dataRequest.pptReference))(any)
+      verify(availableYearsConnector).get(meq(dataRequest.pptReference))(any)
 
     }
 
@@ -349,7 +348,7 @@ class ClaimForWhichYearControllerSpec
 
       val result = await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
-      verify(mockView).apply(eqTo(formWithErrors), meq(availableYears), meq(NormalMode))(eqTo(dataRequest), any)
+      verify(mockView).apply(meq(formWithErrors), meq(availableYears), meq(NormalMode))(meq(dataRequest), any)
 
       result.header.status mustBe Status.BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "correct view"

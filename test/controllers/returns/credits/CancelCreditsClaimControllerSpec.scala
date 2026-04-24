@@ -27,10 +27,11 @@ import models.requests.DataRequest
 import models.returns.CreditsAnswer
 import models.returns.credits.SingleYearClaim
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.{Answers, MockitoSugar}
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits._
 import play.api.data.Form
@@ -52,8 +53,7 @@ class CancelCreditsClaimControllerSpec
     extends PlaySpec
     with JourneyActionAnswer
     with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val journeyAction        = mock[JourneyAction]
   private val messagesApi          = mock[MessagesApi]
@@ -87,6 +87,8 @@ class CancelCreditsClaimControllerSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(errorView, view, navigator, request)
 
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
@@ -165,7 +167,7 @@ class CancelCreditsClaimControllerSpec
       verify(request.userAnswers, never).removePath(any)
       verify(request.userAnswers, never).save(any)(any)
       verify(navigator).cancelCredit()
-      verifyZeroInteractions(saveFunction)
+      verifyNoInteractions(saveFunction)
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
@@ -177,7 +179,7 @@ class CancelCreditsClaimControllerSpec
 
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
       verify(view).apply(eqTo(formWithErrors), any, eqTo(exampleSingleYearClaim))(eqTo(request), any)
-      verifyZeroInteractions(saveFunction)
+      verifyNoInteractions(saveFunction)
 
       result.header.status mustBe BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "the view"
@@ -185,7 +187,7 @@ class CancelCreditsClaimControllerSpec
 
   }
 
-  def createUserAnswer =
+  def createUserAnswer: UserAnswers =
     UserAnswers("123")
       .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
       .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get

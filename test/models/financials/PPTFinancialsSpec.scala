@@ -16,9 +16,10 @@
 
 package models.financials
 
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 
@@ -31,10 +32,7 @@ class PPTFinancialsSpec extends PlaySpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(messages)
-    when(messages.apply(any[String])).thenReturn("expected message")
     when(messages.apply(any[String], any)).thenReturn("expected message")
-    when(messages.apply(any[String], any, any)).thenReturn("expected message")
-    when(messages.apply(any[String], any, any, any)).thenReturn("expected message")
   }
 
   "paymentStatement" must {

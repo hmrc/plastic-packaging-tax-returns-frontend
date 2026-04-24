@@ -16,15 +16,15 @@
 
 package controllers.payments
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import config.FrontendAppConfig
 import connectors.DirectDebitConnector
+import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi

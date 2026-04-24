@@ -22,7 +22,7 @@ import connectors.CacheConnector
 import forms.amends.AmendHumanMedicinePlasticPackagingFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendHumanMedicinePlasticPackagingPage
 import play.api.inject.bind
@@ -46,7 +46,7 @@ class AmendHumanMedicinePlasticPackagingControllerSpec extends SpecBase with Moc
 
   val validAnswer: Long = 0
 
-  lazy val amendHumanMedicinePlasticPackagingRoute =
+  lazy val amendHumanMedicinePlasticPackagingRoute: String =
     routes.AmendHumanMedicinePlasticPackagingController.onPageLoad().url
 
   "AmendHumanMedicinePlasticPackaging Controller" - {

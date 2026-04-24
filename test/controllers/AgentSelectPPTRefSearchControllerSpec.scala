@@ -18,7 +18,7 @@ package controllers
 
 import forms.AgentsFormProvider
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -34,10 +34,10 @@ import scala.concurrent.Future
 
 class AgentSelectPPTRefSearchControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
-  val formProvider = mock[AgentsFormProvider]
+  val formProvider: AgentsFormProvider = mock[AgentsFormProvider]
 
-  val mockAuthConnector     = mock[AuthConnector]
-  val mockSessionRepository = mock[SessionRepository]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
   val sut = new AgentSelectPPTRefSearchController(
     mockAuthConnector,
@@ -83,7 +83,7 @@ class AgentSelectPPTRefSearchControllerSpec extends PlaySpec with BeforeAndAfter
       }
 
       "auth fails" in {
-        object TestException extends Exception("test")
+        object TestException extends RuntimeException("test")
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))
           .thenReturn(Future.failed(TestException))
 

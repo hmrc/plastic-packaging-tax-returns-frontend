@@ -30,9 +30,8 @@ import models.requests.DataRequest
 import models.returns._
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{anyString, eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -234,8 +233,8 @@ class ViewReturnSummaryControllerSpec
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-      verifyZeroInteractions(dataRequest.userAnswers.removeAll())
-      verifyZeroInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
+      verifyNoInteractions(dataRequest.userAnswers.removeAll())
+      verifyNoInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
     }
 
     "return 404 when cannot fetch data" in {

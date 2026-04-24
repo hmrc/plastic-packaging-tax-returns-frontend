@@ -22,7 +22,7 @@ import forms.returns.ManufacturedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ManufacturedPlasticPackagingWeightPage
 import play.api.inject.bind
@@ -36,16 +36,16 @@ import scala.concurrent.Future
 class ManufacturedPlasticPackagingWeightControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider       = new ManufacturedPlasticPackagingWeightFormProvider()
-  val mockCacheConnector = mock[CacheConnector]
+  val mockCacheConnector: CacheConnector = mock[CacheConnector]
 
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: Long = 1
 
-  lazy val ManufacturedPlasticPackagingWeightRoute =
+  lazy val ManufacturedPlasticPackagingWeightRoute: String =
     controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
-  val navigator = mock[ReturnsJourneyNavigator]
+  val navigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   when(navigator.manufacturedPlasticPackagingWeightPage(any)).thenReturn(onwardRoute)
   when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
 

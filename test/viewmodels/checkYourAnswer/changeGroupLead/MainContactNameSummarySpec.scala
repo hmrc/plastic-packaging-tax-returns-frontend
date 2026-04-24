@@ -19,7 +19,8 @@ package viewmodels.checkYourAnswer.changeGroupLead
 import controllers.changeGroupLead.routes
 import models.Mode.CheckMode
 import models.UserAnswers
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.MainContactNamePage
 import play.api.i18n.Messages

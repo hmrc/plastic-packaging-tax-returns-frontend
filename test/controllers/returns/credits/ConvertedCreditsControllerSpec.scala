@@ -27,12 +27,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.captor.ArgCaptor
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
@@ -52,8 +51,7 @@ import scala.concurrent.Future
 class ConvertedCreditsControllerSpec
     extends PlaySpec
     with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val mockCacheConnector: CacheConnector     = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
@@ -62,7 +60,7 @@ class ConvertedCreditsControllerSpec
   private val initialForm                            = mock[Form[Boolean]]("initial form")
   private val preparedForm                           = mock[Form[Boolean]]("prepared form")
   private val journeyAction                          = mock[JourneyAction]
-  private val request                                = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request                                = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi                            = mock[MessagesApi]
   private val messages                               = mock[Messages]
   private val saveUserAnswerFunc                     = mock[UserAnswers.SaveUserAnswerFunc]
@@ -82,6 +80,8 @@ class ConvertedCreditsControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(messagesApi, request, mockCacheConnector, saveUserAnswerFunc)
 
     when(formProvider.apply()).thenReturn(initialForm)
     when(initialForm.bindFromRequest()(any, any)).thenReturn(preparedForm)
@@ -114,12 +114,13 @@ class ConvertedCreditsControllerSpec
 
     "fill the form with user's previous answer" in {
       controller.onPageLoad("year-key", NormalMode)(request)
-      val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function)(any)
+      val function = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
+      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function.capture())(any)
 
       withClue("using correct function") {
         val creditsAnswer = mock[CreditsAnswer]
-        function.value(creditsAnswer)
+        val capturedFunction = function.getValue
+        capturedFunction(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
     }

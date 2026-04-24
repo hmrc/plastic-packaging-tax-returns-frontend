@@ -17,11 +17,11 @@
 package models
 
 import models.UserAnswers.SaveUserAnswerFunc
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, never, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
+class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
 
   private val emptyUserAnswers  = UserAnswers("empty")
   private val filledUserAnswers = UserAnswers("filled", obj("cheese" -> obj("brie" -> "200g")))
@@ -55,10 +55,16 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
+    reset(emptyForm, question, saveFunction, newValueFunc, fillFormFunc, filledForm)
+
     when(question.path) thenReturn JsPath \ "cheese" \ "brie"
-    when(question.cleanup(any, any)) thenAnswer { (_: Option[String], userAnswers: UserAnswers) =>
-      Try(userAnswers) // pass through
-    }
+    when(question.cleanup(any, any))
+      .thenAnswer { invocation =>
+        val userAnswers =
+          invocation.getArguments()(1).asInstanceOf[UserAnswers]
+
+        Try(userAnswers)
+      }
 
     when(saveFunction.apply(any, any)) thenReturn Future.successful(true)
     when(newValueFunc.apply(any)) thenReturn "new-value"

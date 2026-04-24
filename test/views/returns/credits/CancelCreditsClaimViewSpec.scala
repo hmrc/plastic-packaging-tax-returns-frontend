@@ -19,8 +19,9 @@ package views.returns.credits
 import base.ViewSpecBase
 import forms.returns.credits.CancelCreditsClaimFormProvider
 import models.returns.credits.SingleYearClaim
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.Html

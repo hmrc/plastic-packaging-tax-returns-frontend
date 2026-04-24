@@ -19,9 +19,9 @@ package viewmodels.checkYourAnswer.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
@@ -37,21 +37,21 @@ class CreditsExportedSummarySpec extends PlaySpec with BeforeAndAfterEach {
     super.beforeEach()
 
     reset(messages)
-    when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.exported.answer"))).thenReturn("answer")
-    when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
+    when(messages.apply("confirmPackagingCredit.exported.answer")).thenReturn("answer")
+    when(messages.apply("site.change")).thenReturn("change")
   }
 
   "summary" should {
     "return a Summary row" when {
       "answer is yes" in {
         val userAnswer = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(1L)).get
-        when(messages.apply(ArgumentMatchers.eq("site.yes"))).thenReturn("yes")
+        when(messages.apply("site.yes")).thenReturn("yes")
         CreditsExportedPlasticSummary("year-key").row(userAnswer)(messages) mustBe createExpectedResult("yes")
       }
 
       "answer is no" in {
         val ans = UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.noClaim).get
-        when(messages.apply(ArgumentMatchers.eq("site.no"))).thenReturn("no")
+        when(messages.apply("site.no")).thenReturn("no")
         CreditsExportedPlasticSummary("year-key").row(ans)(messages) mustBe createExpectedResult("no")
       }
     }

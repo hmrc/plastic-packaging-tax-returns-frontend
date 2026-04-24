@@ -29,12 +29,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
@@ -55,8 +54,7 @@ import scala.concurrent.Future
 class ConvertedCreditsWeightControllerSpec
     extends PlaySpec
     with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val messagesApi          = mock[MessagesApi]
   private val journeyAction        = mock[JourneyAction]
@@ -77,13 +75,15 @@ class ConvertedCreditsWeightControllerSpec
     navigator
   )
 
-  private val request            = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request            = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form               = mock[Form[Long]]
   private val messages           = mock[Messages]
   private val updatedUserAnswers = mock[UserAnswers]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(view, navigator, request)
 
     when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
@@ -188,7 +188,7 @@ class ConvertedCreditsWeightControllerSpec
       val result = controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe BAD_REQUEST
-      verify(view).apply(meq(boundFormWithError), any, any)(any, any)
+      verify(view).apply(eqTo(boundFormWithError), any, any)(any, any)
     }
 
     "redirect if obligation is missing" in {

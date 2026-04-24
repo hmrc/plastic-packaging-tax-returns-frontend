@@ -18,7 +18,7 @@ package forms.returns.credits
 
 import forms.behaviours.BooleanFieldBehaviours
 import models.returns.CreditRangeOption
-import org.mockito.MockitoSugar.mock
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import play.api.i18n.Messages
 import views.ViewUtils
@@ -29,7 +29,7 @@ class CreditsClaimedListFormProviderSpec extends BooleanFieldBehaviours {
 
   val invalidKey = "error.boolean"
 
-  val mockMessages = mock[Messages]
+  val mockMessages: Messages = MockitoSugar.mock[Messages]
   val cro          = CreditRangeOption(LocalDate.now(), LocalDate.now())
 
   "form when" - {

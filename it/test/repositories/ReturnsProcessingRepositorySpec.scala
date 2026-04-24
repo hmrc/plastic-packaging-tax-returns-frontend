@@ -19,7 +19,7 @@ package repositories
 import config.FrontendAppConfig
 import models.returns.{ProcessingEntry, ProcessingStatus}
 import org.mongodb.scala.model.Filters
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatest.{Assertion, OptionValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec

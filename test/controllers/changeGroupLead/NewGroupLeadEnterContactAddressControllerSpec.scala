@@ -16,10 +16,10 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.byConvertingFunctionArgumentsToFutureAction
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine4, countryCode}
 import models.Mode.NormalMode
@@ -28,12 +28,10 @@ import models.requests.DataRequest
 import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{reset, verifyNoMoreInteractions}
-import org.mockito.MockitoSugar.{mock, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 import play.api.data.Form
@@ -74,9 +72,9 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     mockView
   )(global)
 
-  object TestException extends Exception("test")
+  object TestException extends RuntimeException("test")
 
-  val countryMap = Map("key" -> "value")
+  val countryMap: Map[String, String] = Map("key" -> "value")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -114,12 +112,6 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     when(form.bindFromRequest()(any, any)).thenReturn(createBindForm)
 
   }
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 

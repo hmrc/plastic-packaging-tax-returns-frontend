@@ -22,7 +22,7 @@ import forms.returns.ImportedPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ImportedPlasticPackagingWeightPage
 import play.api.inject.bind
@@ -40,10 +40,10 @@ class ImportedPlasticPackagingWeightControllerSpec extends SpecBase with Mockito
 
   val validAnswer = 0L
 
-  lazy val importedPlasticPackagingWeightRoute =
+  lazy val importedPlasticPackagingWeightRoute: String =
     controllers.returns.routes.ImportedPlasticPackagingWeightController.onPageLoad(NormalMode).url
 
-  val navigator = mock[ReturnsJourneyNavigator]
+  val navigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
   when(mockSessionRepo.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
   when(navigator.importedPlasticPackagingWeightPage()).thenReturn(onwardRoute)
 

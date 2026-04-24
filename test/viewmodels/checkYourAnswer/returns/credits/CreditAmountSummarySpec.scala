@@ -16,8 +16,8 @@
 
 package viewmodels.checkYourAnswer.returns.credits
 
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
@@ -34,7 +34,7 @@ class CreditAmountSummarySpec extends PlaySpec {
 
       when(message.apply("confirmPackagingCredit.creditAmount")).thenReturn("credit amount")
       when(message.apply(BigDecimal(200).asPounds)).thenReturn("£200")
-      when(message.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+      when(message.apply("confirmPackagingCredit.hiddenText")).thenReturn("hidden text")
 
       CreditAmountSummary(200L)(message) mustBe SummaryListRow(
         key = Key(Text("credit amount"), "govuk-!-width-one-half"),

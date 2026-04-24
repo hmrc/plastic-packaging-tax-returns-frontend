@@ -22,7 +22,7 @@ import controllers.actions.AuthenticatedIdentifierAction.IdentifierAction.{pptEn
 import forms.AgentsFormProvider
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -151,7 +151,7 @@ class AgentSelectPPTRefControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
     "error" when {
       "caching fails" in {
-        object TestException extends Exception("test")
+        object TestException extends RuntimeException("test")
         val filledForm = fakeForm.fill("selected")
         when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any())).thenReturn(Future.unit)
@@ -162,7 +162,7 @@ class AgentSelectPPTRefControllerSpec extends PlaySpec with BeforeAndAfterEach {
       }
 
       "auth fails" in {
-        object TestException extends Exception("test")
+        object TestException extends RuntimeException("test")
         val filledForm = fakeForm.fill("selected")
         when(mockForm.bindFromRequest()(any(), any())).thenReturn(filledForm)
         when(mockAuthConnector.authorise[Unit](any(), any())(any(), any()))

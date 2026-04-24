@@ -16,20 +16,21 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import connectors.DirectDebitConnector._
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: FrontendAppConfig,
-  metrics: Metrics
+                                       httpClient: HttpClientV2,
+                                       appConfig: FrontendAppConfig,
+                                       metrics: Metrics
 )(implicit ec: ExecutionContext)
     extends Logging
     with HttpReadsInstances {
@@ -37,7 +38,11 @@ class DirectDebitConnector @Inject() (
   def getDirectDebitLink(pptReference: String, homeUrl: String)(implicit hc: HeaderCarrier): Future[String] = {
     val timer   = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
     val request = DDLinkRequest(pptReference, "zppt", homeUrl, homeUrl)
-    httpClient.POST[DDLinkRequest, DDLinkResponse](appConfig.pptStartDirectDebit, request).map { res =>
+    httpClient
+      .post(url"${appConfig.pptStartDirectDebit}")
+      .withBody(Json.toJson(request))
+      .execute[DDLinkResponse]
+      .map { res =>
       logger.info(s"DD redirect created for pptReferenceNumber: $pptReference with journeyId:${res.journeyId}")
       res.nextUrl
     }

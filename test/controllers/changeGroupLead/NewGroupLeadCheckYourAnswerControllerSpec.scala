@@ -16,20 +16,20 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.SubscriptionConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.UserAnswers
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
-import org.mockito.ArgumentMatchers.refEq
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.{ChooseNewGroupLeadPage, NewGroupLeadEnterContactAddressPage}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -80,17 +80,6 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     when(navigator.checkYourAnswers) thenReturn Call("go", "over-there")
     when(subscriptionConnector.changeGroupLead(any)(any)).thenReturn(Future.successful(HttpResponse(OK, "done")))
   }
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" should {
     "return OK" in {

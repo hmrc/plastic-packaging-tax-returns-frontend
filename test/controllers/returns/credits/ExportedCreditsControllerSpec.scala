@@ -26,12 +26,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.captor.ArgCaptor
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{verify, when}
+import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ExportedCreditsPage
 import play.api.data.Form
@@ -51,8 +50,7 @@ import scala.concurrent.Future
 class ExportedCreditsControllerSpec
     extends PlaySpec
     with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -66,7 +64,7 @@ class ExportedCreditsControllerSpec
   private val preparedForm      = mock[Form[Boolean]]("prepared form")
   private val initialForm       = mock[Form[Boolean]]("initial form")
   private val messages          = mock[Messages]
-  private val request           = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request           = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   val sut: ExportedCreditsController = new ExportedCreditsController(
@@ -113,15 +111,16 @@ class ExportedCreditsControllerSpec
 
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
 
-      val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
+      val func = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
+      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func.capture)(any)
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"
 
       withClue("fills the form value with correct function") {
         val creditsAnswer = mock[CreditsAnswer]
-        func.value(creditsAnswer)
+        val capturedFunc = func.getValue
+        capturedFunc(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
     }

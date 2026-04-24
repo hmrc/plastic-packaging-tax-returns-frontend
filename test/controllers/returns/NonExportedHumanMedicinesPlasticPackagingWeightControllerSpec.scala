@@ -16,7 +16,6 @@
 
 package controllers.returns
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
@@ -26,9 +25,10 @@ import forms.returns.NonExportedHumanMedicinesPlasticPackagingWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
+import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec

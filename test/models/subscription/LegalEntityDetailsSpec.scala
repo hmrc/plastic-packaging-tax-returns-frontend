@@ -16,14 +16,14 @@
 
 package models.subscription
 
-import org.mockito.MockitoSugar.when
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.Answers
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 
 class LegalEntityDetailsSpec extends PlaySpec {
 
-  val mockCustomerDetails = mock[CustomerDetails](ReturnsDeepStubs)
+  val mockCustomerDetails: CustomerDetails = mock[CustomerDetails](Answers.RETURNS_DEEP_STUBS)
 
   val sut = LegalEntityDetails(
     "date-of-application",

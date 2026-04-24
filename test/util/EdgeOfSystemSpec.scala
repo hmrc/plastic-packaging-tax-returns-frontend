@@ -17,15 +17,15 @@
 package util
 
 import config.FrontendAppConfig
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-class EdgeOfSystemSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
+class EdgeOfSystemSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val frontendAppConfig = mock[FrontendAppConfig]
   private val edgeOfSystem      = new EdgeOfSystem(frontendAppConfig)

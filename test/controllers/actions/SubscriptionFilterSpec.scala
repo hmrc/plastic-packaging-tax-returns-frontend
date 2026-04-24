@@ -21,11 +21,12 @@ import connectors.{DownstreamServiceError, SubscriptionConnector}
 import models.requests.IdentifiedRequest
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import models.{EisError, EisFailure, PPTSubscriptionDetails}
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{mock, never, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.Inside.inside
 import org.scalatest.enablers.Messaging
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status
 import play.api.libs.json.JsPath

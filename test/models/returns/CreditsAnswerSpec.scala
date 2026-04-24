@@ -17,22 +17,22 @@
 package models.returns
 
 import models.UserAnswers
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.QuestionPage
 import play.api.data.Form
 import play.api.libs.json.JsPath
 
-class CreditsAnswerSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
+class CreditsAnswerSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar {
 
-  val userAnswers      = mock[UserAnswers]
-  val yesNoForm        = mock[Form[Boolean]]("unfilled-yes-no-form")
-  val weightForm       = mock[Form[Long]]("unfilled-weight-form")
-  val filledYesNoForm  = mock[Form[Boolean]]("filled-yes-no-form")
-  val filledWeightForm = mock[Form[Long]]("filled-weight-form")
+  val userAnswers: UserAnswers = mock[UserAnswers]
+  val yesNoForm: Form[Boolean] = mock[Form[Boolean]]("unfilled-yes-no-form")
+  val weightForm: Form[Long] = mock[Form[Long]]("unfilled-weight-form")
+  val filledYesNoForm: Form[Boolean] = mock[Form[Boolean]]("filled-yes-no-form")
+  val filledWeightForm: Form[Long] = mock[Form[Long]]("filled-weight-form")
 
   case class TestPage() extends QuestionPage[CreditsAnswer] {
     override def path: JsPath = JsPath \ "test-path"

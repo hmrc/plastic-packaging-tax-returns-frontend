@@ -24,10 +24,11 @@ import forms.returns.credits.DoYouWantToClaimFormProvider
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.data.Form
@@ -57,7 +58,7 @@ class WhatDoYouWantToDoControllerSpec
   private val controllerComponents     = stubMessagesControllerComponents()
   private val view                     = mock[DoYouWantToClaimView]
   private val navigator                = mock[ReturnsJourneyNavigator]
-  private val dataRequest              = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val dataRequest              = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form                     = mock[Form[Boolean]]
   private val obligation               = mock[TaxReturnObligation]
 

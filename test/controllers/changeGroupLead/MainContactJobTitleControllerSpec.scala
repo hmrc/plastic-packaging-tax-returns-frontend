@@ -16,20 +16,19 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.changeGroupLead.MainContactJobTitleFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.reset
-import org.mockito.MockitoSugar.{mock, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.MainContactJobTitlePage
 import play.api.data.Form
@@ -68,7 +67,7 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
     mockView
   )(global)
 
-  object TestException extends Exception("test")
+  object TestException extends RuntimeException("test")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -81,17 +80,6 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
     when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.mainContactJobTitle(any)).thenReturn(Call("GET", "/test-foo"))
   }
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
     "invoke the journey action" in {

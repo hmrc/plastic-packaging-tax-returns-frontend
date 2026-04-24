@@ -18,8 +18,9 @@ package controllers.helpers
 
 import models.UserAnswers
 import models.returns.{Calculations, TaxReturnObligation}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.{AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage, DirectlyExportedWeightPage}
 import play.api.i18n.Messages

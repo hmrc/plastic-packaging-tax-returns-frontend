@@ -18,12 +18,10 @@ package controllers.actions
 
 import base.MetricsMocks
 import config.FrontendAppConfig
-import org.mockito.ArgumentMatchers.refEq
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{reset, verify}
-import org.mockito.MockitoSugar.{mock, spyLambda, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -47,12 +45,18 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
     metricsMock
   )(global)
 
+  trait TestBlock {
+    def apply(user: AuthedUser[Any]): Future[Result]
+  }
+
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/target-url")
-  val testBlock: AuthedUser[Any] => Future[Result] = spyLambda(_ => Future.successful(Ok("test")))
-  val predicate                                    = EmptyPredicate
+  val testBlock: TestBlock = mock[TestBlock]
+  val predicate: EmptyPredicate.type = EmptyPredicate
 
   override def beforeEach(): Unit = {
     reset(appConfig, authConnector, testBlock)
+    when(testBlock.apply(any))
+      .thenReturn(Future.successful(Ok("test")))
     super.beforeEach()
   }
 
@@ -63,7 +67,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
           Future.successful(Some("internalId"))
         )
 
-        await(sut.authorised(predicate, request, testBlock))
+        await(sut.authorised(predicate, request, testBlock(_)))
 
         verify(testBlock).apply(any)
         verify(authConnector).authorise(refEq(predicate), refEq(internalId))(any, any)
@@ -77,7 +81,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
         )
         when(appConfig.loginUrl).thenReturn("/login-url")
 
-        val result = sut.authorised(predicate, request, testBlock)
+        val result = sut.authorised(predicate, request, testBlock(_))
 
         redirectLocation(result).get must startWith("/login-url")
         withClue("must append continue param from request target") {
@@ -92,7 +96,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
         when(appConfig.mfaUpliftUrl).thenReturn("/mfa-uplift-url")
         when(appConfig.serviceIdentifier).thenReturn("service-identifier")
 
-        val result = sut.authorised(predicate, request, testBlock)
+        val result = sut.authorised(predicate, request, testBlock(_))
 
         redirectLocation(result).get must startWith("/mfa-uplift-url")
         withClue("must append continueUrl param from request target") {
@@ -112,7 +116,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
           Future.successful(None)
         )
 
-        val ex = intercept[IllegalStateException](await(sut.authorised(predicate, request, testBlock)))
+        val ex = intercept[IllegalStateException](await(sut.authorised(predicate, request, testBlock(_))))
         ex.getMessage mustBe "internalId is required"
       }
     }

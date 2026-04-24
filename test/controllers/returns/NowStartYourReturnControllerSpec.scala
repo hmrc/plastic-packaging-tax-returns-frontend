@@ -23,9 +23,10 @@ import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -60,7 +61,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     super.beforeEach()
     reset(view, request, returnsNavigator)
 
-    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenAnswer(Some(aTaxObligation))
+    when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenReturn(Some(aTaxObligation))
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
@@ -92,7 +93,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
       val nextPage = Call(GET, "foo")
 
       when(returnsNavigator.firstPageOfReturnSection).thenReturn(nextPage)
-      when(messages.apply(any[String], any, any, any)).thenReturn("date")
+      when(messages.apply(any[String], any)).thenReturn("date")
       when(request.userAnswers.getOrFail(eqTo(WhatDoYouWantToDoPage))(any, any)).thenReturn(true)
 
       await(sut.onPageLoad()(request))
@@ -101,7 +102,7 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     }
 
     "redirect" in {
-      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenAnswer(None)
+      when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenReturn(None)
 
       val result = sut.onPageLoad()(request)
 

@@ -26,11 +26,11 @@ import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.requests.DataRequest
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures._
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.amends._
 import play.api.i18n.MessagesApi
@@ -39,8 +39,8 @@ import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import services.AmendReturnAnswerComparisonService
 import support.AmendExportedData
 import util.EdgeOfSystem

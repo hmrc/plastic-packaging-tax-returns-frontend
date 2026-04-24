@@ -22,7 +22,7 @@ import connectors.CacheConnector
 import forms.amends.AmendRecycledPlasticPackagingFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.amends.AmendRecycledPlasticPackagingPage
 import play.api.inject.bind
@@ -46,7 +46,7 @@ class AmendRecycledPlasticPackagingControllerSpec extends SpecBase with MockitoS
 
   val validAnswer: Long = 0L
 
-  lazy val amendRecycledPlasticPackagingRoute =
+  lazy val amendRecycledPlasticPackagingRoute: String =
     routes.AmendRecycledPlasticPackagingController.onPageLoad().url
 
   "AmendRecycledPlasticPackaging Controller" - {

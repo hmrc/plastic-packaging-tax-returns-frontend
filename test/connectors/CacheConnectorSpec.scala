@@ -20,28 +20,30 @@ import base.utils.ConnectorISpec
 import config.FrontendAppConfig
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito
-import org.mockito.MockitoSugar.{atLeastOnce, verify, when}
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.scalatest.concurrent.ScalaFutures
-import uk.gov.hmrc.http.HttpClient
+import play.api.http.Status.OK
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
 
-  val mockConfig = mock[FrontendAppConfig]
-  val connector  = new CacheConnector(config = mockConfig, httpClient = mock[HttpClient])
-  val dateVal    = LocalDateTime.now
+  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val connector  = new CacheConnector(config = mockConfig, httpClient = mock[HttpClientV2])
+  val dateVal: LocalDateTime = LocalDateTime.now
   val answers    = UserAnswers("id")
+  val requestBuilder: RequestBuilder = mock[RequestBuilder]
 
   "GET" must {
     "successfully fetch cache" in {
 
-      when {
-        connector.httpClient.GET[Option[UserAnswers]](any(), any(), any())(any(), any(), any())
-      } thenReturn Future.successful(Some(answers))
+      when(connector.httpClient.get(any())(any())).thenReturn(requestBuilder)
+      when(requestBuilder.execute[Option[UserAnswers]](any(), any())).thenReturn(Future.successful(Some(answers)))
+      when(mockConfig.pptCacheGetUrl(any())).thenReturn(s"http://localhost/test-url")
 
       whenReady(connector.get("someref")) {
         _ mustBe Some(answers)
@@ -53,12 +55,16 @@ class CacheConnectorSpec extends ConnectorISpec with ScalaFutures {
     "successfully write cache" in {
       Mockito.reset(connector.httpClient)
 
-      val putUrl = s"/cache/set/someref"
+      val putUrl = s"http://localhost/cache/set/someref"
 
-      when(mockConfig.pptCacheSetUrl(any())).thenReturn("/cache/set/someref")
+      when(connector.httpClient.post(any())(any())).thenReturn(requestBuilder)
+      when(requestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(HttpResponse(OK)))
+      when(requestBuilder.setHeader(any())).thenReturn(requestBuilder)
+      when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+      when(mockConfig.pptCacheSetUrl(any())).thenReturn("http://localhost/cache/set/someref")
 
       connector.set("someref", answers)
-      verify(connector.httpClient, atLeastOnce).POST(eqTo(putUrl), eqTo(answers), any())(any(), any(), any(), any())
+      verify(connector.httpClient, atLeastOnce).post(url"$putUrl")
     }
   }
 }

@@ -26,10 +26,10 @@ import models.requests.DataRequest
 import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsPath
@@ -49,8 +49,7 @@ class ConfirmPackagingCreditControllerSpec
     extends PlaySpec
     with MockitoSugar
     with JourneyActionAnswer
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val creditBalance = CreditBalance(10, 5, 500, true, Map("year-key" -> TaxablePlastic(1, 2, 0.30)))
   private val answer        = mock[UserAnswers]
@@ -79,6 +78,8 @@ class ConfirmPackagingCreditControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
+    reset(creditSummaryListFactory, returnsJourneyNavigator)
 
     when(request.userAnswers).thenReturn(answer)
     when(request.pptReference).thenReturn("123")

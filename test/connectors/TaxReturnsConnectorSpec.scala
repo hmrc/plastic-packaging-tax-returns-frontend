@@ -17,30 +17,32 @@
 package connectors
 
 import com.codahale.metrics.Timer
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector.StatusCode
-import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, IdDetails, ReturnDisplayApi, ReturnDisplayDetails}
+import models.returns._
 import org.apache.http.HttpException
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.OK
-import play.api.libs.json.{JsObject, JsValue}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
+import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   private val frontendAppConfig = mock[FrontendAppConfig]
-  private val metrics2          = mock[Metrics](ReturnsDeepStubs)
+  private val metrics2          = mock[Metrics](RETURNS_DEEP_STUBS)
   private val timerContext      = mock[Timer.Context]
-  private val httpClient2       = mock[HttpClient]
+  private val httpClient2       = mock[HttpClientV2]
+  private val requestBuilder    = mock[RequestBuilder]
 
   protected implicit val ec2: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   protected implicit val hc2: HeaderCarrier    = mock[HeaderCarrier]
@@ -58,15 +60,31 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     )
   }
 
+  val validJsonResponse: JsObject = Json.obj(
+    "chargeDetails" -> Json.obj(
+      "chargeReference" -> "PANTESTPAN"
+    )
+  )
+
+  val returnSubmissionURL: String = url"http://localhost/return-submission-url".toString
+  val returnsCalculationUrl: String = url"http://localhost/return-calculate".toString
+  val returnAmendUrl: String = url"http://localhost/return-amend-url".toString
+
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(httpClient2, frontendAppConfig, metrics2, timerContext)
-    when(frontendAppConfig.pptReturnSubmissionUrl(any)) thenReturn "return-submission-url"
+    reset(httpClient2, frontendAppConfig, metrics2, timerContext, requestBuilder)
+    when(frontendAppConfig.pptReturnSubmissionUrl(any)) thenReturn returnSubmissionURL
+    when(frontendAppConfig.pptReturnsCalculationUrl(any)) thenReturn returnsCalculationUrl
+    when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn returnAmendUrl
     when(metrics2.defaultRegistry.timer(any).time()) thenReturn timerContext
-    when(httpClient2.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(JsObject.empty)
-    when(httpClient2.POSTEmpty[Any](any, any)(any, any, any)) thenReturn Future.successful(
-      HttpResponse(OK, JsObject.empty.toString())
-    )
+    when(httpClient2.get(any[URL])(any)).thenReturn(requestBuilder)
+    when(httpClient2.post(any[URL])(any)).thenReturn(requestBuilder)
+    when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+
+    when(requestBuilder.execute[SubmittedReturn](
+      any[HttpReads[SubmittedReturn]],
+      any[ExecutionContext]
+    )).thenReturn(Future.successful(mock[SubmittedReturn]))
   }
 
   "Tax Returns Connector" should {
@@ -78,14 +96,13 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
         verify(timerContext).stop()
       }
       "submitting a return" in {
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
         await(connector.submit("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
       }
       "amending a return" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
-          mock[HttpResponse]
-        )
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
         await(connector.amend("id"))
         verify(metrics2.defaultRegistry).timer("ppt.returns.submit.timer")
         verify(timerContext).stop()
@@ -93,49 +110,45 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     }
 
     "get correctly" in {
-      when(httpClient2.GET[ReturnDisplayApi](any, any, any)(any, any, any)) thenReturn Future.successful(
-        aReturnDisplayApi
-      )
+      when(requestBuilder.execute[ReturnDisplayApi](any, any)).thenReturn(Future.successful(aReturnDisplayApi))
       await(connector.get("ppt-reference", "period-key")) mustBe aReturnDisplayApi
       verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
-      verify(httpClient2).GET(meq("return-submission-url/period-key"), any, any)(any, any, any)
+      verify(httpClient2).get(meq(url"$returnSubmissionURL/period-key"))(any)
     }
 
     "submit" when {
       "in all cases" in {
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, json = validJsonResponse, headers = Map.empty)))
         await(connector.submit("ppt-reference"))
         verify(frontendAppConfig).pptReturnSubmissionUrl("ppt-reference")
-        verify(httpClient2).POSTEmpty(meq("return-submission-url"), any)(any, any, any)
+        verify(httpClient2).post(meq(url"$returnSubmissionURL"))(any)
       }
 
       "there is a charge reference" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
           HttpResponse(OK, """{"chargeDetails": {"chargeReference": "PANTESTPAN"}}""")
-        )
+        ))
         await(connector.submit("ppt-reference")) mustBe Right(Some("PANTESTPAN"))
       }
 
       "there is no charge reference" in {
-        when(httpClient2.GET[HttpResponse](any, any, any)(any, any, any)) thenReturn Future.successful(
-          HttpResponse(OK, """{"chargeDetails": {}}""")
-        )
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(HttpResponse(OK, """{"chargeDetails": {}}""")))
         await(connector.submit("ppt-reference")) mustBe Right(None)
       }
 
       "the return obligation is already fulfilled" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
           HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
-        )
+        ))
         await(connector.submit("ppt-reference")) mustBe Left(AlreadySubmitted)
       }
 
       "Something goes wrong" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.failed(
           new HttpException(
             "exception-message",
             new Exception("Something went wrong.")
-          )
-        )
+          )))
         intercept[DownstreamServiceError](await(connector.submit("ppt-reference")))
       }
     }
@@ -143,60 +156,64 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
     "Amend" when {
 
       "in all cases" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
+          HttpResponse(StatusCode.RETURN_ALREADY_SUBMITTED, """{"returnAlreadyReceived": "12A3"}""")
+        ))
+
+        when(requestBuilder.execute[HttpResponse]).thenReturn(Future.successful(
           mock[HttpResponse]
-        )
-        when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn "return-amend-url"
+        ))
+        when(frontendAppConfig.pptReturnAmendUrl(any)) thenReturn returnAmendUrl
         await(connector.amend("ppt-reference"))
         verify(frontendAppConfig).pptReturnAmendUrl("ppt-reference")
-        verify(httpClient2).POSTEmpty(meq("return-amend-url"), any)(any, any, any)
+        verify(httpClient2).post(meq(url"$returnAmendUrl"))(any)
       }
 
       "there is a charge reference" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.successful(
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(Future.successful(
           HttpResponse(200, """{"chargeDetails": {"chargeReference": "SOMEREF"}}""")
-        )
+        ))
         await(connector.amend("ppt-reference")) mustBe Some("SOMEREF")
       }
 
       "there is no charge reference" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn
-          Future.successful(HttpResponse(200, """{"chargeDetails": null}"""))
+        when(requestBuilder.execute[HttpResponse](any, any)).thenReturn(
+          Future.successful(HttpResponse(200, """{"chargeDetails": null}""")))
         await(connector.amend("ppt-reference")) mustBe None
       }
     }
 
     "throw" when {
       "get request fails" in {
-        when(httpClient2.GET[JsValue](any, any, any)(any, any, any)) thenReturn Future.failed(
+        when(requestBuilder.execute[JsValue](any, any)).thenReturn(Future.failed(
           UpstreamErrorResponse(
             message = "exception-message",
             statusCode = 500,
             reportAs = 500
           )
-        )
+        ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference", "period-key")))
       }
 
       "submit response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[JsValue](any, any)(any, any, any)) thenReturn Future.failed(
+        when(requestBuilder.execute[JsValue](any, any)).thenReturn(Future.failed(
           UpstreamErrorResponse(
             message = "exception-message",
             statusCode = 500,
             reportAs = 500
           )
-        )
+        ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.submit("ppt-reference")))
       }
 
       "amend response cannot be parsed" in {
-        when(httpClient2.POSTEmpty[HttpResponse](any, any)(any, any, any)) thenReturn Future.failed(
+        when(requestBuilder.execute[HttpResponse]).thenReturn(Future.failed(
           UpstreamErrorResponse(
             message = "exception-message",
             statusCode = 500,
             reportAs = 500
           )
-        )
+        ))
         a[DownstreamServiceError] mustBe thrownBy(await(connector.amend("ppt-reference")))
       }
     }
@@ -205,18 +222,18 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   "ddInProgress" should {
     "call the backend" when {
       "Ok" in {
-        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptDDInProgress")
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("http://localhost/pptDDInProgress")
         val mockResult = mock[DDInProgressApi]
-        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+        when(requestBuilder.execute[DDInProgressApi](any, any)).thenReturn(Future.successful(mockResult))
 
         val result = await(connector.ddInProgress("ppt-ref", "periodKey"))
 
         result mustBe mockResult
       }
       "error" in {
-        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptDDInProgress")
-        object TestException extends Exception
-        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("http://localhost/pptDDInProgress")
+        object TestException extends RuntimeException
+        when(requestBuilder.execute[DDInProgressApi](any, any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(connector.ddInProgress("ppt-ref", "periodKey")))
       }
@@ -226,18 +243,18 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   "getCalculationAmends" should {
     "call the backend" when {
       "Ok" in {
-        when(frontendAppConfig.pptAmendsCalculationUrl(any)).thenReturn("/getCalculationAmends")
+        when(frontendAppConfig.pptAmendsCalculationUrl(any)).thenReturn(returnsCalculationUrl)
         val mockResult = mock[AmendsCalculations]
-        when(httpClient2.GET[AmendsCalculations](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+        when(requestBuilder.execute[AmendsCalculations](any, any)).thenReturn(Future.successful(mockResult))
 
         val result = await(connector.getCalculationAmends("ppt-ref"))
 
         result mustBe Right(mockResult)
       }
       "error" in {
-        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/getCalculationAmends")
-        object TestException extends Exception("boom")
-        when(httpClient2.GET[DDInProgressApi](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+        when(frontendAppConfig.pptAmendsCalculationUrl(any)).thenReturn(returnsCalculationUrl)
+        object TestException extends RuntimeException("boom")
+        when(requestBuilder.execute[AmendsCalculations](any, any)).thenReturn(Future.failed(TestException))
 
         val result = await(connector.getCalculationAmends("ppt-ref"))
 
@@ -248,18 +265,18 @@ class TaxReturnsConnectorSpec extends AnyWordSpec with BeforeAndAfterEach {
   "getCalculationReturns" should {
     "call the backend" when {
       "Ok" in {
-        when(frontendAppConfig.pptReturnsCalculationUrl(any)).thenReturn("/pptReturnsCalculationUrl")
+        when(frontendAppConfig.pptReturnsCalculationUrl(any)).thenReturn(returnsCalculationUrl)
         val mockResult = mock[Calculations]
-        when(httpClient2.GET[Calculations](any, any, any)(any, any, any)) thenReturn Future.successful(mockResult)
+        when(requestBuilder.execute[Calculations](any, any)).thenReturn(Future.successful(mockResult))
 
         val result = await(connector.getCalculationReturns("ppt-ref"))
 
         result mustBe Right(mockResult)
       }
       "error" in {
-        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn("/pptReturnsCalculationUrl")
-        object TestException extends Exception("boom")
-        when(httpClient2.GET[Calculations](any, any, any)(any, any, any)) thenReturn Future.failed(TestException)
+        when(frontendAppConfig.pptDDInProgress(any, any)).thenReturn(returnsCalculationUrl)
+        object TestException extends RuntimeException("boom")
+        when(requestBuilder.execute[Calculations](any, any)).thenReturn(Future.failed(TestException))
 
         val result = await(connector.getCalculationReturns("ppt-ref"))
 

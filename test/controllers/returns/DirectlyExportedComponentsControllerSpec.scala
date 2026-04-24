@@ -26,8 +26,8 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar

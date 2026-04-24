@@ -16,18 +16,17 @@
 
 package controllers.returns
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -35,7 +34,7 @@ import org.scalatestplus.play.PlaySpec
 import pages.returns._
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
+import play.api.mvc.{AnyContent, Call, RequestHeader}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import queries.Gettable
@@ -68,17 +67,6 @@ class PlasticExportedByAnotherBusinessControllerSpec extends PlaySpec with Mocki
     stubMessagesControllerComponents(),
     view
   )
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

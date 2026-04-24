@@ -23,7 +23,9 @@ import models.returns.{AmendsCalculations, Calculations, DDInProgressApi, Submit
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.JsString
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpReadsInstances, HttpResponse}
+import play.api.libs.ws.EmptyBody
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReadsInstances, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +34,7 @@ case object AlreadySubmitted
 
 @Singleton
 class TaxReturnsConnector @Inject() (
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   frontendAppConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
@@ -43,7 +45,7 @@ class TaxReturnsConnector @Inject() (
   def get(userId: String, periodKey: String)(implicit hc: HeaderCarrier): Future[SubmittedReturn] = {
     val url   = frontendAppConfig.pptReturnSubmissionUrl(userId) + "/" + periodKey
     val timer = metrics.defaultRegistry.timer("ppt.returns.get.timer").time()
-    httpClient.GET[SubmittedReturn](url)
+    httpClient.get(url"$url").execute[SubmittedReturn]
       .andThen { case _ => timer.stop() }
       .recover { case ex: Exception =>
         throw DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex)
@@ -51,12 +53,14 @@ class TaxReturnsConnector @Inject() (
   }
 
   def ddInProgress(pptReference: String, periodKey: String)(implicit hc: HeaderCarrier): Future[DDInProgressApi] =
-    httpClient.GET[DDInProgressApi](frontendAppConfig.pptDDInProgress(pptReference, periodKey))
+    httpClient.get(url"${frontendAppConfig.pptDDInProgress(pptReference, periodKey)}").execute[DDInProgressApi]
 
   def getCalculationAmends(pptReference: String)(implicit
     hc: HeaderCarrier
   ): Future[Either[ServiceError, AmendsCalculations]] =
-    httpClient.GET[AmendsCalculations](frontendAppConfig.pptAmendsCalculationUrl(pptReference)).map(Right.apply)
+    httpClient.get(url"${frontendAppConfig.pptAmendsCalculationUrl(pptReference)}")
+      .execute[AmendsCalculations]
+      .map(Right.apply)
       .recover { case ex: Exception =>
         Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
       }
@@ -64,7 +68,9 @@ class TaxReturnsConnector @Inject() (
   def getCalculationReturns(pptReference: String)(implicit
     hc: HeaderCarrier
   ): Future[Either[ServiceError, Calculations]] =
-    httpClient.GET[Calculations](frontendAppConfig.pptReturnsCalculationUrl(pptReference)).map(Right.apply)
+    httpClient.get(url"${frontendAppConfig.pptReturnsCalculationUrl(pptReference)}")
+      .execute[Calculations]
+      .map(Right.apply)
       .recover { case ex: Exception =>
         Left(DownstreamServiceError(s"Failed to get calculations, error: ${ex.getMessage}", ex))
       }
@@ -73,8 +79,9 @@ class TaxReturnsConnector @Inject() (
     pptReference: String
   )(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
-
-    httpClient.POSTEmpty[HttpResponse](frontendAppConfig.pptReturnSubmissionUrl(pptReference))
+    httpClient.post(url"${frontendAppConfig.pptReturnSubmissionUrl(pptReference)}")
+      .withBody(EmptyBody)
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map { response =>
         response.status match {
@@ -96,8 +103,9 @@ class TaxReturnsConnector @Inject() (
 
   def amend(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
-
-    httpClient.POSTEmpty[HttpResponse](frontendAppConfig.pptReturnAmendUrl(pptReference))
+    httpClient.post(url"${frontendAppConfig.pptReturnAmendUrl(pptReference)}")
+      .withBody(EmptyBody)
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map { response =>
         val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)

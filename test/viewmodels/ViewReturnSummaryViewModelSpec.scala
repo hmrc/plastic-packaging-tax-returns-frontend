@@ -17,15 +17,16 @@
 package viewmodels
 
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
-import org.mockito.MockitoSugar.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.when
+import org.mockito.Mockito.mock
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import viewmodels.checkAnswers.{Field, ViewReturnSummaryViewModel}
 
 class ViewReturnSummaryViewModelSpec extends PlaySpec {
 
-  val mockMessages: Messages = mock[Messages]
+  val mockMessages: Messages = MockitoSugar.mock[Messages]
   when(mockMessages.apply("month.7")).thenReturn("July")
 
   private val returnDisplayChargeDetails = ReturnDisplayChargeDetails(

@@ -17,8 +17,8 @@
 package viewmodels
 
 import models.{CreditBalance, TaxablePlastic}
-import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 
 class CreditBalanceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {

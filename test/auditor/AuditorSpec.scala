@@ -20,7 +20,7 @@ import audit.Auditor
 import audit.returns.{AmendStarted, ReturnStarted}
 import base.utils.ConnectorISpec
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar.{times, verify}
+import org.mockito.Mockito.{times, verify}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -31,7 +31,7 @@ class AuditorSpec extends ConnectorISpec with ScalaFutures {
 
   val auditConnector: AuditConnector = mock[AuditConnector]
   val auditor: Auditor               = new Auditor(auditConnector)
-  val processingDate                 = ZonedDateTime.now()
+  val processingDate: ZonedDateTime = ZonedDateTime.now()
   val fromDate: ZonedDateTime        = ZonedDateTime.now()
   val toDate: ZonedDateTime          = ZonedDateTime.now.plusDays(1)
   val pptReference: String           = "XMPPT0000000123"

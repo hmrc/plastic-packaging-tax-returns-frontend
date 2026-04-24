@@ -23,8 +23,8 @@ import controllers.returns.routes
 import models.obligations.PPTObligations
 import models.subscription.LegalEntityDetails
 import org.jsoup.nodes.Element
-import org.mockito.MockitoSugar.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -53,14 +53,14 @@ class IndexPageViewSpec extends ViewSpecBase with ViewAssertions with ViewMatche
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].toInstance(appConfig),
-      bind[SessionRepository].toInstance(mock[SessionRepository])
+      bind[SessionRepository].toInstance(MockitoSugar.mock[SessionRepository])
     ).build()
 
-  lazy val homePage                    = inject[IndexView]
-  private val appConfig                = mock[FrontendAppConfig]
-  private val singleEntitySubscription = mock[LegalEntityDetails]
-  private val groupSubscription        = mock[LegalEntityDetails]
-  private val partnershipSubscription  = mock[LegalEntityDetails]
+  lazy val homePage: IndexView = inject[IndexView]
+  private val appConfig                = MockitoSugar.mock[FrontendAppConfig]
+  private val singleEntitySubscription = MockitoSugar.mock[LegalEntityDetails]
+  private val groupSubscription        = MockitoSugar.mock[LegalEntityDetails]
+  private val partnershipSubscription  = MockitoSugar.mock[LegalEntityDetails]
   val completeReturnUrl                = "/complete-return-url"
   val pptFinancials                    = Some("You owe £100")
 

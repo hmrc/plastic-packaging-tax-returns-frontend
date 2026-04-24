@@ -19,9 +19,9 @@ package services
 import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.when
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.amends.{AmendDirectExportPlasticPackagingPage, AmendExportedByAnotherBusinessPage}
@@ -31,7 +31,7 @@ class ExportedPlasticAnswerSpec extends PlaySpec {
 
   private val answer = createUserAnswer
 
-  private val nonExportedAmountHelper = mock[NonExportedAmountHelper]
+  private val nonExportedAmountHelper = MockitoSugar.mock[NonExportedAmountHelper]
 
   "resetExportedByYouIfAllExportedPlastic" should {
     "reset userAnswer when exported amount is greater that total plastic" in {

@@ -17,7 +17,7 @@
 package test.repositories
 
 import config.FrontendAppConfig
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalatest.{Assertion, OptionValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}

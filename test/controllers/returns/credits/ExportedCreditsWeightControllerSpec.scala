@@ -29,11 +29,10 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.Answers
+import org.mockito.{Answers, ArgumentCaptor}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.mockito.captor.ArgCaptor
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -122,12 +121,13 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "fill the weight in the form" in {
       await(sut.onPageLoad("year-key", NormalMode)(request))
-      val func = ArgCaptor[CreditsAnswer => Option[Long]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(form), func)(any)
+      val func = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Long]])
+      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(form), func.capture())(any)
 
       withClue("gets weight or None for displaying") {
         val creditsAnswer = mock[CreditsAnswer]
-        func.value(creditsAnswer)
+        val capturedFunc = func.getValue
+        capturedFunc(creditsAnswer)
         verify(creditsAnswer).weightForForm
       }
     }

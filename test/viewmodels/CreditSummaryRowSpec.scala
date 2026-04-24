@@ -17,16 +17,16 @@
 package viewmodels
 
 import models.returns.credits.CreditSummaryRow
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, TableRow, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, HtmlContent}
 
-class CreditSummaryRowSpec extends PlaySpec with MockitoSugar with ResetMocksAfterEachTest with BeforeAndAfterEach {
+class CreditSummaryRowSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   val createAction = mock[Seq[ActionItem] => Html]
 
@@ -39,7 +39,7 @@ class CreditSummaryRowSpec extends PlaySpec with MockitoSugar with ResetMocksAft
     "render a two column version with no actions" in {
       val creditSummaryRow = CreditSummaryRow("a-label", "a-value", actions = Seq())
       val result           = creditSummaryRow.createContent(createAction)
-      verifyZeroInteractions(createAction)
+      verifyNoInteractions(createAction)
       result mustBe Seq(
         TableRow(Text("a-label"), Some("text")),
         TableRow(Text("a-value"), Some("text"), attributes = Map("style" -> "text-align:right;")),

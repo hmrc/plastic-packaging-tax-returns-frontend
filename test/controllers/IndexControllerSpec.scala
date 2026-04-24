@@ -28,8 +28,8 @@ import models.returns.TaxReturnObligation
 import models.subscription.LegalEntityDetails
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.refEq
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec

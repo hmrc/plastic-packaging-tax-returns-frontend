@@ -16,9 +16,9 @@
 
 package viewmodels.checkYourAnswer.returns.credits
 
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, Value}
@@ -31,8 +31,8 @@ class CreditTaxRateSummarySpec extends PlaySpec {
 
   "summary" should {
     "return a row for the tax rate" in {
-      when(messages.apply(anyString())).thenReturn("value")
-      when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.hiddenText"))).thenReturn("hidden text")
+      when(messages.apply(anyString(), any[Any])).thenReturn("value")
+      when(messages.apply("confirmPackagingCredit.hiddenText")).thenReturn("hidden text")
 
       CreditsTaxRateSummary(0.30)(messages) mustBe SummaryListRow(
         key = Key(Text("value"), "govuk-!-width-one-half"),

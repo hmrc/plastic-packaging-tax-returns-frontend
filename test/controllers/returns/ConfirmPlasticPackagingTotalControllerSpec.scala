@@ -24,8 +24,8 @@ import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -67,7 +67,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
     nonExportedAmountHelper
   )
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(journeyAction, view, cacheConnector, dataRequest, messages, navigator)

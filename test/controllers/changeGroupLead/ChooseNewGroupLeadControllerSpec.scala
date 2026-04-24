@@ -16,10 +16,10 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.byConvertingFunctionArgumentsToFutureAction
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode.{CheckMode, NormalMode}
 import models.requests.DataRequest
@@ -27,9 +27,10 @@ import models.subscription.{GroupMembers, Member}
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
@@ -74,7 +75,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
   private val groupMembers = GroupMembers(Seq())
 
-  object TestException extends Exception("test")
+  object TestException extends RuntimeException("test")
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -105,12 +106,6 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     when(navigator.selectNewGroupRep(any)) thenReturn Call("", "some-url")
   }
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 

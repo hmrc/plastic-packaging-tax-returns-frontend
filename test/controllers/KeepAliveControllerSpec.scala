@@ -20,7 +20,7 @@ import base.{FakeIdentifierActionWithEnrolment, SpecBase}
 import connectors.CacheConnector
 import controllers.actions.IdentifierAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{atLeastOnce, never, verify, when}
+import org.mockito.Mockito.{atLeastOnce, never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

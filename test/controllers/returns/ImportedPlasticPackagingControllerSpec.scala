@@ -26,8 +26,7 @@ import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{eq => eqq}
-import org.mockito.MockitoSugar.when
-import org.mockito.MockitoSugar.{reset, verify}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.returns.ImportedPlasticPackagingPage
