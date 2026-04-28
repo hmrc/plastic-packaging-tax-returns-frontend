@@ -19,12 +19,12 @@ package connectors
 import com.codahale.metrics.Timer
 import config.FrontendAppConfig
 import connectors.TaxReturnsConnector.StatusCode
-import models.returns._
+import models.returns.*
 import org.apache.http.HttpException
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, thrownBy}
+import org.scalatest.matchers.must.Matchers.{a, mustBe, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.OK

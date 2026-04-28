@@ -46,7 +46,7 @@ class IdentifyAndCheckSubscriptionSpec extends PlaySpec {
       val resultingAction = mock[ActionBuilder[IdentifiedRequest, AnyContent]]
       when(mockAuthAction.andThen(mockSubscriptionFilter)).thenReturn(resultingAction)
       val request = FakeRequest()
-      val block   = { _: IdentifiedRequest[_] => Future.successful(Ok("test")) }
+      val block   = { (_: IdentifiedRequest[_]) => Future.successful(Ok("test")) }
 
       Try(sut.invokeBlock(request, block))
 

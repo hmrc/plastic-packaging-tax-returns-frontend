@@ -48,7 +48,7 @@
                             }
 
 @submitContent = {@if(calculations.amend.isSubmittable) {
-                        @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+                        @formHelper(action = controllers.amends.routes.CheckYourAnswersController.onSubmit(), Symbol("autoComplete") -> "off") {
                             @sectionH2Heading(message = messages("AmendsCheckYourAnswers.nowSend.heading"), id = Some("now-send-heading"))
                             @paragraphBody(
                                 message = messages("AmendsCheckYourAnswers.nowSend.para"),
@@ -143,6 +143,6 @@
     @paragraph(
         content = link(id = "cancel-link",
             text = messages("AmendsCheckYourAnswers.cancel.link.text"),
-            href = controllers.amends.routes.CancelAmendController.onPageLoad.url),
+            href = controllers.amends.routes.CancelAmendController.onPageLoad().url),
         classes = "govuk-body govuk-!-margin-bottom-6")
 }

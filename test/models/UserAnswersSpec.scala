@@ -130,7 +130,7 @@ class UserAnswersSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar
 
     "complain if an answer cannot be read as given type" in {
       the[Exception] thrownBy filledUserAnswers.getOrFail[Long](JsPath \ "cheese" \ "brie") must have message
-        "/cheese/brie in user answers cannot be read as type Long"
+        "/cheese/brie in user answers cannot be read as type long"
     }
   }
 

@@ -16,11 +16,12 @@
 
 package controllers.returns.credits
 
-import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -30,7 +31,7 @@ import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -82,15 +83,21 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec with MockitoSugar wi
 
     reset(view, navigator, request)
 
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(formProvider.apply()) thenReturn form
 
     when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)) thenReturn form
+    when(
+      request.userAnswers.fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(form),
+        argThat((_: Option[Long] => Any) => true)
+      )(any)
+    ) thenReturn form
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
-    when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
+    when(updatedUserAnswers.save(anyFunc[SaveUserAnswerFunc])(any)) thenReturn Future.successful(updatedUserAnswers)
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
     when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
@@ -108,7 +115,7 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec with MockitoSugar wi
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "show web page with correct submit url" in {
@@ -124,7 +131,11 @@ class ConvertedCreditsWeightControllerSpec extends PlaySpec with MockitoSugar wi
       await {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(form),
+        argThat((_: Option[Long] => Any) => true)
+      )(any)
     }
 
     "redirect if obligation is missing" in {

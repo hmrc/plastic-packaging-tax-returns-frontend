@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("converted-credits-weight.heading-title"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(
             sectionHeading = Some(messages("credits.caption", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to))),

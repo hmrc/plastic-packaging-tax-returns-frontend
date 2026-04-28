@@ -104,7 +104,7 @@ function createDropDown(name, options) {
 function createAutoCompleteCheckbox() {
 
     let chkBox = document.createElement('input')
-    chkBox.id='autoComplete'
+    chkBox.id=Symbol("autoComplete")'
     chkBox.type = "checkbox"
     chkBox.checked = getAutocomplete()
 

@@ -36,7 +36,7 @@
 
 @layout(pageTitle = title(form, messages("select-new-representative.title"), Some(messages("account.title.tail"))), showBackLink = true) {
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "radio-member-0")))
@@ -59,7 +59,7 @@
         <p>
         @link(id = "add-new-member-to-group",
             text = messages("select-new-representative.link"),
-            href = appConfig.addMemberToGroupUrl)
+            href = appConfig.addMemberToGroupUrl())
         </p>
 
 

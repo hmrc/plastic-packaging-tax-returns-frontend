@@ -23,7 +23,7 @@ import org.mockito.Answers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, theSameInstanceAs, thrownBy}
+import org.scalatest.matchers.must.Matchers.{a, mustBe, theSameInstanceAs, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Logger

@@ -48,9 +48,9 @@ class ReturnsProcessingRepositorySpec
   private val processingEntry = ProcessingEntry("1234", ProcessingStatus.Complete, Some("Completed successfully"), instant)
 
   private val mockAppConfig = mock[FrontendAppConfig]
-  when(mockAppConfig.cacheTtl) thenReturn 1
+  when(mockAppConfig.cacheTtl) thenReturn 1L
 
-  protected override val repository = new ReturnsProcessingRepository(
+  protected override val repository: ReturnsProcessingRepository = new ReturnsProcessingRepository(
     mongoComponent = mongoComponent,
     appConfig = mockAppConfig
   )
@@ -58,7 +58,7 @@ class ReturnsProcessingRepositorySpec
   ".set" - {
 
     "must set the last updated time on the supplied processing entry to `now`, and save it" in {
-      val setResult     = repository.set(processingEntry).futureValue
+      val setResult: Unit = repository.set(processingEntry).futureValue
       val updatedRecord = find(Filters.equal("_id", processingEntry.id)).futureValue.headOption.value
 
       verifyProcessingEntryResult(updatedRecord, processingEntry)

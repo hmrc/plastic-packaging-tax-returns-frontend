@@ -49,7 +49,7 @@
 }
 @layout(pageTitle = title(form, messages(heading, amount.asKg), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @yesNoLayout(Some(messages("nonExportedHumanMedicinesPlasticPackaging.caption")),
             messages(heading,  amount.asKg),

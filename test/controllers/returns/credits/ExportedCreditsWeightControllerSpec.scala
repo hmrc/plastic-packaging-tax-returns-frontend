@@ -21,6 +21,7 @@ import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ExportedCreditsWeightFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -30,8 +31,7 @@ import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.{Answers, ArgumentCaptor}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -85,8 +85,8 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     when(formProvider.apply()).thenReturn(form)
     when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
     val aDate = LocalDate.of(2000, 1, 2)
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(
@@ -111,7 +111,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "use the journey action" in {
       sut.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "return 200" in {
@@ -134,7 +134,9 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
     "return a view" in {
       val boundForm = Form("value" -> longNumber).fill(10L)
-      when(request.userAnswers.fillWithFunc(any, any[Form[Long]], any)(any)) thenReturn boundForm
+      when(
+        request.userAnswers.fillWithFunc(any, any[Form[Long]], argThat((_: Option[Long] => Any) => true))(any)
+      ) thenReturn boundForm
       await(sut.onPageLoad("year-key", NormalMode)(request))
       verify(view).apply(eqTo(boundForm), eqTo("year-key"), eqTo(NormalMode), eqTo(creditRangeOption))(any, any)
     }
@@ -156,9 +158,9 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
       sut.onSubmit("year-key", NormalMode)(FakeRequest())
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "get the weight from the form" in {
@@ -178,15 +180,15 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
       await(sut.onSubmit("year-key", NormalMode).skippingJourneyAction(request))
 
       withClue("save weight to user Answer") {
-        verify(userAnswers).save(meq(saveFunction))(any)
+        verify(userAnswers).save(eqTo(saveFunction))(any)
       }
 
       withClue("to the correct year") {
-        verify(request.userAnswers).setOrFail(meq(ExportedCreditsPage("year-key")), any, any)(any)
+        verify(request.userAnswers).setOrFail(eqTo(ExportedCreditsPage("year-key")), any, any)(any)
       }
 
       withClue("save weight to cache") {
-        verify(cacheConnector).saveUserAnswerFunc(meq("123"))(any)
+        verify(cacheConnector).saveUserAnswerFunc(eqTo("123"))(any)
       }
     }
 
@@ -211,7 +213,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
 
         withClue("pass an error to the view") {
           contentAsString(result) mustBe "correct view"
-          verify(view).apply(meq(firmWithError), meq("year-key"), meq(NormalMode), meq(creditRangeOption))(any, any)
+          verify(view).apply(eqTo(firmWithError), eqTo("year-key"), eqTo(NormalMode), eqTo(creditRangeOption))(any, any)
         }
       }
     }
@@ -222,7 +224,7 @@ class ExportedCreditsWeightControllerSpec extends PlaySpec with JourneyActionAns
     when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber).fill(10L))
     when(request.userAnswers.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswers)
     when(request.userAnswers.setOrFail(any[Settable[CreditsAnswer]], any, any)(any)).thenReturn(userAnswers)
-    when(userAnswers.save(any)(any)).thenReturn(Future.successful(mock[UserAnswers]))
+    when(userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(mock[UserAnswers]))
     when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
     when(request.pptReference).thenReturn("123")
     when(navigator.exportedCreditsWeight(any, any, any)).thenReturn(Call(GET, "foo"))

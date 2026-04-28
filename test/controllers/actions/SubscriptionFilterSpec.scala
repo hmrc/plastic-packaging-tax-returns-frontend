@@ -51,7 +51,7 @@ class SubscriptionFilterSpec extends PlaySpec with BeforeAndAfterEach {
   private val request    = mock[IdentifiedRequest[AnyContent]]
   private val eisFailure = mock[EisFailure]
   private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] =
-    Messaging.messagingNatureOfThrowable
+    (e: DownstreamServiceError) => e.getMessage
 
   object RandoError extends RuntimeException
 

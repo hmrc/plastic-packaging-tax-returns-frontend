@@ -289,7 +289,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
     "in normal mode" in {
       navigator.creditClaimedList(NormalMode, isAddingAnotherYear = false, userAnswers) mustBe
-        returnsRoutes.NowStartYourReturnController.onPageLoad
+        returnsRoutes.NowStartYourReturnController.onPageLoad()
       navigator.creditClaimedList(NormalMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
     }
@@ -297,7 +297,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "in check mode without returns section completed" in {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(any)) thenReturn false
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = false, userAnswers) mustBe
-        returnsRoutes.NowStartYourReturnController.onPageLoad
+        returnsRoutes.NowStartYourReturnController.onPageLoad()
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
     }
@@ -315,7 +315,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         CheckMode,
         false,
         userAnswers
-      ) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
+      ) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad()
     }
 
     "redirect to CYA page in CheckMode Mode and have done Returns questions" in {

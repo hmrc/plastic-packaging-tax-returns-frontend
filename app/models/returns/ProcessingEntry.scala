@@ -68,6 +68,6 @@ object ProcessingEntry {
         (JsPath \ "status").write[ProcessingStatus](ProcessingStatus.format) and
         (JsPath \ "message").writeNullable[String] and
         (JsPath \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantFormat)
-    )(unlift(ProcessingEntry.unapply))
+    )(o => Tuple.fromProductTyped(o))
   )
 }

@@ -67,7 +67,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
           Future.successful(Some("internalId"))
         )
 
-        await(sut.authorised(predicate, request, testBlock(_)))
+        await(sut.authorised(predicate, request, (user: AuthedUser[Any]) => testBlock(user)))
 
         verify(testBlock).apply(any)
         verify(authConnector).authorise(refEq(predicate), refEq(internalId))(any, any)
@@ -81,7 +81,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
         )
         when(appConfig.loginUrl).thenReturn("/login-url")
 
-        val result = sut.authorised(predicate, request, testBlock(_))
+        val result = sut.authorised(predicate, request, (user: AuthedUser[Any]) => testBlock(user))
 
         redirectLocation(result).get must startWith("/login-url")
         withClue("must append continue param from request target") {
@@ -96,7 +96,7 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
         when(appConfig.mfaUpliftUrl).thenReturn("/mfa-uplift-url")
         when(appConfig.serviceIdentifier).thenReturn("service-identifier")
 
-        val result = sut.authorised(predicate, request, testBlock(_))
+        val result = sut.authorised(predicate, request, (user: AuthedUser[Any]) => testBlock(user))
 
         redirectLocation(result).get must startWith("/mfa-uplift-url")
         withClue("must append continueUrl param from request target") {
@@ -116,7 +116,9 @@ class AuthFunctionSpec extends PlaySpec with MetricsMocks with BeforeAndAfterEac
           Future.successful(None)
         )
 
-        val ex = intercept[IllegalStateException](await(sut.authorised(predicate, request, testBlock(_))))
+        val ex = intercept[IllegalStateException](
+          await(sut.authorised(predicate, request, (user: AuthedUser[Any]) => testBlock(user)))
+        )
         ex.getMessage mustBe "internalId is required"
       }
     }

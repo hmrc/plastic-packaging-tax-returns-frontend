@@ -20,13 +20,14 @@ import base.utils.JourneyActionAnswer
 import cacheables.ReturnObligationCacheable
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.RequestAsyncFunction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.requests.DataRequest
 import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,7 +35,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
@@ -83,7 +84,7 @@ class ConfirmPackagingCreditControllerSpec
 
     when(request.userAnswers).thenReturn(answer)
     when(request.pptReference).thenReturn("123")
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
     when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn(
@@ -106,7 +107,7 @@ class ConfirmPackagingCreditControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "return OK" in {

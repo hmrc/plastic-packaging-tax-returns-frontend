@@ -43,7 +43,7 @@ object ClientIdentifier extends CommonFormValidators {
           .verifying(identifierEmptyError, isNonEmpty)
           .verifying(lengthError, isLength(_, 15))
           .verifying(formatError, isMatchingPattern(_, validFormatPattern))
-      )(ClientIdentifier.apply)(ClientIdentifier.unapply)
+      )(ClientIdentifier.apply)(ci => Some(ci.identifier))
     )
 
 }

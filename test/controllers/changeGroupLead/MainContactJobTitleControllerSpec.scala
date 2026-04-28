@@ -16,16 +16,18 @@
 
 package controllers.changeGroupLead
 
-import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.changeGroupLead.MainContactJobTitleFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -36,7 +38,7 @@ import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
 import views.html.changeGroupLead.MainContactJobTitleView
@@ -76,16 +78,16 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
     when(dataRequest.userAnswers.getOrFail(any[Gettable[String]])(any, any)) thenReturn "job-title"
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.mainContactJobTitle(any)).thenReturn(Call("GET", "/test-foo"))
   }
 
   "onPageLoad" must {
     "invoke the journey action" in {
-      when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.apply(anyFunc[RequestFunction])) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "return a view" in {
@@ -109,9 +111,9 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
 
   "onSubmit" must {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "bind the form and error" in {
@@ -134,8 +136,8 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-      when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(userAnswers))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
@@ -168,8 +170,8 @@ class MainContactJobTitleControllerSpec extends PlaySpec with BeforeAndAfterEach
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+        when(userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }

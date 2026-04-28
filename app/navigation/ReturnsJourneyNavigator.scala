@@ -109,7 +109,7 @@ class ReturnsJourneyNavigator @Inject() (
     else if (nonExportedAmountHelper.returnsQuestionsAnswered(userAnswers))
       returnRoutes.ReturnsCheckYourAnswersController.onPageLoad()
     else
-      returnRoutes.NowStartYourReturnController.onPageLoad
+      returnRoutes.NowStartYourReturnController.onPageLoad()
 
   def creditSummaryChange(yearKey: String): String =
     creditRoutes.ConfirmPackagingCreditController.onPageLoad(yearKey, CheckMode).url

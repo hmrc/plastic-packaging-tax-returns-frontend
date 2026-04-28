@@ -20,13 +20,14 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns._
+import models.returns.*
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchers.eq as meq
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -37,7 +38,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
 import support.AmendExportedData
@@ -78,14 +79,14 @@ class AmendDirectExportPlasticPackagingControllerSpec
     reset(messagesApi, cacheConnector, journeyAction, view, dataRequest, form, saveFunction)
 
     when(view.apply(any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
 
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "return 200" in {
@@ -120,9 +121,9 @@ class AmendDirectExportPlasticPackagingControllerSpec
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "set UserAnswer" in {

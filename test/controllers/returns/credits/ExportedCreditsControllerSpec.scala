@@ -16,17 +16,18 @@
 
 package controllers.returns.credits
 
-import base.utils.JourneyActionAnswer._
+import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
@@ -39,7 +40,7 @@ import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import views.html.returns.credits.ExportedCreditsView
 
@@ -77,14 +78,16 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(mockJourneyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
+    when(mockJourneyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(view.apply(any, any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
-    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
+    when(
+      request.userAnswers.fillWithFunc(any, any[Form[Boolean]], argThat((_: Option[Any] => Any) => true))(any)
+    ) thenReturn preparedForm
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
     when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
       SingleYearClaim(
@@ -97,7 +100,13 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
 
     when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
     when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
-    when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
+    when(
+      request.userAnswers.changeWithFunc(
+        any,
+        argThat((_: Option[Any] => Any) => true),
+        argThat((_: Option[Boolean] => Any) => true)
+      )(any, any)
+    ) thenReturn Future.unit
   }
 
   "onPageLoad" must {
@@ -109,7 +118,11 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
 
       val func = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
-      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func.capture)(
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ExportedCreditsPage("year-key")),
+        eqTo(initialForm),
+        func.capture()
+      )(
         any
       )
 
@@ -152,7 +165,11 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
       await(result)
 
       verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
-      verify(request.userAnswers).changeWithFunc(any, any, any)(any, any)
+      verify(request.userAnswers).changeWithFunc(
+        any,
+        argThat((_: Option[Any] => Any) => true),
+        argThat((_: Option[Boolean] => Any) => true)
+      )(any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
 
       status(result) mustBe SEE_OTHER

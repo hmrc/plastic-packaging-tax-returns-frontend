@@ -20,12 +20,14 @@ import base.utils.JourneyActionAnswer
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.DoYouWantToClaimFormProvider
+import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -37,7 +39,7 @@ import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.Gettable
 import views.html.returns.credits.DoYouWantToClaimView
@@ -83,8 +85,8 @@ class WhatDoYouWantToDoControllerSpec
       cacheConnector,
       formProvider
     )
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(view.apply(any, any)(any, any)).thenReturn(Html("correct view"))
     when(formProvider.apply()).thenReturn(form)
 
@@ -95,9 +97,9 @@ class WhatDoYouWantToDoControllerSpec
 
   "onPageLoad" must {
     "use the journey action" in {
-      when(journeyAction.apply(any)).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.apply(anyFunc[RequestFunction])).thenReturn(mock[Action[AnyContent]])
       sut.onPageLoad
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "return a 200" in {
@@ -127,15 +129,17 @@ class WhatDoYouWantToDoControllerSpec
 
   "onSubmit" must {
     "use the journey action" in {
-      when(journeyAction.async(any)).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenReturn(mock[Action[AnyContent]])
       sut.onSubmit
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "redirect to the next page" in {
       when(navigator.whatDoYouWantDo(any)).thenReturn(Call(GET, "/foo"))
       when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> boolean).fill(true))
-      when(dataRequest.userAnswers.change(any, any, any)(any)).thenReturn(Future.successful(true))
+      when(dataRequest.userAnswers.change(any, any, anyFunc[SaveUserAnswerFunc])(any)).thenReturn(
+        Future.successful(true)
+      )
 
       val result = await(sut.onSubmit(dataRequest))
       verify(cacheConnector).saveUserAnswerFunc(eqTo(dataRequest.pptReference))(any)

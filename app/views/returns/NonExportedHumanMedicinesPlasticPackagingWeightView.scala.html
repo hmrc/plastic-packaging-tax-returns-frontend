@@ -40,7 +40,7 @@
 
 @layout(pageTitle = title(form, messages(heading, amount.asKg), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.NonExportedHumanMedicinesPlasticPackagingWeightController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(Some(messages("nonExportedHumanMedicinesPlasticPackagingWeight.caption")),
             messages(heading, amount.asKg),

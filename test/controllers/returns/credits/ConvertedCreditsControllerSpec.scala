@@ -16,10 +16,11 @@
 
 package controllers.returns.credits
 
-import base.utils.JourneyActionAnswer._
+import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -27,7 +28,7 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
@@ -40,7 +41,7 @@ import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import views.html.returns.credits.ConvertedCreditsView
 
@@ -87,8 +88,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
     when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
 
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
@@ -106,7 +107,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "fill the form with user's previous answer" in {
@@ -127,7 +128,9 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     }
 
     "render the page" in {
-      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
+      when(
+        request.userAnswers.fillWithFunc(any, any[Form[Boolean]], argThat((_: Option[Boolean] => Any) => true))(any)
+      ) thenReturn preparedForm
       controller.onPageLoad("year-key", NormalMode)(request)
       verify(messagesApi).preferred(request)
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
@@ -165,7 +168,11 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       await(controller.onSubmit("year-key", NormalMode)(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc))(
+      verify(request.userAnswers).changeWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        argThat((_: Option[CreditsAnswer] => CreditsAnswer) => true),
+        eqTo(saveUserAnswerFunc)
+      )(
         any,
         any
       )
@@ -173,7 +180,12 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "redirect to the next page" in {
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-      when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
+      when(
+        request.userAnswers.changeWithFunc(any, argThat((_: Option[Any] => Any) => true), eqTo(saveUserAnswerFunc))(
+          any,
+          any
+        )
+      ) thenReturn Future.unit
 
       val result = await(controller.onSubmit("year-key", NormalMode)(request))
       verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo("year-key"), eqTo(true))

@@ -18,7 +18,7 @@ package base.utils
 
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.requests.DataRequest
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
@@ -56,6 +56,8 @@ trait JourneyActionAnswer {
         }
         .getMock[Action[AnyContent]]
     }
+
+  def anyFunc[T]: T = argThat((_: T) => true)
 }
 
 object JourneyActionAnswer extends JourneyActionAnswer

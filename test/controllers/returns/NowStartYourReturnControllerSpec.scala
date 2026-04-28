@@ -19,14 +19,15 @@ package controllers.returns
 import base.utils.JourneyActionAnswer
 import cacheables.ReturnObligationCacheable
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -44,11 +45,11 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     TaxReturnObligation(LocalDate.of(2022, 7, 5), LocalDate.of(2022, 10, 5), LocalDate.of(2023, 1, 5), "PK1")
 
   private val request          = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messages         = mock[Messages]
-  private val journeyAction    = mock[JourneyAction]
-  private val messagesApi      = mock[MessagesApi]
-  private val view             = mock[NowStartYourReturnView]
-  private val returnsNavigator = mock[ReturnsJourneyNavigator]
+  private val messages         = MockitoSugar.mock[Messages]
+  private val journeyAction    = MockitoSugar.mock[JourneyAction]
+  private val messagesApi      = MockitoSugar.mock[MessagesApi]
+  private val view             = MockitoSugar.mock[NowStartYourReturnView]
+  private val returnsNavigator = MockitoSugar.mock[ReturnsJourneyNavigator]
 
   private val sut = new NowStartYourReturnController(
     messagesApi,
@@ -64,15 +65,15 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenReturn(Some(aTaxObligation))
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
 
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad()
 
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "return 200" in {

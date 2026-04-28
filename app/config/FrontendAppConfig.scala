@@ -24,14 +24,14 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, val servicesConfig: ServicesConfig) {
 
-  lazy val host: String      = configuration.get[String]("host")
-  lazy val appName: String   = configuration.get[String]("appName")
-  lazy val mfaUpliftUrl      = configuration.get[String]("urls.mfaUplift")
-  lazy val serviceIdentifier = "plastic-packaging-tax"
+  lazy val host: String         = configuration.get[String]("host")
+  lazy val appName: String      = configuration.get[String]("appName")
+  lazy val mfaUpliftUrl: String = configuration.get[String]("urls.mfaUplift")
+  lazy val serviceIdentifier    = "plastic-packaging-tax"
 
   lazy private val contactHost = configuration.get[String]("contact-frontend.host")
 
-  lazy val userResearchUrl = configuration.get[String]("urls.userResearchUrl")
+  lazy val userResearchUrl: String = configuration.get[String]("urls.userResearchUrl")
 
   lazy val loginUrl: String   = configuration.get[String]("urls.login")
   lazy val signOutUrl: String = configuration.get[String]("urls.signOut")
@@ -41,12 +41,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
 
   def languageMap: Map[String, Lang] = Map("en" -> Lang("en"), "cy" -> Lang("cy"))
 
-  def contactFrontEnd = contactHost
+  def contactFrontEnd: String = contactHost
 
   lazy val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
   lazy val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
-  lazy val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  lazy val cacheTtl: Long = configuration.get[Long]("mongodb.timeToLiveInSeconds")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
@@ -131,10 +131,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
   def recordsToKeepGuidanceUrl: String =
     configuration.get[String]("urls.recordsToKeepGuidanceLink")
 
-  def addMemberToGroupUrl: String =
+  def addMemberToGroupUrl(): String =
     configuration.get[String]("urls.addMemberToGroup")
 
-  def substantialModificationGuidanceUrl =
+  def substantialModificationGuidanceUrl: String =
     configuration.get[String]("urls.pptSubstantialModificationGuidanceLink")
 
   /** Override the current system data-time, for coding and testing. The system date-time is used if the config value is

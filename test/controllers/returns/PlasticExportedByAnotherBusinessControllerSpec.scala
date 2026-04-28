@@ -16,26 +16,28 @@
 
 package controllers.returns
 
-import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.PlasticExportedByAnotherBusinessFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns._
+import pages.returns.*
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import queries.Gettable
 import views.html.returns.PlasticExportedByAnotherBusinessView
@@ -73,8 +75,8 @@ class PlasticExportedByAnotherBusinessControllerSpec extends PlaySpec with Mocki
     reset(dataRequest, journeyAction, messagesApi, view, mockNonExportedAmountHelper)
 
     when(formProvider.apply()).thenReturn(bindForm)
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn mock[Messages]
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
@@ -84,7 +86,7 @@ class PlasticExportedByAnotherBusinessControllerSpec extends PlaySpec with Mocki
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "return OK" in {
@@ -133,7 +135,7 @@ class PlasticExportedByAnotherBusinessControllerSpec extends PlaySpec with Mocki
       when(returnsNavigator.exportedByAnotherBusinessRoute(any, any)) thenReturn Call("", "some-url")
       val answer = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answer)
-      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answer))
+      when(dataRequest.userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(answer))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 

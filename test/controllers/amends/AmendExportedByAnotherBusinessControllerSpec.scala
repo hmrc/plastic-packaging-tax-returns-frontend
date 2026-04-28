@@ -21,13 +21,14 @@ import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
+import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.AmendExportedByAnotherBusinessFormProvider
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchers.eq as meq
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -38,7 +39,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
 import support.AmendExportedData
@@ -79,8 +80,8 @@ class AmendExportedByAnotherBusinessControllerSpec
     reset(messagesApi, cacheConnector, journeyAction, view, dataRequest, form, saveFunction)
 
     when(view.apply(any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
     when(formProvider.apply()).thenReturn(form)
     when(dataRequest.userAnswers.fill(any[Gettable[Long]], any)(any)).thenReturn(form)
@@ -90,7 +91,7 @@ class AmendExportedByAnotherBusinessControllerSpec
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(anyFunc[RequestFunction])
     }
 
     "fill the form" in {
@@ -125,9 +126,9 @@ class AmendExportedByAnotherBusinessControllerSpec
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
     }
 
     "set UserAnswer" in {

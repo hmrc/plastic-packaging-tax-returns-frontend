@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -38,7 +38,9 @@ class AuthLoggedInActionSpec extends PlaySpec {
 
   "invoke block" must {
     "proxy to AuthFunction set to Agents" in {
-      when(authFun.authorised(any, any, any)).thenReturn(Future.successful(ImATeapot("")))
+      when(authFun.authorised(any, any, argThat((_: AuthedUser[Any] => Any) => true))).thenReturn(
+        Future.successful(ImATeapot(""))
+      )
 
       val request                                  = FakeRequest("GET", "/foo")
       val block: AuthedUser[Any] => Future[Result] = _ => Future.successful(Ok("test"))
