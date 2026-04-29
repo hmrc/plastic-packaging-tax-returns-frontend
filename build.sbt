@@ -5,7 +5,6 @@ import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "plastic-packaging-tax-returns-frontend"
-val silencerVersion      = "1.7.19"
 
 ThisBuild / majorVersion := 1
 ThisBuild / scalaVersion := "3.3.7"
