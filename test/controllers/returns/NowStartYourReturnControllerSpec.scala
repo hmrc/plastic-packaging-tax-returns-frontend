@@ -19,7 +19,6 @@ package controllers.returns
 import base.utils.JourneyActionAnswer
 import cacheables.ReturnObligationCacheable
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
@@ -65,15 +64,15 @@ class NowStartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)).thenReturn(Some(aTaxObligation))
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
 
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad()
 
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return 200" in {

@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer
 import cacheables.AmendSelectedPeriodKey
 import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.amends.ViewReturnSummaryController
 import controllers.amends.ViewReturnSummaryController.Unamendable
 import controllers.helpers.TaxReturnHelper
@@ -30,9 +29,8 @@ import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.*
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{anyString, eq as meq}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{atLeastOnce, reset, verify, verifyNoInteractions, when}
+import org.mockito.ArgumentMatchers.{any, anyString, eq as meq}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -97,8 +95,8 @@ class ViewReturnSummaryControllerSpec
 
     when(dataRequest.pptReference).thenReturn("123")
     when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
@@ -106,7 +104,7 @@ class ViewReturnSummaryControllerSpec
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad("anyKey")
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return ok" in {
@@ -194,7 +192,7 @@ class ViewReturnSummaryControllerSpec
   "amendReturn" should {
     "use the journey action" in {
       sut.amendReturn("anyKey")
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "redirect to CYA page" in {
@@ -204,7 +202,7 @@ class ViewReturnSummaryControllerSpec
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
       when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
-      when(userAnswer.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(userAnswer))
+      when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
 
       val result = sut.amendReturn("22C3").skippingJourneyAction(dataRequest)
 
@@ -218,7 +216,7 @@ class ViewReturnSummaryControllerSpec
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
       when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
-      when(userAnswer.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(userAnswer))
+      when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 

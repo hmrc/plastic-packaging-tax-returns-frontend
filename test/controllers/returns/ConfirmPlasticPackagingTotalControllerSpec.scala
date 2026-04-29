@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import models.requests.DataRequest
@@ -74,8 +73,8 @@ class ConfirmPlasticPackagingTotalControllerSpec
     reset(journeyAction, view, cacheConnector, dataRequest, messages, navigator)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
@@ -84,7 +83,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return OK" in {
@@ -126,9 +125,9 @@ class ConfirmPlasticPackagingTotalControllerSpec
 
   "onwardRouting" should {
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.submit(dataRequest)))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "redirect" in {

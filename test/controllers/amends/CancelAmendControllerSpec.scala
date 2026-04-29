@@ -16,15 +16,13 @@
 
 package controllers.amends
 
-import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.CancelAmendFormProvider
 import models.UserAnswers
-import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
 import org.mockito.Answers
@@ -88,17 +86,17 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     )
 
     when(dataRequest.userAnswers) thenReturn userAnswer
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
   }
 
   "onPageLoad" should {
 
     "invoke the journey action" in {
-      when(journeyAction.apply(anyFunc[RequestFunction])).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.apply(any())).thenReturn(mock[Action[AnyContent]])
       sut.onPageLoad(FakeRequest())
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return ok" in {
@@ -134,9 +132,9 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.async(any())).thenReturn(mock[Action[AnyContent]])
       sut.onSubmit(FakeRequest())
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "save a empty userAnswer to cache" in {
@@ -210,7 +208,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
   private def setUpMocks() = {
     when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
     when(userAnswer.removeAll()).thenReturn(userAnswer)
-    when(userAnswer.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(userAnswer))
+    when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
     when(dataRequest.request.pptReference) thenReturn "123"
     when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
     when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(true))

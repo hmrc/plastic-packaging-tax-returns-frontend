@@ -20,15 +20,13 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.AmendDirectExportPlasticPackagingFormProvider
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import models.returns.*
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.eq as meq
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -79,14 +77,14 @@ class AmendDirectExportPlasticPackagingControllerSpec
     reset(messagesApi, cacheConnector, journeyAction, view, dataRequest, form, saveFunction)
 
     when(view.apply(any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
 
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return 200" in {
@@ -121,9 +119,9 @@ class AmendDirectExportPlasticPackagingControllerSpec
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "set UserAnswer" in {

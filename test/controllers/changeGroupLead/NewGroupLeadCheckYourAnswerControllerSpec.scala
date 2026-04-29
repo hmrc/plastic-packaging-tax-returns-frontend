@@ -16,11 +16,10 @@
 
 package controllers.changeGroupLead
 
-import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.SubscriptionConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.UserAnswers
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
@@ -75,8 +74,8 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     reset(view, journeyAction, dataRequest, navigator, subscriptionConnector)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
     when(navigator.checkYourAnswers) thenReturn Call("go", "over-there")
     when(subscriptionConnector.changeGroupLead(any)(any)).thenReturn(Future.successful(HttpResponse(OK, "done")))
@@ -92,11 +91,11 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     }
 
     "use the journey action" in {
-      when(journeyAction.apply(anyFunc[RequestFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.apply(any())) thenReturn mock[Action[AnyContent]]
 
       sut.onPageLoad(FakeRequest())
 
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "construct the summary list and pass it to the view" in {
@@ -141,9 +140,9 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   "onSubmit" should {
 
     "use the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(FakeRequest())
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "redirect via the navigator" in {

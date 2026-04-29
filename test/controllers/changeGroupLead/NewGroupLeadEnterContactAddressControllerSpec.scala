@@ -16,21 +16,19 @@
 
 package controllers.changeGroupLead
 
-import base.utils.JourneyActionAnswer.{anyFunc, byConvertingFunctionArgumentsToFutureAction}
+import base.utils.JourneyActionAnswer.byConvertingFunctionArgumentsToFutureAction
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider
 import forms.changeGroupLead.NewGroupLeadEnterContactAddressFormProvider.{addressLine1, addressLine2, addressLine4, countryCode}
 import models.Mode.NormalMode
-import models.UserAnswers.SaveUserAnswerFunc
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, argThat, eq as meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -38,7 +36,7 @@ import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.NewGroupLeadEnterContactAddressPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call, Result, Results}
+import play.api.mvc.{Action, AnyContent, Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -94,7 +92,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     when(mockView.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[NewGroupLeadAddressDetails]], any)(any)) thenReturn form
     when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any, any)) thenReturn Member("organisation-name", "1")
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.enterContactAddress(any)).thenReturn(Call("GET", "/test-foo"))
     when(mockCountryService.getAll(any)).thenReturn(countryMap)
 
@@ -102,7 +100,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
     val userAnswers = dataRequest.userAnswers
     when(userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
     when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
-    when(userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(userAnswers))
+    when(userAnswers.save(any())(any)).thenReturn(Future.successful(userAnswers))
     val createBindForm = new NewGroupLeadEnterContactAddressFormProvider().apply().bind(
       Map(
         addressLine1 -> "1 road",
@@ -118,9 +116,9 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
   "onPageLoad" must {
 
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return OK and correct view" in {
@@ -142,9 +140,9 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
   }
   "onSubmit" must {
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "bind the form and error" in {
@@ -195,7 +193,7 @@ class NewGroupLeadEnterContactAddressControllerSpec extends PlaySpec with Before
       }
 
       "the cache save fails" in {
-        when(dataRequest.userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.failed(TestException))
+        when(dataRequest.userAnswers.save(any())(any)).thenReturn(Future.failed(TestException))
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
         verifyNoInteractions(mockNavigator)
       }

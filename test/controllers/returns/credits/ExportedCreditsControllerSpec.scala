@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ExportedCreditsFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
@@ -78,8 +77,8 @@ class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with Befo
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(mockJourneyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
-    when(mockJourneyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(mockJourneyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(mockJourneyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(view.apply(any, any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages

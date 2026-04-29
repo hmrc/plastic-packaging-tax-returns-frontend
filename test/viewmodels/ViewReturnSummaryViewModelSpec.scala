@@ -18,7 +18,6 @@ package viewmodels
 
 import models.returns.{IdDetails, ReturnDisplayApi, ReturnDisplayChargeDetails, ReturnDisplayDetails}
 import org.mockito.Mockito.when
-import org.mockito.Mockito.mock
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages

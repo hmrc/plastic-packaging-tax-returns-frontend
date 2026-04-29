@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.DirectlyExportedComponentsFormProvider
 import models.Mode.NormalMode
@@ -75,8 +74,8 @@ class DirectlyExportedComponentsControllerSpec
     reset(journeyAction, view, cacheConnector, dataRequest, navigator, nonExportedAmountHelper)
 
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(10L))
   }
 
@@ -84,7 +83,7 @@ class DirectlyExportedComponentsControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return OK" in {

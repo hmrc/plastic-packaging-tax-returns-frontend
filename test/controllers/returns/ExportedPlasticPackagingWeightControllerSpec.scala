@@ -20,16 +20,13 @@ import base.utils.JourneyActionAnswer
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.NonExportedAmountHelper
 import forms.returns.ExportedPlasticPackagingWeightFormProvider
 import models.Mode.*
 import models.UserAnswers
-import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.eq as meq
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
@@ -95,8 +92,8 @@ class ExportedPlasticPackagingWeightControllerSpec
     )
 
     when(view.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(100L))
     when(formProvider.apply()).thenReturn(form)
     when(dataRequest.pptReference).thenReturn("ppt Ref")
@@ -104,7 +101,7 @@ class ExportedPlasticPackagingWeightControllerSpec
     when(navigator.exportedPlasticPackagingWeightRoute(any, any)).thenReturn(Call("GET", "foo"))
     val answers = dataRequest.userAnswers
     when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answers)
-    when(dataRequest.userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(answers))
+    when(dataRequest.userAnswers.save(any())(any)).thenReturn(Future.successful(answers))
 
   }
 
@@ -112,7 +109,7 @@ class ExportedPlasticPackagingWeightControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).apply(anyFunc[RequestFunction])
+      verify(journeyAction).apply(any())
     }
 
     "return OK" in {
@@ -142,9 +139,9 @@ class ExportedPlasticPackagingWeightControllerSpec
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "save to the cache and redirect to the next page" in {

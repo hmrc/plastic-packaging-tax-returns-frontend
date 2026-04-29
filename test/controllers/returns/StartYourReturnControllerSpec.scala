@@ -21,7 +21,6 @@ import base.utils.JourneyActionAnswer
 import cacheables.{IsFirstReturnCacheable, ReturnObligationCacheable}
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import controllers.helpers.TaxReturnHelper
 import forms.returns.StartYourReturnFormProvider
 import models.UserAnswers.SaveUserAnswerFunc
@@ -30,8 +29,7 @@ import models.returns.TaxReturnObligation
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -95,15 +93,15 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
 
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn ((_, _) => Future.successful(true))
     when(mockFormProvider.apply()) thenReturn form
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
   }
 
   "onPageLoad" should {
 
     "use the journey action" in {
       sut.onPageLoad()
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "show the view if user has obligation" in {
@@ -162,7 +160,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
   "onSubmit" should {
     "use the journey action" in {
       sut.onSubmit()
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return view as bad request" when {
@@ -215,7 +213,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
         val boundForm = realFrom.fill(true)
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
 
-        when(request.userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenThrow(TestException)
+        when(request.userAnswers.save(any())(any)).thenThrow(TestException)
 
         intercept[TestException.type](await(sut.onSubmit()(request)))
       }
@@ -231,7 +229,7 @@ class StartYourReturnControllerSpec extends PlaySpec with JourneyActionAnswer wi
     when(request.userAnswers.setOrFail(any[Settable[Boolean]], any, any)(any)).thenReturn(ans2)
     when(request.userAnswers.getOrFail(eqTo(ReturnObligationCacheable))(any, any)).thenReturn(obligation)
     when(request.userAnswers.getOrFail(eqTo(IsFirstReturnCacheable))(any, any)).thenReturn(true)
-    when(request.userAnswers.save(anyFunc[SaveUserAnswerFunc])(any)).thenReturn(Future.successful(ans2))
+    when(request.userAnswers.save(any())(any)).thenReturn(Future.successful(ans2))
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunc)
     when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("correct view")
     when(navigator.startYourReturn(any)).thenReturn(Call("GET", "/next-page"))

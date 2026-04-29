@@ -21,7 +21,6 @@ import cacheables.AmendObligationCacheable
 import connectors.{DownstreamServiceError, TaxReturnsConnector}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.amends.AmendNewAnswerType.AnswerWithValue
 import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.requests.DataRequest
@@ -49,6 +48,7 @@ import util.EdgeOfSystem
 import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
+
 import scala.concurrent.Future
 import scala.util.Try
 
@@ -98,16 +98,16 @@ class CheckYourAnswersControllerSpec
     )
 
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
 
   "onPageLoad" should {
     "use the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onPageLoad()(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return 200" in {
@@ -165,9 +165,9 @@ class CheckYourAnswersControllerSpec
 
   "onSubmit" should {
     "use the journey action" in {
-      when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit()(FakeRequest())))
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "submit the amendment" in {

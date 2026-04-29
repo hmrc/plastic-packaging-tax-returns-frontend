@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer
 import cacheables.ReturnObligationCacheable
 import connectors.{CacheConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.RequestAsyncFunction
 import factories.CreditSummaryListFactory
 import models.Mode.{CheckMode, NormalMode}
 import models.requests.DataRequest
@@ -84,7 +83,7 @@ class ConfirmPackagingCreditControllerSpec
 
     when(request.userAnswers).thenReturn(answer)
     when(request.pptReference).thenReturn("123")
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow) thenReturn LocalDateTime.of(2022, 4, 1, 12, 1, 0)
     when(creditSummaryListFactory.createSummaryList(any, any, any)(any)) thenReturn Seq()
     when(request.userAnswers.getOrFail[String](eqTo(JsPath \ "credit" \ "year-key" \ "fromDate"))(any, any)).thenReturn(
@@ -107,7 +106,7 @@ class ConfirmPackagingCreditControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return OK" in {

@@ -21,16 +21,15 @@ import cacheables.ReturnObligationCacheable
 import connectors.{AvailableCreditYearsConnector, CalculateCreditsConnector, DownstreamServiceError}
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.returns.credits.CreditSummaryRow
+import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.enablers.Messaging
@@ -101,8 +100,8 @@ class CreditsClaimedListControllerSpec
     reset(view, request, navigator, journeyAction, calcCreditsConnector)
 
     when(view.apply(any, any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(anyFunc[RequestFunction])).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
     when(request.pptReference).thenReturn("123")
     when(request.userAnswers.getOrFail[String](any[JsPath])(any, any)).thenReturn("2023-04-01")
@@ -123,7 +122,7 @@ class CreditsClaimedListControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "return 200" in {
@@ -181,7 +180,7 @@ class CreditsClaimedListControllerSpec
   "onSubmit" should {
     "invoke the journey action" in {
       sut.onSubmit(NormalMode)
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "redirect" in {

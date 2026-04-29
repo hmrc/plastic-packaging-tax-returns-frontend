@@ -32,6 +32,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import java.net.URL

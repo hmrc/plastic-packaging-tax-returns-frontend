@@ -18,12 +18,12 @@ package base.utils
 
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.requests.DataRequest
-import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.Future
 
@@ -56,8 +56,6 @@ trait JourneyActionAnswer {
         }
         .getMock[Action[AnyContent]]
     }
-
-  def anyFunc[T]: T = argThat((_: T) => true)
 }
 
 object JourneyActionAnswer extends JourneyActionAnswer

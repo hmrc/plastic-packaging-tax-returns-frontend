@@ -20,7 +20,6 @@ import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.returns.credits.ConvertedCreditsFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
@@ -88,8 +87,8 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
     when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
 
-    when(journeyAction.apply(anyFunc[RequestFunction])) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(anyFunc[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
@@ -107,7 +106,7 @@ class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with Bef
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(anyFunc[RequestAsyncFunction])
+      verify(journeyAction).async(any())
     }
 
     "fill the form with user's previous answer" in {
