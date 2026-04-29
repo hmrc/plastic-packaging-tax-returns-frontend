@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 package object models {
 

@@ -26,7 +26,6 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.{TypeTag, typeOf}
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -309,7 +308,7 @@ object UserAnswers {
 
   val reads: Reads[UserAnswers] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").read[String] and
@@ -319,7 +318,7 @@ object UserAnswers {
   }
 
   val writes: OWrites[UserAnswers] = {
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").write[String] and

@@ -19,8 +19,8 @@ package navigation
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.helpers.NonExportedAmountHelper
-import controllers.returns.credits.{routes => creditRoutes}
-import controllers.returns.{routes => returnRoutes}
+import controllers.returns.credits.routes as creditRoutes
+import controllers.returns.routes as returnRoutes
 import models.Mode.{CheckMode, NormalMode}
 import models.returns.CreditRangeOption
 import models.{Mode, UserAnswers}

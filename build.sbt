@@ -39,9 +39,7 @@ lazy val microservice = Project(appName, file("."))
     ScoverageKeys.coverageMinimumStmtTotal := 90.0,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    scalacOptions ++= Seq("-feature"),
-    scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
-    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s",
+    scalacOptions ++= Seq( "-feature", "-Wconf:src=.*routes.*:s", "-Wconf:src=.*twirl.*:s" ),
     // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
     libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     libraryDependencies ++= AppDependencies(),
