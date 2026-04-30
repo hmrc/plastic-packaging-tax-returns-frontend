@@ -17,14 +17,15 @@
 package support
 
 import org.jsoup.nodes.Element
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.Assertion
+import org.scalatest.matchers.must.Matchers.{include, must}
 
 trait ViewAssertions extends ViewMatchers {
 
-  def containTimeoutDialogFunction(view: Element) =
+  def containTimeoutDialogFunction(view: Element): Boolean =
     view.getElementsByAttributeValue("name", "hmrc-timeout-dialog") != null
 
-  def displaySignOutLink(view: Element) = {
+  def displaySignOutLink(view: Element): Assertion = {
     view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
     view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref("/plastic-packaging-tax/account/sign-out")
   }

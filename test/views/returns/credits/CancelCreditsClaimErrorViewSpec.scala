@@ -17,7 +17,7 @@
 package views.returns.credits
 
 import base.ViewSpecBase
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
 import views.html.returns.credits.CancelCreditsClaimErrorView

@@ -16,25 +16,26 @@
 
 package controllers.amends
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import cacheables.AmendObligationCacheable
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.amends.CancelAmendFormProvider
 import models.UserAnswers
 import models.requests.DataRequest
 import models.returns.TaxReturnObligation
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.{Answers, MockitoSugar}
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, RequestHeader}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import queries.Gettable
 import views.html.amends.{AmendAlreadyCancelledView, CancelAmendView}
@@ -53,7 +54,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     "PK1"
   )
 
-  val form                              = mock[Form[Boolean]]
+  val form: Form[Boolean]               = mock[Form[Boolean]]
   private val dataRequest               = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi               = mock[MessagesApi]
   private val cacheConnector            = mock[CacheConnector]
@@ -85,28 +86,17 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     )
 
     when(dataRequest.userAnswers) thenReturn userAnswer
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
   }
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" should {
 
     "invoke the journey action" in {
-      when(journeyAction.apply(any)).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.apply(any())).thenReturn(mock[Action[AnyContent]])
       sut.onPageLoad(FakeRequest())
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return ok" in {
@@ -142,9 +132,9 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)).thenReturn(mock[Action[AnyContent]])
+      when(journeyAction.async(any())).thenReturn(mock[Action[AnyContent]])
       sut.onSubmit(FakeRequest())
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "save a empty userAnswer to cache" in {
@@ -166,7 +156,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     }
 
     "return 200" in {
-      setUpMocks
+      setUpMocks()
 
       val result = sut.onSubmit(dataRequest)
 
@@ -174,7 +164,7 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     }
 
     "return the amendAlreadyCancelledView" in {
-      setUpMocks
+      setUpMocks()
 
       val result = sut.onSubmit(dataRequest)
 
@@ -215,10 +205,10 @@ class CancelAmendControllerSpec extends PlaySpec with MockitoSugar with BeforeAn
     }
   }
 
-  private def setUpMocks = {
+  private def setUpMocks() = {
     when(userAnswer.get(any[Gettable[Any]])(any)).thenReturn(Some(aTaxObligation))
     when(userAnswer.removeAll()).thenReturn(userAnswer)
-    when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
+    when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
     when(dataRequest.request.pptReference) thenReturn "123"
     when(amendAlreadyCancelledView.apply()(any, any)).thenReturn(HtmlFormat.empty)
     when(form.bindFromRequest()(any, any)).thenReturn(new CancelAmendFormProvider()().fillAndValidate(true))

@@ -17,10 +17,10 @@
 package controllers.actions
 
 import base.SpecBase
-import models.{SignedInUser, UserAnswers}
 import models.requests.{DataRequest, IdentifiedRequest, IdentityData, OptionalDataRequest}
+import models.{SignedInUser, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatest.EitherValues
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{AnyContent, Request, Result}

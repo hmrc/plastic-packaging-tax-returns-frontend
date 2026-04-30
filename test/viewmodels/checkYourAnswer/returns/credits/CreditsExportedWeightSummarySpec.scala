@@ -19,8 +19,8 @@ package viewmodels.checkYourAnswer.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ExportedCreditsPage
 import play.api.i18n.Messages
@@ -36,11 +36,11 @@ class CreditsExportedWeightSummarySpec extends PlaySpec {
   "summary" should {
     "return a Summary row" when {
       "answer is yes" in {
-        when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.exported.weight"))).thenReturn(
+        when(messages.apply("confirmPackagingCredit.exported.weight")).thenReturn(
           "exported weight"
         )
-        when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
-        when(messages.apply(ArgumentMatchers.eq(20L.asKg))).thenReturn(20L.asKg)
+        when(messages.apply("site.change")).thenReturn("change")
+        when(messages.apply(20L.asKg)).thenReturn(20L.asKg)
 
         val userAnswer =
           UserAnswers("123").set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(20L)).get

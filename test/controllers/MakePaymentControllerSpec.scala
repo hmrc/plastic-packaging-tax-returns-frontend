@@ -21,10 +21,8 @@ import connectors.{FinancialsConnector, ObligationsConnector}
 import models.financials.PPTFinancials
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.MockitoSugar.{verify, when}
-import org.mockito.MockitoSugar.mock
+import org.mockito.ArgumentMatchers.{any, eq => eqTo, refEq}
+import org.mockito.Mockito.{verify, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -38,8 +36,8 @@ class MakePaymentControllerSpec extends SpecBase {
 
   val mockFinancialsConnector: FinancialsConnector   = mock[FinancialsConnector]
   val mockObligationsConnector: ObligationsConnector = mock[ObligationsConnector]
-  val now                                            = LocalDate.now()
-  val nowInIsoLocalDate                              = now.format(DateTimeFormatter.ISO_LOCAL_DATE)
+  val now: LocalDate                                 = LocalDate.now()
+  val nowInIsoLocalDate: String                      = now.format(DateTimeFormatter.ISO_LOCAL_DATE)
 
   "redirect" - {
     "must redirect" - {

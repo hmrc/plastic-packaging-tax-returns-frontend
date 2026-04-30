@@ -11,10 +11,10 @@ GET         /                                                       controllers.
 
 GET         /account                                                controllers.IndexController.onPageLoad
 
-GET         /account/sign-out                                       controllers.auth.AuthController.signOut
+GET         /account/sign-out                                       controllers.auth.AuthController.signOut()
 GET         /account/signed-out                                     controllers.auth.SignedOutController.onPageLoad
 
-GET         /account/sign-out-no-survey                             controllers.auth.AuthController.signOutNoSurvey
+GET         /account/sign-out-no-survey                             controllers.auth.AuthController.signOutNoSurvey()
 
 GET         /account/not-enrolled                                   controllers.home.UnauthorisedController.notEnrolled()
 
@@ -53,7 +53,7 @@ POST        /amend-manufactured-weight                              controllers.
 GET         /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onPageLoad()
 POST        /amend-recycled-weight                                  controllers.amends.AmendRecycledPlasticPackagingController.onSubmit()
 
-GET         /start-return                                           controllers.returns.NowStartYourReturnController.onPageLoad
+GET         /start-return                                           controllers.returns.NowStartYourReturnController.onPageLoad()
 
 GET         /directly-exported-components                           controllers.returns.DirectlyExportedComponentsController.onPageLoad(mode: Mode = NormalMode)
 POST        /directly-exported-components                           controllers.returns.DirectlyExportedComponentsController.onSubmit(mode: Mode = NormalMode)

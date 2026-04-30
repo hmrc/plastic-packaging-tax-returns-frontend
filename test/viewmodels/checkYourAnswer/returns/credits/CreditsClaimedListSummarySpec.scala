@@ -19,9 +19,10 @@ package viewmodels.checkYourAnswer.returns.credits
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
@@ -36,7 +37,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   private val key1          = "2022-04-01-2023-03-31"
   private val key2          = "2023-04-01-2024-03-31"
   private val key3          = "2024-04-01-2025-03-31"
-  val credit = Map(
+  val credit: Map[String, TaxablePlastic] = Map(
     key3 -> TaxablePlastic(300L, 350, 0.4),
     key2 -> TaxablePlastic(100L, 150, 0.3),
     key1 -> TaxablePlastic(200L, 200, 0.2)
@@ -95,9 +96,9 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
   }
 
   "create a chronological ordered list of row" in {
-    when(message.apply(any[String])).thenAnswer((s: String) => s)
-    when(message.apply(eqTo("creditSummary.for"), any)).thenReturn("creditSummary.for")
-    when(message.apply(eqTo("return.quarter"), any, any, any))
+    when(message.apply(any[String], any[Any])).thenAnswer(_.getArgument[String](0))
+
+    when(message.apply(eqTo("return.quarter"), any[Any]))
       .thenReturn("1 April 2022 to 31 March 2023", "1 April 2023 to 31 March 2024", "1 April 2024 to 31 March 2025")
 
     when(creditBalance.credit).thenReturn(credit)
@@ -128,7 +129,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       when(creditBalance.credit).thenReturn(credit)
 
       intercept[IllegalStateException] {
-        CreditsClaimedListSummary.createRows(userAnswerWithInvalidendDate, creditBalance, navigator)(message)
+        CreditsClaimedListSummary.createRows(userAnswerWithInvalidEndDate, creditBalance, navigator)(message)
       }
     }
 
@@ -162,7 +163,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
       )
     )
 
-  def userAnswerWithInvalidFromDate = {
+  def userAnswerWithInvalidFromDate: UserAnswers = {
     UserAnswers(
       "123",
       Json.parse("""{
@@ -176,7 +177,7 @@ class CreditsClaimedListSummarySpec extends PlaySpec with BeforeAndAfterEach wit
     )
   }
 
-  def userAnswerWithInvalidendDate = {
+  def userAnswerWithInvalidEndDate: UserAnswers = {
     UserAnswers(
       "123",
       Json.parse("""{

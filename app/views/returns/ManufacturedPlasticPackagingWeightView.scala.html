@@ -48,7 +48,7 @@
 
 @layout(pageTitle = title(form, messages("manufacturedPlasticPackagingWeight.title"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.ManufacturedPlasticPackagingWeightController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(Some(messages("caption.total.plastic")),
             messages("manufacturedPlasticPackagingWeight.heading"),

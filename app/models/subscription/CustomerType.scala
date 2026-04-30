@@ -25,6 +25,6 @@ object CustomerType extends Enumeration {
   val Organisation: Value = Value
 
   implicit val format: Format[CustomerType] =
-    Format(Reads.enumNameReads(CustomerType), Writes.enumNameWrites)
+    Format(Reads.enumNameReads(CustomerType), Writes.enumNameWrites[CustomerType.type])
 
 }

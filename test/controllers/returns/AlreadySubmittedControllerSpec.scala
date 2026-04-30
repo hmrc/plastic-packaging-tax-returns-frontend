@@ -21,9 +21,9 @@ import base.FakeIdentifierActionWithEnrolment
 import models.returns.TaxReturnObligation
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.OK
 import play.api.test.FakeRequest

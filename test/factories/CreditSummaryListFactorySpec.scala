@@ -18,10 +18,10 @@ package factories
 
 import models.returns.CreditsAnswer
 import models.{TaxablePlastic, UserAnswers}
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage}
 import play.api.i18n.Messages
@@ -38,13 +38,13 @@ class CreditSummaryListFactorySpec extends PlaySpec with BeforeAndAfterEach {
 
   "createSummaryList" should {
     "a summary list containing credit details" in {
-      when(messages.apply(meq("confirmPackagingCredit.taxRate"))).thenReturn("Tax Rate")
-      when(messages.apply(meq("confirmPackagingCredit.exported.answer"))).thenReturn("exported")
-      when(messages.apply(meq("confirmPackagingCredit.exported.weight"))).thenReturn("exported weight")
-      when(messages.apply(meq("confirmPackagingCredit.converted.answer"))).thenReturn("converted")
-      when(messages.apply(meq("confirmPackagingCredit.converted.weight"))).thenReturn("converted weight")
-      when(messages.apply(meq("confirmPackagingCredit.totalPlastic"))).thenReturn("total plastic")
-      when(messages.apply(meq("confirmPackagingCredit.creditAmount"))).thenReturn("credit amount")
+      when(messages.apply(meq("confirmPackagingCredit.taxRate"), any)).thenReturn("Tax Rate")
+      when(messages.apply(meq("confirmPackagingCredit.exported.answer"), any)).thenReturn("exported")
+      when(messages.apply(meq("confirmPackagingCredit.exported.weight"), any)).thenReturn("exported weight")
+      when(messages.apply(meq("confirmPackagingCredit.converted.answer"), any)).thenReturn("converted")
+      when(messages.apply(meq("confirmPackagingCredit.converted.weight"), any)).thenReturn("converted weight")
+      when(messages.apply(meq("confirmPackagingCredit.totalPlastic"), any)).thenReturn("total plastic")
+      when(messages.apply(meq("confirmPackagingCredit.creditAmount"), any)).thenReturn("credit amount")
       when(userAnswers.get(meq(ExportedCreditsPage("a-key")))(any)).thenReturn(
         Some(CreditsAnswer.answerWeightWith(10L))
       )

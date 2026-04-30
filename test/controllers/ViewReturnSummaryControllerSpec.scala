@@ -27,12 +27,10 @@ import handlers.ErrorHandler
 import models.UserAnswers
 import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
-import models.returns._
+import models.returns.*
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{anyString, eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, verifyZeroInteractions, when}
+import org.mockito.ArgumentMatchers.{any, anyString, eq as meq}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -97,8 +95,8 @@ class ViewReturnSummaryControllerSpec
 
     when(dataRequest.pptReference).thenReturn("123")
     when(view.apply(any, any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
@@ -106,7 +104,7 @@ class ViewReturnSummaryControllerSpec
   "onPageLoad" should {
     "use the journey action" in {
       sut.onPageLoad("anyKey")
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "return ok" in {
@@ -194,7 +192,7 @@ class ViewReturnSummaryControllerSpec
   "amendReturn" should {
     "use the journey action" in {
       sut.amendReturn("anyKey")
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "redirect to CYA page" in {
@@ -204,7 +202,7 @@ class ViewReturnSummaryControllerSpec
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(mock[SaveUserAnswerFunc])
       when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
-      when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
+      when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
 
       val result = sut.amendReturn("22C3").skippingJourneyAction(dataRequest)
 
@@ -218,7 +216,7 @@ class ViewReturnSummaryControllerSpec
       when(cacheConnector.saveUserAnswerFunc(any)(any)).thenReturn(saveFunction)
       when(dataRequest.userAnswers.removeAll()).thenReturn(userAnswer)
       when(userAnswer.setOrFail(any[Settable[Long]], any, any)(any)).thenReturn(userAnswer)
-      when(userAnswer.save(any)(any)).thenReturn(Future.successful(userAnswer))
+      when(userAnswer.save(any())(any)).thenReturn(Future.successful(userAnswer))
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
@@ -234,8 +232,8 @@ class ViewReturnSummaryControllerSpec
 
       await(sut.amendReturn("22C3").skippingJourneyAction(dataRequest))
 
-      verifyZeroInteractions(dataRequest.userAnswers.removeAll())
-      verifyZeroInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
+      verifyNoInteractions(dataRequest.userAnswers.removeAll())
+      verifyNoInteractions(cacheConnector.saveUserAnswerFunc(any)(any))
     }
 
     "return 404 when cannot fetch data" in {

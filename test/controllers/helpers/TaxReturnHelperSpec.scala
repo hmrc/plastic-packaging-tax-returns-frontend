@@ -19,11 +19,12 @@ package controllers.helpers
 import connectors.{ObligationsConnector, TaxReturnsConnector}
 import models.obligations.PPTObligations
 import models.returns.{SubmittedReturn, TaxReturnObligation}
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.verifyNoMoreInteractions
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.verifyNoMoreInteractions
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,7 +62,7 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
       verify(mockReturnsConnector).get("userId", "periodKey")(hc)
     }
     "bubble errors" in {
-      object TestException extends Exception("boom!")
+      object TestException extends RuntimeException("boom!")
 
       when(mockReturnsConnector.get(any, any)(any)).thenReturn(Future.failed(TestException))
 
@@ -158,7 +159,7 @@ class TaxReturnHelperSpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "bubble errors" when {
-      object TestException extends Exception("boom!")
+      object TestException extends RuntimeException("boom!")
       "call to getOpen fails" in {
         when(mockObligationsConnector.getOpen(any)(any)).thenReturn(Future.failed(TestException))
 

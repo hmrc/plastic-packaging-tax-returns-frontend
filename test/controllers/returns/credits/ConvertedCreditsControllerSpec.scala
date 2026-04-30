@@ -16,7 +16,7 @@
 
 package controllers.returns.credits
 
-import base.utils.JourneyActionAnswer._
+import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
@@ -27,12 +27,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.captor.ArgCaptor
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
@@ -41,7 +40,7 @@ import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import views.html.returns.credits.ConvertedCreditsView
 
@@ -49,11 +48,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConvertedCreditsControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+class ConvertedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val mockCacheConnector: CacheConnector     = mock[CacheConnector]
   private val mockNavigator: ReturnsJourneyNavigator = mock[ReturnsJourneyNavigator]
@@ -62,7 +57,7 @@ class ConvertedCreditsControllerSpec
   private val initialForm                            = mock[Form[Boolean]]("initial form")
   private val preparedForm                           = mock[Form[Boolean]]("prepared form")
   private val journeyAction                          = mock[JourneyAction]
-  private val request                                = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request                                = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val messagesApi                            = mock[MessagesApi]
   private val messages                               = mock[Messages]
   private val saveUserAnswerFunc                     = mock[UserAnswers.SaveUserAnswerFunc]
@@ -83,6 +78,8 @@ class ConvertedCreditsControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
+    reset(messagesApi, request, mockCacheConnector, saveUserAnswerFunc)
+
     when(formProvider.apply()).thenReturn(initialForm)
     when(initialForm.bindFromRequest()(any, any)).thenReturn(preparedForm)
     when(view.apply(any, any, any, any)(any, any)).thenReturn(Html("correct view"))
@@ -90,8 +87,8 @@ class ConvertedCreditsControllerSpec
     when(mockCacheConnector.saveUserAnswerFunc(any)(any)) thenReturn saveUserAnswerFunc
     when(mockNavigator.convertedCreditsYesNo(any, any, any)).thenReturn(Call("GET", "/next/page"))
 
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
@@ -109,23 +106,30 @@ class ConvertedCreditsControllerSpec
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "fill the form with user's previous answer" in {
       controller.onPageLoad("year-key", NormalMode)(request)
-      val function = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(initialForm), function)(any)
+      val function = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(initialForm),
+        function.capture()
+      )(any)
 
       withClue("using correct function") {
-        val creditsAnswer = mock[CreditsAnswer]
-        function.value(creditsAnswer)
+        val creditsAnswer    = mock[CreditsAnswer]
+        val capturedFunction = function.getValue
+        capturedFunction(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
     }
 
     "render the page" in {
-      when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
+      when(
+        request.userAnswers.fillWithFunc(any, any[Form[Boolean]], argThat((_: Option[Boolean] => Any) => true))(any)
+      ) thenReturn preparedForm
       controller.onPageLoad("year-key", NormalMode)(request)
       verify(messagesApi).preferred(request)
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
@@ -163,7 +167,11 @@ class ConvertedCreditsControllerSpec
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
       await(controller.onSubmit("year-key", NormalMode)(request))
 
-      verify(request.userAnswers).changeWithFunc(eqTo(ConvertedCreditsPage("year-key")), any, eqTo(saveUserAnswerFunc))(
+      verify(request.userAnswers).changeWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        argThat((_: Option[CreditsAnswer] => CreditsAnswer) => true),
+        eqTo(saveUserAnswerFunc)
+      )(
         any,
         any
       )
@@ -171,7 +179,12 @@ class ConvertedCreditsControllerSpec
 
     "redirect to the next page" in {
       when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
-      when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
+      when(
+        request.userAnswers.changeWithFunc(any, argThat((_: Option[Any] => Any) => true), eqTo(saveUserAnswerFunc))(
+          any,
+          any
+        )
+      ) thenReturn Future.unit
 
       val result = await(controller.onSubmit("year-key", NormalMode)(request))
       verify(mockNavigator).convertedCreditsYesNo(eqTo(NormalMode), eqTo("year-key"), eqTo(true))

@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, titleHeading, Some(messages("return.title.tail")))) {
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

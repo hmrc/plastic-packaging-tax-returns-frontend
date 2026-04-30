@@ -19,9 +19,9 @@ package repositories
 import config.FrontendAppConfig
 import models.RichJsObject
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json._
+import org.mongodb.scala.model.*
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.*
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -48,7 +48,7 @@ object Entry {
       (JsPath \ "_id").write[String] and
         (JsPath \ "data").write[JsObject] and
         (JsPath \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantFormat)
-    )(unlift(Entry.unapply))
+    )(o => Tuple.fromProductTyped(o))
   )
 }
 

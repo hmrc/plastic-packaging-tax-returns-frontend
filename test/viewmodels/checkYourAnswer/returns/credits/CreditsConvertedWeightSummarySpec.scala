@@ -19,9 +19,9 @@ package viewmodels.checkYourAnswer.returns.credits
 import models.Mode.CheckMode
 import models.UserAnswers
 import models.returns.CreditsAnswer
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.i18n.Messages
@@ -36,9 +36,9 @@ class CreditsConvertedWeightSummarySpec extends PlaySpec with BeforeAndAfterEach
 
   "Row" should {
     "return a summary row" in {
-      when(messages.apply(ArgumentMatchers.eq("confirmPackagingCredit.converted.weight"))).thenReturn("answer")
-      when(messages.apply(ArgumentMatchers.eq("site.change"))).thenReturn("change")
-      when(messages.apply(ArgumentMatchers.eq(50L.asKg))).thenReturn(50L.asKg)
+      when(messages.apply("confirmPackagingCredit.converted.weight")).thenReturn("answer")
+      when(messages.apply("site.change")).thenReturn("change")
+      when(messages.apply(50L.asKg)).thenReturn(50L.asKg)
       val userAnswer = UserAnswers("123").set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(50L)).get
 
       val result = CreditsConvertedWeightSummary("year-key").row(userAnswer)(messages)

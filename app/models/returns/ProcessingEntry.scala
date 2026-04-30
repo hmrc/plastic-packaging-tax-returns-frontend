@@ -16,7 +16,7 @@
 
 package models.returns
 
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Format, JsPath}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -29,7 +29,7 @@ object ProcessingStatus {
   case object Complete         extends ProcessingStatus
   case object Failed           extends ProcessingStatus
 
-  import play.api.libs.json._
+  import play.api.libs.json.*
   implicit val format: Format[ProcessingStatus] = new Format[ProcessingStatus] {
     override def reads(json: JsValue): JsResult[ProcessingStatus] = json match {
       case JsString("Processing")       => JsSuccess(Processing)
@@ -68,6 +68,6 @@ object ProcessingEntry {
         (JsPath \ "status").write[ProcessingStatus](ProcessingStatus.format) and
         (JsPath \ "message").writeNullable[String] and
         (JsPath \ "lastUpdated").write[Instant](MongoJavatimeFormats.instantFormat)
-    )(unlift(ProcessingEntry.unapply))
+    )(o => Tuple.fromProductTyped(o))
   )
 }

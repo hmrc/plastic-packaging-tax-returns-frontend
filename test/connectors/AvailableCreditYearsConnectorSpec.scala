@@ -17,35 +17,34 @@
 package connectors
 
 import com.codahale.metrics.Timer
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.CreditRangeOption
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers.{a, convertToAnyMustWrapper, theSameInstanceAs, thrownBy}
+import org.scalatest.matchers.must.Matchers.{a, mustBe, theSameInstanceAs, thrownBy}
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Logger
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
+import java.net.URL
 import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AvailableCreditYearsConnectorSpec
-    extends AnyWordSpec
-    with MockitoSugar
-    with ResetMocksAfterEachTest
-    with BeforeAndAfterEach {
+class AvailableCreditYearsConnectorSpec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val frontendAppConfig = mock[FrontendAppConfig]
-  private val httpClient        = mock[HttpClient]
-  private val metrics           = mock[Metrics](ReturnsDeepStubs)
-  private val timer             = mock[Timer.Context]
-  private val availableYears    = mock[Seq[CreditRangeOption]]
+  private val frontendAppConfig              = mock[FrontendAppConfig]
+  private val httpClient                     = mock[HttpClientV2]
+  private val metrics                        = mock[Metrics](Answers.RETURNS_DEEP_STUBS)
+  private val timer                          = mock[Timer.Context]
+  private val availableYears                 = mock[Seq[CreditRangeOption]]
+  private val requestBuilder: RequestBuilder = mock[RequestBuilder]
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
@@ -55,8 +54,11 @@ class AvailableCreditYearsConnectorSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+    reset(timer)
+    when(frontendAppConfig.pptAvailableCreditYearsUrl(any)).thenReturn("http://localhost/credits/available-years/")
     when(metrics.defaultRegistry.timer(any).time()) thenReturn timer
-    when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.successful(availableYears)
+    when(httpClient.get(any())(any())).thenReturn(requestBuilder)
+    when(requestBuilder.execute[Seq[CreditRangeOption]](any, any)).thenReturn(Future.successful(availableYears))
   }
 
   "get" should {
@@ -75,8 +77,9 @@ class AvailableCreditYearsConnectorSpec
     }
 
     "return an error" in {
-      when(httpClient.GET[Any](any, any, any)(any, any, any)) thenReturn Future.failed(
-        UpstreamErrorResponse("message", 500, 500)
+      when(httpClient.get(any[URL])(any)).thenReturn(requestBuilder)
+      when(requestBuilder.execute[Seq[CreditRangeOption]](any, any)).thenReturn(
+        Future.failed(UpstreamErrorResponse("message", 500, 500))
       )
       a[DownstreamServiceError] mustBe thrownBy(await(connector.get("ppt-reference")))
       withClue("stop the timer") {

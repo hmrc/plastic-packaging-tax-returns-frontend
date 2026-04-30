@@ -36,7 +36,7 @@
 
 @layout(pageTitle = title(form, messages("anotherBusinessExportWeight.title", amount.asKg), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.routes.AnotherBusinessExportWeightController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.AnotherBusinessExportWeightController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(Some(messages("anotherBusinessExportWeight.caption")),
         messages("anotherBusinessExportWeight.heading", amount.asKg),

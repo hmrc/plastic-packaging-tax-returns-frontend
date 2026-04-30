@@ -22,11 +22,11 @@ import connectors.{CacheConnector, TaxReturnsConnector}
 import controllers.actions._
 import models.UserAnswers
 import models.returns._
-import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -44,7 +44,8 @@ trait SpecBase
     with TryValues
     with OptionValues
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with MockitoSugar {
 
   val userAnswersId: String = "123"
 

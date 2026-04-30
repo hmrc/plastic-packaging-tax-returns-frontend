@@ -23,10 +23,11 @@ import controllers.returns.{routes => returnsRoutes}
 import models.Mode.{CheckMode, NormalMode}
 import models.UserAnswers
 import models.returns.{CreditRangeOption, CreditsAnswer}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.verify
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import queries.Gettable
 
@@ -288,7 +289,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
 
     "in normal mode" in {
       navigator.creditClaimedList(NormalMode, isAddingAnotherYear = false, userAnswers) mustBe
-        returnsRoutes.NowStartYourReturnController.onPageLoad
+        returnsRoutes.NowStartYourReturnController.onPageLoad()
       navigator.creditClaimedList(NormalMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(NormalMode)
     }
@@ -296,7 +297,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
     "in check mode without returns section completed" in {
       when(nonExportedAmountHelper.returnsQuestionsAnswered(any)) thenReturn false
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = false, userAnswers) mustBe
-        returnsRoutes.NowStartYourReturnController.onPageLoad
+        returnsRoutes.NowStartYourReturnController.onPageLoad()
       navigator.creditClaimedList(CheckMode, isAddingAnotherYear = true, userAnswers) mustBe
         creditRoutes.ClaimForWhichYearController.onPageLoad(CheckMode)
     }
@@ -314,7 +315,7 @@ class ReturnsJourneyNavigatorSpec extends PlaySpec with BeforeAndAfterEach {
         CheckMode,
         false,
         userAnswers
-      ) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad
+      ) mustBe returnsRoutes.NowStartYourReturnController.onPageLoad()
     }
 
     "redirect to CYA page in CheckMode Mode and have done Returns questions" in {

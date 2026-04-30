@@ -51,7 +51,7 @@
 
 
 @layout(pageTitle = title(form, messages("exportedCredits.heading"), Some(messages("return.title.tail")))) {
-    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsController.onSubmit(yearKey, mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }

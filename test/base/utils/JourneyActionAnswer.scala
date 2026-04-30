@@ -18,24 +18,44 @@ package base.utils
 
 import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.requests.DataRequest
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.Future
 
 trait JourneyActionAnswer {
 
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
+  def byConvertingFunctionArgumentsToAction: Answer[Action[AnyContent]] =
+    (invocation: InvocationOnMock) => {
+      val function =
+        invocation.getArguments()(0).asInstanceOf[RequestFunction]
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
       when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
+        .thenAnswer { (invocation: InvocationOnMock) =>
+          val request =
+            invocation.getArguments()(0).asInstanceOf[DataRequest[AnyContent]]
+          Future.successful(function(request))
+        }
         .getMock[Action[AnyContent]]
+    }
+
+  def byConvertingFunctionArgumentsToFutureAction: Answer[Action[AnyContent]] =
+    (invocation: InvocationOnMock) => {
+      val function =
+        invocation.getArguments()(0).asInstanceOf[RequestAsyncFunction]
+
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer { (invocation: InvocationOnMock) =>
+          val request =
+            invocation.getArguments()(0).asInstanceOf[DataRequest[AnyContent]]
+          function(request)
+        }
+        .getMock[Action[AnyContent]]
+    }
 }
 
 object JourneyActionAnswer extends JourneyActionAnswer

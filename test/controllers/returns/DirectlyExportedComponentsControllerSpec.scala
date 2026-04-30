@@ -26,17 +26,17 @@ import models.Mode.NormalMode
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns._
+import pages.returns.*
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import views.html.returns.DirectlyExportedComponentsView
 
@@ -74,8 +74,8 @@ class DirectlyExportedComponentsControllerSpec
     reset(journeyAction, view, cacheConnector, dataRequest, navigator, nonExportedAmountHelper)
 
     when(view.apply(any, any, any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(10L))
   }
 
@@ -83,7 +83,7 @@ class DirectlyExportedComponentsControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return OK" in {

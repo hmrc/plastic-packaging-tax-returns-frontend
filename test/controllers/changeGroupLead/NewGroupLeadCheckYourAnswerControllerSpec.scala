@@ -16,20 +16,20 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.SubscriptionConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import models.UserAnswers
 import models.changeGroupLead.NewGroupLeadAddressDetails
 import models.requests.DataRequest
 import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
-import org.mockito.ArgumentMatchers.refEq
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.{ChooseNewGroupLeadPage, NewGroupLeadEnterContactAddressPage}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -74,23 +74,12 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     reset(view, journeyAction, dataRequest, navigator, subscriptionConnector)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
     when(navigator.checkYourAnswers) thenReturn Call("go", "over-there")
     when(subscriptionConnector.changeGroupLead(any)(any)).thenReturn(Future.successful(HttpResponse(OK, "done")))
   }
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" should {
     "return OK" in {
@@ -102,11 +91,11 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
     }
 
     "use the journey action" in {
-      when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.apply(any())) thenReturn mock[Action[AnyContent]]
 
       sut.onPageLoad(FakeRequest())
 
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "construct the summary list and pass it to the view" in {
@@ -151,9 +140,9 @@ class NewGroupLeadCheckYourAnswerControllerSpec extends PlaySpec with BeforeAndA
   "onSubmit" should {
 
     "use the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(FakeRequest())
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "redirect via the navigator" in {

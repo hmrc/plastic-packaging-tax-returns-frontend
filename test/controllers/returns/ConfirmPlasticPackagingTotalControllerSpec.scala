@@ -24,16 +24,16 @@ import controllers.helpers.NonExportedAmountHelper
 import models.UserAnswers
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{Answers, ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns._
+import pages.returns.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.returns.ConfirmPlasticPackagingTotalView
@@ -67,14 +67,14 @@ class ConfirmPlasticPackagingTotalControllerSpec
     nonExportedAmountHelper
   )
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
 
     reset(journeyAction, view, cacheConnector, dataRequest, messages, navigator)
 
     when(view.apply(any)(any, any)).thenReturn(HtmlFormat.empty)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
     when(nonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(50L))
   }
@@ -83,7 +83,7 @@ class ConfirmPlasticPackagingTotalControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return OK" in {
@@ -125,9 +125,9 @@ class ConfirmPlasticPackagingTotalControllerSpec
 
   "onwardRouting" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.submit(dataRequest)))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "redirect" in {

@@ -16,20 +16,20 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.byConvertingFunctionArgumentsToFutureAction
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.RequestAsyncFunction
 import forms.changeGroupLead.SelectNewGroupLeadForm
 import models.Mode.{CheckMode, NormalMode}
 import models.requests.DataRequest
 import models.subscription.{GroupMembers, Member}
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.ChooseNewGroupLeadPage
 import play.api.data.Form
@@ -37,14 +37,14 @@ import play.api.data.Forms.ignored
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.changeGroupLead.ChooseNewGroupLeadView
 
-import scala.AnyRef.{eq => _}
+import scala.AnyRef.eq as _
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
@@ -74,7 +74,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
   private val groupMembers = GroupMembers(Seq())
 
-  object TestException extends Exception("test")
+  object TestException extends RuntimeException("test")
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -92,7 +92,7 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(mockSubscriptionService.fetchGroupMemberNames(any)(any)) thenReturn Future.successful(groupMembers)
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(mockFormProvider.apply(any)) thenReturn form
     val boundForm = Form("value" -> ignored(Member("test-member", "1"))).fill(Member("test-member", "1"))
@@ -101,23 +101,17 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     when(dataRequest.userAnswers.fill(any[Gettable[Member]], any)(any)) thenReturn form
     val answers = dataRequest.userAnswers // avoid unfinished stubbing error
     when(dataRequest.userAnswers.setOrFail(any, any, any)(any)) thenReturn answers
-    when(answers.save(any)(any)) thenReturn Future.successful(answers)
+    when(answers.save(any())(any)) thenReturn Future.successful(answers)
 
     when(navigator.selectNewGroupRep(any)) thenReturn Call("", "some-url")
   }
 
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
-
   "onPageLoad" must {
 
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       sut.onPageLoad(NormalMode)(FakeRequest())
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "return a view" in {
@@ -168,9 +162,9 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
 
   "onSubmit" must {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       sut.onSubmit(NormalMode)(FakeRequest())
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "redirect to the url given by the navigator" in {
@@ -207,8 +201,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
     "bind the form and bind a value" in {
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-      when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(userAnswers.save(any())(any)).thenReturn(Future.successful(userAnswers))
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
 
@@ -239,8 +233,8 @@ class ChooseNewGroupLeadControllerSpec extends PlaySpec with BeforeAndAfterEach 
       "the cache save fails" in {
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+        when(userAnswers.save(any())(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }

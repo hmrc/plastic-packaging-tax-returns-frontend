@@ -21,10 +21,10 @@ import models.subscription.group.{GroupPartnershipDetails, GroupPartnershipSubsc
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import models.subscription._
 import models.{EisError, EisFailure}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar
-import org.mockito.MockitoSugar.{mock, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,7 +41,7 @@ class SubscriptionServiceSpec extends PlaySpec with BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    MockitoSugar.reset(subscriptionConnector, headerCarrier)
+    reset(subscriptionConnector, headerCarrier)
     when(subscriptionConnector.get(any)(any)) thenReturn Future.successful(Right(subscriptionDisplayResponse))
   }
 

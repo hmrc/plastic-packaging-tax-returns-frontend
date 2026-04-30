@@ -29,12 +29,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ConvertedCreditsPage
 import play.api.data.Form
@@ -52,11 +51,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ConvertedCreditsWeightControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+class ConvertedCreditsWeightControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val messagesApi          = mock[MessagesApi]
   private val journeyAction        = mock[JourneyAction]
@@ -77,7 +72,7 @@ class ConvertedCreditsWeightControllerSpec
     navigator
   )
 
-  private val request            = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request            = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val form               = mock[Form[Long]]
   private val messages           = mock[Messages]
   private val updatedUserAnswers = mock[UserAnswers]
@@ -85,15 +80,23 @@ class ConvertedCreditsWeightControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    reset(view, navigator, request)
+
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(formProvider.apply()) thenReturn form
 
     when(view.apply(any, any, any)(any, any)) thenReturn HtmlFormat.raw("a-view")
-    when(request.userAnswers.fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)) thenReturn form
+    when(
+      request.userAnswers.fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(form),
+        argThat((_: Option[Long] => Any) => true)
+      )(any)
+    ) thenReturn form
     when(request.userAnswers.setOrFail(any, any, any)(any)) thenReturn updatedUserAnswers
-    when(updatedUserAnswers.save(any)(any)) thenReturn Future.successful(updatedUserAnswers)
+    when(updatedUserAnswers.save(any())(any)) thenReturn Future.successful(updatedUserAnswers)
 
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
     when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
@@ -111,7 +114,7 @@ class ConvertedCreditsWeightControllerSpec
 
     "use the journey action" in {
       controller.onPageLoad("year-key", NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "show web page with correct submit url" in {
@@ -127,7 +130,11 @@ class ConvertedCreditsWeightControllerSpec
       await {
         controller.onPageLoad("year-key", NormalMode).skippingJourneyAction(request)
       }
-      verify(request.userAnswers).fillWithFunc(eqTo(ConvertedCreditsPage("year-key")), eqTo(form), any)(any)
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ConvertedCreditsPage("year-key")),
+        eqTo(form),
+        argThat((_: Option[Long] => Any) => true)
+      )(any)
     }
 
     "redirect if obligation is missing" in {
@@ -188,7 +195,7 @@ class ConvertedCreditsWeightControllerSpec
       val result = controller.onSubmit("year-key", NormalMode).skippingJourneyAction(request)
 
       status(result) mustBe BAD_REQUEST
-      verify(view).apply(meq(boundFormWithError), any, any)(any, any)
+      verify(view).apply(eqTo(boundFormWithError), any, any)(any, any)
     }
 
     "redirect if obligation is missing" in {

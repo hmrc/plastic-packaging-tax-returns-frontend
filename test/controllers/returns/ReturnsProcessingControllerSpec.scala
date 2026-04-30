@@ -18,8 +18,8 @@ package controllers.returns
 
 import base.SpecBase
 import connectors.DownstreamServiceError
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.libs.json.Json

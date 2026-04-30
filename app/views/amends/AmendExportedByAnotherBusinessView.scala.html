@@ -33,7 +33,7 @@
 
 @layout(pageTitle = title(form, messages("amendExportedByAnotherBusiness.title"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.amends.routes.AmendExportedByAnotherBusinessController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.amends.routes.AmendExportedByAnotherBusinessController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(None,
             messages("amendExportedByAnotherBusiness.heading"),

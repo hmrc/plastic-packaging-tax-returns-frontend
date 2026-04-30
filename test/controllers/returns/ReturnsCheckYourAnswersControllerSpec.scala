@@ -16,24 +16,23 @@
 
 package controllers.returns
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import cacheables.ReturnObligationCacheable
 import config.FrontendAppConfig
-import connectors._
+import connectors.*
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction}
 import controllers.helpers.TaxReturnHelper
+import models.returns.*
 import models.returns.Credits.{NoCreditAvailable, NoCreditsClaimed}
-import models.returns._
 import models.returns.credits.CreditSummaryRow
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.apache.pekko.stream.testkit.NoMaterializer
+import org.mockito.ArgumentMatchers.{any, anyString, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.WhatDoYouWantToDoPage
 import play.api.Logger
@@ -42,10 +41,10 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
-import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import viewmodels.govuk.SummaryListFluency
 import views.html.returns.ReturnsCheckYourAnswersView
 
@@ -116,7 +115,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "return OK and the correct view for a GET" in {
       setUpMockConnector()
-      when(message.apply(any[String])).thenAnswer((s: String) => s)
+      when(message.apply(any[String], any)).thenReturn("Expected string")
 
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
@@ -141,8 +140,15 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
     "view claimed credits on pageLoading" in {
       setUpMockConnector()
-      when(message.apply(anyString(), any, any, any)).thenReturn("any-key")
-      when(message.apply(anyString())).thenReturn("total-key")
+
+      when(message.apply(anyString(), any())).thenAnswer { invocation =>
+        val key = invocation.getArgument[String](0)
+
+        key match {
+          case "return.quarter" => "any-key"
+          case _                => "total-key"
+        }
+      }
 
       val result = createSut(Some(setUserAnswer())).onPageLoad()(FakeRequest(GET, "/foo"))
       status(result) mustEqual OK
@@ -191,10 +197,13 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
 
       val result = createSut(Some(setUserAnswer())).onSubmit()(FakeRequest(POST, "/foo"))
 
+      await(result)
+
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.returns.routes.ReturnsProcessingController.onPageLoad(
         true
       ).url
+
       verify(mockSessionRepository).set(
         any,
         ArgumentMatchers.eq(Paths.ReturnChargeRef),

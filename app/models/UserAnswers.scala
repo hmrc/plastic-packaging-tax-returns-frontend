@@ -19,13 +19,13 @@ package models
 import models.UserAnswers.SaveUserAnswerFunc
 import pages.QuestionPage
 import play.api.data.Form
-import play.api.libs.json._
+import play.api.libs.json.*
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.runtime.universe.{TypeTag, typeOf}
+import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
@@ -113,7 +113,7 @@ case class UserAnswers(
     * @throws IllegalStateException
     *   if there is no answer at that path, or if there is an answer but it cannot be reads as type A
     */
-  def getOrFail[A](question: Gettable[A])(implicit reads: Reads[A], tt: TypeTag[A]): A =
+  def getOrFail[A](question: Gettable[A])(implicit reads: Reads[A], ct: ClassTag[A]): A =
     getOrFail(question.path)
 
   /** Overload of
@@ -121,7 +121,7 @@ case class UserAnswers(
     * @param path
     *   path to answer to read
     */
-  def getOrFail[A](path: JsPath)(implicit rds: Reads[A], tt: TypeTag[A]): A =
+  def getOrFail[A](path: JsPath)(implicit rds: Reads[A], ct: ClassTag[A]): A =
     Reads
       .at(path)
       .reads(data)
@@ -129,7 +129,9 @@ case class UserAnswers(
         case JsError((_, JsonValidationError("error.path.missing" :: Nil) :: _) :: _) =>
           throw new IllegalStateException(s"$path is missing from user answers")
         case JsError((_, JsonValidationError(message :: Nil, _*) :: _) :: _) if message.startsWith("error.expected") =>
-          throw new IllegalStateException(s"$path in user answers cannot be read as type ${typeOf[A]}")
+          throw new IllegalStateException(
+            s"$path in user answers cannot be read as type ${ct.runtimeClass.getSimpleName}"
+          )
       }
       .get
 
@@ -306,7 +308,7 @@ object UserAnswers {
 
   val reads: Reads[UserAnswers] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").read[String] and
@@ -316,14 +318,13 @@ object UserAnswers {
   }
 
   val writes: OWrites[UserAnswers] = {
-
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").write[String] and
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    )(unlift(UserAnswers.unapply))
+    )(ua => (ua.id, ua.data, ua.lastUpdated))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)

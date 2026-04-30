@@ -19,11 +19,10 @@ package controllers.actions
 import config.FrontendAppConfig
 import models.requests.IdentifiedRequest
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.refEq
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{mock, reset, spyLambda, verify, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -51,7 +50,11 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/target-url")
 
-  val testBlock: IdentifiedRequest[Any] => Future[Result] = spyLambda(_ => Future.successful(Ok("test")))
+  trait TestBlock {
+    def apply(user: IdentifiedRequest[Any]): Future[Result]
+  }
+
+  val testBlock: TestBlock = mock[TestBlock]
 
   override def beforeEach(): Unit = {
     reset(
@@ -60,6 +63,9 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
       sessionRepository,
       testBlock
     )
+    when(testBlock.apply(any))
+      .thenReturn(Future.successful(Ok("test")))
+
     super.beforeEach()
   }
 
@@ -75,7 +81,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
           Future.successful(Some("internalId") and Some(AffinityGroup.Organisation) and Enrolments(Set(pptEnrolment)))
         )
 
-        await(sut.invokeBlock(request, testBlock))
+        await(sut.invokeBlock(request, testBlock(_)))
 
         val requestCaptor = ArgumentCaptor.forClass(classOf[IdentifiedRequest[Any]])
         verify(testBlock).apply(requestCaptor.capture())
@@ -90,7 +96,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
         )
         when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.successful(Some("selected-ppt-ref")))
 
-        await(sut.invokeBlock(request, testBlock))
+        await(sut.invokeBlock(request, testBlock(_)))
 
         val requestCaptor = ArgumentCaptor.forClass(classOf[IdentifiedRequest[Any]])
         verify(testBlock).apply(requestCaptor.capture())
@@ -107,7 +113,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
         )
         when(sessionRepository.get[String](any, any)(any)).thenReturn(Future.successful(None))
 
-        val result = sut.invokeBlock(request, testBlock)
+        val result = sut.invokeBlock(request, testBlock(_))
 
         redirectLocation(result) mustBe Some(controllers.routes.AgentSelectPPTRefController.onPageLoad().url)
         verifyNoInteractions(testBlock)
@@ -123,7 +129,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
         )
         when(appConfig.loginUrl).thenReturn("/login-url")
 
-        val result = sut.invokeBlock(request, testBlock)
+        val result = sut.invokeBlock(request, testBlock(_))
 
         redirectLocation(result).get must startWith("/login-url")
         withClue("must append continue param from request target") {
@@ -141,7 +147,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
           Future.failed(InsufficientEnrolments())
         )
 
-        val result = sut.invokeBlock(request, testBlock)
+        val result = sut.invokeBlock(request, testBlock(_))
 
         redirectLocation(result) mustBe Some(controllers.home.routes.UnauthorisedController.notEnrolled().url)
         verifyNoInteractions(testBlock)
@@ -156,7 +162,7 @@ class AuthActionSpec extends PlaySpec with BeforeAndAfterEach {
           Future.successful(None and Some(AffinityGroup.Organisation) and Enrolments(Set.empty))
         )
 
-        val ex = intercept[IllegalStateException](await(sut.invokeBlock(request, testBlock)))
+        val ex = intercept[IllegalStateException](await(sut.invokeBlock(request, testBlock(_))))
 
         ex.getMessage mustBe "internalId is required"
         verifyNoInteractions(testBlock)

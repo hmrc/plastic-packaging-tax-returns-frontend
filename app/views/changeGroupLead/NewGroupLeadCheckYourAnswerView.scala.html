@@ -45,7 +45,7 @@
     )
     @paragraphBody(messages("newGroupLeadCheckYourAnswers.body"))
 
-    @formHelper(action = routes.NewGroupLeadCheckYourAnswerController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = routes.NewGroupLeadCheckYourAnswerController.onSubmit, Symbol("autoComplete") -> "off") {
         @govukButton(
             ButtonViewModel(
                 messages("newGroupLeadCheckYourAnswers.button")

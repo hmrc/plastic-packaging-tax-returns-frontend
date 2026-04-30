@@ -55,7 +55,7 @@
     Some(messages("return.title.tail")))
 ) {
 
-    @formHelper(action = controllers.returns.routes.PlasticExportedByAnotherBusinessController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.routes.PlasticExportedByAnotherBusinessController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @yesNoLayout(sectionHeading = Some(messages("plasticExportedByAnotherBusiness.caption")),
             heading = messages("plasticExportedByAnotherBusiness.heading", amount.asKg),

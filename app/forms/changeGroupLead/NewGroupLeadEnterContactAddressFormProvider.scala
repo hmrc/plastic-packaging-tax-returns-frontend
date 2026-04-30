@@ -41,7 +41,9 @@ class NewGroupLeadEnterContactAddressFormProvider {
       ),
       postalCode  -> mandatoryIfEqualOrOptional(countryCode, "GB", gbPostCodeValidation, optionalPostalCodeValidation),
       countryCode -> countryCodeValidation
-    )(NewGroupLeadAddressDetailsFormBuffer.apply)(NewGroupLeadAddressDetailsFormBuffer.unapply)
+    )(NewGroupLeadAddressDetailsFormBuffer.apply)(b =>
+      Some((b.addressLine1, b.addressLine2, b.addressLine3, b.townOrCity, b.postalCode, b.countryCode))
+    )
       .transform[NewGroupLeadAddressDetails](_.toNewGroupLeadAddressDetails, _.toBuffer)
   )
 

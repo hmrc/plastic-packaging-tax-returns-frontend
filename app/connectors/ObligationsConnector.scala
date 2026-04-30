@@ -16,18 +16,19 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import models.obligations.PPTObligations
 import models.returns.TaxReturnObligation
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsConnector @Inject() (
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
@@ -36,7 +37,9 @@ class ObligationsConnector @Inject() (
 
   def getOpen(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTObligations] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.open.get.timer").time()
-    httpClient.GET[PPTObligations](appConfig.pptOpenObligationUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptOpenObligationUrl(pptReferenceNumber)}")
+      .execute[PPTObligations]
       .map { response =>
         logger.info(s"Retrieved open obligations for ppt reference number [$pptReferenceNumber]")
         response
@@ -52,7 +55,9 @@ class ObligationsConnector @Inject() (
 
   def getFulfilled(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[TaxReturnObligation]] = {
     val timer = metrics.defaultRegistry.timer("ppt.obligations.fulfilled.get.timer").time()
-    httpClient.GET[Seq[TaxReturnObligation]](appConfig.pptFulfilledObligationUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptFulfilledObligationUrl(pptReferenceNumber)}")
+      .execute[Seq[TaxReturnObligation]]
       .map { response =>
         logger.info(s"Retrieved fulfilled obligations for ppt reference number [$pptReferenceNumber]")
         response

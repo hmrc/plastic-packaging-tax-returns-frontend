@@ -37,7 +37,7 @@
 
 @layout(pageTitle = title(form, messages("claim-for-which-year.credits.title-heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ClaimForWhichYearController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "option-0")))

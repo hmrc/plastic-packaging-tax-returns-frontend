@@ -26,29 +26,29 @@ import models.amends.{AmendNewAnswerType, AmendSummaryRow}
 import models.requests.DataRequest
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures._
+import org.scalatest.concurrent.ScalaFutures.*
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import pages.amends._
+import pages.amends.*
 import play.api.i18n.MessagesApi
 import play.api.libs.json.{JsPath, JsResultException, JsonValidationError}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
-import repositories.{ReturnsProcessingRepository, SessionRepository}
 import repositories.SessionRepository.Paths
+import repositories.{ReturnsProcessingRepository, SessionRepository}
 import services.AmendReturnAnswerComparisonService
 import support.AmendExportedData
+import uk.gov.hmrc.http.HeaderCarrier
 import util.EdgeOfSystem
 import viewmodels.PrintLong
 import viewmodels.govuk.SummaryListFluency
 import views.html.amends.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
@@ -61,15 +61,16 @@ class CheckYourAnswersControllerSpec
 
   val expectedHtml: Html = Html("correct view")
 
-  private val dataRequest                         = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
-  private val messagesApi                         = mock[MessagesApi]
-  private val journeyAction                       = mock[JourneyAction]
-  private val returnsConnector                    = mock[TaxReturnsConnector]
-  private val comparisonService                   = mock[AmendReturnAnswerComparisonService]
-  private val sessionRepository                   = mock[SessionRepository]
-  private val returnsProcessingRepository         = mock[ReturnsProcessingRepository]
-  private val view                                = mock[CheckYourAnswersView]
-  private implicit val edgeOfSystem: EdgeOfSystem = mock[EdgeOfSystem]
+  private val dataRequest                                    = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
+  private val messagesApi                                    = mock[MessagesApi]
+  private val journeyAction                                  = mock[JourneyAction]
+  private val returnsConnector                               = mock[TaxReturnsConnector]
+  private val comparisonService                              = mock[AmendReturnAnswerComparisonService]
+  private val sessionRepository                              = mock[SessionRepository]
+  private val returnsProcessingRepository                    = mock[ReturnsProcessingRepository]
+  private val view                                           = mock[CheckYourAnswersView]
+  private implicit val edgeOfSystem: EdgeOfSystem            = mock[EdgeOfSystem]
+  private implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private def sut = new CheckYourAnswersController(
     messagesApi,
@@ -80,7 +81,7 @@ class CheckYourAnswersControllerSpec
     sessionRepository,
     returnsProcessingRepository,
     view
-  )
+  )(ec, edgeOfSystem)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -97,16 +98,16 @@ class CheckYourAnswersControllerSpec
     )
 
     when(view.apply(any, any, any, any, any)(any, any)).thenReturn(expectedHtml)
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
     when(edgeOfSystem.localDateTimeNow).thenReturn(taxReturnOb.dueDate.atStartOfDay())
   }
 
   "onPageLoad" should {
     "use the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onPageLoad()(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "return 200" in {
@@ -164,12 +165,13 @@ class CheckYourAnswersControllerSpec
 
   "onSubmit" should {
     "use the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit()(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "submit the amendment" in {
+      when(dataRequest.headerCarrier).thenReturn(HeaderCarrier())
       when(dataRequest.pptReference).thenReturn("pptReference")
       when(returnsConnector.amend(any)(any)).thenReturn(Future.successful(Some("12345")))
       when(sessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))

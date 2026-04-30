@@ -16,16 +16,17 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import models.CreditBalance
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CalculateCreditsConnector @Inject() (httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(
+class CalculateCreditsConnector @Inject() (httpClient: HttpClientV2, appConfig: FrontendAppConfig, metrics: Metrics)(
   implicit ec: ExecutionContext
 ) extends Logging
     with HttpReadsInstances {
@@ -33,7 +34,9 @@ class CalculateCreditsConnector @Inject() (httpClient: HttpClient, appConfig: Fr
   def getEventually(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[CreditBalance] = {
 
     val timer = metrics.defaultRegistry.timer("ppt.exportcredits.open.get.timer").time()
-    httpClient.GET[CreditBalance](appConfig.pptCalculateCreditsUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptCalculateCreditsUrl(pptReferenceNumber)}")
+      .execute[CreditBalance]
       .andThen { case _ => timer.stop() }
       .recover { case ex: Exception =>
         throw DownstreamServiceError(

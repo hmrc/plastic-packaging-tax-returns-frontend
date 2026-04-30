@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("exportedCreditsWeight.heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ExportedCreditsWeightController.onSubmit(yearKey, mode), Symbol("autoComplete") -> "off") {
 
         @weightInputLayout(
                 sectionHeading = Some(messages("credits.caption", ViewUtils.displayDateRangeTo(dateRange.from, dateRange.to))),

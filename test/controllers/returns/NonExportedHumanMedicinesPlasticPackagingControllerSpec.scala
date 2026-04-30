@@ -16,7 +16,6 @@
 
 package controllers.returns
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
@@ -27,8 +26,9 @@ import forms.returns.NonExportedHumanMedicinesPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
+import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
@@ -62,7 +62,8 @@ class NonExportedHumanMedicinesPlasticPackagingControllerSpec
   val importedAmount                  = 100L
   val exportedAmount                  = 50L
   val exportedByAnotherBusinessAmount = 50L
-  val nonExportedAmount = (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
+  val nonExportedAmount: Long =
+    (manufacturedAmount + importedAmount) - (exportedAmount + exportedByAnotherBusinessAmount)
 
   private val mockMessagesApi: MessagesApi                      = mock[MessagesApi]
   private val mockCacheConnector                                = mock[CacheConnector]

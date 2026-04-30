@@ -21,9 +21,10 @@ import models.amends.AmendNewAnswerType.{AnswerWithValue, AnswerWithoutValue}
 import models.amends.AmendSummaryRow
 import models.returns.{AmendsCalculations, Calculations}
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.amends.{AmendImportedPlasticPackagingPage, AmendManufacturedPlasticPackagingPage}
 import queries.Gettable

@@ -16,21 +16,22 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import models.EisFailure
 import models.subscription.subscriptionDisplay.SubscriptionDisplayResponse
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
@@ -40,7 +41,9 @@ class SubscriptionConnector @Inject() (
   )(implicit hc: HeaderCarrier): Future[Either[EisFailure, SubscriptionDisplayResponse]] = {
 
     val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
-    httpClient.GET[HttpResponse](appConfig.pptSubscriptionUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptSubscriptionUrl(pptReferenceNumber)}")
+      .execute[HttpResponse]
       .map { response =>
         if (Status.isSuccessful(response.status)) {
           Right(response.json.as[SubscriptionDisplayResponse])
@@ -54,18 +57,19 @@ class SubscriptionConnector @Inject() (
   def changeGroupLead(pptReferenceNumber: String)(implicit
     hc: HeaderCarrier
   ): Future[HttpResponse] = {
-    httpClient.POSTEmpty[HttpResponse](
-      appConfig.pptChangeGroupLeadUrl(pptReferenceNumber)
-    ).map { response =>
-      response.status match {
-        case OK => response
-        case _ =>
-          throw DownstreamServiceError(
-            s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
-            new Exception()
-          )
+    httpClient
+      .post(url"${appConfig.pptChangeGroupLeadUrl(pptReferenceNumber)}")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK => response
+          case _ =>
+            throw DownstreamServiceError(
+              s"Failed to update subscription details for PPTReference: [$pptReferenceNumber], error: [${response.body}]",
+              new Exception()
+            )
+        }
       }
-    }
   }
 
 }

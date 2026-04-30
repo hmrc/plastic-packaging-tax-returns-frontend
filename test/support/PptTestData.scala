@@ -112,10 +112,10 @@ object PptTestData {
       IdentityData("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b", affinityGroup)
     )
 
-  def newAgent(externalId: String = "123") =
+  def newAgent(externalId: String = "123"): SignedInUser =
     newUser(externalId, enrolments = None, affinityGroup = Some(AffinityGroup.Agent))
 
-  def pptEnrolment(pptEnrolmentId: String) =
+  def pptEnrolment(pptEnrolmentId: String): Enrolments =
     newEnrolments(
       newEnrolment(IdentifierAction.pptEnrolmentKey, IdentifierAction.pptEnrolmentIdentifierName, pptEnrolmentId)
     )

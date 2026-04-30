@@ -16,7 +16,8 @@
 
 package models.returns
 
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import util.EdgeOfSystem
 

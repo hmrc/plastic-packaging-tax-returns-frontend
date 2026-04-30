@@ -41,7 +41,7 @@
 @layout(pageTitle = title(form, messages("do-you-want-to-claim.title"), Some(messages("return.title.tail")))) {
 
 
-    @formHelper(action = controllers.returns.credits.routes.WhatDoYouWantToDoController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.WhatDoYouWantToDoController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

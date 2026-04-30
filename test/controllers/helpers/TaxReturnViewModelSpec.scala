@@ -18,8 +18,9 @@ package controllers.helpers
 
 import models.UserAnswers
 import models.returns.{Calculations, TaxReturnObligation}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.{AnotherBusinessExportedPage, AnotherBusinessExportedWeightPage, DirectlyExportedWeightPage}
 import play.api.i18n.Messages
@@ -181,7 +182,7 @@ class TaxReturnViewModelSpec extends PlaySpec with BeforeAndAfterEach {
 
   "taxRateInPounds" should {
     "return the taxRate in pounds per tonne" in {
-      when(calculations.taxRate).thenReturn(0.3)
+      when(calculations.taxRate).thenReturn(BigDecimal(0.3))
 
       sut.taxRate mustBe "£300.00"
     }

@@ -22,8 +22,11 @@ import models.returns.CreditRangeOption
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, spy, times, verify}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
@@ -40,11 +43,11 @@ class ConvertedCreditsWeightViewSpec
     with MockitoSugar
     with BeforeAndAfterEach {
 
-  override val messages         = spy(super.messages)
-  private val form              = new ConvertedCreditsWeightFormProvider()()
-  private val page              = inject[ConvertedCreditsWeightView]
-  private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
-  private def createView: Html  = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
+  override val messages: Messages = spy(super.messages)
+  private val form                = new ConvertedCreditsWeightFormProvider()()
+  private val page                = inject[ConvertedCreditsWeightView]
+  private val creditRangeOption   = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
+  private def createView: Html    = page(form, Call("method", "/submit-url"), creditRangeOption)(request, messages)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

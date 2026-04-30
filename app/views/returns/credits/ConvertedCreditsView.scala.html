@@ -45,7 +45,7 @@
 
 @layout(pageTitle = title(form, messages("converted-credits-yes-no.title-heading"), Some(messages("return.title.tail")))) {
 
-    @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(key, mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.returns.credits.routes.ConvertedCreditsController.onSubmit(key, mode), Symbol("autoComplete") -> "off") {
         
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

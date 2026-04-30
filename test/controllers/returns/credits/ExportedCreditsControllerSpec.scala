@@ -16,7 +16,7 @@
 
 package controllers.returns.credits
 
-import base.utils.JourneyActionAnswer._
+import base.utils.JourneyActionAnswer.*
 import cacheables.ReturnObligationCacheable
 import connectors.CacheConnector
 import controllers.actions.JourneyAction
@@ -26,12 +26,11 @@ import models.requests.DataRequest
 import models.returns.credits.SingleYearClaim
 import models.returns.{CreditRangeOption, CreditsAnswer, TaxReturnObligation}
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.MockitoSugar
-import org.mockito.captor.ArgCaptor
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.stubbing.ReturnsDeepStubs
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
+import org.mockito.Mockito.{verify, when}
+import org.mockito.{Answers, ArgumentCaptor}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import pages.returns.credits.ExportedCreditsPage
 import play.api.data.Form
@@ -40,7 +39,7 @@ import play.api.http.Status
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.JsPath
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import views.html.returns.credits.ExportedCreditsView
 
@@ -48,11 +47,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ExportedCreditsControllerSpec
-    extends PlaySpec
-    with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+class ExportedCreditsControllerSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val controllerComponents = stubMessagesControllerComponents()
 
@@ -66,7 +61,7 @@ class ExportedCreditsControllerSpec
   private val preparedForm      = mock[Form[Boolean]]("prepared form")
   private val initialForm       = mock[Form[Boolean]]("initial form")
   private val messages          = mock[Messages]
-  private val request           = mock[DataRequest[AnyContent]](ReturnsDeepStubs)
+  private val request           = mock[DataRequest[AnyContent]](Answers.RETURNS_DEEP_STUBS)
   private val creditRangeOption = CreditRangeOption(LocalDate.of(2023, 4, 1), LocalDate.of(2024, 3, 31))
 
   val sut: ExportedCreditsController = new ExportedCreditsController(
@@ -82,14 +77,16 @@ class ExportedCreditsControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(mockJourneyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(mockJourneyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(mockJourneyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(mockJourneyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(view.apply(any, any, any, any)(any, any)) thenReturn Html("correct view")
     when(messagesApi.preferred(any[RequestHeader])) thenReturn messages
 
     when(formProvider.apply()) thenReturn initialForm
-    when(request.userAnswers.fillWithFunc(any, any[Form[Boolean]], any)(any)) thenReturn preparedForm
+    when(
+      request.userAnswers.fillWithFunc(any, any[Form[Boolean]], argThat((_: Option[Any] => Any) => true))(any)
+    ) thenReturn preparedForm
     when(request.userAnswers.get(eqTo(ReturnObligationCacheable))(any)) thenReturn Some(mock[TaxReturnObligation])
     when(request.userAnswers.get[SingleYearClaim](eqTo(JsPath \ "credit" \ "year-key"))(any)) thenReturn Some(
       SingleYearClaim(
@@ -102,7 +99,13 @@ class ExportedCreditsControllerSpec
 
     when(initialForm.bindFromRequest()(any, any)) thenReturn Form("v" -> boolean).fill(true)
     when(mockNavigator.exportedCreditsYesNo(any, any, any, any)) thenReturn Call("me", "mr")
-    when(request.userAnswers.changeWithFunc(any, any, any)(any, any)) thenReturn Future.unit
+    when(
+      request.userAnswers.changeWithFunc(
+        any,
+        argThat((_: Option[Any] => Any) => true),
+        argThat((_: Option[Boolean] => Any) => true)
+      )(any, any)
+    ) thenReturn Future.unit
   }
 
   "onPageLoad" must {
@@ -113,15 +116,22 @@ class ExportedCreditsControllerSpec
 
       verify(view).apply(preparedForm, "year-key", NormalMode, creditRangeOption)(request, messages)
 
-      val func = ArgCaptor[CreditsAnswer => Option[Boolean]]
-      verify(request.userAnswers).fillWithFunc(eqTo(ExportedCreditsPage("year-key")), eqTo(initialForm), func)(any)
+      val func = ArgumentCaptor.forClass(classOf[CreditsAnswer => Option[Boolean]])
+      verify(request.userAnswers).fillWithFunc(
+        eqTo(ExportedCreditsPage("year-key")),
+        eqTo(initialForm),
+        func.capture()
+      )(
+        any
+      )
 
       status(result) mustEqual Status.OK
       contentAsString(result) mustBe "correct view"
 
       withClue("fills the form value with correct function") {
         val creditsAnswer = mock[CreditsAnswer]
-        func.value(creditsAnswer)
+        val capturedFunc  = func.getValue
+        capturedFunc(creditsAnswer)
         verify(creditsAnswer).yesNo
       }
     }
@@ -154,7 +164,11 @@ class ExportedCreditsControllerSpec
       await(result)
 
       verify(mockCacheConnector).saveUserAnswerFunc(any)(any)
-      verify(request.userAnswers).changeWithFunc(any, any, any)(any, any)
+      verify(request.userAnswers).changeWithFunc(
+        any,
+        argThat((_: Option[Any] => Any) => true),
+        argThat((_: Option[Boolean] => Any) => true)
+      )(any, any)
       verify(mockNavigator).exportedCreditsYesNo(any, any, any, any)
 
       status(result) mustBe SEE_OTHER

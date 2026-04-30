@@ -27,12 +27,13 @@ import models.requests.DataRequest
 import models.returns.CreditsAnswer
 import models.returns.credits.SingleYearClaim
 import navigation.ReturnsJourneyNavigator
-import org.mockito.ArgumentMatchersSugar._
-import org.mockito.scalatest.ResetMocksAfterEachTest
-import org.mockito.{Answers, MockitoSugar}
+import org.mockito.Answers
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import pages.returns.credits._
+import pages.returns.credits.*
 import play.api.data.Form
 import play.api.data.Forms.boolean
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -52,8 +53,7 @@ class CancelCreditsClaimControllerSpec
     extends PlaySpec
     with JourneyActionAnswer
     with MockitoSugar
-    with BeforeAndAfterEach
-    with ResetMocksAfterEachTest {
+    with BeforeAndAfterEach {
 
   private val journeyAction        = mock[JourneyAction]
   private val messagesApi          = mock[MessagesApi]
@@ -88,8 +88,10 @@ class CancelCreditsClaimControllerSpec
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    reset(errorView, view, navigator, request)
+
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     when(view.apply(any, any, any)(any, any)) thenReturn Html("the view")
     when(errorView.apply(any)(any, any)) thenReturn Html("the error view")
@@ -100,7 +102,7 @@ class CancelCreditsClaimControllerSpec
 
     val x = request.userAnswers
     when(request.userAnswers.removePath(any)) thenReturn x
-    when(request.userAnswers.save(any)(any)) thenReturn Future.successful(x)
+    when(request.userAnswers.save(any())(any)) thenReturn Future.successful(x)
 
     when(request.userAnswers.get[Any](any[JsPath])(any)) thenReturn Some(exampleSingleYearClaim)
   }
@@ -108,9 +110,9 @@ class CancelCreditsClaimControllerSpec
   "onPageLoad" should {
 
     "use the journey action" in {
-      when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.apply(any())) thenReturn mock[Action[AnyContent]]
       sut.onPageLoad("year-key")(request)
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return a 200" in {
@@ -141,9 +143,9 @@ class CancelCreditsClaimControllerSpec
   "onSubmit" should {
 
     "use the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       sut.onSubmit("year-key")(request)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "handle answer yes" in {
@@ -151,7 +153,7 @@ class CancelCreditsClaimControllerSpec
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
 
       verify(request.userAnswers).removePath(eqTo(JsPath \ "credit" \ "year-key"))
-      verify(request.userAnswers).save(any)(any)
+      verify(request.userAnswers).save(any())(any)
       verify(navigator).cancelCredit()
 
       result.header.status mustBe SEE_OTHER
@@ -163,9 +165,9 @@ class CancelCreditsClaimControllerSpec
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
 
       verify(request.userAnswers, never).removePath(any)
-      verify(request.userAnswers, never).save(any)(any)
+      verify(request.userAnswers, never).save(any())(any)
       verify(navigator).cancelCredit()
-      verifyZeroInteractions(saveFunction)
+      verifyNoInteractions(saveFunction)
 
       result.header.status mustBe SEE_OTHER
       redirectLocation(Future.successful(result)).value mustBe "/next-page"
@@ -177,7 +179,7 @@ class CancelCreditsClaimControllerSpec
 
       val result = await(sut.onSubmit("year-key").skippingJourneyAction(request))
       verify(view).apply(eqTo(formWithErrors), any, eqTo(exampleSingleYearClaim))(eqTo(request), any)
-      verifyZeroInteractions(saveFunction)
+      verifyNoInteractions(saveFunction)
 
       result.header.status mustBe BAD_REQUEST
       contentAsString(Future.successful(result)) mustBe "the view"
@@ -185,7 +187,7 @@ class CancelCreditsClaimControllerSpec
 
   }
 
-  def createUserAnswer =
+  def createUserAnswer: UserAnswers =
     UserAnswers("123")
       .set(ExportedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get
       .set(ConvertedCreditsPage("year-key"), CreditsAnswer.answerWeightWith(10L)).get

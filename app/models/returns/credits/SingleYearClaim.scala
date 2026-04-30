@@ -30,8 +30,8 @@ case class SingleYearClaim(
   exportedCredits: Option[CreditsAnswer],
   convertedCredits: Option[CreditsAnswer]
 ) {
-  def toDateRangeString(implicit messages: Messages) = ViewUtils.displayDateRangeTo(fromDate, toDate)
-  def createCreditRangeOption(): CreditRangeOption   = CreditRangeOption(fromDate, toDate)
+  def toDateRangeString(implicit messages: Messages): String = ViewUtils.displayDateRangeTo(fromDate, toDate)
+  def createCreditRangeOption(): CreditRangeOption           = CreditRangeOption(fromDate, toDate)
 }
 
 object SingleYearClaim {

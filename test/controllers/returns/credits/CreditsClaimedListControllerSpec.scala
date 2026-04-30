@@ -24,13 +24,13 @@ import controllers.actions.JourneyAction
 import forms.returns.credits.CreditsClaimedListFormProvider
 import models.Mode.NormalMode
 import models.requests.DataRequest
-import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.returns.credits.CreditSummaryRow
+import models.returns.{CreditRangeOption, TaxReturnObligation}
 import models.{CreditBalance, TaxablePlastic}
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.enablers.Messaging
 import org.scalatestplus.mockito.MockitoSugar
@@ -40,7 +40,7 @@ import play.api.data.Forms.boolean
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{AnyContent, Call, RequestHeader}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.Gettable
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -80,8 +80,8 @@ class CreditsClaimedListControllerSpec
   private val availableOptions = Seq(CreditRangeOption(LocalDate.now(), LocalDate.now()))
 
   // Resolves an ambiguity in implicits for Messaging used by test framework
-  private implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] =
-    Messaging.messagingNatureOfThrowable
+  implicit val resolveImplicitAmbiguity: Messaging[DownstreamServiceError] =
+    (e: DownstreamServiceError) => e.getMessage
 
   private val sut = new CreditsClaimedListController(
     messagesApi,
@@ -100,8 +100,8 @@ class CreditsClaimedListControllerSpec
     reset(view, request, navigator, journeyAction, calcCreditsConnector)
 
     when(view.apply(any, any, any, any, any, any)(any, any)).thenReturn(Html("correct view"))
-    when(journeyAction.apply(any)).thenAnswer(byConvertingFunctionArgumentsToAction)
-    when(journeyAction.async(any)).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
+    when(journeyAction.apply(any())).thenAnswer(byConvertingFunctionArgumentsToAction)
+    when(journeyAction.async(any())).thenAnswer(byConvertingFunctionArgumentsToFutureAction)
 
     when(request.pptReference).thenReturn("123")
     when(request.userAnswers.getOrFail[String](any[JsPath])(any, any)).thenReturn("2023-04-01")
@@ -122,7 +122,7 @@ class CreditsClaimedListControllerSpec
 
     "use the journey action" in {
       sut.onPageLoad(NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "return 200" in {
@@ -180,7 +180,7 @@ class CreditsClaimedListControllerSpec
   "onSubmit" should {
     "invoke the journey action" in {
       sut.onSubmit(NormalMode)
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "redirect" in {
@@ -190,7 +190,7 @@ class CreditsClaimedListControllerSpec
       val boundForm = Form("value" -> boolean).fill(true)
       when(formProvider.apply(any)(any)).thenReturn(form)
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
-      when(navigator.creditClaimedList(any, any, any)).thenAnswer(Call(GET, "/foo"))
+      when(navigator.creditClaimedList(any, any, any)).thenReturn(Call(GET, "/foo"))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(request)
 
@@ -235,8 +235,7 @@ class CreditsClaimedListControllerSpec
     when(navigator.creditSummaryChange(any)).thenReturn("/change")
     when(navigator.creditSummaryRemove(any)).thenReturn("/remove")
     when(messagesApi.preferred(any[RequestHeader])).thenReturn(messages)
-    // when(messages.apply(any[String])).thenAnswer((s: String) => s)
-    when(messages.apply(any[String], any)).thenAnswer((s: String) => s)
+    when(messages.apply(any[String], any)).thenAnswer(_.getArgument[String](0))
 
   }
 }

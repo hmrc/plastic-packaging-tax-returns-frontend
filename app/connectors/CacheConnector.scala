@@ -18,15 +18,17 @@ package connectors
 
 import config.FrontendAppConfig
 import models.UserAnswers
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsInstances, HttpResponse}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, HttpResponse, StringContextOps}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CacheConnector @Inject() (
   config: FrontendAppConfig,
-  implicit val httpClient: HttpClient
+  implicit val httpClient: HttpClientV2
 )(implicit ec: ExecutionContext)
     extends HttpReadsInstances {
 
@@ -35,13 +37,12 @@ class CacheConnector @Inject() (
   }
 
   def get(pptReference: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] =
-    httpClient.GET[Option[UserAnswers]](config.pptCacheGetUrl(pptReference))
+    httpClient.get(url"${config.pptCacheGetUrl(pptReference)}").execute[Option[UserAnswers]]
 
   def set(pptReference: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST(config.pptCacheSetUrl(pptReference), userAnswers)(
-      implicitly[Writes[UserAnswers]],
-      implicitly[HttpReads[HttpResponse]],
-      hc.withExtraHeaders("Csrf-Token" -> "nocheck"),
-      implicitly
-    )
+    httpClient
+      .post(url"${config.pptCacheSetUrl(pptReference)}")
+      .setHeader("Csrf-Token" -> "nocheck")
+      .withBody(Json.toJson(userAnswers))
+      .execute[HttpResponse]
 }

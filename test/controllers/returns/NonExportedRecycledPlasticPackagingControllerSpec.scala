@@ -16,7 +16,6 @@
 
 package controllers.returns
 
-import org.apache.pekko.stream.testkit.NoMaterializer
 import base.FakeIdentifierActionWithEnrolment
 import base.utils.NonExportedPlasticTestHelper
 import connectors.CacheConnector
@@ -26,8 +25,9 @@ import forms.returns.NonExportedRecycledPlasticPackagingFormProvider
 import models.Mode.NormalMode
 import models.UserAnswers
 import navigation.ReturnsJourneyNavigator
+import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -73,7 +73,7 @@ class NonExportedRecycledPlasticPackagingControllerSpec extends PlaySpec with Mo
   private val recycledPlasticPackagingRoute =
     controllers.returns.routes.NonExportedRecycledPlasticPackagingController.onPageLoad(NormalMode).url
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockView, mockCacheConnector, mockNavigator, mockNonExportedAmountHelper, mockSessionRepository)
 

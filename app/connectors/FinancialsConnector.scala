@@ -16,18 +16,20 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import connectors.FinancialsConnector.{PaymentLinkRequest, PaymentLinkResponse}
 import models.financials.PPTFinancials
 import play.api.Logging
 import play.api.libs.json.{Json, OWrites, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialsConnector @Inject() (httpClient: HttpClient, appConfig: FrontendAppConfig, metrics: Metrics)(implicit
+class FinancialsConnector @Inject() (httpClient: HttpClientV2, appConfig: FrontendAppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) extends Logging
     with HttpReadsInstances {
@@ -36,17 +38,23 @@ class FinancialsConnector @Inject() (httpClient: HttpClient, appConfig: Frontend
     implicit hc: HeaderCarrier
   ): Future[String] = {
     val request = PaymentLinkRequest(pptReferenceNumber, amountInPence, homeUrl, homeUrl, nextDueDate)
-    httpClient.POST[PaymentLinkRequest, PaymentLinkResponse](appConfig.makePaymentUrl, request).map { res =>
-      logger.info(
-        s"Payment redirect created for pptReferenceNumber: $pptReferenceNumber with journeyId:${res.journeyId}"
-      )
-      res.nextUrl
-    }
+    httpClient
+      .post(url"${appConfig.makePaymentUrl}")
+      .withBody(Json.toJson(request))
+      .execute[PaymentLinkResponse]
+      .map { res =>
+        logger.info(
+          s"Payment redirect created for pptReferenceNumber: $pptReferenceNumber with journeyId:${res.journeyId}"
+        )
+        res.nextUrl
+      }
   }
 
   def getPaymentStatement(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[PPTFinancials] = {
     val timer = metrics.defaultRegistry.timer("ppt.financials.open.get.timer").time()
-    httpClient.GET[PPTFinancials](appConfig.pptFinancialsUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptFinancialsUrl(pptReferenceNumber)}")
+      .execute[PPTFinancials]
       .map { response =>
         logger.info(s"Retrieved open financials for ppt reference number [$pptReferenceNumber]")
         response

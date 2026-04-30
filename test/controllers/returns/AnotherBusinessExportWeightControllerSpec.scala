@@ -27,11 +27,10 @@ import models.UserAnswers.SaveUserAnswerFunc
 import models.requests.DataRequest
 import navigation.ReturnsJourneyNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.reset
-import org.mockito.MockitoSugar.{mock, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.returns.AnotherBusinessExportedWeightPage
 import play.api.data.Form
@@ -39,7 +38,7 @@ import play.api.data.Forms.longNumber
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import views.html.returns.AnotherBusinessExportWeightView
 
@@ -88,8 +87,8 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(mockFormProvider.apply()).thenReturn(form)
     when(dataRequest.userAnswers.fill(any[AnotherBusinessExportedWeightPage.type], any)(any)).thenReturn(form)
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.exportedByAnotherBusinessWeightRoute(any, any)).thenReturn(Call("GET", "/foo"))
     when(mockNonExportedAmountHelper.totalPlasticAdditions(any)).thenReturn(Some(200L))
   }
@@ -97,7 +96,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
   "onPageLoad" should {
     "invoke the journey action" in {
       Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return OK and correct view" in {
@@ -130,9 +129,9 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
 
   "onSubmit" should {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "return a BAD REQUEST (400) when the form errors" in {
@@ -179,7 +178,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
       when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber()).fill(20L))
       val answers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answers)
-      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answers))
+      when(dataRequest.userAnswers.save(any())(any)).thenReturn(Future.successful(answers))
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn(saveFunc)
 
       await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest))
@@ -192,7 +191,7 @@ class AnotherBusinessExportWeightControllerSpec extends PlaySpec with JourneyAct
       when(form.bindFromRequest()(any, any)).thenReturn(Form("value" -> longNumber()).fill(20L))
       val answers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any, any, any)(any)).thenReturn(answers)
-      when(dataRequest.userAnswers.save(any)(any)).thenReturn(Future.successful(answers))
+      when(dataRequest.userAnswers.save(any())(any)).thenReturn(Future.successful(answers))
       when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, bool) => Future.successful(bool))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)

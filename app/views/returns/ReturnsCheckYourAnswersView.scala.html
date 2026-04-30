@@ -205,7 +205,7 @@
         @sectionH3Heading(messages("submit-return.check-your-answers.now-send.heading"))
         @para("now-send.line1", classes="govuk-body govuk-!-margin-bottom-6")
 
-        @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+        @formHelper(action = controllers.returns.routes.ReturnsCheckYourAnswersController.onSubmit(), Symbol("autoComplete") -> "off") {
             @govukButton(
                 ButtonViewModel(messages("submit-return.check-your-answers.now-send.button-text"))
             )

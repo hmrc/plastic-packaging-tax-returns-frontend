@@ -16,20 +16,21 @@
 
 package controllers.changeGroupLead
 
+import base.utils.JourneyActionAnswer.{byConvertingFunctionArgumentsToAction, byConvertingFunctionArgumentsToFutureAction}
 import connectors.CacheConnector
 import controllers.BetterMockActionSyntax
 import controllers.actions.JourneyAction
-import controllers.actions.JourneyAction.{RequestAsyncFunction, RequestFunction}
 import forms.changeGroupLead.MainContactNameFormProvider
 import models.Mode.NormalMode
+import models.UserAnswers
 import models.requests.DataRequest
 import models.subscription.Member
 import navigation.ChangeGroupLeadNavigator
 import org.mockito.Answers
-import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import pages.changeGroupLead.MainContactNamePage
 import play.api.data.Form
@@ -37,7 +38,7 @@ import play.api.data.Forms.text
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import queries.{Gettable, Settable}
 import views.html.changeGroupLead.MainContactNameView
@@ -68,7 +69,7 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
     mockView
   )(global)
 
-  object TestException extends Exception("test")
+  object TestException extends RuntimeException("test")
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -86,28 +87,17 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
     when(mockView.apply(any, any, any)(any, any)).thenReturn(Html("correct view"))
     when(dataRequest.userAnswers.fill(any[Gettable[String]], any)(any)) thenReturn form
     when(dataRequest.userAnswers.getOrFail(any[Gettable[Member]])(any, any)) thenReturn Member("company-name", "1")
-    when(journeyAction.apply(any)) thenAnswer byConvertingFunctionArgumentsToAction
-    when(journeyAction.async(any)) thenAnswer byConvertingFunctionArgumentsToFutureAction
+    when(journeyAction.apply(any())) thenAnswer byConvertingFunctionArgumentsToAction
+    when(journeyAction.async(any())) thenAnswer byConvertingFunctionArgumentsToFutureAction
     when(mockNavigator.mainContactName(any)).thenReturn(Call("GET", "/test-foo"))
   }
-
-  def byConvertingFunctionArgumentsToAction: (RequestFunction) => Action[AnyContent] = (function: RequestFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: DataRequest[AnyContent]) => Future.successful(function(request)))
-      .getMock[Action[AnyContent]]
-
-  def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: DataRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   "onPageLoad" must {
 
     "invoke the journey action" in {
-      when(journeyAction.apply(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.apply(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onPageLoad(NormalMode)(FakeRequest())))
-      verify(journeyAction).apply(any)
+      verify(journeyAction).apply(any())
     }
 
     "return a view" in {
@@ -131,9 +121,9 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
   "onSubmit" must {
     "invoke the journey action" in {
-      when(journeyAction.async(any)) thenReturn mock[Action[AnyContent]]
+      when(journeyAction.async(any())) thenReturn mock[Action[AnyContent]]
       Try(await(sut.onSubmit(NormalMode)(FakeRequest())))
-      verify(journeyAction).async(any)
+      verify(journeyAction).async(any())
     }
 
     "bind the form and error" in {
@@ -156,8 +146,8 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
       when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
       val userAnswers = dataRequest.userAnswers
       when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-      when(userAnswers.save(any)(any)).thenReturn(Future.successful(userAnswers))
+      when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+      when(userAnswers.save(any())(any)).thenReturn(Future.successful(userAnswers))
 
       val result = sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)
 
@@ -190,8 +180,8 @@ class MainContactNameControllerSpec extends PlaySpec with BeforeAndAfterEach {
         when(form.bindFromRequest()(any, any)).thenReturn(boundForm)
         val userAnswers = dataRequest.userAnswers
         when(dataRequest.userAnswers.setOrFail(any[Settable[String]], any, any)(any)).thenReturn(userAnswers)
-        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn { case _ => Future.successful(true) }
-        when(userAnswers.save(any)(any)).thenReturn(Future.failed(TestException))
+        when(mockCache.saveUserAnswerFunc(any)(any)).thenReturn((_, _) => Future.successful(true))
+        when(userAnswers.save(any())(any)).thenReturn(Future.failed(TestException))
 
         intercept[TestException.type](await(sut.onSubmit(NormalMode).skippingJourneyAction(dataRequest)))
       }

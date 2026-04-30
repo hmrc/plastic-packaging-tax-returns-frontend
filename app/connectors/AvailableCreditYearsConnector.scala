@@ -16,17 +16,18 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import models.returns.CreditRangeOption
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AvailableCreditYearsConnector @Inject() (
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   appConfig: FrontendAppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
@@ -35,7 +36,9 @@ class AvailableCreditYearsConnector @Inject() (
 
   def get(pptReferenceNumber: String)(implicit hc: HeaderCarrier): Future[Seq[CreditRangeOption]] = {
     val timer = metrics.defaultRegistry.timer("ppt.availableCreditYears.get.timer").time()
-    httpClient.GET[Seq[CreditRangeOption]](appConfig.pptAvailableCreditYearsUrl(pptReferenceNumber))
+    httpClient
+      .get(url"${appConfig.pptAvailableCreditYearsUrl(pptReferenceNumber)}")
+      .execute[Seq[CreditRangeOption]]
       .andThen { case _ => timer.stop() }
       .recover { case exception: Exception =>
         throw DownstreamServiceError(

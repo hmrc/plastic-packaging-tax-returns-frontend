@@ -73,7 +73,7 @@ class ChooseNewGroupLeadViewSpec extends ViewSpecBase with ViewAssertions with V
 
     "have add a new member link" in {
       view.getElementById("add-new-member-to-group").text mustBe messages("Add a new member to the group")
-      view.getElementById("add-new-member-to-group") must haveHref(appConfig.addMemberToGroupUrl)
+      view.getElementById("add-new-member-to-group") must haveHref(appConfig.addMemberToGroupUrl())
     }
 
     "have a save & continue button" in {

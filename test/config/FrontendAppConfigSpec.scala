@@ -17,14 +17,13 @@
 package config
 
 import com.typesafe.config.{Config, ConfigFactory}
-import org.mockito.MockitoSugar
-import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class FrontendAppConfigSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with ResetMocksAfterEachTest {
+class FrontendAppConfigSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach {
 
   private val validAppConfig: Config =
     ConfigFactory.parseString(s"""

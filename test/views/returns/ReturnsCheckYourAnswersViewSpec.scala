@@ -24,8 +24,8 @@ import models.returns.Credits.NoCreditAvailable
 import models.returns._
 import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import org.jsoup.Jsoup
-import org.mockito.MockitoSugar.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.returns._
 import pages.returns.credits.{ConvertedCreditsPage, ExportedCreditsPage, WhatDoYouWantToDoPage}
 import play.api.Application
@@ -43,7 +43,7 @@ import java.time.LocalDate
 class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   private lazy val page: ReturnsCheckYourAnswersView = inject[ReturnsCheckYourAnswersView]
-  private val appConfig                              = mock[FrontendAppConfig]
+  private val appConfig                              = MockitoSugar.mock[FrontendAppConfig]
   private val dateKey                                = s"${LocalDate.now()}-${LocalDate.now()}"
 
   private val aTaxObligation: TaxReturnObligation =
@@ -56,7 +56,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     new GuiceApplicationBuilder()
       .overrides(
         bind[FrontendAppConfig].toInstance(appConfig),
-        bind[SessionRepository].toInstance(mock[SessionRepository])
+        bind[SessionRepository].toInstance(MockitoSugar.mock[SessionRepository])
       ).build()
 
   def createViewModel(answers: UserAnswers, calculations: Calculations = calculations): TaxReturnViewModel =
@@ -112,6 +112,7 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
   "Credits section" should {
     "display guidance" when {
       "is first return" in {
+        when(appConfig.creditsGuidanceUrl).thenReturn("https://localhost/test-url")
         val view = createView(credits = NoCreditAvailable)
         assertNoCreditsAvailable(view)
       }
