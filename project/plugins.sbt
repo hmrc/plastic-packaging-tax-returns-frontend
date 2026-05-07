@@ -16,7 +16,7 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0" exclude ("org
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.4.2")
 
-addSbtPlugin("io.github.irundaia" % "sbt-sassify" % "1.5.2")
+addSbtPlugin("uk.gov.hmrc" % "sbt-sass-compiler" % "0.13.0")
 
 addSbtPlugin("com.github.sbt" % "sbt-concat" % "1.0.0")
 
