@@ -79,6 +79,7 @@ class TaxReturnsConnector @Inject() (
   def submit(
     pptReference: String
   )(implicit hc: HeaderCarrier): Future[Either[AlreadySubmitted.type, Option[String]]] = {
+    logger.warn(s"[DDCYLS-8550]: submit invoked for pptReference=[$pptReference]")
     val timer = metrics.defaultRegistry.timer("ppt.returns.submit.timer").time()
     httpClient.post(url"${frontendAppConfig.pptReturnSubmissionUrl(pptReference)}")
       .withBody(EmptyBody)
@@ -88,13 +89,21 @@ class TaxReturnsConnector @Inject() (
         response.status match {
           case OK =>
             val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
-            logger.info(s"Submitted ppt tax returns for id [$pptReference] with charge ref: $chargeReference")
+            logger.warn(
+              s"[DDCYLS-8550]: Return for pptReference=[$pptReference] submitted successfully with charge ref: $chargeReference"
+            )
             Right(chargeReference)
           case StatusCode.RETURN_ALREADY_SUBMITTED =>
             val periodKey = (response.json \ "returnAlreadyReceived").as[String]
-            logger.info(s"Return for period [$periodKey] already submitted for $pptReference")
+            logger.warn(
+              s"[DDCYLS-8550]: Return for pptReference=[$pptReference] period=[$periodKey] already submitted "
+            )
             Left(AlreadySubmitted)
-          case _ => throw new HttpException(response.body, response.status)
+          case _ =>
+            logger.warn(
+              s"[DDCYLS-8550]: Return for pptReference=[$pptReference] submission failed with status [${response.status}] and body [${response.body}]"
+            )
+            throw new HttpException(response.body, response.status)
         }
       }
       .recover { case ex: Exception =>
@@ -110,7 +119,7 @@ class TaxReturnsConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map { response =>
         val chargeReference = (response.json \ "chargeDetails" \ "chargeReference").asOpt[JsString].map(_.value)
-        logger.info(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
+        logger.warn(s"Submitted ppt amendment for id [$pptReference] with charge ref: $chargeReference")
         chargeReference
       }
       .recover { case ex: Exception =>
