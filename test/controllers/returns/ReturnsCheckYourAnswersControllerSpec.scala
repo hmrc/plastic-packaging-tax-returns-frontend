@@ -29,7 +29,7 @@ import models.{CreditBalance, TaxablePlastic, UserAnswers}
 import navigation.ReturnsJourneyNavigator
 import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers.{any, anyString, eq as eqTo}
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.{never, reset, verify, verifyNoInteractions, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -105,6 +105,7 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
     when(mockSessionRepository.set(any, any, any)(any)).thenReturn(Future.successful(true))
     when(mockSessionRepository.get[Boolean](any, any)(any)).thenReturn(Future.successful(Some(false)))
     when(mockReturnsProcessingRepository.set(any)).thenReturn(Future.successful(()))
+    when(mockReturnsProcessingRepository.startProcessing(any)).thenReturn(Future.successful(true))
 
     when(mockCalculateCreditConnector.getEventually(any)(any)) thenReturn Future.successful(
       CreditBalance(10, 20, 500L, true, Map(keyString -> TaxablePlastic(1, 2, 0.30)))
@@ -209,6 +210,17 @@ class ReturnsCheckYourAnswersControllerSpec extends PlaySpec with SummaryListFlu
         ArgumentMatchers.eq(Paths.ReturnChargeRef),
         ArgumentMatchers.eq(Some("12345"))
       )(any)
+    }
+
+    "must not call submit when a submission is already active (Processing, Complete or AlreadySubmitted)" in {
+      when(mockReturnsProcessingRepository.startProcessing(any))
+        .thenReturn(Future.successful(false))
+
+      val result = createSut(Some(setUserAnswer())).onSubmit()(FakeRequest(POST, "/foo"))
+      await(result)
+
+      status(result) mustEqual SEE_OTHER
+      verify(mockTaxReturnConnector, never()).submit(any)(any)
     }
   }
 

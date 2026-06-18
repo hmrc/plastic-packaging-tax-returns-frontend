@@ -16,8 +16,9 @@
 
 package repositories
 
+import com.mongodb.MongoWriteException
 import config.FrontendAppConfig
-import models.returns.ProcessingEntry
+import models.returns.{ProcessingEntry, ProcessingStatus}
 import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions, Indexes, ReplaceOptions}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -53,5 +54,16 @@ class ReturnsProcessingRepository @Inject() (
 
   def get(id: String): Future[Option[ProcessingEntry]] =
     collection.find(Filters.equal("_id", id)).headOption()
+
+  def startProcessing(entry: ProcessingEntry): Future[Boolean] =
+    collection.insertOne(entry).toFuture()
+      .map(_ => true)
+      .recoverWith { case _: MongoWriteException =>
+        val failedStatus = ProcessingStatus.format.writes(ProcessingStatus.Failed).as[String]
+        collection.replaceOne(
+          filter = Filters.and(Filters.equal("_id", entry.id), Filters.equal("status", failedStatus)),
+          replacement = entry
+        ).toFuture().map(_.getMatchedCount > 0)
+      }
 
 }

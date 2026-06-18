@@ -76,7 +76,7 @@ class ReturnsCheckYourAnswersController @Inject() (
       val processId                = request.cacheKey
 
       (for {
-          _ <- processingStatusRepository.set(ProcessingEntry(processId))
+          _ <- updateProcessingStatus(processId)
           _ <- returnsConnector.submit(request.pptReference).flatMap {
             case Right(optChargeRef) =>
               for {
@@ -92,10 +92,24 @@ class ReturnsCheckYourAnswersController @Inject() (
               } yield ()
           }
         } yield () // keeps running in background
-      ).recover { case ex: Exception =>
-        processingStatusRepository.set(ProcessingEntry(processId, Failed, Some(ex.getMessage)))
+      ).recover {
+        case _: AlreadyInProgressException =>
+          logger.warn(
+            s"[DDCYLS-8550]: User ${request.pptReference} attempted to submit a return while another submission is in progress"
+          )
+        case ex: Exception =>
+          processingStatusRepository.set(ProcessingEntry(processId, Failed, Some(ex.getMessage)))
       }
       Future.successful(Redirect(routes.ReturnsProcessingController.onPageLoad(isUserClaimingCredit)))
+    }
+
+  private class AlreadyInProgressException
+      extends RuntimeException("A submission is already in progress for this return")
+
+  private def updateProcessingStatus(processId: String): Future[Unit] =
+    processingStatusRepository.startProcessing(ProcessingEntry(processId)).flatMap {
+      case false => Future.failed(new AlreadyInProgressException)
+      case true  => Future.unit
     }
 
   private def displayPage(request: DataRequest[_], obligation: TaxReturnObligation)(implicit
