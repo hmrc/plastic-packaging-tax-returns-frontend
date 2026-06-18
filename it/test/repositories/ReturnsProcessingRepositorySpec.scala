@@ -87,6 +87,43 @@ class ReturnsProcessingRepositorySpec
     }
   }
 
+  ".startProcessing" - {
+
+    "when there is no existing entry" - {
+      "must insert a Processing entry and return true" in {
+        val entry = ProcessingEntry("start-new")
+        repository.startProcessing(entry).futureValue mustBe true
+
+        val saved = find(Filters.equal("_id", "start-new")).futureValue.headOption.value
+        saved.status mustEqual ProcessingStatus.Processing
+      }
+    }
+
+    "when an existing entry has status Failed" - {
+      "must replace it with Processing and return true (retry allowed)" in {
+        insert(ProcessingEntry("start-retry", ProcessingStatus.Failed)).futureValue
+
+        repository.startProcessing(ProcessingEntry("start-retry")).futureValue mustBe true
+
+        val saved = find(Filters.equal("_id", "start-retry")).futureValue.headOption.value
+        saved.status mustEqual ProcessingStatus.Processing
+      }
+    }
+
+    Seq(ProcessingStatus.Processing, ProcessingStatus.Complete, ProcessingStatus.AlreadySubmitted).foreach { blockedStatus =>
+      s"when an existing entry has status $blockedStatus" - {
+        "must return false and leave the existing entry unchanged" in {
+          insert(ProcessingEntry(s"start-blocked-$blockedStatus", blockedStatus)).futureValue
+
+          repository.startProcessing(ProcessingEntry(s"start-blocked-$blockedStatus")).futureValue mustBe false
+
+          val saved = find(Filters.equal("_id", s"start-blocked-$blockedStatus")).futureValue.headOption.value
+          saved.status mustEqual blockedStatus
+        }
+      }
+    }
+  }
+
   def verifyProcessingEntryResult(actual: ProcessingEntry, expected: ProcessingEntry): Assertion = {
     actual.id mustEqual expected.id
     actual.status mustEqual expected.status
