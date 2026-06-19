@@ -28,7 +28,6 @@
     hmrcStandardHeader: HmrcStandardHeader,
     hmrcStandardFooter: HmrcStandardFooter,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-    hmrcServiceNavigationLanguageSelect: HmrcServiceNavigationLanguageSelectHelper,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
     hmrcScripts: HmrcScripts,
@@ -63,9 +62,6 @@
 }
 
 @beforeContent = {
-
-    @hmrcServiceNavigationLanguageSelect()
-
     @if(showBackLink) {
         @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withAttribute(("id" -> "back-link")))
     }
@@ -111,7 +107,8 @@
         userResearchBanner = Some(UserResearchBanner(
             language = lang,
             appConfig.userResearchUrl)
-        )
+        ),
+        isWelshTranslationAvailable =  true
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
