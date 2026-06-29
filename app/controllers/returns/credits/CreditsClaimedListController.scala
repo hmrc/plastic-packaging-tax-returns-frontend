@@ -62,10 +62,16 @@ class CreditsClaimedListController @Inject() (
       formProvider(remainingOpts).bindFromRequest().fold(
         formWithErrors =>
           calcCreditsConnector.getEventually(request.pptReference).map { creditBalance =>
+            val updatedCreditBalance: CreditBalance = if (remainingOpts.isEmpty) {
+              creditBalance.copy(canBeClaimed = false)
+            } else {
+              creditBalance
+            }
+
             BadRequest(
               view(
                 formWithErrors,
-                creditBalance,
+                updatedCreditBalance,
                 earliestCreditDate(options),
                 remainingOpts,
                 createCreditSummary(request.userAnswers, creditBalance, Some(navigator)),
@@ -107,5 +113,4 @@ class CreditsClaimedListController @Inject() (
 
     available.collect { case y if !alreadyUsedYears.contains(y.key) => y }
   }
-
 }
