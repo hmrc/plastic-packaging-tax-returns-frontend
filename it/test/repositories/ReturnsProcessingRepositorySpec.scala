@@ -99,27 +99,27 @@ class ReturnsProcessingRepositorySpec
       }
     }
 
-    "when an existing entry has status Failed" - {
-      "must replace it with Processing and return true (retry allowed)" in {
-        insert(ProcessingEntry("start-retry", ProcessingStatus.Failed)).futureValue
+    Seq(ProcessingStatus.Failed, ProcessingStatus.Complete, ProcessingStatus.AlreadySubmitted).foreach { retryableStatus =>
+      s"when an existing entry has status $retryableStatus" - {
+        "must replace it with Processing and return true (retry allowed)" in {
+          insert(ProcessingEntry(s"start-retry-$retryableStatus", retryableStatus)).futureValue
 
-        repository.startProcessing(ProcessingEntry("start-retry")).futureValue mustBe true
+          repository.startProcessing(ProcessingEntry(s"start-retry-$retryableStatus")).futureValue mustBe true
 
-        val saved = find(Filters.equal("_id", "start-retry")).futureValue.headOption.value
-        saved.status mustEqual ProcessingStatus.Processing
+          val saved = find(Filters.equal("_id", s"start-retry-$retryableStatus")).futureValue.headOption.value
+          saved.status mustEqual ProcessingStatus.Processing
+        }
       }
     }
 
-    Seq(ProcessingStatus.Processing, ProcessingStatus.Complete, ProcessingStatus.AlreadySubmitted).foreach { blockedStatus =>
-      s"when an existing entry has status $blockedStatus" - {
-        "must return false and leave the existing entry unchanged" in {
-          insert(ProcessingEntry(s"start-blocked-$blockedStatus", blockedStatus)).futureValue
+    "when an existing entry has status Processing" - {
+      "must return false and leave the existing entry unchanged" in {
+        insert(ProcessingEntry("start-blocked", ProcessingStatus.Processing)).futureValue
 
-          repository.startProcessing(ProcessingEntry(s"start-blocked-$blockedStatus")).futureValue mustBe false
+        repository.startProcessing(ProcessingEntry("start-blocked")).futureValue mustBe false
 
-          val saved = find(Filters.equal("_id", s"start-blocked-$blockedStatus")).futureValue.headOption.value
-          saved.status mustEqual blockedStatus
-        }
+        val saved = find(Filters.equal("_id", "start-blocked")).futureValue.headOption.value
+        saved.status mustEqual ProcessingStatus.Processing
       }
     }
   }

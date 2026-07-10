@@ -59,9 +59,9 @@ class ReturnsProcessingRepository @Inject() (
     collection.insertOne(entry).toFuture()
       .map(_ => true)
       .recoverWith { case _: MongoWriteException =>
-        val failedStatus = ProcessingStatus.format.writes(ProcessingStatus.Failed).as[String]
+        val processingStatus = ProcessingStatus.format.writes(ProcessingStatus.Processing).as[String]
         collection.replaceOne(
-          filter = Filters.and(Filters.equal("_id", entry.id), Filters.equal("status", failedStatus)),
+          filter = Filters.and(Filters.equal("_id", entry.id), Filters.ne("status", processingStatus)),
           replacement = entry
         ).toFuture().map(_.getMatchedCount > 0)
       }
