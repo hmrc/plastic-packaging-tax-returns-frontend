@@ -49,6 +49,9 @@ class TaxReturnsConnector @Inject() (
     httpClient.get(url"$url").execute[SubmittedReturn]
       .andThen { case _ => timer.stop() }
       .recover { case ex: Exception =>
+        logger.warn(
+          s"Failed to get or parse return for pptReference=[$userId] periodKey=[$periodKey], error: ${ex.getMessage}"
+        )
         throw DownstreamServiceError(s"Failed to get return, error: ${ex.getMessage}", ex)
       }
   }
