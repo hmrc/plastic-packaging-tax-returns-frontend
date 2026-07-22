@@ -35,6 +35,7 @@
 @(
     legalEntity: LegalEntityDetails,
     obligations: Option[PPTObligations],
+    hasClaimedCredit: Boolean,
     isFirstReturn: Boolean,
     paymentStatement: Option[String],
     pptReference: String
@@ -164,8 +165,14 @@
 
 @returnsLink = @{
     obligations.flatMap { obligations =>
-        if(obligations.displaySubmitReturnsLink) {
-            val linkContentKey = "account.homePage.card.makeReturn.line3.createLink" + {if(isFirstReturn) "" else ".andCredits"}
+        if(obligations.displaySubmitReturnsLink && isFirstReturn) {
+            val linkContentKey = "account.homePage.card.makeReturn.line3.createLink"
+            Some(link(id = "start-date-return-link", text = messages(linkContentKey), href = controllers.returns.routes.StartYourReturnController.onPageLoad().url))
+        } else if(obligations.displaySubmitReturnsLink && hasClaimedCredit) {
+            val linkContentKey = "account.homePage.card.makeReturn.line3.createLink.creditSummary"
+            Some(link(id = "start-date-return-link", text = messages(linkContentKey), href = controllers.returns.credits.routes.CreditsClaimedListController.onPageLoad(NormalMode).url))
+        } else if(obligations.displaySubmitReturnsLink) {
+            val linkContentKey = "account.homePage.card.makeReturn.line3.createLink.andCredits"
             Some(link(id = "start-date-return-link", text = messages(linkContentKey), href = controllers.returns.routes.StartYourReturnController.onPageLoad().url))
         } else {
             None

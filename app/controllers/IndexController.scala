@@ -22,6 +22,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.PPTSubscriptionDetails
 import models.obligations.PPTObligations
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.json.{JsObject, JsPath}
 import play.api.mvc.{Action, AnyContent, Results}
 import repositories.SessionRepository
 import repositories.SessionRepository.Paths.SubscriptionIsActive
@@ -54,10 +55,12 @@ class IndexController @Inject() (
         paymentStatement <- getPaymentsStatement(pptReference)
         obligations      <- getObligationsDetail(pptReference)
         isFirstReturn    <- isFirstReturn(pptReference)
+        hasClaimedCredit = request.userAnswers.get[Map[String, JsObject]](JsPath \ "credit").exists(_.nonEmpty)
       } yield Ok(
         view(
           legalEntity.get.legalEntityDetails,
           obligations,
+          hasClaimedCredit,
           isFirstReturn,
           paymentStatement,
           pptReference

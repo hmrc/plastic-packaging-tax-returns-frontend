@@ -83,6 +83,7 @@ class IndexPageViewSpec extends ViewSpecBase with ViewAssertions with ViewMatche
     homePage(
       subscription,
       obligations,
+      false,
       true,
       pptFinancials,
       "XMPPT0000000001"
