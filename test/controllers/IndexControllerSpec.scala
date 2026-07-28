@@ -68,7 +68,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
       mockLegalEntityDetails,
       mockPPTFinancials
     )
-    when(mockView.apply(any, any, any, any, any)(any, any)).thenReturn(Html.apply("test view"))
+    when(mockView.apply(any, any, any, any, any, any)(any, any)).thenReturn(Html.apply("test view"))
   }
 
   val sut = new IndexController(
@@ -103,6 +103,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
       verify(mockView).apply(
         refEq(mockLegalEntityDetails),
         refEq(Some(PPTObligations(None, None, 1, true, true))),
+        any,
         refEq(true),
         refEq(Some("Test payment statement")),
         any
@@ -145,7 +146,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any, any, refEq(false), any, any)(any, any)
+      verify(mockView).apply(any, any, any, refEq(false), any, any)(any, any)
     }
 
     "financials data not returned" in {
@@ -163,7 +164,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any, any, any, any, any)(any, any)
+      verify(mockView).apply(any, any, any, any, any, any)(any, any)
     }
 
     "getFulfilled obligations fails" in {
@@ -182,7 +183,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any, any, refEq(false), any, any)(any, any)
+      verify(mockView).apply(any, any, any, refEq(false), any, any)(any, any)
     }
 
     "getObligationDetail fails" in {
@@ -201,7 +202,7 @@ class IndexControllerSpec extends PlaySpec with BeforeAndAfterEach {
 
       await(sut.onPageLoad()(FakeRequest()))
 
-      verify(mockView).apply(any, refEq(None), any, any, any)(any, any)
+      verify(mockView).apply(any, refEq(None), any, any, any, any)(any, any)
     }
   }
 

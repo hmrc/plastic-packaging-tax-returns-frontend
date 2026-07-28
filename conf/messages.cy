@@ -388,6 +388,7 @@ account.homePage.card.makeReturn.line1.none = Nid oes gennych Ffurflenni Treth i
 account.homePage.card.makeReturn.line2.due = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer mis {0} rhwng {1} a {2}.
 account.homePage.card.makeReturn.line3.createLink = Cyflwyno Ffurflen Dreth
 account.homePage.card.makeReturn.line3.createLink.andCredits = Cyflwyno Ffurflen Dreth a hawlio treth yn ôl fel credyd
+account.homePage.card.makeReturn.line3.createLink.creditSummary = Bwrw golwg ar grynodeb o’r credyd a dechrau’ch ffurflen
 account.homePage.card.makeReturn.guidance.link = Rhagor o wybodaeth am sut i lenwi’ch Ffurflen Dreth (yn agor tab newydd)
 account.homePage.card.makeReturn.returnDates.link = Dyddiadau Ffurflenni Treth
 account.homePage.card.makeReturn.failure = Ni allwn ddangos manylion y Ffurflen Dreth.
