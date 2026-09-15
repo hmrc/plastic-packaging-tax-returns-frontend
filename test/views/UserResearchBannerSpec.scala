@@ -31,18 +31,18 @@ import views.html.changeGroupLead.NewGroupLeadConfirmationView
 class UserResearchBannerSpec extends ViewSpecBase with ViewMatchers with Matchers {
 
   val appConfig: FrontendAppConfig = inject[FrontendAppConfig]
-  val messagesApi: MessagesApi = inject[MessagesApi]
+  val messagesApi: MessagesApi     = inject[MessagesApi]
 
-  private val returnConfirmationPage        = inject[ReturnConfirmationView]
-  private val amendConfirmationPage         = inject[AmendConfirmation]
-  private val newGroupLeadConfirmationPage  = inject[NewGroupLeadConfirmationView]
+  private val returnConfirmationPage       = inject[ReturnConfirmationView]
+  private val amendConfirmationPage        = inject[AmendConfirmation]
+  private val newGroupLeadConfirmationPage = inject[NewGroupLeadConfirmationView]
 
   private def welshMessages: Messages = MessagesImpl(Lang("cy"), messagesApi)
 
   private def optedInPages(msgs: Messages): Seq[(String, Html)] = Seq(
-    "return_confirmation"          -> returnConfirmationPage(None, false)(request, msgs),
-    "amend_confirmation"           -> amendConfirmationPage(Some("1234"))(request, msgs), 
-    "new_group_lead_confirmation"  -> newGroupLeadConfirmationPage()(request, msgs)  
+    "return_confirmation"         -> returnConfirmationPage(None, false)(request, msgs),
+    "amend_confirmation"          -> amendConfirmationPage(Some("1234"))(request, msgs),
+    "new_group_lead_confirmation" -> newGroupLeadConfirmationPage()(request, msgs)
   )
 
   private def asElement(html: Html): Element = Jsoup.parse(html.toString()).body()
@@ -56,7 +56,7 @@ class UserResearchBannerSpec extends ViewSpecBase with ViewMatchers with Matcher
     el.select(".hmrc-user-research-banner").size() mustBe 1
     val link = el.select(".hmrc-user-research-banner__link")
     link.attr("href") must include("https://banner-cy")
-    link.text must include ("Ymunwch â’n panel ymchwil (yn agor tab newydd)")
+    link.text must include("Ymunwch â’n panel ymchwil (yn agor tab newydd)")
   }
 
   "The user research banner" should {
