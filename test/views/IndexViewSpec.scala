@@ -74,7 +74,6 @@ class IndexPageViewSpec extends ViewSpecBase with ViewAssertions with ViewMatche
   when(appConfig.pptRegistrationDeregisterUrl).thenReturn("pptRegistrationDeregisterUrl")
   when(appConfig.pptRegistrationAmendUrl).thenReturn("pptRegistrationAmendUrl")
   when(appConfig.pptRegistrationManageGroupUrl).thenReturn("pptRegistrationManageGroupUrl")
-  when(appConfig.userResearchUrl).thenReturn("ur-url")
 
   private def createView(
     subscription: LegalEntityDetails,
