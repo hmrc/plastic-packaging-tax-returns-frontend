@@ -20,6 +20,8 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import config.FrontendAppConfig
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.twirl.api.Html
@@ -30,6 +32,15 @@ import views.html.changeGroupLead.NewGroupLeadConfirmationView
 
 class UserResearchBannerSpec extends ViewSpecBase with ViewMatchers with Matchers {
 
+  private def appWith(bannerEnabled: Boolean): Application =
+    new GuiceApplicationBuilder()
+      .configure(
+        "features.user-research-banner" -> bannerEnabled,
+        "metrics.jvm"                   -> false,
+        "metrics.enabled"               -> false
+      )
+      .build()
+
   val appConfig: FrontendAppConfig = inject[FrontendAppConfig]
   val messagesApi: MessagesApi     = inject[MessagesApi]
 
@@ -37,13 +48,22 @@ class UserResearchBannerSpec extends ViewSpecBase with ViewMatchers with Matcher
   private val amendConfirmationPage        = inject[AmendConfirmation]
   private val newGroupLeadConfirmationPage = inject[NewGroupLeadConfirmationView]
 
+  private lazy val bannerOn  = appWith(bannerEnabled = true)
+  private lazy val bannerOff = appWith(bannerEnabled = false)
+
   private def welshMessages: Messages = MessagesImpl(Lang("cy"), messagesApi)
 
-  private def optedInPages(msgs: Messages): Seq[(String, Html)] = Seq(
-    "return_confirmation"         -> returnConfirmationPage(None, false)(request, msgs),
-    "amend_confirmation"          -> amendConfirmationPage(Some("1234"))(request, msgs),
-    "new_group_lead_confirmation" -> newGroupLeadConfirmationPage()(request, msgs)
-  )
+  private def optedInPages(app: Application, msgs: Messages): Seq[(String, Html)] = {
+    val injector = app.injector
+    Seq(
+      "return_confirmation" ->
+        injector.instanceOf[ReturnConfirmationView].apply(None, false)(request, msgs),
+      "amend_confirmation" ->
+        injector.instanceOf[AmendConfirmation].apply(Some("1234"))(request, msgs),
+      "new_group_lead_confirmation" ->
+        injector.instanceOf[NewGroupLeadConfirmationView].apply()(request, msgs)
+    )
+  }
 
   private def asElement(html: Html): Element = Jsoup.parse(html.toString()).body()
 
@@ -61,15 +81,26 @@ class UserResearchBannerSpec extends ViewSpecBase with ViewMatchers with Matcher
 
   "The user research banner" should {
 
-    "be displayed on every opted-in page in English" in {
-      optedInPages(messages).foreach { case (name, html) =>
+    "be displayed on every opted-in page in English when the feature switch is enabled" in {
+
+      implicit val msgs: Messages = MessagesImpl(Lang("en"), messagesApi)
+
+      optedInPages(bannerOn, msgs).foreach { case (name, html) =>
         withClue(s"$name: ")(containUserResearchBannerEnglish(asElement(html)))
       }
     }
 
-    "be displayed on every opted-in page in Welsh" in {
-      optedInPages(welshMessages).foreach { case (name, html) =>
+    "be displayed on every opted-in page in Welsh when the feature switch is enabled" in {
+      implicit val msgs: Messages = welshMessages
+      optedInPages(bannerOn, msgs).foreach { case (name, html) =>
         withClue(s"$name: ")(containUserResearchBannerWelsh(asElement(html)))
+      }
+    }
+
+    "not be displayed when the feature switch is disabled" in {
+      val disabledMessages = MessagesImpl(Lang("en"), messagesApi)
+      optedInPages(bannerOff, disabledMessages).foreach { case (name, html) =>
+        withClue(s"$name: ")(asElement(html).select(".hmrc-user-research-banner").size() mustBe 0)
       }
     }
   }

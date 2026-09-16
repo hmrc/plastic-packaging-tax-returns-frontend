@@ -52,6 +52,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
 
   def returnUrl(relative: String) = s"$host$relative"
 
+  lazy val userResearchBannerEnabled: Boolean =
+    configuration.getOptional[Boolean]("features.user-research-banner").getOrElse(false)
+
   def userResearchBannerUrl()(implicit messages: Messages): String = {
     val langCode = messages.lang.code
     configuration.get[String](s"urls.user-research-banner-$langCode")

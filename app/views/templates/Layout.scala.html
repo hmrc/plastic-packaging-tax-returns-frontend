@@ -69,7 +69,7 @@
 }
 
 @userResearchBannerData = @{
-    if(displayUserResearchBanner)
+    if(displayUserResearchBanner && appConfig.userResearchBannerEnabled)
         Some(UserResearchBanner(
             url = appConfig.userResearchBannerUrl(),
             hideCloseButton = true
