@@ -70,8 +70,6 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
 
   "View" should {
 
-    when(appConfig.userResearchUrl).thenReturn("/foo")
-
     "have a Credits section" in {
       val view = createView()
 
@@ -86,8 +84,8 @@ class ReturnsCheckYourAnswersViewSpec extends ViewSpecBase with ViewAssertions w
     val text = view.getElementsByClass("govuk-summary-list").text()
 
     "display header" in {
-      view.select("h2").get(1).text() mustBe "Business details"
-      view.select("h2").get(1).text() mustBe messages("submit-return.check-your-answers.business-details.heading")
+      view.select("h2").get(0).text() mustBe "Business details"
+      view.select("h2").get(0).text() mustBe messages("submit-return.check-your-answers.business-details.heading")
     }
 
     "display the registration number" in {

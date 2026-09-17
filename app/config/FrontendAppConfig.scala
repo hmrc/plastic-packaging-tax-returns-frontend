@@ -19,6 +19,7 @@ package config
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.Lang
+import play.api.i18n.Messages
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -30,8 +31,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
   lazy val serviceIdentifier    = "plastic-packaging-tax"
 
   lazy private val contactHost = configuration.get[String]("contact-frontend.host")
-
-  lazy val userResearchUrl: String = configuration.get[String]("urls.userResearchUrl")
 
   lazy val loginUrl: String   = configuration.get[String]("urls.login")
   lazy val signOutUrl: String = configuration.get[String]("urls.signOut")
@@ -52,6 +51,14 @@ class FrontendAppConfig @Inject() (configuration: Configuration, val servicesCon
     servicesConfig.baseUrl("plastic-packaging-tax-returns")
 
   def returnUrl(relative: String) = s"$host$relative"
+
+  lazy val userResearchBannerEnabled: Boolean =
+    configuration.getOptional[Boolean]("features.user-research-banner").getOrElse(false)
+
+  def userResearchBannerUrl()(implicit messages: Messages): String = {
+    val langCode = messages.lang.code
+    configuration.get[String](s"urls.user-research-banner-$langCode")
+  }
 
   private lazy val pptReturnsSubmissionUrl: String           = s"$pptServiceHost/returns-submission"
   private lazy val pptReturnsAmendUrl: String                = s"$pptServiceHost/returns-amend"

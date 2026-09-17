@@ -36,7 +36,7 @@
 link(id = "bta-page-link", text = messages("newGroupLeadConfirmation.paragraph.1.link"), href = appConfig.businessAccountUrl)
 }
 
-@layout(pageTitle = titleNoForm(messages("newGroupLeadConfirmation.title"), Some(messages("account.title.tail"))),showBackLink = false){
+@layout(pageTitle = titleNoForm(messages("newGroupLeadConfirmation.title"), Some(messages("account.title.tail"))),showBackLink = false, displayUserResearchBanner = true) {
 
     @govukPanel(Panel(
             title = Text(messages("newGroupLeadConfirmation.heading")),

@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 
 @this(
     appConfig: FrontendAppConfig,
@@ -34,7 +35,7 @@
     utils: LanguageUtils
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, large: Boolean = false)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, large: Boolean = false, displayUserResearchBanner: Boolean = false)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @head = {
 
@@ -65,6 +66,16 @@
     @if(showBackLink) {
         @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withAttribute(("id" -> "back-link")))
     }
+}
+
+@userResearchBannerData = @{
+    if(displayUserResearchBanner && appConfig.userResearchBannerEnabled)
+        Some(UserResearchBanner(
+            url = appConfig.userResearchBannerUrl(),
+            hideCloseButton = true
+        ))
+    else
+        None
 }
 
 @mainTemplateCass = {
@@ -104,12 +115,10 @@
         serviceUrl  = Some(routes.IndexController.onPageLoad.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None,
         phaseBanner = None,
-        userResearchBanner = Some(UserResearchBanner(
-            language = lang,
-            appConfig.userResearchUrl)
-        ),
+        userResearchBanner = userResearchBannerData,
         isWelshTranslationAvailable =  true
     )),
+    
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
     scriptsBlock       = Some(hmrcScripts(
