@@ -80,6 +80,17 @@ class AmendReturnAnswerComparisonServiceSpec extends PlaySpec {
         val userAnswersWithOneChange = userAnswersNoChanges.set(AmendDirectExportPlasticPackagingPage, 333L)
         service.hasMadeChangesOnAmend(userAnswersWithOneChange.get) mustBe true
       }
+      "exported by another business has been amended" in {
+        val userAnswersWithOneChange = userAnswersNoChanges.set(AmendExportedByAnotherBusinessPage, 305L)
+        service.hasMadeChangesOnAmend(userAnswersWithOneChange.get) mustBe true
+      }
+      "directExports is unchanged but exported by another business has been added" in {
+        val userAnswersWithChange: UserAnswers = userAnswersNoChanges
+          .set(AmendDirectExportPlasticPackagingPage, 220L).get
+          .set(AmendExportedByAnotherBusinessPage, 305L).get
+
+        service.hasMadeChangesOnAmend(userAnswersWithChange) mustBe true
+      }
       "we have a pointless change as well as useful ones" in {
         val userAnswersWithOneUsefulAndOnePointlessChange: UserAnswers = userAnswersNoChanges
           .set(AmendDirectExportPlasticPackagingPage, 220L).get

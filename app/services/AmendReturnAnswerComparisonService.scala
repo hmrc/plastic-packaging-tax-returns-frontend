@@ -31,7 +31,7 @@ class AmendReturnAnswerComparisonService {
           .exists(_ != original.returnDetails.manufacturedWeight)
         val importedHasChanged: Boolean = userAnswers.get(AmendImportedPlasticPackagingPage)
           .exists(_ != original.returnDetails.importedWeight)
-        val directExportHasChanged: Boolean = userAnswers.get(AmendDirectExportPlasticPackagingPage)
+        val directExportHasChanged: Boolean = ExportedPlasticAnswer(userAnswers).totalAmendExportedPlastic
           .exists(_ != original.returnDetails.directExports)
         val recycledHasChanged: Boolean = userAnswers.get(AmendRecycledPlasticPackagingPage)
           .exists(_ != original.returnDetails.recycledPlastic)
@@ -42,6 +42,7 @@ class AmendReturnAnswerComparisonService {
           userAnswers.get(AmendManufacturedPlasticPackagingPage).isDefined ||
             userAnswers.get(AmendImportedPlasticPackagingPage).isDefined ||
             userAnswers.get(AmendDirectExportPlasticPackagingPage).isDefined ||
+            userAnswers.get(AmendExportedByAnotherBusinessPage).isDefined ||
             userAnswers.get(AmendRecycledPlasticPackagingPage).isDefined ||
             userAnswers.get(AmendHumanMedicinePlasticPackagingPage).isDefined
 
