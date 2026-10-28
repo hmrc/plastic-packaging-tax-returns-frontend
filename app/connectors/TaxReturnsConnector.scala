@@ -106,7 +106,7 @@ class TaxReturnsConnector @Inject() (
             logger.warn(
               s"[DDCYLS-8550]: Return for pptReference=[$pptReference] submission failed with status [${response.status}] and body [${response.body}]"
             )
-            throw new HttpException(response.body, response.status)
+            throw new HttpException(s"status [${response.status}]", response.status)
         }
       }
       .recover { case ex: Exception =>
