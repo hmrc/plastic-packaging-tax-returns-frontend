@@ -23,14 +23,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.ExportedPlasticPackagingWeightView
 
-class ExportedPlasticPackagingWeightViewSpec
-    extends ViewSpecBase
-    with ViewAssertions
-    with ViewMatchers
-    with AccessibilityMatchers {
+class ExportedPlasticPackagingWeightViewSpec extends ViewSpecBase with ViewAssertions with ViewMatchers {
 
   val form = new ExportedPlasticPackagingWeightFormProvider()()
   val page = inject[ExportedPlasticPackagingWeightView]

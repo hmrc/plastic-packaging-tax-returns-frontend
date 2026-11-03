@@ -30,7 +30,6 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.twirl.api.Html
 import support.{ViewAssertions, ViewMatchers}
-import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.returns.credits.ConvertedCreditsWeightView
 
 import java.time.LocalDate
@@ -39,7 +38,6 @@ class ConvertedCreditsWeightViewSpec
     extends ViewSpecBase
     with ViewAssertions
     with ViewMatchers
-    with AccessibilityMatchers
     with MockitoSugar
     with BeforeAndAfterEach {
 

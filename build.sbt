@@ -13,12 +13,8 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(inConfig(Test)(testSettings): _*)
-  .configs(A11yTest)
-  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(majorVersion := 1)
   .settings(ThisBuild / useSuperShell := false)
-  .settings(headerSettings(A11yTest): _*)
-  .settings(automateHeaderSettings(A11yTest))
   .settings(
     RoutesKeys.routesImport ++= Seq("models._", "models.Mode._", "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"),
     TwirlKeys.templateImports ++= Seq(
