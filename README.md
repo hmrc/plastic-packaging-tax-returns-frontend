@@ -34,14 +34,6 @@ sm2 -s
   * To see account page: http://localhost:8505/plastic-packaging-tax/account 
 * Press **Submit**.
 
-### Accessibility Tests
-
-The following command will only run the accessibility tests in a11y directory.
-(You will need to install Node v12+ and npm.)
-```
-sbt a11y:test
-```
-
 ### Pushing / merging code
 
 Before pushing code for PR / merging, please run
